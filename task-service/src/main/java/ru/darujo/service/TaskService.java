@@ -43,6 +43,9 @@ public class TaskService {
 
     @Transactional
     public Task saveWorkTime(Task task) {
+        if(task.getCodeDEVBO() != null && task.getCodeDEVBO().equalsIgnoreCase("DevBO-000")){
+            task.setCodeDEVBO(null);
+        }
         if (task.getCodeDEVBO() == null || task.getCodeDEVBO().equals("") || task.getCodeDEVBO().equalsIgnoreCase("DeVbo-000")) {
             if (task.getCodeBTS() == null || task.getCodeBTS().equals("")) {
                 throw new ResourceNotFoundException("Не задан номер DEVBO и BTS");
