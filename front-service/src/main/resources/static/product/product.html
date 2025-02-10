@@ -1,0 +1,61 @@
+<div id="ProductList" class="headtextelem">
+  <div class="filter">
+    <form novalidate ng-submit="filterPrice()" ; class="filter">
+      <input class="vvod" type="number" inputmode="decimal" id="PriceMin" value="1" ng-model="Price.min"/>
+
+      <p class="p-head"> < Цена < </p>
+      <input class="vvod" type="number" inputmode="decimal" id="PriceMax" step="any" ng-model="Price.max"/>
+      <!--                <input  type="hidden" id="ProductId" />-->
+      <br>
+      <button type="submit" class="headbutton">Применить</button>
+
+    </form>
+    <button class="headbutton" ng-click="createProduct()">Добавить продукт</button>
+  </div>
+  <div class="filter">
+    <button class="headbutton" ng-click="findPage(-1)">PrevPage</button>
+    <input class="vvod" type="number" id="Page" value="1"/>
+    <button class="headbutton" ng-click="findPage(1)">NextPage</button>
+  </div>
+  <h1>Список продуктов</h1>
+  <table>
+    <tr>
+      <td>Наименование</td>
+      <td>Цена</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tbody>
+    <tr ng-repeat="product in ProductList">
+      <td>{{product.title}}</td>
+      <td>{{product.price}}</td>
+      <td>
+        <button ng-click="editProduct(product.id)">Изменить</button>
+      </td>
+      <td>
+        <button ng-click="deleteProduct(product.id)">Удалить</button>
+      </td>
+      <td>
+        <button ng-click="addProductToBasket(product.id)">Добавить в корзину</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+</div>
+
+<div id="FormEdit" class="divform">
+  <form novalidate ng-submit="saveProduct()">
+    Наименование : <input class="vvod" type="text" id="ProductName" placeholder="Продукт"
+                          ng-model="Product.title"/>
+    <br>
+    Цена: <input class="vvod" type="number" inputmode="decimal" id="ProductPrice" step="any"
+                 ng-model="Product.price"/>
+    <!--                <input  type="hidden" id="ProductId" />-->
+    <br>
+    <button type="submit" class="button">Сохранить</button>
+    <button ng-click="loadProducts()" class="button">Вернуться к списку</button>
+
+  </form>
+</div>

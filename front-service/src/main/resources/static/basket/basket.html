@@ -1,0 +1,34 @@
+<div>
+  <h1>Корзина</h1>
+  <button class="headbutton" ng-click="clearBasket()">Очистить</button>
+  <table>
+    <tr>
+      <td>Наименование</td>
+      <td></td>
+      <td>Количество</td>
+      <td></td>
+      <td>Цена</td>
+    </tr>
+    <tbody>
+    <tr ng-repeat="product in Basket.productInformDtos">
+      <td>{{product.productName}}</td>
+      <td>
+        <button ng-click="delProductToBasket(product.productId)"> -</button>
+      </td>
+      <td>{{product.quantity}}</td>
+      <td>
+        <button ng-click="addProductToBasket(product.productId)"> +</button>
+      </td>
+      <td>{{product.quantity}} x {{product.price}} = {{product.priceAll}}</td>
+    </tr>
+    <tr>
+      <td> <button ng-click="saveOrder()">Оформит заказ</button></td>
+      <td></td>
+      <td>Итого:</td>
+      <td></td>
+      <td>{{Basket.price}}</td>
+    </tr>
+
+    </tbody>
+  </table>
+</div>

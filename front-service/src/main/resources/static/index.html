@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html ng-app="market">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ngStorage/0.3.11/ngStorage.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular-route.min.js"></script>
+
+    <title>Продукт</title>
+    <link rel="stylesheet" href="style.css?v=1.9">
+</head>
+<body>
+<div class="container" ng-controller="indexController">
+<nav>
+    <div class="" id="navbarNav">
+        <ul class="">
+            <li class="nav-item">
+                <a class="nav-link" href="#!/">Winter Market</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#!/product">Каталог товаров</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#!/basket">Корзина</a>
+            </li>
+            <li class="nav-item" ng-show="!isUserLoggedIn()">
+                <form class="" ng-submit="tryToAuth()">
+                    <div class="input-group input-group-sm" style="padding: 4px;">
+                        <input id="navLoginField" class="vvod" ng-model="user.username" type="text"
+                               aria-describedby="inputGroup-sizing-sm" style="margin-left: 10px;">
+
+                        <input id="navPasswordField" class="vvod" ng-model="user.password" type="password"
+                               aria-describedby="inputGroup-sizing-sm" style="margin-left: 10px;">
+
+                        <button id="navLoginSubmit" class="headbutton"
+                                style="margin-left: 10px;" type="submit">Войти
+                        </button>
+                    </div>
+                </form>
+            </li>
+            <li class="nav-item" ng-show="isUserLoggedIn()" style="padding: 4px;">
+                <button class="headbutton" ng-click="tryToLogout()">Выйти</button>
+            </li>
+        </ul>
+    </div>
+
+     </nav>
+
+    <ng-view></ng-view>
+
+    <script src="index.js"></script>
+    <script src="product/product.js"></script>
+    <script src="basket/basket.js"></script>
+    <script src="welcome/welcome.js"></script>
+</div>
+</body>
+</html>
