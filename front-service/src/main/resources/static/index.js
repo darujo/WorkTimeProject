@@ -11,13 +11,13 @@
                 templateUrl: 'welcome/welcome.html',
                 controller: 'welcomeController'
             })
-            .when('/product', {
+            .when('/work', {
 
-                templateUrl: 'product/product.html',
+                templateUrl: 'work/worktime.html',
                 controller: 'productController'
             })
             .when('/basket', {
-                templateUrl: 'basket/basket.html',
+                templateUrl: 'basket/work.html',
                 controller: 'basketController'
             })
             .otherwise({

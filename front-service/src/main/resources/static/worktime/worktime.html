@@ -1,9 +1,9 @@
 <div id="ProductList" class="headtextelem">
   <div class="filter">
-    <form novalidate ng-submit="filterPrice()" ; class="filter">
+    <form novalidate ng-submit="filterDate()" ; class="filter">
       <input class="vvod" type="number" inputmode="decimal" id="PriceMin" value="1" ng-model="Price.min"/>
 
-      <p class="p-head"> < Цена < </p>
+      <p class="p-head"> <= Цена <= </p>
       <input class="vvod" type="number" inputmode="decimal" id="PriceMax" step="any" ng-model="Price.max"/>
       <!--                <input  type="hidden" id="ProductId" />-->
       <br>
