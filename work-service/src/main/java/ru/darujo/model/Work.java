@@ -18,6 +18,9 @@ public class Work {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    // Наименование
+    @Column(name = "name")
+    private String name;
     // Разработка прототипа
     @Column(name = "startDevelop")
     private Date dateStartDevelop;
@@ -34,7 +37,5 @@ public class Work {
     @Column(name = "startWender")
     private Date dateStartWender;
 
-    @OneToMany (mappedBy = "works")
-    private List<WorkTime> WorkTime;
 
 }

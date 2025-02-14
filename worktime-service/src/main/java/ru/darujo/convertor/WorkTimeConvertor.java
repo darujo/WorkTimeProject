@@ -9,7 +9,7 @@ public class WorkTimeConvertor {
         return WorkTimeBuilder
                 .createWorkTime()
                 .setId(workTime.getId())
-                .setWorkId(workTime.getWork ().getId())
+                .setWorkId(workTime.getWork ())
                 .setWorkDate(workTime.getWorkDate())
                 .setUserName(workTime.getUserName())
                 .setWorkTime(workTime.getWorkTime())

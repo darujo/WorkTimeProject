@@ -5,20 +5,20 @@
         .run(run);
 
     function config($routeProvider) {
-        console.log('product');
+        console.log('index_ss');
         $routeProvider
             .when('/', {
                 templateUrl: 'welcome/welcome.html',
                 controller: 'welcomeController'
             })
-            .when('/work', {
+            .when('/worktime', {
 
-                templateUrl: 'work/worktime.html',
-                controller: 'productController'
+                templateUrl: 'worktime/worktime.html',
+                controller: 'worktimeController'
             })
-            .when('/basket', {
-                templateUrl: 'basket/work.html',
-                controller: 'basketController'
+            .when('/work', {
+                templateUrl: 'work/work.html',
+                controller: 'workController'
             })
             .otherwise({
                 redirectTo: '/'

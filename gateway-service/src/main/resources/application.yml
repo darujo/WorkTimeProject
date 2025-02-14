@@ -16,14 +16,22 @@ spring:
               - DELETE
             allowedHeaders: "*"
       routes:
-        - id: product-service
+        - id: worktime-service
           uri: "http://localhost:8180"
           predicates:
-            - Path=/product-service/**
+            - Path=/worktime-service/**
           filters:
             - StripPrefix=1
             - PrefixPath=/app
 #            - JwtAuthFilter
+        - id: work-service
+          uri: "http://localhost:8182"
+          predicates:
+            - Path=/work-service/**
+          filters:
+            - StripPrefix=1
+            - PrefixPath=/app
+            - JwtAuthFilter
         - id: front-service
           uri: "http://localhost:8181"
           predicates:
@@ -31,22 +39,6 @@ spring:
           filters:
             - StripPrefix=1
             - PrefixPath=/app-front/
-            - JwtAuthFilter
-        - id: basket-service
-          uri: "http://localhost:8182"
-          predicates:
-            - Path=/basket-service/**
-          filters:
-            - StripPrefix=1
-            - PrefixPath=/app-basket
-            - JwtAuthFilter
-        - id: order-service
-          uri: "http://localhost:8180"
-          predicates:
-            - Path=/order-service/**
-          filters:
-            - StripPrefix=1
-            - PrefixPath=/app
             - JwtAuthFilter
         - id: auth-service
           uri: "http://localhost:8183"

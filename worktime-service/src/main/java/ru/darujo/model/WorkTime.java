@@ -28,8 +28,7 @@ public class WorkTime {
     @Column(name = "workTime")
     private float workTime;
 
-    @ManyToOne
-    @JoinColumn(name = "work_id")
-    private Work work;
+    @Column(name = "work_id")
+    private Long work;
 
 }

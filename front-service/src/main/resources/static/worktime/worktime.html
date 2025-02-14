@@ -1,44 +1,50 @@
-<div id="ProductList" class="headtextelem">
+<div id="WorkTimeList" class="headtextelem">
   <div class="filter">
-    <form novalidate ng-submit="filterDate()" ; class="filter">
-      <input class="vvod" type="number" inputmode="decimal" id="PriceMin" value="1" ng-model="Price.min"/>
+    <form novalidate ng-submit="filterWorkTime()" ; class="filter">
+      <div>
+         <p class="p-head"> <= Дата <= </p> 
+         <br>
+         <input class="vvod" type="number" inputmode="decimal" id="WorkId" step="any" ng-model="Filt.workId"/>
+      </div>
+      <input class="vvod" type="number" inputmode="decimal" id="DateLE" value="1" ng-model="Filt.dateLe"/>
 
-      <p class="p-head"> <= Цена <= </p>
-      <input class="vvod" type="number" inputmode="decimal" id="PriceMax" step="any" ng-model="Price.max"/>
+      <p class="p-head"> <= Дата <= </p>
+      <input class="vvod" type="number" inputmode="decimal" id="DateGe" step="any" ng-model="Filt.dateGe"/>
       <!--                <input  type="hidden" id="ProductId" />-->
       <br>
       <button type="submit" class="headbutton">Применить</button>
 
     </form>
-    <button class="headbutton" ng-click="createProduct()">Добавить продукт</button>
+    <button class="headbutton" ng-click="createWorkTime()">Добавить время</button>
   </div>
   <div class="filter">
     <button class="headbutton" ng-click="findPage(-1)">PrevPage</button>
     <input class="vvod" type="number" id="Page" value="1"/>
     <button class="headbutton" ng-click="findPage(1)">NextPage</button>
   </div>
-  <h1>Список продуктов</h1>
+  <h1>Список работ</h1>
   <table>
     <tr>
-      <td>Наименование</td>
-      <td>Цена</td>
+      <td>Пользователь</td>
+      <td>Дата</td>
+      <td>Время</td>
       <td></td>
       <td></td>
-      <td></td>
+
     </tr>
     <tbody>
-    <tr ng-repeat="product in ProductList">
-      <td>{{product.title}}</td>
-      <td>{{product.price}}</td>
+    <tr ng-repeat="worktime in WorkTimeList">
+      <td>{{worktime.userName}}</td>
+      <td>{{worktime.workDate}}</td>
+      <td>{{worktime.workTime}}</td>
+
       <td>
-        <button ng-click="editProduct(product.id)">Изменить</button>
+        <button ng-click="editProduct(worktime.id)">Изменить</button>
       </td>
       <td>
-        <button ng-click="deleteProduct(product.id)">Удалить</button>
+        <button ng-click="deleteProduct(worktime.id)">Удалить</button>
       </td>
-      <td>
-        <button ng-click="addProductToBasket(product.id)">Добавить в корзину</button>
-      </td>
+
     </tr>
     </tbody>
   </table>

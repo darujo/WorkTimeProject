@@ -5,8 +5,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.darujo.model.Work;
 import ru.darujo.repository.WorkRepository;
+import ru.darujo.repository.specifications.WorkSpecifications;
+
 import java.util.Optional;
 
 @Service
@@ -24,15 +27,17 @@ public class WorkService {
     }
 
     public Work saveWork(Work work) {
+        size = -1;
         return workRepository.save(work);
     }
 
     public void deleteWork(Long id) {
         workRepository.deleteById(id);
+        size = -1;
     }
 
 
-    public Page<Work> findWorks(int page, int size) {
+    public Page<Work> findWorks(int page, int size,String name) {
         if (workPage != null && page == 1 && this.size ==size){
             return workPage;
         }
@@ -44,9 +49,9 @@ public class WorkService {
 //        if (dateGE != null) {
 //            specification = specification.and(WorkTimeSpecifications.dateGE(dateGE));
 //        }
-//        if (workID != null) {
-//            specification = specification.and(WorkTimeSpecifications.workIDEQ(workID));
-//        }
+        if (name != null) {
+            specification = specification.and(WorkSpecifications.workNameLike(name));
+        }
         workPage = workRepository.findAll(specification, PageRequest.of(page - 1, size));
         this.size = size;
         return workPage;

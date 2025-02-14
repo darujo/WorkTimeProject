@@ -4,10 +4,14 @@ import ru.darujo.dto.WorkDto;
 import ru.darujo.model.Work;
 
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 public class WorkBuilder {
     private Long id;
+    // Наименование
+    private String name;
     // Разработка прототипа
     private Date dateStartDevelop;
     // Стабилизация прототипа
@@ -21,6 +25,11 @@ public class WorkBuilder {
 
     public WorkBuilder setId(Long id) {
         this.id = id;
+        return this;
+    }
+
+    public WorkBuilder setName(String name) {
+        this.name = name;
         return this;
     }
 
@@ -49,9 +58,9 @@ public class WorkBuilder {
         return new WorkBuilder();
     }
     public WorkDto getWorkDto(){
-        return new WorkDto(id,dateStartDevelop,dateStartDebug,dateStartRelease,dateStartOPE,dateStartWender);
+        return new WorkDto(id,name, dateStartDevelop ,dateStartDebug,dateStartRelease,dateStartOPE,dateStartWender);
     }
     public Work getWork(){
-        return new Work(id,dateStartDevelop, dateStartDebug,dateStartRelease,dateStartOPE,dateStartWender,null);
+        return new Work(id,name, dateStartDevelop, dateStartDebug,dateStartRelease,dateStartOPE,dateStartWender);
     }
 }

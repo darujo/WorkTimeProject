@@ -14,6 +14,7 @@ public class WorkConvertor {
                 .setDateStartOPE(work.getDateStartOPE())
                 .setDateStartRelease(work.getDateStartRelease())
                 .setDateStartWender(work.getDateStartWender())
+                .setName(work.getName())
                 .getWorkDto();
     }
     public static Work getWork(WorkDto workDto){
@@ -25,6 +26,7 @@ public class WorkConvertor {
                 .setDateStartOPE(workDto.getDateStartOPE())
                 .setDateStartDevelop(workDto.getDateStartDevelop())
                 .setDateStartDebug(workDto.getDateStartDebug())
+                .setName(workDto.getName())
                 .getWork();
     }
 }

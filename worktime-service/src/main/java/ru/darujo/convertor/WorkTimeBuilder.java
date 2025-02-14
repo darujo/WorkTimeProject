@@ -1,7 +1,6 @@
 package ru.darujo.convertor;
 
 import ru.darujo.dto.WorkTimeDto;
-import ru.darujo.model.Work;
 import ru.darujo.model.WorkTime;
 
 import java.util.Date;
@@ -41,6 +40,6 @@ public class WorkTimeBuilder {
         return new WorkTimeDto(id,userName,workDate,workTime,workId);
     }
     public WorkTime getWorkTime(){
-        return new WorkTime(id,userName,workDate,workTime,new Work(workId,null,null,null,null,null,null));
+        return new WorkTime(id,userName,workDate,workTime,workId);
     }
 }

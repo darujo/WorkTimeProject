@@ -35,8 +35,9 @@ public class WorkController {
 
     @GetMapping("")
     public Page<WorkDto> productsMinMax(@RequestParam(defaultValue = "1") int page,
-                                        @RequestParam(defaultValue = "10") int size) {
-        return workService.findWorks(page, size).map(WorkConvertor::getWorkDto);
+                                        @RequestParam(defaultValue = "10") int size,
+                                        @RequestParam String name) {
+        return workService.findWorks(page, size,name).map(WorkConvertor::getWorkDto);
     }
 
 

@@ -1,34 +1,81 @@
-<div>
-  <h1>Корзина</h1>
-  <button class="headbutton" ng-click="clearBasket()">Очистить</button>
+<div id="WorkList" class="headtextelem">
+  <div class="filter">
+    <form novalidate ng-submit="filterWork()" ; class="filter">
+<!--      <input class="vvod" type="number" inputmode="decimal" id="WorkId" step="any" ng-model="Filt.workId"/>-->
+<!--      <br>-->
+<!--      <input class="vvod" type="number" inputmode="decimal" id="DateLE" value="1" ng-model="Filt.dateLe"/>-->
+
+<!--      <p class="p-head"> <= Цена <= </p>-->
+<!--      <input class="vvod" type="number" inputmode="decimal" id="DateGe" step="any" ng-model="Filt.dateGe"/>-->
+      <input class="vvod" type="number" inputmode="text" id="Name" step="any" ng-model="Filt.name"/>
+<!--                <input  type="hidden" id="ProductId" />-->
+      <br>
+      <button type="submit" class="headbutton">Применить</button>
+
+    </form>
+    <button class="headbutton" ng-click="createWork()">Добавить время</button>
+  </div>
+  <div class="filter">
+    <button class="headbutton" ng-click="findPage(-1)">PrevPage</button>
+    <input class="vvod" type="number" id="Page" value="1"/>
+    <button class="headbutton" ng-click="findPage(1)">NextPage</button>
+  </div>
+  <h1>Задачи</h1>
   <table>
     <tr>
       <td>Наименование</td>
+      <td>Дата разработка прототипа</td>
+      <td>Дата Стабилизация прототипа</td>
+      <td>Дата Стабилизация релиза</td>
+      <td>Дата ОПЭ релиза</td>
+      <td>Дата вендерка</td>
       <td></td>
-      <td>Количество</td>
       <td></td>
-      <td>Цена</td>
     </tr>
     <tbody>
-    <tr ng-repeat="product in Basket.productInformDtos">
-      <td>{{product.productName}}</td>
-      <td>
-        <button ng-click="delProductToBasket(product.productId)"> -</button>
-      </td>
-      <td>{{product.quantity}}</td>
-      <td>
-        <button ng-click="addProductToBasket(product.productId)"> +</button>
-      </td>
-      <td>{{product.quantity}} x {{product.price}} = {{product.priceAll}}</td>
-    </tr>
-    <tr>
-      <td> <button ng-click="saveOrder()">Оформит заказ</button></td>
-      <td></td>
-      <td>Итого:</td>
-      <td></td>
-      <td>{{Basket.price}}</td>
-    </tr>
+    <tr ng-repeat="work in WorkList">
+      <td>{{work.name}}</td>
+      <td>{{work.dateStartDevelop}}</td>
+      <td>{{work.dateStartDebug}}</td>
+      <td>{{work.dateStartRelease}}</td>
+      <td>{{work.dateStartOPE}}</td>
+      <td>{{work.dateStartWender}}</td>
 
+      <td>
+        <button ng-click="editWork(work.id)">Изменить</button>
+      </td>
+      <td>
+        <button ng-click="deleteWork(work.id)">Удалить</button>
+      </td>
+
+    </tr>
     </tbody>
   </table>
+
+</div>
+
+<div id="FormEdit" class="divform">
+  <form novalidate ng-submit="saveWork()">
+    Наименование : <input class="vvod" type="text" id="WorkName" placeholder="Ведите наименование"
+                          ng-model="Work.name"/>
+    <br>
+    Дата разработка прототипа: <input class="vvod" type="date"  id="StartDevelop" step="any"
+                 ng-model="Work.dateStartDevelop"/>
+    <!--                <input  type="hidden" id="ProductId" />-->
+    <br>
+    Дата стабилизация прототипа: <input class="vvod" type="date" id="StartDebug" step="any"
+                                      ng-model="Work.dateStartDebug"/>
+    <br>
+    Дата стабилизация релиза: <input class="vvod" type="date" id="StartRelease" step="any"
+                                        ng-model="Work.dateStartRelease"/>
+    <br>
+    Дата ОПЭ релиза: <input class="vvod" type="date" id="StartOPE" step="any"
+                                        ng-model="Work.dateStartOPE"/>
+    <br>
+    Дата вендерка: <input class="vvod" type="date" id="StartWender" step="any"
+                                        ng-model="Work.dateStartWender"/>
+    <br>
+    <button type="submit" class="button">Сохранить</button>
+    <button ng-click="loadWork()" class="button">Вернуться к списку</button>
+  </form>
 </div>
