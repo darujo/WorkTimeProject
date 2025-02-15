@@ -103,6 +103,11 @@ angular.module('market').controller('workController', function ($scope, $http, $
                 $scope.loadWork();
             });
     };
+    $scope.addTime = function (workId ,event){
+        event.preventDefault();
+        $scope.WorkId = workId;
+        $location.path('/worktime');
+    }
 
     $scope.loadWork();
 })

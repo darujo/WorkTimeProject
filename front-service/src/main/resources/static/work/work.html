@@ -34,7 +34,7 @@
     </tr>
     <tbody>
     <tr ng-repeat="work in WorkList">
-      <td>{{work.name}}</td>
+      <td><a href="#" onclick="addTime(work.id ,event);">{{work.name}}</a></td>
       <td>{{work.dateStartDevelop}}</td>
       <td>{{work.dateStartDebug}}</td>
       <td>{{work.dateStartRelease}}</td>

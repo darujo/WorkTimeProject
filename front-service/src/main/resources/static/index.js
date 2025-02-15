@@ -5,7 +5,6 @@
         .run(run);
 
     function config($routeProvider) {
-        console.log('index_ss');
         $routeProvider
             .when('/', {
                 templateUrl: 'welcome/welcome.html',
@@ -43,10 +42,14 @@
             }
         }
     }
+    function addTime (workId ,event){
+        event.preventDefault();
+        $scope.WorkId = workId;
+        $location.path('/worktime');
+    }
 })();
 
 angular.module('market').controller('indexController', function ($rootScope, $scope, $http, $location, $localStorage) {
-    console.log('aasdsfdgfd');
     const constPatchAuth    = 'http://localhost:5555';
 
     $scope.tryToAuth = function () {

@@ -22,11 +22,16 @@ public class WorkTimeController {
 
     @GetMapping("/{id}")
     public WorkTimeDto WorkTimeEdit(@PathVariable long id) {
-        return WorkTimeConvertor.getWorkTimeDto(workTimeService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Продукт не найден")));
+        return WorkTimeConvertor.getWorkTimeDto(workTimeService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Отмеченая работа не найден")));
     }
 
     @PostMapping("")
-    public WorkTimeDto WorkTimeSave(@RequestBody WorkTimeDto workTimeDto) {
+    public WorkTimeDto WorkTimeSave( @RequestHeader String username,
+                                    @RequestBody WorkTimeDto workTimeDto) {
+        if (workTimeDto.getUserName().equals("") )
+        {
+            workTimeDto.setUserName(username);
+        }
         return WorkTimeConvertor.getWorkTimeDto(workTimeService.saveWorkTime(WorkTimeConvertor.getWorkTime(workTimeDto)));
     }
 

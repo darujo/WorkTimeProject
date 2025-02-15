@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.darujo.integration.WorkServiceIntegration;
 import ru.darujo.model.WorkTime;
 import ru.darujo.repository.WorkTimeRepository;
 import ru.darujo.repository.specifications.WorkTimeSpecifications;
@@ -15,6 +16,11 @@ import java.util.*;
 @Service
 @Primary
 public class WorkTimeService {
+    private WorkServiceIntegration workServiceIntegration;
+    @Autowired
+    public void setWorkServiceIntegration(WorkServiceIntegration workServiceIntegration) {
+        this.workServiceIntegration = workServiceIntegration;
+    }
 
     private WorkTimeRepository workTimeRepository;
     private int size = 10;
@@ -29,11 +35,14 @@ public class WorkTimeService {
     }
 
     public WorkTime saveWorkTime(WorkTime workTime) {
+        workTimePage = null;
+        workServiceIntegration.getWork(workTime.getWork());
         return workTimeRepository.save(workTime);
     }
 
     public void deleteWorkTime(Long id) {
         workTimeRepository.deleteById(id);
+        workTimePage = null;
     }
 
 

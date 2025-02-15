@@ -1,19 +1,25 @@
 <div id="WorkTimeList" class="headtextelem">
   <div class="filter">
     <form novalidate ng-submit="filterWorkTime()" ; class="filter">
-      <div>
-         <p class="p-head"> <= Дата <= </p> 
-         <br>
-         <input class="vvod" type="number" inputmode="decimal" id="WorkId" step="any" ng-model="Filt.workId"/>
+      <div  class="filter">
+        <div class="filterblock">
+
+          <div  class="horiz">
+            <p class="p-head"> Id задачи </p>
+            <br>
+            <input class="vvod80" type="number" inputmode="decimal" id="WorkId" step="any" ng-model="Filt.workId"/>
+          </div>
+          <div class="horiz">
+            <input class="vvod40" type="number" inputmode="decimal" id="DateLE" value="1" ng-model="Filt.dateLe"/>
+            <p class="p-head"> <= Дата <= </p>
+            <input class="vvod40" type="number" inputmode="decimal" id="DateGe" step="any" ng-model="Filt.dateGe"/>
+            <!--                <input  type="hidden" id="ProductId" />-->
+            <br>
+
+          </div>
+          <button type="submit" class="headbutton">Применить</button>
+        </div>
       </div>
-      <input class="vvod" type="number" inputmode="decimal" id="DateLE" value="1" ng-model="Filt.dateLe"/>
-
-      <p class="p-head"> <= Дата <= </p>
-      <input class="vvod" type="number" inputmode="decimal" id="DateGe" step="any" ng-model="Filt.dateGe"/>
-      <!--                <input  type="hidden" id="ProductId" />-->
-      <br>
-      <button type="submit" class="headbutton">Применить</button>
-
     </form>
     <button class="headbutton" ng-click="createWorkTime()">Добавить время</button>
   </div>
@@ -39,10 +45,10 @@
       <td>{{worktime.workTime}}</td>
 
       <td>
-        <button ng-click="editProduct(worktime.id)">Изменить</button>
+        <button ng-click="editWorkTime(worktime.id)">Изменить</button>
       </td>
       <td>
-        <button ng-click="deleteProduct(worktime.id)">Удалить</button>
+        <button ng-click="deleteWorkTime(worktime.id)">Удалить</button>
       </td>
 
     </tr>
@@ -52,16 +58,19 @@
 </div>
 
 <div id="FormEdit" class="divform">
-  <form novalidate ng-submit="saveProduct()">
-    Наименование : <input class="vvod" type="text" id="ProductName" placeholder="Продукт"
-                          ng-model="Product.title"/>
+  <form novalidate ng-submit="saveWorkTime()">
+    Наименование : <input class="vvod" type="text" id="WorkIdEdit" placeholder="Ведите наименоване"
+                          ng-model="WorkTime.workId"/>
     <br>
-    Цена: <input class="vvod" type="number" inputmode="decimal" id="ProductPrice" step="any"
-                 ng-model="Product.price"/>
-    <!--                <input  type="hidden" id="ProductId" />-->
+    <br>
+    Дата: <input class="vvod" type="date"  id="WorkTimeDate" step="any"
+                 ng-model="WorkTime.workDate"/>
+    <br>
+    Дата: <input class="vvod" type="number" step="0.01" id="WorkTimeTime"
+                 ng-model="WorkTime.workTime"/>
     <br>
     <button type="submit" class="button">Сохранить</button>
-    <button ng-click="loadProducts()" class="button">Вернуться к списку</button>
+    <button ng-click="loadWorkTime()" class="button">Вернуться к списку</button>
 
   </form>
 </div>

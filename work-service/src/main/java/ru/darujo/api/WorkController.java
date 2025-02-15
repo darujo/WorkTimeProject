@@ -20,7 +20,7 @@ public class WorkController {
 
     @GetMapping("/{id}")
     public WorkDto WorkEdit(@PathVariable long id) {
-        return WorkConvertor.getWorkDto(workService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Продукт не найден")));
+        return WorkConvertor.getWorkDto(workService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Задача не найден")));
     }
 
     @PostMapping("")

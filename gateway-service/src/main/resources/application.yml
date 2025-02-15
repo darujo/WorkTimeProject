@@ -23,7 +23,7 @@ spring:
           filters:
             - StripPrefix=1
             - PrefixPath=/app
-#            - JwtAuthFilter
+            - JwtAuthFilter
         - id: work-service
           uri: "http://localhost:8182"
           predicates:

@@ -8,10 +8,25 @@ public class WorkTimeDto implements Serializable {
     private String userName;
     private Date workDate;
     private float workTime;
-    private Long work_id;
+    private Long workId;
 
     public Long getId() {
         return id;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public WorkTimeDto() {
+    }
+
+    public WorkTimeDto(Long id, String userName, Date workDate, float workTime, Long workId) {
+        this.id = id;
+        this.userName = userName;
+        this.workDate = workDate;
+        this.workTime = workTime;
+        this.workId = workId;
     }
 
     public String getUserName() {
@@ -27,14 +42,18 @@ public class WorkTimeDto implements Serializable {
     }
 
     public Long getWorkId() {
-        return work_id;
+        return workId;
     }
 
-    public WorkTimeDto(Long id, String userName, Date workDate, float workTime, Long work_id) {
-        this.id = id;
-        this.userName = userName;
-        this.workDate = workDate;
-        this.workTime = workTime;
-        this.work_id = work_id;
-    }
+//    public WorkTimeDto(Long id, String userName, Date workDate, Float workTime, Long workId) {
+//        this.id = id;
+//        this.userName = userName;
+//        this.workDate = workDate;
+//        this.workTime = workTime;
+//        this.workId = workId;
+//    }
+
+//    public void setUserName(String userName) {
+//        this.userName = userName;
+//    }
 }

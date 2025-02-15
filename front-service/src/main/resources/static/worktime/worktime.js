@@ -46,22 +46,50 @@ angular.module('market').controller('worktimeController', function ($scope, $htt
 
     $scope.createWorkTime = function () {
         WorkTimeIdEdit = null;
-        document.getElementById("WorkTimeDate").value = new Date();
+        console.log("создаем");
+        document.getElementById("WorkIdEdit").value = document.getElementById("WorkId").value;
+        document.getElementById("WorkTimeDate").valueAsDate = new Date();
+        console.log("создаем 1");
         document.getElementById("WorkTimeTime").value = 0;
+        console.log("создаем 2");
+        console.log(typeof $scope.WorkTime);
+        if (typeof $scope.WorkTime == "undefined") {
+            // $scope.WorkTime = {id : null, workId : document.getElementById("WorkId").value, workDate: document.getElementById("WorkTimeDate").valueAsDate };
+            $scope.WorkTime = {id : null, workId : null, workDate: null,userName :null,workTime:null };
+            // $scope
+            console.log($scope.WorkTime);
+            console.log("создаем 6");
+        }
+        // else {
+           console.log("создаем 5");
         $scope.WorkTime.id = null;
+        $scope.WorkTime.workId = document.getElementById("WorkId").value;
+        $scope.WorkTime.workDate = document.getElementById("WorkTimeDate").valueAsDate;
+        $scope.WorkTime.workTime = null;
+        $scope.WorkTime.userName = null;
+        // }
+        console.log("создаем 3");
+
         showFormEdit();
 
     };
 
     $scope.editWorkTime = function (workTimeId) {
-        $http.get(constPatchWorkTime + "/WorkTime/" + workTimeId)
+        console.log("edit");
+        $http.get(constPatchWorkTime + "/worktime/" + workTimeId)
             .then(function (response) {
                 WorkTimeIdEdit = response.data.id;
                 $scope.WorkTime = response.data;
                 console.log($scope.WorkTime);
 
-                document.getElementById("WorkTimeDate").value = response.data.workDate;
+                document.getElementById("WorkTimeDate").valueAsDate = new Date(response.data.workDate);
+                console.log("eeee 1");
+                // response.data.workDate = document.getElementById("WorkTimeDate").value.
+                $scope.WorkTime.workDate = document.getElementById("WorkTimeDate").valueAsDate;
+                console.log("eeee 3")
                 document.getElementById("WorkTimeTime").value = response.data.workTime;
+                console.log("eeee 4")
+
                 showFormEdit();
             });
     };
@@ -79,6 +107,6 @@ angular.module('market').controller('worktimeController', function ($scope, $htt
             .then(function (response) {
                 $scope.loadWorkTime();
             });
-    };
+    }
     $scope.loadWorkTime();
 })
