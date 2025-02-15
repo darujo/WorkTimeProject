@@ -103,16 +103,16 @@ angular.module('market').controller('workController', function ($scope, $http, $
                 $scope.loadWork();
             });
     };
-    $scope.addTime = function (workId ,event){
-        event.preventDefault();
+    $scope.addTime = function (workId){
+        console.log("Другая");
         $scope.WorkId = workId;
         $location.path('/worktime');
     }
-    window.onload = function() {
-        document.getElementById('myLinkId').addEventListener('click', function(event) {
-            event.preventDefault();
-            // Функционал обработки клика
-        });
-    };
+    // window.onload = function() {
+    //     document.getElementById('myLinkId').addEventListener('click', function(event) {
+    //         event.preventDefault();
+    //         // Функционал обработки клика
+    //     });
+    // };
     $scope.loadWork();
 })

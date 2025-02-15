@@ -38,7 +38,7 @@ public class WorkService {
 
 
     public Page<Work> findWorks(int page, int size,String name) {
-        if (workPage != null && page == 1 && this.size ==size){
+        if (workPage != null && page == 1 && this.size ==size && name == null){
             return workPage;
         }
         Specification<Work> specification = Specification.where(null);

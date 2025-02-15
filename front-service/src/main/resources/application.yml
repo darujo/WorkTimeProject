@@ -1,6 +1,6 @@
 server:
   port: 3000
   servlet:
-    context-path: /front
+    context-path: /app-front
 
  

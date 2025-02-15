@@ -33,13 +33,13 @@ spring:
             - PrefixPath=/app
             - JwtAuthFilter
         - id: front-service
-          uri: "http://localhost:8181"
+          uri: "http://localhost:3000"
           predicates:
             - Path=/app/**
           filters:
             - StripPrefix=1
             - PrefixPath=/app-front/
-            - JwtAuthFilter
+#            - JwtAuthFilter
         - id: auth-service
           uri: "http://localhost:8183"
           predicates:

@@ -7,7 +7,7 @@
 
 <!--      <p class="p-head"> <= Цена <= </p>-->
 <!--      <input class="vvod" type="number" inputmode="decimal" id="DateGe" step="any" ng-model="Filt.dateGe"/>-->
-      <input class="vvod" type="number" inputmode="text" id="Name" step="any" ng-model="Filt.name"/>
+      <input class="vvod" inputmode="text" id="Name" ng-model="Filt.name"/>
 <!--                <input  type="hidden" id="ProductId" />-->
       <br>
       <button type="submit" class="headbutton">Применить</button>
@@ -34,7 +34,8 @@
     </tr>
     <tbody>
     <tr ng-repeat="work in WorkList">
-      <td><a href="#" onclick="addTime(work.id ,event);">{{work.name}}</a></td>
+      <td><a routerLink="!#/worktime" href="#" ng-click="addTime(work.id);">{{work.name}}</a></td>
+
       <td>{{work.dateStartDevelop}}</td>
       <td>{{work.dateStartDebug}}</td>
       <td>{{work.dateStartRelease}}</td>

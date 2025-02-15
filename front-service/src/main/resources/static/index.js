@@ -42,11 +42,7 @@
             }
         }
     }
-    function addTime (workId ,event){
-        event.preventDefault();
-        $scope.WorkId = workId;
-        $location.path('/worktime');
-    }
+
 })();
 
 angular.module('market').controller('indexController', function ($rootScope, $scope, $http, $location, $localStorage) {
