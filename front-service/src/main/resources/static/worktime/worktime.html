@@ -5,15 +5,15 @@
         <div class="filterblock">
 
           <div  class="horiz">
-            <p class="p-head"> Id задачи </p>
+            <p class="p-head">Id задачи</p>
             <br>
-            <input class="vvod80" type="number" inputmode="decimal" id="WorkId" step="any" ng-model="Filt.workId"/>
+            <input class="vvod80" type="number" inputmode="numeric" id="WorkId" step="any" ng-model="Filt.workId"/>
           </div>
           <div class="horiz">
-            <input class="vvod40" type="number" inputmode="decimal" id="DateLE" value="1" ng-model="Filt.dateLe"/>
+            <input class="vvod40" type="date" id="DateLe" value="1" ng-model="Filt.dateLe"/>
             <p class="p-head"> <= Дата <= </p>
-            <input class="vvod40" type="number" inputmode="decimal" id="DateGe" step="any" ng-model="Filt.dateGe"/>
-            <!--                <input  type="hidden" id="ProductId" />-->
+            <input class="vvod40" type="date" id="DateGe" step="any" ng-model="Filt.dateGe"/>
+            <!--                <input  type="hidden" id="workId" />-->
             <br>
 
           </div>
@@ -59,7 +59,7 @@
 
 <div id="FormEdit" class="divform">
   <form novalidate ng-submit="saveWorkTime()">
-    Наименование : <input class="vvod" type="text" id="WorkIdEdit" placeholder="Ведите наименоване"
+    Задача : <input class="vvod" type="number" inputmode="number" id="WorkIdEdit" placeholder="Ведите код задачи"
                           ng-model="WorkTime.workId"/>
     <br>
     <br>

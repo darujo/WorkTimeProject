@@ -1,0 +1,43 @@
+<div id="WorkTimeList" class="headtextelem">
+  <div class="filter">
+    <form novalidate ng-submit="filterWorkTime()" ; class="filter">
+      <div  class="filter">
+        <div class="filterblock">
+
+          <div  class="horiz">
+            <p class="p-head">Пользователь</p>
+            <br>
+            <input class="vvod80" type="number" inputmode="numeric" id="UserName" step="any" ng-model="Filt.userName"/>
+          </div>
+          <button type="submit" class="headbutton">Применить</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <h1>Список работ</h1>
+  <table>
+    <tr>
+      <td>Наименование</td>
+      <td>Анализ</td>
+      <td>Разработка прототипа</td>
+      <td>Стабилизация прототипа</td>
+      <td>Стабилизация релиза</td>
+      <td>ОПЭ релиза</td>
+      <td>Вендерка</td>
+
+    </tr>
+    <tbody>
+      <tr ng-repeat="work in WorkTimeList">
+        <td>{{work.name}}</td>
+        <td>{{work.timeAnalise}}</td>
+        <td>{{work.timeDevelop}}</td>
+        <td>{{work.timeDebug}}</td>
+        <td>{{work.timeRelease}}</td>
+        <td>{{work.timeOPE}}</td>
+        <td>{{work.timeWender}}</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+

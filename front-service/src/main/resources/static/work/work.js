@@ -105,9 +105,15 @@ angular.module('market').controller('workController', function ($scope, $http, $
     };
     $scope.addTime = function (workId){
         console.log("Другая");
-        $scope.WorkId = workId;
-        $location.path('/worktime');
+        $location.WorkId = workId;
+        // $location.path('/worktime');
+        //window.open('#!/worktime',"_self");
+        window.open('#!/worktime',"_parent");
+        console.log("Другая 2");
+        // window.open('#!/worktime',"_self");
+        console.log("Другая 3");
     }
+    //_self, _blank, _parent, _top.
     // window.onload = function() {
     //     document.getElementById('myLinkId').addEventListener('click', function(event) {
     //         event.preventDefault();

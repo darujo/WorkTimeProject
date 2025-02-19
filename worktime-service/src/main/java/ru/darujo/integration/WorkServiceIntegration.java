@@ -20,12 +20,10 @@ public class WorkServiceIntegration {
 
     public WorkDto getWork(Long id) {
         return webClientWork.get().uri("/" + id)
-
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                        clientResponse -> Mono.error(new ResourceNotFoundException("Задача не найдена")))
+                        clientResponse -> Mono.error(new ResourceNotFoundException("Задача c id = " + id + " не найдена")))
                 .bodyToMono(WorkDto.class)
                 .block();
     }
-
 }

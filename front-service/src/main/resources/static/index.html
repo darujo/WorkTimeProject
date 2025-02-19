@@ -16,15 +16,16 @@
 <nav>
     <div class="" id="navbarNav">
         <ul class="">
-<!--            <li class="nav-item">-->
-<!--                <a class="nav-link" href="#!/">Winter Market</a>-->
-<!--            </li>-->
             <li class="nav-item">
                 <a class="nav-link" href="#!/work">Задачи</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#!/worktime">Все работы</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#!/worktimerep">Отчет</a>
+            </li>
+
             <li class="nav-item" ng-show="!isUserLoggedIn()">
                 <form class="" ng-submit="tryToAuth()">
                     <div class="input-group input-group-sm" style="padding: 4px;">
@@ -52,6 +53,7 @@
 
     <script src="index.js"></script>
     <script src="worktime/worktime.js"></script>
+    <script src="rep/worktimerep.js"></script>
     <script src="work/work.js"></script>
     <script src="welcome/welcome.js"></script>
 </div>

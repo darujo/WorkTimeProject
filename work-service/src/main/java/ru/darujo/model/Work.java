@@ -13,6 +13,7 @@ import java.util.List;
 //@JsonIgnoreProperties(value = { "chequeLines" })
 @Data
 @Entity
+@Table(name = "work")
 public class Work {
     @Id
     @Column(name = "id")
@@ -36,6 +37,4 @@ public class Work {
     // ВЕНДЕРКА
     @Column(name = "startWender")
     private Date dateStartWender;
-
-
 }

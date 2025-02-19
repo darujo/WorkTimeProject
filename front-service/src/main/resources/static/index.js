@@ -15,6 +15,11 @@
                 templateUrl: 'worktime/worktime.html',
                 controller: 'worktimeController'
             })
+            .when('/worktimerep', {
+
+                templateUrl: 'rep/worktimerep.html',
+                controller: 'workTimeRepController'
+            })
             .when('/work', {
                 templateUrl: 'work/work.html',
                 controller: 'workController'

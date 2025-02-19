@@ -8,7 +8,11 @@ import ru.darujo.dto.WorkTimeDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.service.WorkTimeService;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 @RestController()
 @RequestMapping("/v1/worktime")
@@ -25,10 +29,10 @@ public class WorkTimeController {
         return WorkTimeConvertor.getWorkTimeDto(workTimeService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Отмеченая работа не найден")));
     }
 
-    @PostMapping("")
+    @PutMapping("")
     public WorkTimeDto WorkTimeSave( @RequestHeader String username,
-                                    @RequestBody WorkTimeDto workTimeDto) {
-        if (workTimeDto.getUserName().equals("") )
+                                     @RequestBody WorkTimeDto workTimeDto) {
+        if (workTimeDto.getUserName() == null || !workTimeDto.getUserName().equals("") )
         {
             workTimeDto.setUserName(username);
         }
@@ -36,17 +40,65 @@ public class WorkTimeController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteProduct(@PathVariable long id) {
+    public void deleteWorkTime(@PathVariable long id) {
         workTimeService.deleteWorkTime(id);
     }
 
+    @GetMapping("/qq ")
+    public Page<WorkTimeDto> findWorkTime(@RequestParam(required = false) Long workId,
+                                          @RequestParam(required = false) Date dateLe,
+                                          @RequestParam(required = false) Date dateGe,
+                                          @RequestParam(defaultValue = "1") int page,
+                                          @RequestParam(defaultValue = "10") int size) {
+         return workTimeService.findWorkTime(workId,null,dateLe, null,dateGe, page, size).map(WorkTimeConvertor::getWorkTimeDto);
+    }
     @GetMapping("")
-    public Page<WorkTimeDto> productsMinMax(@RequestParam(required = false) Long id,
-                                            @RequestParam(required = false) Date dateLE ,
-                                            @RequestParam(required = false) Date dateGE,
-                                            @RequestParam(defaultValue = "1") int page,
-                                            @RequestParam(defaultValue = "10") int size) {
-        return workTimeService.findProducts(id,dateLE, dateGE, page, size).map(WorkTimeConvertor::getWorkTimeDto);
+    public Page<WorkTimeDto> findWorkTime(@RequestParam(required = false) String dateLeStr,
+                                          @RequestParam(required = false) String dateGtStr,
+                                          @RequestParam(required = false) String dateGeStr,
+                                          @RequestParam(required = false) long workId,
+                                          @RequestParam(required = false) String userName,
+                                          @RequestParam(defaultValue = "1") int page,
+                                          @RequestParam(defaultValue = "10") int size) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        Date dateLe = null;
+        Date dateGt = null;
+        Date dateGe = null;
+        if (dateLeStr != null) {
+            try {
+                dateLe = simpleDateFormat.parse(dateLeStr);
+            } catch (ParseException e) {
+                throw new ResourceNotFoundException("Не удалось распарсить дату dateLe = " + dateLeStr);
+            }
+        }
+        if (dateGtStr != null) {
+            try {
+                dateGt = simpleDateFormat.parse(dateGtStr);
+            } catch (ParseException e) {
+                throw new ResourceNotFoundException("Не удалось распарсить дату dateLe = " + dateGtStr);
+            }
+        }
+        if (dateGeStr != null) {
+            try {
+                dateGe = simpleDateFormat.parse(dateLeStr);
+            } catch (ParseException e) {
+                throw new ResourceNotFoundException("Не удалось распарсить дату dateLe = " + dateGeStr);
+            }
+        }
+        return workTimeService.findWorkTime(workId,
+                                            userName,
+                                            dateLe,
+                                            dateGt,
+                                            dateGe,
+                                            page,
+                                            size).map(WorkTimeConvertor::getWorkTimeDto);
+    }
+    @GetMapping("/rep/time")
+    public float getTimeWork(@RequestParam(required = false) Long workId,
+                             @RequestParam(required = false) String userName ,
+                             @RequestParam(required = false) Timestamp dateLe ,
+                             @RequestParam(required = false) Timestamp dateGt) {
+        return workTimeService.getTimeWork(workId,userName, dateLe, dateGt);
     }
 
 }
