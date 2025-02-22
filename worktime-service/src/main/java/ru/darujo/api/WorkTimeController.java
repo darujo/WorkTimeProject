@@ -56,10 +56,10 @@ public class WorkTimeController {
     public Page<WorkTimeDto> findWorkTime(@RequestParam(required = false) String dateLeStr,
                                           @RequestParam(required = false) String dateGtStr,
                                           @RequestParam(required = false) String dateGeStr,
-                                          @RequestParam(required = false) long workId,
+                                          @RequestParam(required = false) Long workId,
                                           @RequestParam(required = false) String userName,
-                                          @RequestParam(defaultValue = "1") int page,
-                                          @RequestParam(defaultValue = "10") int size) {
+                                          @RequestParam(defaultValue = "1")Integer page,
+                                          @RequestParam(defaultValue = "10") Integer size) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         Date dateLe = null;
         Date dateGt = null;
@@ -75,14 +75,14 @@ public class WorkTimeController {
             try {
                 dateGt = simpleDateFormat.parse(dateGtStr);
             } catch (ParseException e) {
-                throw new ResourceNotFoundException("Не удалось распарсить дату dateLe = " + dateGtStr);
+                throw new ResourceNotFoundException("Не удалось распарсить дату dateGt = " + dateGtStr);
             }
         }
         if (dateGeStr != null) {
             try {
                 dateGe = simpleDateFormat.parse(dateLeStr);
             } catch (ParseException e) {
-                throw new ResourceNotFoundException("Не удалось распарсить дату dateLe = " + dateGeStr);
+                throw new ResourceNotFoundException("Не удалось распарсить дату dateGe = " + dateGeStr);
             }
         }
         return workTimeService.findWorkTime(workId,
@@ -96,8 +96,26 @@ public class WorkTimeController {
     @GetMapping("/rep/time")
     public float getTimeWork(@RequestParam(required = false) Long workId,
                              @RequestParam(required = false) String userName ,
-                             @RequestParam(required = false) Timestamp dateLe ,
-                             @RequestParam(required = false) Timestamp dateGt) {
+                             @RequestParam(required = false, name = "dateLe") String dateLeStr ,
+                             @RequestParam(required = false, name = "dateGt") String dateGtStr) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        Date dateLe = null;
+        Date dateGt = null;
+        if (dateLeStr != null) {
+            try {
+                dateLe = simpleDateFormat.parse(dateLeStr);
+            } catch (ParseException e) {
+                throw new ResourceNotFoundException("Не удалось распарсить дату dateLe = " + dateLeStr);
+            }
+        }
+        if (dateGtStr != null) {
+            try {
+                dateGt = simpleDateFormat.parse(dateGtStr);
+            } catch (ParseException e) {
+                throw new ResourceNotFoundException("Не удалось распарсить дату dateGt = " + dateGtStr);
+            }
+        }
+
         return workTimeService.getTimeWork(workId,userName, dateLe, dateGt);
     }
 

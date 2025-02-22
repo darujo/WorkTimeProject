@@ -1,6 +1,8 @@
 package ru.darujo.dto;
 
-public class WorkRepDto {
+import java.io.Serializable;
+
+public class WorkRepDto implements Serializable {
     private String name;
 // Разработка прототипа
     private Float timeAnalise;

@@ -1,6 +1,8 @@
 package ru.darujo.dto;
 
-public class JwtResponse {
+import java.io.Serializable;
+
+public class JwtResponse implements Serializable {
     private String token;
 
     public String getToken() {

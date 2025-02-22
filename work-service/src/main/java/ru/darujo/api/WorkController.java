@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.WorkConvertor;
 import ru.darujo.dto.WorkDto;
+import ru.darujo.dto.WorkEditDto;
 import ru.darujo.dto.WorkRepDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.service.WorkService;
@@ -22,12 +23,12 @@ public class WorkController {
 
 
     @GetMapping("/{id}")
-    public WorkDto WorkEdit(@PathVariable long id) {
-        return WorkConvertor.getWorkDto(workService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Задача не найден")));
+    public WorkEditDto WorkEdit(@PathVariable long id) {
+        return WorkConvertor.getWorkEditDto(workService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Задача не найден")));
     }
 
     @PostMapping("")
-    public WorkDto WorkSave(@RequestBody WorkDto workDto) {
+    public WorkDto WorkSave(@RequestBody WorkEditDto workDto) {
         return WorkConvertor.getWorkDto(workService.saveWork(WorkConvertor.getWork(workDto)));
     }
 

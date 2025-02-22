@@ -1,8 +1,9 @@
 package ru.darujo.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class WorkDto {
+public class WorkDto implements Serializable {
     private Long id;
     // Разработка прототипа
     private String name;

@@ -1,4 +1,4 @@
-angular.module('market').controller('workTimeRepController', function ($scope, $http, $location, $localStorage) {
+angular.module('workTimeService').controller('workTimeRepController', function ($scope, $http, $location, $localStorage) {
 
     const constPatchWork = 'http://localhost:5555/work-service/v1';
     // var showWorkTime = function () {

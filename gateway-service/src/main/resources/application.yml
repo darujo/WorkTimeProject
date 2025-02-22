@@ -47,6 +47,16 @@ spring:
           filters:
             - StripPrefix=1
             - PrefixPath=/app-auth/auth
+        - id: front-add
+          uri: "http://localhost:3000"
+          predicates:
+            - Path=/**
+          filters:
+            - StripPrefix=0
+            - PrefixPath=/app-front
+            #            - JwtAuthFilter
+
+
 #      default-filters:
 #        - DedupeResponseHeader = Access-Control-Allow-Credentials Access-Control-Allow-Origin
 

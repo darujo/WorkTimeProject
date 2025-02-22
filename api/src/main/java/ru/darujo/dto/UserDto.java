@@ -1,6 +1,8 @@
 package ru.darujo.dto;
 
-public class UserDto {
+import java.io.Serializable;
+
+public class UserDto implements Serializable {
     private long id;
     private String username;
 

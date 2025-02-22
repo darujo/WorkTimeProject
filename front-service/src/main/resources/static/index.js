@@ -1,6 +1,6 @@
 (function () {
     angular
-        .module('market', ['ngRoute', 'ngStorage'])
+        .module('workTimeService', ['ngRoute', 'ngStorage'])
         .config(config)
         .run(run);
 
@@ -50,7 +50,7 @@
 
 })();
 
-angular.module('market').controller('indexController', function ($rootScope, $scope, $http, $location, $localStorage) {
+angular.module('workTimeService').controller('indexController', function ($rootScope, $scope, $http, $location, $localStorage) {
     const constPatchAuth    = 'http://localhost:5555';
 
     $scope.tryToAuth = function () {

@@ -1,6 +1,8 @@
 package ru.darujo.dto;
 
-public class JwtRequest {
+import java.io.Serializable;
+
+public class JwtRequest implements Serializable {
     private String username;
     private String password;
 

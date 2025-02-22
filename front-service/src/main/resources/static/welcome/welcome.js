@@ -1,2 +1,2 @@
-angular.module('market').controller('welcomeController', function ($scope, $http, $location, $localStorage) {
+angular.module('workTimeService').controller('welcomeController', function ($scope, $http, $location, $localStorage) {
 });
