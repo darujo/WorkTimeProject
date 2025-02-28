@@ -227,6 +227,6 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
 
         showFindTask();
     }
-
+    showWorkTime();
     $scope.loadWorkTime();
 })

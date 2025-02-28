@@ -71,6 +71,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                     $location.path('/');
                 }
             }, function errorCallback(response) {
+                alert("Не удалось авторизоваться")
             });
     };
 

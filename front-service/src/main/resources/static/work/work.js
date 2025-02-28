@@ -188,5 +188,6 @@ angular.module('workTimeService').controller('workController', function ($scope,
     //         // Функционал обработки клика
     //     });
     // };
+    showWork();
     $scope.loadWork();
 })
