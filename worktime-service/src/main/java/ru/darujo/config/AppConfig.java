@@ -10,7 +10,7 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.tcp.TcpClient;
-import ru.darujo.properties.WorkServiceProperty;
+import ru.darujo.properties.TaskServiceProperty;
 import ru.darujo.properties.PropertyConnectionInterface;
 
 import java.util.concurrent.TimeUnit;
@@ -18,13 +18,13 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 @PropertySource("classpath:integration.properties")
 @EnableConfigurationProperties(
-        WorkServiceProperty.class
+        TaskServiceProperty.class
 )
 public class AppConfig {
-    private WorkServiceProperty workServiceProperty;
+    private TaskServiceProperty taskServiceProperty;
     @Autowired
-    public void setWorkServiceProperty(WorkServiceProperty workServiceProperty){
-        this.workServiceProperty = workServiceProperty;
+    public void setWorkServiceProperty(TaskServiceProperty taskServiceProperty){
+        this.taskServiceProperty = taskServiceProperty;
     }
 
     private WebClient webClient (PropertyConnectionInterface propertyConnection){
@@ -42,6 +42,6 @@ public class AppConfig {
     }
     @Bean
     public WebClient webClientBasket(){
-        return webClient(workServiceProperty);
+        return webClient(taskServiceProperty);
     }
 }

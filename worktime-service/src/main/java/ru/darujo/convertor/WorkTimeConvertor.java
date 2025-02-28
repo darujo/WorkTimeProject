@@ -9,7 +9,7 @@ public class WorkTimeConvertor {
         return WorkTimeBuilder
                 .createWorkTime()
                 .setId(workTime.getId())
-                .setWorkId(workTime.getWorkId ())
+                .setTaskId(workTime.getTaskId ())
                 .setWorkDate(workTime.getWorkDate())
                 .setUserName(workTime.getUserName())
                 .setWorkTime(workTime.getWorkTime())
@@ -19,7 +19,7 @@ public class WorkTimeConvertor {
         return WorkTimeBuilder
                 .createWorkTime()
                 .setId(workTimeDto.getId())
-                .setWorkId(workTimeDto.getWorkId())
+                .setTaskId(workTimeDto.getTaskId())
                 .setWorkDate(workTimeDto.getWorkDate())
                 .setUserName(workTimeDto.getUserName())
                 .setWorkTime(workTimeDto.getWorkTime())

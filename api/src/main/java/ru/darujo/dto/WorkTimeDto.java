@@ -8,7 +8,7 @@ public class WorkTimeDto implements Serializable {
     private String userName;
     private Date workDate;
     private float workTime;
-    private Long workId;
+    private Long taskId;
 
     public Long getId() {
         return id;
@@ -26,7 +26,7 @@ public class WorkTimeDto implements Serializable {
         this.userName = userName;
         this.workDate = workDate;
         this.workTime = workTime;
-        this.workId = workId;
+        this.taskId = workId;
     }
 
     public String getUserName() {
@@ -41,8 +41,8 @@ public class WorkTimeDto implements Serializable {
         return workTime;
     }
 
-    public Long getWorkId() {
-        return workId;
+    public Long getTaskId() {
+        return taskId;
     }
 
 //    public WorkTimeDto(Long id, String userName, Date workDate, Float workTime, Long workId) {

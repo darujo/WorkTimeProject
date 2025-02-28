@@ -71,7 +71,7 @@ body {
     margin-bottom: 10px;
 }
 .horiz{
-    display: flex;
+    display:flex;
 }
 .button {
     background: #5A98D0;
@@ -112,4 +112,19 @@ margin: auto;
     font-weight: 500;
     font-size: 30px;
     text-align: center;
+}
+.p-filt {
+
+    width: inherit;
+    margin: auto;
+    font-weight: 250;
+    font-size: 15px;
+    text-align: center;
+}
+.findbr
+width: inherit;
+margin: auto;
+font-weight: 500;
+font-size: 15px;
+text-align: center;
 }

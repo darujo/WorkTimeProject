@@ -12,23 +12,23 @@ import java.util.Date;
 
 @Component
 public class WorkTimeServiceIntegration {
-    private WebClient webClientWork;
+    private WebClient webClientWorkTime;
 
     @Autowired
-    public void setWebClientWork(WebClient webClientWork) {
-        this.webClientWork = webClientWork;
+    public void setWebClientWorkTime(WebClient webClientWorkTime) {
+        this.webClientWorkTime = webClientWorkTime;
     }
 
-    public Float getTimeWork(Long workID, String userName, Date dateLE, Date dateGT) {
+    public Float getTimeTask(Long taskId, String userName, Date dateLE, Date dateGT) {
         StringBuilder stringBuilder = new StringBuilder();
         if (stringBuilder.length() == 0 ){
             stringBuilder.append("?");
         }
-        if (workID != null) {
+        if (taskId != null) {
             if (stringBuilder.length() != 0){
                 stringBuilder.append("&");
             }
-            stringBuilder.append("workId=").append(workID);
+            stringBuilder.append("taskId=").append(taskId);
         }
         if (userName != null) {
             if (stringBuilder.length() != 0){
@@ -50,7 +50,7 @@ public class WorkTimeServiceIntegration {
         }
 
         System.out.println(stringBuilder);
-        return webClientWork.get().uri("/rep/time" + stringBuilder)
+        return webClientWorkTime.get().uri("/rep/time" + stringBuilder)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                         clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))

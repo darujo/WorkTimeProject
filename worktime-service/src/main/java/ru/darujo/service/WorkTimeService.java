@@ -7,7 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.WorkDto;
-import ru.darujo.integration.WorkServiceIntegration;
+import ru.darujo.integration.TaskServiceIntegration;
 import ru.darujo.model.WorkTime;
 import ru.darujo.repository.WorkTimeRepository;
 import ru.darujo.repository.specifications.WorkTimeSpecifications;
@@ -17,10 +17,10 @@ import java.util.*;
 @Service
 @Primary
 public class WorkTimeService {
-    private WorkServiceIntegration workServiceIntegration;
+    private TaskServiceIntegration taskServiceIntegration;
     @Autowired
-    public void setWorkServiceIntegration(WorkServiceIntegration workServiceIntegration) {
-        this.workServiceIntegration = workServiceIntegration;
+    public void setWorkServiceIntegration(TaskServiceIntegration taskServiceIntegration) {
+        this.taskServiceIntegration = taskServiceIntegration;
     }
 
     private WorkTimeRepository workTimeRepository;
@@ -37,7 +37,7 @@ public class WorkTimeService {
 
     public WorkTime saveWorkTime(WorkTime workTime) {
         workTimePage = null;
-        WorkDto workDto = workServiceIntegration.getWork(workTime.getWorkId());
+        WorkDto workDto = taskServiceIntegration.getWork(workTime.getTaskId());
         return workTimeRepository.save(workTime);
     }
 
@@ -46,7 +46,7 @@ public class WorkTimeService {
         workTimePage = null;
     }
 
-    public Page<WorkTime> findWorkTime(Long workID, String userName, Date dateLE, Date dateGT, Date dateGE, int page, int size) {
+    public Page<WorkTime> findWorkTime(Long taskId, String userName, Date dateLE, Date dateGT, Date dateGE, int page, int size) {
         Specification<WorkTime> specification = Specification.where(null);
         if (dateLE != null) {
             specification = specification.and(WorkTimeSpecifications.dateLE(dateLE));
@@ -60,15 +60,15 @@ public class WorkTimeService {
         if (userName != null) {
             specification = specification.and(WorkTimeSpecifications.userNameEQ(userName));
         }
-        if (workID != null) {
-            specification = specification.and(WorkTimeSpecifications.workIDEQ(workID));
+        if (taskId != null) {
+            specification = specification.and(WorkTimeSpecifications.taskIdEQ(taskId));
         }
         workTimePage = workTimeRepository.findAll(specification, PageRequest.of(page - 1, size));
         System.out.println(workTimePage);
         this.size = size;
         return workTimePage;
     }
-    public float getTimeWork(Long workID, String username,Date dateLE, Date dateGT){
-        return findWorkTime(workID, username, dateLE, dateGT,null,1, 100000).getContent().stream().map(WorkTime::getWorkTime).reduce((sumTime, time)-> sumTime + time).orElse(0f) ;
+    public float getTimeWork(Long taskId, String username,Date dateLE, Date dateGT){
+        return findWorkTime(taskId, username, dateLE, dateGT,null,1, 100000).getContent().stream().map(WorkTime::getWorkTime).reduce((sumTime, time)-> sumTime + time).orElse(0f) ;
     }
 }

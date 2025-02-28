@@ -8,6 +8,7 @@
 		<module>api</module>
 		<module>worktime-service</module>
 		<module>work-service</module>
+		<module>task-service</module>
 		<module>front-service</module>
 		<module>gateway-service</module>
 
@@ -20,13 +21,5 @@
 	<properties>
 		<java.version>17</java.version>
 	</properties>
-	<build>
-		<defaultGoal>install</defaultGoal>
-		<directory>${project.basedir}/target</directory>
-		<finalName>${artifactId}-${version}</finalName>
-		<filters>
-			<filter>filters/filter1.properties</filter>
-		</filters>
 
-	</build>
 </project>

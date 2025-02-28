@@ -6,7 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.WorkRepDto;
-import ru.darujo.integration.WorkTimeServiceIntegration;
+import ru.darujo.integration.TaskServiceIntegration;
 import ru.darujo.model.Work;
 import ru.darujo.repository.WorkRepository;
 import ru.darujo.repository.specifications.WorkSpecifications;
@@ -17,10 +17,10 @@ import java.util.Optional;
 
 @Service
 public class WorkService {
-    private WorkTimeServiceIntegration workTimeServiceIntegration ;
+    private TaskServiceIntegration taskServiceIntegration;
     @Autowired
-    public void setWorkTimeServiceIntegration(WorkTimeServiceIntegration workTimeServiceIntegration) {
-        this.workTimeServiceIntegration = workTimeServiceIntegration;
+    public void setWorkTimeServiceIntegration(TaskServiceIntegration taskServiceIntegration) {
+        this.taskServiceIntegration = taskServiceIntegration;
     }
     private WorkRepository workRepository;
     @Autowired
@@ -67,28 +67,28 @@ public class WorkService {
         workRepository.findAll().forEach(work ->
             workRepDtos.add(new WorkRepDto(
                 work.getName(),
-                workTimeServiceIntegration.getTimeWork(
+                taskServiceIntegration.getTimeWork(
                         work.getId(),
                         userName,
                         null,
                         work.getDateStartDevelop()),
-                workTimeServiceIntegration.getTimeWork(work.getId(),
+                taskServiceIntegration.getTimeWork(work.getId(),
                         userName,
                         work.getDateStartDevelop(),
                         work.getDateStartDebug()),
-                workTimeServiceIntegration.getTimeWork(work.getId(),
+                taskServiceIntegration.getTimeWork(work.getId(),
                         userName,
                         work.getDateStartDebug(),
                         work.getDateStartRelease()),
-                workTimeServiceIntegration.getTimeWork(work.getId(),
+                taskServiceIntegration.getTimeWork(work.getId(),
                         userName,
                         work.getDateStartRelease(),
                         work.getDateStartOPE()),
-                workTimeServiceIntegration.getTimeWork(work.getId(),
+                taskServiceIntegration.getTimeWork(work.getId(),
                         userName,
                         work.getDateStartOPE(),
                         work.getDateStartWender()),
-                workTimeServiceIntegration.getTimeWork(work.getId(),
+                taskServiceIntegration.getTimeWork(work.getId(),
                         userName,
                         work.getDateStartWender(),
                         null))

@@ -10,7 +10,7 @@ public class WorkTimeBuilder {
     private String userName;
     private float  workTime;
     private Date   workDate;
-    private Long   workId;
+    private Long   taskId;
 
     public WorkTimeBuilder setId(Long id) {
         this.id = id;
@@ -29,17 +29,17 @@ public class WorkTimeBuilder {
         this.workDate = workDate;
         return this;
     }
-    public WorkTimeBuilder setWorkId(Long workId) {
-        this.workId = workId;
+    public WorkTimeBuilder setTaskId(Long taskId) {
+        this.taskId = taskId;
         return this;
     }
     public static WorkTimeBuilder createWorkTime () {
         return new WorkTimeBuilder();
     }
     public WorkTimeDto getWorkTimeDto(){
-        return new WorkTimeDto(id,userName,workDate,workTime,workId);
+        return new WorkTimeDto(id,userName,workDate,workTime,taskId);
     }
     public WorkTime getWorkTime(){
-        return new WorkTime(id,userName,workDate,workTime,workId);
+        return new WorkTime(id,userName,workDate,workTime,taskId);
     }
 }

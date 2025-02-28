@@ -24,6 +24,11 @@
                 templateUrl: 'work/work.html',
                 controller: 'workController'
             })
+            .when('/task', {
+                templateUrl: 'task/task.html',
+                controller: 'taskController'
+            })
+            
             .otherwise({
                 redirectTo: '/'
             });

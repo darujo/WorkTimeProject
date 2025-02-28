@@ -104,7 +104,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 $scope.Work = response.data;
                 console.log($scope.Work);
                 document.getElementById("CodeSap").value = response.data.codeSap;
-                document.getElementById("CodeZI").value = response.data.codeZi;
+                document.getElementById("CodeZI").value = response.data.codeZI;
 
                 document.getElementById("WorkName").value = response.data.name;
                 document.getElementById("StartDevelop").valueAsDate = new Date( response.data.dateStartDevelop);
@@ -176,10 +176,10 @@ angular.module('workTimeService').controller('workController', function ($scope,
         $location.WorkId = workId;
         // $location.path('/worktime');
         //window.open('#!/worktime',"_self");
-        window.open('#!/worktime',"_parent");
-        console.log("Другая 2");
+        window.open('#!/task',"_parent");
+        // console.log("Другая 2");
         // window.open('#!/worktime',"_self");
-        console.log("Другая 3");
+        // console.log("Другая 3");
     }
     //_self, _blank, _parent, _top.
     // window.onload = function() {

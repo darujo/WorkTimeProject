@@ -8,7 +8,6 @@ import ru.darujo.dto.WorkTimeDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.service.WorkTimeService;
 
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,7 +28,9 @@ public class WorkTimeController {
         return WorkTimeConvertor.getWorkTimeDto(workTimeService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Отмеченая работа не найден")));
     }
 
-    @PutMapping("")
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+
+    @PostMapping("")
     public WorkTimeDto WorkTimeSave( @RequestHeader String username,
                                      @RequestBody WorkTimeDto workTimeDto) {
         if (workTimeDto.getUserName() == null || !workTimeDto.getUserName().equals("") )
@@ -56,36 +57,14 @@ public class WorkTimeController {
     public Page<WorkTimeDto> findWorkTime(@RequestParam(required = false) String dateLeStr,
                                           @RequestParam(required = false) String dateGtStr,
                                           @RequestParam(required = false) String dateGeStr,
-                                          @RequestParam(required = false) Long workId,
+                                          @RequestParam(required = false) Long taskId,
                                           @RequestParam(required = false) String userName,
                                           @RequestParam(defaultValue = "1")Integer page,
                                           @RequestParam(defaultValue = "10") Integer size) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-        Date dateLe = null;
-        Date dateGt = null;
-        Date dateGe = null;
-        if (dateLeStr != null) {
-            try {
-                dateLe = simpleDateFormat.parse(dateLeStr);
-            } catch (ParseException e) {
-                throw new ResourceNotFoundException("Не удалось распарсить дату dateLe = " + dateLeStr);
-            }
-        }
-        if (dateGtStr != null) {
-            try {
-                dateGt = simpleDateFormat.parse(dateGtStr);
-            } catch (ParseException e) {
-                throw new ResourceNotFoundException("Не удалось распарсить дату dateGt = " + dateGtStr);
-            }
-        }
-        if (dateGeStr != null) {
-            try {
-                dateGe = simpleDateFormat.parse(dateLeStr);
-            } catch (ParseException e) {
-                throw new ResourceNotFoundException("Не удалось распарсить дату dateGe = " + dateGeStr);
-            }
-        }
-        return workTimeService.findWorkTime(workId,
+        Date dateLe = stringToDate(dateLeStr,"dateLe = ");
+        Date dateGt = stringToDate(dateGtStr,"dateGt = ");
+        Date dateGe = stringToDate(dateGeStr,"dateGe = ");
+        return workTimeService.findWorkTime(taskId,
                                             userName,
                                             dateLe,
                                             dateGt,
@@ -94,29 +73,24 @@ public class WorkTimeController {
                                             size).map(WorkTimeConvertor::getWorkTimeDto);
     }
     @GetMapping("/rep/time")
-    public float getTimeWork(@RequestParam(required = false) Long workId,
+    public Float getTimeWork(@RequestParam(required = false) Long taskId,
                              @RequestParam(required = false) String userName ,
                              @RequestParam(required = false, name = "dateLe") String dateLeStr ,
                              @RequestParam(required = false, name = "dateGt") String dateGtStr) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-        Date dateLe = null;
-        Date dateGt = null;
-        if (dateLeStr != null) {
-            try {
-                dateLe = simpleDateFormat.parse(dateLeStr);
-            } catch (ParseException e) {
-                throw new ResourceNotFoundException("Не удалось распарсить дату dateLe = " + dateLeStr);
-            }
-        }
-        if (dateGtStr != null) {
-            try {
-                dateGt = simpleDateFormat.parse(dateGtStr);
-            } catch (ParseException e) {
-                throw new ResourceNotFoundException("Не удалось распарсить дату dateGt = " + dateGtStr);
-            }
-        }
+       Date dateLe = stringToDate(dateLeStr,"dateLe = ");
+       Date dateGt = stringToDate(dateGtStr,"dateGt = ");
+       return workTimeService.getTimeWork(taskId,userName, dateLe, dateGt);
+    }
 
-        return workTimeService.getTimeWork(workId,userName, dateLe, dateGt);
+    private Date stringToDate(String dateStr,String text){
+        if (dateStr != null) {
+            try {
+                return simpleDateFormat.parse(dateStr);
+            } catch (ParseException e) {
+                throw new ResourceNotFoundException("Не удалось распарсить дату " + text + " " + dateStr);
+            }
+        }
+        return null;
     }
 
 }

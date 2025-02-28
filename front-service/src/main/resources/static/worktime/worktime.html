@@ -7,13 +7,13 @@
           <div  class="horiz">
             <p class="p-head">Id задачи</p>
             <br>
-            <input class="vvod80" type="number" inputmode="numeric" id="WorkId" step="any" ng-model="Filt.workId"/>
+            <input class="vvod80" type="number" inputmode="numeric" id="TaskId" step="any" ng-model="Filt.taskId"/>
           </div>
           <div class="horiz">
             <input class="vvod40" type="date" id="DateLe" value="1" ng-model="Filt.dateLe"/>
             <p class="p-head"> <= Дата <= </p>
             <input class="vvod40" type="date" id="DateGe" step="any" ng-model="Filt.dateGe"/>
-            <!--                <input  type="hidden" id="workId" />-->
+            <!--                <input  type="hidden" id="taskId" />-->
             <br>
 
           </div>
@@ -58,10 +58,78 @@
 </div>
 
 <div id="FormEdit" class="divform">
+  <div class="filter" id="TaskNum">
+    <div class="horiz">
+      <p class="p-filt">Задача:</p> <input class="vvod80" type="number" inputmode="number" id="TaskIdEdit" placeholder="Ведите код задачи"
+                      ng-model="WorkTime.taskId"/>
+
+      <button type="button" ng-click="findTask(WorkTime.taskId)" class="headbutton">Найти</button>
+    </div>
+  </div>
+  <div id="FindTask">
+    <div class="filter">
+      <div class="filterblock">
+
+        <div  class="horiz">
+          <p class="p-filt">Id задачи</p>
+          <br>
+          <input class="vvod80" type="number" id="WorkIdFilt" step="any" ng-model="FiltTask.workId"/>
+        </div>
+        <div  class="horiz">
+          <p class="p-filt">BTS:</p>
+          <br>
+          <input class="vvod80" type="text" id="BtsFilt" step="any" ng-model="FiltTask.bts"/>
+        </div>
+        <div  class="horiz">
+          <p class="p-filt">DEVBO :</p>
+          <br>
+          <input class="vvod80" type="text" id="DevboFilt" step="any" ng-model="FiltTask.devbo"/>
+        </div>
+        <div  class="horiz">
+          <p class="p-filt">Описание:</p>
+          <br>
+          <input class="vvod80" type="text" id="DescFilt" step="any" ng-model="FiltTask.desc"/>
+        </div>
+        <div  class="horiz">
+          <p class="p-filt">Наименование ЗИ</p>
+          <br>
+          <input class="vvod80" type="text" id="ZiNameFilt" step="any" ng-model="FiltTask.ziName"/>
+        </div>
+      </div>
+    </div>
+    <div class="filter">
+      <button type="button" class="headbutton" ng-click="findPageTask(-1)">PrevPage</button>
+      <input class="vvod" type="number" id="PageTask" value="1"/>
+      <button type="button" class="headbutton" ng-click="findPageTask(1)">NextPage</button>
+      <button type="button" ng-click="filterTask()" class="headbutton">Применить</button>
+    </div>
+    <h1>Выбирите задачу</h1>
+    <table>
+      <tr>
+        <td>Автор</td>
+        <td>№ запроса (BTS)</td>
+        <td>№ внутренней задачи (DEVBO)</td>
+        <td>Краткое описание</td>
+        <td>Тип задачи</td>
+        <td>№ ЗИ (ZI)</td>
+        <td>Наименоваание ЗИ</td>
+      </tr>
+      <tbody>
+      <tr ng-repeat="task in TaskList">
+        <td>{{task.userName}}</td>
+        <td>{{task.codeBTS}}</td>
+        <td>{{task.codeDEVBO}}</td>
+        <td><button type="button"  ng-click="setTask(task.id);">{{task.description}}</button></td>
+        <td>{{task.type}}</td>
+        <td>{{task.codeZi}}</td>
+        <td>{{task.nameZi}}</td>
+      </tr>
+      </tbody>
+    </table>
+
+  </div>
+
   <form novalidate ng-submit="saveWorkTime()">
-    Задача : <input class="vvod" type="number" inputmode="number" id="WorkIdEdit" placeholder="Ведите код задачи"
-                          ng-model="WorkTime.workId"/>
-    <br>
     <br>
     Дата: <input class="vvod" type="date"  id="WorkTimeDate" step="any"
                  ng-model="WorkTime.workDate"/>
@@ -70,7 +138,7 @@
                  ng-model="WorkTime.workTime"/>
     <br>
     <button type="submit" class="button">Сохранить</button>
-    <button ng-click="loadWorkTime()" class="button">Вернуться к списку</button>
+    <button type="reset" ng-click="loadWorkTime()" class="button">Вернуться к списку</button>
 
   </form>
 </div>

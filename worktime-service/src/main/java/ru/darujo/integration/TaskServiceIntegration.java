@@ -10,7 +10,7 @@ import ru.darujo.exceptions.ResourceNotFoundException;
 
 
 @Component
-public class WorkServiceIntegration {
+public class TaskServiceIntegration {
     private WebClient webClientWork;
 
     @Autowired

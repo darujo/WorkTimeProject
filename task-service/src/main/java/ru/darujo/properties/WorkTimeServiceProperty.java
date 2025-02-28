@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 @ConstructorBinding
 @ConfigurationProperties( prefix = "integration.work-time-service")
 @Data
-public class WorkServiceProperty implements PropertyConnectionInterface {
+public class WorkTimeServiceProperty implements PropertyConnectionInterface {
   private String url;
   private Integer connectionTimeOut;
   private Integer readTimeOut;
