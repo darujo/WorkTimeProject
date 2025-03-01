@@ -4,14 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.WorkTimeConvertor;
+import ru.darujo.dto.ListString;
 import ru.darujo.dto.WorkTimeDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.model.WorkTime;
 import ru.darujo.service.WorkTimeService;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.util.*;
 
 @RestController()
 @RequestMapping("/v1/worktime")
@@ -45,14 +47,6 @@ public class WorkTimeController {
         workTimeService.deleteWorkTime(id);
     }
 
-    @GetMapping("/qq ")
-    public Page<WorkTimeDto> findWorkTime(@RequestParam(required = false) Long workId,
-                                          @RequestParam(required = false) Date dateLe,
-                                          @RequestParam(required = false) Date dateGe,
-                                          @RequestParam(defaultValue = "1") int page,
-                                          @RequestParam(defaultValue = "10") int size) {
-         return workTimeService.findWorkTime(workId,null,dateLe, null,dateGe, page, size).map(WorkTimeConvertor::getWorkTimeDto);
-    }
     @GetMapping("")
     public Page<WorkTimeDto> findWorkTime(@RequestParam(required = false) String dateLeStr,
                                           @RequestParam(required = false) String dateGtStr,
@@ -64,15 +58,15 @@ public class WorkTimeController {
         Date dateLe = stringToDate(dateLeStr,"dateLe = ");
         Date dateGt = stringToDate(dateGtStr,"dateGt = ");
         Date dateGe = stringToDate(dateGeStr,"dateGe = ");
-        return workTimeService.findWorkTime(taskId,
+        return ((Page<WorkTime>) workTimeService.findWorkTime(taskId,
                                             userName,
                                             dateLe,
                                             dateGt,
                                             dateGe,
                                             page,
-                                            size).map(WorkTimeConvertor::getWorkTimeDto);
+                                            size)).map(WorkTimeConvertor::getWorkTimeDto);
     }
-    @GetMapping("/rep/time")
+    @GetMapping("/rep/fact/time")
     public Float getTimeWork(@RequestParam(required = false) Long taskId,
                              @RequestParam(required = false) String userName ,
                              @RequestParam(required = false, name = "dateLe") String dateLeStr ,
@@ -82,10 +76,15 @@ public class WorkTimeController {
        return workTimeService.getTimeWork(taskId,userName, dateLe, dateGt);
     }
 
+    @GetMapping("/rep/fact/user")
+    public ListString getFactUser(@RequestParam(required = false) Long taskId) {
+        return workTimeService.getFactUser(taskId);
+    }
+
     private Date stringToDate(String dateStr,String text){
         if (dateStr != null) {
             try {
-                return simpleDateFormat.parse(dateStr);
+                return new Timestamp(simpleDateFormat.parse(dateStr).getTime());
             } catch (ParseException e) {
                 throw new ResourceNotFoundException("Не удалось распарсить дату " + text + " " + dateStr);
             }

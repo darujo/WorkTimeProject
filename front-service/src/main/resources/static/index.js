@@ -20,6 +20,11 @@
                 templateUrl: 'rep/worktimerep.html',
                 controller: 'workTimeRepController'
             })
+            .when('/factwork', {
+
+                templateUrl: 'rep/factwork.html',
+                controller: 'workFactRepController'
+            })
             .when('/work', {
                 templateUrl: 'work/work.html',
                 controller: 'workController'

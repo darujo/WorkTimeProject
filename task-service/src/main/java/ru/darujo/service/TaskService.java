@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.darujo.dto.ListString;
 import ru.darujo.integration.WorkTimeServiceIntegration;
 import ru.darujo.model.Task;
 import ru.darujo.repository.TaskRepository;
@@ -17,11 +18,13 @@ import java.util.*;
 public class TaskService {
 
     private TaskRepository taskRepository;
-    private  Iterable<Task> taskPage;
+    private Iterable<Task> taskPage;
+
     @Autowired
     public void setWorkTimeRepository(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
+
     private WorkTimeServiceIntegration workTimeServiceIntegration;
 
     @Autowired
@@ -44,12 +47,12 @@ public class TaskService {
     }
 
     public Iterable<Task> findWorkTime(String userName,
-                                   String codeBTS,
-                                   String codeDEVBO,
-                                   String description,
-                                   Long workId,
-                                   Integer page,
-                                   Integer size) {
+                                       String codeBTS,
+                                       String codeDEVBO,
+                                       String description,
+                                       Long workId,
+                                       Integer page,
+                                       Integer size) {
         Specification<Task> specification = Specification.where(null);
         if (userName != null) {
             specification = specification.and(TaskSpecifications.userNameLike(userName));
@@ -68,8 +71,7 @@ public class TaskService {
         }
         if (page != null) {
             taskPage = taskRepository.findAll(specification, PageRequest.of(page - 1, size));
-        }
-        else{
+        } else {
             taskPage = taskRepository.findAll(specification);
         }
 
@@ -86,6 +88,18 @@ public class TaskService {
             Date dateLe,
             Date dateGt) {
         return ((List<Task>) findWorkTime(null, codeBTS, codeDEVBO, description, workId, null, null))
-                .stream().map(task ->   workTimeServiceIntegration.getTimeTask(task.getId(),userName,dateLe,dateGt )).reduce((sumTime, time)-> sumTime + time).orElse(0f);
+                .stream().map(task -> workTimeServiceIntegration.getTimeTask(task.getId(), userName, dateLe, dateGt)).reduce((sumTime, time) ->
+                        sumTime + time).orElse(0f);
+    }
+
+    public ListString getFactUsers(Long workId) {
+        ListString users = new ListString();
+        ((List<Task>) findWorkTime(null, null, null, null, workId, null, null))
+                .stream().map(task ->
+                        workTimeServiceIntegration
+                                .getUsers(task.getId()))
+                .forEach(user ->
+                        users.getList().addAll(user.getList()));
+        return users;
     }
 }

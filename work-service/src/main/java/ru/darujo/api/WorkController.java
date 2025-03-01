@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.WorkConvertor;
 import ru.darujo.dto.WorkDto;
 import ru.darujo.dto.WorkEditDto;
+import ru.darujo.dto.WorkFactDto;
 import ru.darujo.dto.WorkRepDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.service.WorkService;
@@ -16,6 +17,7 @@ import java.util.List;
 @RequestMapping("/v1/works")
 public class WorkController {
     private WorkService workService;
+
     @Autowired
     public void setWorkService(WorkService workService) {
         this.workService = workService;
@@ -40,12 +42,18 @@ public class WorkController {
     @GetMapping("")
     public Page<WorkDto> WorkPage(@RequestParam(defaultValue = "1") int page,
                                   @RequestParam(defaultValue = "10") int size,
-                                  @RequestParam(required = false) String name){
-        return workService.findWorks(page, size,name).map(WorkConvertor::getWorkDto);
+                                  @RequestParam(required = false) String name) {
+        return workService.findWorks(page, size, name).map(WorkConvertor::getWorkDto);
     }
-    @GetMapping("/rep")
+
+    @GetMapping("/rep/")
     public List<WorkRepDto> getTimeWork(@RequestParam(required = false) String userName) {
         return workService.getWorkRep(userName);
+    }
+
+    @GetMapping("/rep/factwork")
+    public List<WorkFactDto> getFactWork(@RequestParam(required = false) String userName) {
+        return workService.getWorkFactRep(userName);
     }
 
 }
