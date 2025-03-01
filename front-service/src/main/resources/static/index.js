@@ -12,13 +12,18 @@
             })
             .when('/worktime', {
 
-                templateUrl: 'worktime/worktime.html',
+                templateUrl: 'worktime/worktime.html?v=1.1',
                 controller: 'worktimeController'
             })
             .when('/worktimerep', {
 
                 templateUrl: 'rep/worktimerep.html',
                 controller: 'workTimeRepController'
+            })
+            .when('/factwork', {
+
+                templateUrl: 'rep/factwork.html',
+                controller: 'workFactRepController'
             })
             .when('/work', {
                 templateUrl: 'work/work.html',

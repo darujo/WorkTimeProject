@@ -23,18 +23,70 @@
   <h1>Задачи</h1>
   <table>
     <tr>
-      <td>Наименование</td>
-      <td>Дата разработка прототипа</td>
-      <td>Дата Стабилизация прототипа</td>
-      <td>Дата Стабилизация релиза</td>
-      <td>Дата ОПЭ релиза</td>
-      <td>Дата вендерка</td>
-      <td></td>
-      <td></td>
+      <td rowspan="3"> Код SAP </td>
+      <td rowspan="3"> Код Зи </td>
+      <td rowspan="3"> Наименование </td>
+      <td rowspan="3"> № внутренней задачи (DEVBO) </td>
+      <td rowspan="3"> Краткое описание внутренней задачи </td>
+      <td rowspan="3"> Плановая дата завершения 0 этапа </td>
+      <td rowspan="2" colspan="2"> Дата начала доработки </td>
+      <td colspan="4"> Плановые трудозатраты, чел/час </td>
+      <td colspan="5"> Факт дата завершения этапа </td>
+      <td rowspan="3"> Текущий этап ЗИ </td>
+      <td rowspan="3"> Порядковый номер релиза </td>
+      <td rowspan="2" colspan="2"> Выдача релиза даты </td>
+      <td rowspan="3"> </td>
+      <td rowspan="3"> </td>
+
+
     </tr>
-    <tbody>
+    <tr>
+      <td> I этап </td>
+      <td> II этап </td>
+      <td> III этап </td>
+      <td> IV этап </td>
+
+      <td> 0 этап </td>
+      <td> I этап </td>
+      <td> II этап </td>
+      <td> III этап </td>
+      <td> IV этап </td>
+
+
+    </tr>
+
+    <tr>
+      <td> План </td>
+      <td> Факт </td>
+      <td> Разработка прототипа </td>
+      <td> Стабилизация прототипа </td>
+      <td> Стабилизация релиза </td>
+      <td> ОПЭ </td>
+
+      <td> Согласование требований </td>
+      <td> Разработка прототипа </td>
+      <td> Стабилизация прототипа </td>
+      <td> Стабилизация релиза </td>
+      <td> ОПЭ </td>
+
+      <td> План </td>
+      <td> Факт </td>
+
+    </tr>
+  <tbody>
     <tr ng-repeat="work in WorkList">
-      <td> <button  ng-click="addTime(work.id);">{{work.name}}</button></td>
+      <td>{{work.codeSap}}</td>
+      <td>{{work.codeZI}}</td>
+      <td>{{work.name}}</td>
+      <td>{{work.task}}</td>
+      <td>{{work.description}}</td>
+      <td>{{work.planDateStage0}}</td>
+      <td>{{work.startTaskPlan}}</td>
+      <td>{{work.startTaskFact}}</td>
+      <td>{{work.laborDevelop}}</td>
+      <td>{{work.laborDebug}}</td>
+      <td>{{work.laborRelease}}</td>
+      <td>{{work.laborOPE}}</td>
 
       <td>{{work.dateStartDevelop}}</td>
       <td>{{work.dateStartDebug}}</td>
@@ -42,6 +94,10 @@
       <td>{{work.dateStartOPE}}</td>
       <td>{{work.dateStartWender}}</td>
 
+      <td>{{work.stageZI}}</td>
+      <td>{{work.release}}</td>
+      <td>{{work.issuingReleasePlan}}</td>
+      <td>{{work.issuingReleaseFact}}</td>
       <td>
         <button ng-click="editWork(work.id)">Изменить</button>
       </td>

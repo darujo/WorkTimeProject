@@ -10,7 +10,7 @@
 
     <title>Работы</title>
     <link rel="stylesheet" href="style.css?v=1.9">
-</head>
+</head> 
 <body>
 <div class="container" ng-controller="indexController">
 <nav>
@@ -27,6 +27,9 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#!/worktimerep">Отчет</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#!/factwork">Факт затрат</a>
             </li>
 
             <li class="nav-item" ng-show="!isUserLoggedIn()">
@@ -57,6 +60,7 @@
     <script src="index.js"></script>
     <script src="worktime/worktime.js"></script>
     <script src="rep/worktimerep.js"></script>
+    <script src="rep/factwork.js"></script>
     <script src="work/work.js"></script>
     <script src="task/task.js"></script>
     <script src="welcome/welcome.js"></script>

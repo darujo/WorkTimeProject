@@ -5,20 +5,7 @@ import ru.darujo.dto.WorkEditDto;
 import ru.darujo.model.Work;
 
 public class WorkConvertor {
-
-    public static WorkDto getWorkDto(Work work){
-        return WorkBuilder
-                .createWork()
-                .setId(work.getId())
-                .setDateStartDebug(work.getDateStartDebug())
-                .setDateStartDevelop(work.getDateStartDevelop())
-                .setDateStartOPE(work.getDateStartOPE())
-                .setDateStartRelease(work.getDateStartRelease())
-                .setDateStartWender(work.getDateStartWender())
-                .setName(work.getName())
-                .getWorkDto();
-    }
-    public static WorkEditDto getWorkEditDto(Work work){
+    public static WorkBuilder setWorkBulderBase(Work work){
         return WorkBuilder
                 .createWork()
                 .setId(work.getId())
@@ -42,7 +29,15 @@ public class WorkConvertor {
                 .setStageZI(work.getStageZI())
                 .setRelease(work.getRelease())
                 .setIssuingReleaseFact(work.getIssuingReleaseFact())
-                .setIssuingReleasePlan(work.getIssuingReleasePlan())
+                .setIssuingReleasePlan(work.getIssuingReleasePlan());
+
+    }
+    public static WorkDto getWorkDto(Work work){
+        return setWorkBulderBase(work)
+                .getWorkDto();
+    }
+    public static WorkEditDto getWorkEditDto(Work work){
+        return setWorkBulderBase(work)
                 .getWorkEditDto();
     }
     public static Work getWork(WorkEditDto workDto){

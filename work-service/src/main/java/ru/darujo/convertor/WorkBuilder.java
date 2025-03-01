@@ -162,7 +162,29 @@ public class WorkBuilder {
         return new WorkBuilder();
     }
     public WorkDto getWorkDto(){
-        return new WorkDto(id,name, dateStartDevelop ,dateStartDebug,dateStartRelease,dateStartOPE,dateStartWender);
+        return new WorkDto(
+                id,
+                codeSap,
+                codeZI,
+                name,
+                dateStartDevelop ,
+                dateStartDebug,
+                dateStartRelease,
+                dateStartOPE,
+                dateStartWender,
+                task,
+                description,
+                planDateStage0,
+                startTaskPlan,
+                startTaskFact,
+                laborDevelop,
+                laborDebug,
+                laborRelease,
+                laborOPE,
+                stageZI,
+                release,
+                issuingReleasePlan,
+                issuingReleaseFact);
     }
     public WorkEditDto getWorkEditDto(){
         return new WorkEditDto(

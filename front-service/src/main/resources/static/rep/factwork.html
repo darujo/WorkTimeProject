@@ -1,0 +1,61 @@
+<div id="WorkTimeList" class="headtextelem">
+    <div class="filter">
+        <form novalidate ng-submit="filterWorkTime()" ; class="filter">
+            <div class="filter">
+                <div class="filterblock">
+
+                    <div class="horiz">
+                        <p class="p-head">Пользователь</p>
+                        <br>
+                        <input class="vvod80" type="number" inputmode="numeric" id="UserName" step="any"
+                               ng-model="Filt.userName"/>
+                    </div>
+                    <button type="submit" class="headbutton">Применить</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <h1>Список работ</h1>
+    <table>
+        <tr>
+            <td rowspan="3">№ п/п</td>
+            <td rowspan="3">№ ЗИ (ZI)</td>
+            <td rowspan="3">Наименование ЗИ</td>
+            <td rowspan="3">Исполнитель</td>
+            <td colspan="6">Трудозатраты, чел/час</td>
+        </tr>
+        <tr>
+            <td>0 этап Согласование требований</td>
+            <td>I этап Разработка прототипа</td>
+            <td>II этап Стабилизация прототипа</td>
+            <td>III этап Стабилизация релиза</td>
+            <td>IV этап ОПЭ релиза</td>
+            <td>V Вендерка</td>
+        </tr>
+        <tr>
+            <td>Факт</td>
+            <td>Факт</td>
+            <td>Факт</td>
+            <td>Факт</td>
+            <td>Факт</td>
+            <td>Факт</td>
+        </tr>
+
+        <tbody>
+        <tr ng-repeat="work in WorkTimeList">
+            <td>{{work.num}}</td>
+            <td>{{work.codeZi}}</td>
+            <td>{{work.name}}</td>
+            <td>{{work.userName}}</td>
+            <td>{{work.timeAnalise}}</td>
+            <td>{{work.timeDevelop}}</td>
+            <td>{{work.timeDebug}}</td>
+            <td>{{work.timeRelease}}</td>
+            <td>{{work.timeOPE}}</td>
+            <td>{{work.timeWender}}</td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
