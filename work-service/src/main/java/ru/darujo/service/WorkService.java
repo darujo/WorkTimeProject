@@ -65,8 +65,20 @@ public class WorkService {
     public List<WorkRepDto> getWorkRep(String userName){
         List<WorkRepDto> workRepDtos = new ArrayList<>();
         workRepository.findAll().forEach(work ->
-            workRepDtos.add(new WorkRepDto(
-                work.getName(),
+            workRepDtos.add(
+                    new WorkRepDto(
+                            work.getCodeSap(),
+                            work.getCodeZI(),
+                            work.getName(),
+                            work.getTask(),
+                            work.getDescription(),
+                            work.getPlanDateStage0(),
+                            work.getStartTaskPlan(),
+                            work.getStartTaskFact(),
+                            work.getLaborDevelop(),
+                            work.getLaborDebug(),
+                            work.getLaborRelease(),
+                            work.getLaborOPE(),
                 taskServiceIntegration.getTimeWork(
                         work.getId(),
                         userName,
@@ -91,7 +103,12 @@ public class WorkService {
                 taskServiceIntegration.getTimeWork(work.getId(),
                         userName,
                         work.getDateStartWender(),
-                        null))
+                        null),
+                            work.getStageZI(),
+                            work.getRelease(),
+                            work.getIssuingReleasePlan(),
+                            work.getIssuingReleaseFact()
+                    )
                )
            );
         return workRepDtos;

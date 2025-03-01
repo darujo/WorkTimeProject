@@ -17,24 +17,56 @@
   <h1>Список работ</h1>
   <table>
     <tr>
-      <td>Наименование</td>
+      <td rowspan="5"> Код Зи </td>
+      <td rowspan="5"> Наименование </td>
+      <td> № внутренней задачи (DEVBO) </td>
+      <td> Краткое описание внутренней задачи </td>
+      <td> Плановая дата завершения 0 этапа </td>
+      <td> Дата начала доработки План </td>
+      <td> Дата начала доработки Факт </td>
+      <td> Плановые трудозатраты, чел/час Разработка прототипа </td>
+      <td>Плановые трудозатраты, чел/час Стабилизация прототипа </td>
+      <td> Плановые трудозатраты, чел/час Стабилизация релиза </td>
+      <td> Плановые трудозатраты, чел/час ОПЭ </td>
+
       <td>Анализ</td>
       <td>Разработка прототипа</td>
       <td>Стабилизация прототипа</td>
       <td>Стабилизация релиза</td>
       <td>ОПЭ релиза</td>
       <td>Вендерка</td>
+      <td> Текущий этап ЗИ</td>
+      <td> Порядковый номер релиза</td>
+      <td> Выдача релиза даты План</td>
+      <td> Выдача релиза дата факт</td>
+
 
     </tr>
     <tbody>
       <tr ng-repeat="work in WorkTimeList">
+        <td>{{work.codeSap}}</td>
+        <td>{{work.codeZI}}</td>
         <td>{{work.name}}</td>
+        <td>{{work.task}}</td>
+        <td>{{work.description}}</td>
+        <td>{{work.planDateStage0}}</td>
+        <td>{{work.startTaskPlan}}</td>
+        <td>{{work.startTaskFact}}</td>
+        <td>{{work.laborDevelop}}</td>
+        <td>{{work.laborDebug}}</td>
+        <td>{{work.laborRelease}}</td>
+        <td>{{work.laborOPE}}</td>
         <td>{{work.timeAnalise}}</td>
         <td>{{work.timeDevelop}}</td>
         <td>{{work.timeDebug}}</td>
         <td>{{work.timeRelease}}</td>
         <td>{{work.timeOPE}}</td>
         <td>{{work.timeWender}}</td>
+        <td>{{work.stageZI}}</td>
+        <td>{{work.release}}</td>
+        <td>{{work.issuingReleasePlan}}</td>
+        <td>{{work.issuingReleaseFact}}</td>
+
       </tr>
     </tbody>
   </table>

@@ -12,7 +12,7 @@
             })
             .when('/worktime', {
 
-                templateUrl: 'worktime/worktime.html',
+                templateUrl: 'worktime/worktime.html?v=1.1',
                 controller: 'worktimeController'
             })
             .when('/worktimerep', {
