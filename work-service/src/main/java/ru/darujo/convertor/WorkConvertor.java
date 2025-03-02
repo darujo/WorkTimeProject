@@ -38,6 +38,12 @@ public class WorkConvertor {
     }
     public static WorkEditDto getWorkEditDto(Work work){
         return setWorkBulderBase(work)
+                .setDateStartDebugPlan(work.getDateStartDebugPlan())
+                .setDateStartDevelopPlan(work.getDateStartDevelopPlan())
+                .setDateStartOPEPlan(work.getDateStartOPEPlan())
+                .setDateStartReleasePlan(work.getDateStartReleasePlan())
+                .setDateStartWenderPlan(work.getDateStartWenderPlan())
+                .setFactDateStage0(work.getFactDateStage0())
                 .getWorkEditDto();
     }
     public static Work getWork(WorkEditDto workDto){
@@ -65,6 +71,12 @@ public class WorkConvertor {
                 .setRelease(workDto.getRelease())
                 .setIssuingReleaseFact(workDto.getIssuingReleaseFact())
                 .setIssuingReleasePlan(workDto.getIssuingReleasePlan())
+                .setDateStartDebugPlan(workDto.getDateStartDebugPlan())
+                .setDateStartDevelopPlan(workDto.getDateStartDevelopPlan())
+                .setDateStartOPEPlan(workDto.getDateStartOPEPlan())
+                .setDateStartReleasePlan(workDto.getDateStartReleasePlan())
+                .setDateStartWenderPlan(workDto.getDateStartWenderPlan())
+                .setFactDateStage0(workDto.getFactDateStage0())
                 .getWork();
     }
 }

@@ -67,17 +67,29 @@ public class WorkService {
         workRepository.findAll().forEach(work ->
                 workRepDtos.add(
                         new WorkRepDto(
-                                work.getCodeSap(),
+                                work.getId(),
                                 work.getCodeZI(),
                                 work.getName(),
-                                work.getTask(),
-                                work.getDescription(),
                                 work.getPlanDateStage0(),
+                                work.getFactDateStage0(),
                                 work.getStartTaskPlan(),
                                 work.getStartTaskFact(),
+                                work.getDateStartDevelopPlan(),
+                                work.getDateStartDevelop(),
                                 work.getLaborDevelop(),
+                                work.getDateStartDebugPlan(),
+                                work.getDateStartDebug(),
+                                work.getDateStartReleasePlan(),
+                                work.getDateStartRelease(),
                                 work.getLaborDebug(),
+                                work.getRelease(),
+                                work.getIssuingReleasePlan(),
+                                work.getIssuingReleaseFact(),
+                                work.getDateStartOPEPlan(),
+                                work.getDateStartOPE(),
                                 work.getLaborRelease(),
+                                work.getDateStartWenderPlan(),
+                                work.getDateStartWender(),
                                 work.getLaborOPE(),
                                 taskServiceIntegration.getTimeWork(
                                         work.getId(),
@@ -103,11 +115,7 @@ public class WorkService {
                                 taskServiceIntegration.getTimeWork(work.getId(),
                                         userName,
                                         work.getDateStartWender(),
-                                        null),
-                                work.getStageZI(),
-                                work.getRelease(),
-                                work.getIssuingReleasePlan(),
-                                work.getIssuingReleaseFact()
+                                        null)
                         )
                 )
         );
@@ -137,14 +145,15 @@ public class WorkService {
                                 codeZi = work.getCodeZI();
                                 name = work.getName();
                             } else {
-                                codeZi = "";
-                                name = "";
+                                codeZi = null;
+                                name = null;
                             }
                             workFactDtos.add(
                                     new WorkFactDto(
                                             num.incrementAndGet(),
                                             codeZi,
                                             name,
+                                            users.size(),
                                             user,
                                             taskServiceIntegration.getTimeWork(
                                                     work.getId(),

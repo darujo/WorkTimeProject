@@ -29,18 +29,33 @@ public class Work {
     // Разработка прототипа Факт
     @Column(name = "startDevelop")
     private Date dateStartDevelop;
+    //начало разработки план
+    @Column(name = "startDevelopPlan")
+    private Date dateStartDevelopPlan;
     // Стабилизация прототипа Факт
     @Column(name = "startDebug")
     private Date dateStartDebug;
     // Стабилизация релиза Факт
+    @Column(name = "startDebugPlan")
+    private Date dateStartDebugPlan;
+    // Стабилизация релиза Факт
     @Column(name = "startRelease")
     private Date dateStartRelease;
+    // Стабилизация релиза plan
+    @Column(name = "startReleasePlan")
+    private Date dateStartReleasePlan;
     // ОПЭ релиза Факт
     @Column(name = "startOPE")
     private Date dateStartOPE;
+    // ОПЭ релиза Факт
+    @Column(name = "startOPEPlan")
+    private Date dateStartOPEPlan;
     // ВЕНДЕРКА Факт
     @Column(name = "startWender")
     private Date dateStartWender;
+    // ВЕНДЕРКА Факт
+    @Column(name = "startWenderPlan")
+    private Date dateStartWenderPlan;
     // № внутренней задачи (DEVBO)
     @Column(name = "task")
     private String task;
@@ -50,6 +65,9 @@ public class Work {
     // Плановая дата завершения 0 этапа
     @Column(name = "planDateStage0")
     private Date planDateStage0;
+    // Плановая дата завершения 0 этапа
+    @Column(name = "factDateStage0")
+    private Date factDateStage0;
     // Дата начала доработки План
     @Column(name = "startTaskPlan")
     private Date startTaskPlan;

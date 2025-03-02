@@ -46,7 +46,7 @@ public class WorkController {
         return workService.findWorks(page, size, name).map(WorkConvertor::getWorkDto);
     }
 
-    @GetMapping("/rep/")
+    @GetMapping("/rep")
     public List<WorkRepDto> getTimeWork(@RequestParam(required = false) String userName) {
         return workService.getWorkRep(userName);
     }

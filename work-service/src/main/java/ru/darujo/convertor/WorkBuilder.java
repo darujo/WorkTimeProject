@@ -25,12 +25,24 @@ public class WorkBuilder {
     private Date dateStartOPE;
     // ВЕНДЕРКА
     private Date dateStartWender;
+    // Разработка прототипа
+    private Date dateStartDevelopPlan;
+    // Стабилизация прототипа
+    private Date dateStartDebugPlan;
+    // Стабилизация релиза
+    private Date dateStartReleasePlan;
+    // ОПЭ релиза
+    private Date dateStartOPEPlan;
+    // ВЕНДЕРКА
+    private Date dateStartWenderPlan;
     // № внутренней задачи (DEVBO)
     private String task;
     // Краткое описание внутренней задачи
     private String description;
     // Плановая дата завершения 0 этапа
     private Date planDateStage0;
+    // Плановая дата завершения 0 этапа
+    private Date factDateStage0;
     // Дата начала доработки План
     private Date startTaskPlan;
     // Дата начала доработки Факт
@@ -158,6 +170,36 @@ public class WorkBuilder {
         return this;
     }
 
+    public WorkBuilder setDateStartDevelopPlan(Date dateStartDevelopPlan) {
+        this.dateStartDevelopPlan = dateStartDevelopPlan;
+        return this;
+    }
+
+    public WorkBuilder setDateStartDebugPlan(Date dateStartDebugPlan) {
+        this.dateStartDebugPlan = dateStartDebugPlan;
+        return this;
+    }
+
+    public WorkBuilder setDateStartReleasePlan(Date dateStartReleasePlan) {
+        this.dateStartReleasePlan = dateStartReleasePlan;
+        return this;
+    }
+
+    public WorkBuilder setDateStartOPEPlan(Date dateStartOPEPlan) {
+        this.dateStartOPEPlan = dateStartOPEPlan;
+        return this;
+    }
+
+    public WorkBuilder setDateStartWenderPlan(Date dateStartWenderPlan) {
+        this.dateStartWenderPlan = dateStartWenderPlan;
+        return this;
+    }
+
+    public WorkBuilder setFactDateStage0(Date factDateStage0) {
+        this.factDateStage0 = factDateStage0;
+        return this;
+    }
+
     public static WorkBuilder createWork () {
         return new WorkBuilder();
     }
@@ -192,14 +234,20 @@ public class WorkBuilder {
                 codeSap,
                 codeZI,
                 name,
-                dateStartDevelop ,
+                dateStartDevelop,
+                dateStartDevelopPlan,
                 dateStartDebug,
+                dateStartDebugPlan,
                 dateStartRelease,
+                dateStartReleasePlan,
                 dateStartOPE,
+                dateStartOPEPlan,
                 dateStartWender,
+                dateStartWenderPlan,
                 task,
                 description,
                 planDateStage0,
+                factDateStage0,
                 startTaskPlan,
                 startTaskFact,
                 laborDevelop,
@@ -218,13 +266,19 @@ public class WorkBuilder {
                 codeZI,
                 name,
                 dateStartDevelop,
+                dateStartDevelopPlan,
                 dateStartDebug,
+                dateStartDebugPlan,
                 dateStartRelease,
+                dateStartReleasePlan,
                 dateStartOPE,
+                dateStartOPEPlan,
                 dateStartWender,
+                dateStartWenderPlan,
                 task,
                 description,
                 planDateStage0,
+                factDateStage0,
                 startTaskPlan,
                 startTaskFact,
                 laborDevelop,

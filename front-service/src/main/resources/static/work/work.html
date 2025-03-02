@@ -23,66 +23,66 @@
   <h1>Задачи</h1>
   <table>
     <tr>
-      <td rowspan="3"> Код SAP </td>
-      <td rowspan="3"> Код Зи </td>
-      <td rowspan="3"> Наименование </td>
-      <td rowspan="3"> № внутренней задачи (DEVBO) </td>
-      <td rowspan="3"> Краткое описание внутренней задачи </td>
-      <td rowspan="3"> Плановая дата завершения 0 этапа </td>
-      <td rowspan="2" colspan="2"> Дата начала доработки </td>
-      <td colspan="4"> Плановые трудозатраты, чел/час </td>
-      <td colspan="5"> Факт дата завершения этапа </td>
-      <td rowspan="3"> Текущий этап ЗИ </td>
-      <td rowspan="3"> Порядковый номер релиза </td>
-      <td rowspan="2" colspan="2"> Выдача релиза даты </td>
-      <td rowspan="3"> </td>
-      <td rowspan="3"> </td>
+      <td class="tablehead2" rowspan="3"> Код SAP </td>
+      <td class="tablehead2" rowspan="3"> Код Зи </td>
+      <td class="tablehead2" rowspan="3"> Наименование </td>
+      <td class="tablehead2" rowspan="3"> № внутренней задачи (DEVBO) </td>
+      <td class="tablehead2" rowspan="3"> Краткое описание внутренней задачи </td>
+      <td class="tablehead3" rowspan="3"> Плановая дата завершения 0 этапа </td>
+      <td class="tablehead2" rowspan="2" colspan="2"> Дата начала доработки </td>
+      <td class="tablehead2" colspan="4"> Плановые трудозатраты, чел/час </td>
+      <td class="tablehead2" colspan="5"> Факт дата завершения этапа </td>
+      <td class="tablehead3" rowspan="3"> Текущий этап ЗИ </td>
+      <td class="tablehead2" rowspan="3"> Порядковый номер релиза </td>
+      <td class="tablehead2" rowspan="2" colspan="2"> Выдача релиза даты </td>
+      <td class="tablehead2" rowspan="3"> </td>
+      <td class="tablehead2" rowspan="3"> </td>
 
 
     </tr>
     <tr>
-      <td> I этап </td>
-      <td> II этап </td>
-      <td> III этап </td>
-      <td> IV этап </td>
+      <td class="tablehead2"> I этап </td>
+      <td class="tablehead2"> II этап </td>
+      <td class="tablehead2"> III этап </td>
+      <td class="tablehead2"> IV этап </td>
 
-      <td> 0 этап </td>
-      <td> I этап </td>
-      <td> II этап </td>
-      <td> III этап </td>
-      <td> IV этап </td>
+      <td class="tablehead2"> 0 этап </td>
+      <td class="tablehead2"> I этап </td>
+      <td class="tablehead2"> II этап </td>
+      <td class="tablehead2"> III этап </td>
+      <td class="tablehead2"> IV этап </td>
 
 
     </tr>
 
     <tr>
-      <td> План </td>
-      <td> Факт </td>
-      <td> Разработка прототипа </td>
-      <td> Стабилизация прототипа </td>
-      <td> Стабилизация релиза </td>
-      <td> ОПЭ </td>
+      <td class="tablehead2"> План </td>
+      <td class="tablehead2"> Факт </td>
+      <td class="tablehead2"> Разработка прототипа </td>
+      <td class="tablehead2"> Стабилизация прототипа </td>
+      <td class="tablehead2"> Стабилизация релиза </td>
+      <td class="tablehead2"> ОПЭ </td>
 
-      <td> Согласование требований </td>
-      <td> Разработка прототипа </td>
-      <td> Стабилизация прототипа </td>
-      <td> Стабилизация релиза </td>
-      <td> ОПЭ </td>
+      <td class="tablehead2"> Согласование требований </td>
+      <td class="tablehead2"> Разработка прототипа </td>
+      <td class="tablehead2"> Стабилизация прототипа </td>
+      <td class="tablehead2"> Стабилизация релиза </td>
+      <td class="tablehead2"> ОПЭ </td>
 
-      <td> План </td>
-      <td> Факт </td>
+      <td class="tablehead2"> План </td>
+      <td class="tablehead1"> Факт </td>
 
     </tr>
   <tbody>
     <tr ng-repeat="work in WorkList">
       <td>{{work.codeSap}}</td>
       <td>{{work.codeZI}}</td>
-      <td>{{work.name}}</td>
+      <td><button ng-click="addTime(work.id)">{{work.name}}</button></td>
       <td>{{work.task}}</td>
       <td>{{work.description}}</td>
-      <td>{{work.planDateStage0}}</td>
-      <td>{{work.startTaskPlan}}</td>
-      <td>{{work.startTaskFact}}</td>
+      <td type="date">{{work.planDateStage0}}</td>
+      <td class="date">{{work.startTaskPlan}}</td>
+      <td><time datetime="{{work.startTaskFact}}">{{work.startTaskFact}}</time></td>
       <td>{{work.laborDevelop}}</td>
       <td>{{work.laborDebug}}</td>
       <td>{{work.laborRelease}}</td>
@@ -96,8 +96,8 @@
 
       <td>{{work.stageZI}}</td>
       <td>{{work.release}}</td>
-      <td>{{work.issuingReleasePlan}}</td>
-      <td>{{work.issuingReleaseFact}}</td>
+      <td class="tablecol1">{{work.issuingReleasePlan}}</td>
+      <td class="tablecol1">{{work.issuingReleaseFact}}</td>
       <td>
         <button ng-click="editWork(work.id)">Изменить</button>
       </td>
