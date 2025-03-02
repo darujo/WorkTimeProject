@@ -1,10 +1,18 @@
 package ru.darujo.dto;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class WorkRepDto implements Serializable {
     public WorkRepDto() {
+    }
+    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+    private String dateToText(Date date){
+        if (date == null){
+            return null;
+        }
+        return sdf.format(date);
     }
     private Long id;
     // Код Зи
@@ -139,48 +147,48 @@ public class WorkRepDto implements Serializable {
         return name;
     }
 
-    public Date getPlanDateStage0() {
-        return planDateStage0;
+    public String getPlanDateStage0() {
+        return dateToText(planDateStage0);
     }
 
-    public Date getFactDateStage0() {
-        return factDateStage0;
+    public String getFactDateStage0() {
+        return dateToText(factDateStage0);
     }
 
-    public Date getStartTaskPlan() {
-        return startTaskPlan;
+    public String getStartTaskPlan() {
+        return dateToText(startTaskPlan);
     }
 
-    public Date getStartTaskFact() {
-        return startTaskFact;
+    public String getStartTaskFact() {
+        return dateToText(startTaskFact);
     }
 
-    public Date getDateStartDevelopPlan() {
-        return dateStartDevelopPlan;
+    public String getDateStartDevelopPlan() {
+        return dateToText(dateStartDevelopPlan);
     }
 
-    public Date getDateStartDevelop() {
-        return dateStartDevelop;
+    public String getDateStartDevelop() {
+        return dateToText(dateStartDevelop);
     }
 
     public Float getLaborDevelop() {
         return laborDevelop;
     }
 
-    public Date getDateStartDebugPlan() {
-        return dateStartDebugPlan;
+    public String getDateStartDebugPlan() {
+        return dateToText(dateStartDebugPlan);
     }
 
-    public Date getDateStartDebug() {
-        return dateStartDebug;
+    public String getDateStartDebug() {
+        return dateToText(dateStartDebug);
     }
 
-    public Date getDateStartReleasePlan() {
-        return dateStartReleasePlan;
+    public String getDateStartReleasePlan() {
+        return dateToText(dateStartReleasePlan);
     }
 
-    public Date getDateStartRelease() {
-        return dateStartRelease;
+    public String getDateStartRelease() {
+        return dateToText(dateStartRelease);
     }
 
     public Float getLaborDebug() {
@@ -191,32 +199,32 @@ public class WorkRepDto implements Serializable {
         return release;
     }
 
-    public Date getIssuingReleasePlan() {
-        return issuingReleasePlan;
+    public String getIssuingReleasePlan() {
+        return dateToText(issuingReleasePlan);
     }
 
-    public Date getIssuingReleaseFact() {
-        return issuingReleaseFact;
+    public String getIssuingReleaseFact() {
+        return dateToText(issuingReleaseFact);
     }
 
-    public Date getDateStartOPEPlan() {
-        return dateStartOPEPlan;
+    public String getDateStartOPEPlan() {
+        return dateToText(dateStartOPEPlan);
     }
 
-    public Date getDateStartOPE() {
-        return dateStartOPE;
+    public String getDateStartOPE() {
+        return dateToText(dateStartOPE);
     }
 
     public Float getLaborRelease() {
         return laborRelease;
     }
 
-    public Date getDateStartWenderPlan() {
-        return dateStartWenderPlan;
+    public String getDateStartWenderPlan() {
+        return dateToText(dateStartWenderPlan);
     }
 
-    public Date getDateStartWender() {
-        return dateStartWender;
+    public String getDateStartWender() {
+        return dateToText(dateStartWender);
     }
 
     public Float getLaborOPE() {

@@ -110,9 +110,12 @@ TD {
     background-color: rgb(255, 192, 0);
 }
 .tablecol1 {
-    text-align: center;
     background-color: rgb(180, 192, 231);
 }
+.tablecol2 {
+    background-color: rgb(248, 203, 173);
+}
+
 .filter {
     display: inline-flex;
     width: -webkit-fill-available;
