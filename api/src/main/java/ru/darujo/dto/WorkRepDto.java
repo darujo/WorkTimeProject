@@ -4,35 +4,62 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class WorkRepDto implements Serializable {
-    // Код SAP
-    private Integer codeSap;
+    public WorkRepDto() {
+    }
+    private Long id;
     // Код Зи
     private String codeZI;
     // Наименование
     private String name;
     // Плановая дата завершения 0 этапа
     private Date planDateStage0;
+    // Плановая дата завершения 0 этапа
+    private Date factDateStage0;
+
     // Дата начала доработки План
     private Date startTaskPlan;
     // Дата начала доработки Факт
     private Date startTaskFact;
+    //начало разработки план
+    private Date dateStartDevelopPlan;
+    //начало разработки факт
+    private Date dateStartDevelop;
+    // Плановые трудозатраты, чел/час разработки
     private Float laborDevelop;
-
-
-
-
-
-
-    // № внутренней задачи (DEVBO)
-    private String task;
-    // Краткое описание внутренней задачи
-    private String description;
+    // Стабилизация прототипа план
+    private Date dateStartDebugPlan;
+    // Стабилизация прототипа факт
+    private Date dateStartDebug;
+    // Стабилизация релиза
+    private Date dateStartReleasePlan;
+    // Стабилизация релиза
+    private Date dateStartRelease;
     // Плановые трудозатраты, чел/час Стабилизация прототипа
     private Float laborDebug;
+    // Порядковый номер релиза
+    private String release;
+    // Выдача релиза даты План
+    private Date issuingReleasePlan;
+    // Выдача релиза дата факт
+    private Date issuingReleaseFact;
+    // ОПЭ релиза
+    private Date dateStartOPEPlan;
+    // ОПЭ релиза
+    private Date dateStartOPE;
     // Плановые трудозатраты, чел/час Стабилизация релиза
     private Float laborRelease;
+    // ВЕНДЕРКА План
+    private Date dateStartWenderPlan;
+    // ВЕНДЕРКА
+    private Date dateStartWender;
     // Плановые трудозатраты, чел/час ОПЭ
     private Float laborOPE;
+    // плановое время
+    private Float timePlan;
+    // фактическое время
+    private Float timeFact;
+
+
     // Разработка прототипа
     private Float timeAnalise;
     // Разработка прототипа
@@ -45,17 +72,63 @@ public class WorkRepDto implements Serializable {
     private Float timeOPE;
     // ВЕНДЕРКА
     private Float timeWender;
-    // Текущий этап ЗИ
-    private Integer stageZI;
-    // Порядковый номер релиза
-    private String release;
-    // Выдача релиза даты План
-    private Date issuingReleasePlan;
-    // Выдача релиза дата факт
-    private Date issuingReleaseFact;
+    public WorkRepDto(Long id,String codeZI, String name, Date planDateStage0, Date factDateStage0, Date startTaskPlan, Date startTaskFact, Date dateStartDevelopPlan, Date dateStartDevelop, Float laborDevelop, Date dateStartDebugPlan, Date dateStartDebug, Date dateStartReleasePlan, Date dateStartRelease, Float laborDebug, String release, Date issuingReleasePlan, Date issuingReleaseFact, Date dateStartOPEPlan, Date dateStartOPE, Float laborRelease, Date dateStartWenderPlan, Date dateStartWender, Float laborOPE, Float timeAnalise, Float timeDevelop, Float timeDebug, Float timeRelease, Float timeOPE, Float timeWender) {
+        this.id = id;
+        this.codeZI = codeZI;
+        this.name = name;
+        this.planDateStage0 = planDateStage0;
+        this.factDateStage0 = factDateStage0;
+        this.startTaskPlan = startTaskPlan;
+        this.startTaskFact = startTaskFact;
+        this.dateStartDevelopPlan = dateStartDevelopPlan;
+        this.dateStartDevelop = dateStartDevelop;
+        this.laborDevelop = laborDevelop;
+        this.dateStartDebugPlan = dateStartDebugPlan;
+        this.dateStartDebug = dateStartDebug;
+        this.dateStartReleasePlan = dateStartReleasePlan;
+        this.dateStartRelease = dateStartRelease;
+        this.laborDebug = laborDebug;
+        this.release = release;
+        this.issuingReleasePlan = issuingReleasePlan;
+        this.issuingReleaseFact = issuingReleaseFact;
+        this.dateStartOPEPlan = dateStartOPEPlan;
+        this.dateStartOPE = dateStartOPE;
+        this.laborRelease = laborRelease;
+        this.dateStartWenderPlan = dateStartWenderPlan;
+        this.dateStartWender = dateStartWender;
+        this.laborOPE = laborOPE;
+        this.timeAnalise = timeAnalise;
+        this.timeDevelop = timeDevelop;
+        this.timeDebug = timeDebug;
+        this.timeRelease = timeRelease;
+        this.timeOPE = timeOPE;
+        this.timeWender = timeWender;
+        this.timePlan = 0f;
+        addTimePlan(laborDevelop);
+        addTimePlan(laborDebug);
+        addTimePlan(laborRelease);
+        addTimePlan(laborOPE);
+        this.timeFact = 0f;
+        addTimeFact(timeAnalise);
+        addTimeFact(timeDevelop);
+        addTimeFact(timeDebug);
+        addTimeFact(timeRelease);
+        addTimeFact(timeOPE);
+    }
 
-    public Integer getCodeSap() {
-        return codeSap;
+    public void addTimePlan(Float time ){
+        if (time != null){
+            timePlan = timePlan +time;
+        }
+    }
+    public void addTimeFact(Float time ){
+        if (time != null){
+            timeFact = timeFact +time;
+        }
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getCodeZI() {
@@ -66,16 +139,12 @@ public class WorkRepDto implements Serializable {
         return name;
     }
 
-    public String getTask() {
-        return task;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
     public Date getPlanDateStage0() {
         return planDateStage0;
+    }
+
+    public Date getFactDateStage0() {
+        return factDateStage0;
     }
 
     public Date getStartTaskPlan() {
@@ -86,20 +155,80 @@ public class WorkRepDto implements Serializable {
         return startTaskFact;
     }
 
+    public Date getDateStartDevelopPlan() {
+        return dateStartDevelopPlan;
+    }
+
+    public Date getDateStartDevelop() {
+        return dateStartDevelop;
+    }
+
     public Float getLaborDevelop() {
         return laborDevelop;
+    }
+
+    public Date getDateStartDebugPlan() {
+        return dateStartDebugPlan;
+    }
+
+    public Date getDateStartDebug() {
+        return dateStartDebug;
+    }
+
+    public Date getDateStartReleasePlan() {
+        return dateStartReleasePlan;
+    }
+
+    public Date getDateStartRelease() {
+        return dateStartRelease;
     }
 
     public Float getLaborDebug() {
         return laborDebug;
     }
 
+    public String getRelease() {
+        return release;
+    }
+
+    public Date getIssuingReleasePlan() {
+        return issuingReleasePlan;
+    }
+
+    public Date getIssuingReleaseFact() {
+        return issuingReleaseFact;
+    }
+
+    public Date getDateStartOPEPlan() {
+        return dateStartOPEPlan;
+    }
+
+    public Date getDateStartOPE() {
+        return dateStartOPE;
+    }
+
     public Float getLaborRelease() {
         return laborRelease;
     }
 
+    public Date getDateStartWenderPlan() {
+        return dateStartWenderPlan;
+    }
+
+    public Date getDateStartWender() {
+        return dateStartWender;
+    }
+
     public Float getLaborOPE() {
         return laborOPE;
+    }
+
+    public Float getTimePlan() {
+        return timePlan;
+    }
+
+    public Float getTimeFact() {
+        return timeFact;
     }
 
     public Float getTimeAnalise() {
@@ -125,50 +254,4 @@ public class WorkRepDto implements Serializable {
     public Float getTimeWender() {
         return timeWender;
     }
-
-    public Integer getStageZI() {
-        return stageZI;
-    }
-
-    public String getRelease() {
-        return release;
-    }
-
-    public Date getIssuingReleasePlan() {
-        return issuingReleasePlan;
-    }
-
-    public Date getIssuingReleaseFact() {
-        return issuingReleaseFact;
-    }
-
-    public WorkRepDto(Integer codeSap, String codeZI, String name, String task, String description, Date planDateStage0, Date startTaskPlan, Date startTaskFact, Float laborDevelop, Float laborDebug, Float laborRelease, Float laborOPE, Float timeAnalise, Float timeDevelop, Float timeDebug, Float timeRelease, Float timeOPE, Float timeWender, Integer stageZI, String release, Date issuingReleasePlan, Date issuingReleaseFact) {
-        this.codeSap = codeSap;
-        this.codeZI = codeZI;
-        this.name = name;
-        this.task = task;
-        this.description = description;
-        this.planDateStage0 = planDateStage0;
-        this.startTaskPlan = startTaskPlan;
-        this.startTaskFact = startTaskFact;
-        this.laborDevelop = laborDevelop;
-        this.laborDebug = laborDebug;
-        this.laborRelease = laborRelease;
-        this.laborOPE = laborOPE;
-        this.timeAnalise = timeAnalise;
-        this.timeDevelop = timeDevelop;
-        this.timeDebug = timeDebug;
-        this.timeRelease = timeRelease;
-        this.timeOPE = timeOPE;
-        this.timeWender = timeWender;
-        this.stageZI = stageZI;
-        this.release = release;
-        this.issuingReleasePlan = issuingReleasePlan;
-        this.issuingReleaseFact = issuingReleaseFact;
-    }
-
-    public WorkRepDto() {
-    }
-
-
 }

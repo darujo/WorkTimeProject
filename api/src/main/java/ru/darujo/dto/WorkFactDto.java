@@ -8,6 +8,7 @@ public class WorkFactDto implements Serializable {
     private Integer num;
     private String codeZi;
     private String name;
+    private Integer userCol;
     private String userName;
 // Разработка прототипа
     private Float timeAnalise;
@@ -26,6 +27,10 @@ public class WorkFactDto implements Serializable {
         return num;
     }
 
+    public Integer getUserCol() {
+        return userCol;
+    }
+
     public String getCodeZi() {
         return codeZi;
     }
@@ -34,7 +39,7 @@ public class WorkFactDto implements Serializable {
         return userName;
     }
 
-    public WorkFactDto(Integer num, String codeZi, String name, String userName, Float timeAnalise, Float timeDevelop, Float timeDebug, Float timeRelease, Float timeOPE, Float timeWender) {
+    public WorkFactDto(Integer num, String codeZi, String name,Integer userCol, String userName, Float timeAnalise, Float timeDevelop, Float timeDebug, Float timeRelease, Float timeOPE, Float timeWender) {
         this.num = num;
         this.codeZi = codeZi;
         this.name = name;

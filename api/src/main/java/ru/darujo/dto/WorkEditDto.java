@@ -11,21 +11,35 @@ public class WorkEditDto implements Serializable {
     private String codeZI;
     // Разработка прототипа
     private String name;
+    //начало разработки факт
     private Date dateStartDevelop;
-    // Стабилизация прототипа
+    //начало разработки план
+    private Date dateStartDevelopPlan;
+    // Стабилизация прототипа факт
     private Date dateStartDebug;
+    // Стабилизация прототипа план
+    private Date dateStartDebugPlan;
     // Стабилизация релиза
     private Date dateStartRelease;
+    // Стабилизация релиза
+    private Date dateStartReleasePlan;
     // ОПЭ релиза
     private Date dateStartOPE;
+    // ОПЭ релиза
+    private Date dateStartOPEPlan;
     // ВЕНДЕРКА
     private Date dateStartWender;
+    // ВЕНДЕРКА План
+    private Date dateStartWenderPlan;
     // № внутренней задачи (DEVBO)
     private String task;
     // Краткое описание внутренней задачи
     private String description;
     // Плановая дата завершения 0 этапа
     private Date planDateStage0;
+    // Плановая дата завершения 0 этапа
+    private Date factDateStage0;
+
     // Дата начала доработки План
     private Date startTaskPlan;
     // Дата начала доработки Факт
@@ -126,7 +140,7 @@ public class WorkEditDto implements Serializable {
         return issuingReleaseFact;
     }
 
-    public WorkEditDto(Long id,Integer codeSap,String codeZI, String name, Date dateStartDevelop, Date dateStartDebug, Date dateStartRelease, Date dateStartOPE, Date dateStartWender, String task, String description, Date planDateStage0, Date startTaskPlan, Date startTaskFact, Float laborDevelop, Float laborDebug, Float laborRelease, Float laborOPE, Integer stageZI, String release, Date issuingReleasePlan, Date issuingReleaseFact) {
+    public WorkEditDto(Long id,Integer codeSap,String codeZI, String name, Date dateStartDevelop, Date dateStartDevelopPlan, Date dateStartDebug, Date dateStartDebugPlan, Date dateStartRelease, Date dateStartReleasePlan, Date dateStartOPE, Date dateStartOPEPlan, Date dateStartWender, Date dateStartWenderPlan, String task, String description, Date planDateStage0, Date factDateStage0, Date startTaskPlan, Date startTaskFact, Float laborDevelop, Float laborDebug, Float laborRelease, Float laborOPE, Integer stageZI, String release, Date issuingReleasePlan, Date issuingReleaseFact) {
         this.id = id;
         this.codeSap = codeSap;
         this.codeZI =codeZI;
@@ -136,9 +150,16 @@ public class WorkEditDto implements Serializable {
         this.dateStartRelease = dateStartRelease;
         this.dateStartOPE = dateStartOPE;
         this.dateStartWender = dateStartWender;
+        this.dateStartDevelopPlan = dateStartDevelopPlan;
+        this.dateStartDebugPlan = dateStartDebugPlan;
+        this.dateStartReleasePlan = dateStartReleasePlan;
+        this.dateStartOPEPlan = dateStartOPEPlan;
+        this.dateStartWenderPlan = dateStartWenderPlan;
+
         this.task = task;
         this.description = description;
         this.planDateStage0 = planDateStage0;
+        this.factDateStage0 = factDateStage0;
         this.startTaskPlan = startTaskPlan;
         this.startTaskFact = startTaskFact;
         this.laborDevelop = laborDevelop;
@@ -161,5 +182,29 @@ public class WorkEditDto implements Serializable {
 
     public String getCodeZI() {
         return codeZI;
+    }
+
+    public Date getDateStartDevelopPlan() {
+        return dateStartDevelopPlan;
+    }
+
+    public Date getDateStartDebugPlan() {
+        return dateStartDebugPlan;
+    }
+
+    public Date getDateStartReleasePlan() {
+        return dateStartReleasePlan;
+    }
+
+    public Date getDateStartOPEPlan() {
+        return dateStartOPEPlan;
+    }
+
+    public Date getDateStartWenderPlan() {
+        return dateStartWenderPlan;
+    }
+
+    public Date getFactDateStage0() {
+        return factDateStage0;
     }
 }

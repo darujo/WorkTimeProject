@@ -18,34 +18,34 @@
     <h1>Список работ</h1>
     <table>
         <tr>
-            <td rowspan="3">№ п/п</td>
-            <td rowspan="3">№ ЗИ (ZI)</td>
-            <td rowspan="3">Наименование ЗИ</td>
-            <td rowspan="3">Исполнитель</td>
-            <td colspan="6">Трудозатраты, чел/час</td>
+            <td class="tablehead1" rowspan="3">№ п/п</td>
+            <td class="tablehead2" rowspan="3">№ ЗИ (ZI)</td>
+            <td class="tablehead1" rowspan="3">Наименование ЗИ</td>
+            <td class="tablehead2" rowspan="3">Исполнитель</td>
+            <td class="tablehead1" colspan="6">Трудозатраты, чел/час</td>
         </tr>
         <tr>
-            <td>0 этап Согласование требований</td>
-            <td>I этап Разработка прототипа</td>
-            <td>II этап Стабилизация прототипа</td>
-            <td>III этап Стабилизация релиза</td>
-            <td>IV этап ОПЭ релиза</td>
-            <td>V Вендерка</td>
+            <td class="tablehead1">0 этап Согласование требований</td>
+            <td class="tablehead2">I этап Разработка прототипа</td>
+            <td class="tablehead1">II этап Стабилизация прототипа</td>
+            <td class="tablehead2">III этап Стабилизация релиза</td>
+            <td class="tablehead1">IV этап ОПЭ релиза</td>
+            <td class="tablehead2">V Вендерка</td>
         </tr>
         <tr>
-            <td>Факт</td>
-            <td>Факт</td>
-            <td>Факт</td>
-            <td>Факт</td>
-            <td>Факт</td>
-            <td>Факт</td>
+            <td class="tablehead1">Факт</td>
+            <td class="tablehead2">Факт</td>
+            <td class="tablehead1">Факт</td>
+            <td class="tablehead2">Факт</td>
+            <td class="tablehead1">Факт</td>
+            <td class="tablehead2">Факт</td>
         </tr>
 
         <tbody>
         <tr ng-repeat="work in WorkTimeList">
             <td>{{work.num}}</td>
-            <td>{{work.codeZi}}</td>
-            <td>{{work.name}}</td>
+            <td rowspan="3" ng-if="work.codeZi != null">{{work.codeZi}}</td>
+            <td rowspan="3" ng-if="work.codeZi != null">{{work.name}}</td>
             <td>{{work.userName}}</td>
             <td>{{work.timeAnalise}}</td>
             <td>{{work.timeDevelop}}</td>
