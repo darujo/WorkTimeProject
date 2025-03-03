@@ -48,9 +48,9 @@ public class WorkTimeController {
     }
 
     @GetMapping("")
-    public Page<WorkTimeDto> findWorkTime(@RequestParam(required = false) String dateLeStr,
-                                          @RequestParam(required = false) String dateGtStr,
-                                          @RequestParam(required = false) String dateGeStr,
+    public Page<WorkTimeDto> findWorkTime(@RequestParam(required = false, name = "dateLe") String dateLeStr,
+                                          @RequestParam(required = false, name = "dateGt") String dateGtStr,
+                                          @RequestParam(required = false, name = "dateGe") String dateGeStr,
                                           @RequestParam(required = false) Long taskId,
                                           @RequestParam(required = false) String userName,
                                           @RequestParam(defaultValue = "1")Integer page,

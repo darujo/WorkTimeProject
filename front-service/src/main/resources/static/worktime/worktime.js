@@ -20,7 +20,6 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
         document.getElementById("FindTask").style.display = "block";
     };
 
-
     var Filt;
     $scope.loadWorkTime = function () {
         console.log("$location.TaskId " + $location.TaskId);
@@ -45,10 +44,12 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
                 document.getElementById("TaskId").value = Filt.taskId;
             }
             if (Filt.dateLe != null) {
-                document.getElementById("DateLe").value = Filt.dateLe;
+                console.log("Filt.dateLe");
+                console.log(Filt.dateLe);
+                document.getElementById("DateLe").valueAsDate = new Date(Filt.dateLe);
             }
             if (Filt.dateGe != null) {
-                document.getElementById("DateGe").value = Filt.dateGe;
+                document.getElementById("DateGe").valueAsDate = new Date(Filt.dateGe);
             }
         }
     }
@@ -227,6 +228,9 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
 
         showFindTask();
     }
+    console.log("Start");
     showWorkTime();
+    console.log("Show ok");
+
     $scope.loadWorkTime();
 })

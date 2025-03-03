@@ -1,12 +1,22 @@
 package ru.darujo.dto;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class WorkTimeDto implements Serializable {
+    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+    private String dateToText(Date date){
+        if (date == null){
+            return null;
+        }
+        return sdf.format(date);
+    }
     private Long id;
     private String userName;
     private Date workDate;
+    private String workDateStr;
+
     private float workTime;
     private Long taskId;
 
@@ -45,6 +55,9 @@ public class WorkTimeDto implements Serializable {
         return taskId;
     }
 
+    public String getWorkDateStr() {
+        return dateToText(workDate);
+    }
 //    public WorkTimeDto(Long id, String userName, Date workDate, Float workTime, Long workId) {
 //        this.id = id;
 //        this.userName = userName;
