@@ -100,6 +100,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         if ($localStorage.authUser) {
             return true;
         } else {
+            $location.path('/');
             return false;
         }
     };
