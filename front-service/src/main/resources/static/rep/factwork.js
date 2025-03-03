@@ -1,6 +1,6 @@
 angular.module('workTimeService').controller('workFactRepController', function ($scope, $http, $location, $localStorage) {
 
-    const constPatchWork = 'http://localhost:5555/work-service/v1';
+    const constPatchWork = 'http://178.20.40.174:5555/work-service/v1';
     // var showWorkTime = function () {
     //     document.getElementById("WorkTimeList").style.display = "block";
     //     document.getElementById("FormEdit").style.display = "none";

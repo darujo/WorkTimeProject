@@ -1,7 +1,7 @@
 angular.module('workTimeService').controller('worktimeController', function ($scope, $http, $location, $localStorage) {
 
-    const constPatchWorkTime = 'http://localhost:5555/worktime-service/v1';
-    const constPatchTask = 'http://localhost:5555/task-service/v1';
+    const constPatchWorkTime = 'http://178.20.40.174:5555/worktime-service/v1';
+    const constPatchTask = 'http://178.20.40.174:5555/task-service/v1';
 
     var showWorkTime = function () {
         document.getElementById("WorkTimeList").style.display = "block";
