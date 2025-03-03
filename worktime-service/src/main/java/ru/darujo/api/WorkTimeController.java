@@ -73,6 +73,9 @@ public class WorkTimeController {
                              @RequestParam(required = false, name = "dateGt") String dateGtStr) {
        Date dateLe = stringToDate(dateLeStr,"dateLe = ");
        Date dateGt = stringToDate(dateGtStr,"dateGt = ");
+       if(dateLe == null && dateGt == null ){
+           return 0f;
+       }
        return workTimeService.getTimeWork(taskId,userName, dateLe, dateGt);
     }
 
