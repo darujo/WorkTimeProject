@@ -6,7 +6,7 @@ import java.util.Date;
 public class WorkEditDto implements Serializable {
     private Long id;
     // Код SAP
-    private Integer codeSap;
+    private Long codeSap;
     // Код Зи
     private String codeZI;
     // Разработка прототипа
@@ -140,7 +140,7 @@ public class WorkEditDto implements Serializable {
         return issuingReleaseFact;
     }
 
-    public WorkEditDto(Long id,Integer codeSap,String codeZI, String name, Date dateStartDevelop, Date dateStartDevelopPlan, Date dateStartDebug, Date dateStartDebugPlan, Date dateStartRelease, Date dateStartReleasePlan, Date dateStartOPE, Date dateStartOPEPlan, Date dateStartWender, Date dateStartWenderPlan, String task, String description, Date planDateStage0, Date factDateStage0, Date startTaskPlan, Date startTaskFact, Float laborDevelop, Float laborDebug, Float laborRelease, Float laborOPE, Integer stageZI, String release, Date issuingReleasePlan, Date issuingReleaseFact) {
+    public WorkEditDto(Long id,Long codeSap,String codeZI, String name, Date dateStartDevelop, Date dateStartDevelopPlan, Date dateStartDebug, Date dateStartDebugPlan, Date dateStartRelease, Date dateStartReleasePlan, Date dateStartOPE, Date dateStartOPEPlan, Date dateStartWender, Date dateStartWenderPlan, String task, String description, Date planDateStage0, Date factDateStage0, Date startTaskPlan, Date startTaskFact, Float laborDevelop, Float laborDebug, Float laborRelease, Float laborOPE, Integer stageZI, String release, Date issuingReleasePlan, Date issuingReleaseFact) {
         this.id = id;
         this.codeSap = codeSap;
         this.codeZI =codeZI;
@@ -176,7 +176,7 @@ public class WorkEditDto implements Serializable {
     }
 
 
-    public Integer getCodeSap() {
+    public Long getCodeSap() {
         return codeSap;
     }
 

@@ -19,7 +19,7 @@ public class Work {
     private Long id;
     // Код SAP
     @Column(name = "codeSap")
-    private Integer codeSap;
+    private Long codeSap;
     // Код Зи
     @Column(name = "codeZI")
     private String codeZI;

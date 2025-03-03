@@ -54,14 +54,16 @@ angular.module('workTimeService').controller('workController', function ($scope,
         document.getElementById("CodeZI").value = "";
 
         document.getElementById("WorkName").value = "";
-        console.log("сбрасываем значения 1")
         document.getElementById("StartDevelop").value = null;
-        console.log("сбрасываем значения 2")
         document.getElementById("StartDebug").value = "";
         document.getElementById("StartRelease").value = "";
         document.getElementById("StartOPE").value = "";
         document.getElementById("StartWender").value = "";
-        console.log("сбрасываем значения 3")
+        document.getElementById("StartDevelopPlan").value = null;
+        document.getElementById("StartDebugPlan").value = "";
+        document.getElementById("StartReleasePlan").value = "";
+        document.getElementById("StartOPEPlan").value = "";
+        document.getElementById("StartWenderPlan").value = "";
         if (typeof $scope.Work != "undefined") {
             $scope.Work.id = null;
         }
@@ -71,6 +73,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
         document.getElementById("Description").value = "";
         // Плановая дата завершения 0 этапа
         document.getElementById("PlanDateStage0").value = "";
+        document.getElementById("FactDateStage0").value = "";
         // Дата начала доработки План
         document.getElementById("StartTaskPlan").value = "";
         // Дата начала доработки Факт
@@ -118,6 +121,19 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 response.data.dateStartOPE = document.getElementById("StartOPE").valueAsDate;
                 document.getElementById("StartWender").valueAsDate = new Date( response.data.dateStartWender );
                 response.data.dateStartWender =document.getElementById("StartWender").valueAsDate;
+
+                document.getElementById("StartDevelopPlan").valueAsDate = new Date( response.data.dateStartDevelopPlan);
+                response.data.dateStartDevelopPlan = document.getElementById("StartDevelopPlan").valueAsDate;
+                console.log(response.data.dateStartDevelopPlan);
+                document.getElementById("StartDebugPlan").valueAsDate = new Date( response.data.dateStartDebugPlan );
+                response.data.dateStartDebugPlan = document.getElementById("StartDebugPlan").valueAsDate;
+                document.getElementById("StartReleasePlan").valueAsDate = new Date( response.data.dateStartReleasePlan );
+                response.data.dateStartReleasPlan = document.getElementById("StartReleasePlan").valueAsDate;
+                document.getElementById("StartOPEPlan").valueAsDate = new Date( response.data.dateStartOPEPlan );
+                response.data.dateStartOPEPlan = document.getElementById("StartOPEPlan").valueAsDate;
+                document.getElementById("StartWenderPlan").valueAsDate = new Date( response.data.dateStartWenderPlan );
+                response.data.dateStartWenderPlan =document.getElementById("StartWenderPlan").valueAsDate;
+
                 // № внутренней задачи (DEVBO)
                 document.getElementById("Task").value = response.data.task;
                 // Краткое описание внутренней задачи
@@ -125,6 +141,8 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 // Плановая дата завершения 0 этапа
                 document.getElementById("PlanDateStage0").valueAsDate = new Date(response.data.planDateStage0);
                 response.data.planDateStage0 = document.getElementById("PlanDateStage0").valueAsDate;
+                document.getElementById("FactDateStage0").valueAsDate = new Date(response.data.factDateStage0);
+                response.data.factDateStage0 = document.getElementById("FactDateStage0").valueAsDate;
                 // Дата начала доработки План
                 document.getElementById("StartTaskPlan").valueAsDate = new Date(response.data.startTaskPlan);
                 response.data.startTaskPlan = document.getElementById("StartTaskPlan").valueAsDate;

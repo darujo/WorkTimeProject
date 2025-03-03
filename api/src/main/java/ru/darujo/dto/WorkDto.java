@@ -7,7 +7,7 @@ import java.util.Date;
 public class WorkDto implements Serializable {
     final private Long id;
     // Код SAP
-    final private Integer codeSap;
+    final private Long codeSap;
     // Код Зи
     final private String codeZI;
     // Разработка прототипа
@@ -126,7 +126,7 @@ public class WorkDto implements Serializable {
         return dateToText(issuingReleaseFact);
     }
 
-    public WorkDto(Long id, Integer codeSap, String codeZI, String name, Date dateStartDevelop, Date dateStartDebug, Date dateStartRelease, Date dateStartOPE, Date dateStartWender, String task, String description, Date planDateStage0, Date startTaskPlan, Date startTaskFact, Float laborDevelop, Float laborDebug, Float laborRelease, Float laborOPE, Integer stageZI, String release, Date issuingReleasePlan, Date issuingReleaseFact) {
+    public WorkDto(Long id, Long codeSap, String codeZI, String name, Date dateStartDevelop, Date dateStartDebug, Date dateStartRelease, Date dateStartOPE, Date dateStartWender, String task, String description, Date planDateStage0, Date startTaskPlan, Date startTaskFact, Float laborDevelop, Float laborDebug, Float laborRelease, Float laborOPE, Integer stageZI, String release, Date issuingReleasePlan, Date issuingReleaseFact) {
         this.id = id;
         this.codeSap = codeSap;
         this.codeZI =codeZI;
@@ -151,7 +151,7 @@ public class WorkDto implements Serializable {
         this.issuingReleaseFact = issuingReleaseFact;
     }
 
-    public Integer getCodeSap() {
+    public Long getCodeSap() {
         return codeSap;
     }
 

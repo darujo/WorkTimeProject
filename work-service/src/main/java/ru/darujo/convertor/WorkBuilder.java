@@ -10,7 +10,7 @@ import java.util.Date;
 public class WorkBuilder {
     private Long id;
     // Код SAP
-    private Integer codeSap;
+    private Long codeSap;
     // Код Зи
     private String codeZI;
     // Наименование
@@ -134,7 +134,7 @@ public class WorkBuilder {
         return this;
     }
 
-    public WorkBuilder setCodeSap(Integer codeSap) {
+    public WorkBuilder setCodeSap(Long codeSap) {
         this.codeSap = codeSap;
         return this;
     }

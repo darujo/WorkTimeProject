@@ -131,7 +131,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
         // else {
            console.log("создаем 5");
         $scope.Task.id = null;
-        $scope.Task.workId = document.getElementById("WorkId").value;
+        $scope.Task.workId = document.getElementById("WorkIdFilt").value;
         $scope.Task.codeBTS = null;
         $scope.Task.codeDEVBO = null;
         $scope.Task.userName = null;
