@@ -5,48 +5,49 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class WorkDto implements Serializable {
-    final private Long id;
+
+    private Long id;
     // Код SAP
-    final private Long codeSap;
+    private Long codeSap;
     // Код Зи
-    final private String codeZI;
+    private String codeZI;
     // Разработка прототипа
-    final private String name;
-    final private Date dateStartDevelop;
+    private String name;
+    private Date dateStartDevelop;
     // Стабилизация прототипа
-    final private Date dateStartDebug;
+    private Date dateStartDebug;
     // Стабилизация релиза
-    final private Date dateStartRelease;
+    private Date dateStartRelease;
     // ОПЭ релиза
-    final private Date dateStartOPE;
+    private Date dateStartOPE;
     // ВЕНДЕРКА
-    final private Date dateStartWender;
+    private Date dateStartWender;
     // № внутренней задачи (DEVBO)
-    final private String task;
+    private String task;
     // Краткое описание внутренней задачи
-    final private String description;
+    private String description;
     // Плановая дата завершения 0 этапа
-    final private Date planDateStage0;
+    private Date planDateStage0;
     // Дата начала доработки План
-    final private Date startTaskPlan;
+    private Date startTaskPlan;
     // Дата начала доработки Факт
-    final private Date startTaskFact;
+    private Date startTaskFact;
     // Плановые трудозатраты, чел/час Разработка прототипа
-    final private Float laborDevelop;
+    private Float laborDevelop;
     // Плановые трудозатраты, чел/час Стабилизация прототипа
-    final private Float laborDebug;
+    private Float laborDebug;
     // Плановые трудозатраты, чел/час Стабилизация релиза
-    final private Float laborRelease;
+    private Float laborRelease;
     // Плановые трудозатраты, чел/час ОПЭ
-    final private Float laborOPE;
+    private Float laborOPE;
     // Текущий этап ЗИ
-    final private Integer stageZI;
+    private Integer stageZI;
     // Порядковый номер релиза
-    final private String release;
+    private String release;
     // Выдача релиза даты План
-    final private Date issuingReleasePlan;
+    private Date issuingReleasePlan;
     // Выдача релиза дата факт
-    final private Date issuingReleaseFact;
+    private Date issuingReleaseFact;
 
 
     public Long getId() {
@@ -124,6 +125,8 @@ public class WorkDto implements Serializable {
 
     public String getIssuingReleaseFact() {
         return dateToText(issuingReleaseFact);
+    }
+    public WorkDto() {
     }
 
     public WorkDto(Long id, Long codeSap, String codeZI, String name, Date dateStartDevelop, Date dateStartDebug, Date dateStartRelease, Date dateStartOPE, Date dateStartWender, String task, String description, Date planDateStage0, Date startTaskPlan, Date startTaskFact, Float laborDevelop, Float laborDebug, Float laborRelease, Float laborOPE, Integer stageZI, String release, Date issuingReleasePlan, Date issuingReleaseFact) {

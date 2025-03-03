@@ -22,7 +22,7 @@ public class TaskServiceIntegration {
         this.webClientWork = webClientWork;
     }
 
-    public Float getTimeWork(Long workID, String userName, Date dateLE, Date dateGT) {
+    public Float getTimeWork(Long workID, String userName, Date dateGT, Date dateLE) {
         StringBuilder stringBuilder = new StringBuilder();
         if (stringBuilder.length() == 0) {
             stringBuilder.append("?");
