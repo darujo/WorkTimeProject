@@ -50,50 +50,36 @@ angular.module('workTimeService').controller('workController', function ($scope,
     $scope.createWork = function () {
         WorkIdEdit = null;
         console.log("сбрасываем значения");
-        document.getElementById("CodeSap").value = "";
-        document.getElementById("CodeZI").value = "";
+        $scope.Work = {
+            codeZI: "",
+            codeSap: "",
+            WorkName: "",
+            dateStartDevelop: null,
+            dateStartDebug: null,
+            dateStartRelease: null,
+            dateStartOPE: null,
+            dateStartWender: null,
+            dateStartDevelopPlan: null,
+            dateStartDebugPlan: null,
+            dateStartReleasePlan: null,
+            dateStartOPEPlan: null,
+            dateStartWenderPlan: null,
+            task: "",
+            description: "",
+            planDateStage0: null,
+            factDateStage0: null,
+            startTaskPlan: null,
+            startTaskFact: null,
+            laborDevelop: null,
+            laborDebug: null,
+            laborRelease: null,
+            laborOPE: null,
+            stageZI: 0,
+            release: 0,
+            issuingReleasePlan: null,
+            issuingReleaseFact: null
 
-        document.getElementById("WorkName").value = "";
-        document.getElementById("StartDevelop").value = null;
-        document.getElementById("StartDebug").value = "";
-        document.getElementById("StartRelease").value = "";
-        document.getElementById("StartOPE").value = "";
-        document.getElementById("StartWender").value = "";
-        document.getElementById("StartDevelopPlan").value = null;
-        document.getElementById("StartDebugPlan").value = "";
-        document.getElementById("StartReleasePlan").value = "";
-        document.getElementById("StartOPEPlan").value = "";
-        document.getElementById("StartWenderPlan").value = "";
-        if (typeof $scope.Work != "undefined") {
-            $scope.Work.id = null;
-        }
-        // № внутренней задачи (DEVBO)
-        document.getElementById("Task").value = "";
-        // Краткое описание внутренней задачи
-        document.getElementById("Description").value = "";
-        // Плановая дата завершения 0 этапа
-        document.getElementById("PlanDateStage0").value = "";
-        document.getElementById("FactDateStage0").value = "";
-        // Дата начала доработки План
-        document.getElementById("StartTaskPlan").value = "";
-        // Дата начала доработки Факт
-        document.getElementById("StartTaskFact").value = "";
-        // Плановые трудозатраты, чел/час Разработка прототипа
-        document.getElementById("LaborDevelop").value = 0;
-        // Плановые трудозатраты, чел/час Стабилизация прототипа
-        document.getElementById("LaborDebug").value = 0;
-        // Плановые трудозатраты, чел/час Стабилизация релиза
-        document.getElementById("LaborRelease").value = 0;
-        // Плановые трудозатраты, чел/час ОПЭ
-        document.getElementById("LaborOPE").value = 0;
-        // Текущий этап ЗИ
-        document.getElementById("StageZI").value = 0;
-        // Порядковый номер релиза
-        document.getElementById("Release").value = 0;
-        // Выдача релиза даты План
-        document.getElementById("IssuingReleasePlan").value = "";
-        // Выдача релиза дата факт
-        document.getElementById("IssuingReleaseFact").value = "";
+        };
         console.log("сбрасываем значения 4")
         showFormEdit();
 
@@ -103,70 +89,32 @@ angular.module('workTimeService').controller('workController', function ($scope,
         $http.get(constPatchWork + "/works/" + workId)
             .then(function (response) {
                 console.log("получили");
+                showFormEdit();
                 WorkIdEdit = response.data.id;
                 $scope.Work = response.data;
                 console.log($scope.Work);
-                document.getElementById("CodeSap").value = response.data.codeSap;
-                document.getElementById("CodeZI").value = response.data.codeZI;
+                $scope.Work.dateStartDevelop = new Date(response.data.dateStartDevelop);
+                $scope.Work.dateStartDebug = new Date(response.data.dateStartDebug);
+                $scope.Work.dateStartRelease = new Date( response.data.dateStartRelease );
+                $scope.Work.dateStartOPE = new Date( response.data.dateStartOPE );
+                $scope.Work.dateStartWender = new Date( response.data.dateStartWender );
+                $scope.Work.dateStartDevelopPlan = new Date( response.data.dateStartDevelopPlan );
+                $scope.Work.dateStartDebugPlan = new Date( response.data.dateStartDebugPlan );
+                $scope.Work.dateStartReleasePlan = new Date( response.data.dateStartReleasePlan );
+                $scope.Work.dateStartOPEPlan = new Date( response.data.dateStartOPEPlan );
+                $scope.Work.dateStartWenderPlan = new Date( response.data.dateStartWenderPlan );
 
-                document.getElementById("WorkName").value = response.data.name;
-                document.getElementById("StartDevelop").valueAsDate = new Date( response.data.dateStartDevelop);
-                response.data.dateStartDevelop = document.getElementById("StartDevelop").valueAsDate;
-                console.log(response.data.dateStartDevelop);
-                document.getElementById("StartDebug").valueAsDate = new Date( response.data.dateStartDebug );
-                response.data.dateStartDebug = document.getElementById("StartDebug").valueAsDate;
-                document.getElementById("StartRelease").valueAsDate = new Date( response.data.dateStartRelease );
-                response.data.dateStartReleas = document.getElementById("StartRelease").valueAsDate;
-                document.getElementById("StartOPE").valueAsDate = new Date( response.data.dateStartOPE );
-                response.data.dateStartOPE = document.getElementById("StartOPE").valueAsDate;
-                document.getElementById("StartWender").valueAsDate = new Date( response.data.dateStartWender );
-                response.data.dateStartWender =document.getElementById("StartWender").valueAsDate;
-
-                document.getElementById("StartDevelopPlan").valueAsDate = new Date( response.data.dateStartDevelopPlan);
-                response.data.dateStartDevelopPlan = document.getElementById("StartDevelopPlan").valueAsDate;
-                console.log(response.data.dateStartDevelopPlan);
-                document.getElementById("StartDebugPlan").valueAsDate = new Date( response.data.dateStartDebugPlan );
-                response.data.dateStartDebugPlan = document.getElementById("StartDebugPlan").valueAsDate;
-                document.getElementById("StartReleasePlan").valueAsDate = new Date( response.data.dateStartReleasePlan );
-                response.data.dateStartReleasPlan = document.getElementById("StartReleasePlan").valueAsDate;
-                document.getElementById("StartOPEPlan").valueAsDate = new Date( response.data.dateStartOPEPlan );
-                response.data.dateStartOPEPlan = document.getElementById("StartOPEPlan").valueAsDate;
-                document.getElementById("StartWenderPlan").valueAsDate = new Date( response.data.dateStartWenderPlan );
-                response.data.dateStartWenderPlan =document.getElementById("StartWenderPlan").valueAsDate;
-
-                // № внутренней задачи (DEVBO)
-                document.getElementById("Task").value = response.data.task;
-                // Краткое описание внутренней задачи
-                document.getElementById("Description").value = response.data.description;
                 // Плановая дата завершения 0 этапа
-                document.getElementById("PlanDateStage0").valueAsDate = new Date(response.data.planDateStage0);
-                response.data.planDateStage0 = document.getElementById("PlanDateStage0").valueAsDate;
-                document.getElementById("FactDateStage0").valueAsDate = new Date(response.data.factDateStage0);
-                response.data.factDateStage0 = document.getElementById("FactDateStage0").valueAsDate;
+                $scope.Work.planDateStage0 = new Date(response.data.planDateStage0);
+                $scope.Work.factDateStage0 = new Date(response.data.factDateStage0);
                 // Дата начала доработки План
-                document.getElementById("StartTaskPlan").valueAsDate = new Date(response.data.startTaskPlan);
-                response.data.startTaskPlan = document.getElementById("StartTaskPlan").valueAsDate;
+                $scope.Work.startTaskPlan = new Date(response.data.startTaskPlan);
                 // Дата начала доработки Факт
-                document.getElementById("StartTaskFact").valueAsDate = new Date(response.data.startTaskFact);
-                response.data.startTaskFact = document.getElementById("StartTaskFact").valueAsDate;
-                // Плановые трудозатраты, чел/час Разработка прототипа
-                document.getElementById("LaborDevelop").value = response.data.laborDevelop;
-                // Плановые трудозатраты, чел/час Стабилизация прототипа
-                document.getElementById("LaborDebug").value = response.data.laborDebug;
-                // Плановые трудозатраты, чел/час Стабилизация релиза
-                document.getElementById("LaborRelease").value = response.data.laborRelease;
-                // Плановые трудозатраты, чел/час ОПЭ
-                document.getElementById("LaborOPE").value = response.data.laborOPE;
-                // Текущий этап ЗИ
-                document.getElementById("StageZI").selectedIndex = response.data.stageZI;
-                // Порядковый номер релиза
-                document.getElementById("Release").value = response.data.release;
+                $scope.Work.startTaskFact = new Date(response.data.startTaskFact);
                 // Выдача релиза даты План
-                document.getElementById("IssuingReleasePlan").valueAsDate = new Date(response.data.issuingReleasePlan);
-                response.data.issuingReleasePlan = document.getElementById("IssuingReleasePlan").valueAsDate;
+                $scope.Work.issuingReleasePlan = new Date(response.data.issuingReleasePlan);
                 // Выдача релиза дата факт
-                document.getElementById("IssuingReleaseFact").valueAsDate = new Date(response.data.issuingReleaseFact);
-                response.data.issuingReleaseFact = document.getElementById("IssuingReleaseFact").valueAsDate;
+                $scope.Work.issuingReleaseFact = new Date(response.data.issuingReleaseFact);
 
                 showFormEdit();
             });
@@ -192,20 +140,8 @@ angular.module('workTimeService').controller('workController', function ($scope,
     $scope.addTime = function (workId){
         console.log("Другая");
         $location.WorkId = workId;
-        // $location.path('/worktime');
-        //window.open('#!/worktime',"_self");
         window.open('#!/task',"_parent");
-        // console.log("Другая 2");
-        // window.open('#!/worktime',"_self");
-        // console.log("Другая 3");
     }
-    //_self, _blank, _parent, _top.
-    // window.onload = function() {
-    //     document.getElementById('myLinkId').addEventListener('click', function(event) {
-    //         event.preventDefault();
-    //         // Функционал обработки клика
-    //     });
-    // };
     showWork();
     $scope.loadWork();
 })

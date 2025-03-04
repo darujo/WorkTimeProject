@@ -37,12 +37,6 @@ angular.module('workTimeService').controller('taskController', function ($scope,
             if (Filt.workId != null) {
                 document.getElementById("WorkIdEdit").value = Filt.workId;
             }
-            // if (Filt.dateLe != null) {
-    //             document.getElementById("DateLe").value = Filt.dateLe;
-    //         }
-    //         if (Filt.dateGe != null) {
-    //             document.getElementById("DateGe").value = Filt.dateGe;
-    //         }
         }
     }
 
@@ -58,8 +52,6 @@ angular.module('workTimeService').controller('taskController', function ($scope,
             params: {
                 page: page,
                 size: 10,
-                // dateLe: Filt ? Filt.dateLe : null,
-                // dateGe: Filt ? Filt.dateGe : null,
                 workId: Filt ? Filt.workId : null,
                 codeBTS: Filt ? Filt.bts : null,
                 codeDEVBO: Filt ? Filt.devbo : null,
@@ -67,11 +59,6 @@ angular.module('workTimeService').controller('taskController', function ($scope,
                 ziName: Filt ? Filt.ziName : null
 
             }
-            // ,
-            // data:
-            //     Filt
-
-
         }).then(function (response) {
             console.log("sssssss");
             $scope.setFormTask();
@@ -89,13 +76,6 @@ angular.module('workTimeService').controller('taskController', function ($scope,
             }
             showTask();
             }
-        , function errorCallback(response) {
-            console.log(response);
-            if(response.status = 401){
-
-            }
-
-        }
         );
 
     };
@@ -113,34 +93,19 @@ angular.module('workTimeService').controller('taskController', function ($scope,
         document.getElementById("TaskIdEdit").value = null;
         console.log("создаем 1");
         console.log(typeof $scope.Task);
-        if (typeof $scope.Task == "undefined") {
-            // $scope.WorkTime = {id : null, workId : document.getElementById("WorkId").value, workDate: document.getElementById("WorkTimeDate").valueAsDate };
-            $scope.Task = {
-                id : null,
-                workId : null,
-                codeBTS: null,
-                userName :null,
-                codeDEVBO:null,
-                description: null,
-                type: null
-            };
+        $scope.Task = {
+            id : null,
+            workId : null,
+            codeBTS: null,
+            userName :null,
+            codeDEVBO:null,
+            description: null,
+            type: 1
+        };
             // $scope
-            console.log($scope.Task);
-            console.log("создаем 6");
-        }
-        // else {
-           console.log("создаем 5");
-        $scope.Task.id = null;
+        console.log($scope.Task);
+        console.log("создаем 5");
         $scope.Task.workId = document.getElementById("WorkIdFilt").value;
-        $scope.Task.codeBTS = null;
-        $scope.Task.codeDEVBO = null;
-        $scope.Task.userName = null;
-        $scope.Task.description = null;
-        $scope.Task.type = 1;
-
-        // }
-
-
         console.log("создаем 3");
 
         showFormEdit();
@@ -155,14 +120,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
                 $scope.Task = response.data;
                 console.log($scope.Task);
 
-                // document.getElementById("WorkTimeDate").valueAsDate = new Date(response.data.workDate);
-                // console.log("eeee 1");
-                // response.data.workDate = document.getElementById("WorkTimeDate").value.
-                // $scope.Task.workDate = document.getElementById("WorkTimeDate").valueAsDate;
-                // console.log("eeee 3")
-                // document.getElementById("WorkTimeTime").value = response.data.workTime;
-                // console.log("eeee 4")
-
+                $scope.Task.workDate = new Date(response.data.workDate);
                 showFormEdit();
             });
     };
@@ -181,22 +139,14 @@ angular.module('workTimeService').controller('taskController', function ($scope,
             .then(function (response) {
                 $scope.loadTask();
             }, function errorCallback(response) {
-                // console.log(response);
                 console.log(response.data);
-                // console.log(response.config);
-
                 alert(response.data.message);
             });
     }
     $scope.addTime = function (taskId){
         console.log("Другая");
         $location.TaskId = taskId;
-        // $location.path('/worktime');
-        //window.open('#!/worktime',"_self");
-        // window.open('#!/task',"_parent");
-        // console.log("Другая 2");
         window.open('#!/worktime',"_self");
-        // console.log("Другая 3");
     }
     console.log("start");
     showTask();
