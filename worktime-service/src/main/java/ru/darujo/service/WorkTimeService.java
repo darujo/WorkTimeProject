@@ -100,7 +100,7 @@ public class WorkTimeService {
             throw new ResourceNotFoundException("Не удалось вас опознать пожалуста авторизуйтесь");
         }
         if (workTime.getComment() == null || workTime.getComment().equals("")){
-            throw new ResourceNotFoundException("Не удалось вас опознать пожалуста авторизуйтесь");
+            throw new ResourceNotFoundException("Не задан комментарий");
         }
     }
 }
