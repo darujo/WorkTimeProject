@@ -184,13 +184,13 @@
                                                                  ng-model="Work.laborOPE"/>
     <br>
     Текущий этап ЗИ : <select class="vvod" name="choice" id="StageZI" ng-model="Work.stageZI">
-      <option value="0"selected>0</option>
-      <option value="1" >I</option>
-      <option value="2">II</option>
-      <option value="3">III</option>
-      <option value="4">IV</option>
-      <option value="5">V</option>
-      <option value="6">END</option>
+      <option ng-value="0" value="0" selected>0</option>
+      <option ng-value="1" value="1" >I</option>
+      <option ng-value="2" value="2">II</option>
+      <option ng-value="3" value="3">III</option>
+      <option ng-value="4" value="4">IV</option>
+      <option ng-value="5" value="5">V</option>
+      <option ng-value="6" value="6">END</option>
     </select>
     <br>
     Порядковый номер релиза : <input class="vvod" type="text" id="Release" placeholder="Ведите номер релиза"

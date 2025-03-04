@@ -33,7 +33,7 @@
         </div>
       </div>
     </form>
-    <button class="headbutton" ng-click="createTask()">Добавить время</button>
+    <button class="headbutton" ng-click="createTask()">Создать задачу</button>
   </div>
   <div class="filter">
     <button class="headbutton" ng-click="findPage(-1)">PrevPage</button>
@@ -93,9 +93,10 @@
                              ng-model="Task.description"/>
 
     <br>
-    <select name="choice" id="Type" ng-model="Task.type">
-      <option value="1"selected>ЗИ</option>
-      <option value="2" >Вендерка</option>
+    Тип задачи :
+    <select class="vvod" name="choice" id="Type" ng-model="Task.type">
+      <option ng-value="1" value="1" selected>ЗИ</option>
+      <option ng-value="2" value="2" >Вендерка</option>
     </select>
     <br>
     Код Зи <input class="vvod" type="number" step="1" id="WorkIdEdit"

@@ -70,9 +70,6 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
                 taskId: Filt ? Filt.taskId : null
 
             }
-            // ,
-            // data:
-            //     Filt
 
 
         }).then(function (response) {
@@ -100,32 +97,15 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
         showTaskNum();
         WorkTimeIdEdit = null;
         console.log("создаем");
-        document.getElementById("TaskIdEdit").value = parseInt(document.getElementById("TaskId").value);
-        document.getElementById("WorkTimeDate").valueAsDate = new Date();
-        console.log("создаем 1");
-        document.getElementById("WorkTimeTime").value = parseInt( "0");
-        console.log("создаем 2");
-        console.log(typeof $scope.WorkTime);
-        if (typeof $scope.WorkTime == "undefined") {
-            // $scope.WorkTime = {id : null, taskId : document.getElementById("TaskId").value, workDate: document.getElementById("WorkTimeDate").valueAsDate };
-            $scope.WorkTime = {
-                id : null,
-                taskId : null,
-                workDate: null,
-                userName :null,
-                workTime:null };
+        $scope.WorkTime = {
+            id : null,
+            taskId : document.getElementById("TaskId").value,
+            workDate: new Date(),
+            userName :null,
+            workTime: parseInt("0") };
             // $scope
-            console.log($scope.WorkTime);
-            console.log("создаем 6");
-        }
-        // else {
-           console.log("создаем 5");
-        $scope.WorkTime.id = null;
-        $scope.WorkTime.taskId = document.getElementById("TaskId").value;
-        $scope.WorkTime.workDate = document.getElementById("WorkTimeDate").valueAsDate;
-        $scope.WorkTime.workTime = parseInt("0");
-        $scope.WorkTime.userName = null;
-        // }
+        console.log($scope.WorkTime);
+        console.log("создаем 6");
         console.log("создаем 3");
 
         showFormEdit();
@@ -141,13 +121,8 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
                 $scope.WorkTime = response.data;
                 console.log($scope.WorkTime);
 
-                document.getElementById("WorkTimeDate").valueAsDate = new Date(response.data.workDate);
-                console.log("eeee 1");
-                // response.data.workDate = document.getElementById("WorkTimeDate").value.
-                $scope.WorkTime.workDate = document.getElementById("WorkTimeDate").valueAsDate;
+                $scope.WorkTime.workDate = new Date(response.data.workDate);
                 console.log("eeee 3")
-                document.getElementById("WorkTimeTime").value = response.data.workTime;
-                console.log("eeee 4")
 
                 showFormEdit();
             });
@@ -166,9 +141,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
             .then(function (response) {
                 $scope.loadWorkTime();
             }, function errorCallback(response) {
-                // console.log(response);
                 console.log(response.data);
-                // console.log(response.config);
 
                 alert(response.data.message);
             });
@@ -185,8 +158,6 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
             params: {
                 page: page,
                 size: 10,
-                // dateLe: Filt ? Filt.dateLe : null,
-                // dateGe: Filt ? Filt.dateGe : null,
                 workId: FiltTask ? FiltTask.workId : null,
                 codeBTS: FiltTask ? FiltTask.bts : null,
                 codeDEVBO: FiltTask ? FiltTask.devbo : null,
@@ -194,11 +165,6 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
                 ziName: FiltTask ? FiltTask.ziName : null
 
             }
-            // ,
-            // data:
-            //     Filt
-
-
         }).then(function (response) {
             console.log("sssssss");
             // $scope.setFormTask();
