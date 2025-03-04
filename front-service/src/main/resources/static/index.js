@@ -76,6 +76,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                     $location.path('/');
                 }
             }, function errorCallback(response) {
+                console.log(response);
                 alert("Не удалось авторизоваться")
             });
     };
@@ -105,6 +106,36 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         }
     };
 
+    $location.checkAuthorized= function (response){
+        console.log("response.status");
+        console.log(response.status);
+        if(parseInt(response.status) == 401){
+            checkToken("Вы не авторизованы");
+            $scope.tryToLogout();
+            return false;
+        }
+        return true;
 
+    }
+    var checkToken = function (message){
+        if ($localStorage.authUser){
+            $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.authUser.token;
+            try {
+                let jwt = $localStorage.authUser.token;
+                let payLoad = JSON.parse(atob(jwt.split(".")[1]));
+                let currTime = parseInt(new Date().getTime() / 1000);
+                if(currTime > payLoad.exp){
+                    alert("Токен просрочен авторизуйтесь заново.");
+                    delete $localStorage.authUser;
+                    $http.defaults.headers.common.Authorization = '';
+                }
+                else {
+                    alert(message);
+                }
+            }
+            catch (e){
 
+            }
+        }
+    }
 })

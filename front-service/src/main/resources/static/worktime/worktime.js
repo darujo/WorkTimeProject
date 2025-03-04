@@ -83,6 +83,13 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
             $scope.WorkTimeList = response.data.content;
             showWorkTime();
 
+        }, function errorCallback(response) {
+            console.log(response)
+            if($location.checkAuthorized(response)){
+                //     alert(response.data.message);
+            }
+
+            // showFindTask();
         });
 
     };
@@ -129,6 +136,13 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
                 showFormEdit();
                 findNameTask($scope.WorkTime.taskId);
 
+            }, function errorCallback(response) {
+                console.log(response)
+                if($location.checkAuthorized(response)){
+                    //     alert(response.data.message);
+                }
+
+                // showFindTask();
             });
     };
     $scope.deleteWorkTime = function (workTimeId) {
@@ -137,6 +151,13 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
                 console.log("Delete response")
                 console.log(response);
                 $scope.loadWorkTime();
+            }, function errorCallback(response) {
+                console.log(response)
+                if($location.checkAuthorized(response)){
+                    //     alert(response.data.message);
+                }
+
+                // showFindTask();
             });
     };
     $scope.saveWorkTime = function () {
@@ -151,9 +172,10 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
                 $scope.loadWorkTime();
             }, function errorCallback(response) {
                 console.log(response.data);
+                if($location.checkAuthorized(response)) {
 
-                alert(response.data.message);
-
+                    alert(response.data.message);
+                }
             });
     }
     var FiltTask;
@@ -172,8 +194,10 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
 
         }, function errorCallback(response) {
             console.log(response)
-            alert(response.data.message);
-            showFindTask();
+            if($location.checkAuthorized(response)) {
+                alert(response.data.message);
+                showFindTask();
+            }
         });
 
     }
@@ -204,6 +228,13 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
             $scope.TaskList = response.data.content;
             // showTask();
 
+        }, function errorCallback(response) {
+            console.log(response)
+            if($location.checkAuthorized(response)){
+                //     alert(response.data.message);
+            }
+
+            // showFindTask();
         });
 
     }

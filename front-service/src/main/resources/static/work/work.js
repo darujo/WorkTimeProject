@@ -37,9 +37,17 @@ angular.module('workTimeService').controller('workController', function ($scope,
             $scope.WorkList = response.data.content;
             console.log($scope.WorkList);
             showWork();
+        }, function errorCallback(response) {
+            console.log(response)
+            if($location.checkAuthorized(response)){
+                alert(response.data.message);
+            }
+
+            // showFindTask();
         });
 
     };
+
     $scope.workSort = function (sort){
         $scope.Filt  ={sort:sort,
                        name: document.getElementById("Name").value};
@@ -130,7 +138,15 @@ angular.module('workTimeService').controller('workController', function ($scope,
     $scope.deleteWork = function (workId) {
         $http.delete(constPatchWork + "/works/" + workId)
             .then(function (response) {
+                console.log(response);
                 $scope.loadWork();
+            }, function errorCallback(response) {
+                console.log(response)
+                if($location.checkAuthorized(response)){
+                //     alert(response.data.message);
+                }
+
+                // showFindTask();
             });
     };
     $scope.saveWork = function () {
@@ -142,13 +158,22 @@ angular.module('workTimeService').controller('workController', function ($scope,
 
         $http.post(constPatchWork + "/works",$scope.Work)
             .then(function (response) {
+                console.log(response);
                 $scope.loadWork();
+            }, function errorCallback(response) {
+                console.log(response)
+                if($location.checkAuthorized(response)){
+                    //     alert(response.data.message);
+                }
+
+                // showFindTask();
             });
     };
     $scope.addTime = function (workId){
         console.log("Другая");
         $location.WorkId = workId;
-        window.open('#!/task',"_parent");
+        $location.path('/task');
+        // window.open('#!/task',"_parent");
     }
     showWork();
     $scope.loadWork();

@@ -75,6 +75,11 @@ angular.module('workTimeService').controller('taskController', function ($scope,
                 $scope.TaskList = response.data.content;
             }
             showTask();
+            }, function errorCallback(response) {
+                console.log(response)
+                if($location.checkAuthorized(response)){
+                    //     alert(response.data.message);
+                }
             }
         );
 
@@ -122,12 +127,23 @@ angular.module('workTimeService').controller('taskController', function ($scope,
 
                 $scope.Task.workDate = new Date(response.data.workDate);
                 showFormEdit();
+            }, function errorCallback(response) {
+                console.log(response)
+                if($location.checkAuthorized(response)){
+                    //     alert(response.data.message);
+                }
             });
     };
     $scope.deleteTask = function (taskId) {
         $http.delete(constPatchTask + "/task/" + taskId)
             .then(function (response) {
+                console.log(response)
                 $scope.loadTask();
+            }, function errorCallback(response) {
+                console.log(response);
+                if($location.checkAuthorized(response)){
+                    //     alert(response.data.message);
+                }
             });
     };
     $scope.saveTask = function () {
@@ -137,16 +153,22 @@ angular.module('workTimeService').controller('taskController', function ($scope,
 
         $http.post(constPatchTask + "/task",$scope.Task)
             .then(function (response) {
+                console.log(response);
                 $scope.loadTask();
             }, function errorCallback(response) {
                 console.log(response.data);
                 alert(response.data.message);
-            });
+            }, function errorCallback(response) {
+                console.log(response)
+                if($location.checkAuthorized(response)){
+                    //     alert(response.data.message);
+                }
+        });
     }
     $scope.addTime = function (taskId){
         console.log("Другая");
         $location.TaskId = taskId;
-        window.open('#!/worktime',"_self");
+        $location.path('/worktime');
     }
     console.log("start");
     showTask();
