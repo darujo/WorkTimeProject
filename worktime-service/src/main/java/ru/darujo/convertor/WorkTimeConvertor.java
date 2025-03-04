@@ -13,6 +13,7 @@ public class WorkTimeConvertor {
                 .setWorkDate(workTime.getWorkDate())
                 .setUserName(workTime.getUserName())
                 .setWorkTime(workTime.getWorkTime())
+                .setComment(workTime.getComment())
                 .getWorkTimeDto();
     }
     public static WorkTime getWorkTime(WorkTimeDto workTimeDto){
@@ -23,6 +24,7 @@ public class WorkTimeConvertor {
                 .setWorkDate(workTimeDto.getWorkDate())
                 .setUserName(workTimeDto.getUserName())
                 .setWorkTime(workTimeDto.getWorkTime())
+                .setComment(workTimeDto.getComment())
                 .getWorkTime();
     }
 }

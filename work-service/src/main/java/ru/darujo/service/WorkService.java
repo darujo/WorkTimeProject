@@ -3,6 +3,7 @@ package ru.darujo.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.WorkFactDto;
@@ -48,7 +49,7 @@ public class WorkService {
         size = -1;
     }
 
-    public Page<Work> findWorks(int page, int size, String name) {
+    public Page<Work> findWorks(int page, int size, String name, String sort) {
         if (workPage != null && page == 1 && this.size == size && name == null) {
             return workPage;
         }
@@ -57,7 +58,12 @@ public class WorkService {
         if (name != null) {
             specification = specification.and(WorkSpecifications.workNameLike(name));
         }
-        workPage = workRepository.findAll(specification, PageRequest.of(page - 1, size));
+        if(sort == null) {
+            workPage = workRepository.findAll(specification, PageRequest.of(page - 1, size));
+        }
+        else {
+            workPage = workRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.by(sort)));
+        }
         this.size = size;
         return workPage;
     }

@@ -30,6 +30,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 page: page,
                 size: 10,
                 name: Filt ? Filt.name : null,
+                sort: Filt ? Filt.sort : null
             }
         }).then(function (response) {
             console.log(response);
@@ -39,6 +40,13 @@ angular.module('workTimeService').controller('workController', function ($scope,
         });
 
     };
+    $scope.workSort = function (sort){
+        $scope.Filt  ={sort:sort,
+                       name: document.getElementById("Name").value};
+        console.log("sort");
+        console.log(sort);
+        $scope.filterWork();
+    }
     $scope.filterWork = function () {
         Filt = $scope.Filt;
         document.getElementById("Page").value = "1";

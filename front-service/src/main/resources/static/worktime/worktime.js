@@ -102,7 +102,8 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
             taskId : document.getElementById("TaskId").value,
             workDate: new Date(),
             userName :null,
-            workTime: parseInt("0") };
+            workTime: null,
+            comment: ""};
             // $scope
         console.log($scope.WorkTime);
         console.log("создаем 6");

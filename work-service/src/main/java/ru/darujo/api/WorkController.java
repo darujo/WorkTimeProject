@@ -42,8 +42,9 @@ public class WorkController {
     @GetMapping("")
     public Page<WorkDto> WorkPage(@RequestParam(defaultValue = "1") int page,
                                   @RequestParam(defaultValue = "10") int size,
-                                  @RequestParam(required = false) String name) {
-        return workService.findWorks(page, size, name).map(WorkConvertor::getWorkDto);
+                                  @RequestParam(required = false) String name,
+                                  @RequestParam(required = false) String sort) {
+        return workService.findWorks(page, size, name,sort).map(WorkConvertor::getWorkDto);
     }
 
     @GetMapping("/rep")

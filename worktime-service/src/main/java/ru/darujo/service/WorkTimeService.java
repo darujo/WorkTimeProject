@@ -3,10 +3,12 @@ package ru.darujo.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.WorkDto;
+import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.integration.TaskServiceIntegration;
 import ru.darujo.model.WorkTime;
 import ru.darujo.repository.WorkTimeRepository;
@@ -35,6 +37,7 @@ public class WorkTimeService {
     }
 
     public WorkTime saveWorkTime(WorkTime workTime) {
+        validWorkTime(workTime);
         WorkDto workDto = taskServiceIntegration.getWork(workTime.getTaskId());
         return workTimeRepository.save(workTime);
     }
@@ -65,7 +68,8 @@ public class WorkTimeService {
 
         }
         else {
-            return workTimeRepository.findAll(specification, PageRequest.of(page - 1, size));
+
+            return workTimeRepository.findAll(specification, PageRequest.of(page - 1, size,Sort.by("workDate").and(Sort.by("userName"))));
         }
     }
     public float getTimeWork(Long taskId, String username,Date dateLE, Date dateGT){
@@ -78,5 +82,25 @@ public class WorkTimeService {
         ListString users = new ListString();
         findWorkTime(taskId, null, null, null,null,null, null).forEach(workTime ->  users.getList().add(workTime.getUserName()));
         return  users;
+    }
+    private void validWorkTime(WorkTime workTime){
+        if (workTime.getTaskId() == null){
+            throw new ResourceNotFoundException("Не выбрана задача");
+        }
+        if (workTime.getWorkDate() == null){
+            throw new ResourceNotFoundException("Не задана дата");
+        }
+        if (workTime.getWorkTime() == null){
+            throw new ResourceNotFoundException("Не задано время");
+        }
+        if (workTime.getWorkTime() <= 0){
+            throw new ResourceNotFoundException("Время должно быть больше нуля");
+        }
+        if (workTime.getUserName() == null){
+            throw new ResourceNotFoundException("Не удалось вас опознать пожалуста авторизуйтесь");
+        }
+        if (workTime.getComment() == null || workTime.getComment().equals("")){
+            throw new ResourceNotFoundException("Не удалось вас опознать пожалуста авторизуйтесь");
+        }
     }
 }

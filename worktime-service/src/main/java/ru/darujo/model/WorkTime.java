@@ -22,8 +22,10 @@ public class  WorkTime {
     @Column(name = "workDate")
     private Date workDate;
     @Column(name = "workTime")
-    private float workTime;
+    private Float workTime;
     @Column(name = "taskId")
     private Long taskId;
+    @Column(name = "comment")
+    private String comment;
 
 }
