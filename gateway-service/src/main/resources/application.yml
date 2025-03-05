@@ -55,6 +55,14 @@ spring:
           filters:
             - StripPrefix=1
             - PrefixPath=/app-auth/auth
+        - id: user-service
+          uri: "http://localhost:8183"
+          predicates:
+            - Path=/user
+          filters:
+            - StripPrefix=1
+            - PrefixPath=/app-auth/user
+            - JwtAuthFilter
         - id: front-add
           uri: "http://localhost:8185"
           predicates:
