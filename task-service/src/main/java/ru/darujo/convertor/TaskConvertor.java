@@ -9,7 +9,7 @@ public class TaskConvertor {
         return TaskBuilder
                 .createWorkTime()
                 .setId(task.getId())
-                .setUserName(task.getUserName())
+                .setNikName(task.getNikName())
                 .setCodeBTS(task.getCodeBTS())
                 .setCodeDEVBO(task.getCodeDEVBO())
                 .setDescription(task.getDescription())
@@ -21,7 +21,7 @@ public class TaskConvertor {
         return TaskBuilder
                 .createWorkTime()
                 .setId(taskDto.getId())
-                .setUserName(taskDto.getUserName())
+                .setNikName(taskDto.getNikName())
                 .setCodeBTS(taskDto.getCodeBTS())
                 .setCodeDEVBO(taskDto.getCodeDEVBO())
                 .setDescription(taskDto.getDescription())

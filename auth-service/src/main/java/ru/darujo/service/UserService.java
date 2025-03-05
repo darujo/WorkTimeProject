@@ -24,15 +24,20 @@ public class UserService implements UserDetailsService {
         this.userRepository =userRepository;
     }
 
-    public Optional<User> findByUserName(String name){
-        return userRepository.findByUsername(name);
+    public Optional<User> findByNikName(String name){
+        return userRepository.findByNikName(name);
     }
-    @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = findByUserName(username).orElseThrow(() -> new UsernameNotFoundException("Не наден пользователь по имени"));
-        return new org.springframework.security.core.userdetails.User(user.getUsername(),user.getUserpasword(),mapGrandAuthority(user.getRoles(),user.getRights()));
+    public User loadUserByNikName(String nikName) throws UsernameNotFoundException {
+        return findByNikName(nikName).orElseThrow(() -> new UsernameNotFoundException("Не наден пользователь по логину"));
     }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = loadUserByNikName(username);
+        return new org.springframework.security.core.userdetails.User(user.getNikName(),user.getUserpasword(),mapGrandAuthority(user.getRoles(),user.getRights()));// нужно для спринга
+    }
+
     private Collection<? extends GrantedAuthority> mapGrandAuthority(Collection<Role> roles, Collection<Right> rigths){
         Collection<SimpleGrantedAuthority> grantedAuthorities;
         grantedAuthorities =       roles.stream().map(role  -> new SimpleGrantedAuthority(role.getName() )).collect(Collectors.toList());

@@ -4,18 +4,39 @@ import java.io.Serializable;
 
 public class UserDto implements Serializable {
     private long id;
-    private String username;
+    private String nikName;
 
-    public UserDto(long id, String username) {
+    private String firstName;
+
+    private String lastName;
+
+    private String patronymic;
+
+    public UserDto(long id, String nikName, String firstName, String lastName, String patronymic) {
         this.id = id;
-        this.username = username;
+        this.nikName = nikName;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.patronymic = patronymic;
     }
 
     public long getId() {
         return id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getNikName() {
+        return nikName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getPatronymic() {
+        return patronymic;
     }
 }

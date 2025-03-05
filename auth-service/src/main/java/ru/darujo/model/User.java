@@ -14,11 +14,20 @@ public class User {
     @Column(name = "id")
     private long id;
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "nikName", unique = true)
+    private String nikName;
 
     @Column(name = "userpasword")
     private String userpasword;
+
+    @Column(name = "firstName")
+    private String firstName;
+
+    @Column(name = "lastName")
+    private String lastName;
+
+    @Column(name = "patronymic")
+    private String patronymic;
 
     @ManyToMany
     @JoinTable(name = "user_roles",

@@ -7,7 +7,7 @@ import java.util.Date;
 
 public class WorkTimeBuilder {
     private Long id;
-    private String userName;
+    private String nikName;
     private Float  workTime;
     private Date   workDate;
     private Long   taskId;
@@ -18,8 +18,8 @@ public class WorkTimeBuilder {
         return this;
     }
 
-    public WorkTimeBuilder setUserName(String userName) {
-        this.userName = userName;
+    public WorkTimeBuilder setNikName(String nikName) {
+        this.nikName = nikName;
         return this;
     }
     public WorkTimeBuilder setWorkTime(Float workTime) {
@@ -44,9 +44,9 @@ public class WorkTimeBuilder {
     }
 
     public WorkTimeDto getWorkTimeDto(){
-        return new WorkTimeDto(id,userName,workDate,workTime,taskId,comment);
+        return new WorkTimeDto(id, nikName,workDate,workTime,taskId,comment);
     }
     public WorkTime getWorkTime(){
-        return new WorkTime(id,userName,workDate,workTime,taskId,comment);
+        return new WorkTime(id, nikName,workDate,workTime,taskId,comment);
     }
 }

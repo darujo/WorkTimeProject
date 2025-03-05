@@ -18,8 +18,8 @@ public class WorkTimeSpecifications {
     public static Specification<WorkTime> taskIdEQ(Long taskId){
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("taskId"),taskId));
     }
-    public static Specification<WorkTime> userNameEQ(String name){
-        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("userName"),name));
+    public static Specification<WorkTime> userNikNameEQ(String nikName){
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("nikName"),nikName));
     }
 
 //    public static Specification<WorkTime> titleLike(String title){

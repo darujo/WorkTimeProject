@@ -13,7 +13,7 @@ public class WorkTimeDto implements Serializable {
         return sdf.format(date);
     }
     private Long id;
-    private String userName;
+    private String nikName;
     private Date workDate;
     private String workDateStr;
     private String comment;
@@ -25,24 +25,24 @@ public class WorkTimeDto implements Serializable {
         return id;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setNikName(String nikName) {
+        this.nikName = nikName;
     }
 
     public WorkTimeDto() {
     }
 
-    public WorkTimeDto(Long id, String userName, Date workDate, Float workTime, Long workId, String comment) {
+    public WorkTimeDto(Long id, String nikName, Date workDate, Float workTime, Long workId, String comment) {
         this.id = id;
-        this.userName = userName;
+        this.nikName = nikName;
         this.workDate = workDate;
         this.workTime = workTime;
         this.taskId = workId;
         this.comment = comment;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getNikName() {
+        return nikName;
     }
 
     public Date getWorkDate() {

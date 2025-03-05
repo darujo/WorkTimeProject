@@ -16,8 +16,8 @@ public class Task {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "userName")
-    private String userName;
+    @Column(name = "nikName")
+    private String nikName;
     // № запроса (BTS)
     @Column(name = "codeBTS")
     private String codeBTS;

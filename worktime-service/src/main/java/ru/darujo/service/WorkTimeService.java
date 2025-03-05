@@ -46,7 +46,7 @@ public class WorkTimeService {
         workTimeRepository.deleteById(id);
     }
 
-    public Iterable<WorkTime> findWorkTime(Long taskId, String userName, Date dateLE, Date dateGT, Date dateGE, Integer page, Integer size) {
+    public Iterable<WorkTime> findWorkTime(Long taskId, String nikName, Date dateLE, Date dateGT, Date dateGE, Integer page, Integer size) {
         Specification<WorkTime> specification = Specification.where(null);
         if (dateLE != null) {
             specification = specification.and(WorkTimeSpecifications.dateLE(dateLE));
@@ -57,8 +57,8 @@ public class WorkTimeService {
         if (dateGT != null) {
             specification = specification.and(WorkTimeSpecifications.dateGT(dateGT));
         }
-        if (userName != null) {
-            specification = specification.and(WorkTimeSpecifications.userNameEQ(userName));
+        if (nikName != null) {
+            specification = specification.and(WorkTimeSpecifications.userNikNameEQ(nikName));
         }
         if (taskId != null) {
             specification = specification.and(WorkTimeSpecifications.taskIdEQ(taskId));
@@ -69,18 +69,18 @@ public class WorkTimeService {
         }
         else {
 
-            return workTimeRepository.findAll(specification, PageRequest.of(page - 1, size,Sort.by("workDate").and(Sort.by("userName"))));
+            return workTimeRepository.findAll(specification, PageRequest.of(page - 1, size,Sort.by("workDate").and(Sort.by("nikName"))));
         }
     }
-    public float getTimeWork(Long taskId, String username,Date dateLE, Date dateGT){
+    public float getTimeWork(Long taskId, String nikName,Date dateLE, Date dateGT){
         AtomicReference<Float> time = new AtomicReference<>((float) 0);
-        findWorkTime(taskId, username, dateLE, dateGT,null,null, null).forEach(workTime -> time.set(time.get() + workTime.getWorkTime()));
+        findWorkTime(taskId, nikName, dateLE, dateGT,null,null, null).forEach(workTime -> time.set(time.get() + workTime.getWorkTime()));
         return time.get();
     }
 
     public ListString getFactUser(Long taskId) {
         ListString users = new ListString();
-        findWorkTime(taskId, null, null, null,null,null, null).forEach(workTime ->  users.getList().add(workTime.getUserName()));
+        findWorkTime(taskId, null, null, null,null,null, null).forEach(workTime ->  users.getList().add(workTime.getNikName()));
         return  users;
     }
     private void validWorkTime(WorkTime workTime){
@@ -96,7 +96,7 @@ public class WorkTimeService {
         if (workTime.getWorkTime() <= 0){
             throw new ResourceNotFoundException("Время должно быть больше нуля");
         }
-        if (workTime.getUserName() == null){
+        if (workTime.getNikName() == null){
             throw new ResourceNotFoundException("Не удалось вас опознать пожалуста авторизуйтесь");
         }
         if (workTime.getComment() == null || workTime.getComment().equals("")){

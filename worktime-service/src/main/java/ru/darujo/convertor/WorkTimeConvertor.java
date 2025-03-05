@@ -11,7 +11,7 @@ public class WorkTimeConvertor {
                 .setId(workTime.getId())
                 .setTaskId(workTime.getTaskId ())
                 .setWorkDate(workTime.getWorkDate())
-                .setUserName(workTime.getUserName())
+                .setNikName(workTime.getNikName())
                 .setWorkTime(workTime.getWorkTime())
                 .setComment(workTime.getComment())
                 .getWorkTimeDto();
@@ -22,7 +22,7 @@ public class WorkTimeConvertor {
                 .setId(workTimeDto.getId())
                 .setTaskId(workTimeDto.getTaskId())
                 .setWorkDate(workTimeDto.getWorkDate())
-                .setUserName(workTimeDto.getUserName())
+                .setNikName(workTimeDto.getNikName())
                 .setWorkTime(workTimeDto.getWorkTime())
                 .setComment(workTimeDto.getComment())
                 .getWorkTime();

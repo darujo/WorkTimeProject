@@ -5,7 +5,7 @@ import ru.darujo.model.Task;
 
 public class TaskBuilder {
     private Long id;
-    private String userName;
+    private String nikName;
     // № запроса (BTS)
     private String codeBTS;
     // № внутренней задачи (DEVBO)
@@ -22,8 +22,8 @@ public class TaskBuilder {
         return this;
     }
 
-    public TaskBuilder setUserName(String userName) {
-        this.userName = userName;
+    public TaskBuilder setNikName(String nikName) {
+        this.nikName = nikName;
         return this;
     }
 
@@ -57,7 +57,7 @@ public class TaskBuilder {
     }
     public TaskDto getTaskDto(){
         return new TaskDto(id,
-                userName,
+                nikName,
                 codeBTS,
                 codeDEVBO,
                 description,
@@ -67,7 +67,7 @@ public class TaskBuilder {
     public Task getTask(){
         return new Task(
                 id,
-                userName,
+                nikName,
                 codeBTS,
                 codeDEVBO,
                 description,

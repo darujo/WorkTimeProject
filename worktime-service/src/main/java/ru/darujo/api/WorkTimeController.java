@@ -35,9 +35,9 @@ public class WorkTimeController {
     @PostMapping("")
     public WorkTimeDto WorkTimeSave( @RequestHeader String username,
                                      @RequestBody WorkTimeDto workTimeDto) {
-        if (workTimeDto.getUserName() == null || !workTimeDto.getUserName().equals("") )
+        if (workTimeDto.getNikName() == null || !workTimeDto.getNikName().equals("") )
         {
-            workTimeDto.setUserName(username);
+            workTimeDto.setNikName(username);
         }
         return WorkTimeConvertor.getWorkTimeDto(workTimeService.saveWorkTime(WorkTimeConvertor.getWorkTime(workTimeDto)));
     }
@@ -52,14 +52,14 @@ public class WorkTimeController {
                                           @RequestParam(required = false, name = "dateGt") String dateGtStr,
                                           @RequestParam(required = false, name = "dateGe") String dateGeStr,
                                           @RequestParam(required = false) Long taskId,
-                                          @RequestParam(required = false) String userName,
+                                          @RequestParam(required = false) String nikName,
                                           @RequestParam(defaultValue = "1")Integer page,
                                           @RequestParam(defaultValue = "10") Integer size) {
         Date dateLe = stringToDate(dateLeStr,"dateLe = ");
         Date dateGt = stringToDate(dateGtStr,"dateGt = ");
         Date dateGe = stringToDate(dateGeStr,"dateGe = ");
         return ((Page<WorkTime>) workTimeService.findWorkTime(taskId,
-                                            userName,
+                                            nikName,
                                             dateLe,
                                             dateGt,
                                             dateGe,
@@ -68,7 +68,7 @@ public class WorkTimeController {
     }
     @GetMapping("/rep/fact/time")
     public Float getTimeWork(@RequestParam(required = false) Long taskId,
-                             @RequestParam(required = false) String userName ,
+                             @RequestParam(required = false) String nikName ,
                              @RequestParam(required = false, name = "dateLe") String dateLeStr ,
                              @RequestParam(required = false, name = "dateGt") String dateGtStr) {
        Date dateLe = stringToDate(dateLeStr,"dateLe = ");
@@ -76,7 +76,7 @@ public class WorkTimeController {
        if(dateLe == null && dateGt == null ){
            return 0f;
        }
-       return workTimeService.getTimeWork(taskId,userName, dateLe, dateGt);
+       return workTimeService.getTimeWork(taskId,nikName, dateLe, dateGt);
     }
 
     @GetMapping("/rep/fact/user")

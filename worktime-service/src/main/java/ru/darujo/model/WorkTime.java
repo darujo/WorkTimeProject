@@ -17,8 +17,8 @@ public class  WorkTime {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "userName")
-    private String userName;
+    @Column(name = "nikName")
+    private String nikName;
     @Column(name = "workDate")
     private Date workDate;
     @Column(name = "workTime")

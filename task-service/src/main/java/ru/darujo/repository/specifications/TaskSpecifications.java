@@ -17,8 +17,8 @@ public class TaskSpecifications {
     public static Specification<Task> workIdEQ(Long workId){
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("workId"),workId));
     }
-    public static Specification<Task> userNameLike(String userName){
-        return ((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("userName"),String.format("%%%s%%",userName)));
+    public static Specification<Task> nikNameLike(String nikName){
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("nikName"),String.format("%%%s%%",nikName)));
     }
 
 }

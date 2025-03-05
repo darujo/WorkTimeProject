@@ -44,8 +44,8 @@ public class TaskController {
     @PostMapping("")
     public TaskDto WorkTimeSave(@RequestHeader(required = false) String username,
                                 @RequestBody TaskDto taskDto) {
-        if (taskDto.getUserName() == null || !taskDto.getUserName().equals("")) {
-            taskDto.setUserName(username);
+        if (taskDto.getNikName() == null || !taskDto.getNikName().equals("")) {
+            taskDto.setNikName(username);
         }
         return TaskConvertor.getTaskDto(taskService.saveWorkTime(TaskConvertor.getTask(taskDto)));
     }
@@ -56,7 +56,7 @@ public class TaskController {
     }
 
     @GetMapping("")
-    public Iterable<TaskDto> findTasks(@RequestParam(required = false) String userName,
+    public Iterable<TaskDto> findTasks(@RequestParam(required = false) String nikName,
                                        @RequestParam(required = false) String codeBTS,
                                        @RequestParam(required = false) String codeDEVBO,
                                        @RequestParam(required = false) String description,
@@ -65,10 +65,10 @@ public class TaskController {
                                        @RequestParam(defaultValue = "1") Integer page,
                                        @RequestParam(defaultValue = "10") Integer size) {
         if (workId == null && ziName != null) {
-            return findTasks(userName, codeBTS, codeDEVBO, description, ziName);
+            return findTasks(nikName, codeBTS, codeDEVBO, description, ziName);
         }
 
-        return findTasks(userName, codeBTS, codeDEVBO, description, workId, page, size);
+        return findTasks(nikName, codeBTS, codeDEVBO, description, workId, page, size);
     }
 
     @GetMapping("/rep/fact/time")

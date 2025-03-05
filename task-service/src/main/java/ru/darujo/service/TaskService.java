@@ -46,7 +46,7 @@ public class TaskService {
         taskPage = null;
     }
 
-    public Iterable<Task> findWorkTime(String userName,
+    public Iterable<Task> findWorkTime(String nikName,
                                        String codeBTS,
                                        String codeDEVBO,
                                        String description,
@@ -54,8 +54,8 @@ public class TaskService {
                                        Integer page,
                                        Integer size) {
         Specification<Task> specification = Specification.where(null);
-        if (userName != null) {
-            specification = specification.and(TaskSpecifications.userNameLike(userName));
+        if (nikName != null) {
+            specification = specification.and(TaskSpecifications.nikNameLike(nikName));
         }
         if (codeBTS != null) {
             specification = specification.and(TaskSpecifications.codeBTSLike(codeBTS));

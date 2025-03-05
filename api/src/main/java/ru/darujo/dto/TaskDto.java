@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class TaskDto implements Serializable {
     private Long id;
-    private String userName;
+    private String nikName;
     // № запроса (BTS)
     private String codeBTS;
     // № внутренней задачи (DEVBO)
@@ -28,16 +28,16 @@ public class TaskDto implements Serializable {
     private String nameZi;
 
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setNikName(String nikName) {
+        this.nikName = nikName;
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getNikName() {
+        return nikName;
     }
 
     public String getCodeBTS() {
@@ -69,9 +69,9 @@ public class TaskDto implements Serializable {
     public TaskDto() {
     }
 
-    public TaskDto(Long id, String userName, String codeBTS, String codeDEVBO, String description, Integer type, Long workId) {
+    public TaskDto(Long id, String nikName, String codeBTS, String codeDEVBO, String description, Integer type, Long workId) {
         this.id = id;
-        this.userName = userName;
+        this.nikName = nikName;
         this.codeBTS = codeBTS;
         this.codeDEVBO = codeDEVBO;
         this.description = description;

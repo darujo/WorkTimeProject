@@ -5,12 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ru.darujo.convertor.UserConvertor;
 import ru.darujo.dto.JwtRequest;
 import ru.darujo.dto.JwtResponse;
+import ru.darujo.dto.UserDto;
 import ru.darujo.service.UserService;
 import ru.darujo.utils.JwtTokenUtils;
 
@@ -43,5 +42,9 @@ public class AuthController {
         UserDetails userDetails = userService.loadUserByUsername(jwtRequest.getUsername());
         String token = jwtTokenUtils.generateToken(userDetails);
         return ResponseEntity.ok(new JwtResponse(token));
+    }
+    @GetMapping("/user")
+    public UserDto getUserDto (@RequestParam String nikName){
+        return UserConvertor.getUserDto(userService.loadUserByNikName(nikName));
     }
 }

@@ -68,7 +68,7 @@ public class WorkService {
         return workPage;
     }
 
-    public List<WorkRepDto> getWorkRep(String userName) {
+    public List<WorkRepDto> getWorkRep(String nikName) {
         List<WorkRepDto> workRepDtos = new ArrayList<>();
         workRepository.findAll().forEach(work ->
                 workRepDtos.add(
@@ -99,27 +99,27 @@ public class WorkService {
                                 work.getLaborOPE(),
                                 taskServiceIntegration.getTimeWork(
                                         work.getId(),
-                                        userName,
+                                        nikName,
                                         null,
                                         work.getDateStartDevelop()),
                                 taskServiceIntegration.getTimeWork(work.getId(),
-                                        userName,
+                                        nikName,
                                         work.getDateStartDevelop(),
                                         work.getDateStartDebug()),
                                 taskServiceIntegration.getTimeWork(work.getId(),
-                                        userName,
+                                        nikName,
                                         work.getDateStartDebug(),
                                         work.getDateStartRelease()),
                                 taskServiceIntegration.getTimeWork(work.getId(),
-                                        userName,
+                                        nikName,
                                         work.getDateStartRelease(),
                                         work.getDateStartOPE()),
                                 taskServiceIntegration.getTimeWork(work.getId(),
-                                        userName,
+                                        nikName,
                                         work.getDateStartOPE(),
                                         work.getDateStartWender()),
                                 taskServiceIntegration.getTimeWork(work.getId(),
-                                        userName,
+                                        nikName,
                                         work.getDateStartWender(),
                                         null)
                         )
