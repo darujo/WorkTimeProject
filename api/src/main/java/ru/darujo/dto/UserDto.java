@@ -6,7 +6,7 @@ public class UserDto implements Serializable {
     public UserDto() {
     }
 
-    private long id;
+    private Long id;
     private String nikName;
 
     private String firstName;
@@ -15,7 +15,7 @@ public class UserDto implements Serializable {
 
     private String patronymic;
 
-    public UserDto(long id, String nikName, String firstName, String lastName, String patronymic) {
+    public UserDto(Long id, String nikName, String firstName, String lastName, String patronymic) {
         this.id = id;
         this.nikName = nikName;
         this.firstName = firstName;
@@ -23,7 +23,7 @@ public class UserDto implements Serializable {
         this.patronymic = patronymic;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

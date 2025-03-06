@@ -1,8 +1,6 @@
 package ru.darujo.convertor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import ru.darujo.dto.TaskDto;
-import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.model.Task;
 
 public class TaskConvertor {

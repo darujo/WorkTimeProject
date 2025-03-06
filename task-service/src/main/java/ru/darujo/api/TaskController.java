@@ -132,6 +132,10 @@ public class TaskController {
             taskDto.setNameZi(worEditDto.getName());
         } catch (ResourceNotFoundException e) {
             System.out.println(e.getMessage());
+            if (task.getType() == 1) {
+                taskDto.setCodeZi("Нет ЗИ с ID = " + taskDto.getWorkId());
+                taskDto.setNameZi("Нет ЗИ с ID = " + taskDto.getWorkId());
+            }
         }
         try {
             UserDto userDto = userServiceIntegration.getUserDto(null,task.getNikName());
@@ -139,6 +143,8 @@ public class TaskController {
             taskDto.setAuthorLastName(userDto.getLastName());
             taskDto.setAuthorPatronymic(userDto.getPatronymic());
         } catch (ResourceNotFoundException e) {
+            taskDto.setAuthorFirstName("Нет пользователя с ником " + task.getNikName());
+
             System.out.println(e.getMessage());
         }
 

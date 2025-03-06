@@ -6,8 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.ListString;
-import ru.darujo.integration.TaskServiceIntegration;
-import ru.darujo.integration.UserServiceIntegration;
+import ru.darujo.integration.WorkServiceIntegration;
 import ru.darujo.integration.WorkTimeServiceIntegration;
 import ru.darujo.model.Task;
 import ru.darujo.repository.TaskRepository;
@@ -20,7 +19,6 @@ import java.util.*;
 public class TaskService {
 
     private TaskRepository taskRepository;
-    private Iterable<Task> taskPage;
 
     @Autowired
     public void setWorkTimeRepository(TaskRepository taskRepository) {
@@ -33,19 +31,25 @@ public class TaskService {
     public void setWorkTimeServiceIntegration(WorkTimeServiceIntegration workTimeServiceIntegration) {
         this.workTimeServiceIntegration = workTimeServiceIntegration;
     }
+    private WorkServiceIntegration workServiceIntegration;
+    @Autowired
+    public void setWorkServiceIntegration(WorkServiceIntegration workServiceIntegration) {
+        this.workServiceIntegration = workServiceIntegration;
+    }
 
     public Optional<Task> findById(long id) {
         return taskRepository.findById(id);
     }
 
     public Task saveWorkTime(Task task) {
-        taskPage = null;
+        if(task.getType() == 1){
+           workServiceIntegration.getWorEditDto(task.getWorkId());
+        }
         return taskRepository.save(task);
     }
 
     public void deleteWorkTime(Long id) {
         taskRepository.deleteById(id);
-        taskPage = null;
     }
 
     public Iterable<Task> findWorkTime(String nikName,
@@ -72,13 +76,11 @@ public class TaskService {
             specification = specification.and(TaskSpecifications.workIdEQ(workId));
         }
         if (page != null) {
-            taskPage = taskRepository.findAll(specification, PageRequest.of(page - 1, size));
+            return taskRepository.findAll(specification, PageRequest.of(page - 1, size));
         } else {
-            taskPage = taskRepository.findAll(specification);
+            return taskRepository.findAll(specification);
         }
 
-        System.out.println(taskPage);
-        return taskPage;
     }
 
     public Float getTaskTime(
