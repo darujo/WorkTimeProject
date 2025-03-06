@@ -27,35 +27,35 @@ public class Work {
     @Column(name = "name")
     private String name;
     // Разработка прототипа Факт
-    @Column(name = "startDevelop")
-    private Date dateStartDevelop;
+    // ВЕНДЕРКА Факт
+    @Column(name = "analiseEndFact")
+    private Date analiseEndFact;
+    // ВЕНДЕРКА Факт
+    @Column(name = "analiseEndPlan")
+    private Date analiseEndPlan;
+    @Column(name = "developEndFact")
+    private Date developEndFact;
     //начало разработки план
-    @Column(name = "startDevelopPlan")
-    private Date dateStartDevelopPlan;
+    @Column(name = "developEndPlan")
+    private Date developEndPlan;
     // Стабилизация прототипа Факт
-    @Column(name = "startDebug")
-    private Date dateStartDebug;
+    @Column(name = "debugEndFact")
+    private Date debugEndFact;
     // Стабилизация релиза Факт
-    @Column(name = "startDebugPlan")
-    private Date dateStartDebugPlan;
+    @Column(name = "debugEndPlan")
+    private Date debugEndPlan;
     // Стабилизация релиза Факт
-    @Column(name = "startRelease")
-    private Date dateStartRelease;
+    @Column(name = "releaseEndFact")
+    private Date releaseEndFact;
     // Стабилизация релиза plan
-    @Column(name = "startReleasePlan")
-    private Date dateStartReleasePlan;
+    @Column(name = "releaseEndPlan")
+    private Date releaseEndPlan;
     // ОПЭ релиза Факт
-    @Column(name = "startOPE")
-    private Date dateStartOPE;
+    @Column(name = "opeEndFact")
+    private Date opeEndFact;
     // ОПЭ релиза Факт
-    @Column(name = "startOPEPlan")
-    private Date dateStartOPEPlan;
-    // ВЕНДЕРКА Факт
-    @Column(name = "startWender")
-    private Date dateStartWender;
-    // ВЕНДЕРКА Факт
-    @Column(name = "startWenderPlan")
-    private Date dateStartWenderPlan;
+    @Column(name = "opeEndPlan")
+    private Date opeEndPlan;
     // № внутренней задачи (DEVBO)
     @Column(name = "task")
     private String task;

@@ -23,25 +23,24 @@ public class WorkRepDto implements Serializable {
     private Date planDateStage0;
     // Плановая дата завершения 0 этапа
     private Date factDateStage0;
-
     // Дата начала доработки План
     private Date startTaskPlan;
     // Дата начала доработки Факт
     private Date startTaskFact;
-    //начало разработки план
-    private Date dateStartDevelopPlan;
-    //начало разработки факт
-    private Date dateStartDevelop;
+    // ВЕНДЕРКА План
+    private Date analiseEndPlan;
+    // ВЕНДЕРКА
+    private Date analiseEndFact;
     // Плановые трудозатраты, чел/час разработки
     private Float laborDevelop;
+    //начало разработки план
+    private Date developEndPlan;
+    //начало разработки факт
+    private Date developEndFact;
     // Стабилизация прототипа план
-    private Date dateStartDebugPlan;
+    private Date debugEndPlan;
     // Стабилизация прототипа факт
-    private Date dateStartDebug;
-    // Стабилизация релиза
-    private Date dateStartReleasePlan;
-    // Стабилизация релиза
-    private Date dateStartRelease;
+    private Date debugEndFact;
     // Плановые трудозатраты, чел/час Стабилизация прототипа
     private Float laborDebug;
     // Порядковый номер релиза
@@ -50,16 +49,16 @@ public class WorkRepDto implements Serializable {
     private Date issuingReleasePlan;
     // Выдача релиза дата факт
     private Date issuingReleaseFact;
-    // ОПЭ релиза
-    private Date dateStartOPEPlan;
-    // ОПЭ релиза
-    private Date dateStartOPE;
+    // Стабилизация релиза
+    private Date releaseEndPlan;
+    // Стабилизация релиза
+    private Date releaseEndFact;
     // Плановые трудозатраты, чел/час Стабилизация релиза
     private Float laborRelease;
-    // ВЕНДЕРКА План
-    private Date dateStartWenderPlan;
-    // ВЕНДЕРКА
-    private Date dateStartWender;
+    // ОПЭ релиза
+    private Date opeEndPlan;
+    // ОПЭ релиза
+    private Date opeEndFact;
     // Плановые трудозатраты, чел/час ОПЭ
     private Float laborOPE;
     // плановое время
@@ -80,7 +79,8 @@ public class WorkRepDto implements Serializable {
     private Float timeOPE;
     // ВЕНДЕРКА
     private Float timeWender;
-    public WorkRepDto(Long id,String codeZI, String name, Date planDateStage0, Date factDateStage0, Date startTaskPlan, Date startTaskFact, Date dateStartDevelopPlan, Date dateStartDevelop, Float laborDevelop, Date dateStartDebugPlan, Date dateStartDebug, Date dateStartReleasePlan, Date dateStartRelease, Float laborDebug, String release, Date issuingReleasePlan, Date issuingReleaseFact, Date dateStartOPEPlan, Date dateStartOPE, Float laborRelease, Date dateStartWenderPlan, Date dateStartWender, Float laborOPE, Float timeAnalise, Float timeDevelop, Float timeDebug, Float timeRelease, Float timeOPE, Float timeWender) {
+
+    public WorkRepDto(Long id, String codeZI, String name, Date planDateStage0, Date factDateStage0, Date startTaskPlan, Date startTaskFact, Date analiseEndPlan, Date analiseEndFact, Float laborDevelop, Date developEndPlan, Date developEndFact, Date debugEndPlan, Date debugEndFact, Float laborDebug, String release, Date issuingReleasePlan, Date issuingReleaseFact, Date releaseEndPlan, Date releaseEndFact, Float laborRelease, Date opeEndPlan, Date opeEndFact, Float laborOPE, Float timeAnalise, Float timeDevelop, Float timeDebug, Float timeRelease, Float timeOPE, Float timeWender) {
         this.id = id;
         this.codeZI = codeZI;
         this.name = name;
@@ -88,22 +88,22 @@ public class WorkRepDto implements Serializable {
         this.factDateStage0 = factDateStage0;
         this.startTaskPlan = startTaskPlan;
         this.startTaskFact = startTaskFact;
-        this.dateStartDevelopPlan = dateStartDevelopPlan;
-        this.dateStartDevelop = dateStartDevelop;
+        this.analiseEndPlan = analiseEndPlan;
+        this.analiseEndFact = analiseEndFact;
         this.laborDevelop = laborDevelop;
-        this.dateStartDebugPlan = dateStartDebugPlan;
-        this.dateStartDebug = dateStartDebug;
-        this.dateStartReleasePlan = dateStartReleasePlan;
-        this.dateStartRelease = dateStartRelease;
+        this.developEndPlan = developEndPlan;
+        this.developEndFact = developEndFact;
+        this.debugEndPlan = debugEndPlan;
+        this.debugEndFact = debugEndFact;
         this.laborDebug = laborDebug;
         this.release = release;
         this.issuingReleasePlan = issuingReleasePlan;
         this.issuingReleaseFact = issuingReleaseFact;
-        this.dateStartOPEPlan = dateStartOPEPlan;
-        this.dateStartOPE = dateStartOPE;
+        this.releaseEndPlan = releaseEndPlan;
+        this.releaseEndFact = releaseEndFact;
         this.laborRelease = laborRelease;
-        this.dateStartWenderPlan = dateStartWenderPlan;
-        this.dateStartWender = dateStartWender;
+        this.opeEndPlan = opeEndPlan;
+        this.opeEndFact = opeEndFact;
         this.laborOPE = laborOPE;
         this.timeAnalise = timeAnalise;
         this.timeDevelop = timeDevelop;
@@ -111,17 +111,9 @@ public class WorkRepDto implements Serializable {
         this.timeRelease = timeRelease;
         this.timeOPE = timeOPE;
         this.timeWender = timeWender;
-        this.timePlan = 0f;
-        addTimePlan(laborDevelop);
-        addTimePlan(laborDebug);
-        addTimePlan(laborRelease);
-        addTimePlan(laborOPE);
-        this.timeFact = 0f;
-        addTimeFact(timeAnalise);
-        addTimeFact(timeDevelop);
-        addTimeFact(timeDebug);
-        addTimeFact(timeRelease);
-        addTimeFact(timeOPE);
+        this.timePlan = timeAnalise + timeDevelop + timeDebug + timeRelease + timeOPE + timeWender;
+        this.timeFact = laborDevelop + laborDebug + laborRelease + laborOPE;
+
     }
 
     public void addTimePlan(Float time ){
@@ -163,32 +155,32 @@ public class WorkRepDto implements Serializable {
         return dateToText(startTaskFact);
     }
 
-    public String getDateStartDevelopPlan() {
-        return dateToText(dateStartDevelopPlan);
+    public String getDevelopEndPlan() {
+        return dateToText(developEndPlan);
     }
 
-    public String getDateStartDevelop() {
-        return dateToText(dateStartDevelop);
+    public String getDevelopEndFact() {
+        return dateToText(developEndFact);
     }
 
     public Float getLaborDevelop() {
         return laborDevelop;
     }
 
-    public String getDateStartDebugPlan() {
-        return dateToText(dateStartDebugPlan);
+    public String getDebugEndPlan() {
+        return dateToText(debugEndPlan);
     }
 
-    public String getDateStartDebug() {
-        return dateToText(dateStartDebug);
+    public String getDebugEndFact() {
+        return dateToText(debugEndFact);
     }
 
-    public String getDateStartReleasePlan() {
-        return dateToText(dateStartReleasePlan);
+    public String getReleaseEndPlan() {
+        return dateToText(releaseEndPlan);
     }
 
-    public String getDateStartRelease() {
-        return dateToText(dateStartRelease);
+    public String getReleaseEndFact() {
+        return dateToText(releaseEndFact);
     }
 
     public Float getLaborDebug() {
@@ -207,24 +199,24 @@ public class WorkRepDto implements Serializable {
         return dateToText(issuingReleaseFact);
     }
 
-    public String getDateStartOPEPlan() {
-        return dateToText(dateStartOPEPlan);
+    public String getOpeEndPlan() {
+        return dateToText(opeEndPlan);
     }
 
-    public String getDateStartOPE() {
-        return dateToText(dateStartOPE);
+    public String getOpeEndFact() {
+        return dateToText(opeEndFact);
     }
 
     public Float getLaborRelease() {
         return laborRelease;
     }
 
-    public String getDateStartWenderPlan() {
-        return dateToText(dateStartWenderPlan);
+    public String getAnaliseEndPlan() {
+        return dateToText(analiseEndPlan);
     }
 
-    public String getDateStartWender() {
-        return dateToText(dateStartWender);
+    public String getAnaliseEndFact() {
+        return dateToText(analiseEndFact);
     }
 
     public Float getLaborOPE() {

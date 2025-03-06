@@ -6,15 +6,15 @@ angular.module('workTimeService').controller('workController', function ($scope,
         document.getElementById("FormEdit").style.display = "none";
     };
     var showFormEdit = function () {
+        console.log("showFormEdit");
         document.getElementById("WorkList").style.display = "none";
         document.getElementById("FormEdit").style.display = "block";
-        console.log("dddddddd");
+
     };
 
 
 
     $scope.loadWork = function () {
-        // showWork();
         $scope.findPage(0);
     };
     var Filt;
@@ -70,16 +70,16 @@ angular.module('workTimeService').controller('workController', function ($scope,
             codeZI: "",
             codeSap: "",
             WorkName: "",
-            dateStartDevelop: null,
-            dateStartDebug: null,
-            dateStartRelease: null,
-            dateStartOPE: null,
-            dateStartWender: null,
-            dateStartDevelopPlan: null,
-            dateStartDebugPlan: null,
-            dateStartReleasePlan: null,
-            dateStartOPEPlan: null,
-            dateStartWenderPlan: null,
+            developEndFact: null,
+            debugEndFact: null,
+            releaseEndFact: null,
+            opeEndFact: null,
+            analiseEndFact: null,
+            developEndPlan: null,
+            debugEndPlan: null,
+            releaseEndPlan: null,
+            opeEndPlan: null,
+            analiseEndPlan: null,
             task: "",
             description: "",
             planDateStage0: null,
@@ -109,16 +109,16 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 WorkIdEdit = response.data.id;
                 $scope.Work = response.data;
                 console.log($scope.Work);
-                $scope.Work.dateStartDevelop = new Date(response.data.dateStartDevelop);
-                $scope.Work.dateStartDebug = new Date(response.data.dateStartDebug);
-                $scope.Work.dateStartRelease = new Date( response.data.dateStartRelease );
-                $scope.Work.dateStartOPE = new Date( response.data.dateStartOPE );
-                $scope.Work.dateStartWender = new Date( response.data.dateStartWender );
-                $scope.Work.dateStartDevelopPlan = new Date( response.data.dateStartDevelopPlan );
-                $scope.Work.dateStartDebugPlan = new Date( response.data.dateStartDebugPlan );
-                $scope.Work.dateStartReleasePlan = new Date( response.data.dateStartReleasePlan );
-                $scope.Work.dateStartOPEPlan = new Date( response.data.dateStartOPEPlan );
-                $scope.Work.dateStartWenderPlan = new Date( response.data.dateStartWenderPlan );
+                $scope.Work.developEndFact = new Date(response.data.developEndFact);
+                $scope.Work.debugEndFact = new Date(response.data.debugEndFact);
+                $scope.Work.releaseEndFact = new Date( response.data.releaseEndFact );
+                $scope.Work.opeEndFact = new Date( response.data.opeEndFact );
+                $scope.Work.analiseEndFact = new Date( response.data.analiseEndFact );
+                $scope.Work.developEndPlan = new Date( response.data.developEndPlan );
+                $scope.Work.debugEndPlan = new Date( response.data.debugEndPlan );
+                $scope.Work.releaseEndPlan = new Date( response.data.releaseEndPlan );
+                $scope.Work.opeEndPlan = new Date( response.data.opeEndPlan );
+                $scope.Work.analiseEndPlan = new Date( response.data.analiseEndPlan );
 
                 // Плановая дата завершения 0 этапа
                 $scope.Work.planDateStage0 = new Date(response.data.planDateStage0);
@@ -151,8 +151,6 @@ angular.module('workTimeService').controller('workController', function ($scope,
     };
     $scope.saveWork = function () {
         console.log()
-        console.log(document.getElementById("StartDevelop").value)
-        // $scope.Work.dateStartDevelop = document.getElementById("StartDevelop").value;
         console.log($scope.Work);
         console.log(WorkIdEdit);
 

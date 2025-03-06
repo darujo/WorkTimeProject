@@ -6,11 +6,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.darujo.dto.ListString;
+import ru.darujo.dto.WorkDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 
-import java.text.DateFormat;
 import java.util.Date;
-import java.util.List;
 
 
 @Component
@@ -22,7 +21,7 @@ public class TaskServiceIntegration {
         this.webClientWork = webClientWork;
     }
 
-    public Float getTimeWork(Long workID, String userName, Date dateGT, Date dateLE) {
+    public Float getTimeWork(Long workID, String nikName, Date dateGT, Date dateLE) {
         StringBuilder stringBuilder = new StringBuilder();
         if (stringBuilder.length() == 0) {
             stringBuilder.append("?");
@@ -33,11 +32,11 @@ public class TaskServiceIntegration {
             }
             stringBuilder.append("workId=").append(workID);
         }
-        if (userName != null) {
+        if (nikName != null) {
             if (stringBuilder.length() != 0) {
                 stringBuilder.append("&");
             }
-            stringBuilder.append("userName=").append(userName);
+            stringBuilder.append("nikName=").append(nikName);
         }
         if (dateLE != null) {
             if (stringBuilder.length() != 0) {
@@ -69,6 +68,14 @@ public class TaskServiceIntegration {
                 .bodyToMono(ListString.class)
                 .block();
 
+    }
+    public WorkDto getWork(Long id) {
+        return webClientWork.get().uri("/" + id)
+                .retrieve()
+                .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                        clientResponse -> Mono.error(new ResourceNotFoundException("Задача c id = " + id + " не найдена")))
+                .bodyToMono(WorkDto.class)
+                .block();
     }
 
 }

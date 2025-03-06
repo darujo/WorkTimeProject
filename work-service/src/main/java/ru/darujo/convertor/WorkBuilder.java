@@ -16,25 +16,25 @@ public class WorkBuilder {
     // Наименование
     private String name;
     // Разработка прототипа
-    private Date dateStartDevelop;
+    private Date developEndFact;
     // Стабилизация прототипа
-    private Date dateStartDebug;
+    private Date debugEndFact;
     // Стабилизация релиза
-    private Date dateStartRelease;
+    private Date releaseEndFact;
     // ОПЭ релиза
-    private Date dateStartOPE;
+    private Date opeEndFact;
     // ВЕНДЕРКА
-    private Date dateStartWender;
+    private Date analiseEndFact;
     // Разработка прототипа
-    private Date dateStartDevelopPlan;
+    private Date developEndPlan;
     // Стабилизация прототипа
-    private Date dateStartDebugPlan;
+    private Date debugEndPlan;
     // Стабилизация релиза
-    private Date dateStartReleasePlan;
+    private Date releaseEndPlan;
     // ОПЭ релиза
-    private Date dateStartOPEPlan;
+    private Date opeEndPlan;
     // ВЕНДЕРКА
-    private Date dateStartWenderPlan;
+    private Date analiseEndPlan;
     // № внутренней задачи (DEVBO)
     private String task;
     // Краткое описание внутренней задачи
@@ -149,49 +149,49 @@ public class WorkBuilder {
         return this;
     }
 
-    public WorkBuilder setDateStartDevelop(Date dateStartDevelop) {
-        this.dateStartDevelop = dateStartDevelop;
+    public WorkBuilder setDevelopEndFact(Date developEndFact) {
+        this.developEndFact = developEndFact;
         return this;
     }
-    public WorkBuilder setDateStartDebug(Date dateStartDebug) {
-        this.dateStartDebug = dateStartDebug;
+    public WorkBuilder setDebugEndFact(Date debugEndFact) {
+        this.debugEndFact = debugEndFact;
         return this;
     }
-    public WorkBuilder setDateStartRelease(Date dateStartRelease) {
-        this.dateStartRelease = dateStartRelease;
+    public WorkBuilder setReleaseEndFact(Date releaseEndFact) {
+        this.releaseEndFact = releaseEndFact;
         return this;
     }
-    public WorkBuilder setDateStartOPE(Date dateStartOPE) {
-        this.dateStartOPE = dateStartOPE;
+    public WorkBuilder setOpeEndFact(Date opeEndFact) {
+        this.opeEndFact = opeEndFact;
         return this;
     }
-    public WorkBuilder setDateStartWender(Date dateStartWender) {
-        this.dateStartWender = dateStartWender;
-        return this;
-    }
-
-    public WorkBuilder setDateStartDevelopPlan(Date dateStartDevelopPlan) {
-        this.dateStartDevelopPlan = dateStartDevelopPlan;
+    public WorkBuilder setAnaliseEndFact(Date analiseEndFact) {
+        this.analiseEndFact = analiseEndFact;
         return this;
     }
 
-    public WorkBuilder setDateStartDebugPlan(Date dateStartDebugPlan) {
-        this.dateStartDebugPlan = dateStartDebugPlan;
+    public WorkBuilder setDevelopEndPlan(Date developEndPlan) {
+        this.developEndPlan = developEndPlan;
         return this;
     }
 
-    public WorkBuilder setDateStartReleasePlan(Date dateStartReleasePlan) {
-        this.dateStartReleasePlan = dateStartReleasePlan;
+    public WorkBuilder setDebugEndPlan(Date debugEndPlan) {
+        this.debugEndPlan = debugEndPlan;
         return this;
     }
 
-    public WorkBuilder setDateStartOPEPlan(Date dateStartOPEPlan) {
-        this.dateStartOPEPlan = dateStartOPEPlan;
+    public WorkBuilder setReleaseEndPlan(Date releaseEndPlan) {
+        this.releaseEndPlan = releaseEndPlan;
         return this;
     }
 
-    public WorkBuilder setDateStartWenderPlan(Date dateStartWenderPlan) {
-        this.dateStartWenderPlan = dateStartWenderPlan;
+    public WorkBuilder setOpeEndPlan(Date opeEndPlan) {
+        this.opeEndPlan = opeEndPlan;
+        return this;
+    }
+
+    public WorkBuilder setAnaliseEndPlan(Date analiseEndPlan) {
+        this.analiseEndPlan = analiseEndPlan;
         return this;
     }
 
@@ -209,11 +209,11 @@ public class WorkBuilder {
                 codeSap,
                 codeZI,
                 name,
-                dateStartDevelop ,
-                dateStartDebug,
-                dateStartRelease,
-                dateStartOPE,
-                dateStartWender,
+                analiseEndFact,
+                developEndFact,
+                debugEndFact,
+                releaseEndFact,
+                opeEndFact,
                 task,
                 description,
                 planDateStage0,
@@ -234,16 +234,16 @@ public class WorkBuilder {
                 codeSap,
                 codeZI,
                 name,
-                dateStartDevelop,
-                dateStartDevelopPlan,
-                dateStartDebug,
-                dateStartDebugPlan,
-                dateStartRelease,
-                dateStartReleasePlan,
-                dateStartOPE,
-                dateStartOPEPlan,
-                dateStartWender,
-                dateStartWenderPlan,
+                analiseEndFact,
+                analiseEndPlan,
+                developEndFact,
+                developEndPlan,
+                debugEndFact,
+                debugEndPlan,
+                releaseEndFact,
+                releaseEndPlan,
+                opeEndFact,
+                opeEndPlan,
                 task,
                 description,
                 planDateStage0,
@@ -265,16 +265,16 @@ public class WorkBuilder {
                 codeSap,
                 codeZI,
                 name,
-                dateStartDevelop,
-                dateStartDevelopPlan,
-                dateStartDebug,
-                dateStartDebugPlan,
-                dateStartRelease,
-                dateStartReleasePlan,
-                dateStartOPE,
-                dateStartOPEPlan,
-                dateStartWender,
-                dateStartWenderPlan,
+                analiseEndFact,
+                analiseEndPlan,
+                developEndFact,
+                developEndPlan,
+                debugEndFact,
+                debugEndPlan,
+                releaseEndFact,
+                releaseEndPlan,
+                opeEndFact,
+                opeEndPlan,
                 task,
                 description,
                 planDateStage0,

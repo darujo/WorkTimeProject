@@ -1,12 +1,9 @@
 package ru.darujo.integration;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 import ru.darujo.dto.WorkEditDto;
-import ru.darujo.exceptions.ResourceNotFoundException;
 
 
 @Component

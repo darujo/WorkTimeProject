@@ -25,4 +25,5 @@
             <url>http://127.0.0.1:8081/artifactory/plugins-snapshot-local</url>
         </snapshotRepository>
     </distributionManagement>
+
 </project>

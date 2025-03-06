@@ -20,7 +20,7 @@ public class WorkTimeServiceIntegration {
         this.webClientWorkTime = webClientWorkTime;
     }
 
-    public Float getTimeTask(Long taskId, String userName, Date dateLE, Date dateGT) {
+    public Float getTimeTask(Long taskId, String nikName, Date dateLE, Date dateGT) {
         StringBuilder stringBuilder = new StringBuilder();
         if (stringBuilder.length() == 0) {
             stringBuilder.append("?");
@@ -31,11 +31,11 @@ public class WorkTimeServiceIntegration {
             }
             stringBuilder.append("taskId=").append(taskId);
         }
-        if (userName != null) {
+        if (nikName != null) {
             if (stringBuilder.length() != 0) {
                 stringBuilder.append("&");
             }
-            stringBuilder.append("userName=").append(userName);
+            stringBuilder.append("nikName=").append(nikName);
         }
         if (dateLE != null) {
             if (stringBuilder.length() != 0) {
