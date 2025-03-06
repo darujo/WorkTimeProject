@@ -1,9 +1,13 @@
 package ru.darujo.convertor;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.darujo.dto.TaskDto;
+import ru.darujo.dto.UserDto;
+import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.model.Task;
 
 public class TaskBuilder {
+
     private Long id;
     private String nikName;
     // № запроса (BTS)
@@ -56,8 +60,12 @@ public class TaskBuilder {
         return new TaskBuilder();
     }
     public TaskDto getTaskDto(){
+       // UserDto userDto = userServiceIntegration.getUserDto(null,nikName);
         return new TaskDto(id,
                 nikName,
+                null,
+                null,
+                null,
                 codeBTS,
                 codeDEVBO,
                 description,

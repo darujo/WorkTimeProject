@@ -46,10 +46,13 @@ public class WorkTimeService {
         workTimeRepository.deleteById(id);
     }
 
-    public Iterable<WorkTime> findWorkTime(Long taskId, String nikName, Date dateLE, Date dateGT, Date dateGE, Integer page, Integer size) {
+    public Iterable<WorkTime> findWorkTime(Long taskId, String nikName, Date dateLt,Date dateLe, Date dateGT, Date dateGE, Integer page, Integer size) {
         Specification<WorkTime> specification = Specification.where(null);
-        if (dateLE != null) {
-            specification = specification.and(WorkTimeSpecifications.dateLE(dateLE));
+        if (dateLt != null) {
+            specification = specification.and(WorkTimeSpecifications.dateLt(dateLt));
+        }
+        if (dateLe != null) {
+            specification = specification.and(WorkTimeSpecifications.dateLe(dateLe));
         }
         if (dateGE != null) {
             specification = specification.and(WorkTimeSpecifications.dateGE(dateGE));
@@ -72,15 +75,15 @@ public class WorkTimeService {
             return workTimeRepository.findAll(specification, PageRequest.of(page - 1, size,Sort.by("workDate").and(Sort.by("nikName"))));
         }
     }
-    public float getTimeWork(Long taskId, String nikName,Date dateLE, Date dateGT){
+    public float getTimeWork(Long taskId, String nikName,Date dateGt,Date dateLe){
         AtomicReference<Float> time = new AtomicReference<>((float) 0);
-        findWorkTime(taskId, nikName, dateLE, dateGT,null,null, null).forEach(workTime -> time.set(time.get() + workTime.getWorkTime()));
+        findWorkTime(taskId, nikName, null,dateLe,dateGt,null, null,null).forEach(workTime -> time.set(time.get() + workTime.getWorkTime()));
         return time.get();
     }
 
     public ListString getFactUser(Long taskId) {
         ListString users = new ListString();
-        findWorkTime(taskId, null, null, null,null,null, null).forEach(workTime ->  users.getList().add(workTime.getNikName()));
+        findWorkTime(taskId, null, null, null,null,null, null,null).forEach(workTime ->  users.getList().add(workTime.getNikName()));
         return  users;
     }
     private void validWorkTime(WorkTime workTime){

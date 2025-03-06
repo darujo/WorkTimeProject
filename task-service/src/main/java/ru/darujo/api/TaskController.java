@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.TaskConvertor;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.TaskDto;
+import ru.darujo.dto.UserDto;
 import ru.darujo.dto.WorkEditDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.integration.WorkServiceIntegration;
 import ru.darujo.model.Task;
 import ru.darujo.service.TaskService;
@@ -32,6 +34,11 @@ public class TaskController {
     @Autowired
     public void setWorkServiceIntegration(WorkServiceIntegration workServiceIntegration) {
         this.workServiceIntegration = workServiceIntegration;
+    }
+    UserServiceIntegration userServiceIntegration;
+    @Autowired
+    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+        this.userServiceIntegration = userServiceIntegration;
     }
 
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
@@ -80,7 +87,6 @@ public class TaskController {
                              @RequestParam(required = false, name = "dateLe") String dateLeStr,
                              @RequestParam(required = false, name = "dateGt") String dateGtStr
     ) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         Date dateLe = stringToDate(dateLeStr, "dateLe = ");
         Date dateGt = stringToDate(dateGtStr, "dateGt = ");
         return taskService.getTaskTime(
@@ -127,6 +133,15 @@ public class TaskController {
         } catch (ResourceNotFoundException e) {
             System.out.println(e.getMessage());
         }
+        try {
+            UserDto userDto = userServiceIntegration.getUserDto(null,task.getNikName());
+            taskDto.setAuthorFirstName(userDto.getFirstName());
+            taskDto.setAuthorLastName(userDto.getLastName());
+            taskDto.setAuthorPatronymic(userDto.getPatronymic());
+        } catch (ResourceNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+
         return taskDto;
     }
 

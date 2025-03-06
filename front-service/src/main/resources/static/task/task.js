@@ -33,11 +33,13 @@ angular.module('workTimeService').controller('taskController', function ($scope,
 
     $scope.setFormTask = function () {
         console.log("setFormTask");
+        console.log(Filt);
         if(typeof Filt != "undefined") {
             if (Filt.workId != null) {
-                document.getElementById("WorkIdEdit").value = Filt.workId;
+                document.getElementById("WorkIdFilt").value = Filt.workId;
             }
         }
+        console.log(document.getElementById("WorkIdEdit").value);
     }
 
     $scope.findPage = function (diffPage) {
@@ -95,7 +97,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
         console.log("create");
         TaskIdEdit = null;
         console.log("создаем");
-        document.getElementById("TaskIdEdit").value = null;
+        // document.getElementById("TaskIdEdit").value = null;
         console.log("создаем 1");
         console.log(typeof $scope.Task);
         $scope.Task = {
@@ -110,7 +112,8 @@ angular.module('workTimeService').controller('taskController', function ($scope,
             // $scope
         console.log($scope.Task);
         console.log("создаем 5");
-        $scope.Task.workId = document.getElementById("WorkIdFilt").value;
+        $scope.Task.workId = parseInt(document.getElementById("WorkIdFilt").value);
+        console.log($scope.Task.workId);
         console.log("создаем 3");
 
         showFormEdit();

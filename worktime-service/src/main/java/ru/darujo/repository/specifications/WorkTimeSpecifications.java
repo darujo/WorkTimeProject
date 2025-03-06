@@ -9,8 +9,11 @@ public class WorkTimeSpecifications {
     public static Specification<WorkTime> dateGE(Date date){
         return ((root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("workDate"),date));
     }
-    public static Specification<WorkTime> dateLE(Date date){
+    public static Specification<WorkTime> dateLe(Date date){
         return ((root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("workDate"),date));
+    }
+    public static Specification<WorkTime> dateLt(Date date){
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.lessThan(root.get("workDate"),date));
     }
     public static Specification<WorkTime> dateGT(Date date){
         return ((root, query, criteriaBuilder) -> criteriaBuilder.greaterThan(root.get("workDate"),date));

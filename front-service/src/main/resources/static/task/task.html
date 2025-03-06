@@ -1,11 +1,11 @@
 <div id="TaskList" class="headtextelem">
-  <div class="filter">
+  <div class="filter containerfilt">
     <form novalidate ng-submit="filterTask()" ; class="filter">
       <div  class="filter">
         <div class="filterblock">
 
           <div  class="horiz">
-            <p class="p-head">Id задачи</p>
+            <p class="p-head">Id ЗИ</p>
             <br>
             <input class="vvod80" type="number" id="WorkIdFilt" step="any" ng-model="Filt.workId"/>
           </div>
@@ -35,7 +35,7 @@
     </form>
     <button class="headbutton" ng-click="createTask()">Создать задачу</button>
   </div>
-  <div class="filter">
+  <div class="filter containerfilt">
     <button class="headbutton" ng-click="findPage(-1)">PrevPage</button>
     <input class="vvod" type="number" id="Page" value="1"/>
     <button class="headbutton" ng-click="findPage(1)">NextPage</button>
@@ -56,7 +56,9 @@
     </tr>
     <tbody>
     <tr ng-repeat="task in TaskList">
-      <td>{{task.userName}}</td>
+      <td ng-if="!task.authorFirstName">{{task.nikName}}</td>
+      <td ng-if="task.authorFirstName">{{task.authorLastName}} {{task.authorFirstName}} {{task.authorPatronymic}}</td>
+
       <td>{{task.codeBTS}}</td>
       <td>{{task.codeDEVBO}}</td>
       <td><button  ng-click="addTime(task.id);">{{task.description}}</button></td>
@@ -76,7 +78,7 @@
 
 </div>
 
-<div id="FormEdit" class="divform">
+<div id="FormEdit" class="divform containerfilt">
   <form novalidate ng-submit="saveTask()">
     Задача : <input class="vvod" type="number" inputmode="number" id="TaskIdEdit" placeholder="Ведите код задачи"
                           ng-model="Task.id"/>

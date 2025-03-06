@@ -44,7 +44,7 @@ public class AuthController {
         return ResponseEntity.ok(new JwtResponse(token));
     }
     @GetMapping("/user")
-    public UserDto getUserDto (@RequestParam String nikName){
+    public UserDto getUserDto (@RequestParam(required = false) String nikName){
         return UserConvertor.getUserDto(userService.loadUserByNikName(nikName));
     }
 }

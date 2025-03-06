@@ -1,5 +1,5 @@
 <div id="WorkTimeList" class="headtextelem">
-  <div class="filter">
+  <div class="filter containerfilt">
     <form novalidate ng-submit="filterWorkTime()" ; class="filter">
       <div  class="filter">
         <div class="filterblock">
@@ -23,7 +23,7 @@
     </form>
     <button class="headbutton" ng-click="createWorkTime()">Добавить время</button>
   </div>
-  <div class="filter">
+  <div class="filter containerfilt">
     <button class="headbutton" ng-click="findPage(-1)">PrevPage</button>
     <input class="vvod" type="number" id="Page" value="1"/>
     <button class="headbutton" ng-click="findPage(1)">NextPage</button>
@@ -40,7 +40,8 @@
     </tr>
     <tbody>
     <tr ng-repeat="worktime in WorkTimeList">
-      <td>{{worktime.userName}}</td>
+      <td ng-if="!worktime.authorFirstName">{{worktime.nikName}}</td>
+      <td ng-if="worktime.authorFirstName">{{worktime.authorLastName}} {{worktime.authorFirstName}} {{worktime.authorPatronymic}}</td>
       <td>{{worktime.workDateStr}}</td>
       <td>{{worktime.workTime}}</td>
 
@@ -57,7 +58,7 @@
 
 </div>
 
-<div id="FormEdit" class="divform">
+<div id="FormEdit" class="divform containerfilt">
   <div class="filter" id="TaskNum">
     <div class="horiz">
       <p class="p-filt">Задача:</p> <input class="vvod80" type="hidden" inputmode="number" id="TaskIdEdit"
@@ -117,7 +118,9 @@
       </tr>
       <tbody>
       <tr ng-repeat="task in TaskList">
-        <td>{{task.userName}}</td>
+        <td ng-if="!task.authorFirstName">{{task.nikName}}</td>
+        <td ng-if="task.authorFirstName">{{task.authorLastName}} {{task.authorFirstName}} {{task.authorPatronymic}}</td>
+
         <td>{{task.codeBTS}}</td>
         <td>{{task.codeDEVBO}}</td>
         <td><button type="button"  ng-click="setTask(task.id);">{{task.description}}</button></td>

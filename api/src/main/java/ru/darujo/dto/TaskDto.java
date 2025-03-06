@@ -5,6 +5,11 @@ import java.io.Serializable;
 public class TaskDto implements Serializable {
     private Long id;
     private String nikName;
+
+    private String authorFirstName;
+    private String authorLastName;
+    private String authorPatronymic;
+
     // № запроса (BTS)
     private String codeBTS;
     // № внутренней задачи (DEVBO)
@@ -69,9 +74,24 @@ public class TaskDto implements Serializable {
     public TaskDto() {
     }
 
-    public TaskDto(Long id, String nikName, String codeBTS, String codeDEVBO, String description, Integer type, Long workId) {
+    public String getAuthorFirstName() {
+        return authorFirstName;
+    }
+
+    public String getAuthorLastName() {
+        return authorLastName;
+    }
+
+    public String getAuthorPatronymic() {
+        return authorPatronymic;
+    }
+
+    public TaskDto(Long id, String nikName, String authorFirstName,String authorLastName,String authorPatronymic, String codeBTS, String codeDEVBO, String description, Integer type, Long workId) {
         this.id = id;
         this.nikName = nikName;
+        this.authorFirstName = authorFirstName;
+        this.authorLastName  = authorLastName;
+        this.authorPatronymic = authorPatronymic;
         this.codeBTS = codeBTS;
         this.codeDEVBO = codeDEVBO;
         this.description = description;
@@ -79,6 +99,15 @@ public class TaskDto implements Serializable {
         this.workId = workId;
     }
 
+    public void setAuthorFirstName(String authorFirstName) {
+        this.authorFirstName = authorFirstName;
+    }
 
+    public void setAuthorLastName(String authorLastName) {
+        this.authorLastName = authorLastName;
+    }
 
+    public void setAuthorPatronymic(String authorPatronymic) {
+        this.authorPatronymic = authorPatronymic;
+    }
 }

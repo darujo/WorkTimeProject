@@ -1,5 +1,5 @@
 <div id="WorkList" class="headtextelem">
-  <div class="filter">
+  <div class="filter container">
     <form novalidate ng-submit="filterWork()" ; class="filter">
 <!--      <input class="vvod" type="number" inputmode="decimal" id="WorkId" step="any" ng-model="Filt.workId"/>-->
 <!--      <br>-->
@@ -15,7 +15,7 @@
     </form>
     <button class="headbutton" ng-click="createWork()">Создать ЗИ</button>
   </div>
-  <div class="filter">
+  <div class="filter containerfilt">
     <button class="headbutton" ng-click="findPage(-1)">PrevPage</button>
     <input class="vvod" type="number" id="Page" value="1"/>
     <button class="headbutton" ng-click="findPage(1)">NextPage</button>
@@ -111,7 +111,7 @@
 
 </div>
 
-<div id="FormEdit" class="divform">
+<div id="FormEdit" class="divform containerfilt">
   <form novalidate ng-submit="saveWork()">
     Код SAP : <input class="vvod" type="number" inputmode="decimal" id="CodeSap" step="1"
                                                                  ng-model="Work.codeSap"/>

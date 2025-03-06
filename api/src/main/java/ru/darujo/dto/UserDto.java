@@ -3,6 +3,9 @@ package ru.darujo.dto;
 import java.io.Serializable;
 
 public class UserDto implements Serializable {
+    public UserDto() {
+    }
+
     private long id;
     private String nikName;
 

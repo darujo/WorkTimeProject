@@ -14,11 +14,11 @@ import java.util.Date;
 
 @Component
 public class TaskServiceIntegration {
-    private WebClient webClientWork;
+    private WebClient webClientTask;
 
     @Autowired
-    public void setWebClientWork(WebClient webClientWork) {
-        this.webClientWork = webClientWork;
+    public void setWebClientTask(WebClient webClientTask) {
+        this.webClientTask = webClientTask;
     }
 
     public Float getTimeWork(Long workID, String nikName, Date dateGT, Date dateLE) {
@@ -52,7 +52,7 @@ public class TaskServiceIntegration {
         }
 
         System.out.println(stringBuilder);
-        return webClientWork.get().uri("/rep/fact/time" + stringBuilder)
+        return webClientTask.get().uri("/rep/fact/time" + stringBuilder)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                         clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
@@ -61,7 +61,7 @@ public class TaskServiceIntegration {
     }
 
     public ListString getListUser(Long workID) {
-        return webClientWork.get().uri("/rep/fact/user?workId=" + workID)
+        return webClientTask.get().uri("/rep/fact/user?workId=" + workID)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                         clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
@@ -70,7 +70,7 @@ public class TaskServiceIntegration {
 
     }
     public WorkDto getWork(Long id) {
-        return webClientWork.get().uri("/" + id)
+        return webClientTask.get().uri("/" + id)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                         clientResponse -> Mono.error(new ResourceNotFoundException("Задача c id = " + id + " не найдена")))

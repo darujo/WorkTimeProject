@@ -6,6 +6,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.ListString;
+import ru.darujo.integration.TaskServiceIntegration;
+import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.integration.WorkTimeServiceIntegration;
 import ru.darujo.model.Task;
 import ru.darujo.repository.TaskRepository;

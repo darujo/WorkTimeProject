@@ -19,7 +19,7 @@ public class AppConfigTask extends WebClientConfig {
     }
 
     @Bean
-    public WebClient webClientBasket(){
+    public WebClient webClientTask(){
         return webClient(taskServiceProperty);
     }
 }

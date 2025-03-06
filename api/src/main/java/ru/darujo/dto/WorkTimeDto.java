@@ -14,6 +14,34 @@ public class WorkTimeDto implements Serializable {
     }
     private Long id;
     private String nikName;
+    private String authorFirstName;
+    private String authorLastName;
+    private String authorPatronymic;
+
+    public String getAuthorFirstName() {
+        return authorFirstName;
+    }
+
+    public String getAuthorLastName() {
+        return authorLastName;
+    }
+
+    public String getAuthorPatronymic() {
+        return authorPatronymic;
+    }
+
+    public void setAuthorFirstName(String authorFirstName) {
+        this.authorFirstName = authorFirstName;
+    }
+
+    public void setAuthorLastName(String authorLastName) {
+        this.authorLastName = authorLastName;
+    }
+
+    public void setAuthorPatronymic(String authorPatronymic) {
+        this.authorPatronymic = authorPatronymic;
+    }
+
     private Date workDate;
     private String workDateStr;
     private String comment;

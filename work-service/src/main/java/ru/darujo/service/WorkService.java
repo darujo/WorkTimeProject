@@ -6,9 +6,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.darujo.dto.UserDto;
 import ru.darujo.dto.WorkFactDto;
 import ru.darujo.dto.WorkRepDto;
 import ru.darujo.integration.TaskServiceIntegration;
+import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.model.Work;
 import ru.darujo.repository.WorkRepository;
 import ru.darujo.repository.specifications.WorkSpecifications;
@@ -24,7 +26,11 @@ public class WorkService {
     public void setWorkTimeServiceIntegration(TaskServiceIntegration taskServiceIntegration) {
         this.taskServiceIntegration = taskServiceIntegration;
     }
-
+    UserServiceIntegration userServiceIntegration;
+    @Autowired
+    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+        this.userServiceIntegration = userServiceIntegration;
+    }
     private WorkRepository workRepository;
 
     @Autowired
@@ -154,6 +160,7 @@ public class WorkService {
                                 codeZi = null;
                                 name = null;
                             }
+                            UserDto userDto = userServiceIntegration.getUserDto(null,user);
                             workFactDtos.add(
                                     new WorkFactDto(
                                             num.incrementAndGet(),
@@ -161,6 +168,9 @@ public class WorkService {
                                             name,
                                             users.size(),
                                             user,
+                                            userDto.getFirstName(),
+                                            userDto.getLastName(),
+                                            userDto.getPatronymic(),
                                             taskServiceIntegration.getTimeWork(
                                                     work.getId(),
                                                     user,
