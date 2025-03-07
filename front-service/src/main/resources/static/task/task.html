@@ -80,6 +80,10 @@
 
 <div id="FormEdit" class="divform containerfilt">
   <form novalidate ng-submit="saveTask()">
+    <button type="submit" class="button">Сохранить</button>
+    <button type="reset" ng-click="loadTask()" class="button">Вернуться к списку</button>
+    <br>
+    <br>
     Задача : <input class="vvod" type="number" inputmode="number" id="TaskIdEdit" placeholder="Ведите код задачи"
                           ng-model="Task.id"/>
     <br>
@@ -102,12 +106,59 @@
       <option ng-value="3" value="3" >Админ</option>
     </select>
     <br>
-    Код Зи <input class="vvod" type="number" step="1" id="WorkIdEdit"
-                 ng-model="Task.workId"/>
-    <br>
-
-    <button type="submit" class="button">Сохранить</button>
-    <button type="reset" ng-click="loadTask()" class="button">Вернуться к списку</button>
-
   </form>
+  <div id = "WorkNum">
+    Наименование ЗИ
+    <br>
+    <input class="vvod80" type="hidden" step="1" id="WorkIdEdit"
+                 ng-model="Task.workId"/>
+    <input type="text" id="WorkName" class="vvod80" readonly>
+    <button type="button" ng-click="findWork(WorkTime.taskId)" class="headbutton">Найти</button>
+    <br>
+  </div>
+  <div id = "FindWork" >
+    <div >
+      <form novalidate class="filter">
+        <!--      <input class="vvod" type="number" inputmode="decimal" id="WorkId" step="any" ng-model="Filt.workId"/>-->
+        <!--      <br>-->
+        <!--      <input class="vvod" type="number" inputmode="decimal" id="DateLE" value="1" ng-model="Filt.dateLe"/>-->
+
+        <!--      <p class="p-head"> <= Цена <= </p>-->
+        <!--      <input class="vvod" type="number" inputmode="decimal" id="DateGe" step="any" ng-model="Filt.dateGe"/>-->
+        <p class="p-head"> Наименование </p> <input class="vvod80" inputmode="text" id="Name" ng-model="FiltWork.name"/>
+        <!--                <input  type="hidden" id="wwwwId" />-->
+        <br>
+        <button type="button" ng-click="loadWork()" class="headbutton">Применить</button>
+
+      </form>
+    </div>
+    <div class="filter">
+      <button type="button" class="headbutton" ng-click="loadWork(-1)">PrevPage</button>
+      <input class="vvod" type="number" id="PageWork" value="1"/>
+      <button type="button" class="headbutton" ng-click="loadWork(1)">NextPage</button>
+    </div>
+    <table>
+
+      <tr>
+        <td class="tablehead2" rowspan="3"> Код SAP </td>
+        <td class="tablehead2" rowspan="3"> Код Зи </td>
+        <td class="tablehead2" rowspan="3"> Наименование </td>
+        <td class="tablehead2" rowspan="3"> Этап </td>
+      </tr>
+      <tbody>
+        <tr ng-repeat="work in WorkList">
+          <td>{{work.codeSap}}</td>
+          <td>{{work.codeZI}}</td>
+          <td><button ng-click="setWork(work.id)">{{work.name}}</button></td>
+          <td>{{work.codeZI}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+
+  </div>
+  <button class="button" ng-click="saveTask()">Сохранить</button>
+  <button type="reset" ng-click="loadTask()" class="button">Вернуться к списку</button>
+
+
 </div>

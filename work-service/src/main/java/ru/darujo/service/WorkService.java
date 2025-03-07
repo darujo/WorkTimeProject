@@ -39,39 +39,35 @@ public class WorkService {
         this.workRepository = workRepository;
     }
 
-    private int size = 10;
-    private Page<Work> workPage;
-
     public Optional<Work> findById(long id) {
         return workRepository.findById(id);
     }
 
     public Work saveWork(Work work) {
-        size = -1;
         return workRepository.save(work);
     }
 
     public void deleteWork(Long id) {
         workRepository.deleteById(id);
-        size = -1;
     }
 
-    public Page<Work> findWorks(int page, int size, String name, String sort) {
-        if (workPage != null && page == 1 && this.size == size && name == null) {
-            return workPage;
-        }
+    public Page<Work> findWorks(int page, int size, String name, String sort,Integer stageZiLt) {
         Specification<Work> specification = Specification.where(null);
 
         if (name != null) {
             specification = specification.and(WorkSpecifications.workNameLike(name));
         }
+        if (stageZiLt != null) {
+            specification = specification.and(WorkSpecifications.stageZiLt(stageZiLt));
+        }
+        System.out.println("Page = " + page);
+        Page<Work> workPage;
         if(sort == null) {
             workPage = workRepository.findAll(specification, PageRequest.of(page - 1, size));
         }
         else {
             workPage = workRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.by(sort)));
         }
-        this.size = size;
         return workPage;
     }
 

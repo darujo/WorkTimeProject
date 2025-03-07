@@ -160,23 +160,28 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
                 // showFindTask();
             });
     };
+    var sendSave = false;
     $scope.saveWorkTime = function () {
         console.log($scope.WorkTime);
         console.log(WorkTimeIdEdit);
+        if(!sendSave){
+            sendSave = true;
+            $http.post(constPatchWorkTime + "/worktime",$scope.WorkTime)
+                .then(function (response) {
+                    console.log("Save response")
+                    console.log(response);
+                    sendSave = false;
+                    showWorkTime();
+                    $scope.loadWorkTime();
+                }, function errorCallback(response) {
+                    sendSave = false;
+                    console.log(response.data);
+                    if($location.checkAuthorized(response)) {
 
-        $http.post(constPatchWorkTime + "/worktime",$scope.WorkTime)
-            .then(function (response) {
-                console.log("Save response")
-                console.log(response);
-
-                $scope.loadWorkTime();
-            }, function errorCallback(response) {
-                console.log(response.data);
-                if($location.checkAuthorized(response)) {
-
-                    alert(response.data.message);
-                }
-            });
+                        alert(response.data.message);
+                    }
+                });
+        }
     }
     var FiltTask;
     var findNameTask = function(taskId){
@@ -201,10 +206,18 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
         });
 
     }
-    var loadTask = function(taskId, diffPage){
+    var maxPage = 1;
+    $scope.loadTask = function(diffPage){
         console.log("loadTask")
         var page = parseInt(document.getElementById("PageTask").value) + diffPage;
+        if (page < 1){
+            page = 1;
+        }
+        if(maxPage < page){
+            page = maxPage;
+        }
 
+        document.getElementById("PageTask").value = page;
         $http({
             url: constPatchTask + "/task",
             method: "get",
@@ -226,6 +239,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
             console.log("response,data :" );
             console.log(response.data);
             $scope.TaskList = response.data.content;
+            maxPage = response.data.totalPages;
             // showTask();
 
         }, function errorCallback(response) {
@@ -242,7 +256,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
         console.log("filterTask");
         FiltTask = $scope.FiltTask;
         document.getElementById("PageTask").value = "1";
-        loadTask(0,0);
+        $scope.loadTask(0);
     };
     $scope.setTask = function (taskId) {
         document.getElementById("TaskIdEdit").value = taskId;
@@ -251,7 +265,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
 
     }
     $scope.findTask = function () {
-        loadTask(null,0);
+        $scope.loadTask(0);
 
         showFindTask();
     }
