@@ -24,7 +24,7 @@ public class WorkService {
     private TaskServiceIntegration taskServiceIntegration;
 
     @Autowired
-    public void setWorkTimeServiceIntegration(TaskServiceIntegration taskServiceIntegration) {
+    public void setTaskServiceIntegration(TaskServiceIntegration taskServiceIntegration) {
         this.taskServiceIntegration = taskServiceIntegration;
     }
     UserServiceIntegration userServiceIntegration;
@@ -179,10 +179,14 @@ public class WorkService {
                                             userDto.getFirstName(),
                                             userDto.getLastName(),
                                             userDto.getPatronymic(),
+                                            taskServiceIntegration.getTimeWork(work.getId(),
+                                                    user,
+                                                    null,
+                                                    work.getAnaliseEndFact()),
                                             taskServiceIntegration.getTimeWork(
                                                     work.getId(),
                                                     user,
-                                                    null,
+                                                    work.getAnaliseEndFact(),
                                                     work.getDevelopEndFact()),
                                             taskServiceIntegration.getTimeWork(work.getId(),
                                                     user,
@@ -199,11 +203,8 @@ public class WorkService {
                                             taskServiceIntegration.getTimeWork(work.getId(),
                                                     user,
                                                     work.getOpeEndFact(),
-                                                    work.getAnaliseEndFact()),
-                                            taskServiceIntegration.getTimeWork(work.getId(),
-                                                    user,
-                                                    work.getAnaliseEndFact(),
                                                     null)
+
                                     )
                             );
 
