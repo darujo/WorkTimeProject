@@ -25,7 +25,7 @@ public class UserService implements UserDetailsService {
     }
 
     public Optional<User> findByNikName(String name){
-        return userRepository.findByNikName(name);
+        return userRepository.findByNikNameIgnoreCase(name);
     }
     @Transactional
     public User loadUserByNikName(String nikName) throws UsernameNotFoundException {
