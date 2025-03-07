@@ -1,7 +1,8 @@
 angular.module('workTimeService').controller('taskController', function ($scope, $http, $location, $localStorage) {
 
-    const constPatchTask = 'http://localhost:5555/task-service/v1';
-    const constPatchWork = 'http://localhost:5555/work-service/v1';
+    const constPatchTask = 'http://178.20.40.174:5555/task-service/v1';
+    const constPatchWork = 'http://178.20.40.174:5555/work-service/v1';
+
     var showTask = function () {
         document.getElementById("TaskList").style.display = "block";
         document.getElementById("FormEdit").style.display = "none";
