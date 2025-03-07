@@ -7,6 +7,7 @@
 	<modules>
 		<module>api</module>
 		<module>api-integration</module>
+		<module>auth-service</module>
 		<module>worktime-service</module>
 		<module>work-service</module>
 		<module>task-service</module>
