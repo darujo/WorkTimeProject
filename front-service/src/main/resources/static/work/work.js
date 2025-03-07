@@ -149,23 +149,29 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 // showFindTask();
             });
     };
+    var sendSave= false;
     $scope.saveWork = function () {
         console.log()
         console.log($scope.Work);
         console.log(WorkIdEdit);
+      if (!sendSave){
+          sendSave =true;
+          $http.post(constPatchWork + "/works",$scope.Work)
+              .then(function (response) {
+                  sendSave= false;
+                  console.log(response);
+                  showWork();
+                  $scope.loadWork();
+                }, function errorCallback(response) {
+                  sendSave= false;
+                  console.log(response)
+                  if($location.checkAuthorized(response)){
+                        //     alert(response.data.message);
+                  }
 
-        $http.post(constPatchWork + "/works",$scope.Work)
-            .then(function (response) {
-                console.log(response);
-                $scope.loadWork();
-            }, function errorCallback(response) {
-                console.log(response)
-                if($location.checkAuthorized(response)){
-                    //     alert(response.data.message);
-                }
-
-                // showFindTask();
-            });
+                    // showFindTask();
+                });
+      }
     };
     $scope.addTime = function (workId){
         console.log("Другая");

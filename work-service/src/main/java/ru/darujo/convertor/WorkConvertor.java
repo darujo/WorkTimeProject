@@ -2,6 +2,7 @@ package ru.darujo.convertor;
 
 import ru.darujo.dto.WorkDto;
 import ru.darujo.dto.WorkEditDto;
+import ru.darujo.dto.WorkLittleDto;
 import ru.darujo.model.Work;
 
 public class WorkConvertor {
@@ -78,5 +79,18 @@ public class WorkConvertor {
                 .setAnaliseEndPlan(workDto.getAnaliseEndPlan())
                 .setFactDateStage0(workDto.getFactDateStage0())
                 .getWork();
+    }
+
+    public static WorkLittleDto getWorkLittleDto(Work work) {
+        return WorkBuilder
+                .createWork()
+                .setId(work.getId())
+                .setCodeSap(work.getCodeSap())
+                .setCodeZI(work.getCodeZI())
+                .setStageZI(work.getStageZI())
+                .setName(work.getName())
+                .getWorkLittleDto();
+
+
     }
 }

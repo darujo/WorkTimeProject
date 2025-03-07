@@ -2,6 +2,7 @@ package ru.darujo.convertor;
 
 import ru.darujo.dto.WorkDto;
 import ru.darujo.dto.WorkEditDto;
+import ru.darujo.dto.WorkLittleDto;
 import ru.darujo.model.Work;
 
 
@@ -291,4 +292,7 @@ public class WorkBuilder {
                 issuingReleaseFact);
     }
 
+    public WorkLittleDto getWorkLittleDto() {
+        return new WorkLittleDto(id, codeSap, codeZI, name, stageZI);
+    }
 }
