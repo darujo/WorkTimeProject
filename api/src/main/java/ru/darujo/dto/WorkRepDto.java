@@ -112,17 +112,18 @@ public class WorkRepDto implements Serializable {
         this.timeOPE = timeOPE;
         this.timeWender = timeWender;
         this.timePlan = 0f;
-        addTimePlan(timeAnalise);
-        addTimePlan(timeDevelop);
-        addTimePlan(timeDebug);
-        addTimePlan(timeRelease);
-        addTimePlan(timeOPE);
-        addTimePlan(timeWender);
+        addTimePlan (laborDevelop);
+        addTimePlan (laborDebug);
+        addTimePlan (laborRelease);
+        addTimePlan (laborOPE);
         this.timeFact = 0f;
-        addTimeFact (laborDevelop);
-        addTimeFact (laborDebug);
-        addTimeFact (laborRelease);
-        addTimeFact (laborOPE);
+        addTimeFact(timeAnalise);
+        addTimeFact(timeDevelop);
+        addTimeFact(timeDebug);
+        addTimeFact(timeRelease);
+        addTimeFact(timeOPE);
+        addTimeFact(timeWender);
+
 
     }
     public void addTimePlan(Float time ){

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import ru.darujo.dto.UserDto;
 import ru.darujo.dto.WorkFactDto;
 import ru.darujo.dto.WorkRepDto;
+import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.integration.TaskServiceIntegration;
 import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.model.Work;
@@ -160,7 +161,13 @@ public class WorkService {
                                 codeZi = null;
                                 name = null;
                             }
-                            UserDto userDto = userServiceIntegration.getUserDto(null,user);
+                            UserDto userDto;
+                            try {
+                                userDto = userServiceIntegration.getUserDto(null, user);
+                            }
+                            catch (ResourceNotFoundException ex){
+                                userDto = new UserDto(-1L,"","логином", "Не найден пользователь с",user);
+                            }
                             workFactDtos.add(
                                     new WorkFactDto(
                                             num.incrementAndGet(),

@@ -112,6 +112,7 @@ public class WorkTimeController {
             workTimeDto.setAuthorPatronymic(userDto.getPatronymic());
         } catch (ResourceNotFoundException e) {
             System.out.println(e.getMessage());
+            workTimeDto.setAuthorFirstName("Не найден пользователь с ником " + workTimeDto.getNikName());
         }
         return workTimeDto;
     }
