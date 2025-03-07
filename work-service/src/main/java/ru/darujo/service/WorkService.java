@@ -104,10 +104,14 @@ public class WorkService {
                                 work.getOpeEndPlan(),
                                 work.getOpeEndFact(),
                                 work.getLaborOPE(),
+                                taskServiceIntegration.getTimeWork(work.getId(),
+                                        nikName,
+                                        null,
+                                        work.getAnaliseEndFact()),
                                 taskServiceIntegration.getTimeWork(
                                         work.getId(),
                                         nikName,
-                                        null,
+                                        work.getAnaliseEndFact(),
                                         work.getDevelopEndFact()),
                                 taskServiceIntegration.getTimeWork(work.getId(),
                                         nikName,
@@ -124,11 +128,8 @@ public class WorkService {
                                 taskServiceIntegration.getTimeWork(work.getId(),
                                         nikName,
                                         work.getOpeEndFact(),
-                                        work.getAnaliseEndFact()),
-                                taskServiceIntegration.getTimeWork(work.getId(),
-                                        nikName,
-                                        work.getAnaliseEndFact(),
                                         null)
+
                         )
                 )
         );
