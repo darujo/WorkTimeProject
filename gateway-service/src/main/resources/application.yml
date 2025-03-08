@@ -9,12 +9,13 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOrigins: "http://localhost:8185"
+            allowedOrigins: "http://178.20.40.174:8185,http://localhost:8185"
             allowedMethods:
               - GET
               - POST
               - DELETE
             allowedHeaders: "*"
+#            allow-credentials: true
       routes:
         - id: worktime-service
           uri: "http://localhost:8180"

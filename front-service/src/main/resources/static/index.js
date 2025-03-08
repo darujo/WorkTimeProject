@@ -61,7 +61,7 @@
 })();
 
 angular.module('workTimeService').controller('indexController', function ($rootScope, $scope, $http, $location, $localStorage) {
-    const constPatchAuth    = 'http://localhost:5555';
+    const constPatchAuth    = window.location.origin ;
 
     $scope.tryToAuth = function () {
         $http.post(constPatchAuth + '/auth', $scope.user)

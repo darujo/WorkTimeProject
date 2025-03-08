@@ -1,6 +1,6 @@
 angular.module('workTimeService').controller('workTimeRepController', function ($scope, $http, $location, $localStorage) {
 
-    const constPatchWork = 'http://localhost:5555/work-service/v1';
+    const constPatchWork = window.location.origin + '/work-service/v1';
 
     var Filt;
     $scope.loadWorkTime = function () {
