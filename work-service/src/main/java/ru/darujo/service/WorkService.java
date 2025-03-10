@@ -13,6 +13,8 @@ import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.integration.TaskServiceIntegration;
 import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.model.Work;
+import ru.darujo.model.WorkLittle;
+import ru.darujo.repository.WorkLittleRepository;
 import ru.darujo.repository.WorkRepository;
 import ru.darujo.repository.specifications.WorkSpecifications;
 
@@ -38,9 +40,17 @@ public class WorkService {
     public void setWorkRepository(WorkRepository workRepository) {
         this.workRepository = workRepository;
     }
+    private WorkLittleRepository workLittleRepository;
 
+    @Autowired
+    public void setWorkLittleRepository(WorkLittleRepository workLittleRepository) {
+        this.workLittleRepository = workLittleRepository;
+    }
     public Optional<Work> findById(long id) {
         return workRepository.findById(id);
+    }
+    public Optional<WorkLittle> findLittleById(long id) {
+        return workLittleRepository.findById(id);
     }
 
     public Work saveWork(Work work) {
@@ -48,7 +58,7 @@ public class WorkService {
     }
 
     public void deleteWork(Long id) {
-        workRepository.deleteById(id);
+        workLittleRepository.deleteById(id);
     }
 
     public Page<Work> findWorks(int page, int size, String name, String sort,Integer stageZiLt) {
@@ -70,6 +80,26 @@ public class WorkService {
         }
         return workPage;
     }
+    public Page<WorkLittle> findWorkLittle(int page, int size, String name, String sort,Integer stageZiLt) {
+        Specification<WorkLittle> specification = Specification.where(null);
+
+        if (name != null) {
+            specification = specification.and(WorkSpecifications.workLittleNameLike(name));
+        }
+        if (stageZiLt != null) {
+            specification = specification.and(WorkSpecifications.workLittleStageZiLt(stageZiLt));
+        }
+        System.out.println("Page = " + page);
+        Page<WorkLittle> workPage;
+        if(sort == null) {
+            workPage = workLittleRepository.findAll(specification, PageRequest.of(page - 1, size));
+        }
+        else {
+            workPage = workLittleRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.by(sort)));
+        }
+        return workPage;
+    }
+
 
     public List<WorkRepDto> getWorkRep(String nikName) {
         List<WorkRepDto> workRepDtos = new ArrayList<>();

@@ -41,6 +41,14 @@ spring:
             - StripPrefix=1
             - PrefixPath=/app
             - JwtAuthFilter
+        - id: calendar-service
+          uri: "http://localhost:8184"
+          predicates:
+            - Path=/calendar-service/**
+          filters:
+            - StripPrefix=1
+            - PrefixPath=/app
+            - JwtAuthFilter
         - id: front-service
           uri: "http://localhost:8185"
           predicates:
@@ -64,6 +72,7 @@ spring:
             - StripPrefix=1
             - PrefixPath=/app-auth/user
             - JwtAuthFilter
+
         - id: front-add
           uri: "http://localhost:8185"
           predicates:

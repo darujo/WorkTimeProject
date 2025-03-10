@@ -98,6 +98,10 @@ TABLE {
     border: 1px solid #399; /* Граница вокруг таблицы */
     /*border-spacing: 7px 5px; !* Расстояние между границ *!*/
    }
+.tablecalend{
+    width: 90%; /* Ширина таблицы */
+    border: 1px solid #399; /* Граница вокруг таблицы */
+}
 TD {
     border: 1px solid #333; /* Граница вокруг ячеек */
     padding: 5px; /* Поля в ячейках */

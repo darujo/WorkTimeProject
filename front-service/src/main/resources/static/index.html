@@ -16,22 +16,26 @@
 <nav>
     <div class="" id="navbarNav">
         <ul class="">
-            <li class="nav-item">
-                <a class="nav-link" href="#!/work">Список ЗИ</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#!/task">Все задачи</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#!/worktime">Все работы</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#!/worktimerep">Отчет</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#!/factwork">Факт затрат</a>
-            </li>
-
+            <details open>
+                <summary class="p-head">Меню</summary>
+                <li class="nav-item">
+                    <a class="nav-link" href="#!/work">Список ЗИ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#!/task">Все задачи</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#!/worktime">Все работы</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#!/worktimerep">Отчет</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#!/factwork">Факт затрат</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#!/calendar">Производственный календарь</a>
+                </li>
             <li class="nav-item" ng-show="!isUserLoggedIn()">
                 <form class="" ng-submit="tryToAuth()">
                     <div class="input-group input-group-sm" style="padding: 4px;">
@@ -50,6 +54,8 @@
             <li class="nav-item" ng-show="isUserLoggedIn()" style="padding: 4px;">
                 <button class="headbutton" ng-click="tryToLogout()">Выйти</button>
             </li>
+            </details>
+
         </ul>
     </div>
 
@@ -65,6 +71,9 @@
     <script src="work/work.js"></script>
     <script src="task/task.js"></script>
     <script src="welcome/welcome.js"></script>
+    <script src="calendar/calendar.js"></script>
+
+
 </div>
 </body>
 </html>

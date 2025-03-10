@@ -13,8 +13,10 @@
 		<module>task-service</module>
 		<module>front-service</module>
 		<module>gateway-service</module>
+        <module>calendar</module>
+        <module>api-calendar</module>
 
-	</modules>
+    </modules>
 	<groupId>ru.darujo</groupId>
 	<artifactId>WorkTimeProject</artifactId>
 	<version>0.0.1-SNAPSHOT</version>

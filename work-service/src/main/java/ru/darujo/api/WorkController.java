@@ -60,10 +60,10 @@ public class WorkController {
                                               @RequestParam(required = false) String name,
                                               @RequestParam(defaultValue = "6") Integer stageZiLt,
                                               @RequestParam(required = false) String sort) {
-        return workService.findWorks(page, size, name,sort,stageZiLt ).map(WorkConvertor::getWorkLittleDto);
+        return workService.findWorkLittle(page, size, name,sort,stageZiLt ).map(WorkConvertor::getWorkLittleDto);
     }
     @GetMapping("/obj/little/{id}")
     public WorkLittleDto WorkLittleDto(@PathVariable long id) {
-        return WorkConvertor.getWorkLittleDto(workService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Задача не найден")));
+        return WorkConvertor.getWorkLittleDto(workService.findLittleById(id).orElseThrow(() -> new ResourceNotFoundException("Задача не найден")));
     }
 }

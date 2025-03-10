@@ -1,0 +1,344 @@
+<div>
+    <select ng-model="Filt.year" convert-to-number ng-change="selectYear()">
+        <option value="2025" selected>2025</option>
+        <option value="2026">2026</option>
+        <option value="2027">2027</option>
+        <option value="2028">2028</option>
+        <option value="2029">2029</option>
+        <option value="2030">2030</option>
+        <option value="2031">2031</option>
+    </select>
+
+    <div class="horiz">
+        <div id="JanuaryList" class="headtextelem">
+            <h1>Январь</h1>
+            <table class="tablecalend">
+                <tr>
+                    <td class="tablehead1">Пн</td>
+                    <td class="tablehead2">Вт</td>
+                    <td class="tablehead1">Ср</td>
+                    <td class="tablehead2">Чт</td>
+                    <td class="tablehead1">Пт</td>
+                    <td class="tablehead2">Сб</td>
+                    <td class="tablehead1">ВС</td>
+                </tr>
+
+                <tbody>
+                    <tr ng-repeat="month in Month1">
+                        <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
+                        <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
+                        <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
+                        <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
+                        <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
+                        <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
+                        <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="FebruaryList" class="headtextelem">
+            <h1>Февраль</h1>
+            <table class="tablecalend">
+                <tr>
+                    <td class="tablehead1">Пн</td>
+                    <td class="tablehead2">Вт</td>
+                    <td class="tablehead1">Ср</td>
+                    <td class="tablehead2">Чт</td>
+                    <td class="tablehead1">Пт</td>
+                    <td class="tablehead2">Сб</td>
+                    <td class="tablehead1">ВС</td>
+                </tr>
+
+                <tbody>
+                    <tr ng-repeat="month in Month2">
+                        <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
+                        <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
+                        <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
+                        <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
+                        <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
+                        <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
+                        <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="MarchList" class="headtextelem">
+            <h1>Март</h1>
+            <table class="tablecalend">
+                <tr>
+                    <td class="tablehead1">Пн</td>
+                    <td class="tablehead2">Вт</td>
+                    <td class="tablehead1">Ср</td>
+                    <td class="tablehead2">Чт</td>
+                    <td class="tablehead1">Пт</td>
+                    <td class="tablehead2">Сб</td>
+                    <td class="tablehead1">ВС</td>
+                </tr>
+
+                <tbody>
+                <tr ng-repeat="month in Month3">
+                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
+                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
+                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
+                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
+                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
+                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
+                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="horiz">
+        <div id="AprilList" class="headtextelem">
+            <h1>Апрель</h1>
+            <table class="tablecalend">
+                <tr>
+                    <td class="tablehead1">Пн</td>
+                    <td class="tablehead2">Вт</td>
+                    <td class="tablehead1">Ср</td>
+                    <td class="tablehead2">Чт</td>
+                    <td class="tablehead1">Пт</td>
+                    <td class="tablehead2">Сб</td>
+                    <td class="tablehead1">ВС</td>
+                </tr>
+
+                <tbody>
+                <tr ng-repeat="month in Month4">
+                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
+                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
+                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
+                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
+                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
+                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
+                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="MayList" class="headtextelem">
+            <h1>Май</h1>
+            <table class="tablecalend">
+                <tr>
+                    <td class="tablehead1">Пн</td>
+                    <td class="tablehead2">Вт</td>
+                    <td class="tablehead1">Ср</td>
+                    <td class="tablehead2">Чт</td>
+                    <td class="tablehead1">Пт</td>
+                    <td class="tablehead2">Сб</td>
+                    <td class="tablehead1">ВС</td>
+                </tr>
+
+                <tbody>
+                <tr ng-repeat="month in Month5">
+                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
+                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
+                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
+                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
+                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
+                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
+                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="JuneList" class="headtextelem">
+            <h1>Июнь</h1>
+            <table>
+                <tr>
+                    <td class="tablehead1">Пн</td>
+                    <td class="tablehead2">Вт</td>
+                    <td class="tablehead1">Ср</td>
+                    <td class="tablehead2">Чт</td>
+                    <td class="tablehead1">Пт</td>
+                    <td class="tablehead2">Сб</td>
+                    <td class="tablehead1">ВС</td>
+                </tr>
+
+                <tbody>
+                <tr ng-repeat="month in Month6">
+                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
+                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
+                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
+                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
+                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
+                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
+                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="horiz">
+        <div id="JulyList" class="headtextelem">
+            <h1>Июль</h1>
+            <table class="tablecalend">
+                <tr>
+                    <td class="tablehead1">Пн</td>
+                    <td class="tablehead2">Вт</td>
+                    <td class="tablehead1">Ср</td>
+                    <td class="tablehead2">Чт</td>
+                    <td class="tablehead1">Пт</td>
+                    <td class="tablehead2">Сб</td>
+                    <td class="tablehead1">ВС</td>
+                </tr>
+
+                <tbody>
+                <tr ng-repeat="month in Month7">
+                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
+                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
+                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
+                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
+                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
+                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
+                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="AugustList" class="headtextelem">
+            <h1>Август</h1>
+            <table class="tablecalend">
+                <tr>
+                    <td class="tablehead1">Пн</td>
+                    <td class="tablehead2">Вт</td>
+                    <td class="tablehead1">Ср</td>
+                    <td class="tablehead2">Чт</td>
+                    <td class="tablehead1">Пт</td>
+                    <td class="tablehead2">Сб</td>
+                    <td class="tablehead1">ВС</td>
+                </tr>
+
+                <tbody>
+                <tr ng-repeat="month in Month8">
+                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
+                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
+                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
+                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
+                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
+                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
+                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="SeptemberList" class="headtextelem">
+            <h1>Сентябрь</h1>
+            <table class="tablecalend">
+                <tr>
+                    <td class="tablehead1">Пн</td>
+                    <td class="tablehead2">Вт</td>
+                    <td class="tablehead1">Ср</td>
+                    <td class="tablehead2">Чт</td>
+                    <td class="tablehead1">Пт</td>
+                    <td class="tablehead2">Сб</td>
+                    <td class="tablehead1">ВС</td>
+                </tr>
+
+                <tbody>
+                <tr ng-repeat="month in Month9">
+                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
+                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
+                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
+                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
+                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
+                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
+                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="horiz">
+        <div id="OctoberList" class="headtextelem">
+            <h1>Октябрь</h1>
+            <table class="tablecalend">
+                <tr>
+                    <td class="tablehead1">Пн</td>
+                    <td class="tablehead2">Вт</td>
+                    <td class="tablehead1">Ср</td>
+                    <td class="tablehead2">Чт</td>
+                    <td class="tablehead1">Пт</td>
+                    <td class="tablehead2">Сб</td>
+                    <td class="tablehead1">ВС</td>
+                </tr>
+
+                <tbody>
+                <tr ng-repeat="month in Month10">
+                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
+                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
+                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
+                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
+                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
+                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
+                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="NovemberList" class="headtextelem">
+            <h1>Ноябрь</h1>
+            <table class="tablecalend">
+                <tr>
+                    <td class="tablehead1">Пн</td>
+                    <td class="tablehead2">Вт</td>
+                    <td class="tablehead1">Ср</td>
+                    <td class="tablehead2">Чт</td>
+                    <td class="tablehead1">Пт</td>
+                    <td class="tablehead2">Сб</td>
+                    <td class="tablehead1">ВС</td>
+                </tr>
+
+                <tbody>
+                <tr ng-repeat="month in Month11">
+                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
+                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
+                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
+                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
+                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
+                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
+                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="DecemberList" class="headtextelem">
+            <h1>Декабрь</h1>
+            <table class="tablecalend">
+                <tr>
+                    <td class="tablehead1">Пн</td>
+                    <td class="tablehead2">Вт</td>
+                    <td class="tablehead1">Ср</td>
+                    <td class="tablehead2">Чт</td>
+                    <td class="tablehead1">Пт</td>
+                    <td class="tablehead2">Сб</td>
+                    <td class="tablehead1">ВС</td>
+                </tr>
+
+                <tbody>
+                <tr ng-repeat="month in Month12">
+                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
+                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
+                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
+                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
+                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
+                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
+                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
