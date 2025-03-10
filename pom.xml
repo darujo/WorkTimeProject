@@ -6,15 +6,16 @@
     <packaging>pom</packaging>
 	<modules>
 		<module>api</module>
+		<module>calendar</module>
 		<module>api-integration</module>
+		<module>api-calendar</module>
 		<module>auth-service</module>
 		<module>worktime-service</module>
 		<module>work-service</module>
 		<module>task-service</module>
 		<module>front-service</module>
 		<module>gateway-service</module>
-        <module>calendar</module>
-        <module>api-calendar</module>
+
 
     </modules>
 	<groupId>ru.darujo</groupId>
