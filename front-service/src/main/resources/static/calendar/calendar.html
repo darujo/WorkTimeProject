@@ -24,16 +24,23 @@
                 </tr>
 
                 <tbody>
-                    <tr ng-repeat="month in Month1">
-                        <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
-                        <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
-                        <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
-                        <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
-                        <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
-                        <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
-                        <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+                <tr ng-repeat="month in Month1">
+                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">
+                        <abbr title="{{month.monday.comment}}">{{month.monday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)"><abbr
+                            title="{{month.tuesday.comment}}">{{month.tuesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)"><abbr
+                            title="{{month.wednesday.comment}}">{{month.wednesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)"><abbr
+                            title="{{month.thursday.comment}}">{{month.thursday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)"><abbr
+                            title="{{month.friday.comment}}">{{month.friday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)"><abbr
+                            title="{{month.saturday.comment}}">{{month.saturday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)"><abbr
+                            title="{{month.sunday.comment}}">{{month.sunday.day}}</abbr></td>
 
-                    </tr>
+                </tr>
                 </tbody>
             </table>
         </div>
@@ -51,16 +58,23 @@
                 </tr>
 
                 <tbody>
-                    <tr ng-repeat="month in Month2">
-                        <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
-                        <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
-                        <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
-                        <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
-                        <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
-                        <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
-                        <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+                <tr ng-repeat="month in Month2">
+                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">
+                        <abbr title="{{month.monday.comment}}">{{month.monday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)"><abbr
+                            title="{{month.tuesday.comment}}">{{month.tuesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)"><abbr
+                            title="{{month.wednesday.comment}}">{{month.wednesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)"><abbr
+                            title="{{month.thursday.comment}}">{{month.thursday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)"><abbr
+                            title="{{month.friday.comment}}">{{month.friday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)"><abbr
+                            title="{{month.saturday.comment}}">{{month.saturday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)"><abbr
+                            title="{{month.sunday.comment}}">{{month.sunday.day}}</abbr></td>
 
-                    </tr>
+                </tr>
                 </tbody>
             </table>
         </div>
@@ -79,13 +93,20 @@
 
                 <tbody>
                 <tr ng-repeat="month in Month3">
-                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
-                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
-                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
-                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
-                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
-                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
-                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">
+                        <abbr title="{{month.monday.comment}}">{{month.monday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)"><abbr
+                            title="{{month.tuesday.comment}}">{{month.tuesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)"><abbr
+                            title="{{month.wednesday.comment}}">{{month.wednesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)"><abbr
+                            title="{{month.thursday.comment}}">{{month.thursday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)"><abbr
+                            title="{{month.friday.comment}}">{{month.friday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)"><abbr
+                            title="{{month.saturday.comment}}">{{month.saturday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)"><abbr
+                            title="{{month.sunday.comment}}">{{month.sunday.day}}</abbr></td>
 
                 </tr>
                 </tbody>
@@ -108,13 +129,20 @@
 
                 <tbody>
                 <tr ng-repeat="month in Month4">
-                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
-                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
-                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
-                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
-                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
-                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
-                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">
+                        <abbr title="{{month.monday.comment}}">{{month.monday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)"><abbr
+                            title="{{month.tuesday.comment}}">{{month.tuesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)"><abbr
+                            title="{{month.wednesday.comment}}">{{month.wednesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)"><abbr
+                            title="{{month.thursday.comment}}">{{month.thursday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)"><abbr
+                            title="{{month.friday.comment}}">{{month.friday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)"><abbr
+                            title="{{month.saturday.comment}}">{{month.saturday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)"><abbr
+                            title="{{month.sunday.comment}}">{{month.sunday.day}}</abbr></td>
 
                 </tr>
                 </tbody>
@@ -135,13 +163,20 @@
 
                 <tbody>
                 <tr ng-repeat="month in Month5">
-                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
-                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
-                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
-                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
-                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
-                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
-                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">
+                        <abbr title="{{month.monday.comment}}">{{month.monday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)"><abbr
+                            title="{{month.tuesday.comment}}">{{month.tuesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)"><abbr
+                            title="{{month.wednesday.comment}}">{{month.wednesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)"><abbr
+                            title="{{month.thursday.comment}}">{{month.thursday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)"><abbr
+                            title="{{month.friday.comment}}">{{month.friday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)"><abbr
+                            title="{{month.saturday.comment}}">{{month.saturday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)"><abbr
+                            title="{{month.sunday.comment}}">{{month.sunday.day}}</abbr></td>
 
                 </tr>
                 </tbody>
@@ -149,7 +184,7 @@
         </div>
         <div id="JuneList" class="headtextelem">
             <h1>Июнь</h1>
-            <table>
+            <table class="tablecalend">
                 <tr>
                     <td class="tablehead1">Пн</td>
                     <td class="tablehead2">Вт</td>
@@ -162,13 +197,20 @@
 
                 <tbody>
                 <tr ng-repeat="month in Month6">
-                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
-                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
-                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
-                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
-                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
-                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
-                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">
+                        <abbr title="{{month.monday.comment}}">{{month.monday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)"><abbr
+                            title="{{month.tuesday.comment}}">{{month.tuesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)"><abbr
+                            title="{{month.wednesday.comment}}">{{month.wednesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)"><abbr
+                            title="{{month.thursday.comment}}">{{month.thursday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)"><abbr
+                            title="{{month.friday.comment}}">{{month.friday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)"><abbr
+                            title="{{month.saturday.comment}}">{{month.saturday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)"><abbr
+                            title="{{month.sunday.comment}}">{{month.sunday.day}}</abbr></td>
 
                 </tr>
                 </tbody>
@@ -191,13 +233,20 @@
 
                 <tbody>
                 <tr ng-repeat="month in Month7">
-                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
-                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
-                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
-                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
-                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
-                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
-                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">
+                        <abbr title="{{month.monday.comment}}">{{month.monday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)"><abbr
+                            title="{{month.tuesday.comment}}">{{month.tuesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)"><abbr
+                            title="{{month.wednesday.comment}}">{{month.wednesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)"><abbr
+                            title="{{month.thursday.comment}}">{{month.thursday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)"><abbr
+                            title="{{month.friday.comment}}">{{month.friday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)"><abbr
+                            title="{{month.saturday.comment}}">{{month.saturday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)"><abbr
+                            title="{{month.sunday.comment}}">{{month.sunday.day}}</abbr></td>
 
                 </tr>
                 </tbody>
@@ -218,13 +267,20 @@
 
                 <tbody>
                 <tr ng-repeat="month in Month8">
-                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
-                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
-                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
-                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
-                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
-                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
-                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">
+                        <abbr title="{{month.monday.comment}}">{{month.monday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)"><abbr
+                            title="{{month.tuesday.comment}}">{{month.tuesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)"><abbr
+                            title="{{month.wednesday.comment}}">{{month.wednesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)"><abbr
+                            title="{{month.thursday.comment}}">{{month.thursday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)"><abbr
+                            title="{{month.friday.comment}}">{{month.friday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)"><abbr
+                            title="{{month.saturday.comment}}">{{month.saturday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)"><abbr
+                            title="{{month.sunday.comment}}">{{month.sunday.day}}</abbr></td>
 
                 </tr>
                 </tbody>
@@ -245,13 +301,20 @@
 
                 <tbody>
                 <tr ng-repeat="month in Month9">
-                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
-                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
-                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
-                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
-                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
-                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
-                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">
+                        <abbr title="{{month.monday.comment}}">{{month.monday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)"><abbr
+                            title="{{month.tuesday.comment}}">{{month.tuesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)"><abbr
+                            title="{{month.wednesday.comment}}">{{month.wednesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)"><abbr
+                            title="{{month.thursday.comment}}">{{month.thursday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)"><abbr
+                            title="{{month.friday.comment}}">{{month.friday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)"><abbr
+                            title="{{month.saturday.comment}}">{{month.saturday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)"><abbr
+                            title="{{month.sunday.comment}}">{{month.sunday.day}}</abbr></td>
 
                 </tr>
                 </tbody>
@@ -274,13 +337,20 @@
 
                 <tbody>
                 <tr ng-repeat="month in Month10">
-                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
-                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
-                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
-                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
-                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
-                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
-                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">
+                        <abbr title="{{month.monday.comment}}">{{month.monday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)"><abbr
+                            title="{{month.tuesday.comment}}">{{month.tuesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)"><abbr
+                            title="{{month.wednesday.comment}}">{{month.wednesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)"><abbr
+                            title="{{month.thursday.comment}}">{{month.thursday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)"><abbr
+                            title="{{month.friday.comment}}">{{month.friday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)"><abbr
+                            title="{{month.saturday.comment}}">{{month.saturday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)"><abbr
+                            title="{{month.sunday.comment}}">{{month.sunday.day}}</abbr></td>
 
                 </tr>
                 </tbody>
@@ -301,13 +371,20 @@
 
                 <tbody>
                 <tr ng-repeat="month in Month11">
-                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
-                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
-                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
-                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
-                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
-                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
-                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">
+                        <abbr title="{{month.monday.comment}}">{{month.monday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)"><abbr
+                            title="{{month.tuesday.comment}}">{{month.tuesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)"><abbr
+                            title="{{month.wednesday.comment}}">{{month.wednesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)"><abbr
+                            title="{{month.thursday.comment}}">{{month.thursday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)"><abbr
+                            title="{{month.friday.comment}}">{{month.friday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)"><abbr
+                            title="{{month.saturday.comment}}">{{month.saturday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)"><abbr
+                            title="{{month.sunday.comment}}">{{month.sunday.day}}</abbr></td>
 
                 </tr>
                 </tbody>
@@ -328,13 +405,20 @@
 
                 <tbody>
                 <tr ng-repeat="month in Month12">
-                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">{{month.monday.day}}</td>
-                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)">{{month.tuesday.day}}</td>
-                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)">{{month.wednesday.day}}</td>
-                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)">{{month.thursday.day}}</td>
-                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)">{{month.friday.day}}</td>
-                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)">{{month.saturday.day}}</td>
-                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)">{{month.sunday.day}}</td>
+                    <td ng-style="getStyle(month.monday.workDay,month.monday.shotDay)">
+                        <abbr title="{{month.monday.comment}}">{{month.monday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.tuesday.workDay,month.tuesday.shotDay)"><abbr
+                            title="{{month.tuesday.comment}}">{{month.tuesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.wednesday.workDay,month.wednesday.shotDay)"><abbr
+                            title="{{month.wednesday.comment}}">{{month.wednesday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.thursday.workDay,month.thursday.shotDay)"><abbr
+                            title="{{month.thursday.comment}}">{{month.thursday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.friday.workDay,month.friday.shotDay)"><abbr
+                            title="{{month.friday.comment}}">{{month.friday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.saturday.workDay,month.saturday.shotDay)"><abbr
+                            title="{{month.saturday.comment}}">{{month.saturday.day}}</abbr></td>
+                    <td ng-style="getStyle(month.sunday.workDay,month.sunday.shotDay)"><abbr
+                            title="{{month.sunday.comment}}">{{month.sunday.day}}</abbr></td>
 
                 </tr>
                 </tbody>
