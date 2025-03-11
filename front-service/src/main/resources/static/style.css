@@ -98,6 +98,10 @@ TABLE {
     border: 1px solid #399; /* Граница вокруг таблицы */
     /*border-spacing: 7px 5px; !* Расстояние между границ *!*/
    }
+.tablecalend{
+    width: 90%; /* Ширина таблицы */
+    border: 1px solid #399; /* Граница вокруг таблицы */
+}
 TD {
     border: 1px solid #333; /* Граница вокруг ячеек */
     padding: 5px; /* Поля в ячейках */
@@ -156,4 +160,49 @@ margin: auto;
 font-weight: 500;
 font-size: 15px;
 text-align: center;
+}
+
+
+#tiger2{
+    position: relative;
+    display: inline-block;
+}
+#tiger2 .text {
+    transition: all 0.6s;
+    opacity: 0;
+    position: absolute;
+    left: 0; bottom: 0;
+    background: rgba(5,13,156,.55);
+    color: #fff;
+    text-align: center;
+    font-family: cursive;
+    font-size: 14px;
+    padding: 3px 0;
+    width: 100%;
+    transform: scale(0);
+}
+#tiger2:hover .text{
+    opacity: 1;
+}
+
+#tiger2{
+    position: relative;
+    display: inline-block;
+}
+#tiger2 .text {
+    transition: all 0.6s;
+    opacity: 0;
+    position: absolute;
+    left: 0; bottom: 0;
+    background: rgba(5,13,156,.55);
+    color: #fff;
+    text-align: center;
+    font-family: cursive;
+    font-size: 14px;
+    padding: 3px 0;
+    width: 100%;
+    transform: scale(0);
+}
+#tiger2:hover .text{
+    opacity: 1;
 }

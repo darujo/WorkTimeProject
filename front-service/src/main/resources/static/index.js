@@ -33,7 +33,11 @@
                 templateUrl: 'task/task.html',
                 controller: 'taskController'
             })
-            
+            .when('/calendar', {
+                templateUrl: 'calendar/calendar.html',
+                controller: 'calendarController'
+            })
+
             .otherwise({
                 redirectTo: '/'
             });

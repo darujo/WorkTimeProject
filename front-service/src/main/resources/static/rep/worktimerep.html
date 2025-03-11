@@ -30,8 +30,8 @@
       <td class="tablehead1" colspan="4"> III этап </td>
       <td class="tablehead2" colspan="4"> IV этап </td>
       <td class="tablehead1" colspan="2" rowspan="4"> Общие трудозатраты на доработку по ЗИ </td>
-      <td rowspan="5">Вендерка План</td>
-      <td rowspan="5">Вендерка Факт</td>
+<!--      <td rowspan="5">Вендерка План</td>-->
+<!--      <td rowspan="5">Вендерка Факт</td>-->
       <td rowspan="5">Вендерка</td>
 
     </tr>
@@ -45,7 +45,7 @@
     </tr>
     <tr> <!--row 3-->
       <td class="tablehead2" colspan="3"> Результат: внутреннее согласование ТЗ </td>
-      <td class="tablehead1" colspan="4"> Результат: тестирования ЦК Рязань завершено </td>
+      <td class="tablehead1" colspan="4"> Результат: выдача прототипа в соответствии с ТЗ </td>
       <td class="tablehead2" colspan="4"> Результат: тестирования ЦК Рязань завершено </td>
       <td class="tablehead1" colspan="4"> Результат: регресс тестирование ЦК Рязань завершено </td>
       <td class="tablehead2" colspan="4"> Результат: завершение ОПЭ </td>
@@ -102,19 +102,16 @@
         <td>{{work.name}}</td>
 <!--        // Плановая дата завершения 0 этапа-->
         <td>{{work.planDateStage0}}</td>
-<!--        // Плановая дата завершения 0 этапа-->
-        <td>{{work.factDateStage0}}</td>
-<!--        // Разработка прототипа-->
-        <td>{{work.timeAnalise}}</td>
+        <!--        // ВЕНДЕРКА План-->
+        <td>{{work.analiseEndPlan}}</td>
+        <!--        // ВЕНДЕРКА-->
+        <td>{{work.analiseEndFact}}</td>
 
         <!--        // Дата начала доработки План-->
         <td>{{work.startTaskPlan}}</td>
 <!--        // Дата начала доработки Факт-->
         <td>{{work.startTaskFact}}</td>
-        <!--        // ВЕНДЕРКА План-->
-        <td>{{work.analiseEndPlan}}</td>
-        <!--        // ВЕНДЕРКА-->
-        <td>{{work.analiseEndFact}}</td>
+
 <!--        // Плановые трудозатраты, чел/час разработки-->
         <td class="tablecol2">{{work.laborDevelop}}</td>
 <!--        // Разработка прототипа-->
@@ -123,29 +120,34 @@
         <td>{{work.developEndPlan}}</td>
         <!--        //начало разработки факт-->
         <td>{{work.developEndFact}}</td>
-<!--        // Плановые трудозатраты, чел/час Стабилизация прототипа-->
-        <td>{{work.laborDebug}}</td>
-<!--        // Стабилизация прототипа-->
-        <td>{{work.timeDebug}}</td>
-<!--        // Порядковый номер релиза-->
-        <td>{{work.release}}  Порядковый номер релиза </td>
-<!--        // Выдача релиза даты План-->
-        <td class="tablecol1">{{work.issuingReleasePlan}}</td>
-<!--        // Выдача релиза дата факт-->
-        <td class="tablecol1">{{work.issuingReleaseFact}}</td>
         <!--        // Стабилизация прототипа план-->
         <td>{{work.debugEndPlan}}</td>
         <!--        // Стабилизация прототипа факт-->
         <td>{{work.debugEndFact}}</td>
-       <!--        // Плановые трудозатраты, чел/час Стабилизация релиза-->
-        <td>{{work.laborRelease}}</td>
-<!--        // Стабилизация релиза-->
-        <td>{{work.timeRelease}}</td>
+
+        <!--        // Плановые трудозатраты, чел/час Стабилизация прототипа-->
+        <td>{{work.laborDebug}}</td>
+<!--        // Стабилизация прототипа-->
+        <td>{{work.timeDebug}}</td>
+<!--        // Порядковый номер релиза-->
+        <td>{{work.release}}</td>
+<!--        // Выдача релиза даты План-->
+        <td class="tablecol1">{{work.issuingReleasePlan}}</td>
+<!--        // Выдача релиза дата факт-->
+        <td class="tablecol1">{{work.issuingReleaseFact}}</td>
         <!--        // Стабилизация релиза-->
         <td>{{work.releaseEndPlan}}</td>
         <!--        // Стабилизация релиза-->
         <td>{{work.releaseEndFact}}</td>
 
+        <!--        // Плановые трудозатраты, чел/час Стабилизация релиза-->
+        <td>{{work.laborRelease}}</td>
+<!--        // Стабилизация релиза-->
+        <td>{{work.timeRelease}}</td>
+        <!--        // ОПЭ релиза-->
+        <td>{{work.opeEndPlan}}</td>
+        <!--        // ОПЭ релиза-->
+        <td>{{work.opeEndFact}}</td>
 <!--        // Плановые трудозатраты, чел/час ОПЭ-->
         <td>{{work.laborOPE}}</td>
 <!--        // ОПЭ релиза-->
@@ -154,10 +156,7 @@
         <td>{{work.timePlan}}</td>
 <!--        // фактическое время-->
         <td>{{work.timeFact}}</td>
-        <!--        // ОПЭ релиза-->
-        <td>{{work.opeEndPlan}}</td>
-        <!--        // ОПЭ релиза-->
-        <td>{{work.opeEndFact}}</td>
+
 <!--        // ВЕНДЕРКА-->
         <td>{{work.timeWender}}</td>
 

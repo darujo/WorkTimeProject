@@ -34,6 +34,7 @@
       <td>Пользователь</td>
       <td>Дата</td>
       <td>Время</td>
+      <td>Коментарий</td>
       <td></td>
       <td></td>
 
@@ -42,9 +43,10 @@
     <tr ng-repeat="worktime in WorkTimeList">
       <td ng-if="!worktime.authorFirstName">{{worktime.nikName}}</td>
       <td ng-if="worktime.authorFirstName">{{worktime.authorLastName}} {{worktime.authorFirstName}} {{worktime.authorPatronymic}}</td>
+
       <td>{{worktime.workDateStr}}</td>
       <td>{{worktime.workTime}}</td>
-
+      <td>{{workTime.comment}}</td>
       <td>
         <button ng-click="editWorkTime(worktime.id)">Изменить</button>
       </td>
@@ -117,17 +119,17 @@
         <td>Наименоваание ЗИ</td>
       </tr>
       <tbody>
-      <tr ng-repeat="task in TaskList">
-        <td ng-if="!task.authorFirstName">{{task.nikName}}</td>
-        <td ng-if="task.authorFirstName">{{task.authorLastName}} {{task.authorFirstName}} {{task.authorPatronymic}}</td>
+        <tr ng-repeat="task in TaskList">
+          <td ng-if="!task.authorFirstName">{{task.nikName}}</td>
+          <td ng-if="task.authorFirstName">{{task.authorLastName}} {{task.authorFirstName}} {{task.authorPatronymic}}</td>
 
-        <td>{{task.codeBTS}}</td>
-        <td>{{task.codeDEVBO}}</td>
-        <td><button type="button"  ng-click="setTask(task.id);">{{task.description}}</button></td>
-        <td>{{task.type}}</td>
-        <td>{{task.codeZi}}</td>
-        <td>{{task.nameZi}}</td>
-      </tr>
+          <td>{{task.codeBTS}}</td>
+          <td>{{task.codeDEVBO}}</td>
+          <td><button type="button"  ng-click="setTask(task.id);">{{task.description}}</button></td>
+          <td>{{task.type}}</td>
+          <td>{{task.codeZi}}</td>
+          <td>{{task.nameZi}}</td>
+        </tr>
       </tbody>
     </table>
 

@@ -4,6 +4,7 @@ import ru.darujo.dto.WorkDto;
 import ru.darujo.dto.WorkEditDto;
 import ru.darujo.dto.WorkLittleDto;
 import ru.darujo.model.Work;
+import ru.darujo.model.WorkLittle;
 
 public class WorkConvertor {
     public static WorkBuilder setWorkBulderBase(Work work){
@@ -81,7 +82,19 @@ public class WorkConvertor {
                 .getWork();
     }
 
-    public static WorkLittleDto getWorkLittleDto(Work work) {
+    public static WorkDto getWorkDto(WorkLittle work) {
+        return WorkBuilder
+                .createWork()
+                .setId(work.getId())
+                .setCodeSap(work.getCodeSap())
+                .setCodeZI(work.getCodeZI())
+                .setStageZI(work.getStageZI())
+                .setName(work.getName())
+                .getWorkDto();
+
+
+    }
+    public static WorkLittleDto getWorkLittleDto(WorkLittle work) {
         return WorkBuilder
                 .createWork()
                 .setId(work.getId())

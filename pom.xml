@@ -6,7 +6,9 @@
     <packaging>pom</packaging>
 	<modules>
 		<module>api</module>
+		<module>calendar</module>
 		<module>api-integration</module>
+		<module>api-calendar</module>
 		<module>auth-service</module>
 		<module>worktime-service</module>
 		<module>work-service</module>
@@ -14,7 +16,8 @@
 		<module>front-service</module>
 		<module>gateway-service</module>
 
-	</modules>
+
+    </modules>
 	<groupId>ru.darujo</groupId>
 	<artifactId>WorkTimeProject</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
