@@ -21,7 +21,7 @@ public class TaskService {
     private TaskRepository taskRepository;
 
     @Autowired
-    public void setWorkTimeRepository(TaskRepository taskRepository) {
+    public void setTaskRepository(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
 

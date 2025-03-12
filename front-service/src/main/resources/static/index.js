@@ -37,7 +37,10 @@
                 templateUrl: 'calendar/calendar.html',
                 controller: 'calendarController'
             })
-
+            .when('/weekwork', {
+                templateUrl: 'rep/weekwork/weekwork.html',
+                controller: 'weekworkController'
+            })
             .otherwise({
                 redirectTo: '/'
             });

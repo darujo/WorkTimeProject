@@ -126,7 +126,7 @@ public class TaskController {
         TaskDto taskDto = TaskConvertor.getTaskDto(task);
         try {
 
-
+            // TODO Сделать кеширование
             WorkEditDto worEditDto = workServiceIntegration.getWorEditDto(taskDto.getWorkId());
             taskDto.setCodeZi(worEditDto.getCodeZI());
             taskDto.setNameZi(worEditDto.getName());
@@ -138,6 +138,7 @@ public class TaskController {
             }
         }
         try {
+            // TODO Сделать кеширование
             UserDto userDto = userServiceIntegration.getUserDto(null,task.getNikName());
             taskDto.setAuthorFirstName(userDto.getFirstName());
             taskDto.setAuthorLastName(userDto.getLastName());

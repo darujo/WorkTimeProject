@@ -1,164 +1,179 @@
 <div id="TaskList" class="headtextelem">
-  <div class="filter containerfilt">
-    <form novalidate ng-submit="filterTask()" ; class="filter">
-      <div  class="filter">
-        <div class="filterblock">
+    <div class="filter containerfilt">
+        <details class="filterblock">
+            <summary class="p-head">Фильтр</summary>
 
-          <div  class="horiz">
-            <p class="p-head">Id ЗИ</p>
-            <br>
-            <input class="vvod80" type="number" id="WorkIdFilt" step="any" ng-model="Filt.workId"/>
-          </div>
-          <div  class="horiz">
-            <p class="p-head">BTS:</p>
-            <br>
-            <input class="vvod80" type="text" id="BtsFilt" step="any" ng-model="Filt.bts"/>
-          </div>
-          <div  class="horiz">
-            <p class="p-head">DEVBO :</p>
-            <br>
-            <input class="vvod80" type="text" id="DevboFilt" step="any" ng-model="Filt.devbo"/>
-          </div>
-          <div  class="horiz">
-            <p class="p-head">Описание:</p>
-            <br>
-            <input class="vvod80" type="text" id="DescFilt" step="any" ng-model="Filt.desc"/>
-          </div>
-          <div  class="horiz">
-            <p class="p-head">Наименование ЗИ</p>
-            <br>
-            <input class="vvod80" type="text" id="ZiNameFilt" step="any" ng-model="Filt.ziName"/>
-          </div>
-          <button type="submit" class="headbutton">Применить</button>
-        </div>
-      </div>
-    </form>
-    <button class="headbutton" ng-click="createTask()">Создать задачу</button>
-  </div>
-  <div class="filter containerfilt">
-    <button class="headbutton" ng-click="findPage(-1)">PrevPage</button>
-    <input class="vvod" type="number" id="Page" value="1"/>
-    <button class="headbutton" ng-click="findPage(1)">NextPage</button>
-  </div>
-  <h1>Список задач</h1>
-  <table>
-    <tr>
-      <td>Автор</td>
-      <td>№ запроса (BTS)</td>
-      <td>№ внутренней задачи (DEVBO)</td>
-      <td>Краткое описание</td>
-      <td>Тип задачи</td>
-      <td>№ ЗИ (ZI)</td>
-      <td>Наименоваание ЗИ</td>
-      <td></td>
-      <td></td>
+            <form novalidate ng-submit="filterTask()" ; class="filter">
+                <div class="filter">
+                    <div class="filterblock">
 
-    </tr>
-    <tbody>
-    <tr ng-repeat="task in TaskList">
-      <td ng-if="!task.authorFirstName">{{task.nikName}}</td>
-      <td ng-if="task.authorFirstName">{{task.authorLastName}} {{task.authorFirstName}} {{task.authorPatronymic}}</td>
+                        <div class="horiz">
+                            <p class="p-head">Id ЗИ</p>
+                            <br>
+                            <input class="vvod80" type="number" id="WorkIdFilt" step="any" ng-model="Filt.workId"/>
+                        </div>
+                        <div class="horiz">
+                            <p class="p-head">BTS:</p>
+                            <br>
+                            <input class="vvod80" type="text" id="BtsFilt" step="any" ng-model="Filt.bts"/>
+                        </div>
+                        <div class="horiz">
+                            <p class="p-head">DEVBO :</p>
+                            <br>
+                            <input class="vvod80" type="text" id="DevboFilt" step="any" ng-model="Filt.devbo"/>
+                        </div>
+                        <div class="horiz">
+                            <p class="p-head">Описание:</p>
+                            <br>
+                            <input class="vvod80" type="text" id="DescFilt" step="any" ng-model="Filt.desc"/>
+                        </div>
+                        <div class="horiz">
+                            <p class="p-head">Наименование ЗИ</p>
+                            <br>
+                            <input class="vvod80" type="text" id="ZiNameFilt" step="any" ng-model="Filt.ziName"/>
+                        </div>
+                        <button type="submit" class="headbutton">Применить</button>
+                    </div>
+                </div>
+            </form>
+        </details>
+        <button class="headbutton" ng-click="createTask()">Создать задачу</button>
+    </div>
+    <div class="filter containerfilt">
+        <button class="headbutton" ng-click="findPage(-1)">PrevPage</button>
+        <input class="vvod" type="number" id="Page" value="1"/>
+        <button class="headbutton" ng-click="findPage(1)">NextPage</button>
+    </div>
+    <h1>Список задач</h1>
+    <table>
+        <tr>
+            <td>Автор</td>
+            <td>№ запроса (BTS)</td>
+            <td>№ внутренней задачи (DEVBO)</td>
+            <td>Краткое описание</td>
+            <td>Тип задачи</td>
+            <td>№ ЗИ (ZI)</td>
+            <td>Наименоваание ЗИ</td>
+            <td></td>
+            <td></td>
 
-      <td>{{task.codeBTS}}</td>
-      <td>{{task.codeDEVBO}}</td>
-      <td><button  ng-click="addTime(task.id);">{{task.description}}</button></td>
-      <td>{{task.type}}</td>
-      <td>{{task.codeZi}}</td>
-      <td>{{task.nameZi}}</td>
-      <td>
-        <button ng-click="editTask(task.id)">Изменить</button>
-      </td>
-      <td>
-        <button ng-click="deleteTask(task.id)">Удалить</button>
-      </td>
+        </tr>
+        <tbody>
+        <tr ng-repeat="task in TaskList">
+            <td ng-if="!task.authorFirstName">{{task.nikName}}</td>
+            <td ng-if="task.authorFirstName">{{task.authorLastName}} {{task.authorFirstName}}
+                {{task.authorPatronymic}}
+            </td>
 
-    </tr>
-    </tbody>
-  </table>
+            <td>{{task.codeBTS}}</td>
+            <td>{{task.codeDEVBO}}</td>
+            <td>
+                <button ng-click="addTime(task.id);">{{task.description}}</button>
+            </td>
+            <td>{{task.type}}</td>
+            <td>{{task.codeZi}}</td>
+            <td>{{task.nameZi}}</td>
+            <td>
+                <button ng-click="editTask(task.id)">Изменить</button>
+            </td>
+            <td>
+                <button ng-click="deleteTask(task.id)">Удалить</button>
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
 
 </div>
 
 <div id="FormEdit" class="divform containerfilt">
-  <form novalidate ng-submit="saveTask()">
-    <button type="submit" class="button">Сохранить</button>
-    <button type="reset" ng-click="loadTask()" class="button">Вернуться к списку</button>
-    <br>
-    <br>
-    Задача : <input class="vvod" type="number" inputmode="number" id="TaskIdEdit" placeholder="Ведите код задачи"
-                          ng-model="Task.id"/>
-    <br>
-    № запроса (BTS) : <input class="vvod" type="text" id="CodeBTS" placeholder="Ведите наименование"
-                             ng-model="Task.codeBTS"/>
-
-    <br>
-    № внутренней задачи (DEVBO) : <input class="vvod" type="text" id="CodeDEVBO" placeholder="Ведите наименование"
-                             ng-model="Task.codeDEVBO"/>
-
-    <br>
-    Краткое описание ошибки : <input class="vvod" type="text" id="Description" placeholder="Ведите наименование"
-                             ng-model="Task.description"/>
-
-    <br>
-    Тип задачи :
-    <select class="vvod" name="choice" id="Type" ng-model="Task.type">
-      <option ng-value="1" value="1" selected>ЗИ</option>
-      <option ng-value="2" value="2" >Вендерка</option>
-      <option ng-value="3" value="3" >Админ</option>
-    </select>
-    <br>
-  </form>
-  <div id = "WorkNum">
-    Наименование ЗИ
-    <br>
-    <input class="vvod80" type="hidden" step="1" id="WorkIdEdit"
-                 ng-model="Task.workId"/>
-    <input type="text" id="WorkName" class="vvod80" readonly>
-    <button type="button" ng-click="findWork(WorkTime.taskId)" class="headbutton">Найти</button>
-    <br>
-  </div>
-  <div id = "FindWork" >
-    <div >
-      <form novalidate class="filter">
-        <!--      <input class="vvod" type="number" inputmode="decimal" id="WorkId" step="any" ng-model="Filt.workId"/>-->
-        <!--      <br>-->
-        <!--      <input class="vvod" type="number" inputmode="decimal" id="DateLE" value="1" ng-model="Filt.dateLe"/>-->
-
-        <!--      <p class="p-head"> <= Цена <= </p>-->
-        <!--      <input class="vvod" type="number" inputmode="decimal" id="DateGe" step="any" ng-model="Filt.dateGe"/>-->
-        <p class="p-head"> Наименование </p> <input class="vvod80" inputmode="text" id="Name" ng-model="FiltWork.name"/>
-        <!--                <input  type="hidden" id="wwwwId" />-->
+    <form novalidate ng-submit="saveTask()">
+        <button type="submit" class="button">Сохранить</button>
+        <button type="reset" ng-click="loadTask()" class="button">Вернуться к списку</button>
         <br>
-        <button type="button" ng-click="loadWork()" class="headbutton">Применить</button>
+        <br>
+        Задача : <input class="vvod" type="number" inputmode="number" id="TaskIdEdit" placeholder="Ведите код задачи"
+                        ng-model="Task.id"/>
+        <br>
+        № запроса (BTS) : <input class="vvod" type="text" id="CodeBTS" placeholder="Ведите наименование"
+                                 ng-model="Task.codeBTS"/>
 
-      </form>
+        <br>
+        № внутренней задачи (DEVBO) : <input class="vvod" type="text" id="CodeDEVBO" placeholder="Ведите наименование"
+                                             ng-model="Task.codeDEVBO"/>
+
+        <br>
+        Краткое описание ошибки : <input class="vvod" type="text" id="Description" placeholder="Ведите наименование"
+                                         ng-model="Task.description"/>
+
+        <br>
+        Тип задачи :
+        <select class="vvod" name="choice" id="Type" ng-model="Task.type">
+            <option ng-value="1" value="1" selected>ЗИ</option>
+            <option ng-value="2" value="2">Вендерка</option>
+            <option ng-value="3" value="3">Админ</option>
+        </select>
+        <br>
+    </form>
+    <div id="WorkNum">
+        Наименование ЗИ
+        <br>
+        <input class="vvod80" type="hidden" step="1" id="WorkIdEdit"
+               ng-model="Task.workId"/>
+        <input type="text" id="WorkName" class="vvod80" readonly>
+        <button type="button" ng-click="findWork(WorkTime.taskId)" class="headbutton">Найти</button>
+        <br>
     </div>
-    <div class="filter">
-      <button type="button" class="headbutton" ng-click="loadWork(-1)">PrevPage</button>
-      <input class="vvod" type="number" id="PageWork" value="1"/>
-      <button type="button" class="headbutton" ng-click="loadWork(1)">NextPage</button>
+    <div id="FindWork">
+        <details class="filterblock">
+            <summary class="p-head">Фильтр</summary>
+
+            <div>
+                <form novalidate class="filter">
+                    <!--      <input class="vvod" type="number" inputmode="decimal" id="WorkId" step="any" ng-model="Filt.workId"/>-->
+                    <!--      <br>-->
+                    <!--      <input class="vvod" type="number" inputmode="decimal" id="DateLE" value="1" ng-model="Filt.dateLe"/>-->
+
+                    <!--      <p class="p-head"> <= Цена <= </p>-->
+                    <!--      <input class="vvod" type="number" inputmode="decimal" id="DateGe" step="any" ng-model="Filt.dateGe"/>-->
+                    <p class="p-head"> Наименование </p> <input class="vvod80" inputmode="text" id="Name"
+                                                                ng-model="FiltWork.name"/>
+                    <!--                <input  type="hidden" id="wwwwId" />-->
+                    <br>
+                    <button type="button" ng-click="loadWork()" class="headbutton">Применить</button>
+
+                </form>
+            </div>
+        </details>
+        <div class="filter">
+            <button type="button" class="headbutton" ng-click="loadWork(-1)">PrevPage</button>
+            <input class="vvod" type="number" id="PageWork" value="1"/>
+            <button type="button" class="headbutton" ng-click="loadWork(1)">NextPage</button>
+        </div>
+        <table>
+
+            <tr>
+                <td class="tablehead2" rowspan="3"> Код SAP</td>
+                <td class="tablehead2" rowspan="3"> Код Зи</td>
+                <td class="tablehead2" rowspan="3"> Наименование</td>
+                <td class="tablehead2" rowspan="3"> Этап</td>
+            </tr>
+            <tbody>
+            <tr ng-repeat="work in WorkList">
+                <td>{{work.codeSap}}</td>
+                <td>{{work.codeZI}}</td>
+                <td>
+                    <button ng-click="setWork(work.id)">{{work.name}}</button>
+                </td>
+                <td>{{work.codeZI}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+
     </div>
-    <table>
-
-      <tr>
-        <td class="tablehead2" rowspan="3"> Код SAP </td>
-        <td class="tablehead2" rowspan="3"> Код Зи </td>
-        <td class="tablehead2" rowspan="3"> Наименование </td>
-        <td class="tablehead2" rowspan="3"> Этап </td>
-      </tr>
-      <tbody>
-        <tr ng-repeat="work in WorkList">
-          <td>{{work.codeSap}}</td>
-          <td>{{work.codeZI}}</td>
-          <td><button ng-click="setWork(work.id)">{{work.name}}</button></td>
-          <td>{{work.codeZI}}</td>
-        </tr>
-      </tbody>
-    </table>
-
-
-  </div>
-  <button class="button" ng-click="saveTask()">Сохранить</button>
-  <button type="reset" ng-click="loadTask()" class="button">Вернуться к списку</button>
+    <button class="button" ng-click="saveTask()">Сохранить</button>
+    <button type="reset" ng-click="loadTask()" class="button">Вернуться к списку</button>
 
 
 </div>

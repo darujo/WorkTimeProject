@@ -1,12 +1,9 @@
 package ru.darujo.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import ru.darujo.dto.ListString;
-import ru.darujo.dto.UserDto;
-import ru.darujo.dto.WorkTimeDto;
 import ru.darujo.dto.calendar.WeekDto;
+import ru.darujo.dto.calendar.WeekWorkDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.service.CalendarService;
 
@@ -38,5 +35,26 @@ public class CalendarController {
         return calendarService.getWeekList(month,year);
     }
 
+    @GetMapping("/weektime")
+    public List<WeekWorkDto> WeekTimeList(@RequestParam(name = "dateStart") String dateStartStr,
+                                          @RequestParam(name = "dateEnd") String dateEndStr
+    ) {
+        Date dateStart = stringToDate(dateStartStr, "dateStart = ");
+        Date dateEnd = stringToDate(dateEndStr, "dateEnd = ");
 
+
+        return calendarService.getWeekTime(dateStart,dateEnd);
+    }
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+
+    private Date stringToDate(String dateStr, String text) {
+        if (dateStr != null) {
+            try {
+                return new Timestamp(simpleDateFormat.parse(dateStr).getTime());
+            } catch (ParseException e) {
+                throw new ResourceNotFoundException("Не удалось распарсить дату " + text + " " + dateStr);
+            }
+        }
+        return null;
+    }
 }

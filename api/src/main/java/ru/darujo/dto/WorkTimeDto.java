@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class WorkTimeDto implements Serializable {
+public class WorkTimeDto  implements Serializable, UserFio {
     SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
     private String dateToText(Date date){
         if (date == null){

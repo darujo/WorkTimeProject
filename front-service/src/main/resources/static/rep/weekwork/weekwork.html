@@ -1,0 +1,70 @@
+<div id="WorkTimeList" class="headtextelem">
+    <div class="filter">
+        <details class="filterblock">
+            <summary class="p-head">Фильтр</summary>
+            <form novalidate ng-submit="filterWorkTime()" ; class="filter">
+                <div class="filter">
+                    <div class="filterblock">
+
+                        <div class="horiz">
+                            <p class="p-head">Пользователь</p>
+                            <br>
+                            <input class="vvod80" type="text" id="NikName"
+                                   ng-model="Filt.nikName"/>
+                        </div>
+                        <div class="horiz">
+                            <input class="vvod40" type="date" id="DateStart" step="any" ng-model="Filt.dateStart"/>
+                            <p class="p-head"> <= Дата <= </p>
+                            <input class="vvod40" type="date" id="DateEnd" step="any" ng-model="Filt.dateEnd"/>
+                            <!--                <input  type="hidden" id="taskId" />-->
+                            <br>
+                            <button type="submit" class="headbutton">Применить</button>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+        </details>
+    </div>
+    <h1>Список работ</h1>
+    <table>
+        <tr>
+            <td class="tablehead1" rowspan="3">№ п/п</td>
+            <td class="tablehead2" rowspan="3">Период</td>
+            <td class="tablehead1" rowspan="3">Исполнитель</td>
+            <td class="tablehead2" rowspan="3">Плановые трудозатраты за период, чел/час</td>
+            <td class="tablehead1">Работа по ЗИ</td>
+            <td class="tablehead2">Устранение проблем вендорных запросов</td>
+            <td class="tablehead1">Планерки, АКС</td>
+            <td class="tablehead2" rowspan="3">Итого за период</td>
+        </tr>
+        <tr>
+            <td class="tablehead1" colspan="3">Трудозатраты, чел/час</td>
+
+        </tr>
+        <tr>
+            <td class="tablehead1">Факт</td>
+            <td class="tablehead2">Факт</td>
+            <td class="tablehead1">Факт</td>
+        </tr>
+
+        <tbody>
+        <tr ng-repeat="work in WeekWorkList">
+            <td>{{$index + 1}}</td>
+            <td rowspan="{{work.userCol}}" ng-if="work.userCol != null">{{work.dateStart}} - {{work.dateEnd}}</td>
+            <td ng-if="!work.authorFirstName">{{work.nikName}}</td>
+            <td ng-if="work.authorFirstName">{{work.authorLastName}} {{work.authorFirstName}}
+                {{work.authorPatronymic}}
+            </td>
+
+            <td>{{work.workPlan}}</td>
+            <td>{{work.workZiFact;}}</td>
+            <td>{{work.workWenderFact}}</td>
+            <td>{{work.workAdminFact}}</td>
+            <td>{{work.workAllFact}}</td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+

@@ -10,8 +10,9 @@ public class WeekDto implements Serializable {
     private DayDto friday;
     private DayDto saturday;
     private DayDto sunday;
+    private Integer month;
 
-    public WeekDto(DayDto monday, DayDto tuesday, DayDto wednesday, DayDto thursday, DayDto friday, DayDto saturday, DayDto sunday) {
+    public WeekDto(DayDto monday, DayDto tuesday, DayDto wednesday, DayDto thursday, DayDto friday, DayDto saturday, DayDto sunday,Integer month) {
         this.monday = monday;
         this.tuesday = tuesday;
         this.wednesday = wednesday;
@@ -19,6 +20,11 @@ public class WeekDto implements Serializable {
         this.friday = friday;
         this.saturday = saturday;
         this.sunday = sunday;
+        this.month = month;
+    }
+
+    public Integer getMonth() {
+        return month;
     }
 
     public void setMonday(DayDto monday) {

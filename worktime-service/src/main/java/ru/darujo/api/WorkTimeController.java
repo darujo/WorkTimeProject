@@ -5,10 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.WorkTimeConvertor;
 import ru.darujo.dto.ListString;
-import ru.darujo.dto.UserDto;
+import ru.darujo.dto.UserWorkDto;
 import ru.darujo.dto.WorkTimeDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
-import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.model.WorkTime;
 import ru.darujo.service.WorkTimeService;
 
@@ -26,11 +25,6 @@ public class WorkTimeController {
         this.workTimeService = workTimeService;
     }
 
-    UserServiceIntegration userServiceIntegration;
-    @Autowired
-    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
-        this.userServiceIntegration = userServiceIntegration;
-    }
     @GetMapping("/{id}")
     public WorkTimeDto WorkTimeEdit(@PathVariable long id) {
         return WorkTimeConvertor.getWorkTimeDto(workTimeService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Отмеченая работа не найден")));
@@ -73,7 +67,7 @@ public class WorkTimeController {
                                             dateGt,
                                             dateGe,
                                             page,
-                                            size)).map(this::getWorkTimeDtoAndUpd);
+                                            size)).map(workTimeService::getWorkTimeDtoAndUpd);
     }
     @GetMapping("/rep/fact/time")
     public Float getTimeWork(@RequestParam(required = false) Long taskId,
@@ -93,7 +87,20 @@ public class WorkTimeController {
         return workTimeService.getFactUser(taskId);
     }
 
-    private Date stringToDate(String dateStr,String text){
+    @GetMapping("/rep/fact/week")
+    public List<UserWorkDto> getWeekWork(@RequestParam(required = false) String nikName ,
+                                         @RequestParam(required = false, name = "dateStart") String dateStartStr ,
+                                         @RequestParam(required = false, name = "dateEnd") String dateEndStr) {
+        Timestamp dateStart = stringToDate(dateStartStr,"dateStart = ",true);
+        Timestamp dateEnd = stringToDate(dateEndStr,"dateEnd = ",true);
+        return workTimeService.getWeekWork(nikName,dateStart,dateEnd);
+    }
+
+    private Date stringToDate(String dateStr,String text) {
+        return stringToDate(dateStr,text,false);
+    }
+    private Timestamp stringToDate(String dateStr,String text,boolean checkNull) {
+
         if (dateStr != null) {
             try {
                 return new Timestamp(simpleDateFormat.parse(dateStr).getTime());
@@ -101,20 +108,11 @@ public class WorkTimeController {
                 throw new ResourceNotFoundException("Не удалось распарсить дату " + text + " " + dateStr);
             }
         }
+        else if(checkNull){
+            throw new ResourceNotFoundException("Не не передан обязательный параметр " + text + " null ");
+        }
         return null;
     }
-    private WorkTimeDto getWorkTimeDtoAndUpd(WorkTime workTime){
-        WorkTimeDto workTimeDto = WorkTimeConvertor.getWorkTimeDto(workTime);
-        try {
-            UserDto userDto = userServiceIntegration.getUserDto(null,workTimeDto.getNikName());
-            workTimeDto.setAuthorFirstName(userDto.getFirstName());
-            workTimeDto.setAuthorLastName(userDto.getLastName());
-            workTimeDto.setAuthorPatronymic(userDto.getPatronymic());
-        } catch (ResourceNotFoundException e) {
-            System.out.println(e.getMessage());
-            workTimeDto.setAuthorFirstName("Не найден пользователь с ником " + workTimeDto.getNikName());
-        }
-        return workTimeDto;
-    }
+
 
 }

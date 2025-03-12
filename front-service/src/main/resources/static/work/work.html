@@ -1,216 +1,232 @@
 <div id="WorkList" class="headtextelem">
-  <div class="filter container">
-    <form novalidate ng-submit="filterWork()" ; class="filter">
-<!--      <input class="vvod" type="number" inputmode="decimal" id="WorkId" step="any" ng-model="Filt.workId"/>-->
-<!--      <br>-->
-<!--      <input class="vvod" type="number" inputmode="decimal" id="DateLE" value="1" ng-model="Filt.dateLe"/>-->
+    <div class="filter container">
+        <details class="filterblock">
+            <summary class="p-head">Фильтр</summary>
 
-<!--      <p class="p-head"> <= Цена <= </p>-->
-<!--      <input class="vvod" type="number" inputmode="decimal" id="DateGe" step="any" ng-model="Filt.dateGe"/>-->
-      <p class="p-head"> Наименование </p> <input class="vvod80" inputmode="text" id="Name" ng-model="Filt.name"/>
-<!--                <input  type="hidden" id="wwwwId" />-->
-      <br>
-      <button type="submit" class="headbutton">Применить</button>
+            <form novalidate ng-submit="filterWork()" ; class="filter">
+                <!--      <input class="vvod" type="number" inputmode="decimal" id="WorkId" step="any" ng-model="Filt.workId"/>-->
+                <!--      <br>-->
+                <!--      <input class="vvod" type="number" inputmode="decimal" id="DateLE" value="1" ng-model="Filt.dateLe"/>-->
 
-    </form>
-    <button class="headbutton" ng-click="createWork()">Создать ЗИ</button>
-  </div>
-  <div class="filter containerfilt">
-    <button class="headbutton" ng-click="loadWork(-1)">PrevPage</button>
-    <input class="vvod" type="number" id="Page" value="1"/>
-    <button class="headbutton" ng-click="loadWork(1)">NextPage</button>
-  </div>
-  <h1>Список ЗИ</h1>
-  <table>
-    <tr>
-      <td class="tablehead2" rowspan="3"><button class="tablehead2 buttontable" ng-click="workSort('codeSap')">  Код SAP </button></td>
-      <td class="tablehead2" rowspan="3"><button class="tablehead2 buttontable" ng-click="workSort('codeZI')"> Код Зи </button></td>
-      <td class="tablehead2" rowspan="3"><button class="tablehead2 buttontable" ng-click="workSort('name')"> Наименование </button> </td>
-      <td class="tablehead2" rowspan="3"> № внутренней задачи (DEVBO) </td>
-      <td class="tablehead2" rowspan="3"> Краткое описание внутренней задачи </td>
-      <td class="tablehead3" rowspan="3"> Плановая дата завершения 0 этапа </td>
-      <td class="tablehead2" rowspan="2" colspan="2"> Дата начала доработки </td>
-      <td class="tablehead2" colspan="4"> Плановые трудозатраты, чел/час </td>
-      <td class="tablehead2" colspan="5"> Факт дата завершения этапа </td>
-      <td class="tablehead3" rowspan="3"> Текущий этап ЗИ </td>
-      <td class="tablehead2" rowspan="3"> Порядковый номер релиза </td>
-      <td class="tablehead2" rowspan="2" colspan="2"> Выдача релиза даты </td>
-      <td class="tablehead2" rowspan="3"> </td>
-      <td class="tablehead2" rowspan="3"> </td>
+                <!--      <p class="p-head"> <= Цена <= </p>-->
+                <!--      <input class="vvod" type="number" inputmode="decimal" id="DateGe" step="any" ng-model="Filt.dateGe"/>-->
+                <p class="p-head"> Наименование </p> <input class="vvod80" inputmode="text" id="Name"
+                                                            ng-model="Filt.name"/>
+                <!--                <input  type="hidden" id="wwwwId" />-->
+                <br>
+                <button type="submit" class="headbutton">Применить</button>
 
-
-    </tr>
-    <tr>
-      <td class="tablehead2"> I этап </td>
-      <td class="tablehead2"> II этап </td>
-      <td class="tablehead2"> III этап </td>
-      <td class="tablehead2"> IV этап </td>
-
-      <td class="tablehead2"> 0 этап </td>
-      <td class="tablehead2"> I этап </td>
-      <td class="tablehead2"> II этап </td>
-      <td class="tablehead2"> III этап </td>
-      <td class="tablehead2"> IV этап </td>
+            </form>
+        </details>
+        <button class="headbutton" ng-click="createWork()">Создать ЗИ</button>
+    </div>
+    <div class="filter containerfilt">
+        <button class="headbutton" ng-click="loadWork(-1)">PrevPage</button>
+        <input class="vvod" type="number" id="Page" value="1"/>
+        <button class="headbutton" ng-click="loadWork(1)">NextPage</button>
+    </div>
+    <h1>Список ЗИ</h1>
+    <table>
+        <tr>
+            <td class="tablehead2" rowspan="3">
+                <button class="tablehead2 buttontable" ng-click="workSort('codeSap')"> Код SAP</button>
+            </td>
+            <td class="tablehead2" rowspan="3">
+                <button class="tablehead2 buttontable" ng-click="workSort('codeZI')"> Код Зи</button>
+            </td>
+            <td class="tablehead2" rowspan="3">
+                <button class="tablehead2 buttontable" ng-click="workSort('name')"> Наименование</button>
+            </td>
+            <td class="tablehead2" rowspan="3"> № внутренней задачи (DEVBO)</td>
+            <td class="tablehead2" rowspan="3"> Краткое описание внутренней задачи</td>
+            <td class="tablehead3" rowspan="3"> Плановая дата завершения 0 этапа</td>
+            <td class="tablehead2" rowspan="2" colspan="2"> Дата начала доработки</td>
+            <td class="tablehead2" colspan="4"> Плановые трудозатраты, чел/час</td>
+            <td class="tablehead2" colspan="5"> Факт дата завершения этапа</td>
+            <td class="tablehead3" rowspan="3"> Текущий этап ЗИ</td>
+            <td class="tablehead2" rowspan="3"> Порядковый номер релиза</td>
+            <td class="tablehead2" rowspan="2" colspan="2"> Выдача релиза даты</td>
+            <td class="tablehead2" rowspan="3"></td>
+            <td class="tablehead2" rowspan="3"></td>
 
 
-    </tr>
+        </tr>
+        <tr>
+            <td class="tablehead2"> I этап</td>
+            <td class="tablehead2"> II этап</td>
+            <td class="tablehead2"> III этап</td>
+            <td class="tablehead2"> IV этап</td>
 
-    <tr>
-      <td class="tablehead2"> План </td>
-      <td class="tablehead2"> Факт </td>
-      <td class="tablehead2"> Разработка прототипа </td>
-      <td class="tablehead2"> Стабилизация прототипа </td>
-      <td class="tablehead2"> Стабилизация релиза </td>
-      <td class="tablehead2"> ОПЭ </td>
+            <td class="tablehead2"> 0 этап</td>
+            <td class="tablehead2"> I этап</td>
+            <td class="tablehead2"> II этап</td>
+            <td class="tablehead2"> III этап</td>
+            <td class="tablehead2"> IV этап</td>
 
-      <td class="tablehead2"> Согласование требований </td>
-      <td class="tablehead2"> Разработка прототипа </td>
-      <td class="tablehead2"> Стабилизация прототипа </td>
-      <td class="tablehead2"> Стабилизация релиза </td>
-      <td class="tablehead2"> ОПЭ </td>
 
-      <td class="tablehead2"> План </td>
-      <td class="tablehead2"> Факт </td>
+        </tr>
 
-    </tr>
-    <tbody>
-      <tr ng-repeat="work in WorkList">
-        <td>{{work.codeSap}}</td>
-        <td>{{work.codeZI}}</td>
-        <td><button ng-click="addTime(work.id)">{{work.name}}</button></td>
-        <td>{{work.task}}</td>
-        <td>{{work.description}}</td>
-        <td type="date">{{work.planDateStage0}}</td>
-        <td class="date">{{work.startTaskPlan}}</td>
-        <td>{{work.startTaskFact}}</td>
-        <td>{{work.laborDevelop}}</td>
-        <td>{{work.laborDebug}}</td>
-        <td>{{work.laborRelease}}</td>
-        <td>{{work.laborOPE}}</td>
+        <tr>
+            <td class="tablehead2"> План</td>
+            <td class="tablehead2"> Факт</td>
+            <td class="tablehead2"> Разработка прототипа</td>
+            <td class="tablehead2"> Стабилизация прототипа</td>
+            <td class="tablehead2"> Стабилизация релиза</td>
+            <td class="tablehead2"> ОПЭ</td>
 
-        <td>{{work.analiseEndFact}}</td>
-        <td>{{work.developEndFact}}</td>
-        <td>{{work.debugEndFact}}</td>
-        <td>{{work.releaseEndFact}}</td>
-        <td>{{work.opeEndFact}}</td>
+            <td class="tablehead2"> Согласование требований</td>
+            <td class="tablehead2"> Разработка прототипа</td>
+            <td class="tablehead2"> Стабилизация прототипа</td>
+            <td class="tablehead2"> Стабилизация релиза</td>
+            <td class="tablehead2"> ОПЭ</td>
 
-        <td>{{work.stageZI}}</td>
-        <td>{{work.release}}</td>
-        <td class="tablecol1">{{work.issuingReleasePlan}}</td>
-        <td class="tablecol1">{{work.issuingReleaseFact}}</td>
-        <td>
-          <button ng-click="editWork(work.id)">Изменить</button>
-        </td>
-        <td>
-          <button ng-click="deleteWork(work.id)">Удалить</button>
-        </td>
+            <td class="tablehead2"> План</td>
+            <td class="tablehead2"> Факт</td>
 
-      </tr>
-    </tbody>
-  </table>
+        </tr>
+        <tbody>
+        <tr ng-repeat="work in WorkList">
+            <td>{{work.codeSap}}</td>
+            <td>{{work.codeZI}}</td>
+            <td>
+                <button ng-click="addTime(work.id)">{{work.name}}</button>
+            </td>
+            <td>{{work.task}}</td>
+            <td>{{work.description}}</td>
+            <td type="date">{{work.planDateStage0}}</td>
+            <td class="date">{{work.startTaskPlan}}</td>
+            <td>{{work.startTaskFact}}</td>
+            <td>{{work.laborDevelop}}</td>
+            <td>{{work.laborDebug}}</td>
+            <td>{{work.laborRelease}}</td>
+            <td>{{work.laborOPE}}</td>
+
+            <td>{{work.analiseEndFact}}</td>
+            <td>{{work.developEndFact}}</td>
+            <td>{{work.debugEndFact}}</td>
+            <td>{{work.releaseEndFact}}</td>
+            <td>{{work.opeEndFact}}</td>
+
+            <td>{{work.stageZI}}</td>
+            <td>{{work.release}}</td>
+            <td class="tablecol1">{{work.issuingReleasePlan}}</td>
+            <td class="tablecol1">{{work.issuingReleaseFact}}</td>
+            <td>
+                <button ng-click="editWork(work.id)">Изменить</button>
+            </td>
+            <td>
+                <button ng-click="deleteWork(work.id)">Удалить</button>
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
 
 </div>
 
 <div id="FormEdit" class="divform containerfilt">
-  <form novalidate ng-submit="saveWork()">
-    <button type="submit" class="button">Сохранить</button>
-    <button type="reset" ng-click="loadWork()" class="button">Вернуться к списку</button>
-    Код SAP : <input class="vvod" type="number" inputmode="decimal" id="CodeSap" step="1"
-                                                                 ng-model="Work.codeSap"/>
-    <br>
-    № ЗИ (ZI) : <input class="vvod" type="text" id="CodeZI" placeholder="Ведите наименование"
-                          ng-model="Work.codeZI"/>
-    <br>
-    Наименование : <input class="vvod" type="text" id="WorkName" placeholder="Ведите наименование"
-                          ng-model="Work.name"/>
-    <br>
-    Дата завершения анализа план : <input class="vvod" type="date"  id="AnaliseEndPlan" step="any"
-                                          ng-model="Work.analiseEndPlan"/>
-    <br>
-    Дата завершения анализа факт : <input class="vvod" type="date"  id="AnaliseEndFact" step="any"
-                                          ng-model="Work.analiseEndFact"/>
-    <br>
-    Дата окончания разработка прототипа план: <input class="vvod" type="date"  id="DevelopEndPlan" step="any"
-                                      ng-model="Work.developEndPlan"/>
-    <br>
-    Дата окончания разработка прототипа факт: <input class="vvod" type="date"  id="DevelopEndFact" step="any"
-                                      ng-model="Work.developEndFact"/>
-    <!--                <input  type="hidden" id="ProductId" />-->
-    <br>
-    Дата окончания стабилизация прототипа план: <input class="vvod" type="date" id="DebugEndPlan" step="any"
-                                      ng-model="Work.debugEndPlan"/>
-    <br>
-    Дата окончания стабилизация прототипа факт: <input class="vvod" type="date" id="DebugEndFact" step="any"
-                                        ng-model="Work.debugEndFact"/>
-    <br>
-    Дата окончания стабилизация релиза план: <input class="vvod" type="date" id="ReleaseEndPlan" step="any"
-                                     ng-model="Work.releaseEndPlan"/>
-    <br>
-    Дата окончания стабилизация релиза факт: <input class="vvod" type="date" id="ReleaseEndFact" step="any"
-                                     ng-model="Work.releaseEndFact"/>
-    <br>
-    Дата окончания ОПЭ релиза план: <input class="vvod" type="date" id="OpeEndPlan" step="any"
-                                        ng-model="Work.opeEndPlan"/>
-    <br>
-    Дата окончания ОПЭ релиза факт: <input class="vvod" type="date" id="OpeEndFact" step="any"
-                            ng-model="Work.opeEndFact"/>
-    <br>
-    № внутренней задачи (DEVBO) : <input class="vvod" type="text" id="Task" placeholder="Ведите задачу"
-                          ng-model="Work.task"/>
-    <br>
-    Краткое описание внутренней задачи : <input class="vvod" type="text" id="Description" placeholder="Ведите описание"
-                                         ng-model="Work.description"/>
-    <br>
-<!--    Плановая дата завершения 0 этапа   : <input class="vvod" type="date" id="PlanDateStage0" step="any"-->
-<!--                                             ng-model="Work.planDateStage0"/>-->
-<!--    <br>-->
-<!--    Фактическая дата завершения 0 этапа: <input class="vvod" type="date" id="FactDateStage0" step="any"-->
-<!--                                             ng-model="Work.factDateStage0"/>-->
-<!--    <br>-->
-    Дата начала доработки План: <input class="vvod" type="date" id="StartTaskPlan" step="any"
-                                             ng-model="Work.startTaskPlan"/>
-    <br>
-    Дата начала доработки Факт: <input class="vvod" type="date" id="StartTaskFact" step="any"
-                                             ng-model="Work.startTaskFact"/>
-    <br>
-    Плановые трудозатраты, чел/час Разработка прототипа : <input class="vvod" type="number" inputmode="decimal" id="LaborDevelop" step="1"
-                                                                 ng-model="Work.laborDevelop"/>
-    <br>
-    Плановые трудозатраты, чел/час Стабилизация прототипа : <input class="vvod" type="number" inputmode="decimal" id="LaborDebug" step="1"
-                                                                 ng-model="Work.laborDebug"/>
-    <br>
-    Плановые трудозатраты, чел/час Стабилизация релиза : <input class="vvod" type="number" inputmode="decimal" id="LaborRelease" step="1"
-                                                                 ng-model="Work.laborRelease"/>
-    <br>
-    Плановые трудозатраты, чел/час ОПЭ : <input class="vvod" type="number" inputmode="decimal" id="LaborOPE" step="1"
-                                                                 ng-model="Work.laborOPE"/>
-    <br>
-    Текущий этап ЗИ : <select class="vvod" name="choice" id="StageZI" ng-model="Work.stageZI">
-      <option ng-value="0" value="0" selected>0</option>
-      <option ng-value="1" value="1" >I</option>
-      <option ng-value="2" value="2">II</option>
-      <option ng-value="3" value="3">III</option>
-      <option ng-value="4" value="4">IV</option>
-      <option ng-value="5" value="5">V</option>
-      <option ng-value="6" value="6">END</option>
+    <form novalidate ng-submit="saveWork()">
+        <button type="submit" class="button">Сохранить</button>
+        <button type="reset" ng-click="loadWork()" class="button">Вернуться к списку</button>
+        Код SAP : <input class="vvod" type="number" inputmode="decimal" id="CodeSap" step="1"
+                         ng-model="Work.codeSap"/>
+        <br>
+        № ЗИ (ZI) : <input class="vvod" type="text" id="CodeZI" placeholder="Ведите наименование"
+                           ng-model="Work.codeZI"/>
+        <br>
+        Наименование : <input class="vvod" type="text" id="WorkName" placeholder="Ведите наименование"
+                              ng-model="Work.name"/>
+        <br>
+        Дата завершения анализа план : <input class="vvod" type="date" id="AnaliseEndPlan" step="any"
+                                              ng-model="Work.analiseEndPlan"/>
+        <br>
+        Дата завершения анализа факт : <input class="vvod" type="date" id="AnaliseEndFact" step="any"
+                                              ng-model="Work.analiseEndFact"/>
+        <br>
+        Дата окончания разработка прототипа план: <input class="vvod" type="date" id="DevelopEndPlan" step="any"
+                                                         ng-model="Work.developEndPlan"/>
+        <br>
+        Дата окончания разработка прототипа факт: <input class="vvod" type="date" id="DevelopEndFact" step="any"
+                                                         ng-model="Work.developEndFact"/>
+        <!--                <input  type="hidden" id="ProductId" />-->
+        <br>
+        Дата окончания стабилизация прототипа план: <input class="vvod" type="date" id="DebugEndPlan" step="any"
+                                                           ng-model="Work.debugEndPlan"/>
+        <br>
+        Дата окончания стабилизация прототипа факт: <input class="vvod" type="date" id="DebugEndFact" step="any"
+                                                           ng-model="Work.debugEndFact"/>
+        <br>
+        Дата окончания стабилизация релиза план: <input class="vvod" type="date" id="ReleaseEndPlan" step="any"
+                                                        ng-model="Work.releaseEndPlan"/>
+        <br>
+        Дата окончания стабилизация релиза факт: <input class="vvod" type="date" id="ReleaseEndFact" step="any"
+                                                        ng-model="Work.releaseEndFact"/>
+        <br>
+        Дата окончания ОПЭ релиза план: <input class="vvod" type="date" id="OpeEndPlan" step="any"
+                                               ng-model="Work.opeEndPlan"/>
+        <br>
+        Дата окончания ОПЭ релиза факт: <input class="vvod" type="date" id="OpeEndFact" step="any"
+                                               ng-model="Work.opeEndFact"/>
+        <br>
+        № внутренней задачи (DEVBO) : <input class="vvod" type="text" id="Task" placeholder="Ведите задачу"
+                                             ng-model="Work.task"/>
+        <br>
+        Краткое описание внутренней задачи : <input class="vvod" type="text" id="Description"
+                                                    placeholder="Ведите описание"
+                                                    ng-model="Work.description"/>
+        <br>
+        <!--    Плановая дата завершения 0 этапа   : <input class="vvod" type="date" id="PlanDateStage0" step="any"-->
+        <!--                                             ng-model="Work.planDateStage0"/>-->
+        <!--    <br>-->
+        <!--    Фактическая дата завершения 0 этапа: <input class="vvod" type="date" id="FactDateStage0" step="any"-->
+        <!--                                             ng-model="Work.factDateStage0"/>-->
+        <!--    <br>-->
+        Дата начала доработки План: <input class="vvod" type="date" id="StartTaskPlan" step="any"
+                                           ng-model="Work.startTaskPlan"/>
+        <br>
+        Дата начала доработки Факт: <input class="vvod" type="date" id="StartTaskFact" step="any"
+                                           ng-model="Work.startTaskFact"/>
+        <br>
+        Плановые трудозатраты, чел/час Разработка прототипа : <input class="vvod" type="number" inputmode="decimal"
+                                                                     id="LaborDevelop" step="1"
+                                                                     ng-model="Work.laborDevelop"/>
+        <br>
+        Плановые трудозатраты, чел/час Стабилизация прототипа : <input class="vvod" type="number" inputmode="decimal"
+                                                                       id="LaborDebug" step="1"
+                                                                       ng-model="Work.laborDebug"/>
+        <br>
+        Плановые трудозатраты, чел/час Стабилизация релиза : <input class="vvod" type="number" inputmode="decimal"
+                                                                    id="LaborRelease" step="1"
+                                                                    ng-model="Work.laborRelease"/>
+        <br>
+        Плановые трудозатраты, чел/час ОПЭ : <input class="vvod" type="number" inputmode="decimal" id="LaborOPE"
+                                                    step="1"
+                                                    ng-model="Work.laborOPE"/>
+        <br>
+        Текущий этап ЗИ : <select class="vvod" name="choice" id="StageZI" ng-model="Work.stageZI">
+        <option ng-value="0" value="0" selected>0</option>
+        <option ng-value="1" value="1">I</option>
+        <option ng-value="2" value="2">II</option>
+        <option ng-value="3" value="3">III</option>
+        <option ng-value="4" value="4">IV</option>
+        <option ng-value="5" value="5">V</option>
+        <option ng-value="6" value="6">END</option>
     </select>
-    <br>
-    Порядковый номер релиза : <input class="vvod" type="text" id="Release" placeholder="Ведите номер релиза"
-                                                ng-model="Work.release"/>
-    <br>
-    Выдача релиза даты План: <input class="vvod" type="date" id="IssuingReleasePlan" step="any"
-                                       ng-model="Work.issuingReleasePlan"/>
-    <br>
-    Выдача релиза даты Факт: <input class="vvod" type="date" id="IssuingReleaseFact" step="any"
-                                       ng-model="Work.issuingReleaseFact"/>
-    <br>
+        <br>
+        Порядковый номер релиза : <input class="vvod" type="text" id="Release" placeholder="Ведите номер релиза"
+                                         ng-model="Work.release"/>
+        <br>
+        Выдача релиза даты План: <input class="vvod" type="date" id="IssuingReleasePlan" step="any"
+                                        ng-model="Work.issuingReleasePlan"/>
+        <br>
+        Выдача релиза даты Факт: <input class="vvod" type="date" id="IssuingReleaseFact" step="any"
+                                        ng-model="Work.issuingReleaseFact"/>
+        <br>
 
 
-
-
-    <button type="submit" class="button">Сохранить</button>
-    <button type="reset" ng-click="loadWork()" class="button">Вернуться к списку</button>
-  </form>
+        <button type="submit" class="button">Сохранить</button>
+        <button type="reset" ng-click="loadWork()" class="button">Вернуться к списку</button>
+    </form>
 
 
 </div>

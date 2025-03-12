@@ -4,14 +4,17 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.calendar.DayDto;
 import ru.darujo.dto.calendar.WeekDto;
+import ru.darujo.dto.calendar.WeekWorkDto;
 import ru.darujo.utils.calendar.ProductionCalendar;
 import ru.darujo.utils.calendar.days.RU_Days;
 import ru.darujo.utils.calendar.structure.DateInfo;
 import ru.darujo.utils.calendar.structure.DayType;
 
+import java.sql.Timestamp;
 import java.time.DateTimeException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -44,13 +47,6 @@ public class CalendarService {
         DayOfWeek dayOfWeek = dayStart.getDayOfWeek();
         LocalDate date = dayStart;
         DayDto [] days = new DayDto[7];
-//        days[0] =new DayDto(0,false,false,"");
-//        days[1] =new DayDto(0,false,false,"");
-//        days[2] =new DayDto(0,false,false,"");
-//        days[3] =new DayDto(0,false,false,"");
-//        days[4] =new DayDto(0,false,false,"");
-//        days[5] =new DayDto(0,false,false,"");
-//        days[6] =new DayDto(0,false,false,"");
         DateInfo dateInfo = productionCalendar.getDateInfo(date);
         DayDto dayDto = new DayDto(
                 date.getDayOfMonth(),
@@ -75,7 +71,7 @@ public class CalendarService {
                 days[3],
                 days[4],
                 days[5],
-                days[6]);
+                days[6],month);
         weekDtos.add(weekDto);
         while (date.compareTo(dayEnd) <= 0 ){
             for (int i = 0;i < 7 ;i++){
@@ -102,10 +98,52 @@ public class CalendarService {
                     days[3],
                     days[4],
                     days[5],
-                    days[6]);
+                    days[6],month);
             weekDtos.add(weekDto);
         }
 
         return weekDtos;
+    }
+    private LocalDate weekStart(LocalDate date){
+        return date.minusDays(date.getDayOfWeek().getValue() - 1);
+    }
+    private LocalDate weekEnd(LocalDate date){
+        return date.plusDays(7 -date.getDayOfWeek().getValue() );
+    }
+
+    public List<WeekWorkDto> getWeekTime(Date dateStart, Date dateEnd) {
+        List<WeekWorkDto> weekWorkDtos = new ArrayList<>();
+        LocalDate dayStart = weekStart(dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        LocalDate dayEnd = weekEnd(dateEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+
+
+        LocalDate date = dayStart.minusDays(1);
+
+        while (date.compareTo(dayEnd) < 0 ){
+            Timestamp weekStart =null;
+            Timestamp weekEnd= null;
+            float time = 0f;
+            for (int i = 0;i < 7 ;i++) {
+
+                date = date.plusDays(1);
+                if (i ==0) {
+                    weekStart = Timestamp.valueOf(date.atStartOfDay());
+                }else if (i ==6) {
+                    weekEnd = Timestamp.valueOf(date.atStartOfDay());
+                }
+                DateInfo dateInfo = productionCalendar.getDateInfo(date);
+                if(dateInfo.getType() == DayType.SHORTDAY){
+                    time = time + 7;
+                } else if(dateInfo.getType() == DayType.WORKDAY){
+                    time = time + 8;
+                }
+
+            }
+            WeekWorkDto weekWorkDto= new WeekWorkDto(
+                    weekStart,weekEnd,time);
+            weekWorkDtos.add(weekWorkDto);
+        }
+
+        return weekWorkDtos;
     }
 }
