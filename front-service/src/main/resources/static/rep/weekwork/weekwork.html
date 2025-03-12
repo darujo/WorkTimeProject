@@ -57,7 +57,7 @@
                 {{work.authorPatronymic}}
             </td>
 
-            <td>{{work.workPlan}}</td>
+            <td rowspan="{{work.userCol}}" ng-if="work.userCol != null">{{work.workPlan}}</td>
             <td>{{work.workZiFact;}}</td>
             <td>{{work.workWenderFact}}</td>
             <td>{{work.workAdminFact}}</td>

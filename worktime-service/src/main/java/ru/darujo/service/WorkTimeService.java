@@ -164,6 +164,7 @@ public class WorkTimeService {
                                 weekWorkDto.getDayStart(),
                                 weekWorkDto.getDayEnd(),
                                 0f);
+                        userWorkDto[0].setUserCol(1);
                         userWorkDtoMap.put("", userWorkDto[0]);
                     }
                     userWorkDtoMap.forEach((nik, userWork) ->{

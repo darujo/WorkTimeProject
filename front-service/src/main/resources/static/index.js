@@ -44,9 +44,19 @@
             .otherwise({
                 redirectTo: '/'
             });
+
     }
 
     function run($rootScope, $http, $localStorage) {
+        $rootScope.$on('$routeChangeStart', function(event, next, current) {
+            if (typeof(current) !== 'undefined'){
+                console.log("detail close");
+                document.getElementById("DetailPrim").open = false;
+            } else {
+                console.log("detail open");
+                document.getElementById("DetailPrim").open = true;
+            }
+        });
         if ($localStorage.authUser){
             $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.authUser.token;
             try {
@@ -77,10 +87,12 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                     $http.defaults.headers.common.Authorization = 'Bearer ' + response.data.token;
                     $localStorage.authUser = {username: $scope.user.username, token: response.data.token};
 
-                    $scope.user.username = null;
-                    $scope.user.password = null;
+                    $scope.user= {
+                        username: null,
+                        password:null};
 
                     $location.path('/');
+                    document.getElementById("DetailPrim").open = true;
                 }
             }, function errorCallback(response) {
                 console.log(response);
@@ -90,12 +102,15 @@ angular.module('workTimeService').controller('indexController', function ($rootS
 
     $scope.tryToLogout = function () {
         $scope.clearUser();
-        if ($scope.user.username) {
-            $scope.user.username = null;
-        }
-        if ($scope.user.password) {
-            $scope.user.password = null;
-        }
+        $scope.user= {
+            username: null,
+            password:null};
+        // if ($scope.user.username) {
+        //     $scope.user.username = null;
+        // }
+        // if ($scope.user.password) {
+        //     $scope.user.password = null;
+        // }
         $location.path('/');
     };
 
