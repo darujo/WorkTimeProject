@@ -146,4 +146,19 @@ public class CalendarService {
 
         return weekWorkDtos;
     }
+
+    public Float getWorkTime(Date dateStart, Date dateEnd) {
+        LocalDate dayStart = dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate dayEnd = dateEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        Float time= 0f;
+        for (LocalDate date =dayStart;date.compareTo(dayEnd) <= 0;date = date.plusDays(1)){
+            DateInfo dateInfo = productionCalendar.getDateInfo(date);
+            if(dateInfo.getType() == DayType.SHORTDAY){
+                time = time + 7;
+            } else if(dateInfo.getType() == DayType.WORKDAY){
+                time = time + 8;
+            }
+        }
+        return time;
+    }
 }

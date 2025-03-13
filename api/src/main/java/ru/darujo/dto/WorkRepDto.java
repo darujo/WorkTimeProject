@@ -19,10 +19,6 @@ public class WorkRepDto implements Serializable {
     private String codeZI;
     // Наименование
     private String name;
-    // Плановая дата завершения 0 этапа
-    private Date planDateStage0;
-    // Плановая дата завершения 0 этапа
-    private Date factDateStage0;
     // Дата начала доработки План
     private Date startTaskPlan;
     // Дата начала доработки Факт
@@ -80,12 +76,10 @@ public class WorkRepDto implements Serializable {
     // ВЕНДЕРКА
     private Float timeWender;
 
-    public WorkRepDto(Long id, String codeZI, String name, Date planDateStage0, Date factDateStage0, Date startTaskPlan, Date startTaskFact, Date analiseEndPlan, Date analiseEndFact, Float laborDevelop, Date developEndPlan, Date developEndFact, Date debugEndPlan, Date debugEndFact, Float laborDebug, String release, Date issuingReleasePlan, Date issuingReleaseFact, Date releaseEndPlan, Date releaseEndFact, Float laborRelease, Date opeEndPlan, Date opeEndFact, Float laborOPE, Float timeAnalise, Float timeDevelop, Float timeDebug, Float timeRelease, Float timeOPE, Float timeWender) {
+    public WorkRepDto(Long id, String codeZI, String name, Date startTaskPlan, Date startTaskFact, Date analiseEndPlan, Date analiseEndFact, Float laborDevelop, Date developEndPlan, Date developEndFact, Date debugEndPlan, Date debugEndFact, Float laborDebug, String release, Date issuingReleasePlan, Date issuingReleaseFact, Date releaseEndPlan, Date releaseEndFact, Float laborRelease, Date opeEndPlan, Date opeEndFact, Float laborOPE, Float timeAnalise, Float timeDevelop, Float timeDebug, Float timeRelease, Float timeOPE, Float timeWender) {
         this.id = id;
         this.codeZI = codeZI;
         this.name = name;
-        this.planDateStage0 = planDateStage0;
-        this.factDateStage0 = factDateStage0;
         this.startTaskPlan = startTaskPlan;
         this.startTaskFact = startTaskFact;
         this.analiseEndPlan = analiseEndPlan;
@@ -147,14 +141,6 @@ public class WorkRepDto implements Serializable {
 
     public String getName() {
         return name;
-    }
-
-    public String getPlanDateStage0() {
-        return dateToText(planDateStage0);
-    }
-
-    public String getFactDateStage0() {
-        return dateToText(factDateStage0);
     }
 
     public String getStartTaskPlan() {

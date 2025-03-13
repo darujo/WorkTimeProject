@@ -36,12 +36,16 @@
     <h1>Список работ</h1>
     <table>
         <tr>
-            <td>Пользователь</td>
-            <td>Дата</td>
-            <td>Время</td>
-            <td>Коментарий</td>
-            <td></td>
-            <td></td>
+            <td class="tablehead2">Пользователь</td>
+            <td class="tablehead2">Дата</td>
+            <td class="tablehead2">Время</td>
+            <td class="tablehead2">Коментарий</td>
+            <td class="tablehead2">Devbo</td>
+            <td class="tablehead2">Bts</td>
+            <td class="tablehead2">Описание задачи</td>
+
+            <td class="tablehead2"></td>
+            <td class="tablehead2"></td>
 
         </tr>
         <tbody>
@@ -53,7 +57,11 @@
 
             <td>{{worktime.workDateStr}}</td>
             <td>{{worktime.workTime}}</td>
-            <td>{{workTime.comment}}</td>
+            <td>{{worktime.comment}}</td>
+            <td>{{worktime.taskCodeDEVBO}}</td>
+            <td>{{worktime.taskCodeBTS}}</td>
+            <td>{{worktime.taskDescription}}</td>
+
             <td>
                 <button ng-click="editWorkTime(worktime.id)">Изменить</button>
             </td>

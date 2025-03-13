@@ -1,6 +1,7 @@
 package ru.darujo.dto;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -42,12 +43,40 @@ public class WorkTimeDto  implements Serializable, UserFio {
         this.authorPatronymic = authorPatronymic;
     }
 
-    private Date workDate;
+    private Timestamp workDate;
     private String workDateStr;
     private String comment;
 
     private Float workTime;
     private Long taskId;
+    private String taskDescription;
+    private String taskCodeBTS;
+    // № внутренней задачи (DEVBO)
+    private String taskCodeDEVBO;
+
+    public void setTaskDescription(String taskDescription) {
+        this.taskDescription = taskDescription;
+    }
+
+    public void setTaskCodeBTS(String taskCodeBTS) {
+        this.taskCodeBTS = taskCodeBTS;
+    }
+
+    public void setTaskCodeDEVBO(String taskCodeDEVBO) {
+        this.taskCodeDEVBO = taskCodeDEVBO;
+    }
+
+    public String getTaskDescription() {
+        return taskDescription;
+    }
+
+    public String getTaskCodeBTS() {
+        return taskCodeBTS;
+    }
+
+    public String getTaskCodeDEVBO() {
+        return taskCodeDEVBO;
+    }
 
     public Long getId() {
         return id;
@@ -60,7 +89,7 @@ public class WorkTimeDto  implements Serializable, UserFio {
     public WorkTimeDto() {
     }
 
-    public WorkTimeDto(Long id, String nikName, Date workDate, Float workTime, Long workId, String comment) {
+    public WorkTimeDto(Long id, String nikName, Timestamp workDate, Float workTime, Long workId, String comment) {
         this.id = id;
         this.nikName = nikName;
         this.workDate = workDate;
@@ -73,7 +102,7 @@ public class WorkTimeDto  implements Serializable, UserFio {
         return nikName;
     }
 
-    public Date getWorkDate() {
+    public Timestamp getWorkDate() {
         return workDate;
     }
 

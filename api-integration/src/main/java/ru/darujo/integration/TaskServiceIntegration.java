@@ -9,6 +9,7 @@ import ru.darujo.dto.ListString;
 import ru.darujo.dto.TaskDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
@@ -42,13 +43,13 @@ public class TaskServiceIntegration {
             if (stringBuilder.length() != 0) {
                 stringBuilder.append("&");
             }
-            stringBuilder.append("dateLe=").append(dateLE);
+            stringBuilder.append("dateLe=").append(dateToText(dateLE));
         }
         if (dateGT != null) {
             if (stringBuilder.length() != 0) {
                 stringBuilder.append("&");
             }
-            stringBuilder.append("dateGt=").append(dateGT);
+            stringBuilder.append("dateGt=").append(dateToText(dateGT));
         }
 
         System.out.println(stringBuilder);
@@ -76,6 +77,14 @@ public class TaskServiceIntegration {
                         clientResponse -> Mono.error(new ResourceNotFoundException("Задача c id = " + id + " не найдена")))
                 .bodyToMono(TaskDto.class)
                 .block();
+    }
+
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    private String dateToText(Date date){
+        if (date == null){
+            return null;
+        }
+        return sdf.format(date) + "T00:00:00.000Z";
     }
 
 }

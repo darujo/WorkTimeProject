@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono;
 import ru.darujo.dto.ListString;
 import ru.darujo.exceptions.ResourceNotFoundException;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
@@ -41,13 +42,13 @@ public class WorkTimeServiceIntegration {
             if (stringBuilder.length() != 0) {
                 stringBuilder.append("&");
             }
-            stringBuilder.append("dateLe=").append(dateLE);
+            stringBuilder.append("dateLe=").append(dateToText(dateLE));
         }
         if (dateGT != null) {
             if (stringBuilder.length() != 0) {
                 stringBuilder.append("&");
             }
-            stringBuilder.append("dateGt=").append(dateGT);
+            stringBuilder.append("dateGt=").append(dateToText(dateGT));
         }
 
         System.out.println(stringBuilder);
@@ -66,5 +67,12 @@ public class WorkTimeServiceIntegration {
                         clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
                 .bodyToMono(ListString.class)
                 .block();
+    }
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    private String dateToText(Date date){
+        if (date == null){
+            return null;
+        }
+        return sdf.format(date) + "T00:00:00.000Z";
     }
 }

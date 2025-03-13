@@ -18,10 +18,10 @@ public class WorkConvertor {
                 .setOpeEndFact(work.getOpeEndFact())
                 .setReleaseEndFact(work.getReleaseEndFact())
                 .setAnaliseEndFact(work.getAnaliseEndFact())
+                .setAnaliseEndPlan(work.getAnaliseEndPlan())
                 .setName(work.getName())
                 .setTask(work.getTask())
                 .setDescription(work.getDescription())
-                .setPlanDateStage0(work.getPlanDateStage0())
                 .setStartTaskPlan(work.getStartTaskPlan())
                 .setStartTaskFact(work.getStartTaskFact())
                 .setLaborDevelop(work.getLaborDevelop())
@@ -44,8 +44,6 @@ public class WorkConvertor {
                 .setDevelopEndPlan(work.getDevelopEndPlan())
                 .setOpeEndPlan(work.getOpeEndPlan())
                 .setReleaseEndPlan(work.getReleaseEndPlan())
-                .setAnaliseEndPlan(work.getAnaliseEndPlan())
-                .setFactDateStage0(work.getFactDateStage0())
                 .getWorkEditDto();
     }
     public static Work getWork(WorkEditDto workDto){
@@ -62,7 +60,6 @@ public class WorkConvertor {
                 .setName(workDto.getName())
                 .setTask(workDto.getTask())
                 .setDescription(workDto.getDescription())
-                .setPlanDateStage0(workDto.getPlanDateStage0())
                 .setStartTaskPlan(workDto.getStartTaskPlan())
                 .setStartTaskFact(workDto.getStartTaskFact())
                 .setLaborDevelop(workDto.getLaborDevelop())
@@ -78,22 +75,9 @@ public class WorkConvertor {
                 .setOpeEndPlan(workDto.getOpeEndPlan())
                 .setReleaseEndPlan(workDto.getReleaseEndPlan())
                 .setAnaliseEndPlan(workDto.getAnaliseEndPlan())
-                .setFactDateStage0(workDto.getFactDateStage0())
                 .getWork();
     }
 
-    public static WorkDto getWorkDto(WorkLittle work) {
-        return WorkBuilder
-                .createWork()
-                .setId(work.getId())
-                .setCodeSap(work.getCodeSap())
-                .setCodeZI(work.getCodeZI())
-                .setStageZI(work.getStageZI())
-                .setName(work.getName())
-                .getWorkDto();
-
-
-    }
     public static WorkLittleDto getWorkLittleDto(WorkLittle work) {
         return WorkBuilder
                 .createWork()

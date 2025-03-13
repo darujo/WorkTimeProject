@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import ru.darujo.dto.WorkEditDto;
+import ru.darujo.dto.WorkLittleDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 
 
@@ -18,17 +18,17 @@ public class WorkServiceIntegration {
         this.webClientWork = webClientWork;
     }
 
-    public WorkEditDto getWorEditDto(Long workId) {
+    public WorkLittleDto getWorEditDto(Long workId) {
         if (workId == null){
-            return new WorkEditDto();
+            return new WorkLittleDto();
         }
 
-        return webClientWork.get().uri("/" + workId)
+        return webClientWork.get().uri("/obj/little/" + workId)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                         ,
                         clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по ЗИ с ID = " + workId)))
-                .bodyToMono(WorkEditDto.class)
+                .bodyToMono(WorkLittleDto.class)
                 .block();
     }
 }

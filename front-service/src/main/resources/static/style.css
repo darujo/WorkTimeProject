@@ -64,6 +64,27 @@ body {
     margin-top: 10px;
     margin-bottom: 10px;
 }
+.vvod30 {
+    padding: 10px 10px;
+    border: 1px solid #356EAD;
+    box-sizing: border-box;
+    border-radius: 10px;
+    opacity: 0.4;
+    width: 20%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.vvod20 {
+    padding: 10px 10px;
+    border: 1px solid #356EAD;
+    box-sizing: border-box;
+    border-radius: 10px;
+    opacity: 0.4;
+    width: 20%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 .vvod {
     padding: 10px 10px;
     border: 1px solid #356EAD;

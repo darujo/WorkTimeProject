@@ -82,8 +82,6 @@ angular.module('workTimeService').controller('workController', function ($scope,
             analiseEndPlan: null,
             task: "",
             description: "",
-            // planDateStage0: null,
-            // factDateStage0: null,
             startTaskPlan: null,
             startTaskFact: null,
             laborDevelop: null,
@@ -120,10 +118,6 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 $scope.Work.opeEndPlan = new Date( response.data.opeEndPlan );
                 $scope.Work.analiseEndPlan = new Date( response.data.analiseEndPlan );
 
-                // Плановая дата завершения 0 этапа
-                // $scope.Work.planDateStage0 = new Date(response.data.planDateStage0);
-                // $scope.Work.factDateStage0 = new Date(response.data.factDateStage0);
-                // Дата начала доработки План
                 $scope.Work.startTaskPlan = new Date(response.data.startTaskPlan);
                 // Дата начала доработки Факт
                 $scope.Work.startTaskFact = new Date(response.data.startTaskFact);

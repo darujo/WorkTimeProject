@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Date;
 
 @NoArgsConstructor
@@ -20,7 +21,7 @@ public class  WorkTime {
     @Column(name = "nikName")
     private String nikName;
     @Column(name = "workDate")
-    private Date workDate;
+    private Timestamp workDate;
     @Column(name = "workTime")
     private Float workTime;
     @Column(name = "taskId")

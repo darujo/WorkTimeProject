@@ -1,6 +1,7 @@
 package ru.darujo.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.dto.calendar.WeekDto;
 import ru.darujo.dto.calendar.WeekWorkDto;
@@ -8,8 +9,7 @@ import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.service.CalendarService;
 
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @RestController()
@@ -36,8 +36,8 @@ public class CalendarController {
     }
 
     @GetMapping("/weektime")
-    public List<WeekWorkDto> WeekTimeList(@RequestParam(name = "dateStart") String dateStartStr,
-                                          @RequestParam(name = "dateEnd") String dateEndStr
+    public List<WeekWorkDto> WeekTimeList(@RequestParam(name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
+                                          @RequestParam(name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr
     ) {
         Date dateStart = stringToDate(dateStartStr, "dateStart = ");
         Date dateEnd = stringToDate(dateEndStr, "dateEnd = ");
@@ -45,15 +45,34 @@ public class CalendarController {
 
         return calendarService.getWeekTime(dateStart,dateEnd);
     }
-    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+    @GetMapping("/worktime")
+    public Float WorkTime(@RequestParam(name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
+                          @RequestParam(name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr
+    ) {
+        Date dateStart = stringToDate(dateStartStr, "dateStart = ");
+        Date dateEnd = stringToDate(dateEndStr, "dateEnd = ");
 
-    private Date stringToDate(String dateStr, String text) {
+
+        return calendarService.getWorkTime(dateStart,dateEnd);
+    }
+
+    private Timestamp stringToDate(ZonedDateTime dateStr, String text) {
+        return stringToDate(dateStr,text,false);
+    }
+    private Timestamp stringToDate(ZonedDateTime dateStr, String text, boolean checkNull) {
         if (dateStr != null) {
-            try {
-                return new Timestamp(simpleDateFormat.parse(dateStr).getTime());
-            } catch (ParseException e) {
-                throw new ResourceNotFoundException("Не удалось распарсить дату " + text + " " + dateStr);
-            }
+
+            Calendar c = Calendar.getInstance();
+            c.setTime(Timestamp.from(dateStr.toInstant()));
+            c.set(Calendar.HOUR_OF_DAY, 0);
+            c.set(Calendar.MINUTE, 0);
+            c.set(Calendar.SECOND, 0);
+            c.set(Calendar.MILLISECOND, 0);
+            return new Timestamp(c.getTimeInMillis());
+
+        }
+        else if(checkNull){
+            throw new ResourceNotFoundException("Не не передан обязательный параметр " + text + " null ");
         }
         return null;
     }

@@ -26,21 +26,28 @@ import java.util.concurrent.atomic.AtomicReference;
 @Primary
 public class WorkTimeService {
     private TaskServiceIntegration taskServiceIntegration;
+
     @Autowired
     public void setWorkServiceIntegration(TaskServiceIntegration taskServiceIntegration) {
         this.taskServiceIntegration = taskServiceIntegration;
     }
+
     UserServiceIntegration userServiceIntegration;
+
     @Autowired
     public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
+
     CalendarServiceIntegration calendarServiceIntegration;
+
     @Autowired
     public void setCalendarServiceIntegration(CalendarServiceIntegration calendarServiceIntegration) {
         this.calendarServiceIntegration = calendarServiceIntegration;
     }
+
     private WorkTimeRepository workTimeRepository;
+
     @Autowired
     public void setWorkTimeRepository(WorkTimeRepository workTimeRepository) {
         this.workTimeRepository = workTimeRepository;
@@ -51,8 +58,14 @@ public class WorkTimeService {
     }
 
     public WorkTime saveWorkTime(WorkTime workTime) {
-        validWorkTime(workTime);
-        TaskDto taskDto = taskServiceIntegration.getTask(workTime.getTaskId());
+        return saveWorkTime(workTime, true);
+    }
+
+    public WorkTime saveWorkTime(WorkTime workTime, boolean check) {
+        if (check) {
+            validWorkTime(workTime);
+            TaskDto taskDto = taskServiceIntegration.getTask(workTime.getTaskId());
+        }
         return workTimeRepository.save(workTime);
     }
 
@@ -60,7 +73,7 @@ public class WorkTimeService {
         workTimeRepository.deleteById(id);
     }
 
-    public Iterable<WorkTime> findWorkTime(Long taskId, String nikName, Date dateLt,Date dateLe, Date dateGT, Date dateGE, Integer page, Integer size) {
+    public Iterable<WorkTime> findWorkTime(Long taskId, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer page, Integer size) {
         Specification<WorkTime> specification = Specification.where(null);
         if (dateLt != null) {
             specification = specification.and(WorkTimeSpecifications.dateLt(dateLt));
@@ -80,66 +93,71 @@ public class WorkTimeService {
         if (taskId != null) {
             specification = specification.and(WorkTimeSpecifications.taskIdEQ(taskId));
         }
-        if (page == null){
+        if (page == null) {
             return workTimeRepository.findAll(specification);
 
-        }
-        else {
+        } else {
 
-            return workTimeRepository.findAll(specification, PageRequest.of(page - 1, size,Sort.by("workDate").and(Sort.by("nikName"))));
+            return workTimeRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.by("workDate").and(Sort.by("nikName"))));
         }
     }
-    public float getTimeWork(Long taskId, String nikName,Date dateGt,Date dateLe){
+
+    public float getTimeWork(Long taskId, String nikName, Date dateGt, Date dateLe) {
         AtomicReference<Float> time = new AtomicReference<>((float) 0);
-        findWorkTime(taskId, nikName, null,dateLe,dateGt,null, null,null).forEach(workTime -> time.set(time.get() + workTime.getWorkTime()));
+        findWorkTime(taskId, nikName, null, dateLe, dateGt, null, null, null).forEach(workTime -> time.set(time.get() + workTime.getWorkTime()));
         return time.get();
     }
 
     public ListString getFactUser(Long taskId) {
         ListString users = new ListString();
-        findWorkTime(taskId, null, null, null,null,null, null,null).forEach(workTime ->  users.getList().add(workTime.getNikName()));
-        return  users;
+        findWorkTime(taskId, null, null, null, null, null, null, null).forEach(workTime -> users.getList().add(workTime.getNikName()));
+        return users;
     }
-    private void validWorkTime(WorkTime workTime){
-        if (workTime.getTaskId() == null){
+
+    private void validWorkTime(WorkTime workTime) {
+        if (workTime.getTaskId() == null) {
             throw new ResourceNotFoundException("Не выбрана задача");
         }
-        if (workTime.getWorkDate() == null){
+        if (workTime.getWorkDate() == null) {
             throw new ResourceNotFoundException("Не задана дата");
         }
-        if (workTime.getWorkTime() == null){
+        if (workTime.getWorkTime() == null) {
             throw new ResourceNotFoundException("Не задано время");
         }
-        if (workTime.getWorkTime() <= 0){
+        if (workTime.getWorkTime() <= 0) {
             throw new ResourceNotFoundException("Время должно быть больше нуля");
         }
-        if (workTime.getNikName() == null){
+        if (workTime.getNikName() == null) {
             throw new ResourceNotFoundException("Не удалось вас опознать пожалуста авторизуйтесь");
         }
-        if (workTime.getComment() == null || workTime.getComment().equals("")){
+        if (workTime.getComment() == null || workTime.getComment().equals("")) {
             throw new ResourceNotFoundException("Не задан комментарий");
         }
     }
 
-    public List<UserWorkDto> getWeekWork(String nikName, Timestamp dateStart,Timestamp dateEnd) {
-        List<UserWorkDto> userWorkDtos =new ArrayList<>();
-        List<WeekWorkDto> weekWorkDtos =calendarServiceIntegration.getWeekTime(dateStart,dateEnd);
-
-        Map<Long,Integer> tasks = new HashMap<>();
+    public List<UserWorkDto> getWeekWork(String nikName, boolean weekSplit, Timestamp dateStart, Timestamp dateEnd) {
+        List<UserWorkDto> userWorkDtos = new ArrayList<>();
+        List<WeekWorkDto> weekWorkDtos;
+        if (weekSplit) {
+            weekWorkDtos = calendarServiceIntegration.getWeekTime(dateStart, dateEnd);
+        } else {
+            weekWorkDtos = new ArrayList<>();
+            weekWorkDtos.add(new WeekWorkDto(dateStart, dateEnd, calendarServiceIntegration.getWorkTime(dateStart, dateEnd)));
+        }
+        Map<Long, Integer> tasks = new HashMap<>();
         weekWorkDtos
                 .forEach(weekWorkDto -> {
-                    Map<String,UserWorkDto> userWorkDtoMap = new HashMap<>();
-                    final UserWorkDto[] userWorkDto = {null};
-                    findWorkTime(null, nikName,null,weekWorkDto.getDayEnd(),null,weekWorkDto.getDayStart(),null,null)
+                    Map<String, UserWorkDto> userWorkDtoMap = new HashMap<>();
+                    findWorkTime(null, nikName, null, weekWorkDto.getDayEnd(), null, weekWorkDto.getDayStart(), null, null)
                             .forEach(workTime -> {
                                 Integer type = tasks.get(workTime.getTaskId());
-                                if(type==null){
+                                if (type == null) {
                                     TaskDto taskDto = taskServiceIntegration.getTask(workTime.getTaskId());
-                                    tasks.put(taskDto.getId(),taskDto.getType());
+                                    tasks.put(taskDto.getId(), taskDto.getType());
                                 }
-                                userWorkDto[0] = userWorkDtoMap.get(workTime.getNikName());
-                                if (userWorkDto[0] == null){
-                                    userWorkDto[0] =new UserWorkDto(
+                                UserWorkDto userWorkDto = userWorkDtoMap.get(workTime.getNikName());
+                                if (userWorkDto == null) {
+                                    userWorkDto = new UserWorkDto(
                                             workTime.getNikName(),
                                             null,
                                             null,
@@ -147,46 +165,86 @@ public class WorkTimeService {
                                             weekWorkDto.getDayStart(),
                                             weekWorkDto.getDayEnd(),
                                             weekWorkDto.getTime());
-                                    userWorkDtoMap.put(workTime.getNikName(), userWorkDto[0]);
+                                    userWorkDtoMap.put(workTime.getNikName(), userWorkDto);
+
 
                                 }
-                                userWorkDto[0].addTime(type,workTime.getWorkTime());
+                                userWorkDto.addTime(type, workTime.getWorkTime());
 
                             });
-                    if(userWorkDto[0] != null) {
-                        userWorkDto[0].setUserCol(userWorkDtoMap.size());
-                    }else {
-                        userWorkDto[0] = new UserWorkDto(
-                                null,
-                                null,
-                                null,
-                                null,
-                                weekWorkDto.getDayStart(),
-                                weekWorkDto.getDayEnd(),
-                                0f);
-                        userWorkDto[0].setUserCol(1);
-                        userWorkDtoMap.put("", userWorkDto[0]);
+                    UserWorkDto userWorkDto = userWorkDtoMap.values().stream().findFirst().orElse(
+                            new UserWorkDto(
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    weekWorkDto.getDayStart(),
+                                    weekWorkDto.getDayEnd(),
+                                    weekWorkDto.getTime()));
+
+                    if (userWorkDto.getNikName() != null) {
+
+                        userWorkDto.setUserCol(userWorkDtoMap.size());
                     }
-                    userWorkDtoMap.forEach((nik, userWork) ->{
+//                        UserWorkDto userWorkDto1 = userWorkDtoMap.entrySet().stream().findFirst().map(stringUserWorkDtoEntry -> stringUserWorkDtoEntry.getValue());
+//                    (s, userWorkDto1) -> {userWorkDto1.setUserCol(userWorkDtoMap.size();));
+//                        userWorkDto[0].setUserCol(userWorkDtoMap.size());
+                    else {
+                        userWorkDto.setUserCol(1);
+                        userWorkDtoMap.put("", userWorkDto);
+                    }
+                    userWorkDtoMap.forEach((nik, userWork) -> {
                         updFio(userWork);
-                            userWorkDtos.add(
-                            userWork.addTimeAll());});
-        });
+                        userWorkDtos.add(
+                                userWork.addTimeAll());
+                    });
+                });
         return userWorkDtos;
 
     }
 
-    public WorkTimeDto getWorkTimeDtoAndUpd(WorkTime workTime){
+    public WorkTimeDto getWorkTimeDtoAndUpd(WorkTime workTime) {
         WorkTimeDto workTimeDto = WorkTimeConvertor.getWorkTimeDto(workTime);
         updFio(workTimeDto);
+        updTask(workTimeDto);
 
         return workTimeDto;
     }
-    private void updFio(UserFio userFio){
+
+    private final Map<Long, TaskDto> taskDtoMap = new HashMap<>();
+
+    public void clearCash() {
+        taskDtoMap.clear();
+    }
+
+    private void updTask(WorkTimeDto workTimeDto) {
         try {
-            // TODO Сделать кеширование
-            if(userFio.getNikName()!=null) {
-                UserDto userDto = userServiceIntegration.getUserDto(null, userFio.getNikName());
+            if (workTimeDto.getTaskId() != null) {
+                TaskDto taskDto = taskDtoMap.get(workTimeDto.getTaskId());
+                if (taskDto == null) {
+                    taskDto = taskServiceIntegration.getTask(workTimeDto.getTaskId());
+                    taskDtoMap.put(taskDto.getId(), taskDto);
+                }
+                workTimeDto.setTaskDescription(taskDto.getDescription());
+                workTimeDto.setTaskCodeBTS(taskDto.getCodeBTS());
+                workTimeDto.setTaskCodeDEVBO(taskDto.getCodeDEVBO());
+            }
+        } catch (ResourceNotFoundException e) {
+            System.out.println(e.getMessage());
+            workTimeDto.setAuthorFirstName("Не найдена задача с id " + workTimeDto.getTaskId());
+        }
+    }
+
+    private final Map<String, UserDto> userDtoMap = new HashMap<>();
+
+    private void updFio(UserFio userFio) {
+        try {
+            if (userFio.getNikName() != null) {
+                UserDto userDto = userDtoMap.get(userFio.getNikName());
+                if (userDto == null) {
+                    userDto = userServiceIntegration.getUserDto(null, userFio.getNikName());
+                    userDtoMap.put(userFio.getNikName(), userDto);
+                }
                 userFio.setAuthorFirstName(userDto.getFirstName());
                 userFio.setAuthorLastName(userDto.getLastName());
                 userFio.setAuthorPatronymic(userDto.getPatronymic());

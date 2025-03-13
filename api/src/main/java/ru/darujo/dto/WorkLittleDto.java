@@ -3,6 +3,9 @@ package ru.darujo.dto;
 import java.io.Serializable;
 
 public class WorkLittleDto implements Serializable {
+    public WorkLittleDto() {
+    }
+
     private Long id;
     // Код SAP
     private Long codeSap;

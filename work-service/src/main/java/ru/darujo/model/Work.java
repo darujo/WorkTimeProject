@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,53 +30,45 @@ public class Work {
     // Разработка прототипа Факт
     // ВЕНДЕРКА Факт
     @Column(name = "analiseEndFact")
-    private Date analiseEndFact;
+    private Timestamp analiseEndFact;
     // ВЕНДЕРКА Факт
     @Column(name = "analiseEndPlan")
-    private Date analiseEndPlan;
+    private Timestamp analiseEndPlan;
     @Column(name = "developEndFact")
-    private Date developEndFact;
+    private Timestamp developEndFact;
     //начало разработки план
     @Column(name = "developEndPlan")
-    private Date developEndPlan;
+    private Timestamp developEndPlan;
     // Стабилизация прототипа Факт
     @Column(name = "debugEndFact")
-    private Date debugEndFact;
+    private Timestamp debugEndFact;
     // Стабилизация релиза Факт
     @Column(name = "debugEndPlan")
-    private Date debugEndPlan;
+    private Timestamp debugEndPlan;
     // Стабилизация релиза Факт
     @Column(name = "releaseEndFact")
-    private Date releaseEndFact;
+    private Timestamp releaseEndFact;
     // Стабилизация релиза plan
     @Column(name = "releaseEndPlan")
-    private Date releaseEndPlan;
+    private Timestamp releaseEndPlan;
     // ОПЭ релиза Факт
     @Column(name = "opeEndFact")
-    private Date opeEndFact;
+    private Timestamp opeEndFact;
     // ОПЭ релиза Факт
     @Column(name = "opeEndPlan")
-    private Date opeEndPlan;
+    private Timestamp opeEndPlan;
     // № внутренней задачи (DEVBO)
     @Column(name = "task")
     private String task;
     // Краткое описание внутренней задачи
     @Column(name = "description")
     private String description;
-    //TODO Убрать
-    // Плановая дата завершения 0 этапа
-    @Column(name = "planDateStage0")
-    private Date planDateStage0;
-    //TODO Убрать
-    // Плановая дата завершения 0 этапа
-    @Column(name = "factDateStage0")
-    private Date factDateStage0;
     // Дата начала доработки План
     @Column(name = "startTaskPlan")
-    private Date startTaskPlan;
+    private Timestamp startTaskPlan;
     // Дата начала доработки Факт
     @Column(name = "startTaskFact")
-    private Date startTaskFact;
+    private Timestamp startTaskFact;
     // Плановые трудозатраты, чел/час Разработка прототипа
     @Column(name = "laborDevelop")
     private Float laborDevelop;
@@ -96,9 +89,9 @@ public class Work {
     private String release;
     // Выдача релиза даты План
     @Column(name = "issuingReleasePlan")
-    private Date issuingReleasePlan;
+    private Timestamp issuingReleasePlan;
     // Выдача релиза дата факт
     @Column(name = "issuingReleaseFact")
-    private Date issuingReleaseFact;
+    private Timestamp issuingReleaseFact;
 
 }

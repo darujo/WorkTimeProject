@@ -4,6 +4,7 @@ angular.module('workTimeService').controller('weekworkController', function ($sc
 
     let Filt= {    dateStart: new Date(),
                    dateEnd: new Date(),
+                   weekSplit: true
     };
     $scope.Filt = Filt;
     $scope.loadWorkTime = function () {
@@ -20,9 +21,10 @@ angular.module('workTimeService').controller('weekworkController', function ($sc
             url: constPatchWork + "/worktime/rep/fact/week",
             method: "get",
             params: {
-                userName: Filt ? Filt.userName : null,
+                nikName: Filt ? Filt.nikName : null,
                 dateStart: Filt ? Filt.dateStart : new Date(),
                 dateEnd: Filt ? Filt.dateEnd : new Date(),
+                weekSplit: Filt ? Filt.weekSplit : null
             }
         }).then(function (response) {
             console.log(response.data);

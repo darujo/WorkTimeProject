@@ -9,13 +9,15 @@
                         <div class="horiz">
                             <p class="p-head">Пользователь</p>
                             <br>
-                            <input class="vvod80" type="text" id="NikName"
+                            <input class="vvod40" type="text" id="NikName"
                                    ng-model="Filt.nikName"/>
+                            <p class="p-head">Разбивка по неделям</p> <input class="vvod20" type="checkbox" id="WeekSplit"
+                                   ng-model="Filt.weekSplit"/>
                         </div>
                         <div class="horiz">
-                            <input class="vvod40" type="date" id="DateStart" step="any" ng-model="Filt.dateStart"/>
+                            <input class="vvod30" type="date" id="DateStart" step="any"  ng-model="Filt.dateStart"/>
                             <p class="p-head"> <= Дата <= </p>
-                            <input class="vvod40" type="date" id="DateEnd" step="any" ng-model="Filt.dateEnd"/>
+                            <input class="vvod30" type="date" id="DateEnd" step="any" ng-model="Filt.dateEnd"/>
                             <!--                <input  type="hidden" id="taskId" />-->
                             <br>
                             <button type="submit" class="headbutton">Применить</button>

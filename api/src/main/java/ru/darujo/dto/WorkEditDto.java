@@ -1,7 +1,7 @@
 package ru.darujo.dto;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Timestamp;
 
 public class WorkEditDto implements Serializable {
     private Long id;
@@ -12,39 +12,35 @@ public class WorkEditDto implements Serializable {
     // Разработка прототипа
     private String name;
     // ВЕНДЕРКА
-    private Date analiseEndFact;
+    private Timestamp analiseEndFact;
     // ВЕНДЕРКА План
-    private Date analiseEndPlan;
+    private Timestamp analiseEndPlan;
 
     //конец разработки факт
-    private Date developEndFact;
+    private Timestamp developEndFact;
     //конец разработки план
-    private Date developEndPlan;
+    private Timestamp developEndPlan;
     // конец Стабилизация прототипа факт
-    private Date debugEndFact;
+    private Timestamp debugEndFact;
     // конец Стабилизация прототипа план
-    private Date debugEndPlan;
+    private Timestamp debugEndPlan;
     // конец Стабилизация релиза
-    private Date releaseEndFact;
+    private Timestamp releaseEndFact;
     // конец Стабилизация релиза
-    private Date releaseEndPlan;
+    private Timestamp releaseEndPlan;
     // конец ОПЭ релиза
-    private Date opeEndFact;
+    private Timestamp opeEndFact;
     // конец ОПЭ релиза
-    private Date opeEndPlan;
+    private Timestamp opeEndPlan;
     // № внутренней задачи (DEVBO)
     private String task;
     // Краткое описание внутренней задачи
     private String description;
-    // Плановая дата завершения 0 этапа
-    private Date planDateStage0;
-    // Плановая дата завершения 0 этапа
-    private Date factDateStage0;
 
     // Дата начала доработки План
-    private Date startTaskPlan;
+    private Timestamp startTaskPlan;
     // Дата начала доработки Факт
-    private Date startTaskFact;
+    private Timestamp startTaskFact;
     // Плановые трудозатраты, чел/час Разработка прототипа
     private Float laborDevelop;
     // Плановые трудозатраты, чел/час Стабилизация прототипа
@@ -58,11 +54,11 @@ public class WorkEditDto implements Serializable {
     // Порядковый номер релиза
     private String release;
     // Выдача релиза даты План
-    private Date issuingReleasePlan;
+    private Timestamp issuingReleasePlan;
     // Выдача релиза дата факт
-    private Date issuingReleaseFact;
+    private Timestamp issuingReleaseFact;
 
-    public WorkEditDto(Long id, Long codeSap, String codeZI, String name, Date analiseEndFact, Date analiseEndPlan, Date developEndFact, Date developEndPlan, Date debugEndFact, Date debugEndPlan, Date releaseEndFact, Date releaseEndPlan, Date opeEndFact, Date opeEndPlan, String task, String description, Date planDateStage0, Date factDateStage0, Date startTaskPlan, Date startTaskFact, Float laborDevelop, Float laborDebug, Float laborRelease, Float laborOPE, Integer stageZI, String release, Date issuingReleasePlan, Date issuingReleaseFact) {
+    public WorkEditDto(Long id, Long codeSap, String codeZI, String name, Timestamp analiseEndFact, Timestamp analiseEndPlan, Timestamp developEndFact, Timestamp developEndPlan, Timestamp debugEndFact, Timestamp debugEndPlan, Timestamp releaseEndFact, Timestamp releaseEndPlan, Timestamp opeEndFact, Timestamp opeEndPlan, String task, String description, Timestamp startTaskPlan, Timestamp startTaskFact, Float laborDevelop, Float laborDebug, Float laborRelease, Float laborOPE, Integer stageZI, String release, Timestamp issuingReleasePlan, Timestamp issuingReleaseFact) {
         this.id = id;
         this.codeSap = codeSap;
         this.codeZI = codeZI;
@@ -79,8 +75,6 @@ public class WorkEditDto implements Serializable {
         this.opeEndPlan = opeEndPlan;
         this.task = task;
         this.description = description;
-        this.planDateStage0 = planDateStage0;
-        this.factDateStage0 = factDateStage0;
         this.startTaskPlan = startTaskPlan;
         this.startTaskFact = startTaskFact;
         this.laborDevelop = laborDevelop;
@@ -97,23 +91,23 @@ public class WorkEditDto implements Serializable {
         return id;
     }
 
-    public Date getDevelopEndFact() {
+    public Timestamp getDevelopEndFact() {
         return developEndFact;
     }
 
-    public Date getDebugEndFact() {
+    public Timestamp getDebugEndFact() {
         return debugEndFact;
     }
 
-    public Date getReleaseEndFact() {
+    public Timestamp getReleaseEndFact() {
         return releaseEndFact;
     }
 
-    public Date getOpeEndFact() {
+    public Timestamp getOpeEndFact() {
         return opeEndFact;
     }
 
-    public Date getAnaliseEndFact() {
+    public Timestamp getAnaliseEndFact() {
         return analiseEndFact;
     }
 
@@ -127,15 +121,11 @@ public class WorkEditDto implements Serializable {
         return description;
     }
 
-    public Date getPlanDateStage0() {
-        return planDateStage0;
-    }
-
-    public Date getStartTaskPlan() {
+    public Timestamp getStartTaskPlan() {
         return startTaskPlan;
     }
 
-    public Date getStartTaskFact() {
+    public Timestamp getStartTaskFact() {
         return startTaskFact;
     }
 
@@ -163,11 +153,11 @@ public class WorkEditDto implements Serializable {
         return release;
     }
 
-    public Date getIssuingReleasePlan() {
+    public Timestamp getIssuingReleasePlan() {
         return issuingReleasePlan;
     }
 
-    public Date getIssuingReleaseFact() {
+    public Timestamp getIssuingReleaseFact() {
         return issuingReleaseFact;
     }
 
@@ -184,27 +174,24 @@ public class WorkEditDto implements Serializable {
         return codeZI;
     }
 
-    public Date getDevelopEndPlan() {
+    public Timestamp getDevelopEndPlan() {
         return developEndPlan;
     }
 
-    public Date getDebugEndPlan() {
+    public Timestamp getDebugEndPlan() {
         return debugEndPlan;
     }
 
-    public Date getReleaseEndPlan() {
+    public Timestamp getReleaseEndPlan() {
         return releaseEndPlan;
     }
 
-    public Date getOpeEndPlan() {
+    public Timestamp getOpeEndPlan() {
         return opeEndPlan;
     }
 
-    public Date getAnaliseEndPlan() {
+    public Timestamp getAnaliseEndPlan() {
         return analiseEndPlan;
     }
 
-    public Date getFactDateStage0() {
-        return factDateStage0;
-    }
 }

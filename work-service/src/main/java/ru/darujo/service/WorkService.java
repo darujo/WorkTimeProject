@@ -109,8 +109,6 @@ public class WorkService {
                                 work.getId(),
                                 work.getCodeZI(),
                                 work.getName(),
-                                work.getPlanDateStage0(),
-                                work.getFactDateStage0(),
                                 work.getStartTaskPlan(),
                                 work.getStartTaskFact(),
                                 work.getAnaliseEndPlan(),

@@ -93,7 +93,7 @@
             </td>
             <td>{{work.task}}</td>
             <td>{{work.description}}</td>
-            <td type="date">{{work.planDateStage0}}</td>
+            <td type="date">{{work.analiseEndPlan}}</td>
             <td class="date">{{work.startTaskPlan}}</td>
             <td>{{work.startTaskFact}}</td>
             <td>{{work.laborDevelop}}</td>
@@ -175,12 +175,6 @@
                                                     placeholder="Ведите описание"
                                                     ng-model="Work.description"/>
         <br>
-        <!--    Плановая дата завершения 0 этапа   : <input class="vvod" type="date" id="PlanDateStage0" step="any"-->
-        <!--                                             ng-model="Work.planDateStage0"/>-->
-        <!--    <br>-->
-        <!--    Фактическая дата завершения 0 этапа: <input class="vvod" type="date" id="FactDateStage0" step="any"-->
-        <!--                                             ng-model="Work.factDateStage0"/>-->
-        <!--    <br>-->
         Дата начала доработки План: <input class="vvod" type="date" id="StartTaskPlan" step="any"
                                            ng-model="Work.startTaskPlan"/>
         <br>

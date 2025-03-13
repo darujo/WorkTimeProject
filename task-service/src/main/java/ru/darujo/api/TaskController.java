@@ -2,12 +2,13 @@ package ru.darujo.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.TaskConvertor;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.TaskDto;
 import ru.darujo.dto.UserDto;
-import ru.darujo.dto.WorkEditDto;
+import ru.darujo.dto.WorkLittleDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.integration.WorkServiceIntegration;
@@ -15,8 +16,7 @@ import ru.darujo.model.Task;
 import ru.darujo.service.TaskService;
 
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @RestController()
@@ -40,8 +40,6 @@ public class TaskController {
     public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
-
-    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
     @GetMapping("/{id}")
     public TaskDto WorkTimeEdit(@PathVariable long id) {
@@ -84,8 +82,8 @@ public class TaskController {
                              @RequestParam(required = false) String codeDEVBO,
                              @RequestParam(required = false) String description,
                              @RequestParam(required = false) Long workId,
-                             @RequestParam(required = false, name = "dateLe") String dateLeStr,
-                             @RequestParam(required = false, name = "dateGt") String dateGtStr
+                             @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
+                             @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr
     ) {
         Date dateLe = stringToDate(dateLeStr, "dateLe = ");
         Date dateGt = stringToDate(dateGtStr, "dateGt = ");
@@ -113,6 +111,7 @@ public class TaskController {
                                    Long workId,
                                    Integer page,
                                    Integer size) {
+        clearCash();
         return ((Page<Task>) taskService.findWorkTime(userName,
                 codeBTS,
                 codeDEVBO,
@@ -121,15 +120,23 @@ public class TaskController {
                 page,
                 size)).map(this::taskAddValue);
     }
+    private final Map<String,UserDto> userDtoMap = new HashMap<>();
+    private final Map<Long,WorkLittleDto> workLittleDtoMap = new HashMap<>();
+    private void clearCash(){
+        workLittleDtoMap.clear();
+    }
 
     private TaskDto taskAddValue(Task task) {
         TaskDto taskDto = TaskConvertor.getTaskDto(task);
         try {
 
-            // TODO Сделать кеширование
-            WorkEditDto worEditDto = workServiceIntegration.getWorEditDto(taskDto.getWorkId());
-            taskDto.setCodeZi(worEditDto.getCodeZI());
-            taskDto.setNameZi(worEditDto.getName());
+            WorkLittleDto workLittleDto = workLittleDtoMap.get(taskDto.getWorkId());
+            if (workLittleDto == null ) {
+                workLittleDto = workServiceIntegration.getWorEditDto(taskDto.getWorkId());
+                workLittleDtoMap.put(taskDto.getId(),workLittleDto);
+            }
+            taskDto.setCodeZi(workLittleDto.getCodeZI());
+            taskDto.setNameZi(workLittleDto.getName());
         } catch (ResourceNotFoundException e) {
             System.out.println(e.getMessage());
             if (task.getType() == 1) {
@@ -138,8 +145,11 @@ public class TaskController {
             }
         }
         try {
-            // TODO Сделать кеширование
-            UserDto userDto = userServiceIntegration.getUserDto(null,task.getNikName());
+            UserDto userDto = userDtoMap.get(task.getNikName());
+            if(userDto == null) {
+                userDto = userServiceIntegration.getUserDto(null, task.getNikName());
+                userDtoMap.put(task.getNikName(),userDto);
+            }
             taskDto.setAuthorFirstName(userDto.getFirstName());
             taskDto.setAuthorLastName(userDto.getLastName());
             taskDto.setAuthorPatronymic(userDto.getPatronymic());
@@ -157,6 +167,7 @@ public class TaskController {
                                    String codeDEVBO,
                                    String description,
                                    String ziName) {
+        clearCash();
         List<TaskDto> taskDtoList = new ArrayList<>();
         taskService.findWorkTime(userName,
                 codeBTS,
@@ -175,14 +186,23 @@ public class TaskController {
         });
         return taskDtoList;
     }
-
-    private Date stringToDate(String dateStr, String text) {
+    private Timestamp stringToDate(ZonedDateTime dateStr,String text) {
+        return stringToDate(dateStr,text,false);
+    }
+    private Timestamp stringToDate(ZonedDateTime dateStr, String text, boolean checkNull) {
         if (dateStr != null) {
-            try {
-                return new Timestamp(simpleDateFormat.parse(dateStr).getTime());
-            } catch (ParseException e) {
-                throw new ResourceNotFoundException("Не удалось распарсить дату " + text + " " + dateStr);
-            }
+
+            Calendar c = Calendar.getInstance();
+            c.setTime(Timestamp.from(dateStr.toInstant()));
+            c.set(Calendar.HOUR_OF_DAY, 0);
+            c.set(Calendar.MINUTE, 0);
+            c.set(Calendar.SECOND, 0);
+            c.set(Calendar.MILLISECOND, 0);
+            return new Timestamp(c.getTimeInMillis());
+
+        }
+        else if(checkNull){
+            throw new ResourceNotFoundException("Не не передан обязательный параметр " + text + " null ");
         }
         return null;
     }

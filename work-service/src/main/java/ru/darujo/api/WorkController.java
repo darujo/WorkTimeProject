@@ -20,7 +20,11 @@ public class WorkController {
         this.workService = workService;
     }
 
-
+    @GetMapping("/conv")
+    public WorkDto workConv( ) {
+        workService.findWorks(1,10000,null,null,null).map(work -> workService.saveWork(WorkConvertor.getWork(WorkConvertor.getWorkEditDto(work))));
+        return new WorkDto();
+    }
     @GetMapping("/{id}")
     public WorkEditDto WorkEdit(@PathVariable long id) {
         return WorkConvertor.getWorkEditDto(workService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Задача не найден")));

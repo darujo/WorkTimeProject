@@ -14,6 +14,7 @@ public class WorkDto implements Serializable {
     // Разработка прототипа
     private String name;
     // анализ
+    private Date analiseEndPlan;
     private Date analiseEndFact;
     private Date developEndFact;
     // Стабилизация прототипа
@@ -26,8 +27,6 @@ public class WorkDto implements Serializable {
     private String task;
     // Краткое описание внутренней задачи
     private String description;
-    // Плановая дата завершения 0 этапа
-    private Date planDateStage0;
     // Дата начала доработки План
     private Date startTaskPlan;
     // Дата начала доработки Факт
@@ -49,11 +48,16 @@ public class WorkDto implements Serializable {
     // Выдача релиза дата факт
     private Date issuingReleaseFact;
 
-    public WorkDto(Long id, Long codeSap, String codeZI, String name, Date analiseEndFact, Date developEndFact, Date debugEndFact, Date releaseEndFact, Date opeEndFact, String task, String description, Date planDateStage0, Date startTaskPlan, Date startTaskFact, Float laborDevelop, Float laborDebug, Float laborRelease, Float laborOPE, Integer stageZI, String release, Date issuingReleasePlan, Date issuingReleaseFact) {
+    public String getAnaliseEndPlan() {
+        return dateToText(analiseEndPlan);
+    }
+
+    public WorkDto(Long id, Long codeSap, String codeZI, String name, Date analiseEndPlan, Date analiseEndFact, Date developEndFact, Date debugEndFact, Date releaseEndFact, Date opeEndFact, String task, String description, Date startTaskPlan, Date startTaskFact, Float laborDevelop, Float laborDebug, Float laborRelease, Float laborOPE, Integer stageZI, String release, Date issuingReleasePlan, Date issuingReleaseFact) {
         this.id = id;
         this.codeSap = codeSap;
         this.codeZI = codeZI;
         this.name = name;
+        this.analiseEndPlan = analiseEndPlan;
         this.analiseEndFact = analiseEndFact;
         this.developEndFact = developEndFact;
         this.debugEndFact = debugEndFact;
@@ -61,7 +65,6 @@ public class WorkDto implements Serializable {
         this.opeEndFact = opeEndFact;
         this.task = task;
         this.description = description;
-        this.planDateStage0 = planDateStage0;
         this.startTaskPlan = startTaskPlan;
         this.startTaskFact = startTaskFact;
         this.laborDevelop = laborDevelop;
@@ -85,10 +88,6 @@ public class WorkDto implements Serializable {
 
     public String getDescription() {
         return description;
-    }
-
-    public String getPlanDateStage0() {
-        return dateToText(planDateStage0);
     }
 
     public Float getLaborDevelop() {

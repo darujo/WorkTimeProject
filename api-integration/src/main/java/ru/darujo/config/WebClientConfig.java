@@ -24,7 +24,7 @@ public class WebClientConfig {
         return WebClient
                 .builder()
                 .baseUrl(propertyConnection.getUrl())
-                .clientConnector(new ReactorClientHttpConnector(HttpClient.from(tcpClient))) // TODO Убрать устаревший метод
+                .clientConnector(new ReactorClientHttpConnector(HttpClient.newConnection()))
                 .build();
     }
 }

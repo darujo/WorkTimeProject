@@ -2,6 +2,7 @@ package ru.darujo.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.WorkTimeConvertor;
 import ru.darujo.dto.ListString;
@@ -12,8 +13,7 @@ import ru.darujo.model.WorkTime;
 import ru.darujo.service.WorkTimeService;
 
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @RestController()
@@ -24,13 +24,15 @@ public class WorkTimeController {
     public void setWorkTimeService(WorkTimeService workTimeService) {
         this.workTimeService = workTimeService;
     }
-
+    @GetMapping("/conv")
+    public WorkTimeDto workConv( ) {
+        workTimeService.findWorkTime(null,null,null,null,null,null,null,null).forEach(workTime -> workTimeService.saveWorkTime(WorkTimeConvertor.getWorkTime(WorkTimeConvertor.getWorkTimeDto(workTime)),false));
+        return new WorkTimeDto();
+    }
     @GetMapping("/{id}")
     public WorkTimeDto WorkTimeEdit(@PathVariable long id) {
         return WorkTimeConvertor.getWorkTimeDto(workTimeService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Отмеченая работа не найден")));
     }
-
-    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
     @PostMapping("")
     public WorkTimeDto WorkTimeSave( @RequestHeader String username,
@@ -48,18 +50,19 @@ public class WorkTimeController {
     }
 
     @GetMapping("")
-    public Page<WorkTimeDto> findWorkTime(@RequestParam(required = false, name = "dateLt") String dateLtStr,
-                                          @RequestParam(required = false, name = "dateLe") String dateLeStr,
-                                          @RequestParam(required = false, name = "dateGt") String dateGtStr,
-                                          @RequestParam(required = false, name = "dateGe") String dateGeStr,
+    public Page<WorkTimeDto> findWorkTime(@RequestParam(required = false, name = "dateLt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLtStr,
+                                          @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
+                                          @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
+                                          @RequestParam(required = false, name = "dateGe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGeStr,
                                           @RequestParam(required = false) Long taskId,
                                           @RequestParam(required = false) String nikName,
                                           @RequestParam(defaultValue = "1")Integer page,
                                           @RequestParam(defaultValue = "10") Integer size) {
         Date dateLt = stringToDate(dateLtStr,"dateLt = ");
-        Date dateLe = stringToDate(dateLeStr,"dateLe = ");
-        Date dateGt = stringToDate(dateGtStr,"dateGt = ");
+        Date dateLe = stringToDate(dateLeStr,"dateLe = ",false);
+        Date dateGt = stringToDate(dateGtStr,"dateGt = ",false);
         Date dateGe = stringToDate(dateGeStr,"dateGe = ");
+        workTimeService.clearCash();
         return ((Page<WorkTime>) workTimeService.findWorkTime(taskId,
                                             nikName,
                                             dateLt,
@@ -72,10 +75,10 @@ public class WorkTimeController {
     @GetMapping("/rep/fact/time")
     public Float getTimeWork(@RequestParam(required = false) Long taskId,
                              @RequestParam(required = false) String nikName ,
-                             @RequestParam(required = false, name = "dateLe") String dateLeStr ,
-                             @RequestParam(required = false, name = "dateGt") String dateGtStr) {
-       Date dateLe = stringToDate(dateLeStr,"dateLe = ");
-       Date dateGt = stringToDate(dateGtStr,"dateGt = ");
+                             @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr ,
+                             @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr) {
+       Date dateLe = stringToDate(dateLeStr,"dateLe = ",false);
+       Date dateGt = stringToDate(dateGtStr,"dateGt = ",false);
        if(dateLe == null && dateGt == null ){
            return 0f;
        }
@@ -89,30 +92,36 @@ public class WorkTimeController {
 
     @GetMapping("/rep/fact/week")
     public List<UserWorkDto> getWeekWork(@RequestParam(required = false) String nikName ,
-                                         @RequestParam(required = false, name = "dateStart") String dateStartStr ,
-                                         @RequestParam(required = false, name = "dateEnd") String dateEndStr) {
+                                         @RequestParam(defaultValue = "true") boolean weekSplit ,
+                                         @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr ,
+                                         @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr) {
         Timestamp dateStart = stringToDate(dateStartStr,"dateStart = ",true);
         Timestamp dateEnd = stringToDate(dateEndStr,"dateEnd = ",true);
-        return workTimeService.getWeekWork(nikName,dateStart,dateEnd);
+        return workTimeService.getWeekWork(nikName,weekSplit,dateStart,dateEnd);
     }
 
-    private Date stringToDate(String dateStr,String text) {
+
+    private Timestamp stringToDate(ZonedDateTime dateStr,String text) {
         return stringToDate(dateStr,text,false);
     }
-    private Timestamp stringToDate(String dateStr,String text,boolean checkNull) {
 
+
+    private Timestamp stringToDate(ZonedDateTime dateStr, String text, boolean checkNull) {
         if (dateStr != null) {
-            try {
-                return new Timestamp(simpleDateFormat.parse(dateStr).getTime());
-            } catch (ParseException e) {
-                throw new ResourceNotFoundException("Не удалось распарсить дату " + text + " " + dateStr);
-            }
+
+            Calendar c = Calendar.getInstance();
+            c.setTime(Timestamp.from(dateStr.toInstant()));
+            c.set(Calendar.HOUR_OF_DAY, 0);
+            c.set(Calendar.MINUTE, 0);
+            c.set(Calendar.SECOND, 0);
+            c.set(Calendar.MILLISECOND, 0);
+            return new Timestamp(c.getTimeInMillis());
+
         }
         else if(checkNull){
             throw new ResourceNotFoundException("Не не передан обязательный параметр " + text + " null ");
         }
         return null;
     }
-
 
 }

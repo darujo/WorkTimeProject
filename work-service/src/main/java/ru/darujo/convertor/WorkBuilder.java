@@ -6,7 +6,8 @@ import ru.darujo.dto.WorkLittleDto;
 import ru.darujo.model.Work;
 
 
-import java.util.Date;
+import java.sql.Timestamp;
+import java.util.Calendar;
 
 public class WorkBuilder {
     private Long id;
@@ -17,37 +18,33 @@ public class WorkBuilder {
     // Наименование
     private String name;
     // Разработка прототипа
-    private Date developEndFact;
+    private Timestamp developEndFact;
     // Стабилизация прототипа
-    private Date debugEndFact;
+    private Timestamp debugEndFact;
     // Стабилизация релиза
-    private Date releaseEndFact;
+    private Timestamp releaseEndFact;
     // ОПЭ релиза
-    private Date opeEndFact;
+    private Timestamp opeEndFact;
     // ВЕНДЕРКА
-    private Date analiseEndFact;
+    private Timestamp analiseEndFact;
     // Разработка прототипа
-    private Date developEndPlan;
+    private Timestamp developEndPlan;
     // Стабилизация прототипа
-    private Date debugEndPlan;
+    private Timestamp debugEndPlan;
     // Стабилизация релиза
-    private Date releaseEndPlan;
+    private Timestamp releaseEndPlan;
     // ОПЭ релиза
-    private Date opeEndPlan;
+    private Timestamp opeEndPlan;
     // ВЕНДЕРКА
-    private Date analiseEndPlan;
+    private Timestamp analiseEndPlan;
     // № внутренней задачи (DEVBO)
     private String task;
     // Краткое описание внутренней задачи
     private String description;
-    // Плановая дата завершения 0 этапа
-    private Date planDateStage0;
-    // Плановая дата завершения 0 этапа
-    private Date factDateStage0;
     // Дата начала доработки План
-    private Date startTaskPlan;
+    private Timestamp startTaskPlan;
     // Дата начала доработки Факт
-    private Date startTaskFact;
+    private Timestamp startTaskFact;
     // Плановые трудозатраты, чел/час Разработка прототипа
     private Float laborDevelop;
     // Плановые трудозатраты, чел/час Стабилизация прототипа
@@ -61,9 +58,9 @@ public class WorkBuilder {
     // Порядковый номер релиза
     private String release;
     // Выдача релиза даты План
-    private Date issuingReleasePlan;
+    private Timestamp issuingReleasePlan;
     // Выдача релиза дата факт
-    private Date issuingReleaseFact;
+    private Timestamp issuingReleaseFact;
 
     public WorkBuilder setTask(String task) {
         this.task = task;
@@ -75,18 +72,13 @@ public class WorkBuilder {
         return this;
     }
 
-    public WorkBuilder setPlanDateStage0(Date planDateStage0) {
-        this.planDateStage0 = planDateStage0;
+    public WorkBuilder setStartTaskPlan(Timestamp startTaskPlan) {
+        this.startTaskPlan = dateToStartTime(startTaskPlan);
         return this;
     }
 
-    public WorkBuilder setStartTaskPlan(Date startTaskPlan) {
-        this.startTaskPlan = startTaskPlan;
-        return this;
-    }
-
-    public WorkBuilder setStartTaskFact(Date startTaskFact) {
-        this.startTaskFact = startTaskFact;
+    public WorkBuilder setStartTaskFact(Timestamp startTaskFact) {
+        this.startTaskFact = dateToStartTime(startTaskFact);
         return this;
     }
 
@@ -120,13 +112,13 @@ public class WorkBuilder {
         return this;
     }
 
-    public WorkBuilder setIssuingReleasePlan(Date issuingReleasePlan) {
-        this.issuingReleasePlan = issuingReleasePlan;
+    public WorkBuilder setIssuingReleasePlan(Timestamp issuingReleasePlan) {
+        this.issuingReleasePlan = dateToStartTime(issuingReleasePlan);
         return this;
     }
 
-    public WorkBuilder setIssuingReleaseFact(Date issuingReleaseFact) {
-        this.issuingReleaseFact = issuingReleaseFact;
+    public WorkBuilder setIssuingReleaseFact(Timestamp issuingReleaseFact) {
+        this.issuingReleaseFact = dateToStartTime(issuingReleaseFact);
         return this;
     }
 
@@ -150,54 +142,49 @@ public class WorkBuilder {
         return this;
     }
 
-    public WorkBuilder setDevelopEndFact(Date developEndFact) {
-        this.developEndFact = developEndFact;
+    public WorkBuilder setDevelopEndFact(Timestamp developEndFact) {
+        this.developEndFact = dateToStartTime(developEndFact);
         return this;
     }
-    public WorkBuilder setDebugEndFact(Date debugEndFact) {
-        this.debugEndFact = debugEndFact;
+    public WorkBuilder setDebugEndFact(Timestamp debugEndFact) {
+        this.debugEndFact = dateToStartTime(debugEndFact);
         return this;
     }
-    public WorkBuilder setReleaseEndFact(Date releaseEndFact) {
-        this.releaseEndFact = releaseEndFact;
+    public WorkBuilder setReleaseEndFact(Timestamp releaseEndFact) {
+        this.releaseEndFact = dateToStartTime(releaseEndFact);
         return this;
     }
-    public WorkBuilder setOpeEndFact(Date opeEndFact) {
-        this.opeEndFact = opeEndFact;
+    public WorkBuilder setOpeEndFact(Timestamp opeEndFact) {
+        this.opeEndFact = dateToStartTime(opeEndFact);
         return this;
     }
-    public WorkBuilder setAnaliseEndFact(Date analiseEndFact) {
-        this.analiseEndFact = analiseEndFact;
-        return this;
-    }
-
-    public WorkBuilder setDevelopEndPlan(Date developEndPlan) {
-        this.developEndPlan = developEndPlan;
+    public WorkBuilder setAnaliseEndFact(Timestamp analiseEndFact) {
+        this.analiseEndFact = dateToStartTime(analiseEndFact);
         return this;
     }
 
-    public WorkBuilder setDebugEndPlan(Date debugEndPlan) {
-        this.debugEndPlan = debugEndPlan;
+    public WorkBuilder setDevelopEndPlan(Timestamp developEndPlan) {
+        this.developEndPlan = dateToStartTime(developEndPlan);
         return this;
     }
 
-    public WorkBuilder setReleaseEndPlan(Date releaseEndPlan) {
-        this.releaseEndPlan = releaseEndPlan;
+    public WorkBuilder setDebugEndPlan(Timestamp debugEndPlan) {
+        this.debugEndPlan = dateToStartTime(debugEndPlan);
         return this;
     }
 
-    public WorkBuilder setOpeEndPlan(Date opeEndPlan) {
-        this.opeEndPlan = opeEndPlan;
+    public WorkBuilder setReleaseEndPlan(Timestamp releaseEndPlan) {
+        this.releaseEndPlan = dateToStartTime(releaseEndPlan);
         return this;
     }
 
-    public WorkBuilder setAnaliseEndPlan(Date analiseEndPlan) {
-        this.analiseEndPlan = analiseEndPlan;
+    public WorkBuilder setOpeEndPlan(Timestamp opeEndPlan) {
+        this.opeEndPlan = dateToStartTime(opeEndPlan);
         return this;
     }
 
-    public WorkBuilder setFactDateStage0(Date factDateStage0) {
-        this.factDateStage0 = factDateStage0;
+    public WorkBuilder setAnaliseEndPlan(Timestamp analiseEndPlan) {
+        this.analiseEndPlan = dateToStartTime(analiseEndPlan);
         return this;
     }
 
@@ -210,6 +197,7 @@ public class WorkBuilder {
                 codeSap,
                 codeZI,
                 name,
+                analiseEndPlan,
                 analiseEndFact,
                 developEndFact,
                 debugEndFact,
@@ -217,7 +205,6 @@ public class WorkBuilder {
                 opeEndFact,
                 task,
                 description,
-                planDateStage0,
                 startTaskPlan,
                 startTaskFact,
                 laborDevelop,
@@ -247,8 +234,6 @@ public class WorkBuilder {
                 opeEndPlan,
                 task,
                 description,
-                planDateStage0,
-                factDateStage0,
                 startTaskPlan,
                 startTaskFact,
                 laborDevelop,
@@ -278,8 +263,6 @@ public class WorkBuilder {
                 opeEndPlan,
                 task,
                 description,
-                planDateStage0,
-                factDateStage0,
                 startTaskPlan,
                 startTaskFact,
                 laborDevelop,
@@ -294,5 +277,17 @@ public class WorkBuilder {
 
     public WorkLittleDto getWorkLittleDto() {
         return new WorkLittleDto(id, codeSap, codeZI, name, stageZI);
+    }
+    public Timestamp dateToStartTime(Timestamp timestamp) {
+        if(timestamp== null){
+            return null;
+        }
+        Calendar c = Calendar.getInstance();
+        c.setTime(timestamp);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        return new Timestamp(c.getTimeInMillis());
     }
 }
