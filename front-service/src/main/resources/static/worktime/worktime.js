@@ -20,22 +20,41 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
         document.getElementById("FindTask").style.display = "block";
         $scope.filterTask();
     };
-
+    $localStorage.openEdit = function () {
+        console.log("$localStorage.openEdit worktime ");
+        $scope.loadWorkTime();
+    };
     var Filt;
     $scope.loadWorkTime = function () {
         console.log("$location.TaskId " + $location.TaskId);
-        if (typeof $location.TaskId != "undefined") {
+        console.log("$location.WorkTime " + $localStorage.WorkTime);
+        console.log($localStorage.WorkTime);
+        console.log(typeof $localStorage.WorkTime !== "undefined");
+        if (typeof $location.TaskId !== "undefined") {
             console.log("load5")
-            if (typeof Filt == "undefined") {
+            if (typeof Filt === "undefined") {
                 Filt = {taskId: null};
             }
             Filt.taskId = $location.TaskId;
             $scope.setFormWorkTime();
             console.log(Filt);
             $location.TaskId = null;
+            $scope.findPage(0);
+        } else if (typeof $localStorage.WorkTime !== "undefined") {
+            console.log($localStorage.WorkTime);
+            if (typeof $localStorage.WorkTime.edit !== "undefined") {
+                if ($localStorage.WorkTime.edit) {
+                    $localStorage.WorkTime.edit = false;
+                    $scope.createWorkTime();
+                } else {
+                    $scope.findPage(0);
+                }
+            }
+        } else {
+            $scope.findPage(0);
         }
 
-        $scope.findPage(0);
+
     };
 
     $scope.setFormWorkTime = function () {
@@ -108,6 +127,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
     var WorkTimeIdEdit = null;
 
     $scope.createWorkTime = function () {
+        console.log("createWorkTime");
         showFindTask();
         WorkTimeIdEdit = null;
         console.log("создаем");

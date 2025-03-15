@@ -48,8 +48,8 @@
     }
 
     function run($rootScope, $http, $localStorage) {
-        $rootScope.$on('$routeChangeStart', function(event, next, current) {
-            if (typeof(current) !== 'undefined'){
+        $rootScope.$on('$routeChangeStart', function (event, next, current) {
+            if (typeof (current) !== 'undefined') {
                 console.log("detail close");
                 document.getElementById("DetailPrim").open = false;
             } else {
@@ -57,19 +57,18 @@
                 document.getElementById("DetailPrim").open = true;
             }
         });
-        if ($localStorage.authUser){
+        if ($localStorage.authUser) {
             $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.authUser.token;
             try {
                 let jwt = $localStorage.authUser.token;
                 let payLoad = JSON.parse(atob(jwt.split(".")[1]));
                 let currTime = parseInt(new Date().getTime() / 1000);
-                if(currTime > payLoad.exp){
+                if (currTime > payLoad.exp) {
                     console.log("токен просрочен");
                     delete $localStorage.authUser;
                     $http.defaults.headers.common.Authorization = '';
                 }
-            }
-            catch (e){
+            } catch (e) {
 
             }
         }
@@ -78,7 +77,7 @@
 })();
 
 angular.module('workTimeService').controller('indexController', function ($rootScope, $scope, $http, $location, $localStorage) {
-    const constPatchAuth    = window.location.origin ;
+    const constPatchAuth = window.location.origin;
 
     $scope.tryToAuth = function () {
         $http.post(constPatchAuth + '/auth', $scope.user)
@@ -87,9 +86,10 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                     $http.defaults.headers.common.Authorization = 'Bearer ' + response.data.token;
                     $localStorage.authUser = {username: $scope.user.username, token: response.data.token};
 
-                    $scope.user= {
+                    $scope.user = {
                         username: null,
-                        password:null};
+                        password: null
+                    };
 
                     $location.path('/');
                     document.getElementById("DetailPrim").open = true;
@@ -99,12 +99,28 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                 alert("Не удалось авторизоваться")
             });
     };
+    $scope.addTime = function () {
+        console.log("index addTime")
+        $localStorage.WorkTime = {
+            edit: true
+        };
+        console.log($localStorage.WorkTime);
+        console.log(window.location);
+        console.log(window.location.hash === "#!/worktime");
+        if (window.location.hash === "#!/worktime") {
+            $localStorage.openEdit();
+        } else {
+            $location.path('/worktime');
+        }
+    };
+
 
     $scope.tryToLogout = function () {
         $scope.clearUser();
-        $scope.user= {
+        $scope.user = {
             username: null,
-            password:null};
+            password: null
+        };
         // if ($scope.user.username) {
         //     $scope.user.username = null;
         // }
@@ -128,10 +144,10 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         }
     };
 
-    $location.checkAuthorized= function (response){
+    $location.checkAuthorized = function (response) {
         console.log("response.status");
         console.log(response.status);
-        if(parseInt(response.status) == 401){
+        if (parseInt(response.status) == 401) {
             checkToken("Вы не авторизованы");
             $scope.tryToLogout();
             return false;
@@ -139,23 +155,21 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         return true;
 
     }
-    var checkToken = function (message){
-        if ($localStorage.authUser){
+    var checkToken = function (message) {
+        if ($localStorage.authUser) {
             $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.authUser.token;
             try {
                 let jwt = $localStorage.authUser.token;
                 let payLoad = JSON.parse(atob(jwt.split(".")[1]));
                 let currTime = parseInt(new Date().getTime() / 1000);
-                if(currTime > payLoad.exp){
+                if (currTime > payLoad.exp) {
                     alert("Токен просрочен авторизуйтесь заново.");
                     delete $localStorage.authUser;
                     $http.defaults.headers.common.Authorization = '';
-                }
-                else {
+                } else {
                     alert(message);
                 }
-            }
-            catch (e){
+            } catch (e) {
 
             }
         }

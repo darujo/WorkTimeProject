@@ -63,6 +63,9 @@
 
     </nav>
     <div class="nav-item" ng-show="isUserLoggedIn()" style="padding: 4px;">
+        <button type="button" class="headbutton" ng-click="addTime()">Заполнить отработаное время</button>
+    </div>
+    <div class="nav-item" ng-show="isUserLoggedIn()" style="padding: 4px;">
         <button class="headbutton" ng-click="tryToLogout()">Выйти</button>
     </div>
 </div>
