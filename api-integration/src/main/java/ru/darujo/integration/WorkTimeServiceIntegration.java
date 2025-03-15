@@ -52,25 +52,35 @@ public class WorkTimeServiceIntegration {
         }
 
         System.out.println(stringBuilder);
-        return webClientWorkTime.get().uri("/rep/fact/time" + stringBuilder)
-                .retrieve()
-                .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                        clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
-                .bodyToMono(Float.class)
-                .block();
+        try {
+            return webClientWorkTime.get().uri("/rep/fact/time" + stringBuilder)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                    .bodyToMono(Float.class)
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить работы (api-worktime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
     }
 
     public ListString getUsers(Long taskId) {
-        return webClientWorkTime.get().uri("/rep/fact/user?taskId=" + taskId)
-                .retrieve()
-                .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                        clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
-                .bodyToMono(ListString.class)
-                .block();
+        try {
+            return webClientWorkTime.get().uri("/rep/fact/user?taskId=" + taskId)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                    .bodyToMono(ListString.class)
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить работы (api-worktime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
     }
+
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    private String dateToText(Date date){
-        if (date == null){
+
+    private String dateToText(Date date) {
+        if (date == null) {
             return null;
         }
         return sdf.format(date) + "T00:00:00.000Z";

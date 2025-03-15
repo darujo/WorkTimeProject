@@ -21,17 +21,22 @@ public class WorkController {
     }
 
     @GetMapping("/conv")
-    public WorkDto workConv( ) {
-        workService.findWorks(1,10000,null,null,null).map(work -> workService.saveWork(WorkConvertor.getWork(WorkConvertor.getWorkEditDto(work))));
+    public WorkDto workConv() {
+        workService.findWorks(1, 10000, null, null, null).map(work -> workService.saveWork(WorkConvertor.getWork(WorkConvertor.getWorkEditDto(work))));
         return new WorkDto();
     }
+
     @GetMapping("/{id}")
     public WorkEditDto WorkEdit(@PathVariable long id) {
         return WorkConvertor.getWorkEditDto(workService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Задача не найден")));
     }
 
     @PostMapping("")
-    public WorkDto WorkSave(@RequestBody WorkEditDto workDto) {
+    public WorkDto WorkSave(@RequestBody WorkEditDto workDto,
+                            @RequestHeader(defaultValue = "false", name = "ZI_EDIT") boolean right) {
+        if (!right) {
+            throw new ResourceNotFoundException("У вас нет права ZI_EDIT");
+        }
         return WorkConvertor.getWorkDto(workService.saveWork(WorkConvertor.getWork(workDto)));
     }
 
@@ -46,26 +51,29 @@ public class WorkController {
                                   @RequestParam(required = false) String name,
                                   @RequestParam(defaultValue = "6") Integer stageZiLt,
                                   @RequestParam(required = false) String sort) {
-        return workService.findWorks(page, size, name,sort,stageZiLt).map(WorkConvertor::getWorkDto);
+
+        return workService.findWorks(page, size, name, sort, stageZiLt).map(WorkConvertor::getWorkDto);
     }
 
     @GetMapping("/rep")
-    public List<WorkRepDto> getTimeWork(@RequestParam(required = false) String userName) {
-        return workService.getWorkRep(userName);
+    public List<WorkRepDto> getTimeWork(@RequestParam(required = false) String ziName) {
+        return workService.getWorkRep(ziName);
     }
 
     @GetMapping("/rep/factwork")
     public List<WorkFactDto> getFactWork(@RequestParam(required = false) String userName) {
         return workService.getWorkFactRep(userName);
     }
+
     @GetMapping("/obj/little")
     public Page<WorkLittleDto> WorkLittlePage(@RequestParam(defaultValue = "1") int page,
                                               @RequestParam(defaultValue = "10") int size,
                                               @RequestParam(required = false) String name,
                                               @RequestParam(defaultValue = "6") Integer stageZiLt,
                                               @RequestParam(required = false) String sort) {
-        return workService.findWorkLittle(page, size, name,sort,stageZiLt ).map(WorkConvertor::getWorkLittleDto);
+        return workService.findWorkLittle(page, size, name, sort, stageZiLt).map(WorkConvertor::getWorkLittleDto);
     }
+
     @GetMapping("/obj/little/{id}")
     public WorkLittleDto WorkLittleDto(@PathVariable long id) {
         return WorkConvertor.getWorkLittleDto(workService.findLittleById(id).orElseThrow(() -> new ResourceNotFoundException("Задача не найден")));

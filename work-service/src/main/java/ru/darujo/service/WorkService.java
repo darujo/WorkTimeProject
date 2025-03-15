@@ -29,26 +29,32 @@ public class WorkService {
     public void setTaskServiceIntegration(TaskServiceIntegration taskServiceIntegration) {
         this.taskServiceIntegration = taskServiceIntegration;
     }
+
     UserServiceIntegration userServiceIntegration;
+
     @Autowired
     public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
+
     private WorkRepository workRepository;
 
     @Autowired
     public void setWorkRepository(WorkRepository workRepository) {
         this.workRepository = workRepository;
     }
+
     private WorkLittleRepository workLittleRepository;
 
     @Autowired
     public void setWorkLittleRepository(WorkLittleRepository workLittleRepository) {
         this.workLittleRepository = workLittleRepository;
     }
+
     public Optional<Work> findById(long id) {
         return workRepository.findById(id);
     }
+
     public Optional<WorkLittle> findLittleById(long id) {
         return workLittleRepository.findById(id);
     }
@@ -61,7 +67,7 @@ public class WorkService {
         workLittleRepository.deleteById(id);
     }
 
-    public Page<Work> findWorks(int page, int size, String name, String sort,Integer stageZiLt) {
+    public Page<Work> findWorks(int page, int size, String name, String sort, Integer stageZiLt) {
         Specification<Work> specification = Specification.where(null);
 
         if (name != null) {
@@ -72,15 +78,15 @@ public class WorkService {
         }
         System.out.println("Page = " + page);
         Page<Work> workPage;
-        if(sort == null) {
+        if (sort == null) {
             workPage = workRepository.findAll(specification, PageRequest.of(page - 1, size));
-        }
-        else {
+        } else {
             workPage = workRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.by(sort)));
         }
         return workPage;
     }
-    public Page<WorkLittle> findWorkLittle(int page, int size, String name, String sort,Integer stageZiLt) {
+
+    public Page<WorkLittle> findWorkLittle(int page, int size, String name, String sort, Integer stageZiLt) {
         Specification<WorkLittle> specification = Specification.where(null);
 
         if (name != null) {
@@ -91,19 +97,24 @@ public class WorkService {
         }
         System.out.println("Page = " + page);
         Page<WorkLittle> workPage;
-        if(sort == null) {
+        if (sort == null) {
             workPage = workLittleRepository.findAll(specification, PageRequest.of(page - 1, size));
-        }
-        else {
+        } else {
             workPage = workLittleRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.by(sort)));
         }
         return workPage;
     }
 
 
-    public List<WorkRepDto> getWorkRep(String nikName) {
+    public List<WorkRepDto> getWorkRep(String name) {
+        Specification<Work> specification = Specification.where(null);
+
+        if (name != null) {
+            specification = specification.and(WorkSpecifications.workNameLike(name));
+        }
+
         List<WorkRepDto> workRepDtos = new ArrayList<>();
-        workRepository.findAll().forEach(work ->
+        workRepository.findAll(specification).forEach(work ->
                 workRepDtos.add(
                         new WorkRepDto(
                                 work.getId(),
@@ -129,28 +140,28 @@ public class WorkService {
                                 work.getOpeEndFact(),
                                 work.getLaborOPE(),
                                 taskServiceIntegration.getTimeWork(work.getId(),
-                                        nikName,
+                                        null,
                                         null,
                                         work.getAnaliseEndFact()),
                                 taskServiceIntegration.getTimeWork(
                                         work.getId(),
-                                        nikName,
+                                        null,
                                         work.getAnaliseEndFact(),
                                         work.getDevelopEndFact()),
                                 taskServiceIntegration.getTimeWork(work.getId(),
-                                        nikName,
+                                        null,
                                         work.getDevelopEndFact(),
                                         work.getDebugEndFact()),
                                 taskServiceIntegration.getTimeWork(work.getId(),
-                                        nikName,
+                                        null,
                                         work.getDebugEndFact(),
                                         work.getReleaseEndFact()),
                                 taskServiceIntegration.getTimeWork(work.getId(),
-                                        nikName,
+                                        null,
                                         work.getReleaseEndFact(),
                                         work.getOpeEndFact()),
                                 taskServiceIntegration.getTimeWork(work.getId(),
-                                        nikName,
+                                        null,
                                         work.getOpeEndFact(),
                                         null)
 
@@ -189,9 +200,8 @@ public class WorkService {
                             UserDto userDto;
                             try {
                                 userDto = userServiceIntegration.getUserDto(null, user);
-                            }
-                            catch (ResourceNotFoundException ex){
-                                userDto = new UserDto(-1L,"","логином", "Не найден пользователь с",user);
+                            } catch (ResourceNotFoundException ex) {
+                                userDto = new UserDto(-1L, "", "логином", "Не найден пользователь с", user);
                             }
                             workFactDtos.add(
                                     new WorkFactDto(

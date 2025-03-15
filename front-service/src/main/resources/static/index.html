@@ -16,7 +16,7 @@
     <nav>
         <div class="" id="navbarNav">
             <ul class="">
-                <details open id="DetailPrim"  ng-show="isUserLoggedIn()">
+                <details open id="DetailPrim" ng-show="isUserLoggedIn()">
                     <summary class="p-head">Меню</summary>
                     <li class="nav-item">
                         <a class="nav-link" href="#!/work">Список ЗИ</a>
@@ -28,33 +28,33 @@
                         <a class="nav-link" href="#!/worktime">Все работы</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#!/worktimerep">Отчет</a>
+                        <a class="nav-link" href="#!/worktimerep">Статус задач</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#!/factwork">Работы по ЗИ</a>
+                        <a class="nav-link" href="#!/factwork">Факт затрат</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#!/weekwork">Работы за период</a>
+                        <a class="nav-link" href="#!/weekwork">Свод загрузки</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#!/calendar">Производственный календарь</a>
                     </li>
                 </details>
-                    <li class="nav-item" ng-show="!isUserLoggedIn()">
-                        <form class="" ng-submit="tryToAuth()">
-                            <div class="input-group input-group-sm" style="padding: 4px;">
-                               Логин: <input id="navLoginField" class="vvod" ng-model="user.username" type="text"
-                                       aria-describedby="inputGroup-sizing-sm" style="margin-left: 10px;">
+                <li class="nav-item" ng-show="!isUserLoggedIn()">
+                    <form class="" ng-submit="tryToAuth()">
+                        <div class="input-group input-group-sm" style="padding: 4px;">
+                            Логин: <input id="navLoginField" class="vvod" ng-model="user.username" type="text"
+                                          aria-describedby="inputGroup-sizing-sm" style="margin-left: 10px;">
 
-                               Пароль: <input id="navPasswordField" class="vvod" ng-model="user.password" type="password"
-                                       aria-describedby="inputGroup-sizing-sm" style="margin-left: 10px;">
+                            Пароль: <input id="navPasswordField" class="vvod" ng-model="user.password" type="password"
+                                           aria-describedby="inputGroup-sizing-sm" style="margin-left: 10px;">
 
-                                <button id="navLoginSubmit" class="headbutton"
-                                        style="margin-left: 10px;" type="submit">Войти
-                                </button>
-                            </div>
-                        </form>
-                    </li>
+                            <button id="navLoginSubmit" class="headbutton"
+                                    style="margin-left: 10px;" type="submit">Войти
+                            </button>
+                        </div>
+                    </form>
+                </li>
 
 
             </ul>

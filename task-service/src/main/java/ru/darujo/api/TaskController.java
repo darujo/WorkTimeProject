@@ -35,20 +35,26 @@ public class TaskController {
     public void setWorkServiceIntegration(WorkServiceIntegration workServiceIntegration) {
         this.workServiceIntegration = workServiceIntegration;
     }
+
     UserServiceIntegration userServiceIntegration;
+
     @Autowired
     public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
 
     @GetMapping("/{id}")
-    public TaskDto WorkTimeEdit(@PathVariable long id) {
+    public TaskDto TaskEdit(@PathVariable long id) {
         return TaskConvertor.getTaskDto(taskService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Отмеченая работа не найден")));
     }
 
     @PostMapping("")
-    public TaskDto WorkTimeSave(@RequestHeader(required = false) String username,
-                                @RequestBody TaskDto taskDto) {
+    public TaskDto TaskSave(@RequestHeader(required = false) String username,
+                            @RequestBody TaskDto taskDto,
+                            @RequestHeader(defaultValue = "false", name = "TASK_EDIT") boolean right) {
+        if (!right) {
+            throw new ResourceNotFoundException("У вас нет права TASK_EDIT");
+        }
         if (taskDto.getNikName() == null || !taskDto.getNikName().equals("")) {
             taskDto.setNikName(username);
         }
@@ -56,7 +62,7 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteWorkTime(@PathVariable long id) {
+    public void deleteTask(@PathVariable long id) {
         taskService.deleteWorkTime(id);
     }
 
@@ -120,9 +126,11 @@ public class TaskController {
                 page,
                 size)).map(this::taskAddValue);
     }
-    private final Map<String,UserDto> userDtoMap = new HashMap<>();
-    private final Map<Long,WorkLittleDto> workLittleDtoMap = new HashMap<>();
-    private void clearCash(){
+
+    private final Map<String, UserDto> userDtoMap = new HashMap<>();
+    private final Map<Long, WorkLittleDto> workLittleDtoMap = new HashMap<>();
+
+    private void clearCash() {
         workLittleDtoMap.clear();
     }
 
@@ -131,9 +139,9 @@ public class TaskController {
         try {
 
             WorkLittleDto workLittleDto = workLittleDtoMap.get(taskDto.getWorkId());
-            if (workLittleDto == null ) {
+            if (workLittleDto == null) {
                 workLittleDto = workServiceIntegration.getWorEditDto(taskDto.getWorkId());
-                workLittleDtoMap.put(taskDto.getId(),workLittleDto);
+                workLittleDtoMap.put(taskDto.getId(), workLittleDto);
             }
             taskDto.setCodeZi(workLittleDto.getCodeZI());
             taskDto.setNameZi(workLittleDto.getName());
@@ -146,9 +154,9 @@ public class TaskController {
         }
         try {
             UserDto userDto = userDtoMap.get(task.getNikName());
-            if(userDto == null) {
+            if (userDto == null) {
                 userDto = userServiceIntegration.getUserDto(null, task.getNikName());
-                userDtoMap.put(task.getNikName(),userDto);
+                userDtoMap.put(task.getNikName(), userDto);
             }
             taskDto.setAuthorFirstName(userDto.getFirstName());
             taskDto.setAuthorLastName(userDto.getLastName());
@@ -186,9 +194,11 @@ public class TaskController {
         });
         return taskDtoList;
     }
-    private Timestamp stringToDate(ZonedDateTime dateStr,String text) {
-        return stringToDate(dateStr,text,false);
+
+    private Timestamp stringToDate(ZonedDateTime dateStr, String text) {
+        return stringToDate(dateStr, text, false);
     }
+
     private Timestamp stringToDate(ZonedDateTime dateStr, String text, boolean checkNull) {
         if (dateStr != null) {
 
@@ -200,8 +210,7 @@ public class TaskController {
             c.set(Calendar.MILLISECOND, 0);
             return new Timestamp(c.getTimeInMillis());
 
-        }
-        else if(checkNull){
+        } else if (checkNull) {
             throw new ResourceNotFoundException("Не не передан обязательный параметр " + text + " null ");
         }
         return null;

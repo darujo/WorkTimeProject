@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
+
 @Component
 public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Config> {
     private JwtUtil jwtUtil;
@@ -26,31 +28,37 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
     }
 
 
-
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
-            if (!isAuthMissing(request)){
+            if (!isAuthMissing(request)) {
                 final String token = getAuthHeaders(request);
-                if(jwtUtil.isInvalid(token)){
-                    return this.onError(exchange,"Не правильный заголовок авторизации", HttpStatus.UNAUTHORIZED);
+                if (jwtUtil.isInvalid(token)) {
+                    return this.onError(exchange, "Не правильный заголовок авторизации", HttpStatus.UNAUTHORIZED);
                 }
-                populateRequestHeader(exchange,token);
-            }
-            else {
-                return this.onError(exchange,"Токен отсутсвует", HttpStatus.UNAUTHORIZED);
+                populateRequestHeader(exchange, token);
+            } else {
+                return this.onError(exchange, "Токен отсутсвует", HttpStatus.UNAUTHORIZED);
             }
             return chain.filter(exchange);
         };
     }
+
     public static class Config {
     }
+
     private void populateRequestHeader(ServerWebExchange exchange, String token) {
         Claims claims = jwtUtil.getAllClamsForToken(token);
-        exchange.getRequest().mutate()
-                .header("username",claims.getSubject())
-                .build();
+        ArrayList<String> listString = claims.get("authorities", ArrayList.class);
+        ServerHttpRequest.Builder builder =
+                exchange.getRequest().mutate()
+                        .header("username", claims.getSubject());
+        if (listString != null) {
+            listString.forEach(s -> builder.header(s, "true"));
+        }
+//                .header("authorities",claims.get("authorities",ListString.class))
+        builder.build();
     }
 
     private Mono<Void> onError(ServerWebExchange exchange, String text, HttpStatus status) {
@@ -64,7 +72,7 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
     }
 
     private boolean isAuthMissing(ServerHttpRequest request) {
-        if(!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)){
+        if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
             return true;
         }
         return !request.getHeaders().getOrEmpty(HttpHeaders.AUTHORIZATION).get(0).startsWith("Bearer");

@@ -19,16 +19,19 @@ public class WorkServiceIntegration {
     }
 
     public WorkLittleDto getWorEditDto(Long workId) {
-        if (workId == null){
+        if (workId == null) {
             return new WorkLittleDto();
         }
-
-        return webClientWork.get().uri("/obj/little/" + workId)
-                .retrieve()
-                .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
-                        ,
-                        clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по ЗИ с ID = " + workId)))
-                .bodyToMono(WorkLittleDto.class)
-                .block();
+        try {
+            return webClientWork.get().uri("/obj/little/" + workId)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
+                            ,
+                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по ЗИ с ID = " + workId)))
+                    .bodyToMono(WorkLittleDto.class)
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
     }
 }

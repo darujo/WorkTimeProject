@@ -53,23 +53,31 @@ public class TaskServiceIntegration {
         }
 
         System.out.println(stringBuilder);
-        return webClientTask.get().uri("/rep/fact/time" + stringBuilder)
-                .retrieve()
-                .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                        clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
-                .bodyToMono(Float.class)
-                .block();
+        try {
+            return webClientTask.get().uri("/rep/fact/time" + stringBuilder)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                    .bodyToMono(Float.class)
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календатрь (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
     }
 
     public ListString getListUser(Long workID) {
-        return webClientTask.get().uri("/rep/fact/user?workId=" + workID)
-                .retrieve()
-                .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                        clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
-                .bodyToMono(ListString.class)
-                .block();
-
+        try {
+            return webClientTask.get().uri("/rep/fact/user?workId=" + workID)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                    .bodyToMono(ListString.class)
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
     }
+
     public TaskDto getTask(Long id) {
         return webClientTask.get().uri("/" + id)
                 .retrieve()
@@ -80,8 +88,9 @@ public class TaskServiceIntegration {
     }
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    private String dateToText(Date date){
-        if (date == null){
+
+    private String dateToText(Date date) {
+        if (date == null) {
             return null;
         }
         return sdf.format(date) + "T00:00:00.000Z";

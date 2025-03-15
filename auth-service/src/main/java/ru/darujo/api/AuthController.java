@@ -16,6 +16,7 @@ import ru.darujo.service.UserService;
 import ru.darujo.utils.JwtTokenUtils;
 
 @RestController
+@CrossOrigin
 public class AuthController {
     private UserService userService;
 
@@ -45,13 +46,13 @@ public class AuthController {
         String token = jwtTokenUtils.generateToken(userDetails);
         return ResponseEntity.ok(new JwtResponse(token));
     }
+
     @GetMapping("/user")
-    public ResponseEntity<?> getUserDto (@RequestParam(required = false) String nikName){
+    public ResponseEntity<?> getUserDto(@RequestParam(required = false) String nikName) {
         try {
             return ResponseEntity.ok(UserConvertor.getUserDto(userService.loadUserByNikName(nikName)));
 
-        }
-        catch (UsernameNotFoundException ex){
+        } catch (UsernameNotFoundException ex) {
 //            throw new ResourceNotFoundException(ex.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex);
         }

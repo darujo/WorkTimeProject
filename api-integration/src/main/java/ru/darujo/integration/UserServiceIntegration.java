@@ -19,25 +19,27 @@ public class UserServiceIntegration {
 
     public UserDto getUserDto(Long userId, String nikName) {
         StringBuilder stringBuilder = new StringBuilder();
-        if(userId != null){
+        if (userId != null) {
             stringBuilder.append("/").append(userId);
-        }
-        else{
+        } else {
             if (nikName != null) {
                 if (stringBuilder.length() != 0) {
                     stringBuilder.append("&");
-                } else{
+                } else {
                     stringBuilder.append("?");
                 }
                 stringBuilder.append("nikName=").append(nikName);
             }
         }
-
-        return webClientUser.get().uri(stringBuilder.toString())
-                .retrieve()
-                .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                        clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
-                .bodyToMono(UserDto.class)
-                .block();
+        try {
+            return webClientUser.get().uri(stringBuilder.toString())
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                    .bodyToMono(UserDto.class)
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить пользователя (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
     }
 }

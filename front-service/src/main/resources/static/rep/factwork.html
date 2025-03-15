@@ -5,9 +5,9 @@
                 <div class="filterblock">
 
                     <div class="horiz">
-                        <p class="p-head">Пользователь</p>
+                        <p class="p-head">Логин</p>
                         <br>
-                        <input class="vvod80" type="number" inputmode="numeric" id="UserName" step="any"
+                        <input class="vvod80" type="text"
                                ng-model="Filt.userName"/>
                     </div>
                     <button type="submit" class="headbutton">Применить</button>
@@ -15,7 +15,7 @@
             </div>
         </form>
     </div>
-    <h1>Список работ</h1>
+    <h1>Факт затрат</h1>
     <table>
         <tr>
             <td class="tablehead1" rowspan="3">№ п/п</td>
@@ -30,7 +30,7 @@
             <td class="tablehead1">II этап Стабилизация прототипа</td>
             <td class="tablehead2">III этап Стабилизация релиза</td>
             <td class="tablehead1">IV этап ОПЭ релиза</td>
-            <td class="tablehead2">V Вендерка</td>
+            <td class="tablehead2">V этап Вендерка</td>
         </tr>
         <tr>
             <td class="tablehead1">Факт</td>
@@ -47,7 +47,9 @@
             <td rowspan="{{work.userCol}}" ng-if="work.codeZi != null">{{work.codeZi}}</td>
             <td rowspan="{{work.userCol}}" ng-if="work.codeZi != null">{{work.name}}</td>
             <td ng-if="!work.authorFirstName">{{work.nikName}}</td>
-            <td ng-if="work.authorFirstName">{{work.authorLastName}} {{work.authorFirstName}} {{work.authorPatronymic}}</td>
+            <td ng-if="work.authorFirstName">{{work.authorLastName}} {{work.authorFirstName}}
+                {{work.authorPatronymic}}
+            </td>
 
             <td>{{work.timeAnalise}}</td>
             <td>{{work.timeDevelop}}</td>

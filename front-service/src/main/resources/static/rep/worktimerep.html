@@ -1,167 +1,167 @@
 <div id="WorkTimeList" class="headtextelem">
-  <div class="filter">
-    <form novalidate ng-submit="filterWorkTime()" ; class="filter">
-      <div  class="filter">
-        <div class="filterblock">
+    <div class="filter">
+        <form novalidate ng-submit="filterWorkTime()" ; class="filter">
+            <div class="filter">
+                <div class="filterblock">
 
-          <div  class="horiz">
-            <p class="p-head">Пользователь</p>
-            <br>
-            <input class="vvod80" type="number" inputmode="numeric" id="UserName" step="any" ng-model="Filt.userName"/>
-          </div>
-          <button type="submit" class="headbutton">Применить</button>
-        </div>
-      </div>
-    </form>
-  </div>
-  <h1>Список работ</h1>
-  <table>
+                    <div class="horiz">
+                        <p class="p-head">Наименование ЗИ</p>
+                        <br>
+                        <input class="vvod80" type="text" id="ZiName" step="any" ng-model="Filt.ziName"/>
+                    </div>
+                    <button type="submit" class="headbutton">Применить</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <h1>Статус задач</h1>
+    <table>
 
-    <tr> <!--row 1-->
-      <td class="tablehead1" rowspan="5"> № п/п </td>
-      <td class="tablehead2" rowspan="5"> Код Зи </td>
-      <td class="tablehead1" rowspan="5"> Наименование </td>
-      <td class="tablehead2" colspan="3"> 0 этап</td>
-      <td class="tablehead2" colspan="2" rowspan="4"> Дата начала доработки </td>
-      <td class="tablehead1" colspan="4"> I этап </td>
-      <td class="tablehead2" colspan="4"> II этап </td>
-      <td class="tablecol1"  rowspan="5"> № релиза </td>
-      <td class="tablecol1"  colspan="2" rowspan="3"> Выдача релиза </td>
-      <td class="tablehead1" colspan="4"> III этап </td>
-      <td class="tablehead2" colspan="4"> IV этап </td>
-      <td class="tablehead1" colspan="2" rowspan="4"> Общие трудозатраты на доработку по ЗИ </td>
-<!--      <td rowspan="5">Вендерка План</td>-->
-<!--      <td rowspan="5">Вендерка Факт</td>-->
-      <td rowspan="5">Вендерка</td>
+        <tr> <!--row 1-->
+            <td class="tablehead1" rowspan="5"> № п/п</td>
+            <td class="tablehead2" rowspan="5"> Код Зи</td>
+            <td class="tablehead1" rowspan="5"> Наименование</td>
+            <td class="tablehead2" colspan="3"> 0 этап</td>
+            <td class="tablehead2" colspan="2" rowspan="4"> Дата начала доработки</td>
+            <td class="tablehead1" colspan="4"> I этап</td>
+            <td class="tablehead2" colspan="4"> II этап</td>
+            <td class="tablecol1" rowspan="5"> № релиза</td>
+            <td class="tablecol1" colspan="2" rowspan="3"> Выдача релиза</td>
+            <td class="tablehead1" colspan="4"> III этап</td>
+            <td class="tablehead2" colspan="4"> IV этап</td>
+            <td class="tablehead1" colspan="2" rowspan="4"> Общие трудозатраты на доработку по ЗИ</td>
+            <!--      <td rowspan="5">Вендерка План</td>-->
+            <!--      <td rowspan="5">Вендерка Факт</td>-->
+            <td rowspan="5">Вендерка</td>
 
-    </tr>
-    <tr> <!--row 2-->
-      <td class="tablehead2" colspan="3"> Согласование требований к доработке </td>
-      <td class="tablehead1" colspan="4"> Разработка прототипа </td>
-      <td class="tablehead2" colspan="4"> Стабилизация прототипа (30 дней) </td>
-      <td class="tablehead1" colspan="4"> Стабилизация релиза (30 дней)  </td>
-      <td class="tablehead2" colspan="4"> ОПЭ релиза (30 дней) </td>
+        </tr>
+        <tr> <!--row 2-->
+            <td class="tablehead2" colspan="3"> Согласование требований к доработке</td>
+            <td class="tablehead1" colspan="4"> Разработка прототипа</td>
+            <td class="tablehead2" colspan="4"> Стабилизация прототипа (30 дней)</td>
+            <td class="tablehead1" colspan="4"> Стабилизация релиза (30 дней)</td>
+            <td class="tablehead2" colspan="4"> ОПЭ релиза (30 дней)</td>
 
-    </tr>
-    <tr> <!--row 3-->
-      <td class="tablehead2" colspan="3"> Результат: внутреннее согласование ТЗ </td>
-      <td class="tablehead1" colspan="4"> Результат: выдача прототипа в соответствии с ТЗ </td>
-      <td class="tablehead2" colspan="4"> Результат: тестирования ЦК Рязань завершено </td>
-      <td class="tablehead1" colspan="4"> Результат: регресс тестирование ЦК Рязань завершено </td>
-      <td class="tablehead2" colspan="4"> Результат: завершение ОПЭ </td>
+        </tr>
+        <tr> <!--row 3-->
+            <td class="tablehead2" colspan="3"> Результат: внутреннее согласование ТЗ</td>
+            <td class="tablehead1" colspan="4"> Результат: выдача прототипа в соответствии с ТЗ</td>
+            <td class="tablehead2" colspan="4"> Результат: тестирования ЦК Рязань завершено</td>
+            <td class="tablehead1" colspan="4"> Результат: регресс тестирование ЦК Рязань завершено</td>
+            <td class="tablehead2" colspan="4"> Результат: завершение ОПЭ</td>
 
-    </tr>
-    <tr> <!--row 4-->
-      <td class="tablehead2" colspan="2"> Дата передачи ТЗ в работу </td>
-      <td class="tablehead2" > Трудозатраты, чел/час </td>
-      <td class="tablehead1" colspan="2"> Трудозатраты, чел/час </td>
-      <td class="tablehead1" colspan="2"> Дата выдачи прототипа </td>
-      <td class="tablehead2" colspan="2"> Дата </td>
-      <td class="tablehead2" colspan="2"> Трудозатраты, чел/час </td>
-      <td class="tablecol1"  colspan="2"> Дата </td>
-      <td class="tablehead1" colspan="2"> Дата </td>
-      <td class="tablehead1" colspan="2"> Трудозатраты, чел/час </td>
-      <td class="tablehead2" colspan="2"> Дата </td>
-      <td class="tablehead2" colspan="2"> Трудозатраты, чел/час </td>
+        </tr>
+        <tr> <!--row 4-->
+            <td class="tablehead2" colspan="2"> Дата передачи ТЗ в работу</td>
+            <td class="tablehead2"> Трудозатраты, чел/час</td>
+            <td class="tablehead1" colspan="2"> Трудозатраты, чел/час</td>
+            <td class="tablehead1" colspan="2"> Дата выдачи прототипа</td>
+            <td class="tablehead2" colspan="2"> Дата</td>
+            <td class="tablehead2" colspan="2"> Трудозатраты, чел/час</td>
+            <td class="tablecol1" colspan="2"> Дата</td>
+            <td class="tablehead1" colspan="2"> Дата</td>
+            <td class="tablehead1" colspan="2"> Трудозатраты, чел/час</td>
+            <td class="tablehead2" colspan="2"> Дата</td>
+            <td class="tablehead2" colspan="2"> Трудозатраты, чел/час</td>
 
-    </tr>
-    <tr> <!--row 5-->
-      <td class="tablehead2"> План </td>
-      <td class="tablehead2"> Факт </td>
-      <td class="tablehead2"> Факт </td>
-      <td class="tablehead2"> План </td>
-      <td class="tablehead2"> Факт </td>
-      <td class="tablehead1"> План </td>
-      <td class="tablehead1"> Факт </td>
-      <td class="tablecol2" > План </td>
-      <td class="tablecol2" > Факт </td>
-      <td class="tablehead2"> План </td>
-      <td class="tablehead2"> Факт </td>
-      <td class="tablehead2"> План </td>
-      <td class="tablehead2"> Факт </td>
-      <td class="tablecol1" > План </td>
-      <td class="tablecol1" > Факт </td>
-      <td class="tablehead1"> План </td>
-      <td class="tablehead1"> Факт </td>
-      <td class="tablehead1"> План </td>
-      <td class="tablehead1"> Факт </td>
-      <td class="tablehead2"> План </td>
-      <td class="tablehead2"> Факт </td>
-      <td class="tablehead2"> План </td>
-      <td class="tablehead2"> Факт </td>
-      <td class="tablehead1"> План </td>
-      <td class="tablehead1"> Факт </td>
+        </tr>
+        <tr> <!--row 5-->
+            <td class="tablehead2"> План</td>
+            <td class="tablehead2"> Факт</td>
+            <td class="tablehead2"> Факт</td>
+            <td class="tablehead2"> План</td>
+            <td class="tablehead2"> Факт</td>
+            <td class="tablehead1"> План</td>
+            <td class="tablehead1"> Факт</td>
+            <td class="tablecol2"> План</td>
+            <td class="tablecol2"> Факт</td>
+            <td class="tablehead2"> План</td>
+            <td class="tablehead2"> Факт</td>
+            <td class="tablehead2"> План</td>
+            <td class="tablehead2"> Факт</td>
+            <td class="tablecol1"> План</td>
+            <td class="tablecol1"> Факт</td>
+            <td class="tablehead1"> План</td>
+            <td class="tablehead1"> Факт</td>
+            <td class="tablehead1"> План</td>
+            <td class="tablehead1"> Факт</td>
+            <td class="tablehead2"> План</td>
+            <td class="tablehead2"> Факт</td>
+            <td class="tablehead2"> План</td>
+            <td class="tablehead2"> Факт</td>
+            <td class="tablehead1"> План</td>
+            <td class="tablehead1"> Факт</td>
 
-    </tr>
-    <tbody>
-      <tr ng-repeat="work in WorkTimeList">
-          <td>{{work.id}}</td>
-<!--         Код Зи-->
-        <td>{{work.codeZI}}</td>
-<!--        // Наименование-->
-        <td>{{work.name}}</td>
-        <!--        // ВЕНДЕРКА План-->
-        <td>{{work.analiseEndPlan}}</td>
-        <!--        // ВЕНДЕРКА-->
-        <td>{{work.analiseEndFact}}</td>
-        <td>{{work.timeAnalise}}</td>
-        <!--        // Дата начала доработки План-->
-        <td>{{work.startTaskPlan}}</td>
-<!--        // Дата начала доработки Факт-->
-        <td>{{work.startTaskFact}}</td>
+        </tr>
+        <tbody>
+        <tr ng-repeat="work in WorkTimeList">
+            <td>{{work.id}}</td>
+            <!--         Код Зи-->
+            <td>{{work.codeZI}}</td>
+            <!--        // Наименование-->
+            <td>{{work.name}}</td>
+            <!--        // ВЕНДЕРКА План-->
+            <td>{{work.analiseEndPlan}}</td>
+            <!--        // ВЕНДЕРКА-->
+            <td>{{work.analiseEndFact}}</td>
+            <td>{{work.timeAnalise}}</td>
+            <!--        // Дата начала доработки План-->
+            <td>{{work.startTaskPlan}}</td>
+            <!--        // Дата начала доработки Факт-->
+            <td>{{work.startTaskFact}}</td>
 
-<!--        // Плановые трудозатраты, чел/час разработки-->
-        <td class="tablecol2">{{work.laborDevelop}}</td>
-<!--        // Разработка прототипа-->
-        <td class="tablecol2">{{work.timeDevelop}}</td>
-        <!--        //начало разработки план-->
-        <td>{{work.developEndPlan}}</td>
-        <!--        //начало разработки факт-->
-        <td>{{work.developEndFact}}</td>
-        <!--        // Стабилизация прототипа план-->
-        <td>{{work.debugEndPlan}}</td>
-        <!--        // Стабилизация прототипа факт-->
-        <td>{{work.debugEndFact}}</td>
+            <!--        // Плановые трудозатраты, чел/час разработки-->
+            <td class="tablecol2">{{work.laborDevelop}}</td>
+            <!--        // Разработка прототипа-->
+            <td class="tablecol2">{{work.timeDevelop}}</td>
+            <!--        //начало разработки план-->
+            <td>{{work.developEndPlan}}</td>
+            <!--        //начало разработки факт-->
+            <td>{{work.developEndFact}}</td>
+            <!--        // Стабилизация прототипа план-->
+            <td>{{work.debugEndPlan}}</td>
+            <!--        // Стабилизация прототипа факт-->
+            <td>{{work.debugEndFact}}</td>
 
-        <!--        // Плановые трудозатраты, чел/час Стабилизация прототипа-->
-        <td>{{work.laborDebug}}</td>
-<!--        // Стабилизация прототипа-->
-        <td>{{work.timeDebug}}</td>
-<!--        // Порядковый номер релиза-->
-        <td>{{work.release}}</td>
-<!--        // Выдача релиза даты План-->
-        <td class="tablecol1">{{work.issuingReleasePlan}}</td>
-<!--        // Выдача релиза дата факт-->
-        <td class="tablecol1">{{work.issuingReleaseFact}}</td>
-        <!--        // Стабилизация релиза-->
-        <td>{{work.releaseEndPlan}}</td>
-        <!--        // Стабилизация релиза-->
-        <td>{{work.releaseEndFact}}</td>
+            <!--        // Плановые трудозатраты, чел/час Стабилизация прототипа-->
+            <td>{{work.laborDebug}}</td>
+            <!--        // Стабилизация прототипа-->
+            <td>{{work.timeDebug}}</td>
+            <!--        // Порядковый номер релиза-->
+            <td>{{work.release}}</td>
+            <!--        // Выдача релиза даты План-->
+            <td class="tablecol1">{{work.issuingReleasePlan}}</td>
+            <!--        // Выдача релиза дата факт-->
+            <td class="tablecol1">{{work.issuingReleaseFact}}</td>
+            <!--        // Стабилизация релиза-->
+            <td>{{work.releaseEndPlan}}</td>
+            <!--        // Стабилизация релиза-->
+            <td>{{work.releaseEndFact}}</td>
 
-        <!--        // Плановые трудозатраты, чел/час Стабилизация релиза-->
-        <td>{{work.laborRelease}}</td>
-<!--        // Стабилизация релиза-->
-        <td>{{work.timeRelease}}</td>
-        <!--        // ОПЭ релиза-->
-        <td>{{work.opeEndPlan}}</td>
-        <!--        // ОПЭ релиза-->
-        <td>{{work.opeEndFact}}</td>
-<!--        // Плановые трудозатраты, чел/час ОПЭ-->
-        <td>{{work.laborOPE}}</td>
-<!--        // ОПЭ релиза-->
-        <td>{{work.timeOPE}}</td>
-<!--        // плановое время-->
-        <td>{{work.timePlan}}</td>
-<!--        // фактическое время-->
-        <td>{{work.timeFact}}</td>
+            <!--        // Плановые трудозатраты, чел/час Стабилизация релиза-->
+            <td>{{work.laborRelease}}</td>
+            <!--        // Стабилизация релиза-->
+            <td>{{work.timeRelease}}</td>
+            <!--        // ОПЭ релиза-->
+            <td>{{work.opeEndPlan}}</td>
+            <!--        // ОПЭ релиза-->
+            <td>{{work.opeEndFact}}</td>
+            <!--        // Плановые трудозатраты, чел/час ОПЭ-->
+            <td>{{work.laborOPE}}</td>
+            <!--        // ОПЭ релиза-->
+            <td>{{work.timeOPE}}</td>
+            <!--        // плановое время-->
+            <td>{{work.timePlan}}</td>
+            <!--        // фактическое время-->
+            <td>{{work.timeFact}}</td>
 
-<!--        // ВЕНДЕРКА-->
-        <td>{{work.timeWender}}</td>
+            <!--        // ВЕНДЕРКА-->
+            <td>{{work.timeWender}}</td>
 
 
-      </tr>
-    </tbody>
-  </table>
+        </tr>
+        </tbody>
+    </table>
 
 </div>
 
