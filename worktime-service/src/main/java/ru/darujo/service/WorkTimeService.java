@@ -6,14 +6,19 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import ru.darujo.dto.ListString;
-import ru.darujo.dto.WorkDto;
+import ru.darujo.convertor.WorkTimeConvertor;
+import ru.darujo.dto.*;
+import ru.darujo.dto.UserFio;
+import ru.darujo.dto.calendar.WeekWorkDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.integration.CalendarServiceIntegration;
 import ru.darujo.integration.TaskServiceIntegration;
+import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.model.WorkTime;
 import ru.darujo.repository.WorkTimeRepository;
 import ru.darujo.repository.specifications.WorkTimeSpecifications;
 
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -25,7 +30,16 @@ public class WorkTimeService {
     public void setWorkServiceIntegration(TaskServiceIntegration taskServiceIntegration) {
         this.taskServiceIntegration = taskServiceIntegration;
     }
-
+    UserServiceIntegration userServiceIntegration;
+    @Autowired
+    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+        this.userServiceIntegration = userServiceIntegration;
+    }
+    CalendarServiceIntegration calendarServiceIntegration;
+    @Autowired
+    public void setCalendarServiceIntegration(CalendarServiceIntegration calendarServiceIntegration) {
+        this.calendarServiceIntegration = calendarServiceIntegration;
+    }
     private WorkTimeRepository workTimeRepository;
     @Autowired
     public void setWorkTimeRepository(WorkTimeRepository workTimeRepository) {
@@ -38,7 +52,7 @@ public class WorkTimeService {
 
     public WorkTime saveWorkTime(WorkTime workTime) {
         validWorkTime(workTime);
-        WorkDto workDto = taskServiceIntegration.getWork(workTime.getTaskId());
+        TaskDto taskDto = taskServiceIntegration.getTask(workTime.getTaskId());
         return workTimeRepository.save(workTime);
     }
 
@@ -104,6 +118,81 @@ public class WorkTimeService {
         }
         if (workTime.getComment() == null || workTime.getComment().equals("")){
             throw new ResourceNotFoundException("Не задан комментарий");
+        }
+    }
+
+    public List<UserWorkDto> getWeekWork(String nikName, Timestamp dateStart,Timestamp dateEnd) {
+        List<UserWorkDto> userWorkDtos =new ArrayList<>();
+        List<WeekWorkDto> weekWorkDtos =calendarServiceIntegration.getWeekTime(dateStart,dateEnd);
+
+        Map<Long,Integer> tasks = new HashMap<>();
+        weekWorkDtos
+                .forEach(weekWorkDto -> {
+                    Map<String,UserWorkDto> userWorkDtoMap = new HashMap<>();
+                    final UserWorkDto[] userWorkDto = {null};
+                    findWorkTime(null, nikName,null,weekWorkDto.getDayEnd(),null,weekWorkDto.getDayStart(),null,null)
+                            .forEach(workTime -> {
+                                Integer type = tasks.get(workTime.getTaskId());
+                                if(type==null){
+                                    TaskDto taskDto = taskServiceIntegration.getTask(workTime.getTaskId());
+                                    tasks.put(taskDto.getId(),taskDto.getType());
+                                }
+                                userWorkDto[0] = userWorkDtoMap.get(workTime.getNikName());
+                                if (userWorkDto[0] == null){
+                                    userWorkDto[0] =new UserWorkDto(
+                                            workTime.getNikName(),
+                                            null,
+                                            null,
+                                            null,
+                                            weekWorkDto.getDayStart(),
+                                            weekWorkDto.getDayEnd(),
+                                            weekWorkDto.getTime());
+                                    userWorkDtoMap.put(workTime.getNikName(), userWorkDto[0]);
+
+                                }
+                                userWorkDto[0].addTime(type,workTime.getWorkTime());
+
+                            });
+                    if(userWorkDto[0] != null) {
+                        userWorkDto[0].setUserCol(userWorkDtoMap.size());
+                    }else {
+                        userWorkDto[0] = new UserWorkDto(
+                                null,
+                                null,
+                                null,
+                                null,
+                                weekWorkDto.getDayStart(),
+                                weekWorkDto.getDayEnd(),
+                                0f);
+                        userWorkDtoMap.put("", userWorkDto[0]);
+                    }
+                    userWorkDtoMap.forEach((nik, userWork) ->{
+                        updFio(userWork);
+                            userWorkDtos.add(
+                            userWork.addTimeAll());});
+        });
+        return userWorkDtos;
+
+    }
+
+    public WorkTimeDto getWorkTimeDtoAndUpd(WorkTime workTime){
+        WorkTimeDto workTimeDto = WorkTimeConvertor.getWorkTimeDto(workTime);
+        updFio(workTimeDto);
+
+        return workTimeDto;
+    }
+    private void updFio(UserFio userFio){
+        try {
+            // TODO Сделать кеширование
+            if(userFio.getNikName()!=null) {
+                UserDto userDto = userServiceIntegration.getUserDto(null, userFio.getNikName());
+                userFio.setAuthorFirstName(userDto.getFirstName());
+                userFio.setAuthorLastName(userDto.getLastName());
+                userFio.setAuthorPatronymic(userDto.getPatronymic());
+            }
+        } catch (ResourceNotFoundException e) {
+            System.out.println(e.getMessage());
+            userFio.setAuthorFirstName("Не найден пользователь с ником " + userFio.getNikName());
         }
     }
 }

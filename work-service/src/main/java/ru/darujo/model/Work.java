@@ -62,9 +62,11 @@ public class Work {
     // Краткое описание внутренней задачи
     @Column(name = "description")
     private String description;
+    //TODO Убрать
     // Плановая дата завершения 0 этапа
     @Column(name = "planDateStage0")
     private Date planDateStage0;
+    //TODO Убрать
     // Плановая дата завершения 0 этапа
     @Column(name = "factDateStage0")
     private Date factDateStage0;

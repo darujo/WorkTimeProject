@@ -2,7 +2,7 @@ package ru.darujo.dto;
 
 import java.io.Serializable;
 
-public class TaskDto implements Serializable {
+public class TaskDto implements Serializable, UserFio{
     private Long id;
     private String nikName;
 

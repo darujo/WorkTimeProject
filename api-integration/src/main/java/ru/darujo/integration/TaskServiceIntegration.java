@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.darujo.dto.ListString;
-import ru.darujo.dto.WorkDto;
+import ru.darujo.dto.TaskDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 
 import java.util.Date;
@@ -69,12 +69,12 @@ public class TaskServiceIntegration {
                 .block();
 
     }
-    public WorkDto getWork(Long id) {
+    public TaskDto getTask(Long id) {
         return webClientTask.get().uri("/" + id)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                         clientResponse -> Mono.error(new ResourceNotFoundException("Задача c id = " + id + " не найдена")))
-                .bodyToMono(WorkDto.class)
+                .bodyToMono(TaskDto.class)
                 .block();
     }
 
