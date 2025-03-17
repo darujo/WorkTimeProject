@@ -102,6 +102,16 @@ public class WorkTimeService {
         }
     }
 
+    public List<WorkTime> findWorkTimeTask(String taskDevbo, String taskBts, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE) {
+        List<WorkTime> workTimes = new ArrayList<>();
+        List<Long> taskIdList = taskServiceIntegration.getTaskList(taskDevbo, taskBts);
+        taskIdList.forEach(taskId ->
+                findWorkTime(taskId, nikName, dateLt, dateLe, dateGT, dateGE, null, null)
+                        .forEach(workTimes::add)
+        );
+        return workTimes;
+    }
+
     public float getTimeWork(Long taskId, String nikName, Date dateGt, Date dateLe) {
         AtomicReference<Float> time = new AtomicReference<>((float) 0);
         findWorkTime(taskId, nikName, null, dateLe, dateGt, null, null, null).forEach(workTime -> time.set(time.get() + workTime.getWorkTime()));
@@ -154,6 +164,7 @@ public class WorkTimeService {
                                 if (type == null) {
                                     TaskDto taskDto = taskServiceIntegration.getTask(workTime.getTaskId());
                                     tasks.put(taskDto.getId(), taskDto.getType());
+                                    type = taskDto.getType();
                                 }
                                 UserWorkDto userWorkDto = userWorkDtoMap.get(workTime.getNikName());
                                 if (userWorkDto == null) {

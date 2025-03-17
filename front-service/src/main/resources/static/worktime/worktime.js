@@ -82,16 +82,23 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
         var page = parseInt(document.getElementById("Page").value) + diffPage;
         document.getElementById("Page").value = page;
         console.log("запрос данных7");
+        if (typeof  $scope.Filt === "undefined")
+        {
+            $scope.Filt ={size:10};
+            Filt = $scope.Filt;
+        }
         console.log(Filt);
         $http({
             url: constPatchWorkTime + "/worktime",
             method: "get",
             params: {
                 page: page,
-                size: 10,
+                size: Filt ? Filt.size : null,
                 dateLe: Filt ? Filt.dateLe : null,
                 dateGe: Filt ? Filt.dateGe : null,
                 taskId: Filt ? Filt.taskId : null,
+                taskDevbo: Filt ? Filt.taskDevbo : null,
+                taskBts: Filt ? Filt.taskBts : null,
                 nikName: Filt ? Filt.nikName : null
 
             }
@@ -104,7 +111,14 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
             console.log(response);
             console.log("response,data :");
             console.log(response.data);
-            $scope.WorkTimeList = response.data.content;
+            if (typeof response.data.content =="undefined")
+            {
+                $scope.WorkTimeList = response.data;
+            }
+            else {
+                $scope.WorkTimeList = response.data.content;
+            }
+
             showWorkTime();
 
         }, function errorCallback(response) {
@@ -128,9 +142,11 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
 
     $scope.createWorkTime = function () {
         console.log("createWorkTime");
+        $scope.FiltWork ={size:10};
         showFindTask();
         WorkTimeIdEdit = null;
         console.log("создаем");
+
         $scope.WorkTime = {
             id: null,
             taskId: document.getElementById("TaskId").value,
@@ -149,6 +165,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
     };
 
     $scope.editWorkTime = function (workTimeId) {
+        $scope.FiltWork ={size:10};
         showTaskNum();
         console.log("edit");
         $http.get(constPatchWorkTime + "/worktime/" + workTimeId)
@@ -250,7 +267,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
             method: "get",
             params: {
                 page: page,
-                size: 10,
+                size: FiltTask ? FiltTask.size : null,
                 workId: FiltTask ? FiltTask.workId : null,
                 codeBTS: FiltTask ? FiltTask.bts : null,
                 codeDEVBO: FiltTask ? FiltTask.devbo : null,

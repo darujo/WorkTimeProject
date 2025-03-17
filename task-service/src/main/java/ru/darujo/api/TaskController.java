@@ -76,14 +76,14 @@ public class TaskController {
                                        @RequestParam(defaultValue = "1") Integer page,
                                        @RequestParam(defaultValue = "10") Integer size) {
         if (workId == null && ziName != null) {
-            return findTasks(nikName, codeBTS, codeDEVBO, description, ziName);
+            return findTasks(nikName, codeBTS, codeDEVBO, description, ziName,workId);
         }
 
         return findTasks(nikName, codeBTS, codeDEVBO, description, workId, page, size);
     }
 
     @GetMapping("/rep/fact/time")
-    public Float getTaskTime(@RequestParam(required = false) String userName,
+    public Float getTaskTime(@RequestParam(required = false) String nikName,
                              @RequestParam(required = false) String codeBTS,
                              @RequestParam(required = false) String codeDEVBO,
                              @RequestParam(required = false) String description,
@@ -94,7 +94,7 @@ public class TaskController {
         Date dateLe = stringToDate(dateLeStr, "dateLe = ");
         Date dateGt = stringToDate(dateGtStr, "dateGt = ");
         return taskService.getTaskTime(
-                userName,
+                nikName,
                 codeBTS,
                 codeDEVBO,
                 description,
@@ -125,6 +125,23 @@ public class TaskController {
                 workId,
                 page,
                 size)).map(this::taskAddValue);
+    }
+
+    @GetMapping("/list/id")
+    public Iterable<Long> findTasks(@RequestParam(required = false) String nikName,
+                                       @RequestParam(required = false) String codeBTS,
+                                       @RequestParam(required = false) String codeDEVBO,
+                                       @RequestParam(required = false) String description,
+                                       @RequestParam(required = false) Long workId){
+        Set<Long> listId = new HashSet<>();
+        taskService.findWorkTime(nikName,
+                codeBTS,
+                codeDEVBO,
+                description,
+                workId,
+                null,
+                null).forEach(task ->  listId.add(task.getId()));
+        return listId;
     }
 
     private final Map<String, UserDto> userDtoMap = new HashMap<>();
@@ -174,14 +191,15 @@ public class TaskController {
                                    String codeBTS,
                                    String codeDEVBO,
                                    String description,
-                                   String ziName) {
+                                   String ziName,
+                                   Long workId) {
         clearCash();
         List<TaskDto> taskDtoList = new ArrayList<>();
         taskService.findWorkTime(userName,
                 codeBTS,
                 codeDEVBO,
                 description,
-                null,
+                workId,
                 null,
                 null).forEach(task ->
         {

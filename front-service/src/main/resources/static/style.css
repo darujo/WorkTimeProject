@@ -5,43 +5,46 @@
 /*}*/
 
 .container {
-  max-width: 1140px;
-  margin: 0 auto;
+    max-width: 1140px;
+    margin: 0 auto;
 }
+
 .containerfilt {
     max-width: 1140px;
     margin: 0 auto;
 
 }
+
 body {
-  font-family: sans-serif;
+    font-family: sans-serif;
 }
 
 .headtextelem {
-  margin-top: 30px;
+    margin-top: 30px;
     -webkit-box-flex: 1;
     -ms-flex-positive: 1;
-  flex-grow: 1;
+    flex-grow: 1;
 }
 
 
 .headbutton {
-  font-size: 16px;
-  line-height: 26px;
-  text-align: center;
-  letter-spacing: 0.04em;
-  color: #FFFFFF;
-  background: #5A98D0;
-  -webkit-box-shadow: 5px 10px 20px rgba(53, 110, 173, 0.2);
-          box-shadow: 5px 10px 20px rgba(53, 110, 173, 0.2);
-  border-radius: 10px;
-  padding: 15px 50px;
-  display: inline-block;
-  text-decoration: none;
+    font-size: 16px;
+    line-height: 26px;
+    text-align: center;
+    letter-spacing: 0.04em;
+    color: #FFFFFF;
+    background: #5A98D0;
+    -webkit-box-shadow: 5px 10px 20px rgba(53, 110, 173, 0.2);
+    box-shadow: 5px 10px 20px rgba(53, 110, 173, 0.2);
+    border-radius: 10px;
+    padding: 15px 50px;
+    display: inline-block;
+    text-decoration: none;
     margin: 10px;
 }
-.divform{
-  margin-top: 30px;
+
+.divform {
+    margin-top: 30px;
 }
 
 .vvod80 {
@@ -54,6 +57,7 @@ body {
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
 .vvod40 {
     padding: 10px 10px;
     border: 1px solid #356EAD;
@@ -64,6 +68,7 @@ body {
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
 .vvod30 {
     padding: 10px 10px;
     border: 1px solid #356EAD;
@@ -74,6 +79,7 @@ body {
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
 .vvod20 {
     padding: 10px 10px;
     border: 1px solid #356EAD;
@@ -83,6 +89,18 @@ body {
     width: 20%;
     margin-top: 10px;
     margin-bottom: 10px;
+}
+
+.vvod20mar {
+    padding: 10px 10px;
+    border: 1px solid #356EAD;
+    box-sizing: border-box;
+    border-radius: 10px;
+    opacity: 0.4;
+    width: 20%;
+    margin: auto;
+    margin-bottom: 10px;
+    margin-top: 10px;
 }
 
 .vvod {
@@ -95,9 +113,11 @@ body {
     margin-top: 10px;
     margin-bottom: 10px;
 }
-.horiz{
-    display:flex;
+
+.horiz {
+    display: flex;
 }
+
 .button {
     background: #5A98D0;
     box-shadow: 5px 20px 50px rgba(16, 112, 177, 0.2);
@@ -114,39 +134,48 @@ body {
     border: none;
     height: 72px;
 }
+
 TABLE {
     width: 100%; /* Ширина таблицы */
     border: 1px solid #399; /* Граница вокруг таблицы */
     /*border-spacing: 7px 5px; !* Расстояние между границ *!*/
-   }
-.tablecalend{
+}
+
+.tablecalend {
     width: 90%; /* Ширина таблицы */
     border: 1px solid #399; /* Граница вокруг таблицы */
 }
+
 TD {
     border: 1px solid #333; /* Граница вокруг ячеек */
     padding: 5px; /* Поля в ячейках */
     height: 1px; /*  нужно чтобы элемент в нутри растянулся*/
-   }
+}
+
 .tablehead1 {
     text-align: center;
     background: rgb(255, 242, 204);
 }
+
 .tablehead2 {
     text-align: center;
     background-color: rgb(255, 217, 102);
 }
+
 .tablehead3 {
     text-align: center;
     background-color: rgb(255, 192, 0);
 }
+
 .tablecol1 {
     background-color: rgb(180, 192, 231);
 }
-.buttontable{
+
+.buttontable {
     width: 100%;
     height: 100%;
 }
+
 .tablecol2 {
     background-color: rgb(248, 203, 173);
 }
@@ -155,18 +184,21 @@ TD {
     display: flex;
     width: -webkit-fill-available;
 }
+
 .filterblock {
     display: block;
     width: -webkit-fill-available;
 }
+
 .p-head {
 
-width: inherit;
-margin: auto;
+    width: inherit;
+    margin: auto;
     font-weight: 500;
     font-size: 30px;
     text-align: center;
 }
+
 .p-filt {
 
     width: inherit;
@@ -175,12 +207,33 @@ margin: auto;
     font-size: 15px;
     text-align: center;
 }
-.findbr{
-width: inherit;
-margin: auto;
-font-weight: 500;
-font-size: 15px;
-text-align: center;
+
+.p-form {
+
+    width: inherit;
+    margin: auto;
+    font-weight: 250;
+    font-size: 15px;
+    text-align: center;
+}
+
+.p-form20 {
+
+    width: 20%;
+    margin: auto;
+    font-weight: 250;
+    font-size: 15px;
+    text-align: center;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.findbr {
+    width: inherit;
+    margin: auto;
+    font-weight: 500;
+    font-size: 15px;
+    text-align: center;
 }
 
 

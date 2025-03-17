@@ -15,6 +15,7 @@ import ru.darujo.service.WorkTimeService;
 import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController()
 @RequestMapping("/v1/worktime")
@@ -56,11 +57,13 @@ public class WorkTimeController {
     }
 
     @GetMapping("")
-    public Page<WorkTimeDto> findWorkTime(@RequestParam(required = false, name = "dateLt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLtStr,
+    public Iterable<WorkTimeDto> findWorkTime(@RequestParam(required = false, name = "dateLt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLtStr,
                                           @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
                                           @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
                                           @RequestParam(required = false, name = "dateGe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGeStr,
                                           @RequestParam(required = false) Long taskId,
+                                          @RequestParam(required = false) String taskDevbo,
+                                          @RequestParam(required = false) String taskBts,
                                           @RequestParam(required = false) String nikName,
                                           @RequestParam(defaultValue = "1") Integer page,
                                           @RequestParam(defaultValue = "10") Integer size) {
@@ -69,14 +72,27 @@ public class WorkTimeController {
         Date dateGt = stringToDate(dateGtStr, "dateGt = ", false);
         Date dateGe = stringToDate(dateGeStr, "dateGe = ");
         workTimeService.clearCash();
-        return ((Page<WorkTime>) workTimeService.findWorkTime(taskId,
-                nikName,
-                dateLt,
-                dateLe,
-                dateGt,
-                dateGe,
-                page,
-                size)).map(workTimeService::getWorkTimeDtoAndUpd);
+        if((taskBts== null && taskDevbo == null) || taskId != null) {
+            return ((Page<WorkTime>) workTimeService.findWorkTime(taskId,
+                    nikName,
+                    dateLt,
+                    dateLe,
+                    dateGt,
+                    dateGe,
+                    page,
+                    size)).map(workTimeService::getWorkTimeDtoAndUpd);
+        } else {
+            List<WorkTime> workTimeDtos = workTimeService.findWorkTimeTask(
+                    taskDevbo,
+                    taskBts,
+                    nikName,
+                    dateLt,
+                    dateLe,
+                    dateGt,
+                    dateGe);
+            return workTimeDtos.stream().map(workTimeService::getWorkTimeDtoAndUpd).collect(Collectors.toList());
+
+        }
     }
 
     @GetMapping("/rep/fact/time")

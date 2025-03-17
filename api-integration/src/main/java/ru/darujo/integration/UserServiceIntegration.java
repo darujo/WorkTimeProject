@@ -35,11 +35,17 @@ public class UserServiceIntegration {
             return webClientUser.get().uri(stringBuilder.toString())
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные пользователю")))
                     .bodyToMono(UserDto.class)
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить пользователя (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            if (ex instanceof ResourceNotFoundException)
+            {
+              throw ex;
+            }
+            else {
+                throw new ResourceNotFoundException("Что-то пошло не так не удалось получить пользователя (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            }
         }
     }
 }

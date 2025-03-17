@@ -22,13 +22,18 @@ angular.module('workTimeService').controller('workController', function ($scope,
         var page = parseInt(document.getElementById("Page").value) + diffPage;
         document.getElementById("Page").value = page;
         console.log("отправляем запрос /works")
+        if (typeof  $scope.Filt === "undefined")
+        {
+            $scope.Filt ={size:10};
+            Filt = $scope.Filt;
+        }
         console.log(Filt)
         $http({
             url: constPatchWork + "/works",
             method: "get",
             params: {
                 page: page,
-                size: 10,
+                size: Filt ? Filt.size : null,
                 name: Filt ? Filt.name : null,
                 sort: Filt ? Filt.sort : null
             }
@@ -50,7 +55,8 @@ angular.module('workTimeService').controller('workController', function ($scope,
 
     $scope.workSort = function (sort){
         $scope.Filt  ={sort:sort,
-                       name: document.getElementById("Name").value};
+                       name: document.getElementById("Name").value,
+                       size: $scope.Filt.size};
         console.log("sort");
         console.log(sort);
         $scope.filterWork();

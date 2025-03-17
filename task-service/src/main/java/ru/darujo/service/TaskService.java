@@ -84,7 +84,7 @@ public class TaskService {
     }
 
     public Float getTaskTime(
-            String userName,
+            String nikName,
             String codeBTS,
             String codeDEVBO,
             String description,
@@ -92,7 +92,7 @@ public class TaskService {
             Date dateLe,
             Date dateGt) {
         return ((List<Task>) findWorkTime(null, codeBTS, codeDEVBO, description, workId, null, null))
-                .stream().map(task -> workTimeServiceIntegration.getTimeTask(task.getId(), userName, dateLe, dateGt)).reduce((sumTime, time) ->
+                .stream().map(task -> workTimeServiceIntegration.getTimeTask(task.getId(), nikName, dateLe, dateGt)).reduce((sumTime, time) ->
                         sumTime + time).orElse(0f);
     }
 

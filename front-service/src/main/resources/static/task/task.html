@@ -43,6 +43,16 @@
         <button class="headbutton" ng-click="findPage(-1)">PrevPage</button>
         <input class="vvod" type="number" id="Page" value="1"/>
         <button class="headbutton" ng-click="findPage(1)">NextPage</button>
+        <p class="p-head">Количество элементов</p>
+        <select class="vvod20" name="choice" id="TaskSize" ng-model="Filt.size" ng-change="filterTask()" >
+            <option ng-value="10" value="10" selected>10</option>
+            <option ng-value="25" value="25">25</option>
+            <option ng-value="50" value="50">50</option>
+            <option ng-value="100" value="100">100</option>
+            <option ng-value="500" value="500">500</option>
+            <option ng-value="1000" value="1000">1000</option>
+            <option ng-value="10000" value="10000">10000</option>
+        </select>
     </div>
     <h1>Список задач</h1>
     <table>
@@ -92,9 +102,10 @@
         <button type="reset" ng-click="loadTask()" class="button">Вернуться к списку</button>
         <br>
         <br>
-        Задача : <input class="vvod" type="number" inputmode="number" id="TaskIdEdit" placeholder="Ведите код задачи"
+<!--        Задача : -->
+        <input class="vvod" type="hidden" inputmode="number" id="TaskIdEdit" placeholder="Ведите код задачи"
                         ng-model="Task.id"/>
-        <br>
+<!--        <br>-->
         № запроса (BTS) : <input class="vvod" type="text" id="CodeBTS" placeholder="Ведите наименование"
                                  ng-model="Task.codeBTS"/>
 
@@ -149,6 +160,16 @@
             <button type="button" class="headbutton" ng-click="loadWork(-1)">PrevPage</button>
             <input class="vvod" type="number" id="PageWork" value="1"/>
             <button type="button" class="headbutton" ng-click="loadWork(1)">NextPage</button>
+            <p class="p-head">Количество элементов</p>
+            <select class="vvod20" name="choice" id="WorkSize" ng-model="FiltWork.size" ng-change="filterWork()" >
+                <option ng-value="10" value="10" selected>10</option>
+                <option ng-value="25" value="25">25</option>
+                <option ng-value="50" value="50">50</option>
+                <option ng-value="100" value="100">100</option>
+                <option ng-value="500" value="500">500</option>
+                <option ng-value="1000" value="1000">1000</option>
+                <option ng-value="10000" value="10000">10000</option>
+            </select>
         </div>
         <table>
 

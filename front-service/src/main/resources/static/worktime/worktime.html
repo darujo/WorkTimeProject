@@ -10,8 +10,20 @@
                         <div class="horiz">
                             <p class="p-head">Id задачи</p>
                             <br>
-                            <input class="vvod80" type="number" inputmode="numeric" id="TaskId" step="any"
+                            <input class="vvod30" type="number" inputmode="numeric" id="TaskId" step="any"
                                    ng-model="Filt.taskId"/>
+<!--                        </div>-->
+<!--                        <div class="horiz">-->
+                            <p class="p-head">DEVBO</p>
+                            <br>
+                            <input class="vvod30" type="text" id="TaskDevbo"
+                                   ng-model="Filt.taskDevbo"/>
+                            <!--                        </div>-->
+                            <!--                        <div class="horiz">-->
+                            <p class="p-head">BTS</p>
+                            <br>
+                            <input class="vvod30" type="text" id="TaskBts"
+                                   ng-model="Filt.taskBts"/>
                         </div>
                         <div class="horiz">
                             <p class="p-head">Логин</p>
@@ -38,6 +50,16 @@
         <button class="headbutton" ng-click="findPage(-1)">PrevPage</button>
         <input class="vvod" type="number" id="Page" value="1"/>
         <button class="headbutton" ng-click="findPage(1)">NextPage</button>
+        <p class="p-head">Количество элементов</p>
+        <select class="vvod20" name="choice" id="WorkTimeSize" ng-model="Filt.size" ng-change="filterWorkTime()" >
+            <option ng-value="10" value="10" selected>10</option>
+            <option ng-value="25" value="25">25</option>
+            <option ng-value="50" value="50">50</option>
+            <option ng-value="100" value="100">100</option>
+            <option ng-value="500" value="500">500</option>
+            <option ng-value="1000" value="1000">1000</option>
+            <option ng-value="10000" value="10000">10000</option>
+        </select>
     </div>
     <h1>Список работ</h1>
     <table>
@@ -131,6 +153,16 @@
             <input class="vvod" type="number" id="PageTask" value="1"/>
             <button type="button" class="headbutton" ng-click="loadTask(1)">NextPage</button>
             <button type="button" ng-click="filterTask()" class="headbutton">Применить</button>
+            <p class="p-head">Количество элементов</p>
+            <select class="vvod20" name="choice" id="TaskSize" ng-model="FiltTask.size" ng-change="filterTask()" >
+                <option ng-value="10" value="10" selected>10</option>
+                <option ng-value="25" value="25">25</option>
+                <option ng-value="50" value="50">50</option>
+                <option ng-value="100" value="100">100</option>
+                <option ng-value="500" value="500">500</option>
+                <option ng-value="1000" value="1000">1000</option>
+                <option ng-value="10000" value="10000">10000</option>
+            </select>
         </div>
         <h1>Выбирите задачу</h1>
         <table>

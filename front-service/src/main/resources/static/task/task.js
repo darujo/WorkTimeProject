@@ -57,13 +57,18 @@ angular.module('workTimeService').controller('taskController', function ($scope,
         var page = parseInt(document.getElementById("Page").value) + diffPage;
         document.getElementById("Page").value = page;
         console.log("запрос данных7");
+        if (typeof  $scope.Filt === "undefined")
+        {
+            $scope.Filt ={size:10};
+            Filt = $scope.Filt;
+        }
         console.log(Filt);
         $http({
             url: constPatchTask + "/task",
             method: "get",
             params: {
                 page: page,
-                size: 10,
+                size: Filt ? Filt.size : null,
                 workId: Filt ? Filt.workId : null,
                 codeBTS: Filt ? Filt.bts : null,
                 codeDEVBO: Filt ? Filt.devbo : null,
@@ -105,6 +110,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
 
     $scope.createTask = function () {
         showFindWork();
+        $scope.FiltWork ={size:10};
         console.log("create");
         TaskIdEdit = null;
         console.log("создаем");
@@ -133,6 +139,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
 
     $scope.editTask = function (taskId) {
         showWorkNum();
+        $scope.FiltWork ={size:10};
         console.log("edit");
         $http.get(constPatchTask + "/task/" + taskId)
             .then(function (response) {
@@ -202,25 +209,35 @@ angular.module('workTimeService').controller('taskController', function ($scope,
     var FiltWork;
     var findNameWork = function(workId){
         console.log("findNameWork")
+        console.log(typeof workId);
+        console.log(typeof workId === "undefined");
+        if (typeof workId !== "undefined") {
+            $http({
+                url: constPatchWork + "/works/obj/little/" + workId,
+                method: "get"
 
-        $http({
-            url: constPatchWork + "/works/obj/little/" + workId ,
-            method: "get"
+            }).then(function (response) {
+                console.log(response.data);
+                document.getElementById("WorkName").value = response.data.name;
+                // showTask();
+                showWorkNum();
 
-        }).then(function (response) {
-            console.log(response.data);
-            document.getElementById("WorkName").value = response.data.name;
-            // showTask();
-            showWorkNum();
-
-        }, function errorCallback(response) {
-            console.log(response)
-            if($location.checkAuthorized(response)) {
-                alert(response.data.message);
-                // showFindWork();
-            }
-        });
-
+            }, function errorCallback(response) {
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                    console.log("status");
+                    console.log(response.status);
+                    if (response.status!== 404) {
+                        alert(response.data.message);
+                    } else
+                    {
+                        document.getElementById("WorkName").value = response.data.message;
+                        // document.getElementById("WorkName").value = "не удалось получить с сервера задачу с id " + workId;
+                    }
+                    // showFindWork();
+                }
+            });
+        }
     }
     $scope.loadWork = function( diffPage){
         console.log("loadWork")
@@ -237,7 +254,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
             method: "get",
             params: {
                 page: page,
-                size: 10,
+                size: FiltWork ? FiltWork.size : null,
                 name: FiltWork ? FiltWork.name : null
 
             }
@@ -262,7 +279,8 @@ angular.module('workTimeService').controller('taskController', function ($scope,
     $scope.filterWork = function () {
         console.log("filterWork");
         FiltWork = $scope.FiltWork;
-        document.getElementById("PageWork").value = "1";
+        document.getElementById("PageWork").value = parseInt("1");
+        console.log(document.getElementById("PageWork").value)
         $scope.loadWork(0);
     };
     $scope.setWork = function (workId) {

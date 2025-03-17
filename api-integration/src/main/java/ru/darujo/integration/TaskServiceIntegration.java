@@ -11,6 +11,7 @@ import ru.darujo.exceptions.ResourceNotFoundException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 
 @Component
@@ -24,9 +25,6 @@ public class TaskServiceIntegration {
 
     public Float getTimeWork(Long workID, String nikName, Date dateGT, Date dateLE) {
         StringBuilder stringBuilder = new StringBuilder();
-        if (stringBuilder.length() == 0) {
-            stringBuilder.append("?");
-        }
         if (workID != null) {
             if (stringBuilder.length() != 0) {
                 stringBuilder.append("&");
@@ -54,7 +52,12 @@ public class TaskServiceIntegration {
 
         System.out.println(stringBuilder);
         try {
-            return webClientTask.get().uri("/rep/fact/time" + stringBuilder)
+            String str = "";
+            if (stringBuilder.length() !=0){
+                str = "?" + stringBuilder;
+            }
+
+            return webClientTask.get().uri("/rep/fact/time" + str)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
@@ -86,7 +89,32 @@ public class TaskServiceIntegration {
                 .bodyToMono(TaskDto.class)
                 .block();
     }
-
+    public List<Long> getTaskList(String taskDevbo, String taskBts) {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (taskDevbo != null) {
+            if (stringBuilder.length() != 0) {
+                stringBuilder.append("&");
+            }
+            stringBuilder.append("codeDEVBO=").append(taskDevbo);
+        }
+        if (taskBts != null) {
+            if (stringBuilder.length() != 0) {
+                stringBuilder.append("&");
+            }
+            stringBuilder.append("codeBTS=").append(taskBts);
+        }
+        System.out.println(stringBuilder);
+        String str = "";
+        if (stringBuilder.length() !=0){
+            str = "?" + stringBuilder;
+        }
+        return webClientTask.get().uri( "/list/id" + str)
+                .retrieve()
+                .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                        clientResponse -> Mono.error(new ResourceNotFoundException("Задачи не найдены")))
+                .bodyToFlux(Long.class).collectList()
+                .block();
+    }
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     private String dateToText(Date date) {
