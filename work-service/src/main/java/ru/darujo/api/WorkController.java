@@ -22,7 +22,7 @@ public class WorkController {
 
     @GetMapping("/conv")
     public WorkDto workConv() {
-        workService.findWorks(1, 10000, null, null, null).map(work -> workService.saveWork(WorkConvertor.getWork(WorkConvertor.getWorkEditDto(work))));
+        workService.findWorks(1, 10000, null, null, null, null, null, null, null).map(work -> workService.saveWork(WorkConvertor.getWork(WorkConvertor.getWorkEditDto(work))));
         return new WorkDto();
     }
 
@@ -49,10 +49,23 @@ public class WorkController {
     public Page<WorkDto> WorkPage(@RequestParam(defaultValue = "1") int page,
                                   @RequestParam(defaultValue = "10") int size,
                                   @RequestParam(required = false) String name,
-                                  @RequestParam(defaultValue = "6") Integer stageZiLt,
-                                  @RequestParam(required = false) String sort) {
-
-        return workService.findWorks(page, size, name, sort, stageZiLt).map(WorkConvertor::getWorkDto);
+                                  @RequestParam(defaultValue = "15") Integer stageZi,
+                                  @RequestParam(required = false) Long codeSap,
+                                  @RequestParam(required = false) String codeZi,
+                                  @RequestParam(required = false) String task,
+                                  @RequestParam(defaultValue = "release") String sort) {
+        Integer stageZiLe = null;
+        Integer stageZiGe = null;
+        if (stageZi != null){
+            if(stageZi < 10){
+                stageZiGe = stageZi;
+                stageZiLe = stageZi;
+            }
+            else {
+                stageZiLe = stageZi - 10;
+            }
+        }
+        return workService.findWorks(page, size, name, sort,stageZiGe, stageZiLe,codeSap,codeZi,task).map(WorkConvertor::getWorkDto);
     }
 
     @GetMapping("/rep")
@@ -69,9 +82,20 @@ public class WorkController {
     public Page<WorkLittleDto> WorkLittlePage(@RequestParam(defaultValue = "1") int page,
                                               @RequestParam(defaultValue = "10") int size,
                                               @RequestParam(required = false) String name,
-                                              @RequestParam(defaultValue = "6") Integer stageZiLt,
+                                              @RequestParam(defaultValue = "15") Integer stageZi,
                                               @RequestParam(required = false) String sort) {
-        return workService.findWorkLittle(page, size, name, sort, stageZiLt).map(WorkConvertor::getWorkLittleDto);
+        Integer stageZiLe = null;
+        Integer stageZiGe = null;
+        if (stageZi != null){
+            if(stageZi < 10){
+                stageZiGe = stageZi;
+                stageZiLe = stageZi;
+            }
+            else {
+                stageZiLe = stageZi - 10;
+            }
+        }
+        return workService.findWorkLittle(page, size, name, sort,stageZiGe, stageZiLe).map(WorkConvertor::getWorkLittleDto);
     }
 
     @GetMapping("/obj/little/{id}")

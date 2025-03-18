@@ -67,15 +67,44 @@ public class WorkService {
         workLittleRepository.deleteById(id);
     }
 
-    public Page<Work> findWorks(int page, int size, String name, String sort, Integer stageZiLt) {
+    public Page<Work> findWorks(int page,
+                                int size,
+                                String name,
+                                String sort,
+                                Integer stageZiGe,
+                                Integer stageZiLe,
+                                Long codeSap,
+                                String codeZi,
+                                String task
+                                ) {
         Specification<Work> specification = Specification.where(null);
 
-        if (name != null) {
+        if (name != null && !name.equals("")) {
             specification = specification.and(WorkSpecifications.workNameLike(name));
         }
-        if (stageZiLt != null) {
-            specification = specification.and(WorkSpecifications.stageZiLt(stageZiLt));
+        if (stageZiLe != null && stageZiLe.equals(stageZiGe))
+        {
+            specification = specification.and(WorkSpecifications.stageZiEq(stageZiLe));
+
+        } else {
+            if (stageZiLe != null) {
+                specification = specification.and(WorkSpecifications.stageZiLe(stageZiLe));
+            }
+            if (stageZiGe != null) {
+                specification = specification.and(WorkSpecifications.stageZiGe(stageZiGe));
+            }
         }
+        if (codeSap != null) {
+            specification = specification.and(WorkSpecifications.codeSapEq(codeSap));
+        }
+        if (codeZi != null && !codeZi.equals("")) {
+            specification = specification.and(WorkSpecifications.codeZiLike(codeZi));
+        }
+        if (task != null && !task.equals("")) {
+            specification = specification.and(WorkSpecifications.taskLike(task));
+        }
+
+
         System.out.println("Page = " + page);
         Page<Work> workPage;
         if (sort == null) {
@@ -86,14 +115,17 @@ public class WorkService {
         return workPage;
     }
 
-    public Page<WorkLittle> findWorkLittle(int page, int size, String name, String sort, Integer stageZiLt) {
+    public Page<WorkLittle> findWorkLittle(int page, int size, String name, String sort, Integer stageZiGe, Integer stageZiLe) {
         Specification<WorkLittle> specification = Specification.where(null);
 
         if (name != null) {
             specification = specification.and(WorkSpecifications.workLittleNameLike(name));
         }
-        if (stageZiLt != null) {
-            specification = specification.and(WorkSpecifications.workLittleStageZiLt(stageZiLt));
+        if (stageZiLe != null) {
+            specification = specification.and(WorkSpecifications.workLittleStageZiLe(stageZiLe));
+        }
+        if (stageZiGe != null) {
+            specification = specification.and(WorkSpecifications.workLittleStageZiGe(stageZiGe));
         }
         System.out.println("Page = " + page);
         Page<WorkLittle> workPage;

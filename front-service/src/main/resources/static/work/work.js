@@ -35,7 +35,11 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 page: page,
                 size: Filt ? Filt.size : null,
                 name: Filt ? Filt.name : null,
-                sort: Filt ? Filt.sort : null
+                codeSap: Filt ? Filt.codeSap : null,
+                codeZi: Filt ? Filt.codeZi : null,
+                task: Filt ? Filt.task : null,
+                sort: Filt ? Filt.sort : null,
+                stageZi: Filt ? Filt.stageZi : null
             }
         }).then(function (response) {
             console.log(response);
@@ -55,8 +59,12 @@ angular.module('workTimeService').controller('workController', function ($scope,
 
     $scope.workSort = function (sort){
         $scope.Filt  ={sort:sort,
-                       name: document.getElementById("Name").value,
-                       size: $scope.Filt.size};
+            size: $scope.Filt ? $scope.Filt.size : null,
+            name: $scope.Filt ? $scope.Filt.name : null,
+            codeSap: $scope.Filt ? $scope.Filt.codeSap : null,
+            codeZi: $scope.Filt ? $scope.Filt.codeZi : null,
+            task: $scope.Filt ? $scope.Filt.task : null,
+            stageZi: $scope.Filt ? $scope.Filt.stageZi : null};
         console.log("sort");
         console.log(sort);
         $scope.filterWork();
@@ -173,6 +181,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 });
       }
     };
+    $scope.Filt = {stageZi: 15}
     $scope.addTime = function (workId){
         console.log("Другая");
         $location.WorkId = workId;
