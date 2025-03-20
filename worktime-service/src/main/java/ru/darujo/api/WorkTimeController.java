@@ -57,22 +57,27 @@ public class WorkTimeController {
     }
 
     @GetMapping("")
-    public Iterable<WorkTimeDto> findWorkTime(@RequestParam(required = false, name = "dateLt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLtStr,
-                                          @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
-                                          @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
-                                          @RequestParam(required = false, name = "dateGe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGeStr,
-                                          @RequestParam(required = false) Long taskId,
-                                          @RequestParam(required = false) String taskDevbo,
-                                          @RequestParam(required = false) String taskBts,
-                                          @RequestParam(required = false) String nikName,
-                                          @RequestParam(defaultValue = "1") Integer page,
-                                          @RequestParam(defaultValue = "10") Integer size) {
+    public Iterable<WorkTimeDto> findWorkTime(@RequestHeader String username,
+                                              @RequestParam(required = false, name = "dateLt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLtStr,
+                                              @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
+                                              @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
+                                              @RequestParam(required = false, name = "dateGe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGeStr,
+                                              @RequestParam(required = false) Long taskId,
+                                              @RequestParam(required = false) String taskDevbo,
+                                              @RequestParam(required = false) String taskBts,
+                                              @RequestParam(required = false) String nikName,
+                                              @RequestParam(defaultValue = "false") boolean currentUser,
+                                              @RequestParam(defaultValue = "1") Integer page,
+                                              @RequestParam(defaultValue = "10") Integer size) {
         Date dateLt = stringToDate(dateLtStr, "dateLt = ");
         Date dateLe = stringToDate(dateLeStr, "dateLe = ", false);
         Date dateGt = stringToDate(dateGtStr, "dateGt = ", false);
         Date dateGe = stringToDate(dateGeStr, "dateGe = ");
+        if (nikName == null && currentUser){
+            nikName = username;
+        }
         workTimeService.clearCash();
-        if((taskBts== null && taskDevbo == null) || taskId != null) {
+        if ((taskBts == null && taskDevbo == null) || taskId != null) {
             return ((Page<WorkTime>) workTimeService.findWorkTime(taskId,
                     nikName,
                     dateLt,

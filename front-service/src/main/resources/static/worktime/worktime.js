@@ -60,7 +60,15 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
     $scope.setFormWorkTime = function () {
         if (typeof Filt != "undefined") {
             if (Filt.taskId != null) {
-                document.getElementById("TaskId").value = Filt.taskId;
+                $scope.Filt = {size: $scope.Filt ? $scope.Filt.size : null,
+                    dateLe: $scope.Filt ? $scope.Filt.dateLe : null,
+                    dateGe: $scope.Filt ? $scope.Filt.dateGe : null,
+                    taskId: Filt ? Filt.taskId : null,
+                    taskDevbo: $scope.Filt ? $scope.Filt.taskDevbo : null,
+                    taskBts: $scope.Filt ? $scope.Filt.taskBts : null,
+                    nikName: $scope.Filt ? $scope.Filt.nikName : null,
+                    currentUser: $scope.Filt ? $scope.Filt.currentUser : null}
+                // document.getElementById("TaskId").value = Filt.taskId;
             }
             if (Filt.dateLe != null) {
                 console.log("Filt.dateLe");
@@ -84,7 +92,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
         console.log("запрос данных7");
         if (typeof  $scope.Filt === "undefined")
         {
-            $scope.Filt ={size:10};
+            $scope.Filt ={size:10, currentUser: true};
             Filt = $scope.Filt;
         }
         console.log(Filt);
@@ -99,7 +107,8 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
                 taskId: Filt ? Filt.taskId : null,
                 taskDevbo: Filt ? Filt.taskDevbo : null,
                 taskBts: Filt ? Filt.taskBts : null,
-                nikName: Filt ? Filt.nikName : null
+                nikName: Filt ? Filt.nikName : null,
+                currentUser: Filt ? Filt.currentUser : null
 
             }
 
@@ -272,8 +281,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
                 codeBTS: FiltTask ? FiltTask.bts : null,
                 codeDEVBO: FiltTask ? FiltTask.devbo : null,
                 description: FiltTask ? FiltTask.desc : null,
-                ziName: FiltTask ? FiltTask.ziName : null
-
+                ziName: FiltTask ? FiltTask.ziName : null,
             }
         }).then(function (response) {
             console.log("sssssss");

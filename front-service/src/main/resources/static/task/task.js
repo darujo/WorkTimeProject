@@ -46,7 +46,17 @@ angular.module('workTimeService').controller('taskController', function ($scope,
         console.log(Filt);
         if(typeof Filt != "undefined") {
             if (Filt.workId != null) {
-                document.getElementById("WorkIdFilt").value = Filt.workId;
+                $scope.Filt  =
+                    {
+                        size: $scope.Filt ? $scope.Filt.size : null,
+                        workId: Filt.workId ,
+                        codeBTS: $scope.Filt ? $scope.Filt.bts : null,
+                        codeDEVBO: $scope.Filt ? $scope.Filt.devbo : null,
+                        description: $scope.Filt ? $scope.Filt.desc : null,
+                        ziName: $scope.Filt ? $scope.Filt.ziName : null
+
+                    }
+                    // Filt.workId;
             }
         }
         console.log(document.getElementById("WorkIdEdit").value);

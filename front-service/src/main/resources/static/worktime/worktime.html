@@ -1,6 +1,6 @@
 <div id="WorkTimeList" class="headtextelem">
     <div class="filter containerfilt">
-        <details class="filterblock">
+        <details class="detailsblock">
             <summary class="p-head">Фильтр</summary>
 
             <form novalidate ng-submit="filterWorkTime()" ; class="filter">
@@ -28,8 +28,11 @@
                         <div class="horiz">
                             <p class="p-head">Логин</p>
                             <br>
-                            <input class="vvod80" type="text" id="TaskNikName"
+                            <input class="vvod40" type="text" id="TaskNikName"
                                    ng-model="Filt.nikName"/>
+                            <p class="p-head">Мои работы</p> <input class="vvod20" type="checkbox"
+                                                                             id="CurrentUser"
+                                                                             ng-model="Filt.currentUser"/>
                         </div>
                         <div class="horiz">
                             <input class="vvod40" type="date" id="DateGe" ng-model="Filt.dateGe"/>
@@ -114,7 +117,7 @@
         </div>
     </div>
     <div id="FindTask">
-        <details class="filterblock">
+        <details class="detailsblock">
             <summary class="p-head">Фильтр</summary>
 
             <div class="filter">

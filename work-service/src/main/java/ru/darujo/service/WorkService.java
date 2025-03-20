@@ -18,6 +18,7 @@ import ru.darujo.repository.WorkLittleRepository;
 import ru.darujo.repository.WorkRepository;
 import ru.darujo.repository.specifications.WorkSpecifications;
 
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -76,14 +77,13 @@ public class WorkService {
                                 Long codeSap,
                                 String codeZi,
                                 String task
-                                ) {
+    ) {
         Specification<Work> specification = Specification.where(null);
 
         if (name != null && !name.equals("")) {
             specification = specification.and(WorkSpecifications.workNameLike(name));
         }
-        if (stageZiLe != null && stageZiLe.equals(stageZiGe))
-        {
+        if (stageZiLe != null && stageZiLe.equals(stageZiGe)) {
             specification = specification.and(WorkSpecifications.stageZiEq(stageZiLe));
 
         } else {
@@ -147,58 +147,70 @@ public class WorkService {
 
         List<WorkRepDto> workRepDtos = new ArrayList<>();
         workRepository.findAll(specification).forEach(work ->
-                workRepDtos.add(
-                        new WorkRepDto(
-                                work.getId(),
-                                work.getCodeZI(),
-                                work.getName(),
-                                work.getStartTaskPlan(),
-                                work.getStartTaskFact(),
-                                work.getAnaliseEndPlan(),
-                                work.getAnaliseEndFact(),
-                                work.getLaborDevelop(),
-                                work.getDevelopEndPlan(),
-                                work.getDevelopEndFact(),
-                                work.getDebugEndPlan(),
-                                work.getDebugEndFact(),
-                                work.getLaborDebug(),
-                                work.getRelease(),
-                                work.getIssuingReleasePlan(),
-                                work.getIssuingReleaseFact(),
-                                work.getReleaseEndPlan(),
-                                work.getReleaseEndFact(),
-                                work.getLaborRelease(),
-                                work.getOpeEndPlan(),
-                                work.getOpeEndFact(),
-                                work.getLaborOPE(),
-                                taskServiceIntegration.getTimeWork(work.getId(),
-                                        null,
-                                        null,
-                                        work.getAnaliseEndFact()),
-                                taskServiceIntegration.getTimeWork(
-                                        work.getId(),
-                                        null,
-                                        work.getAnaliseEndFact(),
-                                        work.getDevelopEndFact()),
-                                taskServiceIntegration.getTimeWork(work.getId(),
-                                        null,
-                                        work.getDevelopEndFact(),
-                                        work.getDebugEndFact()),
-                                taskServiceIntegration.getTimeWork(work.getId(),
-                                        null,
-                                        work.getDebugEndFact(),
-                                        work.getReleaseEndFact()),
-                                taskServiceIntegration.getTimeWork(work.getId(),
-                                        null,
-                                        work.getReleaseEndFact(),
-                                        work.getOpeEndFact()),
-                                taskServiceIntegration.getTimeWork(work.getId(),
-                                        null,
-                                        work.getOpeEndFact(),
-                                        null)
+                {
+                    Timestamp timestampDevolop;
+                    if (work.getAnaliseEndFact() == null
+                            && work.getDevelopEndFact() == null
+                            && work.getDebugEndFact() == null
+                            && work.getReleaseEndFact() == null
+                            && work.getOpeEndFact() == null) {
+                        timestampDevolop = new Timestamp(new Date().getTime());
+                    } else {
+                        timestampDevolop = work.getDevelopEndFact();
+                    }
+                    workRepDtos.add(
+                            new WorkRepDto(
+                                    work.getId(),
+                                    work.getCodeZI(),
+                                    work.getName(),
+                                    work.getStartTaskPlan(),
+                                    work.getStartTaskFact(),
+                                    work.getAnaliseEndPlan(),
+                                    work.getAnaliseEndFact(),
+                                    work.getLaborDevelop(),
+                                    work.getDevelopEndPlan(),
+                                    work.getDevelopEndFact(),
+                                    work.getDebugEndPlan(),
+                                    work.getDebugEndFact(),
+                                    work.getLaborDebug(),
+                                    work.getRelease(),
+                                    work.getIssuingReleasePlan(),
+                                    work.getIssuingReleaseFact(),
+                                    work.getReleaseEndPlan(),
+                                    work.getReleaseEndFact(),
+                                    work.getLaborRelease(),
+                                    work.getOpeEndPlan(),
+                                    work.getOpeEndFact(),
+                                    work.getLaborOPE(),
+                                    taskServiceIntegration.getTimeWork(work.getId(),
+                                            null,
+                                            null,
+                                            work.getAnaliseEndFact()),
+                                    taskServiceIntegration.getTimeWork(
+                                            work.getId(),
+                                            null,
+                                            work.getAnaliseEndFact(),
+                                            timestampDevolop),
+                                    taskServiceIntegration.getTimeWork(work.getId(),
+                                            null,
+                                            timestampDevolop,
+                                            work.getDebugEndFact()),
+                                    taskServiceIntegration.getTimeWork(work.getId(),
+                                            null,
+                                            work.getDebugEndFact(),
+                                            work.getReleaseEndFact()),
+                                    taskServiceIntegration.getTimeWork(work.getId(),
+                                            null,
+                                            work.getReleaseEndFact(),
+                                            work.getOpeEndFact()),
+                                    taskServiceIntegration.getTimeWork(work.getId(),
+                                            null,
+                                            work.getOpeEndFact(),
+                                            null)
 
-                        )
-                )
+                            )
+                    );
+                }
         );
         return workRepDtos;
     }
@@ -235,6 +247,16 @@ public class WorkService {
                             } catch (ResourceNotFoundException ex) {
                                 userDto = new UserDto(-1L, "", "логином", "Не найден пользователь с", user);
                             }
+                            Timestamp timestampDevolop;
+                            if (work.getAnaliseEndFact() == null
+                                    && work.getDevelopEndFact() == null
+                                    && work.getDebugEndFact() == null
+                                    && work.getReleaseEndFact() == null
+                                    && work.getOpeEndFact() == null) {
+                                timestampDevolop = new Timestamp(new Date().getTime());
+                            } else {
+                                timestampDevolop = work.getDevelopEndFact();
+                            }
                             workFactDtos.add(
                                     new WorkFactDto(
                                             num.incrementAndGet(),
@@ -253,10 +275,10 @@ public class WorkService {
                                                     work.getId(),
                                                     user,
                                                     work.getAnaliseEndFact(),
-                                                    work.getDevelopEndFact()),
+                                                    timestampDevolop),
                                             taskServiceIntegration.getTimeWork(work.getId(),
                                                     user,
-                                                    work.getDevelopEndFact(),
+                                                    timestampDevolop,
                                                     work.getDebugEndFact()),
                                             taskServiceIntegration.getTimeWork(work.getId(),
                                                     user,

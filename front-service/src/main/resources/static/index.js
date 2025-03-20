@@ -57,6 +57,7 @@
                 document.getElementById("DetailPrim").open = true;
             }
         });
+        console.log($localStorage.authUser)
         if ($localStorage.authUser) {
             $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.authUser.token;
             try {
@@ -68,10 +69,12 @@
                     delete $localStorage.authUser;
                     $http.defaults.headers.common.Authorization = '';
                 }
+
             } catch (e) {
 
             }
         }
+
     }
 
 })();
@@ -85,7 +88,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                 if (response.data.token) {
                     $http.defaults.headers.common.Authorization = 'Bearer ' + response.data.token;
                     $localStorage.authUser = {username: $scope.user.username, token: response.data.token};
-
+                    $scope.getUser();
                     $scope.user = {
                         username: null,
                         password: null
@@ -99,6 +102,22 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                 alert("Не удалось авторизоваться")
             });
     };
+    $scope.getUser = function () {
+        console.log($localStorage.authUser);
+        if (typeof $localStorage.authUser !== "undefined") {
+            var nikName = $localStorage.authUser.username;
+            console.log("getUser")
+            document.getElementById("UserName").value = nikName;
+
+            $http.get(constPatchAuth + '/user?nikName=' + nikName)
+                .then(function successCallback(response) {
+                    console.log(response)
+                    document.getElementById("UserName").value = response.data.lastName + " " + response.data.firstName + " " + response.data.patronymic;
+                }, function errorCallback(response) {
+                    console.log(response);
+                });
+        }
+    }
     $scope.addTime = function () {
         console.log("index addTime")
         $localStorage.WorkTime = {
@@ -144,6 +163,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         }
     };
 
+
     $location.checkAuthorized = function (response) {
         console.log("response.status");
         console.log(response.status);
@@ -174,4 +194,5 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             }
         }
     }
+    $scope.getUser();
 })

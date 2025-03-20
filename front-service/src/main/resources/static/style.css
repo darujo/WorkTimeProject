@@ -15,6 +15,10 @@
 
 }
 
+.nav-item {
+    list-style-type: none; /* Убираем маркеры */
+}
+
 body {
     font-family: sans-serif;
 }
@@ -69,6 +73,18 @@ body {
     margin-bottom: 10px;
 }
 
+.userview {
+    padding: 10px 10px;
+    border: 1px solid #356EAD;
+    box-sizing: border-box;
+    border-radius: 10px;
+    /*opacity: 0.4;*/
+    /*width: 40%;*/
+    margin-top: 10px;
+    margin-bottom: 10px;
+    height: 15px
+}
+
 .vvod30 {
     padding: 10px 10px;
     border: 1px solid #356EAD;
@@ -102,10 +118,12 @@ body {
     margin-bottom: 10px;
     margin-top: 10px;
 }
-.detailsblock{
+
+.detailsblock {
     border-radius: 10px;
     border: 1px solid #356EAD;;
     margin-bottom: 10px;
+    padding: 5px;
 }
 
 .vvod {
@@ -155,6 +173,7 @@ TD {
     border: 1px solid #333; /* Граница вокруг ячеек */
     padding: 5px; /* Поля в ячейках */
     height: 1px; /*  нужно чтобы элемент в нутри растянулся*/
+    text-align: center;
 }
 
 .tablehead1 {

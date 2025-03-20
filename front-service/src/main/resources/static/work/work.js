@@ -21,7 +21,8 @@ angular.module('workTimeService').controller('workController', function ($scope,
     $scope.findPage = function (diffPage) {
         var page = parseInt(document.getElementById("Page").value) + diffPage;
         document.getElementById("Page").value = page;
-        console.log("отправляем запрос /works")
+        console.log("отправляем запрос /works");
+        console.log($scope.Filt);
         if (typeof  $scope.Filt === "undefined")
         {
             $scope.Filt ={size:10};

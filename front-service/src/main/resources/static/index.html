@@ -16,7 +16,7 @@
     <nav>
         <div class="" id="navbarNav">
             <ul class="">
-                <details open id="DetailPrim" ng-show="isUserLoggedIn()">
+                <details class="detailsblock" open id="DetailPrim" ng-show="isUserLoggedIn()">
                     <summary class="p-head">Меню</summary>
                     <li class="nav-item">
                         <a class="nav-link" href="#!/work">Список ЗИ</a>
@@ -46,7 +46,8 @@
                             Логин: <input id="navLoginField" class="vvod" ng-model="user.username" type="text"
                                           aria-describedby="inputGroup-sizing-sm" style="margin-left: 10px;">
 
-                            Пароль: <input id="navPasswordField" class="vvod" ng-model="user.password" type="password"
+                            Пароль: <input id="navPasswordField" class="vvod" ng-model="user.password"
+                                           type="password"
                                            aria-describedby="inputGroup-sizing-sm" style="margin-left: 10px;">
 
                             <button id="navLoginSubmit" class="headbutton"
@@ -68,6 +69,9 @@
     <div class="nav-item" ng-show="isUserLoggedIn()" style="padding: 4px;">
         <button class="headbutton" ng-click="tryToLogout()">Выйти</button>
     </div>
+    <input id="UserName" class="userview" ng-show="isUserLoggedIn()"
+           type="readonly"
+    >
 </div>
 <div>
     <ng-view></ng-view>

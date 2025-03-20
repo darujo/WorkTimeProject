@@ -75,6 +75,23 @@ public class WorkTimeService {
 
     public Iterable<WorkTime> findWorkTime(Long taskId, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer page, Integer size) {
         Specification<WorkTime> specification = Specification.where(null);
+        Sort sort = null;
+        if (taskId != null) {
+            specification = specification.and(WorkTimeSpecifications.taskIdEQ(taskId));
+//            if (sort == null)
+                sort = Sort.by("taskId");
+//            else{
+//              sort.and(Sort.by("taskId"));
+//            }
+        }
+        if (nikName != null) {
+            specification = specification.and(WorkTimeSpecifications.userNikNameEQ(nikName));
+            if (sort == null)
+                sort = Sort.by("nikName");
+            else{
+                sort.and(Sort.by("nikName"));
+            }
+        }
         if (dateLt != null) {
             specification = specification.and(WorkTimeSpecifications.dateLt(dateLt));
         }
@@ -87,18 +104,19 @@ public class WorkTimeService {
         if (dateGT != null) {
             specification = specification.and(WorkTimeSpecifications.dateGT(dateGT));
         }
-        if (nikName != null) {
-            specification = specification.and(WorkTimeSpecifications.userNikNameEQ(nikName));
-        }
-        if (taskId != null) {
-            specification = specification.and(WorkTimeSpecifications.taskIdEQ(taskId));
-        }
+
+
         if (page == null) {
             return workTimeRepository.findAll(specification);
 
         } else {
+            if (sort == null)
+                sort = Sort.by(Sort.Direction.DESC,"workDate");
+            else{
+                sort = sort.and(Sort.by(Sort.Direction.DESC,"workDate"));
+            }
 
-            return workTimeRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.by("workDate").and(Sort.by("nikName"))));
+            return workTimeRepository.findAll(specification, PageRequest.of(page - 1, size, sort));
         }
     }
 
