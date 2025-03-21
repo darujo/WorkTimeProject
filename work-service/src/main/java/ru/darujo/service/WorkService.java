@@ -138,78 +138,90 @@ public class WorkService {
     }
 
 
-    public List<WorkRepDto> getWorkRep(String name) {
+    public List<WorkRepDto> getWorkRep(String name, Boolean availWork, Integer stageZiGe, Integer stageZiLe) {
         Specification<Work> specification = Specification.where(null);
 
         if (name != null) {
             specification = specification.and(WorkSpecifications.workNameLike(name));
         }
-
+        if (stageZiGe != null) {
+            specification = specification.and(WorkSpecifications.stageZiGe(stageZiGe));
+        }
+        if (stageZiLe != null) {
+            specification = specification.and(WorkSpecifications.stageZiLe(stageZiLe));
+        }
         List<WorkRepDto> workRepDtos = new ArrayList<>();
         workRepository.findAll(specification).forEach(work ->
                 {
-                    Timestamp timestampDevolop;
-                    if (work.getAnaliseEndFact() == null
-                            && work.getDevelopEndFact() == null
-                            && work.getDebugEndFact() == null
-                            && work.getReleaseEndFact() == null
-                            && work.getOpeEndFact() == null) {
-                        timestampDevolop = new Timestamp(new Date().getTime());
-                    } else {
-                        timestampDevolop = work.getDevelopEndFact();
+                    boolean availWorkTime = false;
+                    if (availWork != null) {
+                        availWorkTime = taskServiceIntegration.availWorkTime(work.getId());
                     }
-                    workRepDtos.add(
-                            new WorkRepDto(
-                                    work.getId(),
-                                    work.getCodeZI(),
-                                    work.getName(),
-                                    work.getStartTaskPlan(),
-                                    work.getStartTaskFact(),
-                                    work.getAnaliseEndPlan(),
-                                    work.getAnaliseEndFact(),
-                                    work.getLaborDevelop(),
-                                    work.getDevelopEndPlan(),
-                                    work.getDevelopEndFact(),
-                                    work.getDebugEndPlan(),
-                                    work.getDebugEndFact(),
-                                    work.getLaborDebug(),
-                                    work.getRelease(),
-                                    work.getIssuingReleasePlan(),
-                                    work.getIssuingReleaseFact(),
-                                    work.getReleaseEndPlan(),
-                                    work.getReleaseEndFact(),
-                                    work.getLaborRelease(),
-                                    work.getOpeEndPlan(),
-                                    work.getOpeEndFact(),
-                                    work.getLaborOPE(),
-                                    taskServiceIntegration.getTimeWork(work.getId(),
-                                            null,
-                                            null,
-                                            work.getAnaliseEndFact()),
-                                    taskServiceIntegration.getTimeWork(
-                                            work.getId(),
-                                            null,
-                                            work.getAnaliseEndFact(),
-                                            timestampDevolop),
-                                    taskServiceIntegration.getTimeWork(work.getId(),
-                                            null,
-                                            timestampDevolop,
-                                            work.getDebugEndFact()),
-                                    taskServiceIntegration.getTimeWork(work.getId(),
-                                            null,
-                                            work.getDebugEndFact(),
-                                            work.getReleaseEndFact()),
-                                    taskServiceIntegration.getTimeWork(work.getId(),
-                                            null,
-                                            work.getReleaseEndFact(),
-                                            work.getOpeEndFact()),
-                                    taskServiceIntegration.getTimeWork(work.getId(),
-                                            null,
-                                            work.getOpeEndFact(),
-                                            null)
+                    if (availWork == null ||
+                            (availWork && availWorkTime) ||
+                            (!availWork && !availWorkTime))
+                    {
+                        Timestamp timestampDevolop;
+                        if (work.getAnaliseEndFact() == null
+                                && work.getDevelopEndFact() == null
+                                && work.getDebugEndFact() == null
+                                && work.getReleaseEndFact() == null
+                                && work.getOpeEndFact() == null) {
+                            timestampDevolop = new Timestamp(new Date().getTime());
+                        } else {
+                            timestampDevolop = work.getDevelopEndFact();
+                        }
 
-                            )
-                    );
+                        workRepDtos.add(
+                                new WorkRepDto(
+                                        work.getId(),
+                                        work.getCodeZI(),
+                                        work.getName(),
+                                        work.getStartTaskPlan(),
+                                        work.getStartTaskFact(),
+                                        work.getAnaliseEndPlan(),
+                                        work.getAnaliseEndFact(),
+                                        work.getLaborDevelop(),
+                                        work.getDevelopEndPlan(),
+                                        work.getDevelopEndFact(),
+                                        work.getDebugEndPlan(),
+                                        work.getDebugEndFact(),
+                                        work.getLaborDebug(),
+                                        work.getRelease(),
+                                        work.getIssuingReleasePlan(),
+                                        work.getIssuingReleaseFact(),
+                                        work.getReleaseEndPlan(),
+                                        work.getReleaseEndFact(),
+                                        work.getLaborRelease(),
+                                        work.getOpeEndPlan(),
+                                        work.getOpeEndFact(),
+                                        work.getLaborOPE(),
+                                        null,
+                                        taskServiceIntegration.getTimeWork(
+                                                work.getId(),
+                                                null,
+                                                work.getAnaliseEndFact(),
+                                                timestampDevolop),
+                                        taskServiceIntegration.getTimeWork(work.getId(),
+                                                null,
+                                                timestampDevolop,
+                                                work.getDebugEndFact()),
+                                        taskServiceIntegration.getTimeWork(work.getId(),
+                                                null,
+                                                work.getDebugEndFact(),
+                                                work.getReleaseEndFact()),
+                                        taskServiceIntegration.getTimeWork(work.getId(),
+                                                null,
+                                                work.getReleaseEndFact(),
+                                                work.getOpeEndFact()),
+                                        taskServiceIntegration.getTimeWork(work.getId(),
+                                                null,
+                                                work.getOpeEndFact(),
+                                                null)
+
+                                )
+                        );
+                    }
                 }
         );
         return workRepDtos;

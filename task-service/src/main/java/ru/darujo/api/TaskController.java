@@ -47,7 +47,24 @@ public class TaskController {
     public TaskDto TaskEdit(@PathVariable long id) {
         return TaskConvertor.getTaskDto(taskService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Отмеченая работа не найден")));
     }
+    @GetMapping("/right/{right}")
+    public boolean checkRight (@PathVariable String right,
+                               @RequestHeader(defaultValue = "false", name = "TASK_EDIT") boolean rightEdit,
+                               @RequestHeader(defaultValue = "false", name = "TASK_CREATE") boolean rightCreate){
+        right = right.toLowerCase();
+        if( right.equals("edit")){
+            if(!rightEdit) {
+                throw new ResourceNotFoundException("У вас нет права на редактирование TASK_EDIT");
+            }
+        }
+        else if( right.equals("create")){
+            if(!rightCreate) {
+                throw new ResourceNotFoundException("У вас нет права на редактирование TASK_CREATE");
+            }
+        }
+        return true;
 
+    }
     @PostMapping("")
     public TaskDto TaskSave(@RequestHeader(required = false) String username,
                             @RequestBody TaskDto taskDto,
@@ -73,13 +90,14 @@ public class TaskController {
                                        @RequestParam(required = false) String description,
                                        @RequestParam(required = false) Long workId,
                                        @RequestParam(required = false) String ziName,
+                                       @RequestParam(required = false) Integer type,
                                        @RequestParam(defaultValue = "1") Integer page,
                                        @RequestParam(defaultValue = "10") Integer size) {
         if (workId == null && ziName != null) {
-            return findTasks(nikName, codeBTS, codeDEVBO, description, ziName,workId);
+            return findTasks(nikName, codeBTS, codeDEVBO, description, ziName,workId, type);
         }
 
-        return findTasks(nikName, codeBTS, codeDEVBO, description, workId, page, size);
+        return findTasks(nikName, codeBTS, codeDEVBO, description, workId, type, page, size);
     }
 
     @GetMapping("/rep/fact/time")
@@ -109,12 +127,17 @@ public class TaskController {
         return taskService.getFactUsers(
                 workId);
     }
-
+    @GetMapping("/rep/fact/avail/{workId}")
+    public Boolean getFactUsers(@PathVariable long workId
+    ) {
+        return taskService.getAvailTime(workId);
+    }
     public Page<TaskDto> findTasks(String userName,
                                    String codeBTS,
                                    String codeDEVBO,
                                    String description,
                                    Long workId,
+                                   Integer type,
                                    Integer page,
                                    Integer size) {
         clearCash();
@@ -123,6 +146,7 @@ public class TaskController {
                 codeDEVBO,
                 description,
                 workId,
+                type,
                 page,
                 size)).map(this::taskAddValue);
     }
@@ -139,6 +163,7 @@ public class TaskController {
                 codeDEVBO,
                 description,
                 workId,
+                null,
                 null,
                 null).forEach(task ->  listId.add(task.getId()));
         return listId;
@@ -192,7 +217,8 @@ public class TaskController {
                                    String codeDEVBO,
                                    String description,
                                    String ziName,
-                                   Long workId) {
+                                   Long workId,
+                                   Integer type) {
         clearCash();
         List<TaskDto> taskDtoList = new ArrayList<>();
         taskService.findWorkTime(userName,
@@ -200,6 +226,7 @@ public class TaskController {
                 codeDEVBO,
                 description,
                 workId,
+                type,
                 null,
                 null).forEach(task ->
         {

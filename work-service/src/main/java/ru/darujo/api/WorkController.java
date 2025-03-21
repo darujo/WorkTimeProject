@@ -2,6 +2,8 @@ package ru.darujo.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.WorkConvertor;
 import ru.darujo.dto.*;
@@ -23,6 +25,7 @@ public class WorkController {
     }
 
     Random random = new Random();
+
     @GetMapping("/conv")
     public WorkDto workConv() {
         workService.findWorks(1, 10000, null, null, null, null, null, null, null).map(work -> workService.saveWork(WorkConvertor.getWork(WorkConvertor.getWorkEditDto(work))));
@@ -30,27 +33,26 @@ public class WorkController {
     }
 
     @GetMapping("/find")
-    public Iterable<Work> workList( @RequestParam(required = false) String name,
-                             @RequestParam(required = false) String task
-                             ) {
+    public Iterable<Work> workList(@RequestParam(required = false) String name,
+                                   @RequestParam(required = false) String task
+    ) {
         long cur_tiem = System.nanoTime();
 
-        Iterable<Work> works  = workService.findWorks(1, 100000000, name, null, null, null, null, null, task);
-        float time_last = (System.nanoTime() - cur_tiem  ) * 0.000000001f;
+        Iterable<Work> works = workService.findWorks(1, 100000000, name, null, null, null, null, null, task);
+        float time_last = (System.nanoTime() - cur_tiem) * 0.000000001f;
         System.out.println("Время выполнения " + time_last);
         return works;
 
     }
 
-    public static String generateString(Random rng, String characters, int length)
-    {
+    public static String generateString(Random rng, String characters, int length) {
         char[] text = new char[length];
-        for (int i = 0; i < length; i++)
-        {
+        for (int i = 0; i < length; i++) {
             text[i] = characters.charAt(rng.nextInt(characters.length()));
         }
         return new String(text);
     }
+
     @GetMapping("/convAddWork")
     public WorkDto workAddConv() {
 
@@ -65,7 +67,7 @@ public class WorkController {
             Work work = new Work(null,
                     null,
                     null,
-                    generateString(random, str,15),
+                    generateString(random, str, 15),
                     null,
                     null,
                     null,
@@ -76,7 +78,7 @@ public class WorkController {
                     null,
                     null,
                     null,
-                    generateString(random, str,15),
+                    generateString(random, str, 15),
                     null,
                     null,
                     null,
@@ -98,6 +100,24 @@ public class WorkController {
     @GetMapping("/{id}")
     public WorkEditDto WorkEdit(@PathVariable long id) {
         return WorkConvertor.getWorkEditDto(workService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Задача не найден")));
+    }
+
+    @GetMapping("/right/{right}")
+    public boolean checkRight(@PathVariable String right,
+                              @RequestHeader(defaultValue = "false", name = "ZI_EDIT") boolean rightEdit,
+                              @RequestHeader(defaultValue = "false", name = "ZI_CREATE") boolean rightCreate) {
+        right = right.toLowerCase();
+        if (right.equals("edit")) {
+            if (!rightEdit) {
+                throw new ResourceNotFoundException("У вас нет права на редактирование ZI_EDIT");
+            }
+        } else if (right.equals("create")) {
+            if (!rightCreate) {
+                throw new ResourceNotFoundException("У вас нет права на редактирование ZI_CREATE");
+            }
+        }
+        return true;
+
     }
 
     @PostMapping("")
@@ -141,8 +161,20 @@ public class WorkController {
     }
 
     @GetMapping("/rep")
-    public List<WorkRepDto> getTimeWork(@RequestParam(required = false) String ziName) {
-        return workService.getWorkRep(ziName);
+    public List<WorkRepDto> getTimeWork(@RequestParam(required = false) String ziName,
+                                        @RequestParam(required = false) Boolean availWork,
+                                        @RequestParam(defaultValue = "15") Integer stageZi) {
+        Integer stageZiLe = null;
+        Integer stageZiGe = null;
+        if (stageZi != null) {
+            if (stageZi < 10) {
+                stageZiGe = stageZi;
+                stageZiLe = stageZi;
+            } else {
+                stageZiLe = stageZi - 10;
+            }
+        }
+        return workService.getWorkRep(ziName, availWork, stageZiGe, stageZiLe);
     }
 
     @GetMapping("/rep/factwork")

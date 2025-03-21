@@ -8,6 +8,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
         document.getElementById("FormEdit").style.display = "none";
     };
     var showFormEdit = function () {
+        checkRight("Edit",false);
         document.getElementById("TaskList").style.display = "none";
         document.getElementById("FormEdit").style.display = "block";
     };
@@ -20,17 +21,42 @@ angular.module('workTimeService').controller('taskController', function ($scope,
         document.getElementById("FindWork").style.display = "block";
         $scope.filterWork();
     };
-
+    var checkRight = function (right, message) {
+        document.getElementById("ButtonSaveDown").style.display = "none";
+        document.getElementById("ButtonSaveUp").style.display = "none";
+        $scope.Resp = {message: null}
+        $http({
+            url: constPatchTask + "/task/right/" + right,
+            method: "get"
+        }).then(function (response) {
+                console.log(response)
+                document.getElementById("ButtonSaveDown").style.display = "inline-block";
+                document.getElementById("ButtonSaveUp").style.display = "inline-block";
+                if (right === "create") {
+                    $scope.createTaskRun();
+                }
+            }, function errorCallback(response) {
+                console.log("Check");
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                    if (message) {
+                        alert(response.data.message);
+                    } else {
+                        $scope.Resp = {message: response.data.message};
+                    }
+                }
+            }
+        )
+    }
     var Filt;
     var TaskIdEdit = null;
     $scope.loadTask = function () {
         console.log("loadTask");
         console.log("$location.WorkId " + $location.WorkId);
-        if(typeof $location.WorkId != "undefined") {
+        if (typeof $location.WorkId != "undefined") {
             console.log("load5")
-            if (typeof Filt =="undefined")
-            {
-                Filt ={workId: null};
+            if (typeof Filt == "undefined") {
+                Filt = {workId: null};
             }
             Filt.workId = $location.WorkId;
             $scope.setFormTask();
@@ -44,19 +70,20 @@ angular.module('workTimeService').controller('taskController', function ($scope,
     $scope.setFormTask = function () {
         console.log("setFormTask");
         console.log(Filt);
-        if(typeof Filt != "undefined") {
+        if (typeof Filt != "undefined") {
             if (Filt.workId != null) {
-                $scope.Filt  =
+                $scope.Filt =
                     {
                         size: $scope.Filt ? $scope.Filt.size : null,
-                        workId: Filt.workId ,
+                        workId: Filt.workId,
                         codeBTS: $scope.Filt ? $scope.Filt.bts : null,
                         codeDEVBO: $scope.Filt ? $scope.Filt.devbo : null,
                         description: $scope.Filt ? $scope.Filt.desc : null,
-                        ziName: $scope.Filt ? $scope.Filt.ziName : null
+                        ziName: $scope.Filt ? $scope.Filt.ziName : null,
+                        type: $scope.Filt ? $scope.Filt.type : null
 
                     }
-                    // Filt.workId;
+                // Filt.workId;
             }
         }
         console.log(document.getElementById("WorkIdEdit").value);
@@ -67,9 +94,8 @@ angular.module('workTimeService').controller('taskController', function ($scope,
         var page = parseInt(document.getElementById("Page").value) + diffPage;
         document.getElementById("Page").value = page;
         console.log("запрос данных7");
-        if (typeof  $scope.Filt === "undefined")
-        {
-            $scope.Filt ={size:10};
+        if (typeof $scope.Filt === "undefined") {
+            $scope.Filt = {size: 10};
             Filt = $scope.Filt;
         }
         console.log(Filt);
@@ -83,28 +109,27 @@ angular.module('workTimeService').controller('taskController', function ($scope,
                 codeBTS: Filt ? Filt.bts : null,
                 codeDEVBO: Filt ? Filt.devbo : null,
                 description: Filt ? Filt.desc : null,
-                ziName: Filt ? Filt.ziName : null
+                ziName: Filt ? Filt.ziName : null,
+                type: Filt ? Filt.type : null
 
             }
         }).then(function (response) {
-            console.log("sssssss");
-            $scope.setFormTask();
-            console.log("response :" );
-            console.log(response);
-            console.log("response,data :" );
-            console.log(response.data);
-            console.log(response.data.content);
-            if (typeof response.data.content =="undefined")
-            {
-                $scope.TaskList = response.data;
-            }
-            else {
-                $scope.TaskList = response.data.content;
-            }
-            showTask();
+                console.log("sssssss");
+                $scope.setFormTask();
+                console.log("response :");
+                console.log(response);
+                console.log("response,data :");
+                console.log(response.data);
+                console.log(response.data.content);
+                if (typeof response.data.content == "undefined") {
+                    $scope.TaskList = response.data;
+                } else {
+                    $scope.TaskList = response.data.content;
+                }
+                showTask();
             }, function errorCallback(response) {
                 console.log(response)
-                if($location.checkAuthorized(response)){
+                if ($location.checkAuthorized(response)) {
                     //     alert(response.data.message);
                 }
             }
@@ -119,8 +144,11 @@ angular.module('workTimeService').controller('taskController', function ($scope,
     };
 
     $scope.createTask = function () {
+        checkRight("create", true);
+    }
+    $scope.createTaskRun = function () {
         showFindWork();
-        $scope.FiltWork ={size:10};
+        $scope.FiltWork = {size: 10};
         console.log("create");
         TaskIdEdit = null;
         console.log("создаем");
@@ -128,15 +156,15 @@ angular.module('workTimeService').controller('taskController', function ($scope,
         console.log("создаем 1");
         console.log(typeof $scope.Task);
         $scope.Task = {
-            id : null,
-            workId : null,
+            id: null,
+            workId: null,
             codeBTS: null,
-            userName :null,
-            codeDEVBO:null,
+            userName: null,
+            codeDEVBO: null,
             description: null,
             type: 1
         };
-            // $scope
+        // $scope
         console.log($scope.Task);
         console.log("создаем 5");
         $scope.Task.workId = parseInt(document.getElementById("WorkIdFilt").value);
@@ -149,7 +177,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
 
     $scope.editTask = function (taskId) {
         showWorkNum();
-        $scope.FiltWork ={size:10};
+        $scope.FiltWork = {size: 10};
         console.log("edit");
         $http.get(constPatchTask + "/task/" + taskId)
             .then(function (response) {
@@ -162,7 +190,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
                 findNameWork($scope.Task.workId);
             }, function errorCallback(response) {
                 console.log(response)
-                if($location.checkAuthorized(response)){
+                if ($location.checkAuthorized(response)) {
                     //     alert(response.data.message);
                 }
             });
@@ -174,7 +202,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
                 $scope.loadTask();
             }, function errorCallback(response) {
                 console.log(response);
-                if($location.checkAuthorized(response)){
+                if ($location.checkAuthorized(response)) {
                     //     alert(response.data.message);
                 }
             });
@@ -184,12 +212,12 @@ angular.module('workTimeService').controller('taskController', function ($scope,
         console.log("save");
         console.log($scope.Task);
         console.log(TaskIdEdit);
-        if(!sendSave){
+        if (!sendSave) {
             sendSave = true;
             console.log("sendSave");
             console.log(sendSave);
 
-            $http.post(constPatchTask + "/task",$scope.Task)
+            $http.post(constPatchTask + "/task", $scope.Task)
                 .then(function (response) {
                     console.log(response);
                     $scope.loadTask();
@@ -202,22 +230,21 @@ angular.module('workTimeService').controller('taskController', function ($scope,
                     console.log("send false");
                     console.log(sendSave)
                     console.log(response)
-                    if($location.checkAuthorized(response)){
+                    if ($location.checkAuthorized(response)) {
                         alert(response.data.message);
                     }
-            });
-        }
-        else{
+                });
+        } else {
             alert("Подождите запрос на сохранение данных отправлен");
         }
     }
-    $scope.addTime = function (taskId){
+    $scope.addTime = function (taskId) {
         console.log("Другая");
         $location.TaskId = taskId;
         $location.path('/worktime');
     }
     var FiltWork;
-    var findNameWork = function(workId){
+    var findNameWork = function (workId) {
         console.log("findNameWork")
         console.log(typeof workId);
         console.log(typeof workId === "undefined");
@@ -237,10 +264,9 @@ angular.module('workTimeService').controller('taskController', function ($scope,
                 if ($location.checkAuthorized(response)) {
                     console.log("status");
                     console.log(response.status);
-                    if (response.status!== 404) {
+                    if (response.status !== 404) {
                         alert(response.data.message);
-                    } else
-                    {
+                    } else {
                         document.getElementById("WorkName").value = response.data.message;
                         // document.getElementById("WorkName").value = "не удалось получить с сервера задачу с id " + workId;
                     }
@@ -249,10 +275,10 @@ angular.module('workTimeService').controller('taskController', function ($scope,
             });
         }
     }
-    $scope.loadWork = function( diffPage){
+    $scope.loadWork = function (diffPage) {
         console.log("loadWork")
         var page = parseInt(document.getElementById("PageWork").value) + diffPage;
-        if(page < 1) {
+        if (page < 1) {
             page = 1;
         }
         document.getElementById("PageWork").value = page;
@@ -270,15 +296,15 @@ angular.module('workTimeService').controller('taskController', function ($scope,
             }
         }).then(function (response) {
             console.log("sssssss");
-            console.log("response :" );
+            console.log("response :");
             console.log(response);
-            console.log("response,data :" );
+            console.log("response,data :");
             console.log(response.data);
             $scope.WorkList = response.data.content;
 
         }, function errorCallback(response) {
             console.log(response)
-            if($location.checkAuthorized(response)){
+            if ($location.checkAuthorized(response)) {
                 //     alert(response.data.message);
             }
 

@@ -38,6 +38,7 @@
                             <option ng-value="5" value="5">V</option>
                             <option ng-value="15" value="15">В работе</option>
                             <option ng-value="6" value="6">Закрытые</option>
+                            <option ng-value="19" value="19">Все</option>
                         </select>
                         <button type="submit" class="headbutton">Применить</button>
                     </div>
@@ -47,12 +48,12 @@
         <button class="headbutton" ng-click="createWork()">Создать ЗИ</button>
     </div>
     <div class="filter containerfilt">
-        <button class="headbutton" ng-click="loadWork(-1)">PrevPage</button>
+        <button class="headbutton" ng-click="findPage(-1)">PrevPage</button>
         <input class="vvod" type="number" id="Page" value="1"/>
-        <button class="headbutton" ng-click="loadWork(1)">NextPage</button>
+        <button class="headbutton" ng-click="findPage(1)">NextPage</button>
         <p class="p-head">Количество элементов</p>
         <select class="vvod20" name="choice" id="StageZI" ng-model="Filt.size" ng-change="filterWork()">
-            <option ng-value="10" value="10" selected>10</option>
+            <option ng-value="10" value="10">10</option>
             <option ng-value="25" value="25">25</option>
             <option ng-value="50" value="50">50</option>
             <option ng-value="100" value="100">100</option>
@@ -164,7 +165,8 @@
 
 <div id="FormEdit" class="divform containerfilt">
     <form novalidate ng-submit="saveWork()">
-        <button type="submit" class="button">Сохранить</button>
+        <p class="p-form">{{Resp.message}}</p>
+        <button type="submit" class="button" id="ButtonSaveUp">Сохранить</button>
         <button type="reset" ng-click="loadWork()" class="button">Вернуться к списку</button>
         <div class="horiz">
             <p class="p-form"> Код SAP : </p> <input class="vvod40" type="number" inputmode="decimal" id="CodeSap"
@@ -304,7 +306,7 @@
                 <br>
             </div>
         </details>
-        <button type="submit" class="button">Сохранить</button>
+        <button type="submit" class="button" id="ButtonSaveDown">Сохранить</button>
         <button type="reset" ng-click="loadWork()" class="button">Вернуться к списку</button>
     </form>
 

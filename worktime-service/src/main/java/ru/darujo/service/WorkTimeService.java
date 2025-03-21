@@ -283,4 +283,10 @@ public class WorkTimeService {
             userFio.setAuthorFirstName("Не найден пользователь с ником " + userFio.getNikName());
         }
     }
+
+    public Boolean getAvailTime(long taskId) {
+        Specification<WorkTime> specification = Specification.where(null);
+        specification = specification.and(WorkTimeSpecifications.taskIdEQ(taskId));
+        return workTimeRepository.findAll(specification).size() > 0;
+    }
 }

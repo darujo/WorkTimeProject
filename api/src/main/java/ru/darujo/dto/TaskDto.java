@@ -18,6 +18,19 @@ public class TaskDto implements Serializable, UserFio{
     private String description;
     // Тип задачи
     private  Integer type;
+
+    public String getTypeStr() {
+        if(type ==1){
+            return "ЗИ";
+        }else if (type == 2){
+            return "Вендерка";
+        }else if (type== 3){
+            return "Админ";
+        }
+        return "Не известный тип";
+    }
+
+    private  String typeStr;
     // № ЗИ (ZI)
     private Long workId;
 

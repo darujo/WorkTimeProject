@@ -10,17 +10,24 @@
                         <div class="horiz">
                             <p class="p-head">Id ЗИ</p>
                             <br>
-                            <input class="vvod80" type="number" id="WorkIdFilt" step="any" ng-model="Filt.workId"/>
+                            <input class="vvod40" type="number" id="WorkIdFilt" step="any" ng-model="Filt.workId"/>
+                            <p class="p-head">Тип задачи :</p>
+                            <select class="vvod20" name="choice" id="Type" ng-model="Filt.type">
+                                <option ng-value="1" value="1" selected>ЗИ</option>
+                                <option ng-value="2" value="2">Вендерка</option>
+                                <option ng-value="3" value="3">Админ</option>
+                                <option ng-value="" value="">Все</option>
+                            </select>
                         </div>
                         <div class="horiz">
                             <p class="p-head">BTS:</p>
                             <br>
-                            <input class="vvod80" type="text" id="BtsFilt" step="any" ng-model="Filt.bts"/>
-                        </div>
-                        <div class="horiz">
+                            <input class="vvod20" type="text" id="BtsFilt" step="any" ng-model="Filt.bts"/>
+<!--                        </div>-->
+<!--                        <div class="horiz">-->
                             <p class="p-head">DEVBO :</p>
                             <br>
-                            <input class="vvod80" type="text" id="DevboFilt" step="any" ng-model="Filt.devbo"/>
+                            <input class="vvod20" type="text" id="DevboFilt" step="any" ng-model="Filt.devbo"/>
                         </div>
                         <div class="horiz">
                             <p class="p-head">Описание:</p>
@@ -80,7 +87,7 @@
             <td>
                 <button ng-click="addTime(task.id);">{{task.description}}</button>
             </td>
-            <td>{{task.type}}</td>
+            <td>{{task.typeStr}}</td>
             <td>{{task.codeZi}}</td>
             <td>{{task.nameZi}}</td>
             <td>
@@ -98,7 +105,8 @@
 
 <div id="FormEdit" class="divform containerfilt">
     <form novalidate ng-submit="saveTask()">
-        <button type="submit" class="button">Сохранить</button>
+        <p class="p-form">{{Resp.message}}</p>
+        <button type="submit" class="button" id="ButtonSaveUp">Сохранить</button>
         <button type="reset" ng-click="loadTask()" class="button">Вернуться к списку</button>
         <br>
         <br>
@@ -193,7 +201,7 @@
 
 
     </div>
-    <button class="button" ng-click="saveTask()">Сохранить</button>
+    <button class="button" ng-click="saveTask()" id="ButtonSaveDown">Сохранить</button>
     <button type="reset" ng-click="loadTask()" class="button">Вернуться к списку</button>
 
 

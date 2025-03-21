@@ -85,4 +85,19 @@ public class WorkTimeServiceIntegration {
         }
         return sdf.format(date) + "T00:00:00.000Z";
     }
+
+    public Boolean availTime(Long taskId) {
+        try {
+            Boolean b
+            =webClientWorkTime.get().uri("/rep/fact/availTime/" + taskId)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                    .bodyToMono(Boolean.class)
+                    .block();
+            return b;
+        } catch (RuntimeException ex) {
+            return false;
+        }
+    }
 }

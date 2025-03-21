@@ -21,4 +21,7 @@ public class TaskSpecifications {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("nikName"),String.format("%%%s%%",nikName)));
     }
 
+    public static Specification<Task> typeEq(Integer type) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("type"),type);
+    }
 }

@@ -69,9 +69,14 @@
     <div class="nav-item" ng-show="isUserLoggedIn()" style="padding: 4px;">
         <button class="headbutton" ng-click="tryToLogout()">Выйти</button>
     </div>
-    <input id="UserName" class="userview" ng-show="isUserLoggedIn()"
-           type="readonly"
-    >
+    <div class="nav-item" ng-show="isUserLoggedIn()" style="padding: 4px;">
+        <div class="userview">
+            <p class="p-form">{{user.lastName}} {{user.firstName}} {{user.patronymic}}</p>
+        </div>
+        <!--    <input id="UserName" class="userview""-->
+        <!--           type="readonly"-->
+        <!--    >-->
+    </div>
 </div>
 <div>
     <ng-view></ng-view>

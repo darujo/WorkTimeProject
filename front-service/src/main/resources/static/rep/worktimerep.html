@@ -1,18 +1,41 @@
 <div id="WorkTimeList" class="headtextelem">
-    <div class="filter">
-        <form novalidate ng-submit="filterWorkTime()" ; class="filter">
-            <div class="filter">
-                <div class="filterblock">
+    <div class="filter containerfilt">
+        <details class="detailsblock">
+            <summary class="p-head">Фильтр</summary>
+            <form novalidate ng-submit="filterWorkTime()" ; class="filter">
+                <div class="filter">
+                    <div class="filterblock">
 
-                    <div class="horiz">
-                        <p class="p-head">Наименование ЗИ</p>
-                        <br>
-                        <input class="vvod80" type="text" id="ZiName" step="any" ng-model="Filt.ziName"/>
+                        <div class="horiz">
+                            <p class="p-head">Наименование ЗИ</p>
+                            <br>
+                            <input class="vvod80" type="text" id="ZiName" step="any" ng-model="Filt.ziName"/>
+                        </div>
+                        <div class="horiz">
+                            <p class="p-head">Текущий этап ЗИ :</p>
+                            <select class="vvod20" name="choice" id="StageZiFilt" ng-model="Filt.stageZi">
+                                <option ng-value="0" value="0">0</option>
+                                <option ng-value="1" value="1">I</option>
+                                <option ng-value="2" value="2">II</option>
+                                <option ng-value="3" value="3">III</option>
+                                <option ng-value="4" value="4">IV</option>
+                                <option ng-value="5" value="5">V</option>
+                                <option ng-value="15" value="15">В работе</option>
+                                <option ng-value="6" value="6">Закрытые</option>
+                                <option ng-value="" value="">Все</option>
+                            </select>
+                            <p class="p-head">ЗИ :</p>
+                            <select class="vvod20" name="choice" id="AvailWorkFilt" ng-model="Filt.availWork">
+                                <option ng-value="true" value="true">С работами</option>
+                                <option ng-value="false" value="false">Без работ</option>
+                                <option ng-value="" value="">Все</option>
+                            </select>
+                            <button type="submit" class="headbutton">Применить</button>
+                        </div>
                     </div>
-                    <button type="submit" class="headbutton">Применить</button>
                 </div>
-            </div>
-        </form>
+            </form>
+        </details>
     </div>
     <h1>Статус задач</h1>
     <table>
@@ -111,13 +134,13 @@
             <td>{{work.startTaskFact}}</td>
 
             <!--        // Плановые трудозатраты, чел/час разработки-->
-            <td class="tablecol2">{{work.laborDevelop}}</td>
+            <td>{{work.laborDevelop}}</td>
             <!--        // Разработка прототипа-->
-            <td class="tablecol2">{{work.timeDevelop}}</td>
+            <td>{{work.timeDevelop}}</td>
             <!--        //начало разработки план-->
-            <td>{{work.developEndPlan}}</td>
+            <td class="tablecol2">{{work.developEndPlan}}</td>
             <!--        //начало разработки факт-->
-            <td>{{work.developEndFact}}</td>
+            <td class="tablecol2">{{work.developEndFact}}</td>
             <!--        // Стабилизация прототипа план-->
             <td>{{work.debugEndPlan}}</td>
             <!--        // Стабилизация прототипа факт-->

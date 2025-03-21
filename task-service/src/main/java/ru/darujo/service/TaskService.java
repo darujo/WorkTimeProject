@@ -57,11 +57,15 @@ public class TaskService {
                                        String codeDEVBO,
                                        String description,
                                        Long workId,
+                                       Integer type,
                                        Integer page,
                                        Integer size) {
         Specification<Task> specification = Specification.where(null);
         if (nikName != null) {
             specification = specification.and(TaskSpecifications.nikNameLike(nikName));
+        }
+        if (type != null) {
+            specification = specification.and(TaskSpecifications.typeEq(type));
         }
         if (codeBTS != null) {
             specification = specification.and(TaskSpecifications.codeBTSLike(codeBTS));
@@ -91,19 +95,30 @@ public class TaskService {
             Long workId,
             Date dateLe,
             Date dateGt) {
-        return ((List<Task>) findWorkTime(null, codeBTS, codeDEVBO, description, workId, null, null))
+        return ((List<Task>) findWorkTime(null, codeBTS, codeDEVBO, description, workId, null,null, null))
                 .stream().map(task -> workTimeServiceIntegration.getTimeTask(task.getId(), nikName, dateLe, dateGt)).reduce((sumTime, time) ->
                         sumTime + time).orElse(0f);
     }
 
     public ListString getFactUsers(Long workId) {
         ListString users = new ListString();
-        ((List<Task>) findWorkTime(null, null, null, null, workId, null, null))
+        ((List<Task>) findWorkTime(null, null, null, null, workId, null, null,null))
                 .stream().map(task ->
                         workTimeServiceIntegration
                                 .getUsers(task.getId()))
                 .forEach(user ->
                         users.getList().addAll(user.getList()));
         return users;
+    }
+
+    public Boolean getAvailTime(long workId) {
+        Specification<Task> specification = Specification.where(null);
+        specification = specification.and(TaskSpecifications.workIdEQ(workId));
+        List<Task> tasks =taskRepository.findAll(specification);
+        if(tasks.size() == 0){
+            return false;
+        }
+        return tasks.stream().anyMatch(task -> workTimeServiceIntegration.availTime(task.getId()));
+
     }
 }

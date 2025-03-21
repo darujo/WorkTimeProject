@@ -15,7 +15,10 @@ angular.module('workTimeService').controller('workTimeRepController', function (
             url: constPatchWork + "/works/rep",
             method: "get",
             params: {
-                userName: Filt ? Filt.userName : null
+                userName: Filt ? Filt.userName : null,
+                stageZi: Filt ? Filt.stageZi : null,
+                availWork: Filt ? Filt.availWork : null
+
 
             }
         }).then(function (response) {
@@ -34,6 +37,6 @@ angular.module('workTimeService').controller('workTimeRepController', function (
         Filt = $scope.Filt;
         $scope.findPage();
     };
-
+    $scope.Filt= {stageZi:15};
     $scope.loadWorkTime();
 })

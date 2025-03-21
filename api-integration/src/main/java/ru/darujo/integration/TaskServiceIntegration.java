@@ -53,7 +53,7 @@ public class TaskServiceIntegration {
         System.out.println(stringBuilder);
         try {
             String str = "";
-            if (stringBuilder.length() !=0){
+            if (stringBuilder.length() != 0) {
                 str = "?" + stringBuilder;
             }
 
@@ -89,6 +89,7 @@ public class TaskServiceIntegration {
                 .bodyToMono(TaskDto.class)
                 .block();
     }
+
     public List<Long> getTaskList(String taskDevbo, String taskBts) {
         StringBuilder stringBuilder = new StringBuilder();
         if (taskDevbo != null) {
@@ -105,16 +106,17 @@ public class TaskServiceIntegration {
         }
         System.out.println(stringBuilder);
         String str = "";
-        if (stringBuilder.length() !=0){
+        if (stringBuilder.length() != 0) {
             str = "?" + stringBuilder;
         }
-        return webClientTask.get().uri( "/list/id" + str)
+        return webClientTask.get().uri("/list/id" + str)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                         clientResponse -> Mono.error(new ResourceNotFoundException("Задачи не найдены")))
                 .bodyToFlux(Long.class).collectList()
                 .block();
     }
+
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     private String dateToText(Date date) {
@@ -124,4 +126,16 @@ public class TaskServiceIntegration {
         return sdf.format(date) + "T00:00:00.000Z";
     }
 
+    public Boolean availWorkTime(Long id) {
+        try {
+            return webClientTask.get().uri("/rep/fact/avail/" + id)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundException("Задача c id = " + id + " не найдена")))
+                    .bodyToMono(Boolean.class)
+                    .block();
+        } catch (RuntimeException ex) {
+            return false;
+        }
+    }
 }

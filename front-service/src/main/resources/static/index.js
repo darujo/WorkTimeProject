@@ -107,12 +107,13 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         if (typeof $localStorage.authUser !== "undefined") {
             var nikName = $localStorage.authUser.username;
             console.log("getUser")
-            document.getElementById("UserName").value = nikName;
+            // document.getElementById("UserName").value = nikName;
 
             $http.get(constPatchAuth + '/user?nikName=' + nikName)
                 .then(function successCallback(response) {
                     console.log(response)
-                    document.getElementById("UserName").value = response.data.lastName + " " + response.data.firstName + " " + response.data.patronymic;
+                    $scope.user = response.data;
+                    // document.getElementById("UserName").value = response.data.lastName + " " + response.data.firstName + " " + response.data.patronymic;
                 }, function errorCallback(response) {
                     console.log(response);
                 });

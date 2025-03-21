@@ -7,25 +7,67 @@ angular.module('workTimeService').controller('workController', function ($scope,
     };
     var showFormEdit = function () {
         console.log("showFormEdit");
+        checkRight("Edit", false);
         document.getElementById("WorkList").style.display = "none";
         document.getElementById("FormEdit").style.display = "block";
 
     };
 
+    var checkRight = function (right, message) {
+        document.getElementById("ButtonSaveDown").style.display = "none";
+        document.getElementById("ButtonSaveUp").style.display = "none";
+        var flag;
+        $scope.Resp = {message: null}
+        $http({
+            url: constPatchWork + "/works/right/" + right,
+            method: "get"
+        }).then(function (response) {
+                console.log(response)
+                document.getElementById("ButtonSaveDown").style.display = "inline-block";
+                document.getElementById("ButtonSaveUp").style.display = "inline-block";
+                if (right === "create") {
+                    $scope.createWorkRun();
+                }
+            }, function errorCallback(response) {
+                console.log("Check");
+                console.log(response)
+                flag = false;
+                if ($location.checkAuthorized(response)) {
+                    if (message) {
+                        alert(response.data.message);
+                    } else {
+                        $scope.Resp = {message: response.data.message};
+                    }
+
+                }
+            }
+        )
+        return false;
+    }
 
 
     $scope.loadWork = function () {
         $scope.findPage(0);
     };
     var Filt;
+    var maxpage = 1;
     $scope.findPage = function (diffPage) {
+        console.log(diffPage)
         var page = parseInt(document.getElementById("Page").value) + diffPage;
+        if (page < 1) {
+            document.getElementById("Page").value = 1;
+            return;
+        } else if (page > maxpage) {
+            document.getElementById("Page").value = maxpage;
+            return;
+        }
+        console.log("page");
+        console.log(page);
         document.getElementById("Page").value = page;
         console.log("отправляем запрос /works");
         console.log($scope.Filt);
-        if (typeof  $scope.Filt === "undefined")
-        {
-            $scope.Filt ={size:10};
+        if (typeof $scope.Filt === "undefined") {
+            $scope.Filt = {size: 10};
             Filt = $scope.Filt;
         }
         console.log(Filt)
@@ -46,10 +88,11 @@ angular.module('workTimeService').controller('workController', function ($scope,
             console.log(response);
             $scope.WorkList = response.data.content;
             console.log($scope.WorkList);
+            maxpage = response.data.totalPages;
             showWork();
         }, function errorCallback(response) {
             console.log(response)
-            if($location.checkAuthorized(response)){
+            if ($location.checkAuthorized(response)) {
                 alert(response.data.message);
             }
 
@@ -58,14 +101,16 @@ angular.module('workTimeService').controller('workController', function ($scope,
 
     };
 
-    $scope.workSort = function (sort){
-        $scope.Filt  ={sort:sort,
+    $scope.workSort = function (sort) {
+        $scope.Filt = {
+            sort: sort,
             size: $scope.Filt ? $scope.Filt.size : null,
             name: $scope.Filt ? $scope.Filt.name : null,
             codeSap: $scope.Filt ? $scope.Filt.codeSap : null,
             codeZi: $scope.Filt ? $scope.Filt.codeZi : null,
             task: $scope.Filt ? $scope.Filt.task : null,
-            stageZi: $scope.Filt ? $scope.Filt.stageZi : null};
+            stageZi: $scope.Filt ? $scope.Filt.stageZi : null
+        };
         console.log("sort");
         console.log(sort);
         $scope.filterWork();
@@ -79,6 +124,9 @@ angular.module('workTimeService').controller('workController', function ($scope,
     var WorkIdEdit = null;
 
     $scope.createWork = function () {
+        checkRight("create", true);
+    }
+    $scope.createWorkRun = function () {
         WorkIdEdit = null;
         console.log("сбрасываем значения");
         $scope.Work = {
@@ -124,14 +172,14 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 console.log($scope.Work);
                 $scope.Work.developEndFact = new Date(response.data.developEndFact);
                 $scope.Work.debugEndFact = new Date(response.data.debugEndFact);
-                $scope.Work.releaseEndFact = new Date( response.data.releaseEndFact );
-                $scope.Work.opeEndFact = new Date( response.data.opeEndFact );
-                $scope.Work.analiseEndFact = new Date( response.data.analiseEndFact );
-                $scope.Work.developEndPlan = new Date( response.data.developEndPlan );
-                $scope.Work.debugEndPlan = new Date( response.data.debugEndPlan );
-                $scope.Work.releaseEndPlan = new Date( response.data.releaseEndPlan );
-                $scope.Work.opeEndPlan = new Date( response.data.opeEndPlan );
-                $scope.Work.analiseEndPlan = new Date( response.data.analiseEndPlan );
+                $scope.Work.releaseEndFact = new Date(response.data.releaseEndFact);
+                $scope.Work.opeEndFact = new Date(response.data.opeEndFact);
+                $scope.Work.analiseEndFact = new Date(response.data.analiseEndFact);
+                $scope.Work.developEndPlan = new Date(response.data.developEndPlan);
+                $scope.Work.debugEndPlan = new Date(response.data.debugEndPlan);
+                $scope.Work.releaseEndPlan = new Date(response.data.releaseEndPlan);
+                $scope.Work.opeEndPlan = new Date(response.data.opeEndPlan);
+                $scope.Work.analiseEndPlan = new Date(response.data.analiseEndPlan);
 
                 $scope.Work.startTaskPlan = new Date(response.data.startTaskPlan);
                 // Дата начала доработки Факт
@@ -151,39 +199,42 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 $scope.loadWork();
             }, function errorCallback(response) {
                 console.log(response)
-                if($location.checkAuthorized(response)){
-                //     alert(response.data.message);
+                if ($location.checkAuthorized(response)) {
+                    //     alert(response.data.message);
                 }
 
                 // showFindTask();
             });
     };
-    var sendSave= false;
+    var sendSave = false;
     $scope.saveWork = function () {
         console.log()
         console.log($scope.Work);
         console.log(WorkIdEdit);
-      if (!sendSave){
-          sendSave =true;
-          $http.post(constPatchWork + "/works",$scope.Work)
-              .then(function (response) {
-                  sendSave= false;
-                  console.log(response);
-                  showWork();
-                  $scope.loadWork();
+        if (!sendSave) {
+            sendSave = true;
+            $http.post(constPatchWork + "/works", $scope.Work)
+                .then(function (response) {
+                    sendSave = false;
+                    console.log(response);
+                    showWork();
+                    $scope.loadWork();
                 }, function errorCallback(response) {
-                  sendSave= false;
-                  console.log(response)
-                  if($location.checkAuthorized(response)){
+                    sendSave = false;
+                    console.log(response)
+                    if ($location.checkAuthorized(response)) {
                         //     alert(response.data.message);
-                  }
+                    }
 
                     // showFindTask();
                 });
-      }
+        }
     };
-    $scope.Filt = {stageZi: 15}
-    $scope.addTime = function (workId){
+    $scope.Filt = {
+        stageZi: 15,
+        size: 10
+    }
+    $scope.addTime = function (workId) {
         console.log("Другая");
         $location.WorkId = workId;
         $location.path('/task');

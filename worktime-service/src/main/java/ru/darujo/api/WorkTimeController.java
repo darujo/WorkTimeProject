@@ -37,7 +37,24 @@ public class WorkTimeController {
     public WorkTimeDto WorkTimeEdit(@PathVariable long id) {
         return WorkTimeConvertor.getWorkTimeDto(workTimeService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Отмеченая работа не найден")));
     }
+    @GetMapping("/right/{right}")
+    public boolean checkRight (@PathVariable String right,
+                               @RequestHeader(defaultValue = "false", name = "WORK_TIME_EDIT") boolean rightEdit,
+                               @RequestHeader(defaultValue = "false", name = "WORK_TIME_CREATE") boolean rightCreate){
+        right = right.toLowerCase();
+        if( right.equals("edit")){
+            if(!rightEdit) {
+                throw new ResourceNotFoundException("У вас нет права на редактирование WORK_TIME_EDIT");
+            }
+        }
+        else if( right.equals("create")){
+            if(!rightCreate) {
+                throw new ResourceNotFoundException("У вас нет права на редактирование WORK_TIME_CREATE");
+            }
+        }
+        return true;
 
+    }
     @PostMapping("")
     public WorkTimeDto WorkTimeSave(@RequestHeader String username,
                                     @RequestBody WorkTimeDto workTimeDto,
@@ -149,6 +166,11 @@ public class WorkTimeController {
             throw new ResourceNotFoundException("Не не передан обязательный параметр " + text + " null ");
         }
         return null;
+    }
+    @GetMapping("/rep/fact/availTime/{taskId}")
+    public Boolean getFactUsers(@PathVariable long taskId
+    ) {
+        return workTimeService.getAvailTime(taskId);
     }
 
 }
