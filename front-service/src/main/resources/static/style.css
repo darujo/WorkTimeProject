@@ -46,6 +46,21 @@ body {
     text-decoration: none;
     margin: 10px;
 }
+.sortbutton {
+    font-size: 16px;
+    line-height: 26px;
+    text-align: center;
+    letter-spacing: 0.04em;
+    color: #FFFFFF;
+    background: #5A98D0;
+    -webkit-box-shadow: 5px 10px 20px rgba(53, 110, 173, 0.2);
+    box-shadow: 5px 10px 20px rgba(53, 110, 173, 0.2);
+    border-radius: 10px;
+    padding: 10px 10px;
+    display: inline-block;
+    text-decoration: none;
+    margin: 10px;
+}
 
 .divform {
     margin-top: 30px;
@@ -223,7 +238,14 @@ TD {
     font-size: 30px;
     text-align: center;
 }
+.p-sort {
 
+    width: inherit;
+    /*margin: auto;*/
+    font-weight: 500;
+    font-size: 30px;
+    text-align: center;
+}
 .p-filt {
 
     width: inherit;

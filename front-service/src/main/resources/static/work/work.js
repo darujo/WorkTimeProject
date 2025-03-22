@@ -54,13 +54,14 @@ angular.module('workTimeService').controller('workController', function ($scope,
     $scope.findPage = function (diffPage) {
         console.log(diffPage)
         var page = parseInt(document.getElementById("Page").value) + diffPage;
-        if (page < 1) {
-            document.getElementById("Page").value = 1;
-            return;
-        } else if (page > maxpage) {
-            document.getElementById("Page").value = maxpage;
-            return;
+        if (page > maxpage) {
+            page = maxpage;
+
         }
+        if (page < 1) {
+            page = 1;
+        }
+        document.getElementById("Page").value = page
         console.log("page");
         console.log(page);
         document.getElementById("Page").value = page;
@@ -81,6 +82,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 codeSap: Filt ? Filt.codeSap : null,
                 codeZi: Filt ? Filt.codeZi : null,
                 task: Filt ? Filt.task : null,
+                release: Filt ? Filt.release :null,
                 sort: Filt ? Filt.sort : null,
                 stageZi: Filt ? Filt.stageZi : null
             }

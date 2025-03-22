@@ -2,14 +2,20 @@
     <div class="filter containerfilt">
         <details class="detailsblock">
             <summary class="p-head">Фильтр</summary>
-            <form novalidate ng-submit="filterWorkTime()" ; class="filter">
+            <form novalidate ng-submit="filterWork()" ; class="filter">
                 <div class="filter">
                     <div class="filterblock">
 
                         <div class="horiz">
                             <p class="p-head">Наименование ЗИ</p>
                             <br>
-                            <input class="vvod80" type="text" id="ZiName" step="any" ng-model="Filt.ziName"/>
+                            <input class="vvod40" type="text" id="ZiName" step="any" ng-model="Filt.ziName"/>
+                            <p class="p-head">№ Релиза</p>
+                            <br>
+                            <input class="vvod20" type="text" id="Release" step="any" ng-model="Filt.release"/>
+                        </div>
+                        <div class="horiz"><p class="p-sort">Сортировать</p>
+                            <button ng-repeat="workSort in WorkSort" type="button" class="sortbutton" ng-click="delSort(workSort)">{{nameSort(workSort)}} </button>
                         </div>
                         <div class="horiz">
                             <p class="p-head">Текущий этап ЗИ :</p>
@@ -42,13 +48,15 @@
 
         <tr> <!--row 1-->
             <td class="tablehead1" rowspan="5"> № п/п</td>
-            <td class="tablehead2" rowspan="5"> Код Зи</td>
-            <td class="tablehead1" rowspan="5"> Наименование</td>
+            <td class="tablehead2" rowspan="5"><button class="tablehead2 buttontable" ng-click="addSort('codeZI')"> Код Зи</button></td>
+            <td class="tablehead1" rowspan="5"><button class="tablehead2 buttontable" ng-click="addSort('name')"> Наименование</button> </td>
             <td class="tablehead2" colspan="3"> 0 этап</td>
             <td class="tablehead2" colspan="2" rowspan="4"> Дата начала доработки</td>
             <td class="tablehead1" colspan="4"> I этап</td>
             <td class="tablehead2" colspan="4"> II этап</td>
-            <td class="tablecol1" rowspan="5"> № релиза</td>
+            <td class="tablecol1" rowspan="5">
+                <button class="tablehead2 buttontable" ng-click="addSort('release')">№ релиза</button>
+            </td>
             <td class="tablecol1" colspan="2" rowspan="3"> Выдача релиза</td>
             <td class="tablehead1" colspan="4"> III этап</td>
             <td class="tablehead2" colspan="4"> IV этап</td>
@@ -92,8 +100,8 @@
             <td class="tablehead2"> План</td>
             <td class="tablehead2"> Факт</td>
             <td class="tablehead2"> Факт</td>
-            <td class="tablehead2"> План</td>
-            <td class="tablehead2"> Факт</td>
+            <td class="tablehead2"><button class="tablehead2 buttontable" ng-click="addSort('startTaskPlan')">План</button></td>
+            <td class="tablehead2"><button class="tablehead2 buttontable" ng-click="addSort('startTaskFact')">Факт</button></td>
             <td class="tablehead1"> План</td>
             <td class="tablehead1"> Факт</td>
             <td class="tablecol2"> План</td>

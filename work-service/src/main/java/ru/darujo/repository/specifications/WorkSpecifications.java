@@ -44,4 +44,7 @@ public class WorkSpecifications {
     }
 
 
+    public static Specification<Work> releaseLike(String release) {
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get("release")),String.format("%%%s%%",release).toUpperCase()));
+    }
 }

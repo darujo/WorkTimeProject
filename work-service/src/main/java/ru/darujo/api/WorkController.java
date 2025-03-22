@@ -28,7 +28,7 @@ public class WorkController {
 
     @GetMapping("/conv")
     public WorkDto workConv() {
-        workService.findWorks(1, 10000, null, null, null, null, null, null, null).map(work -> workService.saveWork(WorkConvertor.getWork(WorkConvertor.getWorkEditDto(work))));
+        workService.findWorks(1, 10000, null, null, null, null, null, null, null, null).map(work -> workService.saveWork(WorkConvertor.getWork(WorkConvertor.getWorkEditDto(work))));
         return new WorkDto();
     }
 
@@ -38,7 +38,7 @@ public class WorkController {
     ) {
         long cur_tiem = System.nanoTime();
 
-        Iterable<Work> works = workService.findWorks(1, 100000000, name, null, null, null, null, null, task);
+        Iterable<Work> works = workService.findWorks(1, 100000000, name, null, null, null, null, null, task,null);
         float time_last = (System.nanoTime() - cur_tiem) * 0.000000001f;
         System.out.println("Время выполнения " + time_last);
         return works;
@@ -142,6 +142,7 @@ public class WorkController {
                                   @RequestParam(required = false) Long codeSap,
                                   @RequestParam(required = false) String codeZi,
                                   @RequestParam(required = false) String task,
+                                  @RequestParam(required = false) String release,
                                   @RequestParam(defaultValue = "release") String sort) {
         Integer stageZiLe = null;
         Integer stageZiGe = null;
@@ -154,7 +155,7 @@ public class WorkController {
             }
         }
         long cur_tiem = System.nanoTime();
-        Page<WorkDto> workDtos = workService.findWorks(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task).map(WorkConvertor::getWorkDto);
+        Page<WorkDto> workDtos = workService.findWorks(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task,release).map(WorkConvertor::getWorkDto);
         float time_last = (cur_tiem - System.nanoTime()) * 0.000000001f;
         System.out.println("Время выполнения " + time_last);
         return workDtos;
@@ -163,7 +164,9 @@ public class WorkController {
     @GetMapping("/rep")
     public List<WorkRepDto> getTimeWork(@RequestParam(required = false) String ziName,
                                         @RequestParam(required = false) Boolean availWork,
-                                        @RequestParam(defaultValue = "15") Integer stageZi) {
+                                        @RequestParam(defaultValue = "15") Integer stageZi,
+                                        @RequestParam(required = false) String release,
+                                        @RequestParam(required = false)  String[] sort) {
         Integer stageZiLe = null;
         Integer stageZiGe = null;
         if (stageZi != null) {
@@ -174,7 +177,7 @@ public class WorkController {
                 stageZiLe = stageZi - 10;
             }
         }
-        return workService.getWorkRep(ziName, availWork, stageZiGe, stageZiLe);
+        return workService.getWorkRep(ziName, availWork, stageZiGe, stageZiLe, release, sort);
     }
 
     @GetMapping("/rep/factwork")

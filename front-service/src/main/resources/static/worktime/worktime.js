@@ -292,14 +292,21 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
     }
     var maxPage = 1;
     $scope.loadTask = function (diffPage) {
-        console.log("loadTask")
+        console.log("loadTask");
+        console.log("diffPage");
+        console.log(diffPage);
         var page = parseInt(document.getElementById("PageTask").value) + diffPage;
-        if (page < 1) {
-            page = 1;
-        }
+        console.log(page);
+
+
         if (maxPage < page) {
             page = maxPage;
         }
+        // должно быть после если maxPage = 0
+        if (page < 1) {
+            page = 1;
+        }
+        console.log(page);
 
         document.getElementById("PageTask").value = page;
         $http({
@@ -316,9 +323,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
                 type: FiltTask ? FiltTask.type : null
             }
         }).then(function (response) {
-            console.log("sssssss");
-            // $scope.setFormTask();
-            console.log("response :");
+            console.log("/task.response");
             console.log(response);
             console.log("response,data :");
             console.log(response.data);

@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.darujo.dto.UserDto;
 import ru.darujo.dto.WorkFactDto;
 import ru.darujo.dto.WorkRepDto;
@@ -76,7 +77,8 @@ public class WorkService {
                                 Integer stageZiLe,
                                 Long codeSap,
                                 String codeZi,
-                                String task
+                                String task,
+                                String release
     ) {
         Specification<Work> specification = Specification.where(null);
 
@@ -96,6 +98,9 @@ public class WorkService {
         }
         if (codeSap != null) {
             specification = specification.and(WorkSpecifications.codeSapEq(codeSap));
+        }
+        if (release != null) {
+            specification = specification.and(WorkSpecifications.releaseLike(release));
         }
         if (codeZi != null && !codeZi.equals("")) {
             specification = specification.and(WorkSpecifications.codeZiLike(codeZi));
@@ -138,9 +143,15 @@ public class WorkService {
     }
 
 
-    public List<WorkRepDto> getWorkRep(String name, Boolean availWork, Integer stageZiGe, Integer stageZiLe) {
+    public List<WorkRepDto> getWorkRep(String name, Boolean availWork, Integer stageZiGe, Integer stageZiLe, String release, String[] sort) {
         Specification<Work> specification = Specification.where(null);
-
+        Sort sortWork = null;
+        if (sort != null && sort.length > 0) {
+            sortWork = Sort.by(sort[0]);
+            for (int i = 1; i < sort.length; i++) {
+                sortWork = sortWork.and(Sort.by(sort[i]));
+            }
+        }
         if (name != null) {
             specification = specification.and(WorkSpecifications.workNameLike(name));
         }
@@ -150,8 +161,17 @@ public class WorkService {
         if (stageZiLe != null) {
             specification = specification.and(WorkSpecifications.stageZiLe(stageZiLe));
         }
+        if (release != null) {
+            specification = specification.and(WorkSpecifications.releaseLike(release));
+        }
         List<WorkRepDto> workRepDtos = new ArrayList<>();
-        workRepository.findAll(specification).forEach(work ->
+        List<Work> works;
+        if (sortWork == null) {
+            works = workRepository.findAll(specification);
+        } else {
+            works = workRepository.findAll(specification, sortWork);
+        }
+        works.forEach(work ->
                 {
                     boolean availWorkTime = false;
                     if (availWork != null) {
@@ -159,8 +179,7 @@ public class WorkService {
                     }
                     if (availWork == null ||
                             (availWork && availWorkTime) ||
-                            (!availWork && !availWorkTime))
-                    {
+                            (!availWork && !availWorkTime)) {
                         Timestamp timestampDevolop;
                         if (work.getAnaliseEndFact() == null
                                 && work.getDevelopEndFact() == null
