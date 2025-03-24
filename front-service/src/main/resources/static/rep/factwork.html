@@ -44,7 +44,7 @@
         <tbody>
         <tr ng-repeat="work in WorkTimeList">
             <td>{{work.num}}</td>
-            <td rowspan="{{work.userCol}}" ng-if="work.codeZi != null">{{work.codeZi}}</td>
+            <td rowspan="{{work.userCol}}" ng-if="work.codeZi != null" class="textnotwrap">{{work.codeZi}}</td>
             <td rowspan="{{work.userCol}}" ng-if="work.codeZi != null">{{work.name}}</td>
             <td ng-if="!work.authorFirstName">{{work.nikName}}</td>
             <td ng-if="work.authorFirstName">{{work.authorLastName}} {{work.authorFirstName}}

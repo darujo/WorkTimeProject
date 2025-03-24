@@ -70,7 +70,7 @@
             <td class="tablehead2">Пользователь</td>
             <td class="tablehead2">Дата</td>
             <td class="tablehead2">Время</td>
-            <td class="tablehead2">Коментарий</td>
+            <td class="tablehead2">Комментарий</td>
             <td class="tablehead2">Devbo</td>
             <td class="tablehead2">Bts</td>
             <td class="tablehead2">Описание задачи</td>
@@ -88,10 +88,10 @@
 
             <td>{{worktime.workDateStr}}</td>
             <td>{{worktime.workTime}}</td>
-            <td>{{worktime.comment}}</td>
-            <td>{{worktime.taskCodeDEVBO}}</td>
-            <td>{{worktime.taskCodeBTS}}</td>
-            <td>{{worktime.taskDescription}}</td>
+            <td class="textleft">{{worktime.comment}}</td>
+            <td class="textnotwrap">{{worktime.taskCodeDEVBO}}</td>
+            <td class="textnotwrap">{{worktime.taskCodeBTS}}</td>
+            <td class="textleft">{{worktime.taskDescription}}</td>
 
             <td>
                 <button ng-click="editWorkTime(worktime.id)">Изменить</button>
@@ -184,7 +184,7 @@
                 <td>Краткое описание</td>
                 <td>Тип задачи</td>
                 <td>№ ЗИ (ZI)</td>
-                <td>Наименоваание ЗИ</td>
+                <td>Наименование ЗИ</td>
             </tr>
             <tbody>
             <tr ng-repeat="task in TaskList">

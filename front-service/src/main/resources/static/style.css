@@ -190,7 +190,19 @@ TD {
     padding: 5px; /* Поля в ячейках */
     height: 1px; /*  нужно чтобы элемент в нутри растянулся*/
     text-align: center;
+
 }
+
+.textleft {
+    /*border: 1px solid #333; !* Граница вокруг ячеек *!*/
+    /*padding: 5px; !* Поля в ячейках *!*/
+    /*height: 1px; !*  нужно чтобы элемент в нутри растянулся*!*/
+    text-align: left;
+}
+.textnotwrap{
+    white-space: nowrap;
+}
+
 
 .tablehead1 {
     text-align: center;

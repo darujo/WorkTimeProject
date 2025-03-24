@@ -70,7 +70,7 @@
             <td class="tablehead2">Краткое описание</td>
             <td class="tablehead2">Тип задачи</td>
             <td class="tablehead2">№ ЗИ (ZI)</td>
-            <td class="tablehead2">Наименоваание ЗИ</td>
+            <td class="tablehead2">Наименование ЗИ</td>
             <td class="tablehead2"></td>
             <td class="tablehead2"></td>
 
@@ -78,18 +78,18 @@
         <tbody>
         <tr ng-repeat="task in TaskList">
             <td ng-if="!task.authorFirstName">{{task.nikName}}</td>
-            <td ng-if="task.authorFirstName">{{task.authorLastName}} {{task.authorFirstName}}
+            <td ng-if="task.authorFirstName" class="textleft">{{task.authorLastName}} {{task.authorFirstName}}
                 {{task.authorPatronymic}}
             </td>
 
-            <td>{{task.codeBTS}}</td>
-            <td>{{task.codeDEVBO}}</td>
+            <td class="textnotwrap">{{task.codeBTS}}</td>
+            <td class="textnotwrap">{{task.codeDEVBO}}</td>
             <td>
                 <button ng-click="addTime(task.id);">{{task.description}}</button>
             </td>
             <td>{{task.typeStr}}</td>
-            <td>{{task.codeZi}}</td>
-            <td>{{task.nameZi}}</td>
+            <td class="textnotwrap">{{task.codeZi}}</td>
+            <td class="textleft">{{task.nameZi}}</td>
             <td>
                 <button ng-click="editTask(task.id)">Изменить</button>
             </td>

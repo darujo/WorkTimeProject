@@ -129,12 +129,12 @@
         <tbody>
         <tr ng-repeat="work in WorkList">
             <td>{{work.codeSap}}</td>
-            <td>{{work.codeZI}}</td>
-            <td>
+            <td class="textnotwrap">{{work.codeZI}}</td>
+            <td  class="textleft">
                 <button ng-click="addTime(work.id)">{{work.name}}</button>
             </td>
             <td>{{work.task}}</td>
-            <td>{{work.description}}</td>
+            <td class="textleft">{{work.description}}</td>
             <td type="date">{{work.analiseEndPlan}}</td>
             <td class="date">{{work.startTaskPlan}}</td>
             <td>{{work.startTaskFact}}</td>
