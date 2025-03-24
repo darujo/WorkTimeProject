@@ -47,4 +47,18 @@ public class WorkSpecifications {
     public static Specification<Work> releaseLike(String release) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get("release")),String.format("%%%s%%",release).toUpperCase()));
     }
+//нужно для того чтобы записи на разных страницах не повторялись
+    public static Specification<Work> queryDistinctTrue() {
+        return ((root, query, criteriaBuilder) -> {
+            query.distinct(true);
+            return null;
+        });
+    }
+
+    public static Specification<WorkLittle> queryDistinctTrueLittle() {
+        return ((root, query, criteriaBuilder) -> {
+            query.distinct(true);
+            return null;
+        });
+    }
 }

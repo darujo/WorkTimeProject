@@ -6,7 +6,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import ru.darujo.dto.UserDto;
 import ru.darujo.dto.WorkFactDto;
 import ru.darujo.dto.WorkRepDto;
@@ -80,7 +79,7 @@ public class WorkService {
                                 String task,
                                 String release
     ) {
-        Specification<Work> specification = Specification.where(null);
+        Specification<Work> specification = Specification.where(WorkSpecifications.queryDistinctTrue());
 
         if (name != null && !name.equals("")) {
             specification = specification.and(WorkSpecifications.workNameLike(name));
@@ -115,13 +114,13 @@ public class WorkService {
         if (sort == null) {
             workPage = workRepository.findAll(specification, PageRequest.of(page - 1, size));
         } else {
-            workPage = workRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.by(sort)));
+            workPage = workRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.Direction.ASC, sort));
         }
         return workPage;
     }
 
     public Page<WorkLittle> findWorkLittle(int page, int size, String name, String sort, Integer stageZiGe, Integer stageZiLe) {
-        Specification<WorkLittle> specification = Specification.where(null);
+        Specification<WorkLittle> specification = Specification.where(WorkSpecifications.queryDistinctTrueLittle());
 
         if (name != null) {
             specification = specification.and(WorkSpecifications.workLittleNameLike(name));
@@ -215,7 +214,11 @@ public class WorkService {
                                         work.getOpeEndPlan(),
                                         work.getOpeEndFact(),
                                         work.getLaborOPE(),
-                                        null,
+                                        taskServiceIntegration.getTimeWork(
+                                                work.getId(),
+                                                null,
+                                                null,
+                                                work.getAnaliseEndFact()),
                                         taskServiceIntegration.getTimeWork(
                                                 work.getId(),
                                                 null,
