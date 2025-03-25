@@ -2,8 +2,6 @@ package ru.darujo.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.WorkConvertor;
 import ru.darujo.dto.*;
@@ -38,7 +36,7 @@ public class WorkController {
     ) {
         long cur_tiem = System.nanoTime();
 
-        Iterable<Work> works = workService.findWorks(1, 100000000, name, null, null, null, null, null, task,null);
+        Iterable<Work> works = workService.findWorks(1, 100000000, name, null, null, null, null, null, task, null);
         float time_last = (System.nanoTime() - cur_tiem) * 0.000000001f;
         System.out.println("Время выполнения " + time_last);
         return works;
@@ -155,7 +153,7 @@ public class WorkController {
             }
         }
         long cur_tiem = System.nanoTime();
-        Page<WorkDto> workDtos = workService.findWorks(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task,release).map(WorkConvertor::getWorkDto);
+        Page<WorkDto> workDtos = workService.findWorks(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, release).map(WorkConvertor::getWorkDto);
         float time_last = (cur_tiem - System.nanoTime()) * 0.000000001f;
         System.out.println("Время выполнения " + time_last);
         return workDtos;
@@ -166,7 +164,7 @@ public class WorkController {
                                         @RequestParam(required = false) Boolean availWork,
                                         @RequestParam(defaultValue = "15") Integer stageZi,
                                         @RequestParam(required = false) String release,
-                                        @RequestParam(required = false)  String[] sort) {
+                                        @RequestParam(required = false) String[] sort) {
         Integer stageZiLe = null;
         Integer stageZiGe = null;
         if (stageZi != null) {
@@ -181,8 +179,31 @@ public class WorkController {
     }
 
     @GetMapping("/rep/factwork")
-    public List<WorkFactDto> getFactWork(@RequestParam(required = false) String userName) {
-        return workService.getWorkFactRep(userName);
+    public PageDto<WorkFactDto> getFactWork(@RequestParam(defaultValue = "1") int page,
+                                            @RequestParam(defaultValue = "10") int size,
+                                            @RequestParam(required = false) String userName,
+                                            @RequestParam(required = false) String name,
+                                            @RequestParam(defaultValue = "15") Integer stageZi,
+                                            @RequestParam(required = false) Long codeSap,
+                                            @RequestParam(required = false) String codeZi,
+                                            @RequestParam(required = false) String task,
+                                            @RequestParam(required = false) String release,
+                                            @RequestParam(defaultValue = "release") String sort,
+                                            @RequestParam(defaultValue = "true") boolean hideNotTime) {
+        if (userName != null && userName.equals("")) {
+            userName = null;
+        }
+        Integer stageZiLe = null;
+        Integer stageZiGe = null;
+        if (stageZi != null) {
+            if (stageZi < 10) {
+                stageZiGe = stageZi;
+                stageZiLe = stageZi;
+            } else {
+                stageZiLe = stageZi - 10;
+            }
+        }
+        return workService.getWorkFactRep(page, size, userName, name, stageZiGe, stageZiLe, codeSap, codeZi, task, release, sort, hideNotTime);
     }
 
     @GetMapping("/obj/little")

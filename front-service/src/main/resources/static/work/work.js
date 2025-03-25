@@ -61,7 +61,6 @@ angular.module('workTimeService').controller('workController', function ($scope,
         if (page < 1) {
             page = 1;
         }
-        document.getElementById("Page").value = page
         console.log("page");
         console.log(page);
         document.getElementById("Page").value = page;

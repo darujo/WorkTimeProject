@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.darujo.dto.PageDto;
 import ru.darujo.dto.UserDto;
 import ru.darujo.dto.WorkFactDto;
 import ru.darujo.dto.WorkRepDto;
@@ -79,6 +80,32 @@ public class WorkService {
                                 String task,
                                 String release
     ) {
+        return (Page<Work>) findAll(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, release);
+    }
+
+    public List<Work> findWorks(String name,
+                                String sort,
+                                Integer stageZiGe,
+                                Integer stageZiLe,
+                                Long codeSap,
+                                String codeZi,
+                                String task,
+                                String release
+    ) {
+        return (List<Work>) findAll(null, null, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, release);
+    }
+
+    public Iterable<Work> findAll(Integer page,
+                                  Integer size,
+                                  String name,
+                                  String sort,
+                                  Integer stageZiGe,
+                                  Integer stageZiLe,
+                                  Long codeSap,
+                                  String codeZi,
+                                  String task,
+                                  String release
+    ) {
         Specification<Work> specification = Specification.where(WorkSpecifications.queryDistinctTrue());
 
         if (name != null && !name.equals("")) {
@@ -110,11 +137,20 @@ public class WorkService {
 
 
         System.out.println("Page = " + page);
-        Page<Work> workPage;
+        Iterable<Work> workPage;
         if (sort == null) {
-            workPage = workRepository.findAll(specification, PageRequest.of(page - 1, size));
+            if (page != null && size != null) {
+                workPage = workRepository.findAll(specification, PageRequest.of(page - 1, size));
+            } else {
+                workPage = workRepository.findAll(specification);
+            }
+
         } else {
-            workPage = workRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.Direction.ASC, sort));
+            if (page != null && size != null) {
+                workPage = workRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.Direction.ASC, sort));
+            } else {
+                workPage = workRepository.findAll(specification, Sort.by(sort));
+            }
         }
         return workPage;
     }
@@ -179,16 +215,7 @@ public class WorkService {
                     if (availWork == null ||
                             (availWork && availWorkTime) ||
                             (!availWork && !availWorkTime)) {
-                        Timestamp timestampDevolop;
-                        if (work.getAnaliseEndFact() == null
-                                && work.getDevelopEndFact() == null
-                                && work.getDebugEndFact() == null
-                                && work.getReleaseEndFact() == null
-                                && work.getOpeEndFact() == null) {
-                            timestampDevolop = new Timestamp(new Date().getTime());
-                        } else {
-                            timestampDevolop = work.getDevelopEndFact();
-                        }
+                        Timestamp timestampDevolop = getTimeDevolop(work);
 
                         workRepDtos.add(
                                 new WorkRepDto(
@@ -249,10 +276,22 @@ public class WorkService {
         return workRepDtos;
     }
 
-    public List<WorkFactDto> getWorkFactRep(String userName) {
+    public PageDto<WorkFactDto> getWorkFactRep(Integer page,
+                                               Integer size,
+                                               String userName,
+                                               String nameZi,
+                                               Integer stageZiGe,
+                                               Integer stageZiLe,
+                                               Long codeSap,
+                                               String codeZiSearch,
+                                               String task,
+                                               String release,
+                                               String sort,
+                                               boolean hideNotTime) {
         AtomicInteger num = new AtomicInteger();
         List<WorkFactDto> workFactDtos = new ArrayList<>();
-        workRepository.findAll().forEach(work -> {
+        Page<Work> workPage = findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, release);
+        workPage.forEach(work -> {
                     Set<String> users = taskServiceIntegration.getListUser(work.getId()).getList();
                     if (userName != null) {
                         if (users.contains(userName)) {
@@ -262,7 +301,7 @@ public class WorkService {
                             users = null;
                         }
                     }
-                    if (users != null) {
+                    if (users != null && users.size() != 0) {
                         List<String> userList = new ArrayList<>(users);
                         for (int i = 0; i < users.size(); i++) {
                             String user = userList.get(i);
@@ -281,16 +320,7 @@ public class WorkService {
                             } catch (ResourceNotFoundException ex) {
                                 userDto = new UserDto(-1L, "", "логином", "Не найден пользователь с", user);
                             }
-                            Timestamp timestampDevolop;
-                            if (work.getAnaliseEndFact() == null
-                                    && work.getDevelopEndFact() == null
-                                    && work.getDebugEndFact() == null
-                                    && work.getReleaseEndFact() == null
-                                    && work.getOpeEndFact() == null) {
-                                timestampDevolop = new Timestamp(new Date().getTime());
-                            } else {
-                                timestampDevolop = work.getDevelopEndFact();
-                            }
+                            Timestamp timestampDevolop = getTimeDevolop(work);
                             workFactDtos.add(
                                     new WorkFactDto(
                                             num.incrementAndGet(),
@@ -331,10 +361,47 @@ public class WorkService {
                             );
 
                         }
+                    } else {
+                        if (!hideNotTime) {
+                            workFactDtos.add(
+                                    new WorkFactDto(
+                                            num.incrementAndGet(),
+                                            work.getCodeZI(),
+                                            work.getName(),
+                                            1,
+                                            null,
+                                            null,
+                                            null,
+                                            null,
+                                            null,
+                                            null,
+                                            null,
+                                            null,
+                                            null,
+                                            null
+
+                                    )
+                            );
+                        }
                     }
+
                 }
         );
-        return workFactDtos;
+        return new PageDto<WorkFactDto>(workPage.getTotalPages(), workPage.getNumber(), workPage.getSize(), workFactDtos);
+    }
+
+    private Timestamp getTimeDevolop(Work work) {
+        Timestamp timestampDevolop;
+        if (work.getAnaliseEndFact() == null
+                && work.getDevelopEndFact() == null
+                && work.getDebugEndFact() == null
+                && work.getReleaseEndFact() == null
+                && work.getOpeEndFact() == null) {
+            timestampDevolop = new Timestamp(new Date().getTime());
+        } else {
+            timestampDevolop = work.getDevelopEndFact();
+        }
+        return timestampDevolop;
     }
 
 
