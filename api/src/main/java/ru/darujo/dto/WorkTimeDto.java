@@ -49,6 +49,8 @@ public class WorkTimeDto  implements Serializable, UserFio {
 
     private Float workTime;
     private Long taskId;
+    private Integer type;
+    private String typeStr;
     private String taskDescription;
     private String taskCodeBTS;
     // № внутренней задачи (DEVBO)
@@ -89,17 +91,32 @@ public class WorkTimeDto  implements Serializable, UserFio {
     public WorkTimeDto() {
     }
 
-    public WorkTimeDto(Long id, String nikName, Timestamp workDate, Float workTime, Long workId, String comment) {
+    public WorkTimeDto(Long id, String nikName, Timestamp workDate, Float workTime, Long taskId, String comment, Integer type) {
         this.id = id;
         this.nikName = nikName;
         this.workDate = workDate;
         this.workTime = workTime;
-        this.taskId = workId;
+        this.taskId = taskId;
         this.comment = comment;
+        this.type = type;
     }
 
     public String getNikName() {
         return nikName;
+    }
+
+    public String getTypeStr() {
+        if(type == 1){
+            return "Разработка";
+        } else if(type == 2){
+            return "Консультация";
+        } else if(type == 3){
+            return "Анализ";
+        } else if(type == 4){
+            return "Тестирование";
+        } else {
+            return type.toString();
+        }
     }
 
     public Timestamp getWorkDate() {
@@ -120,5 +137,9 @@ public class WorkTimeDto  implements Serializable, UserFio {
 
     public String getWorkDateStr() {
         return dateToText(workDate);
+    }
+
+    public Integer getType() {
+        return type;
     }
 }

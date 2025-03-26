@@ -14,6 +14,7 @@ public class WorkTimeConvertor {
                 .setNikName(workTime.getNikName())
                 .setWorkTime(workTime.getWorkTime())
                 .setComment(workTime.getComment())
+                .setType(workTime.getType())
                 .getWorkTimeDto();
     }
     public static WorkTime getWorkTime(WorkTimeDto workTimeDto){
@@ -25,6 +26,7 @@ public class WorkTimeConvertor {
                 .setNikName(workTimeDto.getNikName())
                 .setWorkTime(workTimeDto.getWorkTime())
                 .setComment(workTimeDto.getComment())
+                .setType(workTimeDto.getType())
                 .getWorkTime();
     }
 }

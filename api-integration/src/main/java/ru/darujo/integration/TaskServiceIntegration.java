@@ -23,40 +23,23 @@ public class TaskServiceIntegration {
         this.webClientTask = webClientTask;
     }
 
-    public Float getTimeWork(Long workID, String nikName, Date dateGT, Date dateLE) {
+    public Float getTimeWork(Long workId, String nikName, Date dateGt, Date dateLe) {
+        return getTimeWork(workId, nikName, dateGt, dateLe, null);
+    }
+
+    public Float getTimeWork(Long workId, String nikName, Date dateGt, Date dateLe, String type) {
         StringBuilder stringBuilder = new StringBuilder();
-        if (workID != null) {
-            if (stringBuilder.length() != 0) {
-                stringBuilder.append("&");
-            }
-            stringBuilder.append("workId=").append(workID);
+        addTeg( stringBuilder, "workId=",workId);
+        addTeg( stringBuilder, "nikName=",nikName);
+        addTeg( stringBuilder, "dateLe=",dateLe);
+        addTeg( stringBuilder, "dateGt=",dateGt);
+        addTeg( stringBuilder, "type=",type);
+        String str = "";
+        if (stringBuilder.length() != 0) {
+            str = "?" + stringBuilder;
         }
-        if (nikName != null) {
-            if (stringBuilder.length() != 0) {
-                stringBuilder.append("&");
-            }
-            stringBuilder.append("nikName=").append(nikName);
-        }
-        if (dateLE != null) {
-            if (stringBuilder.length() != 0) {
-                stringBuilder.append("&");
-            }
-            stringBuilder.append("dateLe=").append(dateToText(dateLE));
-        }
-        if (dateGT != null) {
-            if (stringBuilder.length() != 0) {
-                stringBuilder.append("&");
-            }
-            stringBuilder.append("dateGt=").append(dateToText(dateGT));
-        }
-
-        System.out.println(stringBuilder);
+        System.out.println("/rep/fact/time" + str);
         try {
-            String str = "";
-            if (stringBuilder.length() != 0) {
-                str = "?" + stringBuilder;
-            }
-
             return webClientTask.get().uri("/rep/fact/time" + str)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
@@ -65,6 +48,25 @@ public class TaskServiceIntegration {
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календатрь (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
+    }
+    private void addTeg(StringBuilder stringBuilder, String str, Date value) {
+        addTeg(stringBuilder,str,dateToText(value));
+    }
+    private void addTeg(StringBuilder stringBuilder, String str, String value) {
+        if (value != null) {
+            if (stringBuilder.length() != 0) {
+                stringBuilder.append("&");
+            }
+            stringBuilder.append(str).append(value);
+        }
+    }
+    private void addTeg(StringBuilder stringBuilder, String str, Long value) {
+        if (value != null) {
+            if (stringBuilder.length() != 0) {
+                stringBuilder.append("&");
+            }
+            stringBuilder.append(str).append(value);
         }
     }
 
@@ -104,11 +106,12 @@ public class TaskServiceIntegration {
             }
             stringBuilder.append("codeBTS=").append(taskBts);
         }
-        System.out.println(stringBuilder);
         String str = "";
         if (stringBuilder.length() != 0) {
             str = "?" + stringBuilder;
         }
+        System.out.println("/list/id" + str);
+
         return webClientTask.get().uri("/list/id" + str)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),

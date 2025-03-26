@@ -14,6 +14,7 @@ public class WorkTimeBuilder {
     private Timestamp workDate;
     private Long taskId;
     private String comment;
+    private Integer type;
 
     public WorkTimeBuilder setId(Long id) {
         this.id = id;
@@ -45,20 +46,26 @@ public class WorkTimeBuilder {
         return this;
     }
 
+    public WorkTimeBuilder setType(Integer type) {
+        this.type = type;
+        return this;
+    }
+
     public static WorkTimeBuilder createWorkTime() {
         return new WorkTimeBuilder();
     }
 
+
     public WorkTimeDto getWorkTimeDto() {
-        return new WorkTimeDto(id, nikName, workDate, workTime, taskId, comment);
+        return new WorkTimeDto(id, nikName, workDate, workTime, taskId, comment, type);
     }
 
     public WorkTime getWorkTime() {
-        return new WorkTime(id, nikName, workDate, workTime, taskId, comment);
+        return new WorkTime(id, nikName, workDate, workTime, taskId, comment, type);
     }
 
     public Timestamp dateToStartTime(Timestamp timestamp) {
-        if(timestamp== null){
+        if (timestamp == null) {
             return null;
         }
         Calendar c = Calendar.getInstance();

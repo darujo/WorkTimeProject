@@ -73,13 +73,13 @@ public class WorkTimeService {
         workTimeRepository.deleteById(id);
     }
 
-    public Iterable<WorkTime> findWorkTime(Long taskId, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer page, Integer size) {
+    public Iterable<WorkTime> findWorkTime(Long taskId, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, Integer page, Integer size) {
         Specification<WorkTime> specification = Specification.where(null);
         Sort sort = null;
         if (taskId != null) {
             specification = specification.and(WorkTimeSpecifications.taskIdEQ(taskId));
 //            if (sort == null)
-                sort = Sort.by("taskId");
+            sort = Sort.by("taskId");
 //            else{
 //              sort.and(Sort.by("taskId"));
 //            }
@@ -88,7 +88,7 @@ public class WorkTimeService {
             specification = specification.and(WorkTimeSpecifications.userNikNameEQ(nikName));
             if (sort == null)
                 sort = Sort.by("nikName");
-            else{
+            else {
                 sort.and(Sort.by("nikName"));
             }
         }
@@ -104,16 +104,18 @@ public class WorkTimeService {
         if (dateGT != null) {
             specification = specification.and(WorkTimeSpecifications.dateGT(dateGT));
         }
-
+        if (type != null) {
+            specification = specification.and(WorkTimeSpecifications.typeEq(type));
+        }
 
         if (page == null) {
             return workTimeRepository.findAll(specification);
 
         } else {
             if (sort == null)
-                sort = Sort.by(Sort.Direction.DESC,"workDate");
-            else{
-                sort = sort.and(Sort.by(Sort.Direction.DESC,"workDate"));
+                sort = Sort.by(Sort.Direction.DESC, "workDate");
+            else {
+                sort = sort.and(Sort.by(Sort.Direction.DESC, "workDate"));
             }
 
             return workTimeRepository.findAll(specification, PageRequest.of(page - 1, size, sort));
@@ -124,21 +126,41 @@ public class WorkTimeService {
         List<WorkTime> workTimes = new ArrayList<>();
         List<Long> taskIdList = taskServiceIntegration.getTaskList(taskDevbo, taskBts);
         taskIdList.forEach(taskId ->
-                findWorkTime(taskId, nikName, dateLt, dateLe, dateGT, dateGE, null, null)
+                findWorkTime(taskId, nikName, dateLt, dateLe, dateGT, dateGE, null, null, null)
                         .forEach(workTimes::add)
         );
         return workTimes;
     }
 
-    public float getTimeWork(Long taskId, String nikName, Date dateGt, Date dateLe) {
+    public float getTimeWork(Long taskId, String nikName, Date dateGt, Date dateLe, String typeStr) {
+        ArrayList<Integer> types = new ArrayList<>();
+
+        if (typeStr!= null && typeStr.equals("analise")) {
+            types.add(2);
+            types.add(3);
+
+        } else if (typeStr!= null && typeStr.equals("develop")) {
+            types.add(1);
+            types.add(4);
+        } else {
+            types.add(null);
+        }
+
         AtomicReference<Float> time = new AtomicReference<>((float) 0);
-        findWorkTime(taskId, nikName, null, dateLe, dateGt, null, null, null).forEach(workTime -> time.set(time.get() + workTime.getWorkTime()));
+        for (Integer type : types) {
+
+            findWorkTime(taskId, nikName, null, dateLe, dateGt, null, type, null, null).
+
+                    forEach(workTime ->
+                            time.set(time.get() + workTime.getWorkTime())
+                    );
+        }
         return time.get();
     }
 
     public ListString getFactUser(Long taskId) {
         ListString users = new ListString();
-        findWorkTime(taskId, null, null, null, null, null, null, null).forEach(workTime -> users.getList().add(workTime.getNikName()));
+        findWorkTime(taskId, null, null, null, null, null, null, null,null).forEach(workTime -> users.getList().add(workTime.getNikName()));
         return users;
     }
 
@@ -176,7 +198,7 @@ public class WorkTimeService {
         weekWorkDtos
                 .forEach(weekWorkDto -> {
                     Map<String, UserWorkDto> userWorkDtoMap = new HashMap<>();
-                    findWorkTime(null, nikName, null, weekWorkDto.getDayEnd(), null, weekWorkDto.getDayStart(), null, null)
+                    findWorkTime(null, nikName, null, weekWorkDto.getDayEnd(), null, weekWorkDto.getDayStart(), null, null,null)
                             .forEach(workTime -> {
                                 Integer type = tasks.get(workTime.getTaskId());
                                 if (type == null) {

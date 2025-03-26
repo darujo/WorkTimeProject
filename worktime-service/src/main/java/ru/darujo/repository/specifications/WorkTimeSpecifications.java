@@ -25,6 +25,10 @@ public class WorkTimeSpecifications {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("nikName"),nikName));
     }
 
+    public static Specification<WorkTime> typeEq(Integer type) {
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("type"),type));
+    }
+
 //    public static Specification<WorkTime> titleLike(String title){
 //        return ((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("title"),String.format("%%%s%%",title)));
 //    }

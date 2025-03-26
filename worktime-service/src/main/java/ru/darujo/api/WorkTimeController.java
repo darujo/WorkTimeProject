@@ -29,7 +29,7 @@ public class WorkTimeController {
 
     @GetMapping("/conv")
     public WorkTimeDto workConv() {
-        workTimeService.findWorkTime(null, null, null, null, null, null, null, null).forEach(workTime -> workTimeService.saveWorkTime(WorkTimeConvertor.getWorkTime(WorkTimeConvertor.getWorkTimeDto(workTime)), false));
+        workTimeService.findWorkTime(null, null, null, null, null, null, null, null,null).forEach(workTime -> workTimeService.saveWorkTime(WorkTimeConvertor.getWorkTime(WorkTimeConvertor.getWorkTimeDto(workTime)), false));
         return new WorkTimeDto();
     }
 
@@ -37,24 +37,25 @@ public class WorkTimeController {
     public WorkTimeDto WorkTimeEdit(@PathVariable long id) {
         return WorkTimeConvertor.getWorkTimeDto(workTimeService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Отмеченая работа не найден")));
     }
+
     @GetMapping("/right/{right}")
-    public boolean checkRight (@PathVariable String right,
-                               @RequestHeader(defaultValue = "false", name = "WORK_TIME_EDIT") boolean rightEdit,
-                               @RequestHeader(defaultValue = "false", name = "WORK_TIME_CREATE") boolean rightCreate){
+    public boolean checkRight(@PathVariable String right,
+                              @RequestHeader(defaultValue = "false", name = "WORK_TIME_EDIT") boolean rightEdit,
+                              @RequestHeader(defaultValue = "false", name = "WORK_TIME_CREATE") boolean rightCreate) {
         right = right.toLowerCase();
-        if( right.equals("edit")){
-            if(!rightEdit) {
+        if (right.equals("edit")) {
+            if (!rightEdit) {
                 throw new ResourceNotFoundException("У вас нет права на редактирование WORK_TIME_EDIT");
             }
-        }
-        else if( right.equals("create")){
-            if(!rightCreate) {
+        } else if (right.equals("create")) {
+            if (!rightCreate) {
                 throw new ResourceNotFoundException("У вас нет права на редактирование WORK_TIME_CREATE");
             }
         }
         return true;
 
     }
+
     @PostMapping("")
     public WorkTimeDto WorkTimeSave(@RequestHeader String username,
                                     @RequestBody WorkTimeDto workTimeDto,
@@ -83,6 +84,7 @@ public class WorkTimeController {
                                               @RequestParam(required = false) String taskDevbo,
                                               @RequestParam(required = false) String taskBts,
                                               @RequestParam(required = false) String nikName,
+                                              @RequestParam(required = false) Integer type,
                                               @RequestParam(defaultValue = "false") boolean currentUser,
                                               @RequestParam(defaultValue = "1") Integer page,
                                               @RequestParam(defaultValue = "10") Integer size) {
@@ -90,9 +92,10 @@ public class WorkTimeController {
         Date dateLe = stringToDate(dateLeStr, "dateLe = ", false);
         Date dateGt = stringToDate(dateGtStr, "dateGt = ", false);
         Date dateGe = stringToDate(dateGeStr, "dateGe = ");
-        if (nikName == null && currentUser){
+        if ((nikName == null || nikName.equals(""))  && currentUser) {
             nikName = username;
         }
+
         workTimeService.clearCash();
         if ((taskBts == null && taskDevbo == null) || taskId != null) {
             return ((Page<WorkTime>) workTimeService.findWorkTime(taskId,
@@ -101,6 +104,7 @@ public class WorkTimeController {
                     dateLe,
                     dateGt,
                     dateGe,
+                    type,
                     page,
                     size)).map(workTimeService::getWorkTimeDtoAndUpd);
         } else {
@@ -121,13 +125,14 @@ public class WorkTimeController {
     public Float getTimeWork(@RequestParam(required = false) Long taskId,
                              @RequestParam(required = false) String nikName,
                              @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
-                             @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr) {
+                             @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
+                             @RequestParam(required = false) String type) {
         Date dateLe = stringToDate(dateLeStr, "dateLe = ", false);
         Date dateGt = stringToDate(dateGtStr, "dateGt = ", false);
         if (dateLe == null && dateGt == null) {
             return 0f;
         }
-        return workTimeService.getTimeWork(taskId, nikName, dateGt, dateLe);
+        return workTimeService.getTimeWork(taskId, nikName, dateGt, dateLe, type);
     }
 
     @GetMapping("/rep/fact/user")
@@ -167,6 +172,7 @@ public class WorkTimeController {
         }
         return null;
     }
+
     @GetMapping("/rep/fact/availTime/{taskId}")
     public Boolean getFactUsers(@PathVariable long taskId
     ) {

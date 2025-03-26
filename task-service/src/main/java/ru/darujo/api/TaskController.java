@@ -107,7 +107,8 @@ public class TaskController {
                              @RequestParam(required = false) String description,
                              @RequestParam(required = false) Long workId,
                              @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
-                             @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr
+                             @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
+                             @RequestParam(required = false) String type
     ) {
         Date dateLe = stringToDate(dateLeStr, "dateLe = ");
         Date dateGt = stringToDate(dateGtStr, "dateGt = ");
@@ -118,7 +119,8 @@ public class TaskController {
                 description,
                 workId,
                 dateLe,
-                dateGt);
+                dateGt,
+                type);
     }
 
     @GetMapping("/rep/fact/user")

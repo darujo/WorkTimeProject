@@ -28,5 +28,7 @@ public class  WorkTime {
     private Long taskId;
     @Column(name = "comment")
     private String comment;
+    @Column(name = "type")
+    private Integer type;
 
 }

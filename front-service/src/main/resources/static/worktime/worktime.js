@@ -193,7 +193,8 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
             workDate: new Date(),
             userName: null,
             workTime: null,
-            comment: ""
+            comment: "",
+            type: null
         };
         // $scope
         console.log($scope.WorkTime);

@@ -21,39 +21,22 @@ public class WorkTimeServiceIntegration {
         this.webClientWorkTime = webClientWorkTime;
     }
 
-    public Float getTimeTask(Long taskId, String nikName, Date dateLE, Date dateGT) {
+    public Float getTimeTask(Long taskId, String nikName, Date dateLE, Date dateGT, String type) {
         StringBuilder stringBuilder = new StringBuilder();
-        if (stringBuilder.length() == 0) {
-            stringBuilder.append("?");
+        
+        addTeg( stringBuilder, "taskId=", taskId);
+        addTeg( stringBuilder, "nikName=", nikName);
+        addTeg( stringBuilder, "dateLe=", dateToText(dateLE));
+        addTeg( stringBuilder, "dateGt=", dateToText(dateGT));
+        addTeg( stringBuilder, "type=", type);
+        String str = "";
+        if (stringBuilder.length() != 0) {
+            str = "?" + stringBuilder;
         }
-        if (taskId != null) {
-            if (stringBuilder.length() != 0) {
-                stringBuilder.append("&");
-            }
-            stringBuilder.append("taskId=").append(taskId);
-        }
-        if (nikName != null) {
-            if (stringBuilder.length() != 0) {
-                stringBuilder.append("&");
-            }
-            stringBuilder.append("nikName=").append(nikName);
-        }
-        if (dateLE != null) {
-            if (stringBuilder.length() != 0) {
-                stringBuilder.append("&");
-            }
-            stringBuilder.append("dateLe=").append(dateToText(dateLE));
-        }
-        if (dateGT != null) {
-            if (stringBuilder.length() != 0) {
-                stringBuilder.append("&");
-            }
-            stringBuilder.append("dateGt=").append(dateToText(dateGT));
-        }
-
-        System.out.println(stringBuilder);
+        System.out.println("/rep/fact/time" + str);
+        
         try {
-            return webClientWorkTime.get().uri("/rep/fact/time" + stringBuilder)
+            return webClientWorkTime.get().uri("/rep/fact/time" + str)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
@@ -61,6 +44,23 @@ public class WorkTimeServiceIntegration {
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundException("Что-то пошло не так не удалось получить работы (api-worktime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
+    }
+
+    private void addTeg(StringBuilder stringBuilder, String str, String value) {
+        if (value != null) {
+            if (stringBuilder.length() != 0) {
+                stringBuilder.append("&");
+            }
+            stringBuilder.append(str).append(value);
+        }
+    }
+    private void addTeg(StringBuilder stringBuilder, String str, Long value) {
+        if (value != null) {
+            if (stringBuilder.length() != 0) {
+                stringBuilder.append("&");
+            }
+            stringBuilder.append(str).append(value);
         }
     }
 
@@ -89,7 +89,7 @@ public class WorkTimeServiceIntegration {
     public Boolean availTime(Long taskId) {
         try {
             Boolean b
-            =webClientWorkTime.get().uri("/rep/fact/availTime/" + taskId)
+             = webClientWorkTime.get().uri("/rep/fact/availTime/" + taskId)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))

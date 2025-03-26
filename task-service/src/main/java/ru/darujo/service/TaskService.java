@@ -94,9 +94,10 @@ public class TaskService {
             String description,
             Long workId,
             Date dateLe,
-            Date dateGt) {
+            Date dateGt,
+            String type) {
         return ((List<Task>) findWorkTime(null, codeBTS, codeDEVBO, description, workId, null,null, null))
-                .stream().map(task -> workTimeServiceIntegration.getTimeTask(task.getId(), nikName, dateLe, dateGt)).reduce((sumTime, time) ->
+                .stream().map(task -> workTimeServiceIntegration.getTimeTask(task.getId(), nikName, dateLe, dateGt,type)).reduce((sumTime, time) ->
                         sumTime + time).orElse(0f);
     }
 

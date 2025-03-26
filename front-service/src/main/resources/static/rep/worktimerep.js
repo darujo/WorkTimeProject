@@ -20,7 +20,8 @@ angular.module('workTimeService').controller('workTimeRepController', function (
                 stageZi: Filt ? Filt.stageZi : null,
                 availWork: Filt ? Filt.availWork : null,
                 release: Filt ? Filt.release : null,
-                sort: $scope.WorkSort ? $scope.WorkSort : null
+                sort: $scope.WorkSort ? $scope.WorkSort : null,
+                ziName: Filt ? Filt.ziName : null
 
 
             }
