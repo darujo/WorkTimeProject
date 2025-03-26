@@ -233,8 +233,7 @@ public class TaskController {
                 null).forEach(task ->
         {
             TaskDto taskDto = taskAddValue(task);
-            System.out.println(taskDto.getNameZi().matches(".*" + ziName + "*"));
-            if (taskDto.getNameZi().matches(".*" + ziName + "*")) {
+            if (taskDto.getNameZi() != null && taskDto.getNameZi().matches(".*" + ziName + "*")) {
                 taskDtoList.add(taskDto);
             }
 

@@ -16,10 +16,10 @@ public class TaskSpecifications {
     }
 
     public static Specification<Task> eq(String field, Long value){
-        return ((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get(field),String.format("%%%s%%",value)));
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(field),value));
     }
     public static Specification<Task> eq(String field, Integer value){
-        return ((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get(field),String.format("%%%s%%",value)));
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(field),value));
     }
 
 }
