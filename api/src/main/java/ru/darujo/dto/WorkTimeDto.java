@@ -5,14 +5,16 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class WorkTimeDto  implements Serializable, UserFio {
+public class WorkTimeDto implements Serializable, UserFio {
     SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-    private String dateToText(Date date){
-        if (date == null){
+
+    private String dateToText(Date date) {
+        if (date == null) {
             return null;
         }
         return sdf.format(date);
     }
+
     private Long id;
     private String nikName;
     private String authorFirstName;
@@ -106,13 +108,15 @@ public class WorkTimeDto  implements Serializable, UserFio {
     }
 
     public String getTypeStr() {
-        if(type == 1){
+        if (type == null) {
+            return null;
+        } else if (type == 1) {
             return "Разработка";
-        } else if(type == 2){
+        } else if (type == 2) {
             return "Консультация";
-        } else if(type == 3){
+        } else if (type == 3) {
             return "Анализ";
-        } else if(type == 4){
+        } else if (type == 4) {
             return "Тестирование";
         } else {
             return type.toString();
