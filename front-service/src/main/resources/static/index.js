@@ -109,7 +109,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             console.log("getUser")
             // document.getElementById("UserName").value = nikName;
 
-            $http.get(constPatchAuth + '/user?nikName=' + nikName)
+            $http.get(constPatchAuth + '/users/user?nikName=' + nikName)
                 .then(function successCallback(response) {
                     console.log(response)
                     $scope.user = response.data;

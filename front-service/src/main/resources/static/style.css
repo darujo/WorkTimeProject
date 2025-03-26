@@ -66,27 +66,6 @@ body {
     margin-top: 30px;
 }
 
-.vvod80 {
-    padding: 10px 10px;
-    border: 1px solid #356EAD;
-    box-sizing: border-box;
-    border-radius: 10px;
-    opacity: 0.4;
-    width: 80%;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-.vvod40 {
-    padding: 10px 10px;
-    border: 1px solid #356EAD;
-    box-sizing: border-box;
-    border-radius: 10px;
-    opacity: 0.4;
-    width: 40%;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
 
 .userview {
     padding: 10px 10px;
@@ -100,16 +79,6 @@ body {
     /*height: 15px*/
 }
 
-.vvod30 {
-    padding: 10px 10px;
-    border: 1px solid #356EAD;
-    box-sizing: border-box;
-    border-radius: 10px;
-    opacity: 0.4;
-    width: 20%;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
 
 .vvod20 {
     padding: 10px 10px;
@@ -129,18 +98,105 @@ body {
     border-radius: 10px;
     opacity: 0.4;
     width: 20%;
-    margin: auto;
+    margin: 10px auto;
+}
+
+.vvod20mar10 {
+    padding: 10px 10px;
+    border: 1px solid #356EAD;
+    box-sizing: border-box;
+    border-radius: 10px;
+    opacity: 0.4;
+    width: 20%;
+    margin-left: 10px;
     margin-bottom: 10px;
     margin-top: 10px;
 }
 
-.detailsblock {
+.vvod30 {
+    padding: 10px 10px;
+    border: 1px solid #356EAD;
+    box-sizing: border-box;
     border-radius: 10px;
-    border: 1px solid #356EAD;;
-    margin: 10px;
-    padding: 5px;
-    width: -webkit-fill-available;
+    opacity: 0.4;
+    width: 20%;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
+.vvod30mar {
+    padding: 10px 10px;
+    border: 1px solid #356EAD;
+    box-sizing: border-box;
+    border-radius: 10px;
+    opacity: 0.4;
+    width: 20%;
+    margin: 10px auto;
+}
+
+
+.vvod40 {
+    padding: 10px 10px;
+    border: 1px solid #356EAD;
+    box-sizing: border-box;
+    border-radius: 10px;
+    opacity: 0.4;
+    width: 40%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.vvod40mar {
+    padding: 10px 10px;
+    border: 1px solid #356EAD;
+    box-sizing: border-box;
+    border-radius: 10px;
+    opacity: 0.4;
+    width: 40%;
+    margin: 10px auto;
+}
+.vvod40mar10 {
+    padding: 10px 10px;
+    border: 1px solid #356EAD;
+    box-sizing: border-box;
+    border-radius: 10px;
+    opacity: 0.4;
+    width: 40%;
+    margin-left: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.vvod80 {
+    padding: 10px 10px;
+    border: 1px solid #356EAD;
+    box-sizing: border-box;
+    border-radius: 10px;
+    opacity: 0.4;
+    width: 80%;
+    margin: 10px auto;
+}
+.vvod80mar {
+    padding: 10px 10px;
+    border: 1px solid #356EAD;
+    box-sizing: border-box;
+    border-radius: 10px;
+    opacity: 0.4;
+    width: 80%;
+    margin: 10px auto;
+}
+
+.vvod80mar10 {
+    padding: 10px 10px;
+    border: 1px solid #356EAD;
+    box-sizing: border-box;
+    border-radius: 10px;
+    opacity: 0.4;
+    width: 80%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+
+
 
 .vvod {
     padding: 10px 10px;
@@ -151,6 +207,14 @@ body {
     width: 100%;
     margin-top: 10px;
     margin-bottom: 10px;
+}
+
+.detailsblock {
+    border-radius: 10px;
+    border: 1px solid #356EAD;;
+    margin: 10px;
+    padding: 5px;
+    width: -webkit-fill-available;
 }
 
 .horiz {
@@ -279,12 +343,10 @@ TD {
 .p-form20 {
 
     width: 20%;
-    margin: auto;
     font-weight: 250;
     font-size: 15px;
     text-align: center;
-    margin-bottom: 10px;
-    margin-top: 10px;
+    margin: 10px auto;
 }
 
 .findbr {

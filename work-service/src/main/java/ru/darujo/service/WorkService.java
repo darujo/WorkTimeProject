@@ -107,10 +107,14 @@ public class WorkService {
                                   String release
     ) {
         Specification<Work> specification = Specification.where(WorkSpecifications.queryDistinctTrue());
-
-        if (name != null && !name.equals("")) {
-            specification = specification.and(WorkSpecifications.workNameLike(name));
+        specification = getWorkSpecificationLike("name",name,specification);
+        specification = getWorkSpecificationLike("codeZi",codeZi,specification);
+        specification = getWorkSpecificationLike("task",task,specification);
+        specification = getWorkSpecificationLike("release",release,specification);
+        if (codeSap != null) {
+            specification = specification.and(WorkSpecifications.codeSapEq(codeSap));
         }
+
         if (stageZiLe != null && stageZiLe.equals(stageZiGe)) {
             specification = specification.and(WorkSpecifications.stageZiEq(stageZiLe));
 
@@ -122,18 +126,7 @@ public class WorkService {
                 specification = specification.and(WorkSpecifications.stageZiGe(stageZiGe));
             }
         }
-        if (codeSap != null) {
-            specification = specification.and(WorkSpecifications.codeSapEq(codeSap));
-        }
-        if (release != null) {
-            specification = specification.and(WorkSpecifications.releaseLike(release));
-        }
-        if (codeZi != null && !codeZi.equals("")) {
-            specification = specification.and(WorkSpecifications.codeZiLike(codeZi));
-        }
-        if (task != null && !task.equals("")) {
-            specification = specification.and(WorkSpecifications.taskLike(task));
-        }
+
 
 
         System.out.println("Page = " + page);
@@ -154,9 +147,21 @@ public class WorkService {
         }
         return workPage;
     }
-
+    private Specification<Work> getWorkSpecificationLike(String field, String value, Specification<Work> specification) {
+        if (value != null && !value.equals("")) {
+            specification = specification.and(WorkSpecifications.like(field, value));
+        }
+        return specification;
+    }
+    private Specification<WorkLittle> getWorkLittleSpecificationLike(String field, String value, Specification<WorkLittle> specification) {
+        if (value != null && !value.equals("")) {
+            specification = specification.and(WorkSpecifications.likeLittle(field, value));
+        }
+        return specification;
+    }
     public Page<WorkLittle> findWorkLittle(int page, int size, String name, String sort, Integer stageZiGe, Integer stageZiLe) {
         Specification<WorkLittle> specification = Specification.where(WorkSpecifications.queryDistinctTrueLittle());
+        specification = getWorkLittleSpecificationLike("name",name,specification);
 
         if (name != null) {
             specification = specification.and(WorkSpecifications.workLittleNameLike(name));
@@ -187,19 +192,16 @@ public class WorkService {
                 sortWork = sortWork.and(Sort.by(sort[i]));
             }
         }
-        if (name != null) {
-            specification = specification.and(WorkSpecifications.workNameLike(name));
-        }
+        specification = getWorkSpecificationLike("name",name,specification);
+        specification = getWorkSpecificationLike("release",release,specification);
+
         if (stageZiGe != null) {
             specification = specification.and(WorkSpecifications.stageZiGe(stageZiGe));
         }
         if (stageZiLe != null) {
             specification = specification.and(WorkSpecifications.stageZiLe(stageZiLe));
         }
-        if (release != null) {
-            specification = specification.and(WorkSpecifications.releaseLike(release));
-        }
-        List<WorkRepDto> workRepDtos = new ArrayList<>();
+        List<WorkRepDto> workRepDTOs = new ArrayList<>();
         List<Work> works;
         if (sortWork == null) {
             works = workRepository.findAll(specification);
@@ -215,9 +217,9 @@ public class WorkService {
                     if (availWork == null ||
                             (availWork && availWorkTime) ||
                             (!availWork && !availWorkTime)) {
-                        Timestamp timestampDevolop = getTimeDevolop(work);
+                        Timestamp timestampDevelop = getTimeDevelop(work);
 
-                        workRepDtos.add(
+                        workRepDTOs.add(
                                 new WorkRepDto(
                                         work.getId(),
                                         work.getCodeZI(),
@@ -245,17 +247,17 @@ public class WorkService {
                                                 work.getId(),
                                                 null,
                                                 null,
-                                                timestampDevolop,
+                                                timestampDevelop,
                                                 "analise"),
                                         taskServiceIntegration.getTimeWork(
                                                 work.getId(),
                                                 null,
                                                 null,
-                                                timestampDevolop,
+                                                timestampDevelop,
                                                 "develop"),
                                         taskServiceIntegration.getTimeWork(work.getId(),
                                                 null,
-                                                timestampDevolop,
+                                                timestampDevelop,
                                                 work.getDebugEndFact()),
                                         taskServiceIntegration.getTimeWork(work.getId(),
                                                 null,
@@ -275,7 +277,7 @@ public class WorkService {
                     }
                 }
         );
-        return workRepDtos;
+        return workRepDTOs;
     }
 
     public PageDto<WorkFactDto> getWorkFactRep(Integer page,
@@ -291,7 +293,7 @@ public class WorkService {
                                                String sort,
                                                boolean hideNotTime) {
         AtomicInteger num = new AtomicInteger();
-        List<WorkFactDto> workFactDtos = new ArrayList<>();
+        List<WorkFactDto> workFactDTOs = new ArrayList<>();
         Page<Work> workPage = findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, release);
         workPage.forEach(work -> {
                     Set<String> users = taskServiceIntegration.getListUser(work.getId()).getList();
@@ -322,8 +324,8 @@ public class WorkService {
                             } catch (ResourceNotFoundException ex) {
                                 userDto = new UserDto(-1L, "", "логином", "Не найден пользователь с", user);
                             }
-                            Timestamp timestampDevolop = getTimeDevolop(work);
-                            workFactDtos.add(
+                            Timestamp timestampDevelop = getTimeDevelop(work);
+                            workFactDTOs.add(
                                     new WorkFactDto(
                                             num.incrementAndGet(),
                                             codeZi,
@@ -336,17 +338,17 @@ public class WorkService {
                                             taskServiceIntegration.getTimeWork(work.getId(),
                                                     user,
                                                     null,
-                                                    timestampDevolop,
+                                                    timestampDevelop,
                                                     "analise"),
                                             taskServiceIntegration.getTimeWork(
                                                     work.getId(),
                                                     user,
                                                     null,
-                                                    timestampDevolop,
+                                                    timestampDevelop,
                                                     "develop"),
                                             taskServiceIntegration.getTimeWork(work.getId(),
                                                     user,
-                                                    timestampDevolop,
+                                                    timestampDevelop,
                                                     work.getDebugEndFact()),
                                             taskServiceIntegration.getTimeWork(work.getId(),
                                                     user,
@@ -367,7 +369,7 @@ public class WorkService {
                         }
                     } else {
                         if (!hideNotTime) {
-                            workFactDtos.add(
+                            workFactDTOs.add(
                                     new WorkFactDto(
                                             num.incrementAndGet(),
                                             work.getCodeZI(),
@@ -391,21 +393,21 @@ public class WorkService {
 
                 }
         );
-        return new PageDto<WorkFactDto>(workPage.getTotalPages(), workPage.getNumber(), workPage.getSize(), workFactDtos);
+        return new PageDto<>(workPage.getTotalPages(), workPage.getNumber(), workPage.getSize(), workFactDTOs);
     }
 
-    private Timestamp getTimeDevolop(Work work) {
-        Timestamp timestampDevolop;
+    private Timestamp getTimeDevelop(Work work) {
+        Timestamp timestampDevelop;
         if (work.getAnaliseEndFact() == null
                 && work.getDevelopEndFact() == null
                 && work.getDebugEndFact() == null
                 && work.getReleaseEndFact() == null
                 && work.getOpeEndFact() == null) {
-            timestampDevolop = new Timestamp(new Date().getTime());
+            timestampDevelop = new Timestamp(new Date().getTime());
         } else {
-            timestampDevolop = work.getDevelopEndFact();
+            timestampDevelop = work.getDevelopEndFact();
         }
-        return timestampDevolop;
+        return timestampDevelop;
     }
 
 

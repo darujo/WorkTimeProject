@@ -73,10 +73,10 @@ spring:
         - id: user-service
           uri: "http://localhost:8183"
           predicates:
-            - Path=/user
+            - Path=/users/**
           filters:
             - StripPrefix=1
-            - PrefixPath=/app-auth/user
+            - PrefixPath=/app-auth/users
             - JwtAuthFilter
 
         - id: front-add

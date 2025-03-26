@@ -41,16 +41,26 @@ public class WorkTimeController {
     @GetMapping("/right/{right}")
     public boolean checkRight(@PathVariable String right,
                               @RequestHeader(defaultValue = "false", name = "WORK_TIME_EDIT") boolean rightEdit,
-                              @RequestHeader(defaultValue = "false", name = "WORK_TIME_CREATE") boolean rightCreate) {
+                              @RequestHeader(defaultValue = "false", name = "WORK_TIME_CREATE") boolean rightCreate,
+                              @RequestHeader(defaultValue = "false", name = "WORK_TIME_CHANGE_USER") boolean rightChangeUser) {
+
         right = right.toLowerCase();
-        if (right.equals("edit")) {
-            if (!rightEdit) {
-                throw new ResourceNotFoundException("У вас нет права на редактирование WORK_TIME_EDIT");
-            }
-        } else if (right.equals("create")) {
-            if (!rightCreate) {
-                throw new ResourceNotFoundException("У вас нет права на редактирование WORK_TIME_CREATE");
-            }
+        switch (right) {
+            case "edit":
+                if (!rightEdit) {
+                    throw new ResourceNotFoundException("У вас нет права на редактирование WORK_TIME_EDIT");
+                }
+                break;
+            case "create":
+                if (!rightCreate) {
+                    throw new ResourceNotFoundException("У вас нет права на редактирование WORK_TIME_CREATE");
+                }
+                break;
+            case "changeuser":
+                if (!rightChangeUser) {
+                    throw new ResourceNotFoundException("У вас нет права на редактирование WORK_TIME_CREATE");
+                }
+                break;
         }
         return true;
 
@@ -63,7 +73,7 @@ public class WorkTimeController {
         if (!right) {
             throw new ResourceNotFoundException("У вас нет права WORK_TIME_EDIT");
         }
-        if (workTimeDto.getNikName() == null || !workTimeDto.getNikName().equals("")) {
+        if (workTimeDto.getNikName() == null || workTimeDto.getNikName().equals("")) {
             workTimeDto.setNikName(username);
         }
         return WorkTimeConvertor.getWorkTimeDto(workTimeService.saveWorkTime(WorkTimeConvertor.getWorkTime(workTimeDto)));
@@ -81,7 +91,7 @@ public class WorkTimeController {
                                               @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
                                               @RequestParam(required = false, name = "dateGe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGeStr,
                                               @RequestParam(required = false) Long taskId,
-                                              @RequestParam(required = false) String taskDevbo,
+                                              @RequestParam(required = false) String taskDEVBO,
                                               @RequestParam(required = false) String taskBts,
                                               @RequestParam(required = false) String nikName,
                                               @RequestParam(required = false) Integer type,
@@ -97,7 +107,7 @@ public class WorkTimeController {
         }
 
         workTimeService.clearCash();
-        if ((taskBts == null && taskDevbo == null) || taskId != null) {
+        if ((taskBts == null && taskDEVBO == null) || taskId != null) {
             return ((Page<WorkTime>) workTimeService.findWorkTime(taskId,
                     nikName,
                     dateLt,
@@ -108,15 +118,15 @@ public class WorkTimeController {
                     page,
                     size)).map(workTimeService::getWorkTimeDtoAndUpd);
         } else {
-            List<WorkTime> workTimeDtos = workTimeService.findWorkTimeTask(
-                    taskDevbo,
+            List<WorkTime> workTimeDTOs = workTimeService.findWorkTimeTask(
+                    taskDEVBO,
                     taskBts,
                     nikName,
                     dateLt,
                     dateLe,
                     dateGt,
                     dateGe);
-            return workTimeDtos.stream().map(workTimeService::getWorkTimeDtoAndUpd).collect(Collectors.toList());
+            return workTimeDTOs.stream().map(workTimeService::getWorkTimeDtoAndUpd).collect(Collectors.toList());
 
         }
     }

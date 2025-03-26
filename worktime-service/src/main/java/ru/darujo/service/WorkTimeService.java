@@ -122,9 +122,9 @@ public class WorkTimeService {
         }
     }
 
-    public List<WorkTime> findWorkTimeTask(String taskDevbo, String taskBts, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE) {
+    public List<WorkTime> findWorkTimeTask(String taskDEVBO, String taskBts, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE) {
         List<WorkTime> workTimes = new ArrayList<>();
-        List<Long> taskIdList = taskServiceIntegration.getTaskList(taskDevbo, taskBts);
+        List<Long> taskIdList = taskServiceIntegration.getTaskList(taskDEVBO, taskBts);
         taskIdList.forEach(taskId ->
                 findWorkTime(taskId, nikName, dateLt, dateLe, dateGT, dateGE, null, null, null)
                         .forEach(workTimes::add)
@@ -172,7 +172,7 @@ public class WorkTimeService {
             throw new ResourceNotFoundException("Не задана дата");
         }
         if (workTime.getWorkTime() == null) {
-            throw new ResourceNotFoundException("Не задано время");
+            throw new ResourceNotFoundException("Время должно быть от 0 до 10 часов");
         }
         if (workTime.getWorkTime() <= 0) {
             throw new ResourceNotFoundException("Время должно быть больше нуля");
@@ -186,16 +186,16 @@ public class WorkTimeService {
     }
 
     public List<UserWorkDto> getWeekWork(String nikName, boolean weekSplit, Timestamp dateStart, Timestamp dateEnd) {
-        List<UserWorkDto> userWorkDtos = new ArrayList<>();
-        List<WeekWorkDto> weekWorkDtos;
+        List<UserWorkDto> userWorkDTOs = new ArrayList<>();
+        List<WeekWorkDto> weekWorkDTOs;
         if (weekSplit) {
-            weekWorkDtos = calendarServiceIntegration.getWeekTime(dateStart, dateEnd);
+            weekWorkDTOs = calendarServiceIntegration.getWeekTime(dateStart, dateEnd);
         } else {
-            weekWorkDtos = new ArrayList<>();
-            weekWorkDtos.add(new WeekWorkDto(dateStart, dateEnd, calendarServiceIntegration.getWorkTime(dateStart, dateEnd)));
+            weekWorkDTOs = new ArrayList<>();
+            weekWorkDTOs.add(new WeekWorkDto(dateStart, dateEnd, calendarServiceIntegration.getWorkTime(dateStart, dateEnd)));
         }
         Map<Long, Integer> tasks = new HashMap<>();
-        weekWorkDtos
+        weekWorkDTOs
                 .forEach(weekWorkDto -> {
                     Map<String, UserWorkDto> userWorkDtoMap = new HashMap<>();
                     findWorkTime(null, nikName, null, weekWorkDto.getDayEnd(), null, weekWorkDto.getDayStart(), null, null,null)
@@ -246,11 +246,11 @@ public class WorkTimeService {
                     }
                     userWorkDtoMap.forEach((nik, userWork) -> {
                         updFio(userWork);
-                        userWorkDtos.add(
+                        userWorkDTOs.add(
                                 userWork.addTimeAll());
                     });
                 });
-        return userWorkDtos;
+        return userWorkDTOs;
 
     }
 

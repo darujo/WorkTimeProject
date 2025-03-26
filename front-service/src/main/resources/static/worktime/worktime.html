@@ -12,8 +12,8 @@
                             <br>
                             <input class="vvod30" type="number" inputmode="numeric" id="TaskId" step="any"
                                    ng-model="Filt.taskId"/>
-<!--                        </div>-->
-<!--                        <div class="horiz">-->
+                            <!--                        </div>-->
+                            <!--                        <div class="horiz">-->
                             <p class="p-head">DEVBO</p>
                             <br>
                             <input class="vvod30" type="text" id="TaskDevbo"
@@ -32,7 +32,7 @@
                                    ng-model="Filt.nikName"/>
                             <p class="p-head"> Тип: </p>
                             <select class="vvod20" name="choice" id="TypefFilt" ng-model="WorkTime.type">
-<!--                                при добавление надо прописать workTimeService.getTimeWork-->
+                                <!--                                при добавление надо прописать workTimeService.getTimeWork-->
                                 <option ng-value="1" value="1">Разработка</option>
                                 <option ng-value="2" value="2">Консультация</option>
                                 <option ng-value="3" value="3">Анализ</option>
@@ -43,8 +43,8 @@
                                 <!--            <option ng-value="10000" value="10000">10000</option>-->
                             </select>
                             <p class="p-head">Мои работы</p> <input class="vvod20" type="checkbox"
-                                                                             id="CurrentUser"
-                                                                             ng-model="Filt.currentUser"/>
+                                                                    id="CurrentUser"
+                                                                    ng-model="Filt.currentUser"/>
                         </div>
                         <div class="horiz">
                             <input class="vvod40" type="date" id="DateGe" ng-model="Filt.dateGe"/>
@@ -66,7 +66,7 @@
         <input class="vvod" type="number" id="Page" value="1"/>
         <button class="headbutton" ng-click="findPage(1)">NextPage</button>
         <p class="p-head">Количество элементов</p>
-        <select class="vvod20" name="choice" id="WorkTimeSize" ng-model="Filt.size" ng-change="filterWorkTime()" >
+        <select class="vvod20" name="choice" id="WorkTimeSize" ng-model="Filt.size" ng-change="filterWorkTime()">
             <option ng-value="10" value="10" selected>10</option>
             <option ng-value="25" value="25">25</option>
             <option ng-value="50" value="50">50</option>
@@ -155,8 +155,8 @@
                         <p class="p-filt">BTS:</p>
                         <br>
                         <input class="vvod40" type="text" id="BtsFilt" step="any" ng-model="FiltTask.bts"/>
-<!--                    </div>-->
-<!--                    <div class="horiz">-->
+                        <!--                    </div>-->
+                        <!--                    <div class="horiz">-->
                         <p class="p-filt">DEVBO :</p>
                         <br>
                         <input class="vvod40" type="text" id="DevboFilt" step="any" ng-model="FiltTask.devbo"/>
@@ -180,7 +180,7 @@
             <button type="button" class="headbutton" ng-click="loadTask(1)">NextPage</button>
             <button type="button" ng-click="filterTask()" class="headbutton">Применить</button>
             <p class="p-head">Количество элементов</p>
-            <select class="vvod20" name="choice" id="TaskSize" ng-model="FiltTask.size" ng-change="filterTask()" >
+            <select class="vvod20" name="choice" id="TaskSize" ng-model="FiltTask.size" ng-change="filterTask()">
                 <option ng-value="10" value="10" selected>10</option>
                 <option ng-value="25" value="25">25</option>
                 <option ng-value="50" value="50">50</option>
@@ -224,24 +224,32 @@
 
     <form novalidate ng-submit="saveWorkTime()">
         <br>
-        Дата: <input class="vvod" type="date" id="WorkTimeDate" step="any"
+        Дата: <input class="vvod40mar10" type="date" id="WorkTimeDate" step="any"
                      ng-model="WorkTime.workDate"/>
         <br>
-        Время: <input class="vvod" type="number" step="0.1" id="WorkTimeTime" min="0" max="10"
+        <div class="horiz">
+            <p ng-if="showUser()">Пользователь: </p>
+            <select ng-if="showUser()" class="vvod40mar10" name="choice" id="UserWorkTime" ng-model="WorkTime.nikName">
+                <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">{{user.lastName}}
+                    {{user.firstName}} {{user.patronymic}}
+                </option>
+            </select>
+
+            <br ng-if="showUser()">
+        </div>
+        Время: <input class="vvod20mar10" type="number" step="0.1" id="WorkTimeTime" min="0" max="10"
                       ng-model="WorkTime.workTime"/>
-        Тип:
-        <select class="vvod20" name="choice" id="TypeWorkTime" ng-model="WorkTime.type">
-            при добавление надо прописать workTimeService.getTimeWork
-            <option ng-value="1" value="1">Разработка</option>
-            <option ng-value="2" value="2">Консультация</option>
-            <option ng-value="3" value="3">Анализ</option>
-            <option ng-value="4" value="4">Тестирование</option>
-<!--            <option ng-value="500" value="500">500</option>-->
-<!--            <option ng-value="1000" value="1000">1000</option>-->
-<!--            <option ng-value="10000" value="10000">10000</option>-->
-        </select>
-        <br>
-        Комментарий : <input class="vvod" type="text" id="Comment" placeholder="Ведите комментарий"
+        <div class="horiz">
+            <p ng-if="showType()">Тип:</p>
+            <select ng-if="showType()" class="vvod20mar10" name="choice" id="TypeWorkTime" ng-model="WorkTime.type">
+                <option ng-value="1" value="1">Разработка</option>
+                <option ng-value="2" value="2">Консультация</option>
+                <option ng-value="3" value="3">Анализ</option>
+                <option ng-value="4" value="4">Тестирование</option>
+            </select>
+            <br>
+        </div>
+        Комментарий : <input class="vvod80mar" type="text" id="Comment" placeholder="Ведите комментарий"
                              ng-model="WorkTime.comment"/>
         <br>
         <button type="submit" class="button" id="ButtonSaveDown">Сохранить</button>

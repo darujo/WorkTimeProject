@@ -32,7 +32,7 @@ public class UserServiceIntegration {
             }
         }
         try {
-            return webClientUser.get().uri(stringBuilder.toString())
+            return webClientUser.get().uri("/user" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные пользователю")))

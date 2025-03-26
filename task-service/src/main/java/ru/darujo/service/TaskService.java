@@ -31,7 +31,9 @@ public class TaskService {
     public void setWorkTimeServiceIntegration(WorkTimeServiceIntegration workTimeServiceIntegration) {
         this.workTimeServiceIntegration = workTimeServiceIntegration;
     }
+
     private WorkServiceIntegration workServiceIntegration;
+
     @Autowired
     public void setWorkServiceIntegration(WorkServiceIntegration workServiceIntegration) {
         this.workServiceIntegration = workServiceIntegration;
@@ -42,8 +44,8 @@ public class TaskService {
     }
 
     public Task saveWorkTime(Task task) {
-        if(task.getType() == 1){
-           workServiceIntegration.getWorEditDto(task.getWorkId());
+        if (task.getType() == 1) {
+            workServiceIntegration.getWorEditDto(task.getWorkId());
         }
         return taskRepository.save(task);
     }
@@ -61,20 +63,12 @@ public class TaskService {
                                        Integer page,
                                        Integer size) {
         Specification<Task> specification = Specification.where(null);
-        if (nikName != null) {
-            specification = specification.and(TaskSpecifications.nikNameLike(nikName));
-        }
+        specification = getTaskSpecificationLike("nikName", nikName, specification);
+        specification = getTaskSpecificationLike("codeBTS", codeBTS, specification);
+        specification = getTaskSpecificationLike("codeDEVBO", codeDEVBO, specification);
+        specification = getTaskSpecificationLike("description", description, specification);
         if (type != null) {
             specification = specification.and(TaskSpecifications.typeEq(type));
-        }
-        if (codeBTS != null) {
-            specification = specification.and(TaskSpecifications.codeBTSLike(codeBTS));
-        }
-        if (codeDEVBO != null) {
-            specification = specification.and(TaskSpecifications.codeDEVBOLike(codeDEVBO));
-        }
-        if (description != null) {
-            specification = specification.and(TaskSpecifications.descriptionLike(description));
         }
         if (workId != null) {
             specification = specification.and(TaskSpecifications.workIdEQ(workId));
@@ -87,6 +81,13 @@ public class TaskService {
 
     }
 
+    private Specification<Task> getTaskSpecificationLike(String field, String value, Specification<Task> specification) {
+        if (value != null && !value.equals("")) {
+            specification = specification.and(TaskSpecifications.like(field, value));
+        }
+        return specification;
+    }
+
     public Float getTaskTime(
             String nikName,
             String codeBTS,
@@ -96,14 +97,16 @@ public class TaskService {
             Date dateLe,
             Date dateGt,
             String type) {
-        return ((List<Task>) findWorkTime(null, codeBTS, codeDEVBO, description, workId, null,null, null))
-                .stream().map(task -> workTimeServiceIntegration.getTimeTask(task.getId(), nikName, dateLe, dateGt,type)).reduce((sumTime, time) ->
-                        sumTime + time).orElse(0f);
+        return ((List<Task>) findWorkTime(null, codeBTS, codeDEVBO, description, workId, null, null, null))
+                .stream()
+                .map(task -> workTimeServiceIntegration.getTimeTask(task.getId(), nikName, dateLe, dateGt, type))
+                .reduce((sumTime, time) -> sumTime + time)
+                .orElse(0f);
     }
 
     public ListString getFactUsers(Long workId) {
         ListString users = new ListString();
-        ((List<Task>) findWorkTime(null, null, null, null, workId, null, null,null))
+        ((List<Task>) findWorkTime(null, null, null, null, workId, null, null, null))
                 .stream().map(task ->
                         workTimeServiceIntegration
                                 .getUsers(task.getId()))
@@ -115,8 +118,8 @@ public class TaskService {
     public Boolean getAvailTime(long workId) {
         Specification<Task> specification = Specification.where(null);
         specification = specification.and(TaskSpecifications.workIdEQ(workId));
-        List<Task> tasks =taskRepository.findAll(specification);
-        if(tasks.size() == 0){
+        List<Task> tasks = taskRepository.findAll(specification);
+        if (tasks.size() == 0) {
             return false;
         }
         return tasks.stream().anyMatch(task -> workTimeServiceIntegration.availTime(task.getId()));
