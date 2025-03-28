@@ -29,7 +29,9 @@ public class WorkTimeSpecifications {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("type"),type));
     }
 
-//    public static Specification<WorkTime> titleLike(String title){
-//        return ((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("title"),String.format("%%%s%%",title)));
-//    }
+    public static Specification<WorkTime> like(String field, String value){
+        return ((root, query, criteriaBuilder) ->
+                criteriaBuilder.like(criteriaBuilder.lower(root.get(field)),
+                                     String.format("%%%s%%",value).toLowerCase()));
+    }
 }

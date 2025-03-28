@@ -3,15 +3,19 @@ package ru.darujo.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.ListString;
+import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.integration.WorkServiceIntegration;
 import ru.darujo.integration.WorkTimeServiceIntegration;
 import ru.darujo.model.Task;
 import ru.darujo.repository.TaskRepository;
 import ru.darujo.repository.specifications.TaskSpecifications;
 
+import javax.transaction.Transactional;
+import java.sql.Timestamp;
 import java.util.*;
 
 @Service
@@ -47,6 +51,7 @@ public class TaskService {
         if (task.getType() == 1) {
             workServiceIntegration.getWorEditDto(task.getWorkId());
         }
+        task.setRefresh(new Timestamp(System.currentTimeMillis()));
         return taskRepository.save(task);
     }
 
@@ -62,7 +67,7 @@ public class TaskService {
                                        Integer type,
                                        Integer page,
                                        Integer size) {
-        Specification<Task> specification = Specification.where(null);
+        Specification<Task> specification = Specification.where(TaskSpecifications.queryDistinctTrue());
         specification = getTaskSpecificationLike("nikName", nikName, specification);
         specification = getTaskSpecificationLike("codeBTS", codeBTS, specification);
         specification = getTaskSpecificationLike("codeDEVBO", codeDEVBO, specification);
@@ -74,7 +79,7 @@ public class TaskService {
             specification = specification.and(TaskSpecifications.workIdEQ(workId));
         }
         if (page != null) {
-            return taskRepository.findAll(specification, PageRequest.of(page - 1, size));
+            return taskRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.by("refresh")));
         } else {
             return taskRepository.findAll(specification);
         }
@@ -124,5 +129,11 @@ public class TaskService {
         }
         return tasks.stream().anyMatch(task -> workTimeServiceIntegration.availTime(task.getId()));
 
+    }
+    @Transactional
+    public boolean refreshTime(long id) {
+        Task task = findById(id).orElseThrow(() -> new ResourceNotFoundException("Отмеченая работа не найден"));
+        saveWorkTime(task);
+        return true;
     }
 }

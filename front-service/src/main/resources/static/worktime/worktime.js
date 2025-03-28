@@ -9,7 +9,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
         document.getElementById("FormEdit").style.display = "none";
     };
     var showFormEdit = function () {
-        checkRight("edit", false,callBackUpdate);
+        checkRight("edit", false, callBackUpdate);
         document.getElementById("WorkTimeList").style.display = "none";
         document.getElementById("FormEdit").style.display = "block";
     };
@@ -71,7 +71,11 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
         if (typeof $location.TaskId !== "undefined") {
             console.log("load5")
             if (typeof Filt === "undefined") {
-                Filt = {taskId: null};
+                Filt = {
+                    taskId: null,
+                    size: 10
+                };
+
             }
             Filt.taskId = $location.TaskId;
             $scope.setFormWorkTime();
@@ -118,7 +122,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
                 document.getElementById("DateLe").valueAsDate = vdate;
             }
             if (Filt.dateGe != null) {
-                var vdate = new Date(Filt.dateGe);
+                vdate = new Date(Filt.dateGe);
                 vdate.setHours(6);
 
                 document.getElementById("DateGe").valueAsDate = vdate;
@@ -127,6 +131,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
     }
 
     $scope.findPage = function (diffPage) {
+        console.log("findPage");
         var page = parseInt(document.getElementById("Page").value) + diffPage;
         document.getElementById("Page").value = page;
         console.log("запрос данных7");
@@ -144,10 +149,12 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
                 dateLe: Filt ? Filt.dateLe : null,
                 dateGe: Filt ? Filt.dateGe : null,
                 taskId: Filt ? Filt.taskId : null,
-                taskDevbo: Filt ? Filt.taskDevbo : null,
-                taskBts: Filt ? Filt.taskBts : null,
+                taskDEVBO: Filt ? Filt.taskDevbo : null,
+                taskBTS: Filt ? Filt.taskBts : null,
                 nikName: Filt ? Filt.nikName : null,
-                currentUser: Filt ? Filt.currentUser : null
+                currentUser: Filt ? Filt.currentUser : null,
+                type: Filt ? Filt.type : null,
+                comment: Filt ? Filt.comment : null
 
             }
 
@@ -178,6 +185,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
 
     };
     $scope.filterWorkTime = function () {
+        console.log("filterWorkTime")
         Filt = $scope.Filt;
         console.log(Filt)
         document.getElementById("Page").value = "1";
@@ -187,7 +195,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
     var WorkTimeIdEdit = null;
 
     $scope.createWorkTime = function () {
-        checkRight("create", true,callBackCreate);
+        checkRight("create", true, callBackCreate);
     }
     $scope.createWorkTimeRun = function () {
         console.log("createWorkTime");
@@ -372,54 +380,58 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
         showFindTask();
     }
     $scope.showType = function () {
-        console.log("TaskType");
-        console.log(TaskType);
+        // console.log("TaskType");
+        // console.log(TaskType);
         if (TaskType !== 3) {
-            console.log(true);
+            // console.log(true);
             return true;
         }
         console.log(false);
         return false;
     }
     var userChange;
-    $scope.showUser= function () {
-        console.log("userChange");
-        console.log(userChange);
+    $scope.showUser = function () {
+        // console.log("userChange");
+        // console.log(userChange);
         if (userChange) {
-            console.log(true);
+            // console.log(true);
             return true;
         }
-        console.log(false);
+        // console.log(false);
         return false;
     }
 
-    var callBackUser = function (){
+    var callBackUser = function () {
         userChange = true;
         loadUsers();
     }
     var loadUsers = function () {
-        console.log("Users")
+        // console.log("Users")
 
         $http({
-            url: constPatchUser ,
+            url: constPatchUser,
             method: "get"
 
         }).then(function (response) {
-            console.log(response.data);
+            // console.log(response.data);
             $scope.UserList = response.data;
         }, function errorCallback(response) {
-            console.log(response)
+            // console.log(response)
             if ($location.checkAuthorized(response)) {
                 alert(response.data.message);
             }
         });
 
     }
-    checkRight("changeuser", false,callBackUser);
+    checkRight("changeuser", false);
+    callBackUser();
     $scope.FiltTask = {size: 10}
     console.log("Start");
     showWorkTime();
     console.log("Show ok");
-
+    $scope.Filt = {
+        taskId: null,
+        size: 10
+    };
     $scope.loadWorkTime();
 })

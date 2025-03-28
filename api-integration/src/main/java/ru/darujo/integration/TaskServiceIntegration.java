@@ -141,4 +141,13 @@ public class TaskServiceIntegration {
             return false;
         }
     }
+
+    public Boolean setTaskRefreshTime(Long taskId) {
+        return webClientTask.get().uri("/" + taskId)
+                .retrieve()
+                .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                        clientResponse -> Mono.error(new ResourceNotFoundException("Задача c id = " + taskId + " не найдена")))
+                .bodyToMono(Boolean.class)
+                .block();
+    }
 }

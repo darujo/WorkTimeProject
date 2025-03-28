@@ -57,6 +57,7 @@ public class WorkTimeDto implements Serializable, UserFio {
     private String taskCodeBTS;
     // № внутренней задачи (DEVBO)
     private String taskCodeDEVBO;
+    private Integer taskType;
 
     public void setTaskDescription(String taskDescription) {
         this.taskDescription = taskDescription;
@@ -68,6 +69,10 @@ public class WorkTimeDto implements Serializable, UserFio {
 
     public void setTaskCodeDEVBO(String taskCodeDEVBO) {
         this.taskCodeDEVBO = taskCodeDEVBO;
+    }
+
+    public void setTaskType(Integer taskType) {
+        this.taskType = taskType;
     }
 
     public String getTaskDescription() {
@@ -110,6 +115,8 @@ public class WorkTimeDto implements Serializable, UserFio {
     public String getTypeStr() {
         if (type == null) {
             return null;
+        } else if (taskType != null && taskType == 3) {
+            return "Административная";
         } else if (type == 1) {
             return "Разработка";
         } else if (type == 2) {

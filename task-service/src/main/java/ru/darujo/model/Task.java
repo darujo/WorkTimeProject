@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,4 +34,6 @@ public class Task {
     // № ЗИ (ZI)
     @Column(name = "workId")
     private  Long workId;
+    @Column(name = "refresh")
+    private Timestamp refresh;
 }

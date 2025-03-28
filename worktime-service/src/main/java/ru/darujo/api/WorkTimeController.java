@@ -29,7 +29,7 @@ public class WorkTimeController {
 
     @GetMapping("/conv")
     public WorkTimeDto workConv() {
-        workTimeService.findWorkTime(null, null, null, null, null, null, null, null,null).forEach(workTime -> workTimeService.saveWorkTime(WorkTimeConvertor.getWorkTime(WorkTimeConvertor.getWorkTimeDto(workTime)), false));
+        workTimeService.findWorkTime(null, null, null, null, null, null, null, null,null,null).forEach(workTime -> workTimeService.saveWorkTime(WorkTimeConvertor.getWorkTime(WorkTimeConvertor.getWorkTimeDto(workTime)), false));
         return new WorkTimeDto();
     }
 
@@ -92,9 +92,10 @@ public class WorkTimeController {
                                               @RequestParam(required = false, name = "dateGe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGeStr,
                                               @RequestParam(required = false) Long taskId,
                                               @RequestParam(required = false) String taskDEVBO,
-                                              @RequestParam(required = false) String taskBts,
+                                              @RequestParam(required = false) String taskBTS,
                                               @RequestParam(required = false) String nikName,
                                               @RequestParam(required = false) Integer type,
+                                              @RequestParam(required = false) String comment,
                                               @RequestParam(defaultValue = "false") boolean currentUser,
                                               @RequestParam(defaultValue = "1") Integer page,
                                               @RequestParam(defaultValue = "10") Integer size) {
@@ -107,7 +108,7 @@ public class WorkTimeController {
         }
 
         workTimeService.clearCash();
-        if ((taskBts == null && taskDEVBO == null) || taskId != null) {
+        if ((taskBTS == null && taskDEVBO == null) || taskId != null) {
             return ((Page<WorkTime>) workTimeService.findWorkTime(taskId,
                     nikName,
                     dateLt,
@@ -115,12 +116,13 @@ public class WorkTimeController {
                     dateGt,
                     dateGe,
                     type,
+                    comment,
                     page,
                     size)).map(workTimeService::getWorkTimeDtoAndUpd);
         } else {
             List<WorkTime> workTimeDTOs = workTimeService.findWorkTimeTask(
                     taskDEVBO,
-                    taskBts,
+                    taskBTS,
                     nikName,
                     dateLt,
                     dateLe,

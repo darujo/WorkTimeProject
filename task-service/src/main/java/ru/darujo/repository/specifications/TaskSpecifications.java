@@ -21,5 +21,11 @@ public class TaskSpecifications {
     public static Specification<Task> eq(String field, Integer value){
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(field),value));
     }
+    public static Specification<Task> queryDistinctTrue() {
+        return ((root, query, criteriaBuilder) -> {
+            query.distinct(true);
+            return null;
+        });
+    }
 
 }

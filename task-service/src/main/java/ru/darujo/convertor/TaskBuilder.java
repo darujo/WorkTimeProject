@@ -1,9 +1,6 @@
 package ru.darujo.convertor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import ru.darujo.dto.TaskDto;
-import ru.darujo.dto.UserDto;
-import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.model.Task;
 
 public class TaskBuilder {
@@ -12,7 +9,7 @@ public class TaskBuilder {
     private String nikName;
     // № запроса (BTS)
     private String codeBTS;
-    // № внутренней задачи (DEVBO)
+    // № внутренней задачи (D E V B O)
     private String codeDEVBO;
     // Краткое описание ошибки
     private String description;
@@ -60,7 +57,6 @@ public class TaskBuilder {
         return new TaskBuilder();
     }
     public TaskDto getTaskDto(){
-       // UserDto userDto = userServiceIntegration.getUserDto(null,nikName);
         return new TaskDto(id,
                 nikName,
                 null,
@@ -80,6 +76,7 @@ public class TaskBuilder {
                 codeDEVBO,
                 description,
                 type,
-                workId);
+                workId,
+                null);
     }
 }

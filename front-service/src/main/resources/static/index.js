@@ -49,7 +49,7 @@
 
     function run($rootScope, $http, $localStorage) {
         $rootScope.$on('$routeChangeStart', function (event, next, current) {
-            if (typeof (current) !== 'undefined') {
+            if (typeof current !== 'undefined') {
                 console.log("detail close");
                 document.getElementById("DetailPrim").open = false;
             } else {
@@ -196,4 +196,5 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         }
     }
     $scope.getUser();
+    console.log("dddddd");
 })

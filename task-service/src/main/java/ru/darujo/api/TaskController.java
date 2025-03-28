@@ -47,6 +47,13 @@ public class TaskController {
     public TaskDto TaskEdit(@PathVariable long id) {
         return TaskConvertor.getTaskDto(taskService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Отмеченая работа не найден")));
     }
+
+    @GetMapping("/refresh/{id}")
+    public boolean TaskRefresh(@PathVariable long id) {
+        return taskService.refreshTime(id);
+
+    }
+
     @GetMapping("/right/{right}")
     public boolean checkRight (@PathVariable String right,
                                @RequestHeader(defaultValue = "false", name = "TASK_EDIT") boolean rightEdit,

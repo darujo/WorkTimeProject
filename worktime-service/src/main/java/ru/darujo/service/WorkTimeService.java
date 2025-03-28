@@ -64,8 +64,11 @@ public class WorkTimeService {
     public WorkTime saveWorkTime(WorkTime workTime, boolean check) {
         if (check) {
             validWorkTime(workTime);
-            TaskDto taskDto = taskServiceIntegration.getTask(workTime.getTaskId());
         }
+
+        Boolean ok = taskServiceIntegration.setTaskRefreshTime(workTime.getTaskId());
+        System.out.println("обновили время у задачи " + ok );
+
         return workTimeRepository.save(workTime);
     }
 
@@ -73,7 +76,7 @@ public class WorkTimeService {
         workTimeRepository.deleteById(id);
     }
 
-    public Iterable<WorkTime> findWorkTime(Long taskId, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, Integer page, Integer size) {
+    public Iterable<WorkTime> findWorkTime(Long taskId, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type,String comment, Integer page, Integer size) {
         Specification<WorkTime> specification = Specification.where(null);
         Sort sort = null;
         if (taskId != null) {
@@ -107,7 +110,9 @@ public class WorkTimeService {
         if (type != null) {
             specification = specification.and(WorkTimeSpecifications.typeEq(type));
         }
-
+        if(comment != null && !comment.equals("")){
+            specification = specification.and(WorkTimeSpecifications.like("comment",comment));
+        }
         if (page == null) {
             return workTimeRepository.findAll(specification);
 
@@ -126,7 +131,7 @@ public class WorkTimeService {
         List<WorkTime> workTimes = new ArrayList<>();
         List<Long> taskIdList = taskServiceIntegration.getTaskList(taskDEVBO, taskBts);
         taskIdList.forEach(taskId ->
-                findWorkTime(taskId, nikName, dateLt, dateLe, dateGT, dateGE, null, null, null)
+                findWorkTime(taskId, nikName, dateLt, dateLe, dateGT, dateGE, null, null,null, null)
                         .forEach(workTimes::add)
         );
         return workTimes;
@@ -149,7 +154,7 @@ public class WorkTimeService {
         AtomicReference<Float> time = new AtomicReference<>((float) 0);
         for (Integer type : types) {
 
-            findWorkTime(taskId, nikName, null, dateLe, dateGt, null, type, null, null).
+            findWorkTime(taskId, nikName, null, dateLe, dateGt, null, type, null, null,null).
 
                     forEach(workTime ->
                             time.set(time.get() + workTime.getWorkTime())
@@ -160,7 +165,7 @@ public class WorkTimeService {
 
     public ListString getFactUser(Long taskId) {
         ListString users = new ListString();
-        findWorkTime(taskId, null, null, null, null, null, null, null,null).forEach(workTime -> users.getList().add(workTime.getNikName()));
+        findWorkTime(taskId, null, null, null, null, null, null, null,null,null).forEach(workTime -> users.getList().add(workTime.getNikName()));
         return users;
     }
 
@@ -198,7 +203,7 @@ public class WorkTimeService {
         weekWorkDTOs
                 .forEach(weekWorkDto -> {
                     Map<String, UserWorkDto> userWorkDtoMap = new HashMap<>();
-                    findWorkTime(null, nikName, null, weekWorkDto.getDayEnd(), null, weekWorkDto.getDayStart(), null, null,null)
+                    findWorkTime(null, nikName, null, weekWorkDto.getDayEnd(), null, weekWorkDto.getDayStart(), null, null,null,null)
                             .forEach(workTime -> {
                                 Integer type = tasks.get(workTime.getTaskId());
                                 if (type == null) {
@@ -279,6 +284,7 @@ public class WorkTimeService {
                 workTimeDto.setTaskDescription(taskDto.getDescription());
                 workTimeDto.setTaskCodeBTS(taskDto.getCodeBTS());
                 workTimeDto.setTaskCodeDEVBO(taskDto.getCodeDEVBO());
+                workTimeDto.setTaskType(taskDto.getType());
             }
         } catch (ResourceNotFoundException e) {
             System.out.println(e.getMessage());
