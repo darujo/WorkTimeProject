@@ -1,8 +1,8 @@
 package ru.darujo.convertor;
 
-import ru.darujo.dto.WorkDto;
-import ru.darujo.dto.WorkEditDto;
-import ru.darujo.dto.WorkLittleDto;
+import ru.darujo.dto.work.WorkDto;
+import ru.darujo.dto.work.WorkEditDto;
+import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.model.Work;
 
 

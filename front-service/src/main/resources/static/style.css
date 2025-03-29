@@ -208,6 +208,15 @@ body {
     margin-top: 10px;
     margin-bottom: 10px;
 }
+.vvodmar10 {
+    padding: 10px 10px;
+    border: 1px solid #356EAD;
+    box-sizing: border-box;
+    border-radius: 10px;
+    opacity: 0.4;
+    width: 100%;
+    margin: 10px;
+}
 
 .detailsblock {
     border-radius: 10px;
@@ -356,5 +365,14 @@ TD {
     font-size: 15px;
     text-align: center;
 }
+.minblock300{
+    min-width: 300px;
+}
 
+.minblock200{
+    min-width: 200px;
+}
+.mar5{
+    margin: 5px;
+}
 

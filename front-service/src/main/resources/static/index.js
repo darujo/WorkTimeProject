@@ -33,6 +33,10 @@
                 templateUrl: 'task/task.html',
                 controller: 'taskController'
             })
+            .when('/rate', {
+                templateUrl: 'workrate/workrate.html',
+                controller: 'workRateController'
+            })
             .when('/calendar', {
                 templateUrl: 'calendar/calendar.html',
                 controller: 'calendarController'

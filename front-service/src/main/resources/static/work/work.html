@@ -66,15 +66,16 @@
         </select>
     </div>
     <h1>Список ЗИ</h1>
+    <div class="divscrol"></div>
     <table>
         <tr>
-            <td class="tablehead2" rowspan="3">
+            <td class="tablehead2 headcol" rowspan="3">
                 <button class="tablehead2 buttontable" ng-click="workSort('codeSap')"> Код SAP</button>
             </td>
-            <td class="tablehead2" rowspan="3">
+            <td class="tablehead2 headcol" rowspan="3">
                 <button class="tablehead2 buttontable" ng-click="workSort('codeZI')"> Код Зи</button>
             </td>
-            <td class="tablehead2" rowspan="3">
+            <td class="tablehead2 headcol" rowspan="3">
                 <button class="tablehead2 buttontable" ng-click="workSort('name')"> Наименование</button>
             </td>
             <td class="tablehead2" rowspan="3"> № внутренней задачи (DEVBO)</td>
@@ -159,6 +160,10 @@
             <td>
                 <button ng-click="deleteWork(work.id)">Удалить</button>
             </td>
+            <td  class="textleft">
+                <button ng-click="addRate(work.id)">Разбивка</button>
+            </td>
+
 
         </tr>
         </tbody>

@@ -2,13 +2,13 @@ package ru.darujo.dto;
 
 public interface UserFio {
 
-    public abstract void setAuthorFirstName(String authorFirstName) ;
+    void setFirstName(String firstName) ;
 
-    public abstract void setAuthorLastName(String authorLastName) ;
+    void setLastName(String lastName) ;
 
-    public abstract void setAuthorPatronymic(String authorPatronymic) ;
+    void setPatronymic(String patronymic) ;
 
-    public abstract String getNikName() ;
+    String getNikName() ;
 
 
 }

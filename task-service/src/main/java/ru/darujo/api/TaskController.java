@@ -8,20 +8,20 @@ import ru.darujo.convertor.TaskConvertor;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.TaskDto;
 import ru.darujo.dto.UserDto;
-import ru.darujo.dto.WorkLittleDto;
+import ru.darujo.dto.work.WorkLittleDto;
+import ru.darujo.dto.parsing.DateParser;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.integration.WorkServiceIntegration;
 import ru.darujo.model.Task;
 import ru.darujo.service.TaskService;
 
-import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 import java.util.*;
 
 @RestController()
 @RequestMapping("/v1/task")
-public class TaskController {
+public class TaskController extends DateParser {
     private TaskService taskService;
 
     @Autowired
@@ -209,11 +209,11 @@ public class TaskController {
                 userDto = userServiceIntegration.getUserDto(null, task.getNikName());
                 userDtoMap.put(task.getNikName(), userDto);
             }
-            taskDto.setAuthorFirstName(userDto.getFirstName());
-            taskDto.setAuthorLastName(userDto.getLastName());
-            taskDto.setAuthorPatronymic(userDto.getPatronymic());
+            taskDto.setFirstName(userDto.getFirstName());
+            taskDto.setLastName(userDto.getLastName());
+            taskDto.setPatronymic(userDto.getPatronymic());
         } catch (ResourceNotFoundException e) {
-            taskDto.setAuthorFirstName("Нет пользователя с ником " + task.getNikName());
+            taskDto.setFirstName("Нет пользователя с ником " + task.getNikName());
 
             System.out.println(e.getMessage());
         }
@@ -248,24 +248,5 @@ public class TaskController {
         return taskDtoList;
     }
 
-    private Timestamp stringToDate(ZonedDateTime dateStr, String text) {
-        return stringToDate(dateStr, text, false);
-    }
 
-    private Timestamp stringToDate(ZonedDateTime dateStr, String text, boolean checkNull) {
-        if (dateStr != null) {
-
-            Calendar c = Calendar.getInstance();
-            c.setTime(Timestamp.from(dateStr.toInstant()));
-            c.set(Calendar.HOUR_OF_DAY, 0);
-            c.set(Calendar.MINUTE, 0);
-            c.set(Calendar.SECOND, 0);
-            c.set(Calendar.MILLISECOND, 0);
-            return new Timestamp(c.getTimeInMillis());
-
-        } else if (checkNull) {
-            throw new ResourceNotFoundException("Не не передан обязательный параметр " + text + " null ");
-        }
-        return null;
-    }
 }

@@ -8,6 +8,7 @@ import ru.darujo.convertor.WorkTimeConvertor;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.UserWorkDto;
 import ru.darujo.dto.WorkTimeDto;
+import ru.darujo.dto.parsing.DateParser;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.model.WorkTime;
 import ru.darujo.service.WorkTimeService;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 
 @RestController()
 @RequestMapping("/v1/worktime")
-public class WorkTimeController {
+public class WorkTimeController extends DateParser {
     private WorkTimeService workTimeService;
 
     @Autowired
@@ -162,28 +163,6 @@ public class WorkTimeController {
         return workTimeService.getWeekWork(nikName, weekSplit, dateStart, dateEnd);
     }
 
-
-    private Timestamp stringToDate(ZonedDateTime dateStr, String text) {
-        return stringToDate(dateStr, text, false);
-    }
-
-
-    private Timestamp stringToDate(ZonedDateTime dateStr, String text, boolean checkNull) {
-        if (dateStr != null) {
-
-            Calendar c = Calendar.getInstance();
-            c.setTime(Timestamp.from(dateStr.toInstant()));
-            c.set(Calendar.HOUR_OF_DAY, 0);
-            c.set(Calendar.MINUTE, 0);
-            c.set(Calendar.SECOND, 0);
-            c.set(Calendar.MILLISECOND, 0);
-            return new Timestamp(c.getTimeInMillis());
-
-        } else if (checkNull) {
-            throw new ResourceNotFoundException("Не не передан обязательный параметр " + text + " null ");
-        }
-        return null;
-    }
 
     @GetMapping("/rep/fact/availTime/{taskId}")
     public Boolean getFactUsers(@PathVariable long taskId

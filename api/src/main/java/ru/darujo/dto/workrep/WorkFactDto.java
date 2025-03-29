@@ -1,4 +1,4 @@
-package ru.darujo.dto;
+package ru.darujo.dto.workrep;
 
 import java.io.Serializable;
 

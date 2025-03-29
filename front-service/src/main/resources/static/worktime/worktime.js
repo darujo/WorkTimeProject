@@ -431,6 +431,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
     console.log("Show ok");
     $scope.Filt = {
         taskId: null,
+        currentUser: true,
         size: 10
     };
     $scope.loadWorkTime();

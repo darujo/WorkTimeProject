@@ -241,6 +241,12 @@ angular.module('workTimeService').controller('workController', function ($scope,
         $location.path('/task');
         // window.open('#!/task',"_parent");
     }
+    $scope.addRate = function (workId) {
+        console.log("Другая");
+        $location.WorkId = workId;
+        $location.path('/rate');
+        // window.open('#!/task',"_parent");
+    }
     showWork();
     $scope.loadWork();
 })

@@ -10,7 +10,7 @@ import java.time.LocalDate;
  */
 public class RU_Days extends DefaultDays {
 
-    static private final String NEW_YEAR = "Новогодние каникулы (в ред. Федерального закона от 23.04.2012 № 35-ФЗ)";
+    static private final String NEW_YEAR = "Новогодние каникулы (в ред. Федерального закона от 23.04.2012  35-ФЗ)";
     static private final String CHRISTMAS = "Рождество Христово";
     static private final String MENDAY = "День защитника Отечества";
     static private final String WOMENDAY = "Международный женский день";

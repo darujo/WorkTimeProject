@@ -288,7 +288,7 @@ public class WorkTimeService {
             }
         } catch (ResourceNotFoundException e) {
             System.out.println(e.getMessage());
-            workTimeDto.setAuthorFirstName("Не найдена задача с id " + workTimeDto.getTaskId());
+            workTimeDto.setFirstName("Не найдена задача с id " + workTimeDto.getTaskId());
         }
     }
 
@@ -302,13 +302,13 @@ public class WorkTimeService {
                     userDto = userServiceIntegration.getUserDto(null, userFio.getNikName());
                     userDtoMap.put(userFio.getNikName(), userDto);
                 }
-                userFio.setAuthorFirstName(userDto.getFirstName());
-                userFio.setAuthorLastName(userDto.getLastName());
-                userFio.setAuthorPatronymic(userDto.getPatronymic());
+                userFio.setFirstName(userDto.getFirstName());
+                userFio.setLastName(userDto.getLastName());
+                userFio.setPatronymic(userDto.getPatronymic());
             }
         } catch (ResourceNotFoundException e) {
             System.out.println(e.getMessage());
-            userFio.setAuthorFirstName("Не найден пользователь с ником " + userFio.getNikName());
+            userFio.setFirstName("Не найден пользователь с ником " + userFio.getNikName());
         }
     }
 

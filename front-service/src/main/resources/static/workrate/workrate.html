@@ -1,0 +1,185 @@
+<div id="WorkStageList" class="headtextelem">
+    <div class="horiz">
+        <h1>Плановая оценка</h1>
+        <button type="button" class="headbutton mar5" id="WorkPage" ng-click="workPage()">Назад</button>
+    </div>
+    <table>
+        <tr>
+            <td class="tablehead1">№ п/п</td>
+            <td class="tablehead2">ФИО</td>
+            <td class="tablehead1">Вид работ</td>
+            <td class="tablehead2">0 этап</td>
+            <td class="tablehead1">I этап</td>
+            <td class="tablehead2">II этап</td>
+            <td class="tablehead1">III этап</td>
+            <td class="tablehead2">IV этап</td>
+            <td class="tablehead1">Итого, ч/часов</td>
+            <td class="tablehead2"></td>
+            <td class="tablehead1"></td>
+
+        </tr>
+        <tbody>
+        <tr ng-repeat="work in WorkStageList">
+            <td>{{$index + 1}}</td>
+            <td ng-if="!work.firstName">{{work.nikName}}</td>
+            <td ng-if="work.firstName">{{work.lastName}} {{work.firstName}}
+                {{work.patronymic}}
+            </td>
+
+            <td>{{work.roleStr}}</td>
+            <td>{{work.stage0}}</td>
+            <td>{{work.stage1}}</td>
+            <td>{{work.stage2}}</td>
+            <td>{{work.stage3}}</td>
+            <td>{{work.stage4}}</td>
+            <td>{{work.stageAll}}</td>
+            <td>
+                <button ng-click="editWorkStage(work.id)">Изменить</button>
+            </td>
+            <td>
+                <button ng-click="deleteWorkStage(work.id)">Удалить</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div id="WorkStageAdd">
+        <button type="button" class="headbutton" id="AddWorkStage" ng-click="createWorkStage()">Добавить</button>
+
+    </div>
+    <form id="FormWorkStage" ng-submit="saveWorkStage()">
+        <div class="horiz">
+
+            <div class="filterblock minblock300 mar5">
+                <p class="p-form">ФИО</p>
+
+                <select class="vvod" name="choice" id="User" ng-model="WorkStage.nikName">
+                    <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">{{user.lastName}}
+                        {{user.firstName}} {{user.patronymic}}
+                    </option>
+                </select>
+            </div>
+            <div class="filterblock minblock200 mar5">
+                <p class="p-form">Вид Работ</p>
+
+                <select class="vvod" name="choice" id="Role" ng-model="WorkStage.role">
+                    <option ng-value="1" value="1">Разработка и отладка</option>
+                    <option ng-value="2" value="2">Внутренее тестирование</option>
+                </select>
+            </div>
+            <div class="filterblock mar5">
+                <p class="p-form">Этап 0</p>
+
+                <input class="vvod" type="number" inputmode="numeric" id="Stage0" step="any"
+                       ng-model="WorkStage.stage0"/>
+
+            </div>
+            <div class="filterblock mar5">
+                <p class="p-form">Этап 1</p>
+
+                <input class="vvod" type="number" inputmode="numeric" id="Stage1" step="any"
+                       ng-model="WorkStage.stage1"/>
+
+            </div>
+            <div class="filterblock mar5">
+                <p class="p-form">Этап 2</p>
+
+                <input class="vvod" type="number" inputmode="numeric" id="Stage2" step="any"
+                       ng-model="WorkStage.stage2"/>
+
+            </div>
+            <div class="filterblock mar5">
+                <p class="p-form">Этап 3</p>
+
+                <input class="vvod" type="number" inputmode="numeric" id="Stage3" step="any"
+                       ng-model="WorkStage.stage3"/>
+
+            </div>
+            <div class="filterblock mar5">
+                <p class="p-form">Этап 4</p>
+
+                <input class="vvod" type="number" inputmode="numeric" id="Stage4" step="any"
+                       ng-model="WorkStage.stage4"/>
+
+            </div>
+        </div>
+        <button type="submit" class="button" id="ButtonSaveDown">Сохранить</button>
+        <button type="reset" ng-click="showWorkStageAdd()" class="button">Вернуться к списку</button>
+    </form>
+</div>
+
+<div id="WorkCriteriaList" class="headtextelem">
+    <div class="horiz">
+        <h1>Критерии</h1>
+    </div>
+    <table>
+        <tr>
+            <td class="tablehead2">База</td>
+            <td class="tablehead1">Минимальная доработка (10% кода) ед.</td>
+            <td class="tablehead2">Общая переработка (50% кода) ед.</td>
+            <td class="tablehead1">Новая доработка или реинженеринг кода ед.</td>
+            <td class="tablehead2"></td>
+            <td class="tablehead1"></td>
+
+        </tr>
+        <tbody>
+        <tr ng-repeat="work in WorkCriteriaList">
+            <td>{{work.criteria}}</td>
+            <td>{{work.develop10}}</td>
+            <td>{{work.develop50}}</td>
+            <td>{{work.develop100}}</td>
+            <td>
+                <button ng-click="editWorkCriteria(work.id)">Изменить</button>
+            </td>
+            <td>
+                <button ng-click="deleteWorkCriteria(work.id)">Удалить</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div id="WorkCriteriaAdd">
+        <button type="button" class="headbutton" id="AddWorkCriteria" ng-click="createWorkCriteria()">Добавить</button>
+
+    </div>
+    <form id="FormWorkCriteria" ng-submit="saveWorkCriteria()">
+        <div class="horiz">
+
+            <div class="filterblock minblock200 mar5">
+                <p class="p-form">Вид Работ</p>
+
+                <select class="vvod" name="choice" id="Type" ng-model="WorkCriteria.criteria">
+                    <option ng-value="1" value="1">Реализация импорта данных</option>
+                    <option ng-value="2" value="2">Реализация хранения данных</option>
+                    <option ng-value="3" value="3">Реализация обработки и сравнения данных</option>
+                    <option ng-value="4" value="4">Реализация экспорта</option>
+                    <option ng-value="5" value="5">Поддержака(реализация) протокола интеграции</option>
+                    <option ng-value="6" value="6">Реализация внешнего сервиса (ОС Windows)</option>
+                    <option ng-value="7" value="7">Реализация внешнего сервиса (ОС Linux)</option>
+                </select>
+            </div>
+            <div class="filterblock mar5">
+                <p class="p-form">Переработка 10%</p>
+
+                <input class="vvod" type="number" inputmode="numeric" id="Criteria10" step="any"
+                       ng-model="WorkCriteria.develop10"/>
+
+            </div>
+            <div class="filterblock mar5">
+                <p class="p-form">Переработка 50%</p>
+
+                <input class="vvod" type="number" inputmode="numeric" id="Criteria50" step="any"
+                       ng-model="WorkCriteria.develop50"/>
+
+            </div>
+            <div class="filterblock mar5">
+                <p class="p-form">Переработка 100%</p>
+
+                <input class="vvod" type="number" inputmode="numeric" id="Criteria100" step="any"
+                       ng-model="WorkCriteria.develop100"/>
+
+            </div>
+
+        </div>
+        <button type="submit" class="button" id="ButtonSaveDownCriteria">Сохранить</button>
+        <button type="reset" ng-click="showWorkCriteriaAdd()" class="button">Вернуться к списку</button>
+    </form>
+</div>

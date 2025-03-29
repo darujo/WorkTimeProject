@@ -13,6 +13,7 @@
 		<module>worktime-service</module>
 		<module>work-service</module>
 		<module>task-service</module>
+		<module>rate-service</module>
 		<module>front-service</module>
 		<module>gateway-service</module>
 

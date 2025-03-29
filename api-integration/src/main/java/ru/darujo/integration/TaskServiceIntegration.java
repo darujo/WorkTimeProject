@@ -92,13 +92,13 @@ public class TaskServiceIntegration {
                 .block();
     }
 
-    public List<Long> getTaskList(String taskDevbo, String taskBts) {
+    public List<Long> getTaskList(String taskDEVBO, String taskBts) {
         StringBuilder stringBuilder = new StringBuilder();
-        if (taskDevbo != null) {
+        if (taskDEVBO != null) {
             if (stringBuilder.length() != 0) {
                 stringBuilder.append("&");
             }
-            stringBuilder.append("codeDEVBO=").append(taskDevbo);
+            stringBuilder.append("codeDEVBO=").append(taskDEVBO);
         }
         if (taskBts != null) {
             if (stringBuilder.length() != 0) {
@@ -143,7 +143,7 @@ public class TaskServiceIntegration {
     }
 
     public Boolean setTaskRefreshTime(Long taskId) {
-        return webClientTask.get().uri("/" + taskId)
+        return webClientTask.get().uri("/refresh/" + taskId)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                         clientResponse -> Mono.error(new ResourceNotFoundException("Задача c id = " + taskId + " не найдена")))

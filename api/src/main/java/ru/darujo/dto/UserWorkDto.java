@@ -74,17 +74,17 @@ public class UserWorkDto implements UserFio {
     }
 
     @Override
-    public void setAuthorFirstName(String authorFirstName) {
+    public void setFirstName(String authorFirstName) {
         this.authorFirstName = authorFirstName;
     }
 
     @Override
-    public void setAuthorLastName(String authorLastName) {
+    public void setLastName(String authorLastName) {
         this.authorLastName = authorLastName;
     }
 
     @Override
-    public void setAuthorPatronymic(String authorPatronymic) {
+    public void setPatronymic(String authorPatronymic) {
         this.authorPatronymic = authorPatronymic;
     }
 

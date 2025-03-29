@@ -12,7 +12,7 @@ public class TaskDto implements Serializable, UserFio{
 
     // № запроса (BTS)
     private String codeBTS;
-    // № внутренней задачи (DEVBO)
+    // № внутренней задачи (D E V B O)
     private String codeDEVBO;
     // Краткое описание ошибки
     private String description;
@@ -30,7 +30,6 @@ public class TaskDto implements Serializable, UserFio{
         return "Не известный тип";
     }
 
-    private  String typeStr;
     // № ЗИ (ZI)
     private Long workId;
 
@@ -112,15 +111,15 @@ public class TaskDto implements Serializable, UserFio{
         this.workId = workId;
     }
 
-    public void setAuthorFirstName(String authorFirstName) {
+    public void setFirstName(String authorFirstName) {
         this.authorFirstName = authorFirstName;
     }
 
-    public void setAuthorLastName(String authorLastName) {
+    public void setLastName(String authorLastName) {
         this.authorLastName = authorLastName;
     }
 
-    public void setAuthorPatronymic(String authorPatronymic) {
+    public void setPatronymic(String authorPatronymic) {
         this.authorPatronymic = authorPatronymic;
     }
 }

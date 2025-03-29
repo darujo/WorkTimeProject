@@ -33,15 +33,15 @@ public class WorkTimeDto implements Serializable, UserFio {
         return authorPatronymic;
     }
 
-    public void setAuthorFirstName(String authorFirstName) {
+    public void setFirstName(String authorFirstName) {
         this.authorFirstName = authorFirstName;
     }
 
-    public void setAuthorLastName(String authorLastName) {
+    public void setLastName(String authorLastName) {
         this.authorLastName = authorLastName;
     }
 
-    public void setAuthorPatronymic(String authorPatronymic) {
+    public void setPatronymic(String authorPatronymic) {
         this.authorPatronymic = authorPatronymic;
     }
 
