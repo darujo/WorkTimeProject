@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import ru.darujo.convertor.WorkTimeConvertor;
 import ru.darujo.dto.*;
 import ru.darujo.dto.UserFio;
-import ru.darujo.dto.calendar.WeekWorkDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.integration.CalendarServiceIntegration;
 import ru.darujo.integration.TaskServiceIntegration;
@@ -18,9 +17,7 @@ import ru.darujo.model.WorkTime;
 import ru.darujo.repository.WorkTimeRepository;
 import ru.darujo.repository.specifications.WorkTimeSpecifications;
 
-import java.sql.Timestamp;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @Primary
@@ -137,38 +134,6 @@ public class WorkTimeService {
         return workTimes;
     }
 
-    public float getTimeWork(Long taskId, String nikName, Date dateGt, Date dateLe, String typeStr) {
-        ArrayList<Integer> types = new ArrayList<>();
-
-        if (typeStr!= null && typeStr.equals("analise")) {
-            types.add(2);
-            types.add(3);
-
-        } else if (typeStr!= null && typeStr.equals("develop")) {
-            types.add(1);
-            types.add(4);
-        } else {
-            types.add(null);
-        }
-
-        AtomicReference<Float> time = new AtomicReference<>((float) 0);
-        for (Integer type : types) {
-
-            findWorkTime(taskId, nikName, null, dateLe, dateGt, null, type, null, null,null).
-
-                    forEach(workTime ->
-                            time.set(time.get() + workTime.getWorkTime())
-                    );
-        }
-        return time.get();
-    }
-
-    public ListString getFactUser(Long taskId) {
-        ListString users = new ListString();
-        findWorkTime(taskId, null, null, null, null, null, null, null,null,null).forEach(workTime -> users.getList().add(workTime.getNikName()));
-        return users;
-    }
-
     private void validWorkTime(WorkTime workTime) {
         if (workTime.getTaskId() == null) {
             throw new ResourceNotFoundException("Не выбрана задача");
@@ -188,75 +153,6 @@ public class WorkTimeService {
         if (workTime.getComment() == null || workTime.getComment().equals("")) {
             throw new ResourceNotFoundException("Не задан комментарий");
         }
-    }
-
-    public List<UserWorkDto> getWeekWork(String nikName, boolean weekSplit, Timestamp dateStart, Timestamp dateEnd) {
-        List<UserWorkDto> userWorkDTOs = new ArrayList<>();
-        List<WeekWorkDto> weekWorkDTOs;
-        if (weekSplit) {
-            weekWorkDTOs = calendarServiceIntegration.getWeekTime(dateStart, dateEnd);
-        } else {
-            weekWorkDTOs = new ArrayList<>();
-            weekWorkDTOs.add(new WeekWorkDto(dateStart, dateEnd, calendarServiceIntegration.getWorkTime(dateStart, dateEnd)));
-        }
-        Map<Long, Integer> tasks = new HashMap<>();
-        weekWorkDTOs
-                .forEach(weekWorkDto -> {
-                    Map<String, UserWorkDto> userWorkDtoMap = new HashMap<>();
-                    findWorkTime(null, nikName, null, weekWorkDto.getDayEnd(), null, weekWorkDto.getDayStart(), null, null,null,null)
-                            .forEach(workTime -> {
-                                Integer type = tasks.get(workTime.getTaskId());
-                                if (type == null) {
-                                    TaskDto taskDto = taskServiceIntegration.getTask(workTime.getTaskId());
-                                    tasks.put(taskDto.getId(), taskDto.getType());
-                                    type = taskDto.getType();
-                                }
-                                UserWorkDto userWorkDto = userWorkDtoMap.get(workTime.getNikName());
-                                if (userWorkDto == null) {
-                                    userWorkDto = new UserWorkDto(
-                                            workTime.getNikName(),
-                                            null,
-                                            null,
-                                            null,
-                                            weekWorkDto.getDayStart(),
-                                            weekWorkDto.getDayEnd(),
-                                            weekWorkDto.getTime());
-                                    userWorkDtoMap.put(workTime.getNikName(), userWorkDto);
-
-
-                                }
-                                userWorkDto.addTime(type, workTime.getWorkTime());
-
-                            });
-                    UserWorkDto userWorkDto = userWorkDtoMap.values().stream().findFirst().orElse(
-                            new UserWorkDto(
-                                    null,
-                                    null,
-                                    null,
-                                    null,
-                                    weekWorkDto.getDayStart(),
-                                    weekWorkDto.getDayEnd(),
-                                    weekWorkDto.getTime()));
-
-                    if (userWorkDto.getNikName() != null) {
-
-                        userWorkDto.setUserCol(userWorkDtoMap.size());
-                    }
-//                        UserWorkDto userWorkDto1 = userWorkDtoMap.entrySet().stream().findFirst().map(stringUserWorkDtoEntry -> stringUserWorkDtoEntry.getValue());
-//                    (s, userWorkDto1) -> {userWorkDto1.setUserCol(userWorkDtoMap.size();));
-//                        userWorkDto[0].setUserCol(userWorkDtoMap.size());
-                    else {
-                        userWorkDto.setUserCol(1);
-                        userWorkDtoMap.put("", userWorkDto);
-                    }
-                    userWorkDtoMap.forEach((nik, userWork) -> {
-                        updFio(userWork);
-                        userWorkDTOs.add(
-                                userWork.addTimeAll());
-                    });
-                });
-        return userWorkDTOs;
-
     }
 
     public WorkTimeDto getWorkTimeDtoAndUpd(WorkTime workTime) {
@@ -294,7 +190,7 @@ public class WorkTimeService {
 
     private final Map<String, UserDto> userDtoMap = new HashMap<>();
 
-    private void updFio(UserFio userFio) {
+    public void updFio(UserFio userFio) {
         try {
             if (userFio.getNikName() != null) {
                 UserDto userDto = userDtoMap.get(userFio.getNikName());
@@ -311,10 +207,9 @@ public class WorkTimeService {
             userFio.setFirstName("Не найден пользователь с ником " + userFio.getNikName());
         }
     }
-
     public Boolean getAvailTime(long taskId) {
-        Specification<WorkTime> specification = Specification.where(null);
-        specification = specification.and(WorkTimeSpecifications.taskIdEQ(taskId));
+        Specification<WorkTime> specification = Specification.where(WorkTimeSpecifications.taskIdEQ(taskId));
         return workTimeRepository.findAll(specification).size() > 0;
     }
+
 }

@@ -5,15 +5,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.WorkTimeConvertor;
-import ru.darujo.dto.ListString;
-import ru.darujo.dto.UserWorkDto;
 import ru.darujo.dto.WorkTimeDto;
 import ru.darujo.dto.parsing.DateParser;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.model.WorkTime;
 import ru.darujo.service.WorkTimeService;
 
-import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -132,42 +129,6 @@ public class WorkTimeController extends DateParser {
             return workTimeDTOs.stream().map(workTimeService::getWorkTimeDtoAndUpd).collect(Collectors.toList());
 
         }
-    }
-
-    @GetMapping("/rep/fact/time")
-    public Float getTimeWork(@RequestParam(required = false) Long taskId,
-                             @RequestParam(required = false) String nikName,
-                             @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
-                             @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
-                             @RequestParam(required = false) String type) {
-        Date dateLe = stringToDate(dateLeStr, "dateLe = ", false);
-        Date dateGt = stringToDate(dateGtStr, "dateGt = ", false);
-        if (dateLe == null && dateGt == null) {
-            return 0f;
-        }
-        return workTimeService.getTimeWork(taskId, nikName, dateGt, dateLe, type);
-    }
-
-    @GetMapping("/rep/fact/user")
-    public ListString getFactUser(@RequestParam(required = false) Long taskId) {
-        return workTimeService.getFactUser(taskId);
-    }
-
-    @GetMapping("/rep/fact/week")
-    public List<UserWorkDto> getWeekWork(@RequestParam(required = false) String nikName,
-                                         @RequestParam(defaultValue = "true") boolean weekSplit,
-                                         @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
-                                         @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr) {
-        Timestamp dateStart = stringToDate(dateStartStr, "dateStart = ", true);
-        Timestamp dateEnd = stringToDate(dateEndStr, "dateEnd = ", true);
-        return workTimeService.getWeekWork(nikName, weekSplit, dateStart, dateEnd);
-    }
-
-
-    @GetMapping("/rep/fact/availTime/{taskId}")
-    public Boolean getFactUsers(@PathVariable long taskId
-    ) {
-        return workTimeService.getAvailTime(taskId);
     }
 
 }
