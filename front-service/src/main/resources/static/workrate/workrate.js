@@ -1,11 +1,13 @@
 angular.module('workTimeService').controller('workRateController', function ($scope, $http, $location, $localStorage) {
 
     const constPatchWork = window.location.origin + '/rate-service/v1';
-    const constPatchUser = window.location.origin + '/users';
-
+    const constPatchRight = window.location.origin + '/work-service/v1';
     $scope.showWorkStageAdd = function () {
         document.getElementById("WorkStageAdd").style.display = "block";
         document.getElementById("FormWorkStage").style.display = "none";
+        console.log("stageCreate");
+        console.log($scope.stageCreate);
+
     };
     let showWorkStageEdit = function () {
         document.getElementById("WorkStageAdd").style.display = "none";
@@ -30,24 +32,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
             }
         });
     };
-    let loadUsers = function () {
-        // console.log("Users")
 
-        $http({
-            url: constPatchUser,
-            method: "get"
-
-        }).then(function (response) {
-            // console.log(response.data);
-            $scope.UserList = response.data;
-        }, function errorCallback(response) {
-            // console.log(response)
-            if ($location.checkAuthorized(response)) {
-                alert(response.data.message);
-            }
-        });
-
-    }
     $scope.createWorkStage = function () {
         $scope.WorkStage = {
             workId: WorkId,
@@ -108,12 +93,12 @@ angular.module('workTimeService').controller('workRateController', function ($sc
                     sendSave = false;
                     console.log(response)
                     if ($location.checkAuthorized(response)) {
-                            alert(response.data.message);
+                        alert(response.data.message);
                     }
-            });
+                });
         }
     };
-    $scope.workPage = function (){
+    $scope.workPage = function () {
         $location.path('/work');
     }
     $scope.showWorkCriteriaAdd = function () {
@@ -213,8 +198,53 @@ angular.module('workTimeService').controller('workRateController', function ($sc
     } else {
         $scope.workPage();
     }
+    $scope.stageCreate = false;
+    $scope.stageEdit = false;
+    $scope.criteriaCreate = false;
+    $scope.criteriaEdit = false;
+    var checkRight = function (right, message, callBack) {
+        // document.getElementById("ButtonSaveUp").style.display = "none";
+        $scope.Resp = {message: null}
+        $http({
+            url: constPatchRight + "/works/right/" + right,
+            method: "get"
+        }).then(function (response) {
+                console.log(response)
+                callBack();
+
+            }, function errorCallback(response) {
+                console.log("Check");
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                    if (message) {
+                        alert(response.data.message);
+                    } else {
+                        $scope.Resp = {message: response.data.message};
+                    }
+                }
+            }
+        )
+    }
+
+    let callBackStageCreate = function () {
+        $scope.stageCreate = true;
+    }
+    let callBackStageEdit = function () {
+        $scope.stageEdit = true;
+    }
+    let callBackCriteriaCreate = function () {
+        $scope.criteriaCreate = true;
+    }
+    let callBackCriteriaEdit = function () {
+        $scope.criteriaEdit = true;
+    }
+    checkRight("stageCreate",false,callBackStageCreate);
+    checkRight("stageEdit",false,callBackStageEdit);
+    checkRight("criteriaCreate",false,callBackCriteriaCreate);
+    checkRight("criteriaEdit",false,callBackCriteriaEdit);
+
     console.log("Start workRate");
-    loadUsers();
+    $scope.UserList = $location.UserList;
     $scope.showWorkStageAdd();
     $scope.showWorkCriteriaAdd();
     $scope.loadWorkCriteria();

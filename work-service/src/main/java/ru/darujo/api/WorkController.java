@@ -114,7 +114,25 @@ public class WorkController {
             if (!rightCreate) {
                 throw new ResourceNotFoundException("У вас нет права на редактирование ZI_CREATE");
             }
+        } else if (right.equals("stagecreate")) {
+            if (!rightCreate) {
+                throw new ResourceNotFoundException("У вас нет права на редактирование ZI_CREATE");
+            }
+        } else if (right.equals("stageedit")) {
+            if (!rightEdit) {
+                throw new ResourceNotFoundException("У вас нет права на редактирование ZI_EDIT");
+            }
+        } else if (right.equals("criteriacreate")) {
+            if (!rightCreate) {
+                throw new ResourceNotFoundException("У вас нет права на редактирование ZI_CREATE");
+            }
+        } else if (right.equals("criteriaedit")) {
+            if (!rightEdit) {
+                throw new ResourceNotFoundException("У вас нет права на редактирование ZI_EDIT");
+            }
         }
+
+
         return true;
 
     }

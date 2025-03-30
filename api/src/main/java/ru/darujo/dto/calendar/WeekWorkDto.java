@@ -1,7 +1,10 @@
 package ru.darujo.dto.calendar;
 
+import ru.darujo.dto.WorkTimeDto;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 
 public class WeekWorkDto implements Serializable {
     public WeekWorkDto() {
@@ -10,6 +13,7 @@ public class WeekWorkDto implements Serializable {
     private Timestamp dayStart;
     private Timestamp dayEnd;
     private Float time;
+
 
     public WeekWorkDto(Timestamp dayStart, Timestamp dayEnd, Float time) {
         this.dayStart = dayStart;
@@ -28,4 +32,5 @@ public class WeekWorkDto implements Serializable {
     public Float getTime() {
         return time;
     }
+
 }

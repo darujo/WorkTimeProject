@@ -62,6 +62,6 @@ angular.module('workTimeService').controller('workFactRepController', function (
         size: 10,
         hideNotTime: true
     }
-
+    $scope.UserList = $location.UserList;
     $scope.filterWork();
 })

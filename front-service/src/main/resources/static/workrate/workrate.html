@@ -14,8 +14,8 @@
             <td class="tablehead1">III этап</td>
             <td class="tablehead2">IV этап</td>
             <td class="tablehead1">Итого, ч/часов</td>
-            <td class="tablehead2"></td>
-            <td class="tablehead1"></td>
+            <td class="tablehead2" ng-if="stageEdit"></td>
+            <td class="tablehead1" ng-if="stageEdit"></td>
 
         </tr>
         <tbody>
@@ -33,17 +33,17 @@
             <td>{{work.stage3}}</td>
             <td>{{work.stage4}}</td>
             <td>{{work.stageAll}}</td>
-            <td>
+            <td ng-if="stageEdit">
                 <button ng-click="editWorkStage(work.id)">Изменить</button>
             </td>
-            <td>
+            <td ng-if="stageEdit">
                 <button ng-click="deleteWorkStage(work.id)">Удалить</button>
             </td>
         </tr>
         </tbody>
     </table>
-    <div id="WorkStageAdd">
-        <button type="button" class="headbutton" id="AddWorkStage" ng-click="createWorkStage()">Добавить</button>
+    <div id="WorkStageAdd" >
+        <button ng-if="stageCreate" type="button" class="headbutton" id="AddWorkStage" ng-click="createWorkStage()">Добавить</button>
 
     </div>
     <form id="FormWorkStage" ng-submit="saveWorkStage()">
@@ -117,8 +117,8 @@
             <td class="tablehead1">Минимальная доработка (10% кода) ед.</td>
             <td class="tablehead2">Общая переработка (50% кода) ед.</td>
             <td class="tablehead1">Новая доработка или реинженеринг кода ед.</td>
-            <td class="tablehead2"></td>
-            <td class="tablehead1"></td>
+            <td class="tablehead2" ng-if="criteriaEdit"></td>
+            <td class="tablehead1" ng-if="criteriaEdit"></td>
 
         </tr>
         <tbody>
@@ -127,17 +127,17 @@
             <td>{{work.develop10}}</td>
             <td>{{work.develop50}}</td>
             <td>{{work.develop100}}</td>
-            <td>
+            <td ng-if="criteriaEdit">
                 <button ng-click="editWorkCriteria(work.id)">Изменить</button>
             </td>
-            <td>
+            <td ng-if="criteriaEdit">
                 <button ng-click="deleteWorkCriteria(work.id)">Удалить</button>
             </td>
         </tr>
         </tbody>
     </table>
-    <div id="WorkCriteriaAdd">
-        <button type="button" class="headbutton" id="AddWorkCriteria" ng-click="createWorkCriteria()">Добавить</button>
+    <div id="WorkCriteriaAdd" >
+        <button ng-if="criteriaCreate" type="button" class="headbutton" id="AddWorkCriteria" ng-click="createWorkCriteria()">Добавить</button>
 
     </div>
     <form id="FormWorkCriteria" ng-submit="saveWorkCriteria()">

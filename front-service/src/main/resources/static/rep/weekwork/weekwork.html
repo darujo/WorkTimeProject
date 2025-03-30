@@ -7,10 +7,16 @@
                     <div class="filterblock">
 
                         <div class="horiz">
-                            <p class="p-head">Пользователь</p>
-                            <br>
-                            <input class="vvod40" type="text" id="NikName"
-                                   ng-model="Filt.nikName"/>
+                            <p class="p-form">ФИО</p>
+
+                            <select class="vvod40 mar5" name="choice" id="User" ng-model="Filt.nikName">
+                                <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">{{user.lastName}}
+                                    {{user.firstName}} {{user.patronymic}}
+                                </option>
+                                <option ng-value="" value="">Все</option>
+
+                            </select>
+
                             <p class="p-head">Разбивка по неделям</p> <input class="vvod20" type="checkbox"
                                                                              id="WeekSplit"
                                                                              ng-model="Filt.weekSplit"/>

@@ -45,6 +45,10 @@
                 templateUrl: 'rep/weekwork/weekwork.html',
                 controller: 'weekworkController'
             })
+            .when('/userwork', {
+                templateUrl: 'rep/userwork/userwork.html',
+                controller: 'userworkController'
+            })
             .otherwise({
                 redirectTo: '/'
             });
@@ -85,6 +89,7 @@
 
 angular.module('workTimeService').controller('indexController', function ($rootScope, $scope, $http, $location, $localStorage) {
     const constPatchAuth = window.location.origin;
+    const constPatchUser = window.location.origin + '/users';
 
     $scope.tryToAuth = function () {
         $http.post(constPatchAuth + '/auth', $scope.user)
@@ -93,6 +98,8 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                     $http.defaults.headers.common.Authorization = 'Bearer ' + response.data.token;
                     $localStorage.authUser = {username: $scope.user.username, token: response.data.token};
                     $scope.getUser();
+                    loadUsers();
+
                     $scope.user = {
                         username: null,
                         password: null
@@ -199,6 +206,29 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             }
         }
     }
-    $scope.getUser();
+    let loadUsers = function () {
+        // console.log("Users")
+
+        $http({
+            url: constPatchUser,
+            method: "get"
+
+        }).then(function (response) {
+            // console.log(response.data);
+            $location.UserList = response.data;
+        }, function errorCallback(response) {
+            // console.log(response)
+            if ($location.checkAuthorized(response)) {
+                alert(response.data.message);
+            }
+        });
+
+    }
+    if ($scope.isUserLoggedIn) {
+
+        loadUsers();
+        $scope.getUser();
+    }
+
     console.log("dddddd");
 })

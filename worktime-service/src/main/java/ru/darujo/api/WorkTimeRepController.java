@@ -5,7 +5,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.UserWorkDto;
+import ru.darujo.dto.calendar.WeekWorkDto;
 import ru.darujo.dto.parsing.DateParser;
+import ru.darujo.dto.workrep.UserWorkPeriodDto;
 import ru.darujo.service.WorkTimeRepService;
 
 import java.sql.Timestamp;
@@ -41,6 +43,27 @@ public class WorkTimeRepController extends DateParser {
     @GetMapping("/user")
     public ListString getFactUser(@RequestParam(required = false) Long taskId) {
         return workTimeRepService.getFactUser(taskId);
+    }
+
+    @GetMapping("/user/work")
+    public List<UserWorkPeriodDto> getUserWork(@RequestParam(required = false) String nikName,
+                                               @RequestParam(defaultValue = "week") String periodSplit,
+                                               @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
+                                               @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr,
+                                               @RequestHeader String username) {
+        if (nikName == null || nikName.equals("")) {
+            nikName = username;
+        }
+        if (periodSplit.equals("1")) {
+            periodSplit = "day";
+        } else if (periodSplit.equals("2")) {
+            periodSplit = "week_day";
+        } else if (periodSplit.equals("3")) {
+            periodSplit = "week";
+        }
+        Timestamp dateStart = stringToDate(dateStartStr, "dateStart = ", true);
+        Timestamp dateEnd = stringToDate(dateEndStr, "dateEnd = ", true);
+        return workTimeRepService.getUserWork(nikName, periodSplit, dateStart, dateEnd);
     }
 
     @GetMapping("/week")

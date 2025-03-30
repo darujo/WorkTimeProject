@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.*;
 import ru.darujo.dto.calendar.WeekWorkDto;
+import ru.darujo.dto.workrep.UserWorkPeriodDto;
 import ru.darujo.integration.CalendarServiceIntegration;
 import ru.darujo.integration.TaskServiceIntegration;
 
@@ -136,7 +137,48 @@ public class WorkTimeRepService {
         return userWorkDTOs;
 
     }
+
     public Boolean getAvailTime(long taskId) {
         return workTimeService.getAvailTime(taskId);
+    }
+
+    public List<UserWorkPeriodDto> getUserWork(String nikName, String periodSplit, Timestamp dateStart, Timestamp dateEnd) {
+        List<WeekWorkDto> weekWorkDTOs;
+        List<UserWorkPeriodDto> weekWorkPeriodDTOs = new ArrayList<>();
+        if (periodSplit != null) {
+            weekWorkDTOs = calendarServiceIntegration.getPeriodTime(dateStart, dateEnd, periodSplit);
+        } else {
+            weekWorkDTOs = new ArrayList<>();
+            weekWorkDTOs.add(new WeekWorkDto(dateStart, dateEnd, calendarServiceIntegration.getWorkTime(dateStart, dateEnd)));
+        }
+        AtomicReference<Float> timePlan= new AtomicReference<>(0f);
+        AtomicReference<Float> timeFact= new AtomicReference<>(0f);
+        weekWorkDTOs
+                .forEach(weekWorkDto -> {
+                    List<WorkTimeDto> workTimeDtoList = new ArrayList<>();
+                    timePlan.set(timePlan.get() + weekWorkDto.getTime());
+                    workTimeService.findWorkTime(
+                                    null,
+                                    nikName,
+                                    null,
+                                    weekWorkDto.getDayEnd(),
+                                    null,
+                                    weekWorkDto.getDayStart(),
+                                    null,
+                                    null,
+                                    null,
+                                    null)
+                            .forEach(workTime -> {
+                                timeFact.set(timeFact.get() + workTime.getWorkTime());
+                                workTimeDtoList.add(workTimeService.getWorkTimeDtoAndUpd(workTime));
+                            });
+                    weekWorkPeriodDTOs.add(new UserWorkPeriodDto(weekWorkDto, workTimeDtoList));
+                });
+        WorkTimeDto workTimeDto = new WorkTimeDto(null,null,null,null,null,timeFact + " из " + timePlan,null);
+        List<WorkTimeDto>workTimeDTOs = new ArrayList<>();
+        workTimeDTOs.add(workTimeDto);
+        UserWorkPeriodDto userWorkPeriodDto = new UserWorkPeriodDto(null,null,8f,workTimeDTOs);
+        weekWorkPeriodDTOs.add( userWorkPeriodDto);
+        return weekWorkPeriodDTOs;
     }
 }

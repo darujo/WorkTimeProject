@@ -25,10 +25,17 @@ public class CalendarServiceIntegration {
         this.webClientCalendar = webClientCalendar;
     }
 
-
     public List<WeekWorkDto> getWeekTime(Timestamp dateStart, Timestamp dateEnd) {
+        return getPeriodTime(dateStart,dateEnd, null);
+    }
+    public List<WeekWorkDto> getPeriodTime(Timestamp dateStart, Timestamp dateEnd,String period) {
         try {
-            return webClientCalendar.get().uri("/weektime?dateStart=" + dateToText(dateStart) + "&dateEnd=" + dateToText(dateEnd))
+            String str = "";
+            if(period != null){
+                str ="&period=" + period;
+            }
+
+            return webClientCalendar.get().uri("/periodtime?dateStart=" + dateToText(dateStart) + "&dateEnd=" + dateToText(dateEnd) + str)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить работы за период")))
