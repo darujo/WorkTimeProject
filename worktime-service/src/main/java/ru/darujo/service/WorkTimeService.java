@@ -110,16 +110,15 @@ public class WorkTimeService {
         if(comment != null && !comment.equals("")){
             specification = specification.and(WorkTimeSpecifications.like("comment",comment));
         }
+        if (sort == null)
+            sort = Sort.by(Sort.Direction.DESC, "workDate");
+        else {
+            sort = sort.and(Sort.by(Sort.Direction.DESC, "workDate"));
+        }
         if (page == null) {
-            return workTimeRepository.findAll(specification);
+            return workTimeRepository.findAll(specification,sort);
 
         } else {
-            if (sort == null)
-                sort = Sort.by(Sort.Direction.DESC, "workDate");
-            else {
-                sort = sort.and(Sort.by(Sort.Direction.DESC, "workDate"));
-            }
-
             return workTimeRepository.findAll(specification, PageRequest.of(page - 1, size, sort));
         }
     }

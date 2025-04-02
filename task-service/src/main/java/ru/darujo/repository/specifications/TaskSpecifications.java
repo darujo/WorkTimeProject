@@ -12,9 +12,13 @@ public class TaskSpecifications {
         return eq("type",type);
     }
     public static Specification<Task> like(String field, String value){
-        return ((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get(field),String.format("%%%s%%",value)));
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get(field),String.format("%%%s%%",value))
+        );
     }
-
+    public static Specification<Task> notEqual(String field, Long value){
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.notEqual(root.get(field),value)
+        );
+    }
     public static Specification<Task> eq(String field, Long value){
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(field),value));
     }

@@ -84,7 +84,10 @@ public class TaskController extends DateParser {
         }
         return TaskConvertor.getTaskDto(taskService.saveWorkTime(TaskConvertor.getTask(taskDto)));
     }
-
+    @PostMapping("/checkAvail")
+    public String TaskCheckAvail(@RequestBody TaskDto taskDto) {
+        return taskService.workTimeCheckAvail(taskDto.getWorkId(), taskDto.getCodeDEVBO(), taskDto.getCodeBTS());
+    }
     @DeleteMapping("/{id}")
     public void deleteTask(@PathVariable long id) {
         taskService.deleteWorkTime(id);
@@ -150,7 +153,7 @@ public class TaskController extends DateParser {
                                    Integer page,
                                    Integer size) {
         clearCash();
-        return ((Page<Task>) taskService.findWorkTime(userName,
+        return ((Page<Task>) taskService.findTask(userName,
                 codeBTS,
                 codeDEVBO,
                 description,
@@ -167,7 +170,7 @@ public class TaskController extends DateParser {
                                        @RequestParam(required = false) String description,
                                        @RequestParam(required = false) Long workId){
         Set<Long> listId = new HashSet<>();
-        taskService.findWorkTime(nikName,
+        taskService.findTask(nikName,
                 codeBTS,
                 codeDEVBO,
                 description,
@@ -230,7 +233,7 @@ public class TaskController extends DateParser {
                                    Integer type) {
         clearCash();
         List<TaskDto> taskDtoList = new ArrayList<>();
-        taskService.findWorkTime(userName,
+        taskService.findTask(userName,
                 codeBTS,
                 codeDEVBO,
                 description,

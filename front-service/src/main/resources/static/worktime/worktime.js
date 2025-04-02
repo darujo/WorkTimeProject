@@ -70,13 +70,12 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
         console.log(typeof $localStorage.WorkTime !== "undefined");
         if (typeof $location.TaskId !== "undefined") {
             console.log("load5")
-            if (typeof Filt === "undefined") {
-                Filt = {
-                    taskId: null,
-                    size: 10
-                };
-
-            }
+            $scope.Filt = {
+                taskId: null,
+                size: 10,
+                urrentUser: false
+            };
+            Filt = $scope.Filt;
             Filt.taskId = $location.TaskId;
             $scope.setFormWorkTime();
             console.log(Filt);
@@ -134,8 +133,12 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
         console.log("findPage");
         var page = parseInt(document.getElementById("Page").value) + diffPage;
         document.getElementById("Page").value = page;
-        console.log("запрос данных7");
-        if (typeof $scope.Filt === "undefined") {
+        console.log("запрос данных");
+
+        if (typeof $scope.Filt !== "undefined") {
+            // Filt = {size: 10, currentUser: true};
+            Filt = $scope.Filt;
+        } else if (typeof Filt === "undefined") {
             $scope.Filt = {size: 10, currentUser: true};
             Filt = $scope.Filt;
         }
@@ -400,39 +403,21 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
         // console.log(false);
         return false;
     }
-
-    var callBackUser = function () {
-        userChange = true;
-        loadUsers();
-    }
-    var loadUsers = function () {
-        // console.log("Users")
-
-        $http({
-            url: constPatchUser,
-            method: "get"
-
-        }).then(function (response) {
-            // console.log(response.data);
-            $scope.UserList = response.data;
-        }, function errorCallback(response) {
-            // console.log(response)
-            if ($location.checkAuthorized(response)) {
-                alert(response.data.message);
-            }
-        });
+    let callBackEmpty = function () {
 
     }
-    checkRight("changeuser", false);
-    callBackUser();
-    $scope.FiltTask = {size: 10}
-    console.log("Start");
-    showWorkTime();
-    console.log("Show ok");
+    $scope.UserList = $location.UserList;
     $scope.Filt = {
         taskId: null,
         currentUser: true,
         size: 10
     };
+    $scope.FiltTask = {size: 10}
+
+    checkRight("changeuser", false, callBackEmpty);
+    console.log("Start");
+    showWorkTime();
+    console.log("Show ok");
+
     $scope.loadWorkTime();
 })

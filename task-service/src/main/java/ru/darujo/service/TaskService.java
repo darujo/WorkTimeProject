@@ -59,14 +59,14 @@ public class TaskService {
         taskRepository.deleteById(id);
     }
 
-    public Iterable<Task> findWorkTime(String nikName,
-                                       String codeBTS,
-                                       String codeDEVBO,
-                                       String description,
-                                       Long workId,
-                                       Integer type,
-                                       Integer page,
-                                       Integer size) {
+    public Iterable<Task> findTask(String nikName,
+                                   String codeBTS,
+                                   String codeDEVBO,
+                                   String description,
+                                   Long workId,
+                                   Integer type,
+                                   Integer page,
+                                   Integer size) {
         Specification<Task> specification = Specification.where(TaskSpecifications.queryDistinctTrue());
         specification = getTaskSpecificationLike("nikName", nikName, specification);
         specification = getTaskSpecificationLike("codeBTS", codeBTS, specification);
@@ -79,7 +79,7 @@ public class TaskService {
             specification = specification.and(TaskSpecifications.workIdEQ(workId));
         }
         if (page != null) {
-            return taskRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.by("refresh")));
+            return taskRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC,"refresh")));
         } else {
             return taskRepository.findAll(specification);
         }
@@ -102,7 +102,7 @@ public class TaskService {
             Date dateLe,
             Date dateGt,
             String type) {
-        return ((List<Task>) findWorkTime(null, codeBTS, codeDEVBO, description, workId, null, null, null))
+        return ((List<Task>) findTask(null, codeBTS, codeDEVBO, description, workId, null, null, null))
                 .stream()
                 .map(task -> workTimeServiceIntegration.getTimeTask(task.getId(), nikName, dateLe, dateGt, type))
                 .reduce((sumTime, time) -> sumTime + time)
@@ -111,7 +111,7 @@ public class TaskService {
 
     public ListString getFactUsers(Long workId) {
         ListString users = new ListString();
-        ((List<Task>) findWorkTime(null, null, null, null, workId, null, null, null))
+        ((List<Task>) findTask(null, null, null, null, workId, null, null, null))
                 .stream().map(task ->
                         workTimeServiceIntegration
                                 .getUsers(task.getId()))
@@ -130,10 +130,24 @@ public class TaskService {
         return tasks.stream().anyMatch(task -> workTimeServiceIntegration.availTime(task.getId()));
 
     }
+
     @Transactional
     public boolean refreshTime(long id) {
         Task task = findById(id).orElseThrow(() -> new ResourceNotFoundException("Отмеченая работа не найден"));
         saveWorkTime(task);
         return true;
+    }
+
+    public String workTimeCheckAvail(Long workId, String codeDEVBO, String codeBTS) {
+        Specification<Task> specification = Specification.where(null);
+        specification = getTaskSpecificationLike("codeDEVBO", codeDEVBO, specification);
+        if (workId != null) {
+            Specification<Task> specificationNotWork = specification.and(TaskSpecifications.notEqual("workId", workId));
+            taskRepository.findAll(specificationNotWork, PageRequest.of(0, 5));
+        }
+
+        specification = getTaskSpecificationLike("codeBTS", codeBTS, specification);
+
+        return "";
     }
 }
