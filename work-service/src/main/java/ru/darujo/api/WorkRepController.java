@@ -42,7 +42,7 @@ public class WorkRepController {
     @GetMapping("/factwork")
     public PageDto<WorkFactDto> getFactWork(@RequestParam(defaultValue = "1") int page,
                                             @RequestParam(defaultValue = "10") int size,
-                                            @RequestParam(required = false) String userName,
+                                            @RequestParam(required = false) String nikName,
                                             @RequestParam(required = false) String name,
                                             @RequestParam(defaultValue = "15") Integer stageZi,
                                             @RequestParam(required = false) Long codeSap,
@@ -51,8 +51,8 @@ public class WorkRepController {
                                             @RequestParam(required = false) String release,
                                             @RequestParam(defaultValue = "release") String sort,
                                             @RequestParam(defaultValue = "true") boolean hideNotTime) {
-        if (userName != null && userName.equals("")) {
-            userName = null;
+        if (nikName != null && nikName.equals("")) {
+            nikName = null;
         }
         Integer stageZiLe = null;
         Integer stageZiGe = null;
@@ -64,7 +64,7 @@ public class WorkRepController {
                 stageZiLe = stageZi - 10;
             }
         }
-        return workRepService.getWorkFactRep(page, size, userName, name, stageZiGe, stageZiLe, codeSap, codeZi, task, release, sort, hideNotTime);
+        return workRepService.getWorkFactRep(page, size, nikName, name, stageZiGe, stageZiLe, codeSap, codeZi, task, release, sort, hideNotTime);
     }
 
 }

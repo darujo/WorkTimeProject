@@ -23,6 +23,10 @@ public class UserDto implements Serializable {
         this.patronymic = patronymic;
     }
 
+    public UserDto(String nikName) {
+        this.nikName = nikName;
+    }
+
     public Long getId() {
         return id;
     }

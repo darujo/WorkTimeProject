@@ -64,7 +64,7 @@ public class WorkTimeService {
         }
 
         Boolean ok = taskServiceIntegration.setTaskRefreshTime(workTime.getTaskId());
-        System.out.println("обновили время у задачи " + ok );
+        System.out.println("обновили время у задачи " + ok);
 
         return workTimeRepository.save(workTime);
     }
@@ -73,7 +73,7 @@ public class WorkTimeService {
         workTimeRepository.deleteById(id);
     }
 
-    public Iterable<WorkTime> findWorkTime(Long taskId, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type,String comment, Integer page, Integer size) {
+    public Iterable<WorkTime> findWorkTime(Long taskId, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, String comment, Integer page, Integer size) {
         Specification<WorkTime> specification = Specification.where(null);
         Sort sort = null;
         if (taskId != null) {
@@ -107,8 +107,8 @@ public class WorkTimeService {
         if (type != null) {
             specification = specification.and(WorkTimeSpecifications.typeEq(type));
         }
-        if(comment != null && !comment.equals("")){
-            specification = specification.and(WorkTimeSpecifications.like("comment",comment));
+        if (comment != null && !comment.equals("")) {
+            specification = specification.and(WorkTimeSpecifications.like("comment", comment));
         }
         if (sort == null)
             sort = Sort.by(Sort.Direction.DESC, "workDate");
@@ -116,18 +116,18 @@ public class WorkTimeService {
             sort = sort.and(Sort.by(Sort.Direction.DESC, "workDate"));
         }
         if (page == null) {
-            return workTimeRepository.findAll(specification,sort);
+            return workTimeRepository.findAll(specification, sort);
 
         } else {
             return workTimeRepository.findAll(specification, PageRequest.of(page - 1, size, sort));
         }
     }
 
-    public List<WorkTime> findWorkTimeTask(String taskDEVBO, String taskBts, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE) {
+    public List<WorkTime> findWorkTimeTask(String taskDEVBO, String taskBts, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, String comment) {
         List<WorkTime> workTimes = new ArrayList<>();
         List<Long> taskIdList = taskServiceIntegration.getTaskList(taskDEVBO, taskBts);
         taskIdList.forEach(taskId ->
-                findWorkTime(taskId, nikName, dateLt, dateLe, dateGT, dateGE, null, null,null, null)
+                findWorkTime(taskId, nikName, dateLt, dateLe, dateGT, dateGE, type, comment, null, null)
                         .forEach(workTimes::add)
         );
         return workTimes;
@@ -206,6 +206,16 @@ public class WorkTimeService {
             userFio.setFirstName("Не найден пользователь с ником " + userFio.getNikName());
         }
     }
+
+    public List<UserDto> getUsers(String role) {
+        try {
+            return userServiceIntegration.getUserDTOs(role);
+        } catch (ResourceNotFoundException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
     public Boolean getAvailTime(long taskId) {
         Specification<WorkTime> specification = Specification.where(WorkTimeSpecifications.taskIdEQ(taskId));
         return workTimeRepository.findAll(specification).size() > 0;

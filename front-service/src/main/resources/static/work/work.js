@@ -49,7 +49,6 @@ angular.module('workTimeService').controller('workController', function ($scope,
     $scope.loadWork = function () {
         $scope.findPage(0);
     };
-    var Filt;
     var maxpage = 1;
     $scope.findPage = function (diffPage) {
         console.log(diffPage)
@@ -68,9 +67,9 @@ angular.module('workTimeService').controller('workController', function ($scope,
         console.log($scope.Filt);
         if (typeof $scope.Filt === "undefined") {
             $scope.Filt = {size: 10};
-            Filt = $scope.Filt;
         }
-        console.log(Filt)
+        let Filt = $scope.Filt;
+        console.log($scope.Filt)
         $http({
             url: constPatchWork + "/works",
             method: "get",
@@ -117,7 +116,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
         $scope.filterWork();
     }
     $scope.filterWork = function () {
-        Filt = $scope.Filt;
+        $location.saveFilter("workFilter",$scope.Filt);
         document.getElementById("Page").value = "1";
         $scope.findPage(0);
     };
@@ -231,10 +230,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 });
         }
     };
-    $scope.Filt = {
-        stageZi: 15,
-        size: 10
-    }
+
     $scope.addTime = function (workId) {
         console.log("Другая");
         $location.WorkId = workId;
@@ -247,6 +243,18 @@ angular.module('workTimeService').controller('workController', function ($scope,
         $location.path('/rate');
         // window.open('#!/task',"_parent");
     }
+
     showWork();
+    console.log("---workFilter---");
+    $scope.Filt = $location.getFilter("workFilter");
+    console.log($scope.Filt );
+    if($scope.Filt === null) {
+        $scope.Filt = {
+            stageZi: 15,
+            size: 10
+        }
+    }
+    console.log("workFilter");
+    console.log($scope.Filt);
     $scope.loadWork();
 })

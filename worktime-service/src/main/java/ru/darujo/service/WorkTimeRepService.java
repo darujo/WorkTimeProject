@@ -6,12 +6,14 @@ import org.springframework.stereotype.Service;
 import ru.darujo.dto.*;
 import ru.darujo.dto.calendar.WeekWorkDto;
 import ru.darujo.dto.workrep.UserWorkPeriodDto;
+import ru.darujo.dto.workrep.WorkPeriodDto;
 import ru.darujo.integration.CalendarServiceIntegration;
 import ru.darujo.integration.TaskServiceIntegration;
 
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Service
 @Primary
@@ -144,41 +146,70 @@ public class WorkTimeRepService {
 
     public List<UserWorkPeriodDto> getUserWork(String nikName, String periodSplit, Timestamp dateStart, Timestamp dateEnd) {
         List<WeekWorkDto> weekWorkDTOs;
-        List<UserWorkPeriodDto> weekWorkPeriodDTOs = new ArrayList<>();
+        List<UserWorkPeriodDto> userWeekWorkPeriodDTOs = new ArrayList<>();
         if (periodSplit != null) {
             weekWorkDTOs = calendarServiceIntegration.getPeriodTime(dateStart, dateEnd, periodSplit);
         } else {
             weekWorkDTOs = new ArrayList<>();
             weekWorkDTOs.add(new WeekWorkDto(dateStart, dateEnd, calendarServiceIntegration.getWorkTime(dateStart, dateEnd)));
         }
-        AtomicReference<Float> timePlan= new AtomicReference<>(0f);
-        AtomicReference<Float> timeFact= new AtomicReference<>(0f);
-        weekWorkDTOs
-                .forEach(weekWorkDto -> {
-                    List<WorkTimeDto> workTimeDtoList = new ArrayList<>();
-                    timePlan.set(timePlan.get() + weekWorkDto.getTime());
-                    workTimeService.findWorkTime(
-                                    null,
-                                    nikName,
-                                    null,
-                                    weekWorkDto.getDayEnd(),
-                                    null,
-                                    weekWorkDto.getDayStart(),
-                                    null,
-                                    null,
-                                    null,
-                                    null)
-                            .forEach(workTime -> {
-                                timeFact.set(timeFact.get() + workTime.getWorkTime());
-                                workTimeDtoList.add(workTimeService.getWorkTimeDtoAndUpd(workTime));
-                            });
-                    weekWorkPeriodDTOs.add(new UserWorkPeriodDto(weekWorkDto, workTimeDtoList));
-                });
-        WorkTimeDto workTimeDto = new WorkTimeDto(null,null,null,null,null,timeFact + " из " + timePlan,null);
-        List<WorkTimeDto>workTimeDTOs = new ArrayList<>();
-        workTimeDTOs.add(workTimeDto);
-        UserWorkPeriodDto userWorkPeriodDto = new UserWorkPeriodDto(null,null,8f,workTimeDTOs);
-        weekWorkPeriodDTOs.add( userWorkPeriodDto);
-        return weekWorkPeriodDTOs;
+        List<UserDto> userDTOs;
+
+        if (nikName == null) {
+            userDTOs = workTimeService.getUsers(null);
+        } else if (nikName.substring(0, 5).equalsIgnoreCase("role_")) {
+            userDTOs = workTimeService.getUsers(nikName.substring(5));
+        } else {
+            userDTOs = new ArrayList<>();
+            userDTOs.add(new UserDto(nikName));
+        }
+        if (userDTOs == null || userDTOs.size() == 0){
+
+            List<WorkPeriodDto> weekWorkPeriodDTOs = weekWorkDTOs.stream().map(weekWorkDto -> new WorkPeriodDto(weekWorkDto, null)).collect(Collectors.toList());
+            userWeekWorkPeriodDTOs.add(new UserWorkPeriodDto("",weekWorkPeriodDTOs));
+            return userWeekWorkPeriodDTOs;
+        }
+        for (UserDto user : userDTOs) {
+            List<WorkPeriodDto> weekWorkPeriodDTOs = new ArrayList<>();
+
+            AtomicReference<Float> timePlan = new AtomicReference<>(0f);
+            AtomicReference<Float> timeFact = new AtomicReference<>(0f);
+            weekWorkDTOs
+                    .forEach(weekWorkDto -> {
+                        List<WorkTimeDto> workTimeDtoList = new ArrayList<>();
+                        WorkTimeDto workTimeDto = new WorkTimeDto();
+                        workTimeDtoList.add(workTimeDto);
+                        AtomicReference<Float> timeFactOne = new AtomicReference<>(0f);
+                        timePlan.set(timePlan.get() + weekWorkDto.getTime());
+                        workTimeService.findWorkTime(
+                                        null,
+                                        user.getNikName(),
+                                        null,
+                                        weekWorkDto.getDayEnd(),
+                                        null,
+                                        weekWorkDto.getDayStart(),
+                                        null,
+                                        null,
+                                        null,
+                                        null)
+                                .forEach(workTime -> {
+                                    timeFact.set(timeFact.get() + workTime.getWorkTime());
+                                    timeFactOne.set(timeFactOne.get() + workTime.getWorkTime());
+                                    workTimeDtoList.add(workTimeService.getWorkTimeDtoAndUpd(workTime));
+                                });
+                        workTimeDto.setWorkTime(timeFactOne.get());
+                        weekWorkPeriodDTOs.add(new WorkPeriodDto(weekWorkDto, workTimeDtoList));
+                    });
+            WorkTimeDto workTimeDto = new WorkTimeDto(null, null, null, null, null, timeFact + " из " + timePlan, null);
+            List<WorkTimeDto> workTimeDTOs = new ArrayList<>();
+            workTimeDTOs.add(workTimeDto);
+            // Добавим итог
+            WorkPeriodDto workPeriodDto = new WorkPeriodDto(null, null, 8f, workTimeDTOs);
+            weekWorkPeriodDTOs.add(workPeriodDto);
+            UserWorkPeriodDto userWorkPeriodDto = new UserWorkPeriodDto(user.getNikName(), weekWorkPeriodDTOs);
+            workTimeService.updFio(userWorkPeriodDto);
+            userWeekWorkPeriodDTOs.add(userWorkPeriodDto);
+        }
+        return userWeekWorkPeriodDTOs;
     }
 }

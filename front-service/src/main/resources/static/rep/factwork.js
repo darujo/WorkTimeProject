@@ -2,14 +2,13 @@ angular.module('workTimeService').controller('workFactRepController', function (
 
     const constPatchWork = window.location.origin + '/work-service/v1';
 
-    var Filt;
     $scope.loadWorkTime = function () {
-        console.log("qqqqqqqq 2");
+        console.log("loadWorkTime");
         $scope.findPage();
     };
 
     $scope.filterWork = function () {
-        Filt = $scope.Filt;
+        $location.saveFilter("factWorkFilter",$scope.Filt);
         document.getElementById("Page").value = "1";
         $scope.findPage(0);
     };
@@ -28,12 +27,14 @@ angular.module('workTimeService').controller('workFactRepController', function (
         console.log("page");
         console.log(page);
         document.getElementById("Page").value = page;
+        let Filt;
+        Filt = $scope.Filt;
 
         $http({
             url: constPatchWork + "/works/rep/factwork",
             method: "get",
             params: {
-                userName: Filt ? Filt.userName : null,
+                nikName: Filt ? Filt.nikName : null,
                 page: page,
                 size: Filt ? Filt.size : null,
                 name: Filt ? Filt.name : null,
@@ -57,10 +58,13 @@ angular.module('workTimeService').controller('workFactRepController', function (
         });
     };
     document.getElementById("Page").value = "1";
-    $scope.Filt = {
-        stageZi: 15,
-        size: 10,
-        hideNotTime: true
+    $scope.Filt = $location.getFilter("factWorkFilter");
+    if ($scope.Filt === null ) {
+        $scope.Filt = {
+            stageZi: 15,
+            size: 10,
+            hideNotTime: true
+        }
     }
     $scope.UserList = $location.UserList;
     $scope.filterWork();

@@ -29,7 +29,8 @@ angular.module('workTimeService').controller('userworkController', function ($sc
             }
         }).then(function (response) {
             console.log(response.data);
-            $scope.WeekWorkList = response.data;
+            $scope.WeekWorkList = response.data[0].workPeriodDTOs;
+            $scope.UserPeriodList = response.data;
         }, function errorCallback(response) {
             console.log(response)
             if ($location.checkAuthorized(response)) {
@@ -60,5 +61,7 @@ angular.module('workTimeService').controller('userworkController', function ($sc
         }
     };
     $scope.UserList = $location.UserList;
+    $scope.UserList.push({firstName: "Разработчик", nikName: "ROLE_DEVELOPER"});
+    $scope.UserList.push({firstName: "Все", nikName: "All"});
     $scope.loadWorkTime();
 })

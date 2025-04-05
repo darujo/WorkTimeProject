@@ -125,6 +125,8 @@ public class WorkTimeDto implements Serializable, UserFio {
             return "Анализ";
         } else if (type == 4) {
             return "Тестирование";
+        } else if (type == 5) {
+            return "Анализ ошибки";
         } else {
             return type.toString();
         }
@@ -152,5 +154,9 @@ public class WorkTimeDto implements Serializable, UserFio {
 
     public Integer getType() {
         return type;
+    }
+
+    public void setWorkTime(Float workTime) {
+        this.workTime = workTime;
     }
 }

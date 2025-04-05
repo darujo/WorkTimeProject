@@ -5,6 +5,7 @@
         .run(run);
 
     function config($routeProvider) {
+        let ver = "1.2";
         $routeProvider
             .when('/', {
                 templateUrl: 'welcome/welcome.html',
@@ -12,41 +13,41 @@
             })
             .when('/worktime', {
 
-                templateUrl: 'worktime/worktime.html?v=1.1',
+                templateUrl: 'worktime/worktime.html?ver=' + ver,
                 controller: 'worktimeController'
             })
             .when('/worktimerep', {
 
-                templateUrl: 'rep/worktimerep.html',
+                templateUrl: 'rep/worktimerep.html?ver=' + ver,
                 controller: 'workTimeRepController'
             })
             .when('/factwork', {
 
-                templateUrl: 'rep/factwork.html',
+                templateUrl: 'rep/factwork.html?ver=' + ver,
                 controller: 'workFactRepController'
             })
             .when('/work', {
-                templateUrl: 'work/work.html',
+                templateUrl: 'work/work.html?ver=' + ver,
                 controller: 'workController'
             })
             .when('/task', {
-                templateUrl: 'task/task.html',
+                templateUrl: 'task/task.html?ver=' + ver,
                 controller: 'taskController'
             })
             .when('/rate', {
-                templateUrl: 'workrate/workrate.html',
+                templateUrl: 'workrate/workrate.html?ver=' + ver,
                 controller: 'workRateController'
             })
             .when('/calendar', {
-                templateUrl: 'calendar/calendar.html',
+                templateUrl: 'calendar/calendar.html?ver=' + ver,
                 controller: 'calendarController'
             })
             .when('/weekwork', {
-                templateUrl: 'rep/weekwork/weekwork.html',
+                templateUrl: 'rep/weekwork/weekwork.html?ver=' + ver,
                 controller: 'weekworkController'
             })
             .when('/userwork', {
-                templateUrl: 'rep/userwork/userwork.html',
+                templateUrl: 'rep/userwork/userwork.html?ver=' + ver,
                 controller: 'userworkController'
             })
             .otherwise({
@@ -116,7 +117,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     $scope.getUser = function () {
         console.log($localStorage.authUser);
         if (typeof $localStorage.authUser !== "undefined") {
-            var nikName = $localStorage.authUser.username;
+            let nikName = $localStorage.authUser.username;
             console.log("getUser")
             // document.getElementById("UserName").value = nikName;
 
@@ -179,7 +180,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     $location.checkAuthorized = function (response) {
         console.log("response.status");
         console.log(response.status);
-        if (parseInt(response.status) == 401) {
+        if (parseInt(response.status) === 401) {
             checkToken("Вы не авторизованы");
             $scope.tryToLogout();
             return false;
@@ -187,7 +188,42 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         return true;
 
     }
-    var checkToken = function (message) {
+    if (typeof $localStorage.filterWorkTime === "undefined") {
+        $localStorage.filterWorkTime = {}
+    }
+
+    $location.saveFilter = function (name, filter) {
+        if (typeof $scope.SettingUser !== "undefined") {
+            if ($scope.SettingUser.saveFilter) {
+                console.log("Save filter");
+                console.log(name);
+                console.log(filter);
+                $localStorage.filterWorkTime[name] = filter;
+            }
+        }
+    }
+    $location.getFilter = function (name) {
+
+        console.log("$scope.SettingUser.loadFilter")
+        console.log($scope.SettingUser);
+        if (typeof $scope.SettingUser !== "undefined") {
+            if ($scope.SettingUser.loadFilter) {
+                if (typeof $localStorage.filterWorkTime[name] === "undefined") {
+                    return null;
+                }
+                console.log("loadFilter");
+                console.log(name);
+                console.log($localStorage.filterWorkTime[name]);
+                return $localStorage.filterWorkTime[name];
+            }
+        }
+        return null;
+
+    }
+    $scope.delFilter = function () {
+        $localStorage.filterWorkTime = {};
+    }
+    let checkToken = function (message) {
         if ($localStorage.authUser) {
             $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.authUser.token;
             try {
@@ -224,6 +260,10 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         });
 
     }
+    $scope.saveSetting = function (){
+        $localStorage.UserSettingWorkTime = $scope.SettingUser;
+    }
+    $scope.SettingUser = $localStorage.UserSettingWorkTime;
     if ($scope.isUserLoggedIn) {
 
         loadUsers();

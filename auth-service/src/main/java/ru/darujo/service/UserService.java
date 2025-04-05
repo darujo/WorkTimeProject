@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import ru.darujo.model.Right;
 import ru.darujo.model.Role;
 import ru.darujo.model.User;
+import ru.darujo.repository.RoleRepository;
 import ru.darujo.repository.UserRepository;
 
 import javax.transaction.Transactional;
@@ -27,6 +28,13 @@ public class UserService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
+    private RoleRepository roleRepository;
+
+    @Autowired
+    public void setRoleRepository(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
+
     public Optional<User> findByNikName(String name) {
         return userRepository.findByNikNameIgnoreCase(name);
     }
@@ -36,7 +44,19 @@ public class UserService implements UserDetailsService {
         return findByNikName(nikName).orElseThrow(() -> new UsernameNotFoundException("Не наден пользователь по логину"));
     }
 
-    public List<User> getUserList() {
+    @Transactional
+    public Collection<User> getUserList(String role) {
+        if (role != null) {
+           return roleRepository.findByNameIgnoreCase(role)
+                   .orElse(new Role())
+                   .getUsers()
+                   .stream()
+                   .sorted(
+                           Comparator.comparing(User::getLastName)
+                                 .thenComparing(User::getFirstName)
+                                 .thenComparing(User::getPatronymic))
+                   .collect(Collectors.toList());
+        }
         return new ArrayList<>(userRepository.findAll(Specification.where(null), Sort.by("lastName")
                 .and(Sort.by("firstName"))));
     }

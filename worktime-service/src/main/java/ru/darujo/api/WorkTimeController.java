@@ -125,7 +125,9 @@ public class WorkTimeController extends DateParser {
                     dateLt,
                     dateLe,
                     dateGt,
-                    dateGe);
+                    dateGe,
+                    type,
+                    comment);
             return workTimeDTOs.stream().map(workTimeService::getWorkTimeDtoAndUpd).collect(Collectors.toList());
 
         }

@@ -2,7 +2,7 @@ angular.module('workTimeService').controller('workTimeRepController', function (
 
     const constPatchWork = window.location.origin + '/work-service/v1';
 
-    var Filt;
+
     $scope.loadWorkTime = function () {
         console.log("loadWorkTime");
         $scope.findPage();
@@ -11,7 +11,8 @@ angular.module('workTimeService').controller('workTimeRepController', function (
     $scope.findPage = function () {
         console.log("findPage");
         console.log($scope.WorkSort);
-
+        let Filt;
+        Filt = $scope.Filt;
         $http({
             url: constPatchWork + "/works/rep",
             method: "get",
@@ -38,15 +39,17 @@ angular.module('workTimeService').controller('workTimeRepController', function (
         });
     };
     $scope.filterWork = function () {
-        Filt = $scope.Filt;
+        $location.saveFilter("workTimeRepFilter",$scope.Filt);
         $scope.findPage();
     };
     var init = function () {
-        $scope.Filt = {
-            stageZi: 15,
-            availWork: true
-        };
-        Filt = $scope.Filt;
+        $scope.Filt = $location.getFilter("workTimeRepFilter");
+        if ($scope.Filt === null ) {
+            $scope.Filt = {
+                stageZi: 15,
+                availWork: true
+            };
+        }
         $scope.addSort("release");
         $scope.loadWorkTime();
     }

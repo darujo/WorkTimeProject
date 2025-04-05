@@ -9,41 +9,59 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular-route.min.js"></script>
 
     <title>Работы</title>
-    <link rel="stylesheet" href="style.css?v=1.9">
+    <link rel="stylesheet" href="style.css?ver=1.1">
 </head>
 <body>
 <div class="container horiz" ng-controller="indexController">
     <nav>
         <div class="" id="navbarNav">
             <ul class="">
-                <details class="detailsblock" open id="DetailPrim" ng-show="isUserLoggedIn()">
-                    <summary class="p-head">Меню</summary>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#!/work">Список ЗИ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#!/task">Все задачи</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#!/worktime">Все работы</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#!/worktimerep">Статус задач</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#!/factwork">Факт затрат</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#!/weekwork">Свод загрузки</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#!/userwork">Работы за период</a>
-                    </li>
+                <div class="horiz"  ng-show="isUserLoggedIn()">
+                    <details class="detailsblockmenu" open id="DetailPrim">
+                        <summary class="p-head">Меню</summary>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#!/work">Список ЗИ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#!/task">Все задачи</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#!/worktime">Все работы</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#!/worktimerep">Статус задач</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#!/factwork">Факт затрат</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#!/weekwork">Свод загрузки</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#!/userwork">Работы за период</a>
+                        </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="#!/calendar">Производственный календарь</a>
-                    </li>
-                </details>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#!/calendar">Производственный календарь</a>
+                        </li>
+                    </details>
+                    <details class="detailsblockmenu">
+                        <summary class="p-head">Фильтры</summary>
+                        <div class="horiz">
+                            <p class="p-form">Сохронять</p> <input class="vvod20" type="checkbox"
+                                                                   id="SaveFilter"
+                                                                   ng-model="SettingUser.saveFilter"
+                                                                   ng-change="saveSetting()"/>
+                        </div>
+                        <div class="horiz">
+                            <p class="p-form">Загружать</p> <input class="vvod20" type="checkbox"
+                                                                   id="LoadFilter"
+                                                                   ng-model="SettingUser.loadFilter"
+                                                                   ng-change="saveSetting()"/>
+                        </div>
+                        <button ng-click="delFilter()">Удалить сохраненные фильтрый</button>
+                    </details>
+                </div>
                 <li class="nav-item" ng-show="!isUserLoggedIn()">
                     <form class="" ng-submit="tryToAuth()">
                         <div class="input-group input-group-sm" style="padding: 4px;">
@@ -77,6 +95,7 @@
         <div class="userview">
             <p class="p-form">{{user.lastName}} {{user.firstName}} {{user.patronymic}}</p>
         </div>
+
         <!--    <input id="UserName" class="userview""-->
         <!--           type="readonly"-->
         <!--    >-->
@@ -85,17 +104,17 @@
 <div>
     <ng-view></ng-view>
 
-    <script src="index.js"></script>
-    <script src="worktime/worktime.js"></script>
-    <script src="rep/worktimerep.js"></script>
-    <script src="rep/factwork.js"></script>
-    <script src="rep/weekwork/weekwork.js"></script>
-    <script src="work/work.js"></script>
-    <script src="task/task.js"></script>
-    <script src="workrate/workrate.js"></script>
-    <script src="welcome/welcome.js"></script>
-    <script src="calendar/calendar.js"></script>
-    <script src="rep/userwork/userwork.js"></script>
+    <script src="index.js?ver=1.1"></script>
+    <script src="worktime/worktime.js?ver=1.1"></script>
+    <script src="rep/worktimerep.js?ver=1.1"></script>
+    <script src="rep/factwork.js?ver=1.1"></script>
+    <script src="rep/weekwork/weekwork.js?ver=1.1"></script>
+    <script src="work/work.js?ver=1.1"></script>
+    <script src="task/task.js?ver=1.1"></script>
+    <script src="workrate/workrate.js?ver=1.1"></script>
+    <script src="welcome/welcome.js?ver=1.1"></script>
+    <script src="calendar/calendar.js?ver=1.1"></script>
+    <script src="rep/userwork/userwork.js?ver=1.1"></script>
 
 
 </div>

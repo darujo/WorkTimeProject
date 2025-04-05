@@ -56,10 +56,10 @@ public class AuthController {
         }
     }
     @GetMapping("/users")
-    public ResponseEntity<?> getUserList() {
+    public ResponseEntity<?> getUserList(@RequestParam(required = false) String role) {
         try {
 
-            return ResponseEntity.ok(userService.getUserList().stream().map(UserConvertor::getUserDto));
+            return ResponseEntity.ok(userService.getUserList(role).stream().map(UserConvertor::getUserDto));
 
         } catch (UsernameNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex);

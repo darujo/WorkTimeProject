@@ -14,6 +14,7 @@
                                     {{user.lastName}}
                                     {{user.firstName}} {{user.patronymic}}
                                 </option>
+
                                 <option ng-value="" value="">Мои</option>
 
                             </select>
@@ -43,14 +44,16 @@
     <h1>Работы за период</h1>
     <table>
         <tr>
+            <td>ФИО</td>
             <td ng-repeat="work in WeekWorkList" ng-style="getStyle(work.time)">
                 {{work.period}}
             </td>
         </tr>
 
         <tbody>
-        <tr>
-            <td ng-repeat="work in WeekWorkList" class="tdtop">
+        <tr ng-repeat="user in UserPeriodList">
+            <td>{{user.lastName}} {{user.firstName}} {{user.patronymic}}</td>
+            <td ng-repeat="work in user.workPeriodDTOs" class="tdtop">
                 <div ng-repeat="task in work.list" class="tdtask">
                     <p>{{task.taskCodeBTS}}
                     {{task.taskCodeDEVBO}}

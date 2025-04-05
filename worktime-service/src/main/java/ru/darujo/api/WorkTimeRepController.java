@@ -5,9 +5,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.UserWorkDto;
-import ru.darujo.dto.calendar.WeekWorkDto;
 import ru.darujo.dto.parsing.DateParser;
 import ru.darujo.dto.workrep.UserWorkPeriodDto;
+import ru.darujo.dto.workrep.WorkPeriodDto;
 import ru.darujo.service.WorkTimeRepService;
 
 import java.sql.Timestamp;
@@ -54,12 +54,16 @@ public class WorkTimeRepController extends DateParser {
         if (nikName == null || nikName.equals("")) {
             nikName = username;
         }
-        if (periodSplit.equals("1")) {
-            periodSplit = "day";
-        } else if (periodSplit.equals("2")) {
-            periodSplit = "week_day";
-        } else if (periodSplit.equals("3")) {
-            periodSplit = "week";
+        switch (periodSplit) {
+            case "1":
+                periodSplit = "day";
+                break;
+            case "2":
+                periodSplit = "week_day";
+                break;
+            case "3":
+                periodSplit = "week";
+                break;
         }
         Timestamp dateStart = stringToDate(dateStartStr, "dateStart = ", true);
         Timestamp dateEnd = stringToDate(dateEndStr, "dateEnd = ", true);
