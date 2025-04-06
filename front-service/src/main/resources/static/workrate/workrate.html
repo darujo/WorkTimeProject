@@ -1,4 +1,5 @@
 <div id="WorkStageList" class="headtextelem">
+    <h1 ng-style="getStyle(RateStatus.code)">{{RateStatus.value}}</h1>
     <div class="horiz">
         <h1>Плановая оценка</h1>
         <button type="button" class="headbutton mar5" id="WorkPage" ng-click="workPage()">Назад</button>
@@ -123,7 +124,7 @@
         </tr>
         <tbody>
         <tr ng-repeat="work in WorkCriteriaList">
-            <td>{{work.criteria}}</td>
+            <td>{{work.criteriaStr}}</td>
             <td>{{work.develop10}}</td>
             <td>{{work.develop50}}</td>
             <td>{{work.develop100}}</td>

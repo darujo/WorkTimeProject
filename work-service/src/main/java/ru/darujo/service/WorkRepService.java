@@ -3,6 +3,7 @@ package ru.darujo.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import ru.darujo.dto.MapStringFloat;
 import ru.darujo.dto.PageDto;
 import ru.darujo.dto.UserDto;
 import ru.darujo.dto.workrep.WorkFactDto;
@@ -19,6 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 public class WorkRepService {
     private TaskServiceIntegration taskServiceIntegration;
+
 
     @Autowired
     public void setTaskServiceIntegration(TaskServiceIntegration taskServiceIntegration) {
@@ -51,8 +53,6 @@ public class WorkRepService {
                     if (availWork == null ||
                             (availWork && availWorkTime) ||
                             (!availWork && !availWorkTime)) {
-                        Timestamp timestampDevelop = getTimeDevelop(work);
-
                         workRepDTOs.add(
                                 new WorkRepDto(
                                         work.getId(),
@@ -77,34 +77,12 @@ public class WorkRepService {
                                         work.getOpeEndPlan(),
                                         work.getOpeEndFact(),
                                         work.getLaborOPE(),
-                                        taskServiceIntegration.getTimeWork(
-                                                work.getId(),
-                                                null,
-                                                null,
-                                                timestampDevelop,
-                                                "analise"),
-                                        taskServiceIntegration.getTimeWork(
-                                                work.getId(),
-                                                null,
-                                                null,
-                                                timestampDevelop,
-                                                "develop"),
-                                        taskServiceIntegration.getTimeWork(work.getId(),
-                                                null,
-                                                timestampDevelop,
-                                                work.getDebugEndFact()),
-                                        taskServiceIntegration.getTimeWork(work.getId(),
-                                                null,
-                                                work.getDebugEndFact(),
-                                                work.getReleaseEndFact()),
-                                        taskServiceIntegration.getTimeWork(work.getId(),
-                                                null,
-                                                work.getReleaseEndFact(),
-                                                work.getOpeEndFact()),
-                                        taskServiceIntegration.getTimeWork(work.getId(),
-                                                null,
-                                                work.getOpeEndFact(),
-                                                null)
+                                        getFactWork(work, 0),
+                                        getFactWork(work, 1),
+                                        getFactWork(work, 2),
+                                        getFactWork(work, 3),
+                                        getFactWork(work, 4),
+                                        getFactWork(work, 5)
 
                                 )
                         );
@@ -131,7 +109,7 @@ public class WorkRepService {
         List<WorkFactDto> workFactDTOs = new ArrayList<>();
         Page<Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, release);
         workPage.forEach(work -> {
-                    Set<String> users = taskServiceIntegration.getListUser(work.getId()).getList();
+                    Set<String> users = taskServiceIntegration.getListUser(work.getId(),null).getList();
                     if (userName != null) {
                         if (users.contains(userName)) {
                             users = new HashSet<>();
@@ -159,7 +137,6 @@ public class WorkRepService {
                             } catch (ResourceNotFoundException ex) {
                                 userDto = new UserDto(-1L, "", "логином", "Не найден пользователь с", user);
                             }
-                            Timestamp timestampDevelop = getTimeDevelop(work);
                             workFactDTOs.add(
                                     new WorkFactDto(
                                             num.incrementAndGet(),
@@ -170,34 +147,12 @@ public class WorkRepService {
                                             userDto.getFirstName(),
                                             userDto.getLastName(),
                                             userDto.getPatronymic(),
-                                            taskServiceIntegration.getTimeWork(work.getId(),
-                                                    user,
-                                                    null,
-                                                    timestampDevelop,
-                                                    "analise"),
-                                            taskServiceIntegration.getTimeWork(
-                                                    work.getId(),
-                                                    user,
-                                                    null,
-                                                    timestampDevelop,
-                                                    "develop"),
-                                            taskServiceIntegration.getTimeWork(work.getId(),
-                                                    user,
-                                                    timestampDevelop,
-                                                    work.getDebugEndFact()),
-                                            taskServiceIntegration.getTimeWork(work.getId(),
-                                                    user,
-                                                    work.getDebugEndFact(),
-                                                    work.getReleaseEndFact()),
-                                            taskServiceIntegration.getTimeWork(work.getId(),
-                                                    user,
-                                                    work.getReleaseEndFact(),
-                                                    work.getOpeEndFact()),
-                                            taskServiceIntegration.getTimeWork(work.getId(),
-                                                    user,
-                                                    work.getOpeEndFact(),
-                                                    null)
-
+                                            getFactWork(work, 0, user),
+                                            getFactWork(work, 1, user),
+                                            getFactWork(work, 2, user),
+                                            getFactWork(work, 3, user),
+                                            getFactWork(work, 4, user),
+                                            getFactWork(work, 5, user)
                                     )
                             );
 
@@ -229,6 +184,77 @@ public class WorkRepService {
                 }
         );
         return new PageDto<>(workPage.getTotalPages(), workPage.getNumber(), workPage.getSize(), workFactDTOs);
+    }
+
+    public MapStringFloat getFactWorkStage0(Long workId, String nikName) {
+        MapStringFloat mapStringFloat = new MapStringFloat();
+        Map<String,Float> usersTime = new HashMap<>();
+        mapStringFloat.setList(usersTime);
+        Work work = workService.findById(workId).orElseThrow(() -> new ResourceNotFoundException("Не найдено ЗИ с id = " + workId));
+        Set<String> users;
+        if(nikName != null && !nikName.equals("")){
+            users = new HashSet<>();
+            users.add(nikName);
+        } else {
+            users = taskServiceIntegration.getListUser(workId, work.getDevelopEndFact()).getList();
+        }
+        users.forEach(user ->{
+            Float time = getFactWork(work, 0, user);
+            if (time > 0){
+                usersTime.put(user,time);
+            }
+        } );
+        return mapStringFloat;
+    }
+    public Float getFactWork(Long workId, Integer stage, String nikName) {
+        Work work = workService.findById(workId).orElseThrow(() -> new ResourceNotFoundException("Не найдено ЗИ с id = " + workId));
+        return  getFactWork(work,stage,nikName);
+    }
+    private Float getFactWork(Work work, Integer stage) {
+        return  getFactWork(work,stage,null);
+    }
+
+    public Float getFactWork(Work work, Integer stage, String nikName) {
+        if (stage == 0) {
+            return taskServiceIntegration.getTimeWork(work.getId(),
+                    nikName,
+                    null,
+                    getTimeDevelop(work),
+                    "analise");
+        }
+        if (stage == 1) {
+            return taskServiceIntegration.getTimeWork(
+                    work.getId(),
+                    nikName,
+                    null,
+                    getTimeDevelop(work),
+                    "develop");
+        }
+        if (stage == 2) {
+            return taskServiceIntegration.getTimeWork(work.getId(),
+                    nikName,
+                    getTimeDevelop(work),
+                    work.getDebugEndFact());
+        }
+        if (stage == 3) {
+            return taskServiceIntegration.getTimeWork(work.getId(),
+                    nikName,
+                    work.getDebugEndFact(),
+                    work.getReleaseEndFact());
+        }
+        if (stage == 4) {
+            return taskServiceIntegration.getTimeWork(work.getId(),
+                    nikName,
+                    work.getReleaseEndFact(),
+                    work.getOpeEndFact());
+        }
+        if (stage == 5) {
+            taskServiceIntegration.getTimeWork(work.getId(),
+                    nikName,
+                    work.getOpeEndFact(),
+                    null);
+        }
+        return 0f;
     }
 
     private Timestamp getTimeDevelop(Work work) {

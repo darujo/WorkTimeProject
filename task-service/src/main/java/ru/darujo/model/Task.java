@@ -22,7 +22,7 @@ public class Task {
     // № запроса (BTS)
     @Column(name = "codeBTS")
     private String codeBTS;
-    // № внутренней задачи (DEVBO)
+    // № внутренней задачи (D E V B O)
     @Column(name = "codeDEVBO")
     private String codeDEVBO;
     // Краткое описание ошибки

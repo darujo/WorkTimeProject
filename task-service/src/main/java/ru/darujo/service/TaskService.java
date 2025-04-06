@@ -2,6 +2,7 @@ package ru.darujo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -79,7 +80,7 @@ public class TaskService {
             specification = specification.and(TaskSpecifications.workIdEQ(workId));
         }
         if (page != null) {
-            return taskRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC,"refresh")));
+            return taskRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "refresh")));
         } else {
             return taskRepository.findAll(specification);
         }
@@ -109,12 +110,12 @@ public class TaskService {
                 .orElse(0f);
     }
 
-    public ListString getFactUsers(Long workId) {
+    public ListString getFactUsers(Long workId, Date dateLe) {
         ListString users = new ListString();
         ((List<Task>) findTask(null, null, null, null, workId, null, null, null))
                 .stream().map(task ->
                         workTimeServiceIntegration
-                                .getUsers(task.getId()))
+                                .getUsers(task.getId(), dateLe))
                 .forEach(user ->
                         users.getList().addAll(user.getList()));
         return users;
@@ -138,16 +139,37 @@ public class TaskService {
         return true;
     }
 
-    public String workTimeCheckAvail(Long workId, String codeDEVBO, String codeBTS) {
-        Specification<Task> specification = Specification.where(null);
-        specification = getTaskSpecificationLike("codeDEVBO", codeDEVBO, specification);
-        if (workId != null) {
-            Specification<Task> specificationNotWork = specification.and(TaskSpecifications.notEqual("workId", workId));
-            taskRepository.findAll(specificationNotWork, PageRequest.of(0, 5));
+    public String workTimeCheckAvail(Long id, Long workId, String codeDEVBO, String codeBTS) {
+
+        String text = checkAvail(id, workId, "codeBTS", codeBTS);
+        if (text != null) {
+            return text;
         }
+        text = checkAvail(id, workId, "codeDEVBO", codeDEVBO);
+        return text;
+    }
 
-        specification = getTaskSpecificationLike("codeBTS", codeBTS, specification);
+    private String checkAvail(Long id, Long workId, String dbField, String value) {
+        Specification<Task> specification = Specification.where(null);
 
-        return "";
+        if (value != null && !value.equals("")) {
+            specification = getTaskSpecificationLike(dbField, value, specification);
+            if (id != null) {
+                specification = specification.and(TaskSpecifications.notEqual("id", id));
+            }
+            Page<Task> page;
+            if (workId != null) {
+                Specification<Task> specificationNotWork = specification.and(TaskSpecifications.notEqual("workId", workId));
+                page = taskRepository.findAll(specificationNotWork, PageRequest.of(0, 5));
+                if (page.getTotalElements() > 0) {
+                    return "Уже есть с " + dbField + ": " + value + "  по другим ЗИ " + page.getTotalElements() + " записей";
+                }
+            }
+            page = taskRepository.findAll(specification, PageRequest.of(0, 5));
+            if (page.getTotalElements() > 0) {
+                return "Уже есть с " + dbField + ": " + value + "  по 'этой' ЗИ " + page.getTotalElements() + " записей";
+            }
+        }
+        return null;
     }
 }

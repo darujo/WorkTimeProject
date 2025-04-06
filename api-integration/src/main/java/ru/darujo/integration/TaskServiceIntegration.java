@@ -9,13 +9,12 @@ import ru.darujo.dto.ListString;
 import ru.darujo.dto.TaskDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 
 @Component
-public class TaskServiceIntegration {
+public class TaskServiceIntegration extends ServiceIntegration {
     private WebClient webClientTask;
 
     @Autowired
@@ -29,11 +28,11 @@ public class TaskServiceIntegration {
 
     public Float getTimeWork(Long workId, String nikName, Date dateGt, Date dateLe, String type) {
         StringBuilder stringBuilder = new StringBuilder();
-        addTeg( stringBuilder, "workId=",workId);
-        addTeg( stringBuilder, "nikName=",nikName);
-        addTeg( stringBuilder, "dateLe=",dateLe);
-        addTeg( stringBuilder, "dateGt=",dateGt);
-        addTeg( stringBuilder, "type=",type);
+        addTeg( stringBuilder, "workId",workId);
+        addTeg( stringBuilder, "nikName",nikName);
+        addTeg( stringBuilder, "dateLe",dateLe);
+        addTeg( stringBuilder, "dateGt",dateGt);
+        addTeg( stringBuilder, "type",type);
         String str = "";
         if (stringBuilder.length() != 0) {
             str = "?" + stringBuilder;
@@ -50,29 +49,19 @@ public class TaskServiceIntegration {
             throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календатрь (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
-    private void addTeg(StringBuilder stringBuilder, String str, Date value) {
-        addTeg(stringBuilder,str,dateToText(value));
-    }
-    private void addTeg(StringBuilder stringBuilder, String str, String value) {
-        if (value != null) {
-            if (stringBuilder.length() != 0) {
-                stringBuilder.append("&");
-            }
-            stringBuilder.append(str).append(value);
-        }
-    }
-    private void addTeg(StringBuilder stringBuilder, String str, Long value) {
-        if (value != null) {
-            if (stringBuilder.length() != 0) {
-                stringBuilder.append("&");
-            }
-            stringBuilder.append(str).append(value);
-        }
-    }
 
-    public ListString getListUser(Long workID) {
+    public ListString getListUser(Long workID,Date dateLe) {
+        StringBuilder stringBuilder = new StringBuilder();
+        if(workID == null){
+            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору не задан workId" );
+
+        }
+
+        addTeg(stringBuilder,"workId",workID);
+
+        addTeg(stringBuilder,"dateLe",dateLe);
         try {
-            return webClientTask.get().uri("/rep/fact/user?workId=" + workID)
+            return webClientTask.get().uri("/rep/fact/user?" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
@@ -118,15 +107,6 @@ public class TaskServiceIntegration {
                         clientResponse -> Mono.error(new ResourceNotFoundException("Задачи не найдены")))
                 .bodyToFlux(Long.class).collectList()
                 .block();
-    }
-
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-    private String dateToText(Date date) {
-        if (date == null) {
-            return null;
-        }
-        return sdf.format(date) + "T00:00:00.000Z";
     }
 
     public Boolean availWorkTime(Long id) {

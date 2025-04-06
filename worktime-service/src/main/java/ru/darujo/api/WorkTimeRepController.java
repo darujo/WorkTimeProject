@@ -7,7 +7,6 @@ import ru.darujo.dto.ListString;
 import ru.darujo.dto.UserWorkDto;
 import ru.darujo.dto.parsing.DateParser;
 import ru.darujo.dto.workrep.UserWorkPeriodDto;
-import ru.darujo.dto.workrep.WorkPeriodDto;
 import ru.darujo.service.WorkTimeRepService;
 
 import java.sql.Timestamp;
@@ -41,8 +40,11 @@ public class WorkTimeRepController extends DateParser {
     }
 
     @GetMapping("/user")
-    public ListString getFactUser(@RequestParam(required = false) Long taskId) {
-        return workTimeRepService.getFactUser(taskId);
+    public ListString getFactUser(@RequestParam(required = false) Long taskId,
+                                  @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr
+                                  ) {
+        Date dateLe = stringToDate(dateLeStr, "dateLe = ", false);
+        return workTimeRepService.getFactUser(taskId,dateLe);
     }
 
     @GetMapping("/user/work")

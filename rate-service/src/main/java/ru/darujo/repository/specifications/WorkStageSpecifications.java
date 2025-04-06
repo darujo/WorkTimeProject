@@ -13,4 +13,5 @@ public class WorkStageSpecifications {
     public static Specification<WorkStage> nikNameEq(String nikName){
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("nikName"),nikName));
     }
+
 }

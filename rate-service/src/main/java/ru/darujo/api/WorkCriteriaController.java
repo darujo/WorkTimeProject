@@ -3,7 +3,7 @@ package ru.darujo.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.WorkCriteriaConvertor;
-import ru.darujo.dto.workstage.WorkCriteriaDto;
+import ru.darujo.dto.ratestage.WorkCriteriaDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.service.WorkCriteriaService;
 

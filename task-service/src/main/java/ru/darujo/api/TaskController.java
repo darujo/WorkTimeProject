@@ -86,7 +86,7 @@ public class TaskController extends DateParser {
     }
     @PostMapping("/checkAvail")
     public String TaskCheckAvail(@RequestBody TaskDto taskDto) {
-        return taskService.workTimeCheckAvail(taskDto.getWorkId(), taskDto.getCodeDEVBO(), taskDto.getCodeBTS());
+        return taskService.workTimeCheckAvail(taskDto.getId(),taskDto.getWorkId(), taskDto.getCodeDEVBO(), taskDto.getCodeBTS());
     }
     @DeleteMapping("/{id}")
     public void deleteTask(@PathVariable long id) {
@@ -134,10 +134,13 @@ public class TaskController extends DateParser {
     }
 
     @GetMapping("/rep/fact/user")
-    public ListString getFactUsers(@RequestParam(required = false) Long workId
-    ) {
+    public ListString getFactUsers(@RequestParam(required = false) Long workId,
+                                   @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr
+                                   ) {
+        Date dateLe = stringToDate(dateLeStr, "dateLe = ");
+
         return taskService.getFactUsers(
-                workId);
+                workId,dateLe);
     }
     @GetMapping("/rep/fact/avail/{workId}")
     public Boolean getFactUsers(@PathVariable long workId

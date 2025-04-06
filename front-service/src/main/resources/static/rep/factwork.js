@@ -31,7 +31,7 @@ angular.module('workTimeService').controller('workFactRepController', function (
         Filt = $scope.Filt;
 
         $http({
-            url: constPatchWork + "/works/rep/factwork",
+            url: constPatchWork + "/works/rep/work/fact",
             method: "get",
             params: {
                 nikName: Filt ? Filt.nikName : null,

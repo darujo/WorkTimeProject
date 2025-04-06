@@ -5,9 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MapStringFloat implements Serializable {
-    Map<String,Float> list;
+    Map<String,Float> list = new HashMap<>();
     public MapStringFloat() {
-        list = new HashMap<>();
     }
 
     public void setList(Map<String,Float> list) {

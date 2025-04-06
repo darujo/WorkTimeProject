@@ -2,6 +2,7 @@ package ru.darujo.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.darujo.dto.MapStringFloat;
 import ru.darujo.dto.PageDto;
 import ru.darujo.dto.workrep.WorkFactDto;
 import ru.darujo.dto.workrep.WorkRepDto;
@@ -39,7 +40,7 @@ public class WorkRepController {
         return workRepService.getWorkRep(ziName, availWork, stageZiGe, stageZiLe, release, sort);
     }
 
-    @GetMapping("/factwork")
+    @GetMapping("/work/fact")
     public PageDto<WorkFactDto> getFactWork(@RequestParam(defaultValue = "1") int page,
                                             @RequestParam(defaultValue = "10") int size,
                                             @RequestParam(required = false) String nikName,
@@ -65,6 +66,20 @@ public class WorkRepController {
             }
         }
         return workRepService.getWorkFactRep(page, size, nikName, name, stageZiGe, stageZiLe, codeSap, codeZi, task, release, sort, hideNotTime);
+    }
+
+    @GetMapping("/time/fact")
+    public Float getFactWork(@RequestParam Long workId,
+                             @RequestParam Integer stage,
+                             @RequestParam(required = false) String nikName
+    ) {
+        return workRepService.getFactWork(workId, stage,nikName);
+    }
+
+    @GetMapping("/time/fact/stage0")
+    public MapStringFloat getFactWork(@RequestParam Long workId,
+                                      @RequestParam(required = false) String nikName) {
+        return workRepService.getFactWorkStage0(workId, nikName);
     }
 
 }

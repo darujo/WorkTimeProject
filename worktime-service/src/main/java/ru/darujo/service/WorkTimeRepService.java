@@ -65,9 +65,9 @@ public class WorkTimeRepService {
         return time.get();
     }
 
-    public ListString getFactUser(Long taskId) {
+    public ListString getFactUser(Long taskId, Date dateLe) {
         ListString users = new ListString();
-        workTimeService.findWorkTime(taskId, null, null, null, null, null, null, null, null, null).forEach(workTime -> users.getList().add(workTime.getNikName()));
+        workTimeService.findWorkTime(taskId, null, null, dateLe, null, null, null, null, null, null).forEach(workTime -> users.getList().add(workTime.getNikName()));
         return users;
     }
 
@@ -122,11 +122,7 @@ public class WorkTimeRepService {
                     if (userWorkDto.getNikName() != null) {
 
                         userWorkDto.setUserCol(userWorkDtoMap.size());
-                    }
-//                        UserWorkDto userWorkDto1 = userWorkDtoMap.entrySet().stream().findFirst().map(stringUserWorkDtoEntry -> stringUserWorkDtoEntry.getValue());
-//                    (s, userWorkDto1) -> {userWorkDto1.setUserCol(userWorkDtoMap.size();));
-//                        userWorkDto[0].setUserCol(userWorkDtoMap.size());
-                    else {
+                    } else {
                         userWorkDto.setUserCol(1);
                         userWorkDtoMap.put("", userWorkDto);
                     }
@@ -163,10 +159,10 @@ public class WorkTimeRepService {
             userDTOs = new ArrayList<>();
             userDTOs.add(new UserDto(nikName));
         }
-        if (userDTOs == null || userDTOs.size() == 0){
+        if (userDTOs == null || userDTOs.size() == 0) {
 
             List<WorkPeriodDto> weekWorkPeriodDTOs = weekWorkDTOs.stream().map(weekWorkDto -> new WorkPeriodDto(weekWorkDto, null)).collect(Collectors.toList());
-            userWeekWorkPeriodDTOs.add(new UserWorkPeriodDto("",weekWorkPeriodDTOs));
+            userWeekWorkPeriodDTOs.add(new UserWorkPeriodDto("", weekWorkPeriodDTOs));
             return userWeekWorkPeriodDTOs;
         }
         for (UserDto user : userDTOs) {

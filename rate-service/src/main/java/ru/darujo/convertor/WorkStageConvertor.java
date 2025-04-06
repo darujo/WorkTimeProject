@@ -1,6 +1,6 @@
 package ru.darujo.convertor;
 
-import ru.darujo.dto.workstage.WorkStageDto;
+import ru.darujo.dto.ratestage.WorkStageDto;
 import ru.darujo.model.WorkStage;
 
 public class WorkStageConvertor {

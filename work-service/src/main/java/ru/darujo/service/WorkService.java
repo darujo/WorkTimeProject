@@ -75,7 +75,7 @@ public class WorkService {
     ) {
         Specification<Work> specification = Specification.where(WorkSpecifications.queryDistinctTrue());
         specification = getWorkSpecificationLike("name",name,specification);
-        specification = getWorkSpecificationLike("codeZi",codeZi,specification);
+        specification = getWorkSpecificationLike("codeZI",codeZi,specification);
         specification = getWorkSpecificationLike("task",task,specification);
         specification = getWorkSpecificationLike("release",release,specification);
         if (codeSap != null) {

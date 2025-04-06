@@ -1,4 +1,4 @@
-package ru.darujo.dto.workstage;
+package ru.darujo.dto.ratestage;
 
 import ru.darujo.dto.UserFio;
 
@@ -41,7 +41,6 @@ public class WorkStageDto implements UserFio {
         addAllTime(stage0);
         addAllTime(stage1);
         addAllTime(stage2);
-        addAllTime(stage3);
         addAllTime(stage3);
         addAllTime(stage4);
     }
@@ -115,6 +114,10 @@ public class WorkStageDto implements UserFio {
         } else if (role == 2) {
             return "Внутренее тестирование";
         }
+        if (role == -1) {
+            return "";
+        }
+
         return "Не известная роль";
     }
     private void  addAllTime(Float time){

@@ -21,7 +21,7 @@
                 templateUrl: 'rep/worktimerep.html?ver=' + ver,
                 controller: 'workTimeRepController'
             })
-            .when('/factwork', {
+            .when('/work/fact', {
 
                 templateUrl: 'rep/factwork.html?ver=' + ver,
                 controller: 'workFactRepController'

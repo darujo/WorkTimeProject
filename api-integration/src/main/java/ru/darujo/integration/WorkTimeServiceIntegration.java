@@ -8,12 +8,11 @@ import reactor.core.publisher.Mono;
 import ru.darujo.dto.ListString;
 import ru.darujo.exceptions.ResourceNotFoundException;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
 @Component
-public class WorkTimeServiceIntegration {
+public class WorkTimeServiceIntegration extends ServiceIntegration{
     private WebClient webClientWorkTime;
 
     @Autowired
@@ -24,11 +23,11 @@ public class WorkTimeServiceIntegration {
     public Float getTimeTask(Long taskId, String nikName, Date dateLE, Date dateGT, String type) {
         StringBuilder stringBuilder = new StringBuilder();
         
-        addTeg( stringBuilder, "taskId=", taskId);
-        addTeg( stringBuilder, "nikName=", nikName);
-        addTeg( stringBuilder, "dateLe=", dateToText(dateLE));
-        addTeg( stringBuilder, "dateGt=", dateToText(dateGT));
-        addTeg( stringBuilder, "type=", type);
+        addTeg( stringBuilder, "taskId", taskId);
+        addTeg( stringBuilder, "nikName", nikName);
+        addTeg( stringBuilder, "dateLe", dateToText(dateLE));
+        addTeg( stringBuilder, "dateGt", dateToText(dateGT));
+        addTeg( stringBuilder, "type", type);
         String str = "";
         if (stringBuilder.length() != 0) {
             str = "?" + stringBuilder;
@@ -43,47 +42,26 @@ public class WorkTimeServiceIntegration {
                     .bodyToMono(Float.class)
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить работы (api-worktime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 
-    private void addTeg(StringBuilder stringBuilder, String str, String value) {
-        if (value != null) {
-            if (stringBuilder.length() != 0) {
-                stringBuilder.append("&");
-            }
-            stringBuilder.append(str).append(value);
-        }
-    }
-    private void addTeg(StringBuilder stringBuilder, String str, Long value) {
-        if (value != null) {
-            if (stringBuilder.length() != 0) {
-                stringBuilder.append("&");
-            }
-            stringBuilder.append(str).append(value);
-        }
-    }
+    public ListString getUsers(Long taskId,Date dateLe) {
+        StringBuilder stringBuilder = new StringBuilder();
 
-    public ListString getUsers(Long taskId) {
+        addTeg( stringBuilder, "taskId", taskId);
+        addTeg( stringBuilder, "dateLe", dateToText(dateLe));
+
         try {
-            return webClientWorkTime.get().uri("/rep/fact/user?taskId=" + taskId)
+            return webClientWorkTime.get().uri("/rep/fact/user?" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
                     .bodyToMono(ListString.class)
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить работы (api-worktime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
-    }
-
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-    private String dateToText(Date date) {
-        if (date == null) {
-            return null;
-        }
-        return sdf.format(date) + "T00:00:00.000Z";
     }
 
     public Boolean availTime(Long taskId) {

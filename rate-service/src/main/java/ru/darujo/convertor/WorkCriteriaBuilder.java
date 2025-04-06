@@ -1,6 +1,6 @@
 package ru.darujo.convertor;
 
-import ru.darujo.dto.workstage.WorkCriteriaDto;
+import ru.darujo.dto.ratestage.WorkCriteriaDto;
 import ru.darujo.model.WorkCriteria;
 
 public class WorkCriteriaBuilder {

@@ -202,7 +202,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
     $scope.stageEdit = false;
     $scope.criteriaCreate = false;
     $scope.criteriaEdit = false;
-    var checkRight = function (right, message, callBack) {
+    let checkRight = function (right, message, callBack) {
         // document.getElementById("ButtonSaveUp").style.display = "none";
         $scope.Resp = {message: null}
         $http({
@@ -238,15 +238,45 @@ angular.module('workTimeService').controller('workRateController', function ($sc
     let callBackCriteriaEdit = function () {
         $scope.criteriaEdit = true;
     }
-    checkRight("stageCreate",false,callBackStageCreate);
-    checkRight("stageEdit",false,callBackStageEdit);
-    checkRight("criteriaCreate",false,callBackCriteriaCreate);
-    checkRight("criteriaEdit",false,callBackCriteriaEdit);
+    checkRight("stageCreate", false, callBackStageCreate);
+    checkRight("stageEdit", false, callBackStageEdit);
+    checkRight("criteriaCreate", false, callBackCriteriaCreate);
+    checkRight("criteriaEdit", false, callBackCriteriaEdit);
+    $scope.loadRateStatus = function () {
+        console.log("loadRateStatus");
+        $http({
+            url: constPatchWork + "/rate/compare/sc",
+            method: "get",
+            params: {
+                workId: WorkId
 
+            }
+        }).then(function (response) {
+            console.log(response.data);
+            $scope.RateStatus = response.data;
+        }, function errorCallback(response) {
+            console.log(response)
+            if ($location.checkAuthorized(response)) {
+            }
+        });
+    };
+    $scope.getStyle = function (code) {
+        let codeInt = parseInt(code);
+        if (codeInt !== 0) {
+            return {
+                'background-color': 'red',
+                'color': 'white'
+            };
+        } else {
+            return {};
+        }
+
+    };
     console.log("Start workRate");
     $scope.UserList = $location.UserList;
     $scope.showWorkStageAdd();
     $scope.showWorkCriteriaAdd();
     $scope.loadWorkCriteria();
     $scope.loadWorkStage();
+    $scope.loadRateStatus();
 })
