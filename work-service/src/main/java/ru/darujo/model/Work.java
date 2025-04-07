@@ -69,18 +69,6 @@ public class Work {
     // Дата начала доработки Факт
     @Column(name = "startTaskFact")
     private Timestamp startTaskFact;
-    // Плановые трудозатраты, чел/час Разработка прототипа
-    @Column(name = "laborDevelop")
-    private Float laborDevelop;
-    // Плановые трудозатраты, чел/час Стабилизация прототипа
-    @Column(name = "laborDebug")
-    private Float laborDebug;
-    // Плановые трудозатраты, чел/час Стабилизация релиза
-    @Column(name = "laborRelease")
-    private Float laborRelease;
-    // Плановые трудозатраты, чел/час ОПЭ
-    @Column(name = "laborOPE")
-    private Float laborOPE;
     // Текущий этап ЗИ
     @Column(name = "stageZI")
     private Integer stageZI;

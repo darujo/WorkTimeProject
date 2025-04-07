@@ -109,6 +109,9 @@ public class WorkStageDto implements UserFio {
     }
 
     public String getRoleStr() {
+        if(role == null){
+            return "";
+        }
         if (role == 1) {
             return "Разработка и отладка";
         } else if (role == 2) {

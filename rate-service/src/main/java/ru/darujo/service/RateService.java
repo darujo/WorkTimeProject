@@ -27,21 +27,23 @@ public class RateService {
         this.workCriteriaService = workCriteriaService;
     }
 
-    public AttrDto ComparisonStageCriteria(Long workId) {
+    public AttrDto ComparisonStageCriteria(Long workId,boolean loadFact) {
         AtomicReference<Float> timeCriteria = new AtomicReference<>();
         AtomicReference<Float> timeStage = new AtomicReference<>();
         timeCriteria.set( 0f);
         timeStage.set( 0f);
         List<WorkCriteria> workCriteriaList = workCriteriaService.findWorkCriteria(workId);
-        workCriteriaList.forEach(workCriteria -> timeCriteria.set(timeCriteria.get() + workCriteria.getDevelop10() + workCriteria.getDevelop50() + workCriteria.getDevelop100()));
-        List<WorkStage> workStageList = workStageService.findWorkStage(workId, 1);
+        workCriteriaList.forEach(
+                workCriteria -> timeCriteria.set(
+                timeCriteria.get() + getTime(workCriteria.getDevelop10()) + getTime(workCriteria.getDevelop50()) + getTime(workCriteria.getDevelop100())));
+        List<WorkStage> workStageList = workStageService.findWorkStage(workId, 1, loadFact);
         workStageList.forEach(
                 workStage -> timeStage.set(timeStage.get()
-                + workStage.getStage0()
-                + workStage.getStage1()
-                + workStage.getStage2()
-                + workStage.getStage3()
-                + workStage.getStage4()
+                + getTime(workStage.getStage0())
+                + getTime(workStage.getStage1())
+                + getTime(workStage.getStage2())
+                + getTime(workStage.getStage3())
+                + getTime(workStage.getStage4())
         ));
         float time = timeCriteria.get() - timeStage.get();
         if (time < 0) {
@@ -52,20 +54,26 @@ public class RateService {
         }
         return new AttrDto(time, "Критериев больше чем плановой оценки на " + time);
     }
+    private Float getTime(Float time){
+        if (time == null){
+            return 0f;
+        }
+        return time;
+    }
 
-    public WorkStageDto AllTime(Long workId) {
+    public WorkStageDto AllTime(Long workId, boolean loadFact) {
         final Float[] stage = new Float[5];
         stage[0] = 0f;
         stage[1] = 0f;
         stage[2] = 0f;
         stage[3] = 0f;
         stage[4] = 0f;
-        workStageService.findWorkStage(workId).forEach(workStage -> {
-            stage[0] = stage[0] + workStage.getStage0();
-            stage[1] = stage[1] + workStage.getStage1();
-            stage[2] = stage[2] + workStage.getStage2();
-            stage[3] = stage[3] + workStage.getStage3();
-            stage[4] = stage[4] + workStage.getStage4();
+        workStageService.findWorkStage(workId,loadFact).forEach(workStage -> {
+            stage[0] = stage[0] + getTime(workStage.getStage0());
+            stage[1] = stage[1] + getTime(workStage.getStage1());
+            stage[2] = stage[2] + getTime(workStage.getStage2());
+            stage[3] = stage[3] + getTime(workStage.getStage3());
+            stage[4] = stage[4] + getTime(workStage.getStage4());
         });
         return new WorkStageDto(
                 -1L,

@@ -12,7 +12,7 @@ public class TaskSpecifications {
         return eq("type",type);
     }
     public static Specification<Task> like(String field, String value){
-        return ((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get(field),String.format("%%%s%%",value))
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get(field)),String.format("%%%s%%",value).toUpperCase())
         );
     }
     public static Specification<Task> notEqual(String field, Long value){

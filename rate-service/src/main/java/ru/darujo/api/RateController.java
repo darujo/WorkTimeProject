@@ -17,13 +17,15 @@ public class RateController {
     }
 
     @GetMapping("/compare/sc")
-    public AttrDto ComparisonStageCriteria(@RequestParam Long workId) {
-        return rateService.ComparisonStageCriteria(workId);
+    public AttrDto ComparisonStageCriteria(@RequestParam Long workId,
+                                           @RequestParam (defaultValue = "false") boolean loadFact ) {
+        return rateService.ComparisonStageCriteria(workId,loadFact);
     }
 
     @GetMapping("/time/all")
-    public WorkStageDto AllTime(@RequestParam Long workId) {
-        return rateService.AllTime(workId);
+    public WorkStageDto AllTime(@RequestParam Long workId,
+                                @RequestParam (defaultValue = "false") boolean loadFact ) {
+        return rateService.AllTime(workId,loadFact);
 
     }
 

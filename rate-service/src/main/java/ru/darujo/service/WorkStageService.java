@@ -88,14 +88,16 @@ public class WorkStageService {
     }
 
 
-    public List<WorkStage> findWorkStage(Long workId, Integer role) {
+    public List<WorkStage> findWorkStage(Long workId, Integer role, boolean loadFact) {
         Specification<WorkStage> specification = Specification.where(WorkStageSpecifications.workIdEq(workId));
         if (role != null) {
-            specification.and(WorkStageSpecifications.roleEq(role));
+            specification = specification.and(WorkStageSpecifications.roleEq(role));
         }
 
         List<WorkStage> workStages = workStageRepository.findAll(specification);
-        updWorkStage(workId, workStages);
+        if(loadFact) {
+            updWorkStage(workId, workStages);
+        }
         return workStages;
     }
 
@@ -166,7 +168,7 @@ public class WorkStageService {
 //        }
 //    }
 
-    public List<WorkStage> findWorkStage(Long workId) {
-        return findWorkStage(workId, null);
+    public List<WorkStage> findWorkStage(Long workId,boolean loadFact) {
+        return findWorkStage(workId, null, loadFact);
     }
 }

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class WorkDto implements Serializable {
+public class WorkDto implements Serializable, WorkPlanTime {
 
     private Long id;
     // Код SAP
@@ -52,7 +52,24 @@ public class WorkDto implements Serializable {
         return dateToText(analiseEndPlan);
     }
 
-    public WorkDto(Long id, Long codeSap, String codeZI, String name, Date analiseEndPlan, Date analiseEndFact, Date developEndFact, Date debugEndFact, Date releaseEndFact, Date opeEndFact, String task, String description, Date startTaskPlan, Date startTaskFact, Float laborDevelop, Float laborDebug, Float laborRelease, Float laborOPE, Integer stageZI, String release, Date issuingReleasePlan, Date issuingReleaseFact) {
+    public WorkDto(Long id,
+                   Long codeSap,
+                   String codeZI,
+                   String name,
+                   Date analiseEndPlan,
+                   Date analiseEndFact,
+                   Date developEndFact,
+                   Date debugEndFact,
+                   Date releaseEndFact,
+                   Date opeEndFact,
+                   String task,
+                   String description,
+                   Date startTaskPlan,
+                   Date startTaskFact,
+                   Integer stageZI,
+                   String release,
+                   Date issuingReleasePlan,
+                   Date issuingReleaseFact) {
         this.id = id;
         this.codeSap = codeSap;
         this.codeZI = codeZI;
@@ -67,10 +84,6 @@ public class WorkDto implements Serializable {
         this.description = description;
         this.startTaskPlan = startTaskPlan;
         this.startTaskFact = startTaskFact;
-        this.laborDevelop = laborDevelop;
-        this.laborDebug = laborDebug;
-        this.laborRelease = laborRelease;
-        this.laborOPE = laborOPE;
         this.stageZI = stageZI;
         this.release = release;
         this.issuingReleasePlan = issuingReleasePlan;
@@ -165,5 +178,21 @@ public class WorkDto implements Serializable {
             return null;
         }
         return sdf.format(date);
+    }
+
+    public void setLaborDevelop(Float laborDevelop) {
+        this.laborDevelop = laborDevelop;
+    }
+
+    public void setLaborDebug(Float laborDebug) {
+        this.laborDebug = laborDebug;
+    }
+
+    public void setLaborRelease(Float laborRelease) {
+        this.laborRelease = laborRelease;
+    }
+
+    public void setLaborOPE(Float laborOPE) {
+        this.laborOPE = laborOPE;
     }
 }

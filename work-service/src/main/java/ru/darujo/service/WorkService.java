@@ -6,6 +6,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.darujo.dto.ratestage.WorkStageDto;
+import ru.darujo.dto.work.WorkPlanTime;
+import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.integration.RateServiceIntegration;
 import ru.darujo.model.Work;
 import ru.darujo.model.WorkLittle;
 import ru.darujo.repository.WorkLittleRepository;
@@ -29,6 +33,13 @@ public class WorkService {
     @Autowired
     public void setWorkLittleRepository(WorkLittleRepository workLittleRepository) {
         this.workLittleRepository = workLittleRepository;
+    }
+
+    private RateServiceIntegration rateServiceIntegration;
+
+    @Autowired
+    public void setRateServiceIntegration(RateServiceIntegration rateServiceIntegration) {
+        this.rateServiceIntegration = rateServiceIntegration;
     }
 
     public Optional<Work> findById(long id) {
@@ -176,4 +187,32 @@ public class WorkService {
         return works;
     }
 
+    public void updWorkPlanTime (WorkPlanTime workPlanTime){
+        WorkStageDto workStageDto = rateServiceIntegration.getTimePlan(workPlanTime.getId());
+        workPlanTime.setLaborDevelop(workStageDto.getStage1());
+        workPlanTime.setLaborDebug(workStageDto.getStage2());
+        workPlanTime.setLaborRelease(workStageDto.getStage3());
+        workPlanTime.setLaborOPE(workStageDto.getStage4());
+    }
+
+    public boolean checkRight(String right, boolean rightEdit, boolean rightCreate) {
+        right = right.toLowerCase();
+        switch (right) {
+            case "edit":
+            case "stageedit":
+            case "criteriaedit":
+                if (!rightEdit) {
+                    throw new ResourceNotFoundException("У вас нет права на редактирование ZI_EDIT");
+                }
+                break;
+            case "create":
+            case "stagecreate":
+            case "criteriacreate":
+                if (!rightCreate) {
+                    throw new ResourceNotFoundException("У вас нет права на редактирование ZI_CREATE");
+                }
+                break;
+        }
+        return true;
+    }
 }

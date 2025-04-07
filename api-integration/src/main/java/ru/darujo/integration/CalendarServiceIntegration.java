@@ -10,14 +10,12 @@ import ru.darujo.dto.calendar.WeekWorkDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 
 @Component
 @ConditionalOnMissingClass
-public class CalendarServiceIntegration {
+public class CalendarServiceIntegration extends ServiceIntegration {
     private WebClient webClientCalendar;
 
     @Autowired
@@ -29,13 +27,15 @@ public class CalendarServiceIntegration {
         return getPeriodTime(dateStart,dateEnd, null);
     }
     public List<WeekWorkDto> getPeriodTime(Timestamp dateStart, Timestamp dateEnd,String period) {
+        if(dateStart == null || dateEnd ==null){
+            throw new ResourceNotFoundException("Что-то пошло не так для получения календаря должны быть заданы даты начала и конца"  );
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        addTeg(stringBuilder,"dateStart",dateStart);
+        addTeg(stringBuilder,"dateEnd",dateEnd);
+        addTeg(stringBuilder,"period",period);
         try {
-            String str = "";
-            if(period != null){
-                str ="&period=" + period;
-            }
-
-            return webClientCalendar.get().uri("/periodtime?dateStart=" + dateToText(dateStart) + "&dateEnd=" + dateToText(dateEnd) + str)
+            return webClientCalendar.get().uri("/period/time?" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить работы за период")))
@@ -47,8 +47,15 @@ public class CalendarServiceIntegration {
     }
 
     public Float getWorkTime(Timestamp dateStart, Timestamp dateEnd) {
+        if(dateStart == null || dateEnd ==null){
+            throw new ResourceNotFoundException("Что-то пошло не так для получения календаря должны быть заданы даты начала и конца"  );
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        addTeg(stringBuilder,"dateStart",dateStart);
+        addTeg(stringBuilder,"dateEnd",dateEnd);
+
         try {
-            return webClientCalendar.get().uri("/worktime?dateStart=" + dateToText(dateStart) + "&dateEnd=" + dateToText(dateEnd))
+            return webClientCalendar.get().uri("/work/time?" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить работы за период")))
@@ -57,14 +64,5 @@ public class CalendarServiceIntegration {
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
-    }
-
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-    private String dateToText(Date date) {
-        if (date == null) {
-            return null;
-        }
-        return sdf.format(date) + "T00:00:00.000Z";
     }
 }

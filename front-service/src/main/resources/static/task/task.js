@@ -53,7 +53,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
     $scope.loadTask = function () {
         console.log("loadTask");
         console.log("$location.WorkId " + $location.WorkId);
-        if (typeof $location.WorkId != "undefined") {
+        if (typeof $location.WorkId !== "undefined") {
             console.log("load5")
             // if (typeof $scope.Filt == "undefined") {
             //     $scope.Filt = {workId: null};
@@ -119,7 +119,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
                 console.log("response,data :");
                 console.log(response.data);
                 console.log(response.data.content);
-                if (typeof response.data.content == "undefined") {
+                if (typeof response.data.content === "undefined") {
                     $scope.TaskList = response.data;
                 } else {
                     $scope.TaskList = response.data.content;
@@ -207,7 +207,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
             });
     };
     let sendSave = false;
-    $scope.saveTask = function () {
+    $scope.saveTaskPost = function () {
         console.log("save");
         console.log($scope.Task);
         console.log(TaskIdEdit);
@@ -224,6 +224,42 @@ angular.module('workTimeService').controller('taskController', function ($scope,
                     sendSave = false;
                     console.log("send ok");
                     console.log(sendSave);
+                }, function errorCallback(response) {
+                    sendSave = false;
+                    console.log("send false");
+                    console.log(sendSave)
+                    console.log(response)
+                    if ($location.checkAuthorized(response)) {
+                        alert(response.data.message);
+                    }
+                });
+        } else {
+            alert("Подождите запрос на сохранение данных отправлен");
+        }
+    }
+    $scope.saveTask = function () {
+        console.log("save");
+        console.log($scope.Task);
+        console.log(TaskIdEdit);
+        if (!sendSave) {
+            sendSave = true;
+            console.log("sendSave");
+            console.log(sendSave);
+
+            $http.post(constPatchTask + "/task/checkAvail", $scope.Task)
+                .then(function (response) {
+                    sendSave = false;
+                    console.log(response);
+                    if(parseInt(response.data.codeInt) === 0){
+                        console.log("Сохраняем сразу");
+                        $scope.saveTaskPost();
+                    } else{
+                        let userResponse = confirm(response.data.value + " Продолжить сохранение?");
+                        if(userResponse){
+                            console.log("Сохраняем с подтверждением");
+                            $scope.saveTaskPost();
+                        }
+                    }
                 }, function errorCallback(response) {
                     sendSave = false;
                     console.log("send false");

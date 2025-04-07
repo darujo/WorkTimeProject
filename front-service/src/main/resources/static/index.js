@@ -140,7 +140,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         console.log(window.location);
         console.log(window.location.hash === "#!/worktime");
         if (window.location.hash === "#!/worktime") {
-            $localStorage.openEdit();
+            $location.openEdit();
         } else {
             $location.path('/worktime');
         }

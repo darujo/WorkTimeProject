@@ -221,4 +221,25 @@ public class WorkTimeService {
         return workTimeRepository.findAll(specification).size() > 0;
     }
 
+    public boolean checkRight(String right, boolean rightEdit, boolean rightCreate, boolean rightChangeUser) {
+        right = right.toLowerCase();
+        switch (right) {
+            case "edit":
+                if (!rightEdit) {
+                    throw new ResourceNotFoundException("У вас нет права на редактирование WORK_TIME_EDIT");
+                }
+                break;
+            case "create":
+                if (!rightCreate) {
+                    throw new ResourceNotFoundException("У вас нет права на редактирование WORK_TIME_CREATE");
+                }
+                break;
+            case "changeuser":
+                if (!rightChangeUser) {
+                    throw new ResourceNotFoundException("У вас нет права на редактирование WORK_TIME_CREATE");
+                }
+                break;
+        }
+        return true;
+    }
 }

@@ -36,7 +36,7 @@ public class CalendarController extends DateParser {
         return calendarService.getWeekList(month, year);
     }
 
-    @GetMapping("/periodtime")
+    @GetMapping("/period/time")
     public List<WeekWorkDto> PeriodTimeList(@RequestParam(name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
                                             @RequestParam(name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr,
                                             @RequestParam(required = false) String period
@@ -48,7 +48,7 @@ public class CalendarController extends DateParser {
         return calendarService.getPeriodTime(dateStart, dateEnd, period);
     }
 
-    @GetMapping("/worktime")
+    @GetMapping("/work/time")
     public Float WorkTime(@RequestParam(name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
                           @RequestParam(name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr
     ) {

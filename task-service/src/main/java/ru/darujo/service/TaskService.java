@@ -167,7 +167,7 @@ public class TaskService {
             }
             page = taskRepository.findAll(specification, PageRequest.of(0, 5));
             if (page.getTotalElements() > 0) {
-                return "Уже есть с " + dbField + ": " + value + "  по 'этой' ЗИ " + page.getTotalElements() + " записей";
+                return "Уже есть с " + dbField + ": " + value + " количество записей: " + page.getTotalElements() ;
             }
         }
         return null;

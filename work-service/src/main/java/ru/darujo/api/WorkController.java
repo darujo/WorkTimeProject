@@ -81,10 +81,6 @@ public class WorkController {
                     null,
                     null,
                     null,
-                    null,
-                    null,
-                    null,
-                    null,
                     8,
                     null,
                     null,
@@ -98,44 +94,17 @@ public class WorkController {
 
     @GetMapping("/{id}")
     public WorkEditDto WorkEdit(@PathVariable long id) {
-        return WorkConvertor.getWorkEditDto(workService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Задача не найден")));
+        WorkEditDto workEditDto = WorkConvertor.getWorkEditDto(workService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Задача не найден")));
+        workService.updWorkPlanTime(workEditDto);
+        return workEditDto;
     }
 
     @GetMapping("/right/{right}")
     public boolean checkRight(@PathVariable String right,
                               @RequestHeader(defaultValue = "false", name = "ZI_EDIT") boolean rightEdit,
                               @RequestHeader(defaultValue = "false", name = "ZI_CREATE") boolean rightCreate) {
-        right = right.toLowerCase();
-        if (right.equals("edit")) {
-            if (!rightEdit) {
-                throw new ResourceNotFoundException("У вас нет права на редактирование ZI_EDIT");
+        return workService.checkRight(right,rightEdit,rightCreate);
             }
-        } else if (right.equals("create")) {
-            if (!rightCreate) {
-                throw new ResourceNotFoundException("У вас нет права на редактирование ZI_CREATE");
-            }
-        } else if (right.equals("stagecreate")) {
-            if (!rightCreate) {
-                throw new ResourceNotFoundException("У вас нет права на редактирование ZI_CREATE");
-            }
-        } else if (right.equals("stageedit")) {
-            if (!rightEdit) {
-                throw new ResourceNotFoundException("У вас нет права на редактирование ZI_EDIT");
-            }
-        } else if (right.equals("criteriacreate")) {
-            if (!rightCreate) {
-                throw new ResourceNotFoundException("У вас нет права на редактирование ZI_CREATE");
-            }
-        } else if (right.equals("criteriaedit")) {
-            if (!rightEdit) {
-                throw new ResourceNotFoundException("У вас нет права на редактирование ZI_EDIT");
-            }
-        }
-
-
-        return true;
-
-    }
 
     @PostMapping("")
     public WorkDto WorkSave(@RequestBody WorkEditDto workDto,
@@ -173,6 +142,7 @@ public class WorkController {
         }
         long curTime = System.nanoTime();
         Page<WorkDto> workDTOs = workService.findWorks(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, release).map(WorkConvertor::getWorkDto);
+        workDTOs.forEach(workService::updWorkPlanTime);
         float time_last = (curTime - System.nanoTime()) * 0.000000001f;
         System.out.println("Время выполнения " + time_last);
         return workDTOs;

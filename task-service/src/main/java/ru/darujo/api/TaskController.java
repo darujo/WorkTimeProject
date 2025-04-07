@@ -8,6 +8,7 @@ import ru.darujo.convertor.TaskConvertor;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.TaskDto;
 import ru.darujo.dto.UserDto;
+import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.dto.parsing.DateParser;
 import ru.darujo.exceptions.ResourceNotFoundException;
@@ -85,8 +86,12 @@ public class TaskController extends DateParser {
         return TaskConvertor.getTaskDto(taskService.saveWorkTime(TaskConvertor.getTask(taskDto)));
     }
     @PostMapping("/checkAvail")
-    public String TaskCheckAvail(@RequestBody TaskDto taskDto) {
-        return taskService.workTimeCheckAvail(taskDto.getId(),taskDto.getWorkId(), taskDto.getCodeDEVBO(), taskDto.getCodeBTS());
+    public AttrDto TaskCheckAvail(@RequestBody TaskDto taskDto) {
+       String test = taskService.workTimeCheckAvail(taskDto.getId(),taskDto.getWorkId(), taskDto.getCodeDEVBO(), taskDto.getCodeBTS());
+       if(test!= null){
+           return new AttrDto(-1f,test);
+       }
+       return new AttrDto(0f,"");
     }
     @DeleteMapping("/{id}")
     public void deleteTask(@PathVariable long id) {

@@ -20,7 +20,8 @@ angular.module('workTimeService').controller('workRateController', function ($sc
             url: constPatchWork + "/stage",
             method: "get",
             params: {
-                workId: WorkId
+                workId: WorkId,
+                loadFact: true
 
             }
         }).then(function (response) {

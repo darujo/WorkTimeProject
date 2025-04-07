@@ -56,7 +56,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
             }
         )
     }
-    $localStorage.openEdit = function () {
+    $location.openEdit = function () {
         console.log("$localStorage.openEdit worktime ");
         $scope.loadWorkTime();
     };
@@ -71,7 +71,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
             $scope.Filt = {
                 taskId: null,
                 size: 10,
-                urrentUser: false
+                currentUser: false
             };
             $scope.Filt.taskId = $location.TaskId;
             $scope.setFormWorkTime();
@@ -96,7 +96,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
     };
 
     $scope.setFormWorkTime = function () {
-        if (typeof $scope.Filt != "undefined") {
+        if (typeof $scope.Filt !== "undefined") {
             // if (Filt.taskId != null) {
             //     $scope.Filt = {
             //         size: $scope.Filt ? $scope.Filt.size : null,
@@ -169,7 +169,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
             console.log(response);
             console.log("response,data :");
             console.log(response.data);
-            if (typeof response.data.content == "undefined") {
+            if (typeof response.data.content === "undefined") {
                 $scope.WorkTimeList = response.data;
             } else {
                 $scope.WorkTimeList = response.data.content;

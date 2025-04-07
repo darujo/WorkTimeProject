@@ -45,14 +45,6 @@ public class WorkBuilder {
     private Timestamp startTaskPlan;
     // Дата начала доработки Факт
     private Timestamp startTaskFact;
-    // Плановые трудозатраты, чел/час Разработка прототипа
-    private Float laborDevelop;
-    // Плановые трудозатраты, чел/час Стабилизация прототипа
-    private Float laborDebug;
-    // Плановые трудозатраты, чел/час Стабилизация релиза
-    private Float laborRelease;
-    // Плановые трудозатраты, чел/час ОПЭ
-    private Float laborOPE;
     // Текущий этап ЗИ
     private Integer stageZI;
     // Порядковый номер релиза
@@ -82,25 +74,6 @@ public class WorkBuilder {
         return this;
     }
 
-    public WorkBuilder setLaborDevelop(Float laborDevelop) {
-        this.laborDevelop = laborDevelop;
-        return this;
-    }
-
-    public WorkBuilder setLaborDebug(Float laborDebug) {
-        this.laborDebug = laborDebug;
-        return this;
-    }
-
-    public WorkBuilder setLaborRelease(Float laborRelease) {
-        this.laborRelease = laborRelease;
-        return this;
-    }
-
-    public WorkBuilder setLaborOPE(Float laborOPE) {
-        this.laborOPE = laborOPE;
-        return this;
-    }
 
     public WorkBuilder setStageZI(Integer stageZI) {
         this.stageZI = stageZI;
@@ -207,10 +180,6 @@ public class WorkBuilder {
                 description,
                 startTaskPlan,
                 startTaskFact,
-                laborDevelop,
-                laborDebug,
-                laborRelease,
-                laborOPE,
                 stageZI,
                 release,
                 issuingReleasePlan,
@@ -236,10 +205,6 @@ public class WorkBuilder {
                 description,
                 startTaskPlan,
                 startTaskFact,
-                laborDevelop,
-                laborDebug,
-                laborRelease,
-                laborOPE,
                 stageZI,
                 release,
                 issuingReleasePlan,
@@ -265,10 +230,6 @@ public class WorkBuilder {
                 description,
                 startTaskPlan,
                 startTaskFact,
-                laborDevelop,
-                laborDebug,
-                laborRelease,
-                laborOPE,
                 stageZI,
                 release,
                 issuingReleasePlan,

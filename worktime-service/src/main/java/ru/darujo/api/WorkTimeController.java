@@ -41,26 +41,8 @@ public class WorkTimeController extends DateParser {
                               @RequestHeader(defaultValue = "false", name = "WORK_TIME_EDIT") boolean rightEdit,
                               @RequestHeader(defaultValue = "false", name = "WORK_TIME_CREATE") boolean rightCreate,
                               @RequestHeader(defaultValue = "false", name = "WORK_TIME_CHANGE_USER") boolean rightChangeUser) {
+       return workTimeService.checkRight(right,rightEdit, rightCreate, rightChangeUser);
 
-        right = right.toLowerCase();
-        switch (right) {
-            case "edit":
-                if (!rightEdit) {
-                    throw new ResourceNotFoundException("У вас нет права на редактирование WORK_TIME_EDIT");
-                }
-                break;
-            case "create":
-                if (!rightCreate) {
-                    throw new ResourceNotFoundException("У вас нет права на редактирование WORK_TIME_CREATE");
-                }
-                break;
-            case "changeuser":
-                if (!rightChangeUser) {
-                    throw new ResourceNotFoundException("У вас нет права на редактирование WORK_TIME_CREATE");
-                }
-                break;
-        }
-        return true;
 
     }
 

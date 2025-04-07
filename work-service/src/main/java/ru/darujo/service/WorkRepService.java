@@ -62,21 +62,17 @@ public class WorkRepService {
                                         work.getStartTaskFact(),
                                         work.getAnaliseEndPlan(),
                                         work.getAnaliseEndFact(),
-                                        work.getLaborDevelop(),
                                         work.getDevelopEndPlan(),
                                         work.getDevelopEndFact(),
                                         work.getDebugEndPlan(),
                                         work.getDebugEndFact(),
-                                        work.getLaborDebug(),
                                         work.getRelease(),
                                         work.getIssuingReleasePlan(),
                                         work.getIssuingReleaseFact(),
                                         work.getReleaseEndPlan(),
                                         work.getReleaseEndFact(),
-                                        work.getLaborRelease(),
                                         work.getOpeEndPlan(),
                                         work.getOpeEndFact(),
-                                        work.getLaborOPE(),
                                         getFactWork(work, 0),
                                         getFactWork(work, 1),
                                         getFactWork(work, 2),
@@ -89,6 +85,7 @@ public class WorkRepService {
                     }
                 }
         );
+        workRepDTOs.forEach(workService::updWorkPlanTime);
         return workRepDTOs;
     }
 

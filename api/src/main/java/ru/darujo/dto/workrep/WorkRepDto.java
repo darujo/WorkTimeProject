@@ -1,10 +1,12 @@
 package ru.darujo.dto.workrep;
 
+import ru.darujo.dto.work.WorkPlanTime;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class WorkRepDto implements Serializable {
+public class WorkRepDto implements Serializable, WorkPlanTime {
     public WorkRepDto() {
     }
     SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
@@ -57,8 +59,6 @@ public class WorkRepDto implements Serializable {
     private Date opeEndFact;
     // Плановые трудозатраты, чел/час ОПЭ
     private Float laborOPE;
-    // плановое время
-    private Float timePlan;
     // фактическое время
     private Float timeFact;
 
@@ -76,7 +76,30 @@ public class WorkRepDto implements Serializable {
     // ВЕНДЕРКА
     private Float timeWender;
 
-    public WorkRepDto(Long id, String codeZI, String name, Date startTaskPlan, Date startTaskFact, Date analiseEndPlan, Date analiseEndFact, Float laborDevelop, Date developEndPlan, Date developEndFact, Date debugEndPlan, Date debugEndFact, Float laborDebug, String release, Date issuingReleasePlan, Date issuingReleaseFact, Date releaseEndPlan, Date releaseEndFact, Float laborRelease, Date opeEndPlan, Date opeEndFact, Float laborOPE, Float timeAnalise, Float timeDevelop, Float timeDebug, Float timeRelease, Float timeOPE, Float timeWender) {
+    public WorkRepDto(Long id,
+                      String codeZI,
+                      String name,
+                      Date startTaskPlan,
+                      Date startTaskFact,
+                      Date analiseEndPlan,
+                      Date analiseEndFact,
+                      Date developEndPlan,
+                      Date developEndFact,
+                      Date debugEndPlan,
+                      Date debugEndFact,
+                      String release,
+                      Date issuingReleasePlan,
+                      Date issuingReleaseFact,
+                      Date releaseEndPlan,
+                      Date releaseEndFact,
+                      Date opeEndPlan,
+                      Date opeEndFact,
+                      Float timeAnalise,
+                      Float timeDevelop,
+                      Float timeDebug,
+                      Float timeRelease,
+                      Float timeOPE,
+                      Float timeWender) {
         this.id = id;
         this.codeZI = codeZI;
         this.name = name;
@@ -84,32 +107,23 @@ public class WorkRepDto implements Serializable {
         this.startTaskFact = startTaskFact;
         this.analiseEndPlan = analiseEndPlan;
         this.analiseEndFact = analiseEndFact;
-        this.laborDevelop = laborDevelop;
         this.developEndPlan = developEndPlan;
         this.developEndFact = developEndFact;
         this.debugEndPlan = debugEndPlan;
         this.debugEndFact = debugEndFact;
-        this.laborDebug = laborDebug;
         this.release = release;
         this.issuingReleasePlan = issuingReleasePlan;
         this.issuingReleaseFact = issuingReleaseFact;
         this.releaseEndPlan = releaseEndPlan;
         this.releaseEndFact = releaseEndFact;
-        this.laborRelease = laborRelease;
         this.opeEndPlan = opeEndPlan;
         this.opeEndFact = opeEndFact;
-        this.laborOPE = laborOPE;
         this.timeAnalise = timeAnalise;
         this.timeDevelop = timeDevelop;
         this.timeDebug = timeDebug;
         this.timeRelease = timeRelease;
         this.timeOPE = timeOPE;
         this.timeWender = timeWender;
-        this.timePlan = 0f;
-        addTimePlan (laborDevelop);
-        addTimePlan (laborDebug);
-        addTimePlan (laborRelease);
-        addTimePlan (laborOPE);
         this.timeFact = 0f;
         addTimeFact(timeAnalise);
         addTimeFact(timeDevelop);
@@ -120,10 +134,11 @@ public class WorkRepDto implements Serializable {
 
 
     }
-    public void addTimePlan(Float time ){
+    public Float addTimePlan(Float time ){
         if (time != null){
-            timePlan = timePlan +time;
+            return time;
         }
+        return 0f;
     }
     public void addTimeFact(Float time ){
         if (time != null){
@@ -220,7 +235,7 @@ public class WorkRepDto implements Serializable {
     }
 
     public Float getTimePlan() {
-        return timePlan;
+        return addTimePlan(laborDevelop) + addTimePlan(laborDebug) + addTimePlan(laborRelease) + addTimePlan(laborOPE);
     }
 
     public Float getTimeFact() {
@@ -249,5 +264,25 @@ public class WorkRepDto implements Serializable {
 
     public Float getTimeWender() {
         return timeWender;
+    }
+
+    @Override
+    public void setLaborDevelop(Float laborDevelop) {
+        this.laborDevelop = laborDevelop;
+    }
+
+    @Override
+    public void setLaborDebug(Float laborDebug) {
+        this.laborDebug = laborDebug;
+    }
+
+    @Override
+    public void setLaborRelease(Float laborRelease) {
+        this.laborRelease = laborRelease;
+    }
+
+    @Override
+    public void setLaborOPE(Float laborOPE) {
+        this.laborOPE = laborOPE;
     }
 }

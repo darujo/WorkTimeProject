@@ -3,7 +3,7 @@ package ru.darujo.dto.work;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class WorkEditDto implements Serializable {
+public class WorkEditDto implements Serializable, WorkPlanTime {
     private Long id;
     // Код SAP
     private Long codeSap;
@@ -58,7 +58,28 @@ public class WorkEditDto implements Serializable {
     // Выдача релиза дата факт
     private Timestamp issuingReleaseFact;
 
-    public WorkEditDto(Long id, Long codeSap, String codeZI, String name, Timestamp analiseEndFact, Timestamp analiseEndPlan, Timestamp developEndFact, Timestamp developEndPlan, Timestamp debugEndFact, Timestamp debugEndPlan, Timestamp releaseEndFact, Timestamp releaseEndPlan, Timestamp opeEndFact, Timestamp opeEndPlan, String task, String description, Timestamp startTaskPlan, Timestamp startTaskFact, Float laborDevelop, Float laborDebug, Float laborRelease, Float laborOPE, Integer stageZI, String release, Timestamp issuingReleasePlan, Timestamp issuingReleaseFact) {
+    public WorkEditDto(Long id,
+                       Long codeSap,
+                       String codeZI,
+                       String name,
+                       Timestamp analiseEndFact,
+                       Timestamp analiseEndPlan,
+                       Timestamp developEndFact,
+                       Timestamp developEndPlan,
+                       Timestamp debugEndFact,
+                       Timestamp debugEndPlan,
+                       Timestamp releaseEndFact,
+                       Timestamp releaseEndPlan,
+                       Timestamp opeEndFact,
+                       Timestamp opeEndPlan,
+                       String task,
+                       String description,
+                       Timestamp startTaskPlan,
+                       Timestamp startTaskFact,
+                       Integer stageZI,
+                       String release,
+                       Timestamp issuingReleasePlan,
+                       Timestamp issuingReleaseFact) {
         this.id = id;
         this.codeSap = codeSap;
         this.codeZI = codeZI;
@@ -77,16 +98,13 @@ public class WorkEditDto implements Serializable {
         this.description = description;
         this.startTaskPlan = startTaskPlan;
         this.startTaskFact = startTaskFact;
-        this.laborDevelop = laborDevelop;
-        this.laborDebug = laborDebug;
-        this.laborRelease = laborRelease;
-        this.laborOPE = laborOPE;
         this.stageZI = stageZI;
         this.release = release;
         this.issuingReleasePlan = issuingReleasePlan;
         this.issuingReleaseFact = issuingReleaseFact;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
@@ -194,4 +212,23 @@ public class WorkEditDto implements Serializable {
         return analiseEndPlan;
     }
 
+    @Override
+    public void setLaborDevelop(Float laborDevelop) {
+        this.laborDevelop = laborDevelop;
+    }
+
+    @Override
+    public void setLaborDebug(Float laborDebug) {
+        this.laborDebug = laborDebug;
+    }
+
+    @Override
+    public void setLaborRelease(Float laborRelease) {
+        this.laborRelease = laborRelease;
+    }
+
+    @Override
+    public void setLaborOPE(Float laborOPE) {
+        this.laborOPE = laborOPE;
+    }
 }

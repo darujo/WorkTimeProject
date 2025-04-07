@@ -36,9 +36,10 @@ public class WorkStageController {
     }
 
     @GetMapping("")
-    public List<WorkStageDto> WorkStageList(@RequestParam Long workId) {
+    public List<WorkStageDto> WorkStageList(@RequestParam Long workId,
+                                            @RequestParam (defaultValue = "false") boolean loadFact ) {
         List<WorkStageDto> workStageDTOs = new ArrayList<>();
-        workStageService.findWorkStage(workId).forEach(workStage ->  workStageDTOs.add(WorkStageConvertor.getWorkStageDto(workStage)));
+        workStageService.findWorkStage(workId, loadFact).forEach(workStage ->  workStageDTOs.add(WorkStageConvertor.getWorkStageDto(workStage)));
         workStageDTOs.forEach(workStageDto -> workStageService.updFio(workStageDto));
         return workStageDTOs;
     }
