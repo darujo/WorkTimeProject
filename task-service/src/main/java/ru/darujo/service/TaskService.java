@@ -49,6 +49,11 @@ public class TaskService {
     }
 
     public Task saveWorkTime(Task task) {
+        if (task.getCodeDEVBO() == null || task.getCodeDEVBO().equals("") || task.getCodeDEVBO().equalsIgnoreCase("DeVbo-000")){
+            if(task.getCodeBTS() == null || task.getCodeBTS().equals("") ) {
+                throw new ResourceNotFoundException("Не задан номер DEVBO и BTS");
+            }
+        }
         if (task.getType() == 1) {
             workServiceIntegration.getWorEditDto(task.getWorkId());
         }
@@ -106,7 +111,7 @@ public class TaskService {
         return ((List<Task>) findTask(null, codeBTS, codeDEVBO, description, workId, null, null, null))
                 .stream()
                 .map(task -> workTimeServiceIntegration.getTimeTask(task.getId(), nikName, dateLe, dateGt, type))
-                .reduce((sumTime, time) -> sumTime + time)
+                .reduce(Float::sum)
                 .orElse(0f);
     }
 

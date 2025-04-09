@@ -254,6 +254,36 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
                 // showFindTask();
             });
     };
+
+    $scope.copyWorkTime = function (workTimeId) {
+        // $scope.FiltWork = {size: 10};
+        showTaskNum();
+        console.log("edit");
+        $http.get(constPatchWorkTime + "/worktime/" + workTimeId)
+            .then(function (response) {
+                WorkTimeIdEdit = response.data.id;
+                $scope.WorkTime = response.data;
+                $scope.WorkTime.id = null;
+                $scope.WorkTime.nikName = null;
+                $scope.WorkTime.workTime = null;
+                $scope.WorkTime.workDate = new Date();
+                console.log($scope.WorkTime);
+
+                $scope.WorkTime.workDate = new Date(response.data.workDate);
+                console.log("eeee 3")
+
+                showFormEdit();
+                findNameTask($scope.WorkTime.taskId);
+
+            }, function errorCallback(response) {
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                    //     alert(response.data.message);
+                }
+
+                // showFindTask();
+            });
+    };
     $scope.deleteWorkTime = function (workTimeId) {
         $http.delete(constPatchWorkTime + "/worktime/" + workTimeId)
             .then(function (response) {
@@ -350,7 +380,8 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
                 codeDEVBO: FiltTask ? FiltTask.devbo : null,
                 description: FiltTask ? FiltTask.desc : null,
                 ziName: FiltTask ? FiltTask.ziName : null,
-                type: FiltTask ? FiltTask.type : null
+                type: FiltTask ? FiltTask.type : null,
+                nikName: FiltTask ? FiltTask.nikName : null
             }
         }).then(function (response) {
             console.log("/task.response");
