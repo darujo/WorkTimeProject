@@ -444,19 +444,35 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
     let callBackEmpty = function () {
 
     }
-    $scope.UserList = $location.UserList;
-    $scope.Filt = $location.getFilter("wortTimeFilter");
-    $scope.FiltTask = $location.getFilter("wortTimeEditFilter");
-    if ($scope.Filt === null) {
+    $scope.clearFilter =function (load){
+        console.log("clearFilter");
         $scope.Filt = {
             taskId: null,
             currentUser: true,
             size: 10
         };
+        console.log($scope.Filt);
+        if(load){
+            $scope.filterWorkTime();
+        }
     }
-    if ($scope.FiltTask === null) {
-        $scope.FiltTask = {size: 10}
+    $scope.clearFilterTask =function (load){
+        console.log("clearFilter");
+        if ($scope.FiltTask === null) {
+            $scope.FiltTask = {size: 10}
+        }
+        console.log($scope.Filt);
+        if(load){
+            $scope.filterTask();
+        }
     }
+    $scope.UserList = $location.UserList;
+    $scope.Filt = $location.getFilter("wortTimeFilter");
+    $scope.FiltTask = $location.getFilter("wortTimeEditFilter");
+    if ($scope.Filt === null) {
+        $scope.clearFilter(false);
+    }
+    $scope.clearFilterTask(false);
     checkRight("changeuser", false, callBackEmpty);
     console.log("Start");
     showWorkTime();

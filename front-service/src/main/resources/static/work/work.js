@@ -243,16 +243,23 @@ angular.module('workTimeService').controller('workController', function ($scope,
         $location.path('/rate');
         // window.open('#!/task',"_parent");
     }
-
+    $scope.clearFilter =function (load){
+        console.log("clearFilter");
+        $scope.Filt = {
+            stageZi: 15,
+            size: 10
+        }
+        console.log($scope.Filt);
+        if(load){
+            $scope.filterWork();
+        }
+    }
     showWork();
     console.log("---workFilter---");
     $scope.Filt = $location.getFilter("workFilter");
     console.log($scope.Filt );
     if($scope.Filt === null) {
-        $scope.Filt = {
-            stageZi: 15,
-            size: 10
-        }
+        $scope.clearFilter(false);
     }
     console.log("workFilter");
     console.log($scope.Filt);

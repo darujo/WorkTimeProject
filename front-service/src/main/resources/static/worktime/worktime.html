@@ -29,7 +29,8 @@
                             <p class="p-head">ФИО</p>
                             <br>
                             <select class="vvod40mar10" name="choice" id="UserFilt" ng-model="Filt.nikName">
-                                <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">{{user.lastName}}
+                                <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">
+                                    {{user.lastName}}
                                     {{user.firstName}} {{user.patronymic}}
                                 </option>
                                 <option ng-value="" value="">Все</option>
@@ -64,7 +65,9 @@
                             <br>
                             <input class="vvod40mar10" type="text" id="CommentFilt"
                                    ng-model="Filt.comment"/>
-                        <button type="submit" class="headbutton">Применить</button>
+                            <button type="submit" class="headbutton">Применить</button>
+                            <button type="button" class="headbutton" ng-click="clearFilter(true)">Сбросить</button>
+
                         </div>
                     </div>
                 </div>
@@ -114,7 +117,9 @@
             <td>{{worktime.workDateStr}}</td>
             <td>{{worktime.workTime}}</td>
             <td class="textleft">{{worktime.comment}}</td>
-            <td class="textnotwrap"><button ng-click="copyWorkTime(worktime.id)">{{worktime.taskCodeDEVBO}}</button></td>
+            <td class="textnotwrap">
+                <button ng-click="copyWorkTime(worktime.id)">{{worktime.taskCodeDEVBO}}</button>
+            </td>
             <td class="textnotwrap">{{worktime.taskCodeBTS}}</td>
             <td class="textleft">{{worktime.taskDescription}}</td>
             <td>
@@ -158,9 +163,10 @@
                         <p class="p-filt">Id задачи</p>
                         <br>
                         <input class="vvod20" type="number" id="WorkIdFilt" step="any" ng-model="FiltTask.workId"/>
-                        <p >ФИО: </p>
+                        <p>ФИО: </p>
                         <select class="vvod40mar10" name="choice" id="UserTaskFiltr" ng-model="FiltTask.nikName">
-                            <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">{{user.lastName}}
+                            <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">
+                                {{user.lastName}}
                                 {{user.firstName}} {{user.patronymic}}
                             </option>
                             <option ng-value="" value="">Все</option>
@@ -201,6 +207,8 @@
             <input class="vvod" type="number" id="PageTask" value="1"/>
             <button type="button" class="headbutton" ng-click="loadTask(1)">NextPage</button>
             <button type="button" ng-click="filterTask()" class="headbutton">Применить</button>
+            <button type="button" class="headbutton" ng-click="clearFilter(true)">Сбросить</button>
+
             <p class="p-head">Количество элементов</p>
             <select class="vvod20" name="choice" id="TaskSize" ng-model="FiltTask.size" ng-change="filterTask()">
                 <option ng-value="10" value="10" selected>10</option>

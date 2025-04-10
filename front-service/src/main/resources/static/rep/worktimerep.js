@@ -42,13 +42,21 @@ angular.module('workTimeService').controller('workTimeRepController', function (
         $location.saveFilter("workTimeRepFilter",$scope.Filt);
         $scope.findPage();
     };
+    $scope.clearFilter =function (load){
+        console.log("clearFilter");
+        $scope.Filt = {
+            stageZi: 15,
+            availWork: true
+        };
+        console.log($scope.Filt);
+        if(load){
+            $scope.filterWork();
+        }
+    }
     var init = function () {
         $scope.Filt = $location.getFilter("workTimeRepFilter");
         if ($scope.Filt === null ) {
-            $scope.Filt = {
-                stageZi: 15,
-                availWork: true
-            };
+            $scope.clearFilter(false);
         }
         $scope.addSort("release");
         $scope.loadWorkTime();

@@ -57,14 +57,22 @@ angular.module('workTimeService').controller('workFactRepController', function (
             }
         });
     };
-    document.getElementById("Page").value = "1";
-    $scope.Filt = $location.getFilter("factWorkFilter");
-    if ($scope.Filt === null ) {
+    $scope.clearFilter =function (load){
+        console.log("clearFilter");
         $scope.Filt = {
             stageZi: 15,
             size: 10,
             hideNotTime: true
         }
+        console.log($scope.Filt);
+        if(load){
+            $scope.filterWork();
+        }
+    }
+    document.getElementById("Page").value = "1";
+    $scope.Filt = $location.getFilter("factWorkFilter");
+    if ($scope.Filt === null ) {
+        $scope.clearFilter(false);
     }
     $scope.UserList = $location.UserList;
     $scope.filterWork();

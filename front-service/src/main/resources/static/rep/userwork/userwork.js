@@ -1,13 +1,19 @@
 angular.module('workTimeService').controller('userworkController', function ($scope, $http, $location, $localStorage) {
 
     const constPatchWork = window.location.origin + '/worktime-service/v1';
+    $scope.clearFilter =function (load){
+        console.log("clearFilter");
+        $scope.Filt =  {
+            dateStart: new Date(),
+            dateEnd: new Date(),
+            period: 2
+        };
+        console.log($scope.Filt);
+        if(load){
+            $scope.filterWorkTime();
+        }
+    }
 
-    let Filt = {
-        dateStart: new Date(),
-        dateEnd: new Date(),
-        period: 2
-    };
-    $scope.Filt = Filt;
     $scope.loadWorkTime = function () {
         console.log("loadWorkTime");
         console.log($scope.Filt);
@@ -17,7 +23,7 @@ angular.module('workTimeService').controller('userworkController', function ($sc
 
     $scope.findPage = function () {
         console.log("findPage");
-        console.log(Filt)
+        let Filt = $scope.Filt;
         $http({
             url: constPatchWork + "/worktime/rep/fact/user/work",
             method: "get",
@@ -41,7 +47,7 @@ angular.module('workTimeService').controller('userworkController', function ($sc
 
     $scope.filterWorkTime = function () {
         console.log("filterWorkTime");
-        Filt = $scope.Filt;
+
         $scope.findPage();
     };
     $scope.getStyle = function (time) {
@@ -60,6 +66,7 @@ angular.module('workTimeService').controller('userworkController', function ($sc
             }
         }
     };
+    $scope.clearFilter(false);
     $scope.UserList = $location.UserList;
     $scope.UserList.push({firstName: "Разработчик", nikName: "ROLE_DEVELOPER"});
     $scope.UserList.push({firstName: "Все", nikName: "All"});

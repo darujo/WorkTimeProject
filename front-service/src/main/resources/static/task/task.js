@@ -366,7 +366,15 @@ angular.module('workTimeService').controller('taskController', function ($scope,
 
         showFindWork();
     }
-
+    $scope.clearFilter =function (load){
+        $scope.Filt = {
+            workId: null,
+            size: 10
+        }
+        if(load) {
+            $scope.filterWork();
+        }
+    }
     $scope.Filt = $location.getFilter("taskFilter");
     $scope.FiltWork = $location.getFilter("taskEditFilter");
     if($scope.FiltWork == null){
@@ -374,10 +382,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
     }
     console.log($scope.Filt);
     if ($scope.Filt === null) {
-        $scope.Filt = {
-            workId: null,
-            size: 10
-        }
+        $scope.clearFilter(false);
     }
     console.log("start");
     showTask();

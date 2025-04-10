@@ -1,12 +1,18 @@
 angular.module('workTimeService').controller('weekworkController', function ($scope, $http, $location, $localStorage) {
 
     const constPatchWork = window.location.origin + '/worktime-service/v1';
+    $scope.clearFilter =function (load){
+        console.log("clearFilter");
+        $scope.Filt = {    dateStart: new Date(),
+            dateEnd: new Date(),
+            weekSplit: true
+        };
+        console.log($scope.Filt);
+        if(load){
+            $scope.filterWorkTime();
+        }
+    }
 
-    let Filt= {    dateStart: new Date(),
-                   dateEnd: new Date(),
-                   weekSplit: true
-    };
-    $scope.Filt = Filt;
     $scope.loadWorkTime = function () {
         console.log("loadWorkTime");
         console.log($scope.Filt);
@@ -16,7 +22,9 @@ angular.module('workTimeService').controller('weekworkController', function ($sc
 
     $scope.findPage = function () {
         console.log("findPage");
-        console.log(Filt)
+
+        let Filt = $scope.Filt;
+
         $http({
             url: constPatchWork + "/worktime/rep/fact/week",
             method: "get",
@@ -39,9 +47,10 @@ angular.module('workTimeService').controller('weekworkController', function ($sc
 
     $scope.filterWorkTime = function () {
         console.log("filterWorkTime");
-        Filt = $scope.Filt;
+
         $scope.findPage();
     };
+    $scope.clearFilter (false);
     $scope.UserList = $location.UserList;
     $scope.loadWorkTime();
 })

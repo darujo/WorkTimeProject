@@ -39,7 +39,10 @@
                             <br>
                             <input class="vvod80" type="text" id="ZiNameFilt" step="any" ng-model="Filt.ziName"/>
                         </div>
-                        <button type="submit" class="headbutton">Применить</button>
+                        <div class="horiz">
+                            <button type="submit" class="headbutton">Применить</button>
+                            <button type="button" class="headbutton" ng-click="clearFilter(true)">Сбросить</button>
+                        </div>
                     </div>
                 </div>
             </form>
