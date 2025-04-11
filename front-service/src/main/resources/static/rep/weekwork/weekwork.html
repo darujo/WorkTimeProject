@@ -43,14 +43,14 @@
             <td class="tablehead1" rowspan="2">№ п/п</td>
             <td class="tablehead2  twodate" rowspan="2">Период</td>
             <td class="tablehead1 fieldfio" rowspan="2">Исполнитель</td>
-            <td class="tablehead1" colspan="3">Факт трудозатрат, чел/час</td>
-            <td class="tablehead2 weekworkpalntime" rowspan="2">Плановые трудозатраты за период, чел/час</td>
+            <td class="tablehead2" colspan="{{TaskListType.length}}">Факт трудозатрат, чел/час</td>
+            <td class="tablehead1 weekworkpalntime" rowspan="2">Плановые трудозатраты за период, чел/час</td>
             <td class="tablehead2" rowspan="2">Итого за период</td>
         </tr>
         <tr>
-            <td class="tablehead1">Работа по ЗИ</td>
-            <td class="tablehead2">Устранение проблем вендорных запросов</td>
-            <td class="tablehead1">Административные</td>
+            <td class="tablehead2 weekworkpalntime" ng-repeat="taskType in TaskListType">{{taskType.value}}</td>
+<!--            <td class="tablehead2">Устранение проблем вендорных запросов</td>-->
+<!--            <td class="tablehead1">Административные</td>-->
 
 
         </tr>
@@ -68,10 +68,10 @@
             <td ng-if="work.authorFirstName">{{work.authorLastName}} {{work.authorFirstName}}
                 {{work.authorPatronymic}}
             </td>
-
-            <td>{{work.workZiFact;}}</td>
-            <td>{{work.workWenderFact}}</td>
-            <td>{{work.workAdminFact}}</td>
+            <td ng-repeat="taskType in TaskListType">{{searchJson(work.workTime,"codeInt",taskType.codeInt,"value")}}</td>
+<!--            <td>{{work.workZiFact;}}</td>-->
+<!--            <td>{{work.workWenderFact}}</td>-->
+<!--            <td>{{work.workAdminFact}}</td>-->
             <td rowspan="{{work.userCol}}" ng-if="work.userCol != null">{{work.workPlan}}</td>
             <td>{{work.workAllFact}}</td>
         </tr>

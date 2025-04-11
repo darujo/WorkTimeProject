@@ -16,6 +16,7 @@
 		<module>rate-service</module>
 		<module>front-service</module>
 		<module>gateway-service</module>
+        <module>code-service</module>
 
 
     </modules>

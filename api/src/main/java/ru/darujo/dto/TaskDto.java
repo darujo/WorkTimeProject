@@ -1,5 +1,7 @@
 package ru.darujo.dto;
 
+import ru.darujo.service.CodeService;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -21,14 +23,7 @@ public class TaskDto implements Serializable, UserFio {
     private Integer type;
 
     public String getTypeStr() {
-        if (type == 1) {
-            return "ЗИ";
-        } else if (type == 2) {
-            return "Вендерка";
-        } else if (type == 3) {
-            return "Админ";
-        }
-        return "Не известный тип";
+        return CodeService.getTaskType(type);
     }
 
     // № ЗИ (ZI)

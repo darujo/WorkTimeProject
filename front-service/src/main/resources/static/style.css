@@ -411,9 +411,12 @@ TD {
     min-width: 300px;
 }
 .weekworkpalntime{
-    max-width: 100px;
+    width: 100px;
 }
 .stagetime{
-    max-width: 100px;
+    max-width: 110px;
 }
-
+.formlablep{
+    width: 110px;
+    text-align: right;
+}

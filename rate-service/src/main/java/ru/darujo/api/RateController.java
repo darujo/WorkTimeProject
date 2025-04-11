@@ -17,7 +17,7 @@ public class RateController {
     }
 
     @GetMapping("/compare/sc")
-    public AttrDto ComparisonStageCriteria(@RequestParam Long workId,
+    public AttrDto<Float> ComparisonStageCriteria(@RequestParam Long workId,
                                            @RequestParam (defaultValue = "false") boolean loadFact ) {
         return rateService.ComparisonStageCriteria(workId,loadFact);
     }

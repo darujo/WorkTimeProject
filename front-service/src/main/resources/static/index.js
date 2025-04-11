@@ -91,6 +91,7 @@
 angular.module('workTimeService').controller('indexController', function ($rootScope, $scope, $http, $location, $localStorage) {
     const constPatchAuth = window.location.origin;
     const constPatchUser = window.location.origin + '/users';
+    const constPatchCode = window.location.origin + '/task-service/v1/';
 
     $scope.tryToAuth = function () {
         $http.post(constPatchAuth + '/auth', $scope.user)
@@ -188,6 +189,24 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         return true;
 
     }
+
+    $location.getCode = function (code,callBack) {
+        $http({
+            url: constPatchCode + code,
+            method: "get"
+
+        }).then(function (response) {
+           callBack(response);
+        }, function errorCallback(response) {
+            // console.log(response)
+            if ($location.checkAuthorized(response)) {
+                alert(response.data.message);
+            }
+        });
+
+    }
+
+
     if (typeof $localStorage.filterWorkTime === "undefined") {
         $localStorage.filterWorkTime = {}
     }

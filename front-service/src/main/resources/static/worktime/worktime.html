@@ -253,12 +253,13 @@
     </div>
 
     <form novalidate ng-submit="saveWorkTime()">
-        <br>
-        Дата: <input class="vvod40mar10" type="date" id="WorkTimeDate" step="any"
-                     ng-model="WorkTime.workDate"/>
-        <br>
         <div class="horiz">
-            <p ng-if="showUser()">Пользователь: </p>
+            <p class="formlablep">Дата:</p> <input class="vvod40mar10" type="date" id="WorkTimeDate" step="any"
+                                                   ng-model="WorkTime.workDate"/>
+            <br>
+        </div>
+        <div class="horiz">
+            <p class="formlablep" ng-if="showUser()">Пользователь: </p>
             <select ng-if="showUser()" class="vvod40mar10" name="choice" id="UserWorkTime" ng-model="WorkTime.nikName">
                 <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">{{user.lastName}}
                     {{user.firstName}} {{user.patronymic}}
@@ -267,10 +268,14 @@
 
             <br ng-if="showUser()">
         </div>
-        Время: <input class="vvod20mar10" type="number" step="0.1" id="WorkTimeTime" min="0" max="10"
-                      ng-model="WorkTime.workTime"/>
         <div class="horiz">
-            <p ng-if="showType()">Тип:</p>
+            <p class="formlablep">Время:</p>
+            <input class="vvod20mar10" type="number" step="0.1" id="WorkTimeTime"
+                   min="0" max="10"
+                   ng-model="WorkTime.workTime"/>
+        </div>
+        <div class="horiz">
+            <p class="formlablep" ng-if="showType()">Тип:</p>
             <select ng-if="showType()" class="vvod20mar10" name="choice" id="TypeWorkTime" ng-model="WorkTime.type">
                 <option ng-value="1" value="1">Разработка</option>
                 <option ng-value="2" value="2">Консультация</option>
@@ -280,9 +285,12 @@
             </select>
             <br>
         </div>
-        Комментарий : <input class="vvod80mar" type="text" id="Comment" placeholder="Ведите комментарий"
-                             ng-model="WorkTime.comment"/>
-        <br>
+        <div class="horiz">
+            <p class="formlablep">Комментарий :</p>
+            <input class="vvod80mar10" type="text" id="Comment"
+                   placeholder="Ведите комментарий"
+                   ng-model="WorkTime.comment"/>
+        </div>
         <button type="submit" class="button" id="ButtonSaveDown">Сохранить</button>
         <button type="reset" ng-click="loadWorkTime()" class="button">Вернуться к списку</button>
 

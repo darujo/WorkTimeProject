@@ -1,7 +1,10 @@
 package ru.darujo.dto;
 
+import ru.darujo.dto.ratestage.AttrDto;
+import ru.darujo.service.CodeService;
+
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 
 public class UserWorkDto implements UserFio {
     public UserWorkDto() {
@@ -22,10 +25,8 @@ public class UserWorkDto implements UserFio {
     private Date dateStart;
     private Date dateEnd;
     private Float workPlan;
-    private Float workZiFact;
-    private Float workWenderFact;
-    private Float workAdminFact;
     private Float workAllFact;
+    private final Map<Integer,Float>  workTime = new LinkedHashMap <>();
 
     public UserWorkDto(String nikName, String authorFirstName, String authorLastName, String authorPatronymic, Date dateStart, Date dateEnd, Float workPlan) {
         this.nikName = nikName;
@@ -35,28 +36,16 @@ public class UserWorkDto implements UserFio {
         this.dateStart = dateStart;
         this.dateEnd = dateEnd;
         this.workPlan = workPlan;
-        this.workZiFact = 0f;
-        this.workWenderFact = 0f;
-        this.workAdminFact = 0f;
         this.workAllFact = 0f;
+        CodeService.getTaskTypes().forEach((type, s) -> workTime.put(type,0f));
     }
     public void addTime(Integer type,Float time ){
         if(type != null && time != null){
-            if(type == 1){
-                workZiFact = workZiFact + time;
-            }
-            else if(type == 2){
-                workWenderFact = workWenderFact + time;
-            }
-            else if(type == 3){
-                workAdminFact = workAdminFact + time;
-            }
+            workTime.put(type,workTime.get(type) + time);
         }
     }
     public UserWorkDto addTimeAll(){
-        addTimeAll(workZiFact);
-        addTimeAll(workWenderFact);
-        addTimeAll(workAdminFact);
+        workTime.forEach((type, time) ->addTimeAll(time) );
         return this;
     }
     private void addTimeAll(Float time){
@@ -117,18 +106,24 @@ public class UserWorkDto implements UserFio {
     }
 
     public Float getWorkZiFact() {
-        return workZiFact;
+        return workTime.get(1);
     }
 
     public Float getWorkWenderFact() {
-        return workWenderFact;
+        return workTime.get(2);
     }
 
     public Float getWorkAdminFact() {
-        return workAdminFact;
+        return workTime.get(3);
     }
 
     public Float getWorkAllFact() {
         return workAllFact;
+    }
+
+    public List<AttrDto<Integer>> getWorkTime() {
+        List<AttrDto<Integer>> attrDTOs = new ArrayList<>();
+        workTime.forEach((type, time) -> attrDTOs.add(new AttrDto<>(type,time.toString())) );
+        return attrDTOs;
     }
 }

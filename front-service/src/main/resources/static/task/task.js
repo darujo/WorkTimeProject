@@ -375,6 +375,15 @@ angular.module('workTimeService').controller('taskController', function ($scope,
             $scope.filterWork();
         }
     }
+
+
+     let callBackType = function (response) {
+        console.log("TaskListType");
+        console.log(response);
+        $scope.TaskListType = response.data;
+     }
+
+    $location.getCode ("task/code/type",callBackType);
     $scope.Filt = $location.getFilter("taskFilter");
     $scope.FiltWork = $location.getFilter("taskEditFilter");
     if($scope.FiltWork == null){

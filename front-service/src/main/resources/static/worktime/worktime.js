@@ -441,8 +441,11 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
         // console.log(false);
         return false;
     }
-    let callBackEmpty = function () {
-
+    // let callBackEmpty = function () {
+    //
+    // }
+    let callBackUserChange = function () {
+        userChange = true;
     }
     $scope.clearFilter =function (load){
         console.log("clearFilter");
@@ -473,7 +476,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
         $scope.clearFilter(false);
     }
     $scope.clearFilterTask(false);
-    checkRight("changeuser", false, callBackEmpty);
+    checkRight("changeuser", false, callBackUserChange);
     console.log("Start");
     showWorkTime();
     console.log("Show ok");

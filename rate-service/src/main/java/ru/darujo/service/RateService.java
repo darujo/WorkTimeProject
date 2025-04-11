@@ -27,7 +27,7 @@ public class RateService {
         this.workCriteriaService = workCriteriaService;
     }
 
-    public AttrDto ComparisonStageCriteria(Long workId,boolean loadFact) {
+    public AttrDto<Float> ComparisonStageCriteria(Long workId,boolean loadFact) {
         AtomicReference<Float> timeCriteria = new AtomicReference<>();
         AtomicReference<Float> timeStage = new AtomicReference<>();
         timeCriteria.set( 0f);
@@ -47,12 +47,12 @@ public class RateService {
         ));
         float time = timeCriteria.get() - timeStage.get();
         if (time < 0) {
-            return new AttrDto(time, "Плановой оценки больше чем критериев на " + time * -1);
+            return new AttrDto<>(time, "Плановой оценки больше чем критериев на " + time * -1);
         }
         if (time == 0) {
-            return new AttrDto(time, "");
+            return new AttrDto<>(time, "");
         }
-        return new AttrDto(time, "Критериев больше чем плановой оценки на " + time);
+        return new AttrDto<>(time, "Критериев больше чем плановой оценки на " + time);
     }
     private Float getTime(Float time){
         if (time == null){

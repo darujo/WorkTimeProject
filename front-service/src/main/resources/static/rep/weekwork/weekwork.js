@@ -50,6 +50,25 @@ angular.module('workTimeService').controller('weekworkController', function ($sc
 
         $scope.findPage();
     };
+    let callBackType = function (response) {
+        console.log("TaskListType");
+        console.log(response);
+        $scope.TaskListType = response.data;
+    }
+    $scope.searchJson = function (list, searchField, searchVal, resultField ){
+        console.log("searchJson");
+        console.log(list);
+        console.log(searchField);
+        console.log(searchVal);
+        console.log(resultField);
+        for (let i=0 ; i < list.length ; i++)
+        {
+            if (list[i][searchField] === searchVal) {
+                return list[i][resultField]
+            }
+        }
+    }
+    $location.getCode ("task/code/type",callBackType);
     $scope.clearFilter (false);
     $scope.UserList = $location.UserList;
     $scope.loadWorkTime();
