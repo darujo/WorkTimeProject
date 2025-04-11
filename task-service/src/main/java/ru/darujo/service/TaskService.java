@@ -48,9 +48,10 @@ public class TaskService {
         return taskRepository.findById(id);
     }
 
+    @Transactional
     public Task saveWorkTime(Task task) {
-        if (task.getCodeDEVBO() == null || task.getCodeDEVBO().equals("") || task.getCodeDEVBO().equalsIgnoreCase("DeVbo-000")){
-            if(task.getCodeBTS() == null || task.getCodeBTS().equals("") ) {
+        if (task.getCodeDEVBO() == null || task.getCodeDEVBO().equals("") || task.getCodeDEVBO().equalsIgnoreCase("DeVbo-000")) {
+            if (task.getCodeBTS() == null || task.getCodeBTS().equals("")) {
                 throw new ResourceNotFoundException("Не задан номер DEVBO и BTS");
             }
         }
@@ -58,6 +59,14 @@ public class TaskService {
             workServiceIntegration.getWorEditDto(task.getWorkId());
         }
         task.setRefresh(new Timestamp(System.currentTimeMillis()));
+        if (task.getId() != null) {
+            Task taskSave = findById(task.getId()).orElseThrow(() -> new ResourceNotFoundException("Отмеченая работа не найден"));
+            if(task.getTimeCreate() == null && taskSave.getTimeCreate() != null){
+                task.setTimeCreate(taskSave.getTimeCreate());
+            }
+        } else {
+            task.setTimeCreate(task.getRefresh());
+        }
         return taskRepository.save(task);
     }
 
@@ -140,7 +149,8 @@ public class TaskService {
     @Transactional
     public boolean refreshTime(long id) {
         Task task = findById(id).orElseThrow(() -> new ResourceNotFoundException("Отмеченая работа не найден"));
-        saveWorkTime(task);
+        task.setRefresh(new Timestamp(System.currentTimeMillis()));
+        taskRepository.save(task);
         return true;
     }
 
@@ -172,7 +182,7 @@ public class TaskService {
             }
             page = taskRepository.findAll(specification, PageRequest.of(0, 5));
             if (page.getTotalElements() > 0) {
-                return "Уже есть с " + dbField + ": " + value + " количество записей: " + page.getTotalElements() ;
+                return "Уже есть с " + dbField + ": " + value + " количество записей: " + page.getTotalElements();
             }
         }
         return null;

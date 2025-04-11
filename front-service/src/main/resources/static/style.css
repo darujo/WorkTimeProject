@@ -403,4 +403,17 @@ TD {
 .mar5{
     margin: 5px;
 }
+.twodate{
+    min-width: 180px;
+    max-width: 180px;
+}
+.fieldfio{
+    min-width: 300px;
+}
+.weekworkpalntime{
+    max-width: 100px;
+}
+.stagetime{
+    max-width: 100px;
+}
 

@@ -15,6 +15,7 @@ public class TaskConvertor {
                 .setDescription(task.getDescription())
                 .setType(task.getType())
                 .setWorkId(task.getWorkId ())
+                .setTimeCreate(task.getTimeCreate())
                 .getTaskDto();
     }
     public static Task getTask(TaskDto taskDto){
@@ -27,6 +28,7 @@ public class TaskConvertor {
                 .setDescription(taskDto.getDescription())
                 .setType(taskDto.getType())
                 .setWorkId(taskDto.getWorkId ())
+                .setTimeCreate(taskDto.getTimeCreate())
                 .getTask();
     }
 }

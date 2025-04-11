@@ -36,4 +36,6 @@ public class Task {
     private  Long workId;
     @Column(name = "refresh")
     private Timestamp refresh;
+    @Column(name = "timeCreate")
+    private Timestamp timeCreate;
 }

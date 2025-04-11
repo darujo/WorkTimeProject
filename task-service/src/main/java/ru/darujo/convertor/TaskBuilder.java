@@ -3,6 +3,8 @@ package ru.darujo.convertor;
 import ru.darujo.dto.TaskDto;
 import ru.darujo.model.Task;
 
+import java.sql.Timestamp;
+
 public class TaskBuilder {
 
     private Long id;
@@ -17,7 +19,7 @@ public class TaskBuilder {
     private  Integer type;
     // № ЗИ (ZI)
     private  Long workId;
-
+    private Timestamp timeCreate;
     public TaskBuilder setId(Long id) {
         this.id = id;
         return this;
@@ -53,6 +55,11 @@ public class TaskBuilder {
         return this;
     }
 
+    public TaskBuilder setTimeCreate(Timestamp timeCreate) {
+        this.timeCreate = timeCreate;
+        return this;
+    }
+
     public static TaskBuilder createWorkTime () {
         return new TaskBuilder();
     }
@@ -66,7 +73,8 @@ public class TaskBuilder {
                 codeDEVBO,
                 description,
                 type,
-                workId);
+                workId,
+                timeCreate);
     }
     public Task getTask(){
         return new Task(
@@ -77,6 +85,7 @@ public class TaskBuilder {
                 description,
                 type,
                 workId,
-                null);
+                null,
+                timeCreate);
     }
 }

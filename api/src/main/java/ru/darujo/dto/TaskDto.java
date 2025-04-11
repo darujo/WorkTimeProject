@@ -1,8 +1,9 @@
 package ru.darujo.dto;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
-public class TaskDto implements Serializable, UserFio{
+public class TaskDto implements Serializable, UserFio {
     private Long id;
     private String nikName;
 
@@ -17,14 +18,14 @@ public class TaskDto implements Serializable, UserFio{
     // Краткое описание ошибки
     private String description;
     // Тип задачи
-    private  Integer type;
+    private Integer type;
 
     public String getTypeStr() {
-        if(type ==1){
+        if (type == 1) {
             return "ЗИ";
-        }else if (type == 2){
+        } else if (type == 2) {
             return "Вендерка";
-        }else if (type== 3){
+        } else if (type == 3) {
             return "Админ";
         }
         return "Не известный тип";
@@ -43,7 +44,7 @@ public class TaskDto implements Serializable, UserFio{
 
     private String codeZi;
     private String nameZi;
-
+    private Timestamp timeCreate;
 
     public void setNikName(String nikName) {
         this.nikName = nikName;
@@ -76,6 +77,7 @@ public class TaskDto implements Serializable, UserFio{
     public Long getWorkId() {
         return workId;
     }
+
     public String getCodeZi() {
         return codeZi;
     }
@@ -83,6 +85,7 @@ public class TaskDto implements Serializable, UserFio{
     public String getNameZi() {
         return nameZi;
     }
+
     public TaskDto() {
     }
 
@@ -98,17 +101,28 @@ public class TaskDto implements Serializable, UserFio{
         return authorPatronymic;
     }
 
-    public TaskDto(Long id, String nikName, String authorFirstName,String authorLastName,String authorPatronymic, String codeBTS, String codeDEVBO, String description, Integer type, Long workId) {
+    public TaskDto(Long id,
+                   String nikName,
+                   String authorFirstName,
+                   String authorLastName,
+                   String authorPatronymic,
+                   String codeBTS,
+                   String codeDEVBO,
+                   String description,
+                   Integer type,
+                   Long workId,
+                   Timestamp timeCreate) {
         this.id = id;
         this.nikName = nikName;
         this.authorFirstName = authorFirstName;
-        this.authorLastName  = authorLastName;
+        this.authorLastName = authorLastName;
         this.authorPatronymic = authorPatronymic;
         this.codeBTS = codeBTS;
         this.codeDEVBO = codeDEVBO;
         this.description = description;
         this.type = type;
         this.workId = workId;
+        this.timeCreate = timeCreate;
     }
 
     public void setFirstName(String authorFirstName) {
@@ -121,5 +135,9 @@ public class TaskDto implements Serializable, UserFio{
 
     public void setPatronymic(String authorPatronymic) {
         this.authorPatronymic = authorPatronymic;
+    }
+
+    public Timestamp getTimeCreate() {
+        return timeCreate;
     }
 }

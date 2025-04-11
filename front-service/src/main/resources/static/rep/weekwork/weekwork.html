@@ -37,27 +37,28 @@
             </form>
         </details>
     </div>
-    <h1>Свод загрузки</h1>
+    <h1>Факт загрузки </h1>
     <table>
         <tr>
-            <td class="tablehead1" rowspan="3">№ п/п</td>
-            <td class="tablehead2" rowspan="3">Период</td>
-            <td class="tablehead1" rowspan="3">Исполнитель</td>
-            <td class="tablehead2" rowspan="3">Плановые трудозатраты за период, чел/час</td>
+            <td class="tablehead1" rowspan="2">№ п/п</td>
+            <td class="tablehead2  twodate" rowspan="2">Период</td>
+            <td class="tablehead1 fieldfio" rowspan="2">Исполнитель</td>
+            <td class="tablehead1" colspan="3">Факт трудозатрат, чел/час</td>
+            <td class="tablehead2 weekworkpalntime" rowspan="2">Плановые трудозатраты за период, чел/час</td>
+            <td class="tablehead2" rowspan="2">Итого за период</td>
+        </tr>
+        <tr>
             <td class="tablehead1">Работа по ЗИ</td>
             <td class="tablehead2">Устранение проблем вендорных запросов</td>
             <td class="tablehead1">Административные</td>
-            <td class="tablehead2" rowspan="3">Итого за период</td>
-        </tr>
-        <tr>
-            <td class="tablehead1" colspan="3">Трудозатраты, чел/час</td>
+
 
         </tr>
-        <tr>
-            <td class="tablehead1">Факт</td>
-            <td class="tablehead2">Факт</td>
-            <td class="tablehead1">Факт</td>
-        </tr>
+<!--        <tr>-->
+<!--            <td class="tablehead1">Факт</td>-->
+<!--            <td class="tablehead2">Факт</td>-->
+<!--            <td class="tablehead1">Факт</td>-->
+<!--        </tr>-->
 
         <tbody>
         <tr ng-repeat="work in WeekWorkList">
@@ -68,10 +69,10 @@
                 {{work.authorPatronymic}}
             </td>
 
-            <td rowspan="{{work.userCol}}" ng-if="work.userCol != null">{{work.workPlan}}</td>
             <td>{{work.workZiFact;}}</td>
             <td>{{work.workWenderFact}}</td>
             <td>{{work.workAdminFact}}</td>
+            <td rowspan="{{work.userCol}}" ng-if="work.userCol != null">{{work.workPlan}}</td>
             <td>{{work.workAllFact}}</td>
         </tr>
         </tbody>

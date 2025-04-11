@@ -80,31 +80,31 @@
             <option ng-value="10000" value="10000">10000</option>
         </select>
     </div>
-    <h1>Факт затрат</h1>
+    <h1>Факт затрат ЗИ</h1>
     <table>
         <tr>
-            <td class="tablehead1" rowspan="3">№ п/п</td>
-            <td class="tablehead2" rowspan="3">№ ЗИ (ZI)</td>
-            <td class="tablehead1" rowspan="3">Наименование ЗИ</td>
-            <td class="tablehead2" rowspan="3">Исполнитель</td>
-            <td class="tablehead1" colspan="6">Трудозатраты, чел/час</td>
+            <td class="tablehead1" rowspan="2">№ п/п</td>
+            <td class="tablehead2" rowspan="2">№ ЗИ (ZI)</td>
+            <td class="tablehead1" rowspan="2">Наименование ЗИ</td>
+            <td class="tablehead2" rowspan="2">Исполнитель</td>
+            <td class="tablehead1" colspan="6">Факт трудозатрат, чел/час</td>
         </tr>
         <tr>
-            <td class="tablehead1">0 этап Согласование требований</td>
-            <td class="tablehead2">I этап Разработка прототипа</td>
-            <td class="tablehead1">II этап Стабилизация прототипа</td>
-            <td class="tablehead2">III этап Стабилизация релиза</td>
-            <td class="tablehead1">IV этап ОПЭ релиза</td>
-            <td class="tablehead2">V этап Вендерка</td>
+            <td class="tablehead1 stagetime">0 этап <br> Согласование требований</td>
+            <td class="tablehead2 stagetime">I этап <br> Разработка прототипа</td>
+            <td class="tablehead1 stagetime">II этап <br> Стабилизация прототипа</td>
+            <td class="tablehead2 stagetime">III этап <br> Стабилизация релиза</td>
+            <td class="tablehead1 stagetime">IV этап <br> ОПЭ релиза</td>
+            <td class="tablehead2 stagetime">V этап <br> Вендерка</td>
         </tr>
-        <tr>
-            <td class="tablehead1">Факт</td>
-            <td class="tablehead2">Факт</td>
-            <td class="tablehead1">Факт</td>
-            <td class="tablehead2">Факт</td>
-            <td class="tablehead1">Факт</td>
-            <td class="tablehead2">Факт</td>
-        </tr>
+<!--        <tr>-->
+<!--            <td class="tablehead1">Факт</td>-->
+<!--            <td class="tablehead2">Факт</td>-->
+<!--            <td class="tablehead1">Факт</td>-->
+<!--            <td class="tablehead2">Факт</td>-->
+<!--            <td class="tablehead1">Факт</td>-->
+<!--            <td class="tablehead2">Факт</td>-->
+<!--        </tr>-->
 
         <tbody>
         <tr ng-repeat="work in WorkTimeList">
