@@ -87,6 +87,7 @@ public class TaskRepService {
                                 userWorkDtoHashMap.put(userWorkDto.getNikName(),userWorkDto);
                             } else {
                                 userWorkDto.getWorkTime().forEach(userWorkDtoSave::addTime);
+                                userWorkDto.getWorkTask().forEach((type, tasks) ->  tasks.forEach(taskId ->  userWorkDtoSave.addTask(type,taskId)));
                             }
                         }));
         List<UserWorkDto> userWorkDTOs = new ArrayList<>();

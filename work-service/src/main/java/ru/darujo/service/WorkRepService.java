@@ -291,7 +291,7 @@ public class WorkRepService {
                             work.getCodeZI(),
                             work.getName(),
                             work.getStageZI(),
-                            taskServiceIntegration.getWorkUserOrZi(work.getId(), nikName))
+                            taskServiceIntegration.getWorkUserOrZi(work.getId(), nikName, addTotal))
                     )
             );
 

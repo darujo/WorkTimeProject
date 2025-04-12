@@ -72,14 +72,13 @@ public class WorkTimeRepService {
         return users;
     }
 
-    public List<UserWorkDto> getWeekWork(Long taskId, String nikName, boolean weekSplit, Timestamp dateStart, Timestamp dateEnd) {
+    public List<UserWorkDto> getWeekWork(Long taskId, String nikName, boolean addTotal, boolean weekSplit , Timestamp dateStart, Timestamp dateEnd) {
         List<UserWorkDto> userWorkDTOs = new ArrayList<>();
         List<WeekWorkDto> weekWorkDTOs;
-        if (taskId != null){
+        if (taskId != null) {
             weekWorkDTOs = new ArrayList<>();
             weekWorkDTOs.add(new WeekWorkDto(null, null, 0f));
-        }
-        else if (weekSplit) {
+        } else if (weekSplit) {
             weekWorkDTOs = calendarServiceIntegration.getWeekTime(dateStart, dateEnd);
         } else {
             weekWorkDTOs = new ArrayList<>();
@@ -88,7 +87,20 @@ public class WorkTimeRepService {
         Map<Long, Integer> tasks = new HashMap<>();
         weekWorkDTOs
                 .forEach(weekWorkDto -> {
-                    Map<String, UserWorkDto> userWorkDtoMap = new HashMap<>();
+                    LinkedHashMap<String, UserWorkDto> userWorkDtoMap = new LinkedHashMap<>();
+                    UserWorkDto userWorkDtoTotal = null;
+                    if(addTotal) {
+                        userWorkDtoTotal = new UserWorkDto(
+                                null,
+                                "Итого",
+                                null,
+                                null,
+                                weekWorkDto.getDayStart(),
+                                weekWorkDto.getDayEnd(),
+                                weekWorkDto.getTime());
+                        userWorkDtoMap.put(userWorkDtoTotal.getNikName(),userWorkDtoTotal);
+                    }
+                    UserWorkDto finalUserWorkDtoTotal = userWorkDtoTotal;
                     workTimeService.findWorkTime(taskId, nikName, null, weekWorkDto.getDayEnd(), null, weekWorkDto.getDayStart(), null, null, null, null)
                             .forEach(workTime -> {
                                 Integer type = tasks.get(workTime.getTaskId());
@@ -113,6 +125,10 @@ public class WorkTimeRepService {
                                 }
                                 userWorkDto.addTime(type, workTime.getWorkTime());
                                 userWorkDto.addTask(type, workTime.getTaskId());
+                                if(addTotal) {
+                                    finalUserWorkDtoTotal.addTime(type, workTime.getWorkTime());
+                                    finalUserWorkDtoTotal.addTask(type, workTime.getTaskId());
+                                }
 
                             });
                     UserWorkDto userWorkDto = userWorkDtoMap.values().stream().findFirst().orElse(

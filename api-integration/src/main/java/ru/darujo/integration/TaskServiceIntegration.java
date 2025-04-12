@@ -133,11 +133,13 @@ public class TaskServiceIntegration extends ServiceIntegration {
     }
     public List<UserWorkFormDto> getWorkUserOrZi(
             Long workId,
-            String nikName) {
+            String nikName,
+            Boolean addTotal) {
         StringBuilder stringBuilder = new StringBuilder();
 
         addTeg(stringBuilder, "workId", workId);
         addTeg(stringBuilder, "nikName", nikName);
+        addTeg(stringBuilder, "addTotal", addTotal);
 
         try {
             return webClientTask.get().uri("/rep/fact/week?" + stringBuilder)

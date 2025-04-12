@@ -75,12 +75,13 @@ public class WorkTimeRepController extends DateParser {
     @GetMapping("/week")
     public List<UserWorkDto> getWeekWork(@RequestParam(required = false) Long taskId,
                                          @RequestParam(required = false) String nikName,
-                                         @RequestParam(defaultValue = "true") boolean weekSplit,
+                                         @RequestParam(defaultValue = "false") Boolean addTotal,
+                                         @RequestParam(defaultValue = "true") Boolean weekSplit,
                                          @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
                                          @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr) {
         Timestamp dateStart = stringToDate(dateStartStr, "dateStart = ", false);
         Timestamp dateEnd = stringToDate(dateEndStr, "dateEnd = ", false);
-        return workTimeRepService.getWeekWork(taskId,nikName, weekSplit, dateStart, dateEnd);
+        return workTimeRepService.getWeekWork(taskId,nikName,addTotal, weekSplit, dateStart, dateEnd);
     }
 
 

@@ -36,7 +36,8 @@ angular.module('workTimeService').controller('weekworkController', function ($sc
                 dateStart: Filt ? Filt.dateStart : new Date(),
                 dateEnd: Filt ? Filt.dateEnd : new Date(),
                 weekSplit: Filt ? Filt.weekSplit : null,
-                ziSplit: Filt ? Filt.ziSplit : null
+                ziSplit: Filt ? Filt.ziSplit : null,
+                addTotal: Filt ? Filt.addTotal : null
             }
         }).then(function (response) {
             console.log(response.data);
