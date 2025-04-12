@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.dto.ListString;
-import ru.darujo.dto.UserWorkDto;
+import ru.darujo.dto.workperiod.UserWorkDto;
 import ru.darujo.dto.parsing.DateParser;
 import ru.darujo.dto.workrep.UserWorkPeriodDto;
 import ru.darujo.service.WorkTimeRepService;
@@ -73,13 +73,14 @@ public class WorkTimeRepController extends DateParser {
     }
 
     @GetMapping("/week")
-    public List<UserWorkDto> getWeekWork(@RequestParam(required = false) String nikName,
+    public List<UserWorkDto> getWeekWork(@RequestParam(required = false) Long taskId,
+                                         @RequestParam(required = false) String nikName,
                                          @RequestParam(defaultValue = "true") boolean weekSplit,
                                          @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
                                          @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr) {
-        Timestamp dateStart = stringToDate(dateStartStr, "dateStart = ", true);
-        Timestamp dateEnd = stringToDate(dateEndStr, "dateEnd = ", true);
-        return workTimeRepService.getWeekWork(nikName, weekSplit, dateStart, dateEnd);
+        Timestamp dateStart = stringToDate(dateStartStr, "dateStart = ", false);
+        Timestamp dateEnd = stringToDate(dateEndStr, "dateEnd = ", false);
+        return workTimeRepService.getWeekWork(taskId,nikName, weekSplit, dateStart, dateEnd);
     }
 
 

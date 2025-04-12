@@ -1,32 +1,23 @@
-package ru.darujo.dto;
+package ru.darujo.dto.workperiod;
 
-import ru.darujo.dto.ratestage.AttrDto;
+import ru.darujo.dto.UserFio;
 import ru.darujo.service.CodeService;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class UserWorkDto implements UserFio {
     public UserWorkDto() {
-    }
-    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-
-    private String dateToText(Date date){
-        if (date == null){
-            return null;
-        }
-        return sdf.format(date);
     }
     private Integer userCol;
     private String nikName;
     private String authorFirstName;
     private String authorLastName;
     private String authorPatronymic;
-    private Date dateStart;
-    private Date dateEnd;
+    protected Date dateStart;
+    protected Date dateEnd;
     private Float workPlan;
     private Float workAllFact;
-    private final Map<Integer,Float>  workTime = new LinkedHashMap <>();
+    protected final Map<Integer,Float>  workTime = new LinkedHashMap <>();
 
     public UserWorkDto(String nikName, String authorFirstName, String authorLastName, String authorPatronymic, Date dateStart, Date dateEnd, Float workPlan) {
         this.nikName = nikName;
@@ -45,6 +36,7 @@ public class UserWorkDto implements UserFio {
         }
     }
     public UserWorkDto addTimeAll(){
+        workAllFact = 0f;
         workTime.forEach((type, time) ->addTimeAll(time) );
         return this;
     }
@@ -93,37 +85,36 @@ public class UserWorkDto implements UserFio {
         return authorPatronymic;
     }
 
-    public String getDateStart() {
-        return dateToText(dateStart);
-    }
-
-    public String getDateEnd() {
-        return dateToText(dateEnd);
-    }
 
     public Float getWorkPlan() {
         return workPlan;
-    }
-
-    public Float getWorkZiFact() {
-        return workTime.get(1);
-    }
-
-    public Float getWorkWenderFact() {
-        return workTime.get(2);
-    }
-
-    public Float getWorkAdminFact() {
-        return workTime.get(3);
     }
 
     public Float getWorkAllFact() {
         return workAllFact;
     }
 
-    public List<AttrDto<Integer>> getWorkTime() {
-        List<AttrDto<Integer>> attrDTOs = new ArrayList<>();
-        workTime.forEach((type, time) -> attrDTOs.add(new AttrDto<>(type,time.toString())) );
-        return attrDTOs;
+
+    protected final Map<Integer,Set<Long>>  workTask = new LinkedHashMap <>();
+    public void addTask(Integer type, Long taskId) {
+        Set<Long> tasks = workTask.computeIfAbsent(type, k -> new HashSet<>());
+        tasks.add(taskId);
+
+    }
+
+    public Date getDateStart() {
+        return dateStart;
+    }
+
+    public Date getDateEnd() {
+        return dateEnd;
+    }
+
+    public Map<Integer, Float> getWorkTime() {
+        return workTime;
+    }
+
+    public Map<Integer, Set<Long>> getWorkTask() {
+        return workTask;
     }
 }

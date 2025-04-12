@@ -137,7 +137,12 @@ public class WorkService {
         }
         return specification;
     }
-    public Page<WorkLittle> findWorkLittle(int page, int size, String name, String sort, Integer stageZiGe, Integer stageZiLe) {
+    public Iterable<WorkLittle> findWorkLittle(Integer page,
+                                           Integer size,
+                                           String name,
+                                           String sort,
+                                           Integer stageZiGe,
+                                           Integer stageZiLe) {
         Specification<WorkLittle> specification = Specification.where(WorkSpecifications.queryDistinctTrueLittle());
         specification = getWorkLittleSpecificationLike("name",name,specification);
 
@@ -151,8 +156,15 @@ public class WorkService {
             specification = specification.and(WorkSpecifications.workLittleStageZiGe(stageZiGe));
         }
         System.out.println("Page = " + page);
-        Page<WorkLittle> workPage;
-        if (sort == null) {
+        Iterable<WorkLittle> workPage;
+        if ( page == null){
+            if (sort == null) {
+                workPage = workLittleRepository.findAll(specification);
+            } else {
+                workPage = workLittleRepository.findAll(specification, Sort.by(sort));
+            }
+        }
+        else if (sort == null) {
             workPage = workLittleRepository.findAll(specification, PageRequest.of(page - 1, size));
         } else {
             workPage = workLittleRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.by(sort)));

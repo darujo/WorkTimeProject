@@ -9,6 +9,7 @@ import ru.darujo.dto.work.WorkEditDto;
 import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.model.Work;
+import ru.darujo.model.WorkLittle;
 import ru.darujo.service.WorkService;
 
 import java.util.Random;
@@ -165,7 +166,7 @@ public class WorkController {
                 stageZiLe = stageZi - 10;
             }
         }
-        return workService.findWorkLittle(page, size, name, sort, stageZiGe, stageZiLe).map(WorkConvertor::getWorkLittleDto);
+        return ((Page<WorkLittle>) workService.findWorkLittle(page, size, name, sort, stageZiGe, stageZiLe)).map(WorkConvertor::getWorkLittleDto);
     }
 
     @GetMapping("/obj/little/{id}")

@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.*;
 import ru.darujo.dto.calendar.WeekWorkDto;
+import ru.darujo.dto.workperiod.UserWorkDto;
 import ru.darujo.dto.workrep.UserWorkPeriodDto;
 import ru.darujo.dto.workrep.WorkPeriodDto;
 import ru.darujo.integration.CalendarServiceIntegration;
@@ -71,10 +72,14 @@ public class WorkTimeRepService {
         return users;
     }
 
-    public List<UserWorkDto> getWeekWork(String nikName, boolean weekSplit, Timestamp dateStart, Timestamp dateEnd) {
+    public List<UserWorkDto> getWeekWork(Long taskId, String nikName, boolean weekSplit, Timestamp dateStart, Timestamp dateEnd) {
         List<UserWorkDto> userWorkDTOs = new ArrayList<>();
         List<WeekWorkDto> weekWorkDTOs;
-        if (weekSplit) {
+        if (taskId != null){
+            weekWorkDTOs = new ArrayList<>();
+            weekWorkDTOs.add(new WeekWorkDto(null, null, 0f));
+        }
+        else if (weekSplit) {
             weekWorkDTOs = calendarServiceIntegration.getWeekTime(dateStart, dateEnd);
         } else {
             weekWorkDTOs = new ArrayList<>();
@@ -84,7 +89,7 @@ public class WorkTimeRepService {
         weekWorkDTOs
                 .forEach(weekWorkDto -> {
                     Map<String, UserWorkDto> userWorkDtoMap = new HashMap<>();
-                    workTimeService.findWorkTime(null, nikName, null, weekWorkDto.getDayEnd(), null, weekWorkDto.getDayStart(), null, null, null, null)
+                    workTimeService.findWorkTime(taskId, nikName, null, weekWorkDto.getDayEnd(), null, weekWorkDto.getDayStart(), null, null, null, null)
                             .forEach(workTime -> {
                                 Integer type = tasks.get(workTime.getTaskId());
                                 if (type == null) {
@@ -107,6 +112,7 @@ public class WorkTimeRepService {
 
                                 }
                                 userWorkDto.addTime(type, workTime.getWorkTime());
+                                userWorkDto.addTask(type, workTime.getTaskId());
 
                             });
                     UserWorkDto userWorkDto = userWorkDtoMap.values().stream().findFirst().orElse(

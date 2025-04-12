@@ -143,13 +143,7 @@ body {
     margin-bottom: 10px;
 }
 .vvod30mar {
-    padding: 10px 10px;
-    border: 1px solid #356EAD;
-    box-sizing: border-box;
-    border-radius: 10px;
-    opacity: 0.4;
-    width: 20%;
-    margin: 10px auto;
+
 }
 
 
@@ -419,4 +413,36 @@ TD {
 .formlablep{
     width: 110px;
     text-align: right;
+}
+
+.p-td {
+    padding: 5px 10px;
+    border: 1px solid #356EAD;
+    box-sizing: border-box;
+    border-radius: 10px;
+    opacity: 0.8;
+    width: auto;
+    margin: 5px auto;
+    white-space: nowrap;
+    min-height: 30px;
+}
+
+.div-type {
+    min-width: 45px;
+    width: -webkit-fill-available;
+    margin: 1px;
+}
+.check-box-filt{
+    border: 1px solid #356EAD;
+    box-sizing: border-box;
+    border-radius: 10px;
+    opacity: 0.6;
+    min-width: 25px;
+    min-height: 25.px;
+    /*margin-top: 10px;*/
+    /*margin-bottom: 10px;*/
+
+}
+.contents{
+    display: contents;
 }

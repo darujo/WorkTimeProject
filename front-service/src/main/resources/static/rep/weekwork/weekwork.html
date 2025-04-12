@@ -5,31 +5,53 @@
             <form novalidate ng-submit="filterWorkTime()" ; class="filter">
                 <div class="filter">
                     <div class="filterblock">
-
                         <div class="horiz">
-                            <p class="p-form">ФИО</p>
+                            <p class="p-head">По ЗИ</p> <input class="check-box-filt" type="checkbox"
+                                                               id="ZiSplit"
+                                                               ng-model="Filt.ziSplit"/>
+                            <p class="p-head">ФИО</p>
 
                             <select class="vvod40 mar5" name="choice" id="User" ng-model="Filt.nikName">
-                                <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">{{user.lastName}}
+                                <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">
+                                    {{user.lastName}}
                                     {{user.firstName}} {{user.patronymic}}
                                 </option>
                                 <option ng-value="" value="">Все</option>
 
                             </select>
 
-                            <p class="p-head">Разбивка по неделям</p> <input class="vvod20" type="checkbox"
-                                                                             id="WeekSplit"
-                                                                             ng-model="Filt.weekSplit"/>
+
                         </div>
                         <div class="horiz">
-                            <input class="vvod30" type="date" id="DateStart" step="any" ng-model="Filt.dateStart"/>
-                            <p class="p-head"> <= Дата <= </p>
-                            <input class="vvod30" type="date" id="DateEnd" step="any" ng-model="Filt.dateEnd"/>
-                            <!--                <input  type="hidden" id="taskId" />-->
-                            <br>
-                            <button type="submit" class="headbutton">Применить</button>
-                            <button type="button" class="headbutton" ng-click="clearFilter(true)">Сбросить</button>
+                            <p ng-if="!Filt.ziSplit" class="p-head">Разбивка по неделям</p>
+                            <input ng-if="!Filt.ziSplit" class="check-box-filt" type="checkbox"
+                                   id="WeekSplit"
+                                   ng-model="Filt.weekSplit"/>
+                            <!--                        </div>-->
+                            <!--                        <div class="horiz">-->
+                            <p class="p-head">Количество задач</p> <input class="check-box-filt" type="checkbox"
+                                                                          id="WorkTask"
+                                                                          ng-model="Filt.workTask"/>
+                            <p class="p-head">Время</p> <input class="check-box-filt" type="checkbox"
+                                                               id="workTime"
+                                                               ng-model="Filt.workTime"/>
+                            <p class="p-head">Процент</p> <input class="check-box-filt" type="checkbox"
+                                                                 id="WorkPercent"
+                                                                 ng-model="Filt.workPercent"/>
+                        </div>
+                        <div class="horiz">
+                            <div ng-if="!Filt.ziSplit" class="contents">
+                                <input class="vvod30" type="date" id="DateStart" step="any" ng-model="Filt.dateStart"/>
+                                <p class="p-head"> <= Дата <= </p>
+                                <input class="vvod30" type="date" id="DateEnd" step="any" ng-model="Filt.dateEnd"/>
+                                <!--                <input  type="hidden" id="taskId" />-->
+                                <br>
+                            </div>
+                            <div class="contents">
 
+                                <button type="submit" class="headbutton">Применить</button>
+                                <button type="button" class="headbutton" ng-click="clearFilter(true)">Сбросить</button>
+                            </div>
                         </div>
 
                     </div>
@@ -41,40 +63,78 @@
     <table>
         <tr>
             <td class="tablehead1" rowspan="2">№ п/п</td>
-            <td class="tablehead2  twodate" rowspan="2">Период</td>
+            <td ng-if="ziSplit" class="tablehead2  twodate" rowspan="2">ЗИ</td>
+            <td ng-if="!ziSplit" class="tablehead2  twodate" rowspan="2">Период</td>
             <td class="tablehead1 fieldfio" rowspan="2">Исполнитель</td>
             <td class="tablehead2" colspan="{{TaskListType.length}}">Факт трудозатрат, чел/час</td>
-            <td class="tablehead1 weekworkpalntime" rowspan="2">Плановые трудозатраты за период, чел/час</td>
+            <td ng-if="!ziSplit" class="tablehead1 weekworkpalntime" rowspan="2">Плановые трудозатраты за период,
+                чел/час
+            </td>
             <td class="tablehead2" rowspan="2">Итого за период</td>
         </tr>
         <tr>
-            <td class="tablehead2 weekworkpalntime" ng-repeat="taskType in TaskListType">{{taskType.value}}</td>
-<!--            <td class="tablehead2">Устранение проблем вендорных запросов</td>-->
-<!--            <td class="tablehead1">Административные</td>-->
+            <td class="tablehead2 weekworkpalntime" ng-repeat="taskType in TaskListType">
+                {{taskType.value}}
+            </td>
+            <!--            <td class="tablehead2">Устранение проблем вендорных запросов</td>-->
+            <!--            <td class="tablehead1">Административные</td>-->
 
 
         </tr>
-<!--        <tr>-->
-<!--            <td class="tablehead1">Факт</td>-->
-<!--            <td class="tablehead2">Факт</td>-->
-<!--            <td class="tablehead1">Факт</td>-->
-<!--        </tr>-->
+        <!--        <tr>-->
+        <!--            <td class="tablehead1">Факт</td>-->
+        <!--            <td class="tablehead2">Факт</td>-->
+        <!--            <td class="tablehead1">Факт</td>-->
+        <!--        </tr>-->
 
-        <tbody>
-        <tr ng-repeat="work in WeekWorkList">
-            <td>{{$index + 1}}</td>
-            <td rowspan="{{work.userCol}}" ng-if="work.userCol != null">{{work.dateStart}} - {{work.dateEnd}}</td>
+        <tbody ng-repeat="work_zi in WeekWorkList" ng-init="parentIndex = $index">
+        <!--        <span ></span>-->
+
+        <tr ng-repeat-start="work in work_zi.userWorkFormDTOs" ng-repeat-end>
+            <td>
+                <div class="horiz">
+                    <p ng-if="ziSplit">{{parentIndex + 1}}.</p>
+                    <p>{{$index + 1}}</p>
+                </div>
+            </td>
+
+            <td ng-if="ziSplit && work.userCol != null" rowspan="{{work.userCol}}">
+                {{work_zi.name}}
+            </td>
+            <td ng-if="!ziSplit && work.userCol != null" rowspan="{{work.userCol}}">{{work.dateStartStr}} -
+                {{work.dateEndStr}}
+            </td>
             <td ng-if="!work.authorFirstName">{{work.nikName}}</td>
             <td ng-if="work.authorFirstName">{{work.authorLastName}} {{work.authorFirstName}}
                 {{work.authorPatronymic}}
             </td>
-            <td ng-repeat="taskType in TaskListType">{{searchJson(work.workTime,"codeInt",taskType.codeInt,"value")}}</td>
-<!--            <td>{{work.workZiFact;}}</td>-->
-<!--            <td>{{work.workWenderFact}}</td>-->
-<!--            <td>{{work.workAdminFact}}</td>-->
-            <td rowspan="{{work.userCol}}" ng-if="work.userCol != null">{{work.workPlan}}</td>
+
+            <td ng-repeat="taskType in TaskListType">
+                <div class="horiz">
+                    <div class="div-type" ng-if="Filt.workTask">
+                        <p class="p-td">
+                            {{searchJson(work.workTaskColAttr,"codeInt",taskType.codeInt,"value")}}
+                        </p>
+                    </div>
+                    <div class="div-type" ng-if="Filt.workTime">
+                        <p class="p-td">
+                            {{searchJson(work.workTimeAttr,"codeInt",taskType.codeInt,"value")}}
+                        </p>
+                    </div>
+                    <div class="div-type" ng-if="Filt.workPercent">
+                        <p class="p-td">
+                            {{searchJson(work.workPercent,"codeInt",taskType.codeInt,"value")}}
+                        </p>
+                    </div>
+                </div>
+            </td>
+            <!--            <td>{{work.workZiFact;}}</td>-->
+            <!--            <td>{{work.workWenderFact}}</td>-->
+            <!--            <td>{{work.workAdminFact}}</td>-->
+            <td ng-if="!ziSplit" rowspan="{{work.userCol}}" ng-if="work.userCol != null">{{work.workPlan}}</td>
             <td>{{work.workAllFact}}</td>
         </tr>
+        <!--        <span ng-repeat-end></span>-->
         </tbody>
     </table>
 

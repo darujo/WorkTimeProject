@@ -1,11 +1,14 @@
 angular.module('workTimeService').controller('weekworkController', function ($scope, $http, $location, $localStorage) {
 
-    const constPatchWork = window.location.origin + '/worktime-service/v1';
+    const constPatchWork = window.location.origin + '/work-service/v1/works';
     $scope.clearFilter =function (load){
         console.log("clearFilter");
         $scope.Filt = {    dateStart: new Date(),
             dateEnd: new Date(),
-            weekSplit: true
+            weekSplit: true,
+            workTask: true,
+            workTime: true,
+            workPercent: true
         };
         console.log($scope.Filt);
         if(load){
@@ -26,17 +29,19 @@ angular.module('workTimeService').controller('weekworkController', function ($sc
         let Filt = $scope.Filt;
 
         $http({
-            url: constPatchWork + "/worktime/rep/fact/week",
+            url: constPatchWork + "/rep/fact/week",
             method: "get",
             params: {
                 nikName: Filt ? Filt.nikName : null,
                 dateStart: Filt ? Filt.dateStart : new Date(),
                 dateEnd: Filt ? Filt.dateEnd : new Date(),
-                weekSplit: Filt ? Filt.weekSplit : null
+                weekSplit: Filt ? Filt.weekSplit : null,
+                ziSplit: Filt ? Filt.ziSplit : null
             }
         }).then(function (response) {
             console.log(response.data);
             $scope.WeekWorkList = response.data;
+            $scope.ziSplit = Filt.ziSplit;
         }, function errorCallback(response) {
             console.log(response)
             if($location.checkAuthorized(response)){
@@ -56,11 +61,11 @@ angular.module('workTimeService').controller('weekworkController', function ($sc
         $scope.TaskListType = response.data;
     }
     $scope.searchJson = function (list, searchField, searchVal, resultField ){
-        console.log("searchJson");
-        console.log(list);
-        console.log(searchField);
-        console.log(searchVal);
-        console.log(resultField);
+        // console.log("searchJson");
+        // console.log(list);
+        // console.log(searchField);
+        // console.log(searchVal);
+        // console.log(resultField);
         for (let i=0 ; i < list.length ; i++)
         {
             if (list[i][searchField] === searchVal) {
@@ -68,6 +73,7 @@ angular.module('workTimeService').controller('weekworkController', function ($sc
             }
         }
     }
+
     $location.getCode ("task/code/type",callBackType);
     $scope.clearFilter (false);
     $scope.UserList = $location.UserList;

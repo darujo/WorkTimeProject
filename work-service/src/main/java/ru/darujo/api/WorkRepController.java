@@ -1,18 +1,24 @@
 package ru.darujo.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.dto.MapStringFloat;
 import ru.darujo.dto.PageDto;
+import ru.darujo.dto.parsing.DateParser;
+import ru.darujo.dto.workperiod.UserWorkFormDto;
+import ru.darujo.dto.workperiod.WorkUserTime;
 import ru.darujo.dto.workrep.WorkFactDto;
 import ru.darujo.dto.workrep.WorkRepDto;
 import ru.darujo.service.WorkRepService;
 
+import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @RestController()
 @RequestMapping("/v1/works/rep")
-public class WorkRepController {
+public class WorkRepController extends DateParser {
     private WorkRepService workRepService;
 
     @Autowired
@@ -73,13 +79,25 @@ public class WorkRepController {
                              @RequestParam Integer stage,
                              @RequestParam(required = false) String nikName
     ) {
-        return workRepService.getFactWork(workId, stage,nikName);
+        return workRepService.getFactWork(workId, stage, nikName);
     }
 
     @GetMapping("/time/fact/stage0")
     public MapStringFloat getFactWork(@RequestParam Long workId,
                                       @RequestParam(required = false) String nikName) {
         return workRepService.getFactWorkStage0(workId, nikName);
+    }
+
+    @GetMapping("/fact/week")
+    public List<WorkUserTime> getWeekWork(@RequestParam(defaultValue = "false") boolean ziSplit,
+                                          @RequestParam(required = false) String nikName,
+                                          @RequestParam(required = false) Boolean addTotal,
+                                          @RequestParam(required = false) Boolean weekSplit,
+                                          @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
+                                          @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr) {
+        Timestamp dateStart = stringToDate(dateStartStr, "dateStart = ", true);
+        Timestamp dateEnd = stringToDate(dateEndStr, "dateEnd = ", true);
+        return workRepService.getWeekWork(ziSplit, addTotal, nikName, weekSplit, dateStart, dateEnd);
     }
 
 }

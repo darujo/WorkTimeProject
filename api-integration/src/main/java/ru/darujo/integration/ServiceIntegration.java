@@ -15,6 +15,14 @@ public abstract  class ServiceIntegration {
             stringBuilder.append(str).append("=").append(value);
         }
     }
+    protected void addTeg(StringBuilder stringBuilder, String str, Boolean value) {
+        if (value != null) {
+            if (stringBuilder.length() != 0) {
+                stringBuilder.append("&");
+            }
+            stringBuilder.append(str).append("=").append(value);
+        }
+    }
     protected void addTeg(StringBuilder stringBuilder, String str, Long value) {
         if (value != null) {
             if (stringBuilder.length() != 0) {
@@ -33,7 +41,7 @@ public abstract  class ServiceIntegration {
     }
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-    protected String dateToText(Date date) {
+    private String dateToText(Date date) {
         if (date == null) {
             return null;
         }

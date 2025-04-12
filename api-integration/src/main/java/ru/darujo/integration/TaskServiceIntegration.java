@@ -7,6 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.TaskDto;
+import ru.darujo.dto.workperiod.UserWorkFormDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 
 import java.util.Date;
@@ -129,5 +130,25 @@ public class TaskServiceIntegration extends ServiceIntegration {
                         clientResponse -> Mono.error(new ResourceNotFoundException("Задача c id = " + taskId + " не найдена")))
                 .bodyToMono(Boolean.class)
                 .block();
+    }
+    public List<UserWorkFormDto> getWorkUserOrZi(
+            Long workId,
+            String nikName) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        addTeg(stringBuilder, "workId", workId);
+        addTeg(stringBuilder, "nikName", nikName);
+
+        try {
+            return webClientTask.get().uri("/rep/fact/week?" + stringBuilder)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                    .bodyToFlux(UserWorkFormDto.class)
+                    .collectList()
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
     }
 }

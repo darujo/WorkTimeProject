@@ -2,10 +2,8 @@ package ru.darujo.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.TaskConvertor;
-import ru.darujo.dto.ListString;
 import ru.darujo.dto.TaskDto;
 import ru.darujo.dto.UserDto;
 import ru.darujo.dto.ratestage.AttrDto;
@@ -17,7 +15,6 @@ import ru.darujo.integration.WorkServiceIntegration;
 import ru.darujo.model.Task;
 import ru.darujo.service.TaskService;
 
-import java.time.ZonedDateTime;
 import java.util.*;
 
 @RestController()
@@ -86,12 +83,12 @@ public class TaskController extends DateParser {
         return TaskConvertor.getTaskDto(taskService.saveWorkTime(TaskConvertor.getTask(taskDto)));
     }
     @PostMapping("/checkAvail")
-    public AttrDto TaskCheckAvail(@RequestBody TaskDto taskDto) {
+    public AttrDto<Integer> TaskCheckAvail(@RequestBody TaskDto taskDto) {
        String test = taskService.workTimeCheckAvail(taskDto.getId(),taskDto.getWorkId(), taskDto.getCodeDEVBO(), taskDto.getCodeBTS());
        if(test!= null){
-           return new AttrDto(-1f,test);
+           return new AttrDto<>(-1,test);
        }
-       return new AttrDto(0f,"");
+       return new AttrDto<>(0,"");
     }
     @DeleteMapping("/{id}")
     public void deleteTask(@PathVariable long id) {
@@ -115,43 +112,7 @@ public class TaskController extends DateParser {
         return findTasks(nikName, codeBTS, codeDEVBO, description, workId, type, page, size);
     }
 
-    @GetMapping("/rep/fact/time")
-    public Float getTaskTime(@RequestParam(required = false) String nikName,
-                             @RequestParam(required = false) String codeBTS,
-                             @RequestParam(required = false) String codeDEVBO,
-                             @RequestParam(required = false) String description,
-                             @RequestParam(required = false) Long workId,
-                             @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
-                             @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
-                             @RequestParam(required = false) String type
-    ) {
-        Date dateLe = stringToDate(dateLeStr, "dateLe = ");
-        Date dateGt = stringToDate(dateGtStr, "dateGt = ");
-        return taskService.getTaskTime(
-                nikName,
-                codeBTS,
-                codeDEVBO,
-                description,
-                workId,
-                dateLe,
-                dateGt,
-                type);
-    }
 
-    @GetMapping("/rep/fact/user")
-    public ListString getFactUsers(@RequestParam(required = false) Long workId,
-                                   @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr
-                                   ) {
-        Date dateLe = stringToDate(dateLeStr, "dateLe = ");
-
-        return taskService.getFactUsers(
-                workId,dateLe);
-    }
-    @GetMapping("/rep/fact/avail/{workId}")
-    public Boolean getFactUsers(@PathVariable long workId
-    ) {
-        return taskService.getAvailTime(workId);
-    }
     public Page<TaskDto> findTasks(String userName,
                                    String codeBTS,
                                    String codeDEVBO,

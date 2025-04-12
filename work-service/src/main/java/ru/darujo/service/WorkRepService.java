@@ -6,12 +6,15 @@ import org.springframework.stereotype.Service;
 import ru.darujo.dto.MapStringFloat;
 import ru.darujo.dto.PageDto;
 import ru.darujo.dto.UserDto;
+import ru.darujo.dto.workperiod.WorkUserTime;
 import ru.darujo.dto.workrep.WorkFactDto;
 import ru.darujo.dto.workrep.WorkRepDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.integration.TaskServiceIntegration;
 import ru.darujo.integration.UserServiceIntegration;
+import ru.darujo.integration.WorkTimeServiceIntegration;
 import ru.darujo.model.Work;
+import ru.darujo.model.WorkLittle;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -21,10 +24,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class WorkRepService {
     private TaskServiceIntegration taskServiceIntegration;
 
-
     @Autowired
     public void setTaskServiceIntegration(TaskServiceIntegration taskServiceIntegration) {
         this.taskServiceIntegration = taskServiceIntegration;
+    }
+
+    private WorkTimeServiceIntegration workTimeServiceIntegration;
+
+    @Autowired
+    public void setWorkTimeServiceIntegration(WorkTimeServiceIntegration workTimeServiceIntegration) {
+        this.workTimeServiceIntegration = workTimeServiceIntegration;
     }
 
     UserServiceIntegration userServiceIntegration;
@@ -106,7 +115,7 @@ public class WorkRepService {
         List<WorkFactDto> workFactDTOs = new ArrayList<>();
         Page<Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, release);
         workPage.forEach(work -> {
-                    Set<String> users = taskServiceIntegration.getListUser(work.getId(),null).getList();
+                    Set<String> users = taskServiceIntegration.getListUser(work.getId(), null).getList();
                     if (userName != null) {
                         if (users.contains(userName)) {
                             users = new HashSet<>();
@@ -185,30 +194,32 @@ public class WorkRepService {
 
     public MapStringFloat getFactWorkStage0(Long workId, String nikName) {
         MapStringFloat mapStringFloat = new MapStringFloat();
-        Map<String,Float> usersTime = new HashMap<>();
+        Map<String, Float> usersTime = new HashMap<>();
         mapStringFloat.setList(usersTime);
         Work work = workService.findById(workId).orElseThrow(() -> new ResourceNotFoundException("Не найдено ЗИ с id = " + workId));
         Set<String> users;
-        if(nikName != null && !nikName.equals("")){
+        if (nikName != null && !nikName.equals("")) {
             users = new HashSet<>();
             users.add(nikName);
         } else {
             users = taskServiceIntegration.getListUser(workId, work.getDevelopEndFact()).getList();
         }
-        users.forEach(user ->{
+        users.forEach(user -> {
             Float time = getFactWork(work, 0, user);
-            if (time > 0){
-                usersTime.put(user,time);
+            if (time > 0) {
+                usersTime.put(user, time);
             }
-        } );
+        });
         return mapStringFloat;
     }
+
     public Float getFactWork(Long workId, Integer stage, String nikName) {
         Work work = workService.findById(workId).orElseThrow(() -> new ResourceNotFoundException("Не найдено ЗИ с id = " + workId));
-        return  getFactWork(work,stage,nikName);
+        return getFactWork(work, stage, nikName);
     }
+
     private Float getFactWork(Work work, Integer stage) {
-        return  getFactWork(work,stage,null);
+        return getFactWork(work, stage, null);
     }
 
     public Float getFactWork(Work work, Integer stage, String nikName) {
@@ -269,4 +280,34 @@ public class WorkRepService {
     }
 
 
+    public List<WorkUserTime> getWeekWork(boolean ziSplit, Boolean addTotal, String nikName, boolean weekSplit, Timestamp dateStart, Timestamp dateEnd) {
+        List<WorkUserTime> workUserTimes = new ArrayList<>();
+        if (ziSplit) {
+            Iterable<WorkLittle> works = workService.findWorkLittle(null, null, nikName, null, null, 5);
+            works.forEach(work ->
+                    workUserTimes.add(new WorkUserTime(
+                            work.getId(),
+                            work.getCodeSap(),
+                            work.getCodeZI(),
+                            work.getName(),
+                            work.getStageZI(),
+                            taskServiceIntegration.getWorkUserOrZi(work.getId(), nikName))
+                    )
+            );
+
+        } else {
+
+            workUserTimes.add(new WorkUserTime(
+                    null,
+                    null,
+                    null,
+                    "Без ЗИ",
+                    null,
+                    workTimeServiceIntegration.getWorkUserOrZiBig(null, nikName, addTotal, weekSplit, dateStart, dateEnd))
+            );
+
+
+        }
+        return workUserTimes;
+    }
 }
