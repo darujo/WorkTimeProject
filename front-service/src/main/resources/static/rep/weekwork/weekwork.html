@@ -196,7 +196,7 @@
             <!--            <td>{{work.workZiFact;}}</td>-->
             <!--            <td>{{work.workWenderFact}}</td>-->
             <!--            <td>{{work.workAdminFact}}</td>-->
-            <td ng-if="!ziSplit" rowspan="{{work.userCol}}" ng-if="work.userCol != null">{{work.workPlan}}</td>
+            <td ng-if="!ziSplit && work.userCol != null" rowspan="{{work.userCol}}" ng-if="work.userCol != null">{{work.workPlan}}</td>
             <td>{{work.workAllFact}}</td>
         </tr>
         <!--        <span ng-repeat-end></span>-->

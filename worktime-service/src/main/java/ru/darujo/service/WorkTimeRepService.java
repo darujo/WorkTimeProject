@@ -72,7 +72,7 @@ public class WorkTimeRepService {
         return users;
     }
 
-    public List<UserWorkDto> getWeekWork(Long taskId, String nikName, boolean addTotal, boolean weekSplit , Timestamp dateStart, Timestamp dateEnd) {
+    public List<UserWorkDto> getWeekWork(Long taskId, String nikName, boolean addTotal, boolean weekSplit, Timestamp dateStart, Timestamp dateEnd) {
         List<UserWorkDto> userWorkDTOs = new ArrayList<>();
         List<WeekWorkDto> weekWorkDTOs;
         if (taskId != null) {
@@ -89,7 +89,7 @@ public class WorkTimeRepService {
                 .forEach(weekWorkDto -> {
                     LinkedHashMap<String, UserWorkDto> userWorkDtoMap = new LinkedHashMap<>();
                     UserWorkDto userWorkDtoTotal = null;
-                    if(addTotal) {
+                    if (addTotal) {
                         userWorkDtoTotal = new UserWorkDto(
                                 null,
                                 "Итого",
@@ -98,7 +98,7 @@ public class WorkTimeRepService {
                                 weekWorkDto.getDayStart(),
                                 weekWorkDto.getDayEnd(),
                                 weekWorkDto.getTime());
-                        userWorkDtoMap.put(userWorkDtoTotal.getNikName(),userWorkDtoTotal);
+                        userWorkDtoMap.put(userWorkDtoTotal.getNikName(), userWorkDtoTotal);
                     }
                     UserWorkDto finalUserWorkDtoTotal = userWorkDtoTotal;
                     workTimeService.findWorkTime(taskId, nikName, null, weekWorkDto.getDayEnd(), null, weekWorkDto.getDayStart(), null, null, null, null)
@@ -125,12 +125,14 @@ public class WorkTimeRepService {
                                 }
                                 userWorkDto.addTime(type, workTime.getWorkTime());
                                 userWorkDto.addTask(type, workTime.getTaskId());
-                                if(addTotal) {
+                                if (addTotal) {
                                     finalUserWorkDtoTotal.addTime(type, workTime.getWorkTime());
                                     finalUserWorkDtoTotal.addTask(type, workTime.getTaskId());
                                 }
 
                             });
+
+
                     UserWorkDto userWorkDto = userWorkDtoMap.values().stream().findFirst().orElse(
                             new UserWorkDto(
                                     null,
@@ -140,8 +142,9 @@ public class WorkTimeRepService {
                                     weekWorkDto.getDayStart(),
                                     weekWorkDto.getDayEnd(),
                                     weekWorkDto.getTime()));
-
-                    if (userWorkDto.getNikName() != null) {
+                    if (addTotal) {
+                        userWorkDtoTotal.setUserCol(userWorkDtoMap.size());
+                    } else if (userWorkDto.getNikName() != null) {
 
                         userWorkDto.setUserCol(userWorkDtoMap.size());
                     } else {
