@@ -44,7 +44,7 @@
             })
             .when('/weekwork', {
                 templateUrl: 'rep/weekwork/weekwork.html?ver=' + ver,
-                controller: 'weekworkController'
+                controller: 'weekWorkController'
             })
             .when('/userwork', {
                 templateUrl: 'rep/userwork/userwork.html?ver=' + ver,

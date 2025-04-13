@@ -93,10 +93,31 @@ public class WorkRepController extends DateParser {
                                           @RequestParam(required = false) Boolean addTotal,
                                           @RequestParam(required = false) Boolean weekSplit,
                                           @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
-                                          @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr) {
+                                          @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr,
+
+                                          @RequestParam(defaultValue = "1") int page,
+                                          @RequestParam(defaultValue = "10") int size,
+                                          @RequestParam(required = false) String name,
+                                          @RequestParam(defaultValue = "15") Integer stageZi,
+                                          @RequestParam(required = false) Long codeSap,
+                                          @RequestParam(required = false) String codeZi,
+                                          @RequestParam(required = false) String task,
+                                          @RequestParam(required = false) String release,
+                                          @RequestParam(defaultValue = "release") String sort) {
         Timestamp dateStart = stringToDate(dateStartStr, "dateStart = ", true);
         Timestamp dateEnd = stringToDate(dateEndStr, "dateEnd = ", true);
-        return workRepService.getWeekWork(ziSplit, addTotal, nikName, weekSplit, dateStart, dateEnd);
+        Integer stageZiLe = null;
+        Integer stageZiGe = null;
+        if (stageZi != null) {
+            if (stageZi < 10) {
+                stageZiGe = stageZi;
+                stageZiLe = stageZi;
+            } else {
+                stageZiLe = stageZi - 10;
+            }
+        }
+        return workRepService.getWeekWork(ziSplit, addTotal, nikName, weekSplit, dateStart, dateEnd,
+                page, size, name, stageZiGe, stageZiLe, codeSap, codeZi, task,release,sort);
     }
 
 }

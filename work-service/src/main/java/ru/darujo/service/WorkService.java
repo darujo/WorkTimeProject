@@ -85,10 +85,10 @@ public class WorkService {
                                   String release
     ) {
         Specification<Work> specification = Specification.where(WorkSpecifications.queryDistinctTrue());
-        specification = getWorkSpecificationLike("name",name,specification);
-        specification = getWorkSpecificationLike("codeZI",codeZi,specification);
-        specification = getWorkSpecificationLike("task",task,specification);
-        specification = getWorkSpecificationLike("release",release,specification);
+        specification = getWorkSpecificationLike("name", name, specification);
+        specification = getWorkSpecificationLike("codeZI", codeZi, specification);
+        specification = getWorkSpecificationLike("task", task, specification);
+        specification = getWorkSpecificationLike("release", release, specification);
         if (codeSap != null) {
             specification = specification.and(WorkSpecifications.codeSapEq(codeSap));
         }
@@ -104,7 +104,6 @@ public class WorkService {
                 specification = specification.and(WorkSpecifications.stageZiGe(stageZiGe));
             }
         }
-
 
 
         System.out.println("Page = " + page);
@@ -125,30 +124,41 @@ public class WorkService {
         }
         return workPage;
     }
+
     private Specification<Work> getWorkSpecificationLike(String field, String value, Specification<Work> specification) {
         if (value != null && !value.equals("")) {
             specification = specification.and(WorkSpecifications.like(field, value));
         }
         return specification;
     }
+
     private Specification<WorkLittle> getWorkLittleSpecificationLike(String field, String value, Specification<WorkLittle> specification) {
         if (value != null && !value.equals("")) {
             specification = specification.and(WorkSpecifications.likeLittle(field, value));
         }
         return specification;
     }
-    public Iterable<WorkLittle> findWorkLittle(Integer page,
-                                           Integer size,
-                                           String name,
-                                           String sort,
-                                           Integer stageZiGe,
-                                           Integer stageZiLe) {
-        Specification<WorkLittle> specification = Specification.where(WorkSpecifications.queryDistinctTrueLittle());
-        specification = getWorkLittleSpecificationLike("name",name,specification);
 
-        if (name != null) {
-            specification = specification.and(WorkSpecifications.workLittleNameLike(name));
+    public Iterable<WorkLittle> findWorkLittle(Integer page,
+                                               Integer size,
+                                               String name,
+                                               String sort,
+                                               Integer stageZiGe,
+                                               Integer stageZiLe,
+                                               Long codeSap,
+                                               String codeZi,
+                                               String task,
+                                               String release) {
+        Specification<WorkLittle> specification = Specification.where(WorkSpecifications.queryDistinctTrueLittle());
+        specification = getWorkLittleSpecificationLike("name", name, specification);
+        specification = getWorkLittleSpecificationLike("codeZI", codeZi, specification);
+        specification = getWorkLittleSpecificationLike("task", task, specification);
+        specification = getWorkLittleSpecificationLike("release", release, specification);
+
+        if (codeSap != null) {
+            specification = specification.and(WorkSpecifications.codeSapEqLittle(codeSap));
         }
+
         if (stageZiLe != null) {
             specification = specification.and(WorkSpecifications.workLittleStageZiLe(stageZiLe));
         }
@@ -157,20 +167,20 @@ public class WorkService {
         }
         System.out.println("Page = " + page);
         Iterable<WorkLittle> workPage;
-        if ( page == null){
+        if (page == null) {
             if (sort == null) {
                 workPage = workLittleRepository.findAll(specification);
             } else {
                 workPage = workLittleRepository.findAll(specification, Sort.by(sort));
             }
-        }
-        else if (sort == null) {
+        } else if (sort == null) {
             workPage = workLittleRepository.findAll(specification, PageRequest.of(page - 1, size));
         } else {
             workPage = workLittleRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.by(sort)));
         }
         return workPage;
     }
+
     public List<Work> getWorkList(String name, Integer stageZiGe, Integer stageZiLe, String release, String[] sort) {
         List<Work> works;
         Specification<Work> specification = Specification.where(null);
@@ -181,8 +191,8 @@ public class WorkService {
                 sortWork = sortWork.and(Sort.by(sort[i]));
             }
         }
-        specification = getWorkSpecificationLike("name", name,specification);
-        specification = getWorkSpecificationLike("release", release,specification);
+        specification = getWorkSpecificationLike("name", name, specification);
+        specification = getWorkSpecificationLike("release", release, specification);
 
         if (stageZiGe != null) {
             specification = specification.and(WorkSpecifications.stageZiGe(stageZiGe));
@@ -199,7 +209,7 @@ public class WorkService {
         return works;
     }
 
-    public void updWorkPlanTime (WorkPlanTime workPlanTime){
+    public void updWorkPlanTime(WorkPlanTime workPlanTime) {
         WorkStageDto workStageDto = rateServiceIntegration.getTimePlan(workPlanTime.getId());
         workPlanTime.setLaborDevelop(workStageDto.getStage1());
         workPlanTime.setLaborDebug(workStageDto.getStage2());

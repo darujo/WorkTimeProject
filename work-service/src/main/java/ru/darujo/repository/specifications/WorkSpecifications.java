@@ -17,9 +17,6 @@ public class WorkSpecifications {
     public static Specification<Work> stageZiEq(Integer stageZi) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("stageZI"),stageZi));
     }
-    public static Specification<WorkLittle> workLittleNameLike(String name){
-        return ((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.upper(root.get("name")),String.format("%%%s%%",name).toUpperCase()));
-    }
 
     public static Specification<WorkLittle> workLittleStageZiLe(Integer stageZiLe) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("stageZI"),stageZiLe));
@@ -28,6 +25,10 @@ public class WorkSpecifications {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("stageZI"),stageZiGe));
     }
     public static Specification<Work> codeSapEq(Long codeSap) {
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("codeSap"),codeSap));
+
+    }
+    public static Specification<WorkLittle> codeSapEqLittle(Long codeSap) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("codeSap"),codeSap));
 
     }

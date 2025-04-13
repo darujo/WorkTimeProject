@@ -280,10 +280,11 @@ public class WorkRepService {
     }
 
 
-    public List<WorkUserTime> getWeekWork(boolean ziSplit, Boolean addTotal, String nikName, boolean weekSplit, Timestamp dateStart, Timestamp dateEnd) {
+    public List<WorkUserTime> getWeekWork(boolean ziSplit, Boolean addTotal, String nikName, boolean weekSplit, Timestamp dateStart, Timestamp dateEnd,
+                                          Integer page, Integer size, String name, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, String release, String sort) {
         List<WorkUserTime> workUserTimes = new ArrayList<>();
         if (ziSplit) {
-            Iterable<WorkLittle> works = workService.findWorkLittle(null, null, nikName, null, null, 5);
+            Iterable<WorkLittle> works = workService.findWorkLittle(page, size, name, sort, stageZiGe, stageZiLe,codeSap,codeZi,task,release);
             works.forEach(work ->
                     workUserTimes.add(new WorkUserTime(
                             work.getId(),

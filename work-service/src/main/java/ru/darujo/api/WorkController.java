@@ -166,7 +166,7 @@ public class WorkController {
                 stageZiLe = stageZi - 10;
             }
         }
-        return ((Page<WorkLittle>) workService.findWorkLittle(page, size, name, sort, stageZiGe, stageZiLe)).map(WorkConvertor::getWorkLittleDto);
+        return ((Page<WorkLittle>) workService.findWorkLittle(page, size, name, sort, stageZiGe, stageZiLe,null,null,null,null)).map(WorkConvertor::getWorkLittleDto);
     }
 
     @GetMapping("/obj/little/{id}")

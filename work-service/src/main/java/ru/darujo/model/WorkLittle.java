@@ -30,5 +30,9 @@ public class WorkLittle {
     // ВЕНДЕРКА Факт
     @Column(name = "stageZI")
     private Integer stageZI;
+    @Column(name = "task")
+    private String task;
+    @Column(name = "release")
+    private String release;
 
 }

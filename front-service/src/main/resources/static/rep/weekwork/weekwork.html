@@ -1,66 +1,128 @@
 <div id="WorkTimeList" class="headtextelem">
-    <div class="filter container">
-        <details class="detailsblock">
-            <summary class="p-head">Фильтр</summary>
-            <form novalidate ng-submit="filterWorkTime()" ; class="filter">
-                <div class="filter">
-                    <div class="filterblock">
-                        <div class="horiz">
-                            <p class="p-head">По ЗИ</p> <input class="check-box-filt" type="checkbox"
-                                                               id="ZiSplit"
-                                                               ng-model="Filt.ziSplit"/>
-                            <p class="p-head">Итоги</p> <input class="check-box-filt" type="checkbox"
-                                                               id="AddTotal"
-                                                               ng-model="Filt.addTotal"/>
-                            <p class="p-head">ФИО</p>
+    <div>
+        <div class="filter container">
+            <details class="detailsblock">
+                <summary class="p-head">Фильтр</summary>
+                <form novalidate ng-submit="filterWorkTime()" ; class="filter">
+                    <div class="filter">
+                        <div class="filterblock">
+                            <div class="horiz">
+                                <p class="p-head">По ЗИ</p> <input class="check-box-filt" type="checkbox"
+                                                                   id="ZiSplit"
+                                                                   ng-model="Filt.ziSplit"/>
+                                <p class="p-head">Итоги</p> <input class="check-box-filt" type="checkbox"
+                                                                   id="AddTotal"
+                                                                   ng-model="Filt.addTotal"/>
+                                <p class="p-head">ФИО</p>
 
-                            <select class="vvod40 mar5" name="choice" id="User" ng-model="Filt.nikName">
-                                <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">
-                                    {{user.lastName}}
-                                    {{user.firstName}} {{user.patronymic}}
-                                </option>
-                                <option ng-value="" value="">Все</option>
+                                <select class="vvod40 mar5" name="choice" id="User" ng-model="Filt.nikName">
+                                    <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">
+                                        {{user.lastName}}
+                                        {{user.firstName}} {{user.patronymic}}
+                                    </option>
+                                    <option ng-value="" value="">Все</option>
 
-                            </select>
+                                </select>
 
 
-                        </div>
-                        <div class="horiz">
-                            <p ng-if="!Filt.ziSplit" class="p-head">Разбивка по неделям</p>
-                            <input ng-if="!Filt.ziSplit" class="check-box-filt" type="checkbox"
-                                   id="WeekSplit"
-                                   ng-model="Filt.weekSplit"/>
-                            <!--                        </div>-->
-                            <!--                        <div class="horiz">-->
-                            <p class="p-head">Количество задач</p> <input class="check-box-filt" type="checkbox"
-                                                                          id="WorkTask"
-                                                                          ng-model="Filt.workTask"/>
-                            <p class="p-head">Время</p> <input class="check-box-filt" type="checkbox"
-                                                               id="workTime"
-                                                               ng-model="Filt.workTime"/>
-                            <p class="p-head">Процент</p> <input class="check-box-filt" type="checkbox"
-                                                                 id="WorkPercent"
-                                                                 ng-model="Filt.workPercent"/>
-                        </div>
-                        <div class="horiz">
-                            <div ng-if="!Filt.ziSplit" class="contents">
-                                <input class="vvod30" type="date" id="DateStart" step="any" ng-model="Filt.dateStart"/>
-                                <p class="p-head"> <= Дата <= </p>
-                                <input class="vvod30" type="date" id="DateEnd" step="any" ng-model="Filt.dateEnd"/>
-                                <!--                <input  type="hidden" id="taskId" />-->
-                                <br>
                             </div>
-                            <div class="contents">
-
-                                <button type="submit" class="headbutton">Применить</button>
-                                <button type="button" class="headbutton" ng-click="clearFilter(true)">Сбросить</button>
+                            <div class="horiz">
+                                <p ng-if="!Filt.ziSplit" class="p-head">Разбивка по неделям</p>
+                                <input ng-if="!Filt.ziSplit" class="check-box-filt" type="checkbox"
+                                       id="WeekSplit"
+                                       ng-model="Filt.weekSplit"/>
+                                <!--                        </div>-->
+                                <!--                        <div class="horiz">-->
+                                <p class="p-head">Количество задач</p> <input class="check-box-filt" type="checkbox"
+                                                                              id="WorkTask"
+                                                                              ng-model="Filt.workTask"/>
+                                <p class="p-head">Время</p> <input class="check-box-filt" type="checkbox"
+                                                                   id="workTime"
+                                                                   ng-model="Filt.workTime"/>
+                                <p class="p-head">Процент</p> <input class="check-box-filt" type="checkbox"
+                                                                     id="WorkPercent"
+                                                                     ng-model="Filt.workPercent"/>
                             </div>
-                        </div>
+                            <div ng-if="Filt.ziSplit" class="filterblock">
+                                <div class="horiz">
+                                    <p class="p-head"> Наименование </p> <input class="vvod80" inputmode="text"
+                                                                                id="Name"
+                                                                                ng-model="Filt.name"/>
+                                    <br>
+                                </div>
+                                <div class="horiz">
+                                    <p class="p-head"> Devbo </p> <input class="vvod20" inputmode="text"
+                                                                         id="WorkNameFilt"
+                                                                         ng-model="Filt.task"/>
+                                    <p class="p-head"> № Sap </p> <input class="vvod20" type="number"
+                                                                         inputmode="numeric"
+                                                                         id="CodeSapFilt"
+                                                                         step="1"
+                                                                         ng-model="Filt.codeSap"/>
+                                    <p class="p-head"> ZI- </p> <input class="vvod20" inputmode="text" id="CodeZiFilt"
+                                                                       ng-model="Filt.codeZi"/>
 
+                                    <!--                <input  type="hidden" id="wwwwId" />-->
+                                </div>
+                                <div class="horiz">
+                                    <p class="p-head">Текущий этап ЗИ :</p>
+                                    <select class="vvod20" name="choice" id="StageZFilt" ng-model="Filt.stageZi">
+                                        <option ng-value="0" value="0">0</option>
+                                        <option ng-value="1" value="1">I</option>
+                                        <option ng-value="2" value="2">II</option>
+                                        <option ng-value="3" value="3">III</option>
+                                        <option ng-value="4" value="4">IV</option>
+                                        <option ng-value="5" value="5">V</option>
+                                        <option ng-value="15" value="15">В работе</option>
+                                        <option ng-value="6" value="6">Закрытые</option>
+                                        <option ng-value="19" value="19">Все</option>
+                                    </select>
+                                    <p class="p-head">№ Релиза</p>
+                                    <br>
+                                    <input class="vvod20" type="text" id="ReleaseFilt" step="any"
+                                           ng-model="Filt.release"/>
+
+                                </div>
+
+                            </div>
+                            <div class="horiz">
+                                <div ng-if="!Filt.ziSplit" class="contents">
+                                    <input class="vvod30" type="date" id="DateStart" step="any"
+                                           ng-model="Filt.dateStart"/>
+                                    <p class="p-head"> <= Дата <= </p>
+                                    <input class="vvod30" type="date" id="DateEnd" step="any" ng-model="Filt.dateEnd"/>
+                                    <!--                <input  type="hidden" id="taskId" />-->
+                                    <br>
+                                </div>
+                                <div class="contents">
+
+                                    <button type="submit" class="headbutton">Применить</button>
+                                    <button type="button" class="headbutton" ng-click="clearFilter(true)">Сбросить
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
-                </div>
-            </form>
-        </details>
+                </form>
+            </details>
+
+        </div>
+        <div ng-if="Filt.ziSplit" class="filter containerfilt">
+            <button class="headbutton" ng-click="findPage(-1)">PrevPage</button>
+            <input class="vvod" type="number" id="Page" value="1" ng-model="Filt.page"/>
+            <button class="headbutton" ng-click="findPage(1)">NextPage</button>
+            <p class="p-head">Количество элементов</p>
+            <select class="vvod20" name="choice" id="StageZI" ng-model="Filt.size" ng-change="filterWorkTime()">
+                <option ng-value="10" value="10">10</option>
+                <option ng-value="25" value="25">25</option>
+                <option ng-value="50" value="50">50</option>
+                <option ng-value="100" value="100">100</option>
+                <option ng-value="500" value="500">500</option>
+                <option ng-value="1000" value="1000">1000</option>
+                <option ng-value="10000" value="10000">10000</option>
+            </select>
+        </div>
     </div>
     <h1>Факт загрузки </h1>
     <table>
