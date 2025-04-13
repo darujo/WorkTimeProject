@@ -13,9 +13,7 @@
                             <input class="vvod40" type="number" id="WorkIdFilt" step="any" ng-model="Filt.workId"/>
                             <p class="p-head">Тип задачи :</p>
                             <select class="vvod20" name="choice" id="TypeFilt" ng-model="Filt.type">
-                                <option ng-value="1" value="1" selected>ЗИ</option>
-                                <option ng-value="2" value="2">Вендерка</option>
-                                <option ng-value="3" value="3">Админ</option>
+                                <option ng-repeat="task in TaskListType" ng-value="task.codeInt" value="task.codeInt">{{task.value}}</option>
                                 <option ng-value="" value="">Все</option>
                             </select>
                         </div>
