@@ -13,7 +13,7 @@ public class JwtAdminFilter extends JwtAuthFilter {
    protected void populateRequestHeader(ServerWebExchange exchange, String token) {
         Claims claims = jwtUtil.getAllClamsForToken(token);
         ArrayList<String> listString = claims.get("authorities", ArrayList.class);
-        if(!listString.contains("ROLE_ADMIN".toUpperCase() )){
+        if(!listString.contains("EDIT_USER".toUpperCase() )){
             throw new RuntimeException("У вас недостаточно прав");
         }
 
