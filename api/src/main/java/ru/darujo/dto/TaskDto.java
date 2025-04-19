@@ -1,5 +1,6 @@
 package ru.darujo.dto;
 
+import ru.darujo.dto.user.UserFio;
 import ru.darujo.service.CodeService;
 
 import java.io.Serializable;

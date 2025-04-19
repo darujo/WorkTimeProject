@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.MapStringFloat;
 import ru.darujo.dto.PageDto;
-import ru.darujo.dto.UserDto;
+import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.workperiod.WorkUserTime;
 import ru.darujo.dto.workrep.WorkFactDto;
 import ru.darujo.dto.workrep.WorkRepDto;

@@ -1,5 +1,7 @@
 package ru.darujo.dto;
 
+import ru.darujo.dto.user.UserFio;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;

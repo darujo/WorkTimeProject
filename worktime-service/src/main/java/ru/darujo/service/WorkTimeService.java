@@ -8,7 +8,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.convertor.WorkTimeConvertor;
 import ru.darujo.dto.*;
-import ru.darujo.dto.UserFio;
+import ru.darujo.dto.user.UserFio;
+import ru.darujo.dto.user.UserDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.integration.CalendarServiceIntegration;
 import ru.darujo.integration.TaskServiceIntegration;
@@ -149,7 +150,7 @@ public class WorkTimeService {
         if (workTime.getNikName() == null) {
             throw new ResourceNotFoundException("Не удалось вас опознать пожалуста авторизуйтесь");
         }
-        if (workTime.getComment() == null || workTime.getComment().equals("")) {
+        if (workTime.getComment() == null || workTime.getComment().isEmpty()) {
             throw new ResourceNotFoundException("Не задан комментарий");
         }
     }

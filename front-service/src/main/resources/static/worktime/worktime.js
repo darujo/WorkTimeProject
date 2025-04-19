@@ -469,7 +469,6 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
             $scope.filterTask();
         }
     }
-    $scope.UserList = $location.UserList;
     $scope.Filt = $location.getFilter("wortTimeFilter");
     $scope.FiltTask = $location.getFilter("wortTimeEditFilter");
     if ($scope.Filt === null) {
@@ -482,4 +481,8 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
     console.log("Show ok");
 
     $scope.loadWorkTime();
+    console.log("----------------------------------------")
+    console.log($location.UserList);
+    $scope.UserList = $location.UserList;
+
 })

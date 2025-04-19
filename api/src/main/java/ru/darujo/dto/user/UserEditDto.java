@@ -1,9 +1,9 @@
-package ru.darujo.dto;
+package ru.darujo.dto.user;
 
 import java.io.Serializable;
 
-public class UserDto implements Serializable {
-    public UserDto() {
+public class UserEditDto implements Serializable {
+    public UserEditDto() {
     }
 
     private Long id;
@@ -14,16 +14,18 @@ public class UserDto implements Serializable {
     private String lastName;
 
     private String patronymic;
+    private String userPassword;
 
-    public UserDto(Long id, String nikName, String firstName, String lastName, String patronymic) {
+    public UserEditDto(Long id, String nikName, String firstName, String lastName, String patronymic,String userPassword) {
         this.id = id;
         this.nikName = nikName;
         this.firstName = firstName;
         this.lastName = lastName;
         this.patronymic = patronymic;
+        this.userPassword = userPassword;
     }
 
-    public UserDto(String nikName) {
+    public UserEditDto(String nikName) {
         this.nikName = nikName;
     }
 
@@ -45,5 +47,9 @@ public class UserDto implements Serializable {
 
     public String getPatronymic() {
         return patronymic;
+    }
+
+    public String getUserPassword() {
+        return userPassword;
     }
 }

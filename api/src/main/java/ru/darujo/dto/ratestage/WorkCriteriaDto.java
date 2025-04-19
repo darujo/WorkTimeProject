@@ -67,6 +67,10 @@ public class WorkCriteriaDto {
         if (criteria == 7) {
             return "Реализация внешнего сервиса (ОС Linux)";
         }
+        if (criteria == 8) {
+            return "Разработка экранной формы";
+        }
+
         return "Не известная роль";
     }
 }

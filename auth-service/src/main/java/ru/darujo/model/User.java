@@ -1,6 +1,8 @@
 package ru.darujo.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -8,6 +10,8 @@ import java.util.Collection;
 @Data
 @Entity
 @Table(name = "users")
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,8 +21,8 @@ public class User {
     @Column(name = "nikName", unique = true)
     private String nikName;
 
-    @Column(name = "userpasword")
-    private String userpasword;
+    @Column(name = "password")
+    private String password;
 
     @Column(name = "firstName")
     private String firstName;
@@ -40,5 +44,16 @@ public class User {
             joinColumns = @JoinColumn(name ="user_id"),
             inverseJoinColumns = @JoinColumn(name ="right_id"))
     private Collection<Right> rights;
+
+    public User(Long id, String nikName, String password, String firstName, String lastName, String patronymic) {
+        this.id = id;
+        this.nikName = nikName;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.patronymic = patronymic;
+    }
+
+
 }
 

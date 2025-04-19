@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import ru.darujo.dto.UserDto;
+import ru.darujo.dto.user.UserDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 
 import java.util.List;

@@ -20,6 +20,7 @@ public class CodeService {
     private Map<Integer, String> newTaskTypes() {
         Map<Integer, String> code = new LinkedHashMap<>();
         code.put(1, "ЗИ");
+        code.put(5, "Запросы по ЗИ");
         code.put(4, "Изменение по ТЗ");
         code.put(2, "Вендорные запросы");
         code.put(3, "Админ");

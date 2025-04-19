@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.darujo.dto.TaskDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.integration.WorkServiceIntegration;
 import ru.darujo.model.Task;
@@ -47,8 +48,11 @@ public class TaskService {
                 throw new ResourceNotFoundException("Не задан номер DEVBO и BTS");
             }
         }
-        if (task.getType() == 1) {
+        if (task.getType() == 1 && task.getType() == 5 && task.getType() == 4) {
             workServiceIntegration.getWorEditDto(task.getWorkId());
+        }
+        if (task.getType() == 1 && (task.getCodeBTS() != null && !task.getCodeBTS().equals(""))){
+            task.setType(5);
         }
         task.setRefresh(new Timestamp(System.currentTimeMillis()));
         if (task.getId() != null) {
@@ -107,8 +111,21 @@ public class TaskService {
         taskRepository.save(task);
         return true;
     }
-
-    public String workTimeCheckAvail(Long id, Long workId, String codeDEVBO, String codeBTS) {
+    public String taskCheck(TaskDto taskDto){
+        String text = null;
+        if (taskDto.getWorkId() != null && taskDto.getType() == 1 && (taskDto.getCodeBTS() != null && !taskDto.getCodeBTS().equals(""))){
+            text = "Тип задачи будет изменен на Запросы по ЗИ та как тип задачи ЗИ и по ней введен номер запроса";
+        }
+        String testAvail = taskCheckAvail(taskDto.getId(), taskDto.getWorkId(), taskDto.getCodeDEVBO(), taskDto.getCodeBTS());
+        if (text == null){
+            return testAvail;
+        }
+        if (testAvail == null){
+            return text;
+        }
+        return  text + " " + testAvail;
+    }
+    public String taskCheckAvail(Long id, Long workId, String codeDEVBO, String codeBTS) {
 
         String text = checkAvail(id, workId, "codeBTS", codeBTS);
         if (text != null) {
@@ -119,6 +136,7 @@ public class TaskService {
     }
 
     private String checkAvail(Long id, Long workId, String dbField, String value) {
+
         Specification<Task> specification = Specification.where(null);
 
         if (value != null && !value.equals("")) {

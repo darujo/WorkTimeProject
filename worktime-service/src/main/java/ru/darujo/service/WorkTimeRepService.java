@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.*;
 import ru.darujo.dto.calendar.WeekWorkDto;
+import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.workperiod.UserWorkDto;
 import ru.darujo.dto.workrep.UserWorkPeriodDto;
 import ru.darujo.dto.workrep.WorkPeriodDto;
@@ -178,7 +179,9 @@ public class WorkTimeRepService {
 
         if (nikName == null) {
             userDTOs = workTimeService.getUsers(null);
-        } else if (nikName.substring(0, 5).equalsIgnoreCase("role_")) {
+        } else if (nikName.equalsIgnoreCase("all")) {
+            userDTOs = workTimeService.getUsers(null);
+        } else if (nikName.length() > 5 && nikName.substring(0, 5).equalsIgnoreCase("role_")) {
             userDTOs = workTimeService.getUsers(nikName.substring(5));
         } else {
             userDTOs = new ArrayList<>();

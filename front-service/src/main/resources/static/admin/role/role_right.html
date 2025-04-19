@@ -1,0 +1,32 @@
+<div id="RoleList" class="headtextelem">
+    <p class="p-head">{{Role.code}} {{Role.name}} </p>
+    <div class="horiz">
+        <button ng-if="Role" type="button" class="headbutton" ng-click="saveRole()">Сохранить</button>
+        <button type="button" class="headbutton" ng-click="backRole()">Назад</button>
+    </div>
+    <h1>Список прав роли</h1>
+
+
+    <table>
+        <tr>
+            <td class="tablehead2">Код</td>
+            <td class="tablehead2">Название</td>
+            <td class="tablehead2"></td>
+            <!--            <td class="tablehead2"></td>-->
+
+        </tr>
+        <tbody>
+        <tr ng-repeat="right in Role.rights">
+
+            <td>{{right.code}}</td>
+            <td>{{right.name}}</td>
+            <td>
+                <input class="vvod20" type="checkbox" ng-model="right.active"/>
+
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+
+</div>

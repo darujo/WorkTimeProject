@@ -1,9 +1,13 @@
 package ru.darujo.jwt;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -16,7 +20,7 @@ import java.util.ArrayList;
 
 @Component
 public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Config> {
-    private JwtUtil jwtUtil;
+    protected JwtUtil jwtUtil;
 
     @Autowired
     public void setJwtUtil(JwtUtil jwtUtil) {
@@ -37,7 +41,11 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
                 if (jwtUtil.isInvalid(token)) {
                     return this.onError(exchange, "Не правильный заголовок авторизации", HttpStatus.UNAUTHORIZED);
                 }
-                populateRequestHeader(exchange, token);
+                try {
+                    populateRequestHeader(exchange, token);
+                } catch (RuntimeException ex) {
+                    return this.onError(exchange, ex.getMessage(), HttpStatus.FORBIDDEN);
+                }
             } else {
                 return this.onError(exchange, "Токен отсутсвует", HttpStatus.UNAUTHORIZED);
             }
@@ -48,7 +56,7 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
     public static class Config {
     }
 
-    private void populateRequestHeader(ServerWebExchange exchange, String token) {
+    protected void populateRequestHeader(ServerWebExchange exchange, String token) {
         Claims claims = jwtUtil.getAllClamsForToken(token);
         ArrayList<String> listString = claims.get("authorities", ArrayList.class);
         ServerHttpRequest.Builder builder =
@@ -64,7 +72,16 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
     private Mono<Void> onError(ServerWebExchange exchange, String text, HttpStatus status) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(status);
-        return response.setComplete();
+        DataBufferFactory bufferFactory = response.bufferFactory();
+        ObjectMapper objectMapper = new ObjectMapper();
+        DataBuffer wrap;
+        try {
+            wrap = bufferFactory.wrap(objectMapper.writeValueAsBytes(text));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        DataBuffer finalWrap = wrap;
+        return response.writeWith(Mono.fromSupplier(() -> finalWrap));
     }
 
     private String getAuthHeaders(ServerHttpRequest request) {

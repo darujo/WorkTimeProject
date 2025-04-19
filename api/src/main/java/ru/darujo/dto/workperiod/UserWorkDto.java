@@ -1,6 +1,6 @@
 package ru.darujo.dto.workperiod;
 
-import ru.darujo.dto.UserFio;
+import ru.darujo.dto.user.UserFio;
 import ru.darujo.service.CodeService;
 
 import java.util.*;

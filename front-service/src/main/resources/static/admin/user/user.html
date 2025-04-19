@@ -1,0 +1,122 @@
+<div id="UserList" class="headtextelem">
+    <div class="filter containerfilt">
+        <details class="detailsblock">
+            <summary class="p-head">Фильтр</summary>
+
+            <form novalidate ng-submit="filterUser()" ; class="filter">
+                <div class="filter">
+                    <div class="filterblock">
+
+                        <div class="horiz">
+                            <p class="p-head">Логин:</p>
+                            <br>
+                            <input class="vvod30mar" type="text" id="UserLoginFilter"
+                                   ng-model="Filt.nikName"/>
+                            <!--                        </div>-->
+                            <!--                        <div class="horiz">-->
+                            <p class="p-head">Фамилия:</p>
+                            <br>
+                            <input class="vvod30mar" type="text" id="LastNameFilter"
+                                   ng-model="Filt.lastName"/>
+                        </div>
+                        <div class="horiz">
+                            <p class="p-head">Имя:</p>
+                            <br>
+                            <input class="vvod30mar" type="text" id="FirstNameFilter"
+                                   ng-model="Filt.firstName"/>
+                            <p class="p-head"> Отчество: </p>
+                            <input class="vvod30mar" type="text" id="PatronymicFilter"
+                                   ng-model="Filt.patronymic"/>
+                        </div>
+                        <button type="submit" class="button" id="FilterButton">Применить</button>
+                        <button type="button" class="headbutton" ng-click="clearFilter(true)">Сбросить</button>
+                    </div>
+                </div>
+            </form>
+        </details>
+        <button class="headbutton" ng-click="createUser()">Добавить пользователя</button>
+    </div>
+    <div class="filter containerfilt">
+        <button class="headbutton" ng-click="findPage(-1)">PrevPage</button>
+        <input class="vvod" type="number" id="Page" value="1"/>
+        <button class="headbutton" ng-click="findPage(1)">NextPage</button>
+        <p class="p-head">Количество элементов</p>
+        <select class="vvod20" name="choice" id="WorkTimeSize" ng-model="Filt.size" ng-change="filterUser()">
+            <option ng-value="10" value="10" selected>10</option>
+            <option ng-value="25" value="25">25</option>
+            <option ng-value="50" value="50">50</option>
+            <option ng-value="100" value="100">100</option>
+            <option ng-value="500" value="500">500</option>
+            <option ng-value="1000" value="1000">1000</option>
+            <option ng-value="10000" value="10000">10000</option>
+        </select>
+    </div>
+    <h1>Список пользователей</h1>
+    <table>
+        <tr>
+            <td class="tablehead2">Логин</td>
+            <td class="tablehead2">Фамилия</td>
+            <td class="tablehead2">Имя</td>
+            <td class="tablehead2">Отчество</td>
+
+            <td class="tablehead2"></td>
+            <td class="tablehead2"></td>
+<!--            <td class="tablehead2"></td>-->
+
+        </tr>
+        <tbody>
+        <tr ng-repeat="user in UserList">
+
+            <td>{{user.nikName}}</td>
+            <td>{{user.lastName}}</td>
+            <td class="textleft">{{user.firstName}}</td>
+            <td class="textleft">{{user.patronymic}}</td>
+            <td>
+                <button ng-click="editRole(user.id)">Роли</button>
+            </td>
+            <td>
+                <button ng-click="editUser(user.id)">Изменить</button>
+            </td>
+<!--            <td>-->
+<!--                <button ng-click="deleteWorkTime(user.id)">Удалить</button>-->
+<!--            </td>-->
+
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<div id="FormEdit" class="divform containerfilt">
+
+    <form novalidate ng-submit="saveUser()">
+        <div class="horiz">
+            <p class="formlablep">Логин:</p> <input class="vvod80mar10" type="text" id="NikName" step="any"
+                                                   ng-model="User.nikName"/>
+            <br>
+        </div>
+        <div class="horiz">
+            <p class="formlablep">Пароль Hash bcrypt:</p> <input class="vvod80mar10" type="text" id="UserPassword" step="any"
+                                                   ng-model="User.userPassword"/>
+            <br>
+        </div>
+        <div class="horiz">
+            <p class="formlablep">Фамилия:</p> <input class="vvod80mar10" type="text" id="LastName" step="any"
+                                                   ng-model="User.lastName"/>
+            <br>
+        </div>
+        <div class="horiz">
+            <p class="formlablep">Имя:</p> <input class="vvod80mar10" type="text" id="FirstName" step="any"
+                                                   ng-model="User.firstName"/>
+            <br>
+        </div>
+        <div class="horiz">
+            <p class="formlablep">Отчество:</p> <input class="vvod80mar10" type="text" id="Patronymic" step="any"
+                                                   ng-model="User.patronymic"/>
+            <br>
+        </div>
+        <button type="submit" class="button" id="ButtonSaveDown">Сохранить</button>
+        <button type="reset" ng-click="loadUser()" class="button">Вернуться к списку</button>
+
+    </form>
+</div>

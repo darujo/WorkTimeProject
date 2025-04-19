@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.TaskConvertor;
 import ru.darujo.dto.TaskDto;
-import ru.darujo.dto.UserDto;
+import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.dto.parsing.DateParser;
@@ -84,7 +84,7 @@ public class TaskController extends DateParser {
     }
     @PostMapping("/checkAvail")
     public AttrDto<Integer> TaskCheckAvail(@RequestBody TaskDto taskDto) {
-       String test = taskService.workTimeCheckAvail(taskDto.getId(),taskDto.getWorkId(), taskDto.getCodeDEVBO(), taskDto.getCodeBTS());
+       String test = taskService.taskCheck(taskDto);
        if(test!= null){
            return new AttrDto<>(-1,test);
        }

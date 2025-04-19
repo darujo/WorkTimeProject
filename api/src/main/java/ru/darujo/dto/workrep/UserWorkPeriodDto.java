@@ -1,6 +1,6 @@
 package ru.darujo.dto.workrep;
 
-import ru.darujo.dto.UserFio;
+import ru.darujo.dto.user.UserFio;
 
 import java.util.List;
 

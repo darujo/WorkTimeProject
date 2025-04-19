@@ -7,7 +7,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ngStorage/0.3.11/ngStorage.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular-route.min.js"></script>
-
     <title>Работы</title>
     <link rel="stylesheet" href="style.css?ver=1.1">
 </head>
@@ -16,7 +15,7 @@
     <nav>
         <div class="" id="navbarNav">
             <ul class="">
-                <div class="horiz"  ng-show="isUserLoggedIn()">
+                <div class="horiz" ng-show="isUserLoggedIn()">
                     <details class="detailsblockmenu" open id="DetailPrim">
                         <summary class="p-head">Меню</summary>
                         <li class="nav-item">
@@ -32,10 +31,10 @@
                             <a class="nav-link" href="#!/worktimerep">Статус задач</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#!/work/fact">Факт затрат</a>
+                            <a class="nav-link" href="#!/work/fact">Факт затрат ЗИ</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#!/weekwork">Свод загрузки</a>
+                            <a class="nav-link" href="#!/weekwork">Факт загрузки</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#!/userwork">Работы за период</a>
@@ -44,11 +43,17 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#!/calendar">Производственный календарь</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#!/user">Пользователи</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#!/role">Группы</a>
+                        </li>
                     </details>
                     <details class="detailsblockmenu">
                         <summary class="p-head">Фильтры</summary>
                         <div class="horiz">
-                            <p class="p-form">Сохронять</p> <input class="vvod20" type="checkbox"
+                            <p class="p-form">Сохранять</p> <input class="vvod20" type="checkbox"
                                                                    id="SaveFilter"
                                                                    ng-model="SettingUser.saveFilter"
                                                                    ng-change="saveSetting()"/>
@@ -59,7 +64,7 @@
                                                                    ng-model="SettingUser.loadFilter"
                                                                    ng-change="saveSetting()"/>
                         </div>
-                        <button ng-click="delFilter()">Удалить сохраненные фильтрый</button>
+                        <button ng-click="delFilter()">Удалить сохраненные фильтры</button>
                     </details>
                 </div>
                 <li class="nav-item" ng-show="!isUserLoggedIn()">
@@ -116,7 +121,10 @@
     <script src="calendar/calendar.js?ver=1.1"></script>
     <script src="rep/userwork/userwork.js?ver=1.1"></script>
 
-
+    <script src="admin/user/user.js?ver=1.1"></script>
+    <script src="admin/user/user_role.js?ver=1.1"></script>
+    <script src="admin/role/role.js?ver=1.1"></script>
+    <script src="admin/role/role_right.js?ver=1.1"></script>
 </div>
 </body>
 </html>

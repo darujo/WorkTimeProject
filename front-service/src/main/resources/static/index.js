@@ -50,6 +50,22 @@
                 templateUrl: 'rep/userwork/userwork.html?ver=' + ver,
                 controller: 'userworkController'
             })
+            .when('/user', {
+                templateUrl: 'admin/user/user.html?ver=' + ver,
+                controller: 'userController'
+            })
+            .when('/user_role', {
+                templateUrl: 'admin/user/user_role.html?ver=' + ver,
+                controller: 'userRoleController'
+            })
+            .when('/role', {
+                templateUrl: 'admin/role/role.html?ver=' + ver,
+                controller: 'roleController'
+            })
+            .when('/role_right', {
+                templateUrl: 'admin/role/role_right.html?ver=' + ver,
+                controller: 'roleRightController'
+            })
             .otherwise({
                 redirectTo: '/'
             });
@@ -181,8 +197,14 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     $location.checkAuthorized = function (response) {
         console.log("response.status");
         console.log(response.status);
-        if (parseInt(response.status) === 401) {
-            checkToken("Вы не авторизованы");
+        if (parseInt(response.status) === 500) {
+            alert("Произошла ошибка. Обратитесь к администратору. " + response.data.message);
+        }
+        else if (parseInt(response.status) === 403) {
+            alert("Нет прав: " + response.data);
+        }
+        else if (parseInt(response.status) === 401) {
+            checkToken("Вы не авторизованы " + response.data);
             $scope.tryToLogout();
             return false;
         }
@@ -262,17 +284,20 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         }
     }
     let loadUsers = function () {
-        // console.log("Users")
+        console.log("Users")
 
         $http({
             url: constPatchUser,
             method: "get"
 
         }).then(function (response) {
-            // console.log(response.data);
-            $location.UserList = response.data;
+            console.log("response user");
+            console.log(response.data);
+            $location.UserList = response.data.content;
+
         }, function errorCallback(response) {
-            // console.log(response)
+            console.log(" --- response user");
+             console.log(response)
             if ($location.checkAuthorized(response)) {
                 alert(response.data.message);
             }
@@ -289,5 +314,5 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         $scope.getUser();
     }
 
-    console.log("dddddd");
+    console.log("loan index.js end");
 })

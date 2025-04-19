@@ -1,6 +1,6 @@
 package ru.darujo.dto.ratestage;
 
-import ru.darujo.dto.UserFio;
+import ru.darujo.dto.user.UserFio;
 
 
 public class WorkStageDto implements UserFio {
