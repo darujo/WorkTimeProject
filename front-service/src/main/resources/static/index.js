@@ -5,7 +5,7 @@
         .run(run);
 
     function config($routeProvider) {
-        let ver = "1.2";
+        let ver = "1.2.1";
         $routeProvider
             .when('/', {
                 templateUrl: 'welcome/welcome.html',
