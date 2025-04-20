@@ -100,7 +100,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
         }
     };
     $scope.workPage = function () {
-        $location.path('/work');
+        $location.path('/work').search({});
     }
     $scope.showWorkCriteriaAdd = function () {
         document.getElementById("WorkCriteriaAdd").style.display = "block";
@@ -191,14 +191,8 @@ angular.module('workTimeService').controller('workRateController', function ($sc
                 });
         }
     };
-
-    if (typeof $location.WorkId !== "undefined") {
-        console.log("location.WorkId")
-        WorkId = $location.WorkId;
-        $location.WorkId = null;
-    } else {
-        $scope.workPage();
-    }
+    let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
+    WorkId =paramsStr.get('workId');
     $scope.stageCreate = false;
     $scope.stageEdit = false;
     $scope.criteriaCreate = false;

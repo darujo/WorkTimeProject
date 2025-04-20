@@ -241,9 +241,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
     }
     $scope.addRate = function (workId) {
         console.log("Другая");
-        $location.WorkId = workId;
-        $location.path('/rate');
-        // window.open('#!/task',"_parent");
+        $location.path('/rate').search({workId: workId});
     }
     $scope.clearFilter =function (load){
         console.log("clearFilter");
