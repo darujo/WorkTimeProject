@@ -54,17 +54,8 @@ angular.module('workTimeService').controller('taskController', function ($scope,
         console.log("loadTask");
         console.log("$location.WorkId " + $location.WorkId);
 
-        if (location.href.indexOf("?") !== -1) {
-            let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
-            for (let [key, value] of paramsStr.entries()) {
-                if (key.toLowerCase().indexOf("id") !== -1 || key.toLowerCase().indexOf("size") !== -1 ) {
-                    $scope.Filt[key] = parseInt(value);
-                } else {
-                    $scope.Filt[key] = value;
-                }
-            }
-            console.log($scope.Filt);
-        }
+        $location.parserFilter($scope.Filt);
+
         $scope.findPage(0);
     };
 

@@ -4,42 +4,17 @@ angular.module('workTimeService').controller('workFactRepController', function (
 
     $scope.loadWork = function () {
         console.log("loadWorkTime");
-        if (location.href.indexOf("?") !== -1) {
-            let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
-            for (let [key, value] of paramsStr.entries()) {
-                if (key.toLowerCase().indexOf("stage") !== -1 || key.toLowerCase().indexOf("size") !== -1 || key.toLowerCase().indexOf("sap") !== -1) {
-                    $scope.Filt[key] = parseInt(value);
-                } else if (key.toLowerCase().indexOf("date") !== -1) {
-                    console.log(key);
+        $location.parserFilter($scope.Filt);
+        console.log($scope.Filt);
 
-                    console.log(paramsStr.get(key))
-                    console.log(new Date(paramsStr.get(key)));
-
-                    $scope.Filt[key] = new Date(paramsStr.get(key));
-                } else if (key.toLowerCase().indexOf("hide") !== -1) {
-                    console.log(key);
-
-                    console.log(paramsStr.get(key))
-                    console.log(value)
-                    if(paramsStr.get(key) === "false"){
-                        $scope.Filt[key] = false
-                    } else {
-                        $scope.Filt[key] = true;
-                    }
-                } else {
-                    $scope.Filt[key] = paramsStr.get(key);
-                }
-
-            }
-            console.log($scope.Filt);
-        }
         $scope.filterWork();
     };
     $scope.sendFilter = function () {
+        $scope.Filt["hideNotTime"] = $scope.Filt.hideNotTime ? true : false;
         $location.sendFilter(location.hash, $scope.Filt);
     }
     $scope.filterWork = function () {
-        $location.saveFilter("factWorkFilter",$scope.Filt);
+        $location.saveFilter("factWorkFilter", $scope.Filt);
         document.getElementById("Page").value = "1";
         $scope.findPage(0);
     };
@@ -72,7 +47,7 @@ angular.module('workTimeService').controller('workFactRepController', function (
                 codeSap: Filt ? Filt.codeSap : null,
                 codeZi: Filt ? Filt.codeZi : null,
                 task: Filt ? Filt.task : null,
-                release: Filt ? Filt.release :null,
+                release: Filt ? Filt.release : null,
                 sort: Filt ? Filt.sort : null,
                 stageZi: Filt ? Filt.stageZi : null,
                 hideNotTime: Filt ? Filt.hideNotTime : null
@@ -83,12 +58,12 @@ angular.module('workTimeService').controller('workFactRepController', function (
             maxpage = response.data.totalPages;
         }, function errorCallback(response) {
             console.log(response)
-            if($location.checkAuthorized(response)){
+            if ($location.checkAuthorized(response)) {
                 //     alert(response.data.message);
             }
         });
     };
-    $scope.clearFilter =function (load){
+    $scope.clearFilter = function (load) {
         console.log("clearFilter");
         $scope.Filt = {
             stageZi: 15,
@@ -96,13 +71,13 @@ angular.module('workTimeService').controller('workFactRepController', function (
             hideNotTime: true
         }
         console.log($scope.Filt);
-        if(load){
+        if (load) {
             $scope.filterWork();
         }
     }
     document.getElementById("Page").value = "1";
     $scope.Filt = $location.getFilter("factWorkFilter");
-    if ($scope.Filt === null ) {
+    if ($scope.Filt === null) {
         $scope.clearFilter(false);
     }
     $scope.UserList = $location.UserList;

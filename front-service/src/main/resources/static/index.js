@@ -199,11 +199,9 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         console.log(response.status);
         if (parseInt(response.status) === 500) {
             alert("Произошла ошибка. Обратитесь к администратору. " + response.data.message);
-        }
-        else if (parseInt(response.status) === 403) {
+        } else if (parseInt(response.status) === 403) {
             alert("Нет прав: " + response.data);
-        }
-        else if (parseInt(response.status) === 401) {
+        } else if (parseInt(response.status) === 401) {
             checkToken("Вы не авторизованы " + response.data);
             $scope.tryToLogout();
             return false;
@@ -230,13 +228,13 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             });
     }
 
-    $location.getCode = function (code,callBack) {
+    $location.getCode = function (code, callBack) {
         $http({
             url: constPatchCode + code,
             method: "get"
 
         }).then(function (response) {
-           callBack(response);
+            callBack(response);
         }, function errorCallback(response) {
             // console.log(response)
             if ($location.checkAuthorized(response)) {
@@ -279,6 +277,57 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         return null;
 
     }
+    $location.parserFilter = function (filter) {
+        console.log("parserFilter");
+        console.log(location.href);
+        if (location.href.indexOf("?") !== -1) {
+            let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
+            for (let [key, value] of paramsStr.entries()) {
+                if (key.toLowerCase().indexOf("stage") !== -1
+                    || key.toLowerCase().indexOf("size") !== -1
+                    || key.toLowerCase().indexOf("sap") !== -1
+                    || key.indexOf("period") !== -1
+                    || key.toLowerCase().indexOf("kid") !== -1
+                    || key.toLowerCase().indexOf("type")  !== -1
+                ) {
+                    console.log("int");
+                    console.log(key);
+                    filter[key] = parseInt(value);
+                } else if (key.toLowerCase().indexOf("date") !== -1) {
+                    console.log(key);
+
+                    console.log(paramsStr.get(key))
+                    console.log(new Date(paramsStr.get(key)));
+
+                    filter[key] = new Date(paramsStr.get(key));
+                } else if (key.indexOf("weekSplit") !== -1
+                    || key.indexOf("workTask") !== -1
+                    || key.indexOf("workTime") !== -1
+                    || key.indexOf("workPercent") !== -1
+                    || key.indexOf("addTotal") !== -1
+                    || key.indexOf("ziSplit") !== -1
+                    || key.indexOf("hideNotTime") !== -1
+                    || key.indexOf("avail") !== -1
+
+                ) {
+                    console.log(key);
+
+                    console.log(paramsStr.get(key))
+                    console.log(value)
+                    filter[key] = paramsStr.get(key) !== "false";
+                } else {
+                    console.log(key);
+                    paramsStr.get(key);
+                    console.log(value);
+                    filter[key] = paramsStr.get(key);
+                }
+
+            }
+            console.log(filter);
+
+        }
+        return filter;
+    }
     $scope.delFilter = function () {
         $localStorage.filterWorkTime = {};
     }
@@ -315,14 +364,14 @@ angular.module('workTimeService').controller('indexController', function ($rootS
 
         }, function errorCallback(response) {
             console.log(" --- response user");
-             console.log(response)
+            console.log(response)
             if ($location.checkAuthorized(response)) {
                 alert(response.data.message);
             }
         });
 
     }
-    $scope.saveSetting = function (){
+    $scope.saveSetting = function () {
         $localStorage.UserSettingWorkTime = $scope.SettingUser;
     }
     $scope.SettingUser = $localStorage.UserSettingWorkTime;

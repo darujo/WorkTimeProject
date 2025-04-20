@@ -67,32 +67,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
         console.log($localStorage.WorkTime);
         console.log(typeof $localStorage.WorkTime !== "undefined");
         if (location.href.indexOf("?") !== -1) {
-            let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
-            for (let [key, value] of paramsStr.entries()) {
-                if (key.toLowerCase().indexOf("id") !== -1 || key.toLowerCase().indexOf("size") !== -1 || key.toLowerCase().indexOf("type") !== -1) {
-                    $scope.Filt[key] = parseInt(value);
-                } else if (key.toLowerCase().indexOf("date") !== -1) {
-                    console.log(key);
-
-                    console.log(paramsStr.get(key))
-                    console.log(new Date(paramsStr.get(key)));
-
-                    $scope.Filt[key] = new Date(paramsStr.get(key));
-                } else if (key.toLowerCase().indexOf("current") !== -1) {
-                    console.log(key);
-
-                    console.log(paramsStr.get(key))
-                    console.log(value)
-                    if(paramsStr.get(key) === "false"){
-                        $scope.Filt[key] = false
-                    } else {
-                        $scope.Filt[key] = true;
-                    }
-                } else {
-                    $scope.Filt[key] = paramsStr.get(key);
-                }
-
-            }
+            $location.parserFilter($scope.Filt);
             $scope.findPage(0);
             console.log($scope.Filt);
         } else if (typeof $localStorage.WorkTime !== "undefined") {

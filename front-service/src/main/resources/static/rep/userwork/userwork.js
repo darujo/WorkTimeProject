@@ -17,39 +17,7 @@ angular.module('workTimeService').controller('userworkController', function ($sc
     $scope.loadWorkTime = function () {
         console.log("loadWorkTime");
         console.log($scope.Filt);
-        if (location.href.indexOf("?") !== -1) {
-            let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
-            for (let [key, value] of paramsStr.entries()) {
-                if (key.toLowerCase().indexOf("stage") !== -1
-                    || key.toLowerCase().indexOf("size") !== -1
-                    || key.toLowerCase().indexOf("sap") !== -1
-                    || key.indexOf("period") !== -1) {
-                    $scope.Filt[key] = parseInt(value);
-                } else if (key.toLowerCase().indexOf("date") !== -1) {
-                    console.log(key);
-
-                    console.log(paramsStr.get(key))
-                    console.log(new Date(paramsStr.get(key)));
-
-                    $scope.Filt[key] = new Date(paramsStr.get(key));
-                } else if (key.indexOf("weekSplit") !== -1
-                    || key.indexOf("workTask") !== -1
-                    || key.indexOf("workTime") !== -1
-                    || key.indexOf("workPercent") !== -1
-                    || key.indexOf("addTotal") !== -1
-                    || key.indexOf("ziSplit") !== -1) {
-                    console.log(key);
-
-                    console.log(paramsStr.get(key))
-                    console.log(value)
-                    $scope.Filt[key] = paramsStr.get(key) !== "false";
-                } else {
-                    $scope.Filt[key] = paramsStr.get(key);
-                }
-
-            }
-            console.log($scope.Filt);
-        }
+        $location.parserFilter($scope.Filt);
         console.log($scope.Filt);
 
         $scope.findPage();
