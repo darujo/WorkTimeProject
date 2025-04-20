@@ -66,18 +66,35 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
         console.log("$location.WorkTime " + $localStorage.WorkTime);
         console.log($localStorage.WorkTime);
         console.log(typeof $localStorage.WorkTime !== "undefined");
-        if (typeof $location.TaskId !== "undefined") {
-            console.log("load5")
-            $scope.Filt = {
-                taskId: null,
-                size: 10,
-                currentUser: false
-            };
-            $scope.Filt.taskId = $location.TaskId;
-            $scope.setFormWorkTime();
-            console.log($scope.Filt);
-            $location.TaskId = null;
+        if (location.href.indexOf("?") !== -1) {
+            let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
+            for (let [key, value] of paramsStr.entries()) {
+                if (key.toLowerCase().indexOf("id") !== -1 || key.toLowerCase().indexOf("size") !== -1 || key.toLowerCase().indexOf("type") !== -1) {
+                    $scope.Filt[key] = parseInt(value);
+                } else if (key.toLowerCase().indexOf("date") !== -1) {
+                    console.log(key);
+
+                    console.log(paramsStr.get(key))
+                    console.log(new Date(paramsStr.get(key)));
+
+                    $scope.Filt[key] = new Date(paramsStr.get(key));
+                } else if (key.toLowerCase().indexOf("current") !== -1) {
+                    console.log(key);
+
+                    console.log(paramsStr.get(key))
+                    console.log(value)
+                    if(paramsStr.get(key) === "false"){
+                        $scope.Filt[key] = false
+                    } else {
+                        $scope.Filt[key] = true;
+                    }
+                } else {
+                    $scope.Filt[key] = paramsStr.get(key);
+                }
+
+            }
             $scope.findPage(0);
+            console.log($scope.Filt);
         } else if (typeof $localStorage.WorkTime !== "undefined") {
             console.log($localStorage.WorkTime);
             if (typeof $localStorage.WorkTime.edit !== "undefined") {
@@ -94,6 +111,10 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
 
 
     };
+    $scope.sendFilter = function () {
+        $scope.Filt["currentUser"] = $scope.Filt.currentUser ? true : false;
+        $location.sendFilter(location.hash, $scope.Filt);
+    }
 
     $scope.setFormWorkTime = function () {
         if (typeof $scope.Filt !== "undefined") {
@@ -191,7 +212,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
         console.log("filterWorkTime")
         // Filt = $scope.Filt;
         // console.log(Filt)
-        $location.saveFilter("wortTimeFilter",$scope.Filt);
+        $location.saveFilter("wortTimeFilter", $scope.Filt);
         document.getElementById("Page").value = "1";
         $scope.findPage(0);
     };
@@ -406,7 +427,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
         console.log("filterTask");
         // FiltTask = $scope.FiltTask;
         document.getElementById("PageTask").value = "1";
-        $location.saveFilter("wortTimeEditFilter",$scope.FiltTask);
+        $location.saveFilter("wortTimeEditFilter", $scope.FiltTask);
         $scope.loadTask(0);
     };
     $scope.setTask = function (taskId) {
@@ -447,7 +468,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
     let callBackUserChange = function () {
         userChange = true;
     }
-    $scope.clearFilter =function (load){
+    $scope.clearFilter = function (load) {
         console.log("clearFilter");
         $scope.Filt = {
             taskId: null,
@@ -455,17 +476,17 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
             size: 10
         };
         console.log($scope.Filt);
-        if(load){
+        if (load) {
             $scope.filterWorkTime();
         }
     }
-    $scope.clearFilterTask =function (load){
+    $scope.clearFilterTask = function (load) {
         console.log("clearFilter");
         if ($scope.FiltTask === null) {
             $scope.FiltTask = {size: 10}
         }
         console.log($scope.Filt);
-        if(load){
+        if (load) {
             $scope.filterTask();
         }
     }

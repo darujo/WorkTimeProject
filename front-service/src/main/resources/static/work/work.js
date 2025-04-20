@@ -47,8 +47,22 @@ angular.module('workTimeService').controller('workController', function ($scope,
 
 
     $scope.loadWork = function () {
+        if (location.href.indexOf("?") !== -1) {
+            let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
+            for (let [key, value] of paramsStr.entries()) {
+                if (key.toLowerCase().indexOf("sap") !== -1 || key.toLowerCase().indexOf("size") !== -1 || key.toLowerCase().indexOf("stage") !== -1) {
+                    $scope.Filt[key] = parseInt(value);
+                } else {
+                    $scope.Filt[key] = value;
+                }
+            }
+            console.log($scope.Filt);
+        }
         $scope.findPage(0);
     };
+    $scope.sendFilter = function () {
+        $location.sendFilter(location.hash,$scope.Filt);
+    }
     var maxpage = 1;
     $scope.findPage = function (diffPage) {
         console.log(diffPage)
@@ -232,9 +246,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
     };
 
     $scope.addTime = function (workId) {
-        console.log("Другая");
-        $location.WorkId = workId;
-        $location.path('/task');
+        $location.path('/task').search({workId : workId});
         // window.open('#!/task',"_parent");
     }
     $scope.addRate = function (workId) {

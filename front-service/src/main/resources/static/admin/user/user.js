@@ -164,7 +164,7 @@
         }
     }
     $scope.editRole = function (userId){
-        $location.path('/user_role' ).search({userId: userId});;
+        $location.path('/user_role' ).search({userId: userId});
 
     }
     // $scope.UserList = $location.UserList;

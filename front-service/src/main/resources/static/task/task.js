@@ -53,17 +53,18 @@ angular.module('workTimeService').controller('taskController', function ($scope,
     $scope.loadTask = function () {
         console.log("loadTask");
         console.log("$location.WorkId " + $location.WorkId);
-        if (typeof $location.WorkId !== "undefined") {
-            console.log("load5")
-            // if (typeof $scope.Filt == "undefined") {
-            //     $scope.Filt = {workId: null};
-            // }
-            $scope.Filt = {workId: $location.WorkId};
-            $scope.setFormTask();
-            console.log($scope.Filt);
-            $location.WorkId = null;
-        }
 
+        if (location.href.indexOf("?") !== -1) {
+            let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
+            for (let [key, value] of paramsStr.entries()) {
+                if (key.toLowerCase().indexOf("id") !== -1 || key.toLowerCase().indexOf("size") !== -1 ) {
+                    $scope.Filt[key] = parseInt(value);
+                } else {
+                    $scope.Filt[key] = value;
+                }
+            }
+            console.log($scope.Filt);
+        }
         $scope.findPage(0);
     };
 
@@ -166,7 +167,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
         console.log("создаем 5");
         $scope.Task.workId = parseInt(document.getElementById("WorkIdFilt").value);
         console.log($scope.Task.workId);
-        if (!isNaN($scope.Task.workId)){
+        if (!isNaN($scope.Task.workId)) {
             findNameWork($scope.Task.workId);
         }
         console.log("создаем 3");
@@ -250,12 +251,12 @@ angular.module('workTimeService').controller('taskController', function ($scope,
                 .then(function (response) {
                     sendSave = false;
                     console.log(response);
-                    if(parseInt(response.data.codeInt) === 0){
+                    if (parseInt(response.data.codeInt) === 0) {
                         console.log("Сохраняем сразу");
                         $scope.saveTaskPost();
-                    } else{
+                    } else {
                         let userResponse = confirm(response.data.value + " Продолжить сохранение?");
-                        if(userResponse){
+                        if (userResponse) {
                             console.log("Сохраняем с подтверждением");
                             $scope.saveTaskPost();
                         }
@@ -275,8 +276,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
     }
     $scope.addTime = function (taskId) {
         console.log("Другая");
-        $location.TaskId = taskId;
-        $location.path('/worktime');
+        $location.path('/worktime').search({taskId: taskId,currentUser: false});
     }
     let findNameWork = function (workId) {
         console.log("findNameWork")
@@ -366,28 +366,31 @@ angular.module('workTimeService').controller('taskController', function ($scope,
 
         showFindWork();
     }
-    $scope.clearFilter =function (load){
+    $scope.clearFilter = function (load) {
         $scope.Filt = {
             workId: null,
             size: 10
         }
-        if(load) {
+        if (load) {
             $scope.filterWork();
         }
     }
 
+    $scope.sendFilter = function () {
+        $location.sendFilter(location.hash,$scope.Filt);
+    }
 
-     let callBackType = function (response) {
+    let callBackType = function (response) {
         console.log("TaskListType");
         console.log(response);
         $scope.TaskListType = response.data;
-     }
+    }
 
-    $location.getCode ("task/code/type",callBackType);
+    $location.getCode("task/code/type", callBackType);
     $scope.Filt = $location.getFilter("taskFilter");
     $scope.FiltWork = $location.getFilter("taskEditFilter");
-    if($scope.FiltWork == null){
-        $scope.FiltWork ={size:10};
+    if ($scope.FiltWork == null) {
+        $scope.FiltWork = {size: 10};
     }
     console.log($scope.Filt);
     if ($scope.Filt === null) {

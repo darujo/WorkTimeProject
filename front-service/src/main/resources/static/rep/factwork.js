@@ -2,11 +2,42 @@ angular.module('workTimeService').controller('workFactRepController', function (
 
     const constPatchWork = window.location.origin + '/work-service/v1';
 
-    $scope.loadWorkTime = function () {
+    $scope.loadWork = function () {
         console.log("loadWorkTime");
-        $scope.findPage();
-    };
+        if (location.href.indexOf("?") !== -1) {
+            let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
+            for (let [key, value] of paramsStr.entries()) {
+                if (key.toLowerCase().indexOf("stage") !== -1 || key.toLowerCase().indexOf("size") !== -1 || key.toLowerCase().indexOf("sap") !== -1) {
+                    $scope.Filt[key] = parseInt(value);
+                } else if (key.toLowerCase().indexOf("date") !== -1) {
+                    console.log(key);
 
+                    console.log(paramsStr.get(key))
+                    console.log(new Date(paramsStr.get(key)));
+
+                    $scope.Filt[key] = new Date(paramsStr.get(key));
+                } else if (key.toLowerCase().indexOf("hide") !== -1) {
+                    console.log(key);
+
+                    console.log(paramsStr.get(key))
+                    console.log(value)
+                    if(paramsStr.get(key) === "false"){
+                        $scope.Filt[key] = false
+                    } else {
+                        $scope.Filt[key] = true;
+                    }
+                } else {
+                    $scope.Filt[key] = paramsStr.get(key);
+                }
+
+            }
+            console.log($scope.Filt);
+        }
+        $scope.filterWork();
+    };
+    $scope.sendFilter = function () {
+        $location.sendFilter(location.hash, $scope.Filt);
+    }
     $scope.filterWork = function () {
         $location.saveFilter("factWorkFilter",$scope.Filt);
         document.getElementById("Page").value = "1";
@@ -75,5 +106,5 @@ angular.module('workTimeService').controller('workFactRepController', function (
         $scope.clearFilter(false);
     }
     $scope.UserList = $location.UserList;
-    $scope.filterWork();
+    $scope.loadWork();
 })

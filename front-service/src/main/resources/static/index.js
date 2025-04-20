@@ -123,7 +123,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                         password: null
                     };
 
-                    $location.path('/');
+                    $location.path('/').search({});
                     document.getElementById("DetailPrim").open = true;
                 }
             }, function errorCallback(response) {
@@ -157,9 +157,9 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         console.log(window.location);
         console.log(window.location.hash === "#!/worktime");
         if (window.location.hash === "#!/worktime") {
-            $location.openEdit();
+            $location.openEdit().search({});
         } else {
-            $location.path('/worktime');
+            $location.path('/worktime').search({});
         }
     };
 
@@ -176,7 +176,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         // if ($scope.user.password) {
         //     $scope.user.password = null;
         // }
-        $location.path('/');
+        $location.path('/').search({});
     };
 
     $scope.clearUser = function () {
@@ -188,7 +188,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         if ($localStorage.authUser) {
             return true;
         } else {
-            $location.path('/');
+            $location.path('/').search({});
             return false;
         }
     };
@@ -210,6 +210,24 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         }
         return true;
 
+    }
+    $location.sendFilter = function (url, filter) {
+        let localPath;
+        if (url.indexOf("?") === -1) {
+            localPath = url.substring(url.indexOf("/"));
+        } else {
+            localPath = url.substring(url.indexOf("/"), url.indexOf("?"));
+        }
+        console.log(localPath);
+        $location.path(localPath).search(filter);
+        console.log(location.href)
+        navigator.clipboard.writeText(location.href)
+            .then(() => {
+                // Получилось!
+            })
+            .catch(err => {
+                console.log('Something went wrong', err);
+            });
     }
 
     $location.getCode = function (code,callBack) {

@@ -232,12 +232,12 @@ public class WorkTimeService {
                 break;
             case "create":
                 if (!rightCreate) {
-                    throw new ResourceNotFoundException("У вас нет права на редактирование WORK_TIME_CREATE");
+                    throw new ResourceNotFoundException("У вас нет права на создание WORK_TIME_CREATE");
                 }
                 break;
             case "changeuser":
                 if (!rightChangeUser) {
-                    throw new ResourceNotFoundException("У вас нет права на редактирование WORK_TIME_CREATE");
+                    throw new ResourceNotFoundException("У вас нет права на изменение пользователя WORK_TIME_CHANGE_USER");
                 }
                 break;
         }

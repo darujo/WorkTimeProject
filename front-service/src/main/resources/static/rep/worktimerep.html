@@ -14,9 +14,6 @@
                             <br>
                             <input class="vvod20" type="text" id="Release" step="any" ng-model="Filt.release"/>
                         </div>
-                        <div class="horiz"><p class="p-sort">Сортировать</p>
-                            <button ng-repeat="workSort in WorkSort" type="button" class="sortbutton" ng-click="delSort(workSort)">{{nameSort(workSort)}} </button>
-                        </div>
                         <div class="horiz">
                             <p class="p-head">Текущий этап ЗИ :</p>
                             <select class="vvod20" name="choice" id="StageZiFilt" ng-model="Filt.stageZi">
@@ -36,8 +33,14 @@
                                 <option ng-value="false" value="false">Без работ</option>
                                 <option ng-value="" value="">Все</option>
                             </select>
+                        </div>
+                        <div class="horiz"><p class="p-sort">Сортировать</p>
+                            <button ng-repeat="workSort in WorkSort" type="button" class="sortbutton" ng-click="delSort(workSort)">{{nameSort(workSort)}} </button>
+                        </div>
+                        <div class="horiz">
                             <button type="submit" class="headbutton">Применить</button>
                             <button type="button" class="headbutton" ng-click="clearFilter(true)">Сбросить</button>
+                            <button type="button" class="headbutton" ng-click="sendFilter()">Поделиться</button>
 
                         </div>
                     </div>

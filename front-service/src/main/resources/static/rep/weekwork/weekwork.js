@@ -22,11 +22,53 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
 
     $scope.loadWorkTime = function () {
         console.log("loadWorkTime");
+        if (location.href.indexOf("?") !== -1) {
+            let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
+            for (let [key, value] of paramsStr.entries()) {
+                if (key.toLowerCase().indexOf("stage") !== -1 || key.toLowerCase().indexOf("size") !== -1 || key.toLowerCase().indexOf("sap") !== -1) {
+                    $scope.Filt[key] = parseInt(value);
+                } else if (key.toLowerCase().indexOf("date") !== -1) {
+                    console.log(key);
+
+                    console.log(paramsStr.get(key))
+                    console.log(new Date(paramsStr.get(key)));
+
+                    $scope.Filt[key] = new Date(paramsStr.get(key));
+                } else if (key.indexOf("weekSplit") !== -1
+                    || key.indexOf("workTask") !== -1
+                    || key.indexOf("workTime") !== -1
+                    || key.indexOf("workPercent") !== -1
+                    || key.indexOf("addTotal") !== -1
+                    || key.indexOf("ziSplit") !== -1) {
+                    console.log(key);
+
+                    console.log(paramsStr.get(key))
+                    console.log(value)
+                    $scope.Filt[key] = paramsStr.get(key) !== "false";
+                } else {
+                    $scope.Filt[key] = paramsStr.get(key);
+                }
+
+            }
+            console.log($scope.Filt);
+        }
         console.log($scope.Filt);
 
         $scope.findPage(0);
     };
+    $scope.sendFilter = function () {
+        $scope.Filt["weekSplit"] = $scope.Filt.weekSplit ? true : false;
+        $scope.Filt["workTask"] = $scope.Filt.workTask ? true : false;
+        $scope.Filt["workTime"] = $scope.Filt.workTime ? true : false;
+        $scope.Filt["workPercent"] = $scope.Filt.workPercent ? true : false;
+        $scope.Filt["addTotal"] = $scope.Filt.addTotal ? true : false;
+        $scope.Filt["ziSplit"] = $scope.Filt.ziSplit ? true : false;
 
+
+
+
+        $location.sendFilter(location.hash, $scope.Filt);
+    }
     let maxPage;
     $scope.findPage = function (diff) {
         console.log("findPage");

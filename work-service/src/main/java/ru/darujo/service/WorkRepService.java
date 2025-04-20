@@ -280,7 +280,7 @@ public class WorkRepService {
     }
 
 
-    public List<WorkUserTime> getWeekWork(boolean ziSplit, Boolean addTotal, String nikName, boolean weekSplit, Timestamp dateStart, Timestamp dateEnd,
+    public List<WorkUserTime> getWeekWork(boolean ziSplit, Boolean addTotal, String nikName, Boolean weekSplit, Timestamp dateStart, Timestamp dateEnd,
                                           Integer page, Integer size, String name, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, String release, String sort) {
         List<WorkUserTime> workUserTimes = new ArrayList<>();
         if (ziSplit) {
