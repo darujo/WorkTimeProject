@@ -288,7 +288,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                     || key.toLowerCase().indexOf("sap") !== -1
                     || key.indexOf("period") !== -1
                     || key.toLowerCase().indexOf("kid") !== -1
-                    || key.toLowerCase().indexOf("type")  !== -1
+                    || key.toLowerCase().indexOf("type") !== -1
                 ) {
                     console.log("int");
                     console.log(key);
@@ -315,6 +315,17 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                     console.log(paramsStr.get(key))
                     console.log(value)
                     filter[key] = paramsStr.get(key) !== "false";
+                } else if (key.indexOf("listId") !== -1) {
+                    console.log("listId");
+                    console.log(typeof  filter[key]);
+                    console.log(paramsStr.get(key));
+                    console.log(paramsStr.getAll(key));
+
+                    if(typeof  filter[key] === "undefined"){
+                        filter[key] = [];
+                    }
+                    filter[key].push(parseInt(value));
+                    console.log(filter[key]);
                 } else {
                     console.log(key);
                     paramsStr.get(key);

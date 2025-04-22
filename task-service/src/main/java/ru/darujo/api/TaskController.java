@@ -15,6 +15,7 @@ import ru.darujo.integration.WorkServiceIntegration;
 import ru.darujo.model.Task;
 import ru.darujo.service.TaskService;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 @RestController()
@@ -104,12 +105,18 @@ public class TaskController extends DateParser {
                                        @RequestParam(required = false) String ziName,
                                        @RequestParam(required = false) Integer type,
                                        @RequestParam(defaultValue = "1") Integer page,
-                                       @RequestParam(defaultValue = "10") Integer size) {
+                                       @RequestParam(defaultValue = "10") Integer size,
+                                       @RequestParam(required = false) Long[] arrTaskId) {
+        List<Long> listTaskId = null;
+        if(arrTaskId != null && arrTaskId.length != 0){
+            listTaskId = Arrays.asList(arrTaskId);
+
+        }
         if (workId == null && ziName != null) {
-            return findTasks(nikName, codeBTS, codeDEVBO, description, ziName,workId, type);
+            return findTasks(nikName, codeBTS, codeDEVBO, description, ziName,workId, type, listTaskId);
         }
 
-        return findTasks(nikName, codeBTS, codeDEVBO, description, workId, type, page, size);
+        return findTasks(nikName, codeBTS, codeDEVBO, description, workId, type, page, size, listTaskId);
     }
 
 
@@ -120,7 +127,8 @@ public class TaskController extends DateParser {
                                    Long workId,
                                    Integer type,
                                    Integer page,
-                                   Integer size) {
+                                   Integer size,
+                                   List<Long> listTaskId) {
         clearCash();
         return ((Page<Task>) taskService.findTask(userName,
                 codeBTS,
@@ -128,6 +136,7 @@ public class TaskController extends DateParser {
                 description,
                 workId,
                 type,
+                listTaskId,
                 page,
                 size)).map(this::taskAddValue);
     }
@@ -199,7 +208,8 @@ public class TaskController extends DateParser {
                                    String description,
                                    String ziName,
                                    Long workId,
-                                   Integer type) {
+                                   Integer type,
+                                   List<Long> listTaskId) {
         clearCash();
         List<TaskDto> taskDtoList = new ArrayList<>();
         taskService.findTask(userName,
@@ -208,6 +218,7 @@ public class TaskController extends DateParser {
                 description,
                 workId,
                 type,
+                listTaskId,
                 null,
                 null).forEach(task ->
         {

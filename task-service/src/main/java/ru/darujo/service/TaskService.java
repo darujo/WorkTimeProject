@@ -69,7 +69,6 @@ public class TaskService {
     public void deleteWorkTime(Long id) {
         taskRepository.deleteById(id);
     }
-
     public Iterable<Task> findTask(String nikName,
                                    String codeBTS,
                                    String codeDEVBO,
@@ -77,12 +76,33 @@ public class TaskService {
                                    Long workId,
                                    Integer type,
                                    Integer page,
+                                   Integer size){
+       return findTask(nikName,
+                codeBTS,
+                codeDEVBO,
+                description,
+                workId,
+                type,
+                null,
+                page,
+                size);
+    }
+
+    public Iterable<Task> findTask(String nikName,
+                                   String codeBTS,
+                                   String codeDEVBO,
+                                   String description,
+                                   Long workId,
+                                   Integer type,
+                                   List<Long> listTaskId,
+                                   Integer page,
                                    Integer size) {
         Specification<Task> specification = Specification.where(TaskSpecifications.queryDistinctTrue());
-        specification = getTaskSpecificationLike("nikName", nikName, specification);
-        specification = getTaskSpecificationLike("codeBTS", codeBTS, specification);
-        specification = getTaskSpecificationLike("codeDEVBO", codeDEVBO, specification);
-        specification = getTaskSpecificationLike("description", description, specification);
+        specification = TaskSpecifications.in(specification,"id", listTaskId);
+        specification = TaskSpecifications.like("nikName", nikName, specification);
+        specification = TaskSpecifications.like("codeBTS", codeBTS, specification);
+        specification = TaskSpecifications.like("codeDEVBO", codeDEVBO, specification);
+        specification = TaskSpecifications.like("description", description, specification);
         if (type != null) {
             specification = specification.and(TaskSpecifications.typeEq(type));
         }
@@ -97,12 +117,7 @@ public class TaskService {
 
     }
 
-    private Specification<Task> getTaskSpecificationLike(String field, String value, Specification<Task> specification) {
-        if (value != null && !value.equals("")) {
-            specification = specification.and(TaskSpecifications.like(field, value));
-        }
-        return specification;
-    }
+
 
     @Transactional
     public boolean refreshTime(long id) {
@@ -140,7 +155,7 @@ public class TaskService {
         Specification<Task> specification = Specification.where(null);
 
         if (value != null && !value.equals("")) {
-            specification = getTaskSpecificationLike(dbField, value, specification);
+            specification = TaskSpecifications.like(dbField, value, specification);
             if (id != null) {
                 specification = specification.and(TaskSpecifications.notEqual("id", id));
             }

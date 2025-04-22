@@ -70,7 +70,7 @@ public class WorkTimeController extends DateParser {
                                               @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
                                               @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
                                               @RequestParam(required = false, name = "dateGe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGeStr,
-                                              @RequestParam(required = false) Long taskId,
+                                              @RequestParam(required = false) Long[] taskId,
                                               @RequestParam(required = false) String taskDEVBO,
                                               @RequestParam(required = false) String taskBTS,
                                               @RequestParam(required = false) String nikName,

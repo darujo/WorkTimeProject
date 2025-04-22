@@ -3,6 +3,8 @@ package ru.darujo.repository.specifications;
 import org.springframework.data.jpa.domain.Specification;
 import ru.darujo.model.Task;
 
+import java.util.List;
+
 
 public class TaskSpecifications {
     public static Specification<Task> workIdEQ(Long workId){
@@ -30,6 +32,22 @@ public class TaskSpecifications {
             query.distinct(true);
             return null;
         });
+    }
+    public static Specification<Task> like(String field, String value, Specification<Task> specification) {
+        if (value != null && !value.equals("")) {
+            specification = specification.and(TaskSpecifications.like(field, value));
+        }
+        return specification;
+    }
+    public static Specification<Task> in(Specification<Task> specification, String field, List<Long> value){
+        if(value != null && !value.isEmpty()){
+            specification = specification.and(in(field,value));
+        }
+        return specification;
+    }
+    public static Specification<Task> in(String field, List<Long> value){
+        return ((root, query, criteriaBuilder) ->
+                root.get(field).in(value));
     }
 
 }

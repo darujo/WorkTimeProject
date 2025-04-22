@@ -26,7 +26,7 @@ public class WorkTimeRepController extends DateParser {
 
 
     @GetMapping("/time")
-    public Float getTimeWork(@RequestParam(required = false) Long taskId,
+    public Float getTimeWork(@RequestParam(required = false) Long[] taskId,
                              @RequestParam(required = false) String nikName,
                              @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
                              @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
@@ -40,7 +40,7 @@ public class WorkTimeRepController extends DateParser {
     }
 
     @GetMapping("/user")
-    public ListString getFactUser(@RequestParam(required = false) Long taskId,
+    public ListString getFactUser(@RequestParam(required = false) Long[] taskId,
                                   @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr
                                   ) {
         Date dateLe = stringToDate(dateLeStr, "dateLe = ", false);
@@ -73,7 +73,7 @@ public class WorkTimeRepController extends DateParser {
     }
 
     @GetMapping("/week")
-    public List<UserWorkDto> getWeekWork(@RequestParam(required = false) Long taskId,
+    public List<UserWorkDto> getWeekWork(@RequestParam(required = false) Long[] taskId,
                                          @RequestParam(required = false) String nikName,
                                          @RequestParam(defaultValue = "false") Boolean addTotal,
                                          @RequestParam(defaultValue = "true") Boolean weekSplit,

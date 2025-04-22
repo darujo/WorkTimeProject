@@ -50,6 +50,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
     }
 
     let TaskIdEdit = null;
+    let arrTaskId = [];
     $scope.loadTask = function () {
         console.log("loadTask");
         console.log("$location.WorkId " + $location.WorkId);
@@ -86,7 +87,6 @@ angular.module('workTimeService').controller('taskController', function ($scope,
         let page = parseInt(document.getElementById("Page").value) + diffPage;
         document.getElementById("Page").value = page;
         console.log("запрос данных7");
-
         let Filt;
         Filt = $scope.Filt;
         console.log(Filt);
@@ -101,7 +101,8 @@ angular.module('workTimeService').controller('taskController', function ($scope,
                 codeDEVBO: Filt ? Filt.devbo : null,
                 description: Filt ? Filt.desc : null,
                 ziName: Filt ? Filt.ziName : null,
-                type: Filt ? Filt.type : null
+                type: Filt ? Filt.type : null,
+                arrTaskId: Filt.favouriteTask ? arrTaskId : Filt ? Filt.listId :null,
 
             }
         }).then(function (response) {
@@ -152,6 +153,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
             codeDEVBO: "DEVBO-000",
             description: null,
             type: 1
+
         };
         // $scope
         console.log($scope.Task);
@@ -267,7 +269,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
     }
     $scope.addTime = function (taskId) {
         console.log("Другая");
-        $location.path('/worktime').search({taskId: taskId,currentUser: false});
+        $location.path('/worktime').search({taskId: taskId, currentUser: false});
     }
     let findNameWork = function (workId) {
         console.log("findNameWork")
@@ -368,7 +370,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
     }
 
     $scope.sendFilter = function () {
-        $location.sendFilter(location.hash,$scope.Filt);
+        $location.sendFilter(location.hash, $scope.Filt);
     }
 
     let callBackType = function (response) {
@@ -376,6 +378,48 @@ angular.module('workTimeService').controller('taskController', function ($scope,
         console.log(response);
         $scope.TaskListType = response.data;
     }
+    
+    if (typeof $localStorage.favourites !== "undefined"
+        && typeof $localStorage.favourites.listTaskID !== "undefined" ){
+        arrTaskId=  $localStorage.favourites.listTaskID;
+    }
+    $scope.addDelTaskId = function (element) {
+        let i = arrTaskId.indexOf(element);
+        if (-1 === i) {
+            $scope.addTaskId(element);
+        } else {
+            $scope.delTaskId(element);
+        }
+    }
+
+    $scope.addTaskId = function (element) {
+        console.log("addTaskId");
+
+        let i = arrTaskId.indexOf(element);
+        if (-1 === i) {
+            arrTaskId.push(element);
+            $localStorage.favourites = {listTaskID: arrTaskId};
+        }
+        console.log(arrTaskId);
+    }
+    $scope.delTaskId = function (element) {
+        console.log("delTaskId");
+        let i = arrTaskId.indexOf(element);
+        if (-1 !== i) {
+            arrTaskId.splice(i, 1);
+            $localStorage.favourites = {listTaskID: arrTaskId};
+        }
+    }
+    $scope.getStyle = function (taskId) {
+        let i = arrTaskId.indexOf(taskId);
+        if (-1 !== i) {
+            return {
+                'background-color': 'yellow'
+            };
+        } else {
+            return {};
+        }
+    };
 
     $location.getCode("task/code/type", callBackType);
     $scope.Filt = $location.getFilter("taskFilter");

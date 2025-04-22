@@ -74,16 +74,12 @@ public class WorkTimeService {
         workTimeRepository.deleteById(id);
     }
 
-    public Iterable<WorkTime> findWorkTime(Long taskId, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, String comment, Integer page, Integer size) {
+    public Iterable<WorkTime> findWorkTime(Long[] taskId, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, String comment, Integer page, Integer size) {
         Specification<WorkTime> specification = Specification.where(null);
         Sort sort = null;
         if (taskId != null) {
-            specification = specification.and(WorkTimeSpecifications.taskIdEQ(taskId));
-//            if (sort == null)
-            sort = Sort.by("taskId");
-//            else{
-//              sort.and(Sort.by("taskId"));
-//            }
+            specification = WorkTimeSpecifications.in(specification, "taskId", taskId);
+//            sort = Sort.by("taskId");
         }
         if (nikName != null) {
             specification = specification.and(WorkTimeSpecifications.userNikNameEQ(nikName));
@@ -127,10 +123,13 @@ public class WorkTimeService {
     public List<WorkTime> findWorkTimeTask(String taskDEVBO, String taskBts, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, String comment) {
         List<WorkTime> workTimes = new ArrayList<>();
         List<Long> taskIdList = taskServiceIntegration.getTaskList(taskDEVBO, taskBts);
-        taskIdList.forEach(taskId ->
-                findWorkTime(taskId, nikName, dateLt, dateLe, dateGT, dateGE, type, comment, null, null)
-                        .forEach(workTimes::add)
-        );
+        if( taskIdList == null){
+            return null;
+        }
+
+        findWorkTime(taskIdList.toArray(new Long[0]), nikName, dateLt, dateLe, dateGT, dateGE, type, comment, null, null)
+                .forEach(workTimes::add)
+        ;
         return workTimes;
     }
 

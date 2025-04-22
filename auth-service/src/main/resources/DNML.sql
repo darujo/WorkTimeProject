@@ -23,4 +23,4 @@ VALUES (1,'ADMIN', '$2a$12$s/dfgSfPDZ8.VzJsNWyc2.HtONZFFITs1abzNX8Bei4ebLmnwOkDO
 
 INSERT INTO userrepo.user_roles
 (user_id, role_id)
-VALUES(8, 1);
+VALUES(1, 1);

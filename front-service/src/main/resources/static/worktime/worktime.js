@@ -147,7 +147,7 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
                 size: Filt ? Filt.size : null,
                 dateLe: Filt ? Filt.dateLe : null,
                 dateGe: Filt ? Filt.dateGe : null,
-                taskId: Filt ? Filt.taskId : null,
+                taskId: Filt ? Filt.listId ? Filt.listId :Filt.taskId : null,
                 taskDEVBO: Filt ? Filt.taskDevbo : null,
                 taskBTS: Filt ? Filt.taskBts : null,
                 nikName: Filt ? Filt.nikName : null,

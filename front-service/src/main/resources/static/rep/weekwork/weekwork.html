@@ -178,14 +178,18 @@
             <td ng-repeat="taskType in TaskListType">
                 <div class="horiz">
                     <div class="div-type" ng-if="Filt.workTask">
-                        <p class="p-td">
+                        <button class="p-td" ng-click="openTask(work.workTask,taskType.codeInt)">
+<!--                        <p class="p-td">-->
                             {{searchJson(work.workTaskColAttr,"codeInt",taskType.codeInt,"value")}}
-                        </p>
+<!--                        </p>-->
+                        </button>
                     </div>
                     <div class="div-type" ng-if="Filt.workTime">
-                        <p class="p-td">
+                        <button class="p-td" ng-click="openWorkTime(work.nikName,work.workTask,taskType.codeInt,work.dateStart,work.dateEnd)">
+<!--                        <p class="p-td">-->
                             {{searchJson(work.workTimeAttr,"codeInt",taskType.codeInt,"value")}}
-                        </p>
+<!--                        </p>-->
+                        </button>
                     </div>
                     <div class="div-type" ng-if="Filt.workPercent">
                         <p class="p-td">

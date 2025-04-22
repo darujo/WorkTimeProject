@@ -12,7 +12,7 @@ import ru.darujo.repository.TaskRepository;
 import ru.darujo.repository.specifications.TaskSpecifications;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Service
 @Primary
@@ -78,31 +78,9 @@ public class TaskRepService {
     }
 
     public List<UserWorkDto> getWeekWork(Long workId, String nikName, Boolean addTotal) {
-        LinkedHashMap<String,UserWorkDto> userWorkDtoHashMap = new LinkedHashMap<>();
-        taskService.findTask(null,null,null,null,workId,null,null,null)
-                .forEach(task -> workTimeServiceIntegration.getWorkUserOrZi(task.getId(), nikName, addTotal, false, null, null)
-                        .forEach(userWorkDto -> {
-                            UserWorkDto userWorkDtoSave = userWorkDtoHashMap.get(userWorkDto.getNikName());
-                            if (userWorkDtoSave == null){
-                                userWorkDtoHashMap.put(userWorkDto.getNikName(),userWorkDto);
-                            } else {
-                                userWorkDto.getWorkTime().forEach(userWorkDtoSave::addTime);
-                                userWorkDto.getWorkTask().forEach((type, tasks) ->  tasks.forEach(taskId ->  userWorkDtoSave.addTask(type,taskId)));
-                            }
-                        }));
-        List<UserWorkDto> userWorkDTOs = new ArrayList<>();
-        AtomicReference<Boolean> first = new AtomicReference<>(true);
-        userWorkDtoHashMap.forEach((s, userWorkDto) -> {
-            if(first.get()) {
-                first.set(false);
-                userWorkDto.setUserCol(userWorkDtoHashMap.size());
+        List<Task> tasks = (List<Task>) taskService.findTask(null, null, null, null, workId, null, null, null);
 
-            } else {
-                userWorkDto.setUserCol(null);
-            }
-            userWorkDTOs.add(userWorkDto.addTimeAll());
+        return workTimeServiceIntegration.getWorkUserOrZi(tasks.stream().map(Task::getId).collect(Collectors.toList()), nikName, addTotal, false, null, null);
 
-        });
-        return userWorkDTOs;
     }
 }

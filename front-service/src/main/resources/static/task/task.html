@@ -38,6 +38,9 @@
                             <input class="vvod80" type="text" id="ZiNameFilt" step="any" ng-model="Filt.ziName"/>
                         </div>
                         <div class="horiz">
+                            <p class="p-head">Избранное</p> <input class="vvod20" type="checkbox"
+                                                                    id="FavoritTask"
+                                                                    ng-model="Filt.favouriteTask"/>
                             <button type="submit" class="headbutton">Применить</button>
                             <button type="button" class="headbutton" ng-click="clearFilter(true)">Сбросить</button>
                             <button type="button" class="headbutton" ng-click="sendFilter()">Поделиться</button>
@@ -85,9 +88,13 @@
             </td>
 
             <td class="textnotwrap">{{task.codeBTS}}</td>
-            <td class="textnotwrap">{{task.codeDEVBO}}</td>
+            <td class="textnotwrap">
+                <button class="buttontable" ng-click="addDelTaskId(task.id);" ng-style="getStyle(task.id)">
+                    {{task.codeDEVBO}}
+                </button>
+            </td>
             <td>
-                <button ng-click="addTime(task.id);">{{task.description}}</button>
+                <button class="buttontable" ng-click="addTime(task.id);">{{task.description}}</button>
             </td>
             <td>{{task.typeStr}}</td>
             <td class="textnotwrap">{{task.codeZi}}</td>

@@ -41,7 +41,7 @@ public class WorkTimeRepService {
         this.calendarServiceIntegration = calendarServiceIntegration;
     }
 
-    public float getTimeWork(Long taskId, String nikName, Date dateGt, Date dateLe, String typeStr) {
+    public float getTimeWork(Long[] taskId, String nikName, Date dateGt, Date dateLe, String typeStr) {
         ArrayList<Integer> types = new ArrayList<>();
 
         if (typeStr != null && typeStr.equals("analise")) {
@@ -67,13 +67,13 @@ public class WorkTimeRepService {
         return time.get();
     }
 
-    public ListString getFactUser(Long taskId, Date dateLe) {
+    public ListString getFactUser(Long[] taskId, Date dateLe) {
         ListString users = new ListString();
         workTimeService.findWorkTime(taskId, null, null, dateLe, null, null, null, null, null, null).forEach(workTime -> users.getList().add(workTime.getNikName()));
         return users;
     }
 
-    public List<UserWorkDto> getWeekWork(Long taskId, String nikName, boolean addTotal, boolean weekSplit, Timestamp dateStart, Timestamp dateEnd) {
+    public List<UserWorkDto> getWeekWork(Long[] taskId, String nikName, boolean addTotal, boolean weekSplit, Timestamp dateStart, Timestamp dateEnd) {
         List<UserWorkDto> userWorkDTOs = new ArrayList<>();
         List<WeekWorkDto> weekWorkDTOs;
         if (taskId != null) {

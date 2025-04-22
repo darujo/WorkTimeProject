@@ -1,9 +1,10 @@
 angular.module('workTimeService').controller('weekWorkController', function ($scope, $http, $location, $localStorage) {
 
     const constPatchWork = window.location.origin + '/work-service/v1/works';
-    $scope.clearFilter =function (load){
+    $scope.clearFilter = function (load) {
         console.log("clearFilter");
-        $scope.Filt  = {    dateStart: new Date(),
+        $scope.Filt = {
+            dateStart: new Date(),
             dateEnd: new Date(),
             weekSplit: true,
             workTask: true,
@@ -14,7 +15,7 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
             size: 10
         };
         console.log($scope.Filt);
-        if(load){
+        if (load) {
             $scope.filterWorkTime();
             $scope.Filt.page = 1;
         }
@@ -34,8 +35,6 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
         $scope.Filt["workPercent"] = $scope.Filt.workPercent ? true : false;
         $scope.Filt["addTotal"] = $scope.Filt.addTotal ? true : false;
         $scope.Filt["ziSplit"] = $scope.Filt.ziSplit ? true : false;
-
-
 
 
         $location.sendFilter(location.hash, $scope.Filt);
@@ -66,8 +65,8 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
                 ziSplit: Filt ? Filt.ziSplit : null,
                 addTotal: Filt ? Filt.addTotal : null,
                 //ЗИ
-                page: Filt ? Filt.page :1,
-                size: Filt ? Filt.size :10,
+                page: Filt ? Filt.page : 1,
+                size: Filt ? Filt.size : 10,
                 name: Filt ? Filt.name : null,
                 task: Filt ? Filt.task : null,
                 codeSap: Filt ? Filt.codeSap : null,
@@ -81,7 +80,7 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
             $scope.ziSplit = Filt.ziSplit;
         }, function errorCallback(response) {
             console.log(response)
-            if($location.checkAuthorized(response)){
+            if ($location.checkAuthorized(response)) {
                 //     alert(response.data.message);
             }
         });
@@ -97,22 +96,38 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
         console.log(response);
         $scope.TaskListType = response.data;
     }
-    $scope.searchJson = function (list, searchField, searchVal, resultField ){
+    $scope.searchJson = function (list, searchField, searchVal, resultField) {
         // console.log("searchJson");
         // console.log(list);
         // console.log(searchField);
         // console.log(searchVal);
         // console.log(resultField);
-        for (let i=0 ; i < list.length ; i++)
-        {
+        for (let i = 0; i < list.length; i++) {
             if (list[i][searchField] === searchVal) {
                 return list[i][resultField]
             }
         }
     }
+    $scope.openTask = function (task, type) {
+        console.log(typeof task[type])
+        if (typeof task[type] !== "undefined") {
+            $location.path("/task").search({listId: task[type]});
+        }
+    }
+    $scope.openWorkTime = function (nikName, task, type, dateGe, dateLe) {
+        if (typeof task[type] !== "undefined") {
+            $location.path("/worktime").search({
+                listId: task[type],
+                nikName: nikName,
+                currentUser: false,
+                dateGe: dateGe,
+                dateLe: dateLe
+            });
+        }
+    }
 
-    $location.getCode ("task/code/type",callBackType);
-    $scope.clearFilter (false);
+    $location.getCode("task/code/type", callBackType);
+    $scope.clearFilter(false);
     $scope.UserList = $location.UserList;
     $scope.loadWorkTime();
 })

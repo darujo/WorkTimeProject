@@ -3,7 +3,9 @@ package ru.darujo.repository.specifications;
 import org.springframework.data.jpa.domain.Specification;
 import ru.darujo.model.WorkTime;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 public class WorkTimeSpecifications {
     public static Specification<WorkTime> dateGE(Date date){
@@ -33,5 +35,30 @@ public class WorkTimeSpecifications {
         return ((root, query, criteriaBuilder) ->
                 criteriaBuilder.like(criteriaBuilder.lower(root.get(field)),
                                      String.format("%%%s%%",value).toLowerCase()));
+    }
+
+    public static Specification<WorkTime> in(Specification<WorkTime> specification, String field, Long[] value){
+        if(value != null && value.length > 0){
+            if(value.length == 1){
+                specification = eq (specification,field,value[0]);
+            } else {
+                specification = specification.and(in(field, Arrays.asList(value)));
+            }
+        }
+        return specification;
+    }
+    public static Specification<WorkTime> in(String field, List<Long> value){
+        return ((root, query, criteriaBuilder) ->
+                root.get(field).in(value));
+    }
+    public static Specification<WorkTime> eq(Specification<WorkTime> specification, String field, Long value){
+        if(value != null){
+            specification = specification.and(eq(field,value));
+        }
+        return specification;
+    }
+    public static Specification<WorkTime> eq(String field, Long value){
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(field),value));
+
     }
 }

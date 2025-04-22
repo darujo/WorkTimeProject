@@ -83,15 +83,14 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
     }
 
     public List<UserWorkDto> getWorkUserOrZi(
-            Long taskId,
+            Iterable<Long> taskIds,
             String nikName,
             Boolean addTotal,
             Boolean weekSplit,
             Date dateStart,
             Date dateEnd) {
         StringBuilder stringBuilder = new StringBuilder();
-
-        addTeg(stringBuilder, "taskId", taskId);
+        taskIds.forEach(taskId -> addTeg(stringBuilder, "taskId", taskId));
         addTeg(stringBuilder, "nikName", nikName);
         addTeg(stringBuilder, "addTotal", addTotal);
         addTeg(stringBuilder, "weekSplit", weekSplit);
