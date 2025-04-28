@@ -31,6 +31,8 @@ public class WorkDto implements Serializable, WorkPlanTime {
     private Date startTaskPlan;
     // Дата начала доработки Факт
     private Date startTaskFact;
+    // Плановые трудозатраты, чел/час Анализ
+    private Float laborAnalise;
     // Плановые трудозатраты, чел/час Разработка прототипа
     private Float laborDevelop;
     // Плановые трудозатраты, чел/час Стабилизация прототипа
@@ -172,12 +174,22 @@ public class WorkDto implements Serializable, WorkPlanTime {
     public String getCodeZI() {
         return codeZI;
     }
+
+    public Float getLaborAnalise() {
+        return laborAnalise;
+    }
+
     SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
     private String dateToText(Date date){
         if (date == null){
             return null;
         }
         return sdf.format(date);
+    }
+
+    @Override
+    public void setLaborAnalise(Float laborAnalise) {
+        this.laborAnalise = laborAnalise;
     }
 
     public void setLaborDevelop(Float laborDevelop) {

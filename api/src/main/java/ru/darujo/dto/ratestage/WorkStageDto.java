@@ -49,6 +49,7 @@ public class WorkStageDto implements UserFio {
     private String nikName;
     private Integer role;
     private Float stage0;
+    private Float stage0Fact;
     private Float stage1;
     private Float stage2;
     private Float stage3;
@@ -127,5 +128,13 @@ public class WorkStageDto implements UserFio {
         if(time != null){
             stageAll = stageAll + time;
         }
+    }
+
+    public Float getStage0Fact() {
+        return stage0Fact;
+    }
+
+    public void setStage0Fact(Float stage0Fact) {
+        this.stage0Fact = stage0Fact;
     }
 }

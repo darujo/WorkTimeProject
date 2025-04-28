@@ -211,6 +211,7 @@ public class WorkService {
 
     public void updWorkPlanTime(WorkPlanTime workPlanTime) {
         WorkStageDto workStageDto = rateServiceIntegration.getTimePlan(workPlanTime.getId());
+        workPlanTime.setLaborAnalise(workStageDto.getStage0());
         workPlanTime.setLaborDevelop(workStageDto.getStage1());
         workPlanTime.setLaborDebug(workStageDto.getStage2());
         workPlanTime.setLaborRelease(workStageDto.getStage3());

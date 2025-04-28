@@ -267,8 +267,7 @@ public class WorkRepService {
 
     private Timestamp getTimeDevelop(Work work) {
         Timestamp timestampDevelop;
-        if (work.getAnaliseEndFact() == null
-                && work.getDevelopEndFact() == null
+        if (work.getDevelopEndFact() == null
                 && work.getDebugEndFact() == null
                 && work.getReleaseEndFact() == null
                 && work.getOpeEndFact() == null) {

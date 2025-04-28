@@ -79,7 +79,9 @@ public class WorkTimeService {
         Sort sort = null;
         if (taskId != null) {
             specification = WorkTimeSpecifications.in(specification, "taskId", taskId);
-//            sort = Sort.by("taskId");
+            if (taskId.length == 1) {
+                sort = Sort.by("taskId");
+            }
         }
         if (nikName != null) {
             specification = specification.and(WorkTimeSpecifications.userNikNameEQ(nikName));

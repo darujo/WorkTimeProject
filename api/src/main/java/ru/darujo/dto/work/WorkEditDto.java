@@ -41,6 +41,8 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
     private Timestamp startTaskPlan;
     // Дата начала доработки Факт
     private Timestamp startTaskFact;
+    // Плановые трудозатраты, чел/час анализ
+    private Float laborAnalise;
     // Плановые трудозатраты, чел/час Разработка прототипа
     private Float laborDevelop;
     // Плановые трудозатраты, чел/час Стабилизация прототипа
@@ -147,6 +149,10 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
         return startTaskFact;
     }
 
+    public Float getLaborAnalise() {
+        return laborAnalise;
+    }
+
     public Float getLaborDevelop() {
         return laborDevelop;
     }
@@ -210,6 +216,11 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
 
     public Timestamp getAnaliseEndPlan() {
         return analiseEndPlan;
+    }
+
+    @Override
+    public void setLaborAnalise(Float laborAnalise) {
+        this.laborAnalise = laborAnalise;
     }
 
     @Override

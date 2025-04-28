@@ -89,7 +89,7 @@
             <td class="tablehead2" rowspan="3"> Краткое описание внутренней задачи</td>
             <td class="tablehead3" rowspan="3"> Плановая дата завершения 0 этапа</td>
             <td class="tablehead2" rowspan="2" colspan="2"> Дата начала доработки</td>
-            <td class="tablehead2" colspan="4"> Плановые трудозатраты, чел/час</td>
+            <td class="tablehead2" colspan="5"> Плановые трудозатраты, чел/час</td>
             <td class="tablehead2" colspan="5"> Факт дата завершения этапа</td>
             <td class="tablehead3" rowspan="3"> Текущий этап ЗИ</td>
             <td class="tablehead2" rowspan="3">
@@ -98,10 +98,12 @@
             <td class="tablehead2" rowspan="2" colspan="2"> Выдача релиза даты</td>
             <td class="tablehead2" rowspan="3"></td>
             <td class="tablehead2" rowspan="3"></td>
+            <td class="tablehead2" rowspan="3"></td>
 
 
         </tr>
         <tr>
+            <td class="tablehead2"> 0 этап</td>
             <td class="tablehead2"> I этап</td>
             <td class="tablehead2"> II этап</td>
             <td class="tablehead2"> III этап</td>
@@ -119,6 +121,7 @@
         <tr>
             <td class="tablehead2"> План</td>
             <td class="tablehead2"> Факт</td>
+            <td class="tablehead2"> Анализ</td>
             <td class="tablehead2"> Разработка прототипа</td>
             <td class="tablehead2"> Стабилизация прототипа</td>
             <td class="tablehead2"> Стабилизация релиза</td>
@@ -146,6 +149,7 @@
             <td type="date">{{work.analiseEndPlan}}</td>
             <td class="date">{{work.startTaskPlan}}</td>
             <td>{{work.startTaskFact}}</td>
+            <td>{{work.laborAnalise}}</td>
             <td>{{work.laborDevelop}}</td>
             <td>{{work.laborDebug}}</td>
             <td>{{work.laborRelease}}</td>
@@ -258,12 +262,17 @@
             <summary class="p-form">Плановые трудозатраты</summary>
             <p class="p-form">, чел/час</p>
             <div class="horiz">
+                <p class="p-form20">Анализ :</p>
                 <p class="p-form20">Разработка прототипа :</p>
                 <p class="p-form20">Стабилизация прототипа :</p>
                 <p class="p-form20">Стабилизация релиза :</p>
                 <p class="p-form20">ОПЭ :</p>
             </div>
             <div class="horiz">
+                <input class="vvod20mar" type="number" inputmode="decimal"
+                       id="LaborAnalise" step="1"
+                       ng-model="Work.laborAnalise" readonly/>
+                <br>
                 <input class="vvod20mar" type="number" inputmode="decimal"
                        id="LaborDevelop" step="1"
                        ng-model="Work.laborDevelop" readonly/>

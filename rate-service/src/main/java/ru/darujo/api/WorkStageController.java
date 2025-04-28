@@ -14,6 +14,7 @@ import java.util.List;
 @RequestMapping("/v1/stage")
 public class WorkStageController {
     private WorkStageService workStageService;
+
     @Autowired
     public void setWorkStage(WorkStageService workStageService) {
         this.workStageService = workStageService;
@@ -37,10 +38,16 @@ public class WorkStageController {
 
     @GetMapping("")
     public List<WorkStageDto> WorkStageList(@RequestParam Long workId,
-                                            @RequestParam (defaultValue = "false") boolean loadFact ) {
+                                            @RequestParam(defaultValue = "false") boolean loadFact) {
         List<WorkStageDto> workStageDTOs = new ArrayList<>();
-        workStageService.findWorkStage(workId, loadFact).forEach(workStage ->  workStageDTOs.add(WorkStageConvertor.getWorkStageDto(workStage)));
-        workStageDTOs.forEach(workStageDto -> workStageService.updFio(workStageDto));
+        workStageService.findWorkStage(workId).forEach(workStage -> workStageDTOs.add(WorkStageConvertor.getWorkStageDto(workStage)));
+        workStageDTOs.forEach(workStageDto ->
+                workStageService.updFio(workStageDto)
+
+        );
+        if (loadFact) {
+            workStageService.updWorkStage(workId, workStageDTOs);
+        }
         return workStageDTOs;
     }
 

@@ -29,6 +29,8 @@ public class WorkRepDto implements Serializable, WorkPlanTime {
     private Date analiseEndPlan;
     // ВЕНДЕРКА
     private Date analiseEndFact;
+    // Плановые трудозатраты, чел/час анализ
+    private Float laborAnalise;
     // Плановые трудозатраты, чел/час разработки
     private Float laborDevelop;
     //начало разработки план
@@ -174,6 +176,10 @@ public class WorkRepDto implements Serializable, WorkPlanTime {
         return dateToText(developEndFact);
     }
 
+    public Float getLaborAnalise() {
+        return laborAnalise;
+    }
+
     public Float getLaborDevelop() {
         return laborDevelop;
     }
@@ -264,6 +270,11 @@ public class WorkRepDto implements Serializable, WorkPlanTime {
 
     public Float getTimeWender() {
         return timeWender;
+    }
+
+    @Override
+    public void setLaborAnalise(Float laborAnalise) {
+        this.laborAnalise = laborAnalise;
     }
 
     @Override

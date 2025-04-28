@@ -1,7 +1,8 @@
 angular.module('workTimeService').controller('workRateController', function ($scope, $http, $location, $localStorage) {
 
-    const constPatchWork = window.location.origin + '/rate-service/v1';
+    const constPatchWorkRate = window.location.origin + '/rate-service/v1';
     const constPatchRight = window.location.origin + '/work-service/v1';
+    const constPatchWork = window.location.origin + '/work-service/v1';
     $scope.showWorkStageAdd = function () {
         document.getElementById("WorkStageAdd").style.display = "block";
         document.getElementById("FormWorkStage").style.display = "none";
@@ -14,10 +15,25 @@ angular.module('workTimeService').controller('workRateController', function ($sc
         document.getElementById("FormWorkStage").style.display = "block";
     };
     let WorkId;
+    $scope.loadWork = function () {
+        console.log("loadWork");
+        $http({
+            url: constPatchWork + "/works//obj/little/" + WorkId,
+            method: "get"
+        }).then(function (response) {
+            console.log(response.data);
+            $scope.ZI = response.data;
+        }, function errorCallback(response) {
+            console.log(response)
+            if ($location.checkAuthorized(response)) {
+            }
+        });
+    };
+
     $scope.loadWorkStage = function () {
         console.log("loadWorkStage");
         $http({
-            url: constPatchWork + "/stage",
+            url: constPatchWorkRate + "/stage",
             method: "get",
             params: {
                 workId: WorkId,
@@ -48,7 +64,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
         showWorkStageEdit();
     }
     $scope.editWorkStage = function (workStageId) {
-        $http.get(constPatchWork + "/stage/" + workStageId)
+        $http.get(constPatchWorkRate + "/stage/" + workStageId)
             .then(function (response) {
                 // WorkTimeIdEdit = response.data.id;
                 $scope.WorkStage = response.data;
@@ -63,7 +79,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
             });
     }
     $scope.deleteWorkStage = function (workStageId) {
-        $http.delete(constPatchWork + "/stage/" + workStageId)
+        $http.delete(constPatchWorkRate + "/stage/" + workStageId)
             .then(function (response) {
                 // WorkTimeIdEdit = response.data.id;
                 $scope.WorkStage = response.data;
@@ -84,7 +100,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
         console.log($scope.WorkStage);
         if (!sendSave) {
             sendSave = true;
-            $http.post(constPatchWork + "/stage", $scope.WorkStage)
+            $http.post(constPatchWorkRate + "/stage", $scope.WorkStage)
                 .then(function (response) {
                     sendSave = false;
                     console.log(response);
@@ -113,7 +129,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
     $scope.loadWorkCriteria = function () {
         console.log("loadWorkCriteria");
         $http({
-            url: constPatchWork + "/criteria",
+            url: constPatchWorkRate + "/criteria",
             method: "get",
             params: {
                 workId: WorkId
@@ -140,7 +156,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
         showWorkCriteriaEdit();
     }
     $scope.editWorkCriteria = function (workCriteriaId) {
-        $http.get(constPatchWork + "/criteria/" + workCriteriaId)
+        $http.get(constPatchWorkRate + "/criteria/" + workCriteriaId)
             .then(function (response) {
                 // WorkTimeIdEdit = response.data.id;
                 $scope.WorkCriteria = response.data;
@@ -155,7 +171,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
             });
     }
     $scope.deleteWorkCriteria = function (workCriteriaId) {
-        $http.delete(constPatchWork + "/criteria/" + workCriteriaId)
+        $http.delete(constPatchWorkRate + "/criteria/" + workCriteriaId)
             .then(function (response) {
                 // WorkTimeIdEdit = response.data.id;
                 $scope.WorkCriteria = response.data;
@@ -176,7 +192,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
         console.log($scope.WorkCriteria);
         if (!sendSaveCriteria) {
             sendSaveCriteria = true;
-            $http.post(constPatchWork + "/criteria", $scope.WorkCriteria)
+            $http.post(constPatchWorkRate + "/criteria", $scope.WorkCriteria)
                 .then(function (response) {
                     sendSaveCriteria = false;
                     console.log(response);
@@ -240,7 +256,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
     $scope.loadRateStatus = function () {
         console.log("loadRateStatus");
         $http({
-            url: constPatchWork + "/rate/compare/sc",
+            url: constPatchWorkRate + "/rate/compare/sc",
             method: "get",
             params: {
                 workId: WorkId
@@ -271,6 +287,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
     $scope.UserList = $location.UserList;
     $scope.showWorkStageAdd();
     $scope.showWorkCriteriaAdd();
+    $scope.loadWork();
     $scope.loadWorkCriteria();
     $scope.loadWorkStage();
     $scope.loadRateStatus();

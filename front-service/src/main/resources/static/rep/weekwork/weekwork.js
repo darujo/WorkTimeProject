@@ -89,6 +89,7 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
     $scope.filterWorkTime = function () {
         console.log("filterWorkTime");
         $scope.Filt.page = 1;
+        $location.saveFilter("week_work",$scope.Filt);
         $scope.findPage(0);
     };
     let callBackType = function (response) {
@@ -127,7 +128,10 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
     }
 
     $location.getCode("task/code/type", callBackType);
-    $scope.clearFilter(false);
+    $scope.Filt = $location.getFilter("week_work");
+    if ($scope.Filt === null) {
+        $scope.clearFilter(false);
+    }
     $scope.UserList = $location.UserList;
     $scope.loadWorkTime();
 })

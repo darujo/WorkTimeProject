@@ -1,4 +1,6 @@
 <div id="WorkStageList" class="headtextelem">
+    <h1>{{ZI.codeSap}} </h1>
+    <h1>{{ZI.codeZI}} {{ZI.name}} </h1>
     <h1 ng-style="getStyle(RateStatus.code)">{{RateStatus.value}}</h1>
     <div class="horiz">
         <h1>Плановая оценка</h1>
@@ -9,6 +11,7 @@
             <td class="tablehead1">№ п/п</td>
             <td class="tablehead2">ФИО</td>
             <td class="tablehead1">Вид работ</td>
+            <td class="tablehead2">0 факт</td>
             <td class="tablehead2">0 этап</td>
             <td class="tablehead1">I этап</td>
             <td class="tablehead2">II этап</td>
@@ -29,6 +32,7 @@
             </td>
 
             <td>{{work.roleStr}}</td>
+            <td>{{work.stage0Fact}}</td>
             <td>{{work.stage0}}</td>
             <td>{{work.stage1}}</td>
             <td>{{work.stage2}}</td>

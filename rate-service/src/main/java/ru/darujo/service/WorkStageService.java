@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.MapStringFloat;
+import ru.darujo.dto.ratestage.WorkStageDto;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.user.UserFio;
 import ru.darujo.exceptions.ResourceNotFoundException;
@@ -88,16 +89,13 @@ public class WorkStageService {
     }
 
 
-    public List<WorkStage> findWorkStage(Long workId, Integer role, boolean loadFact) {
+    public List<WorkStage> findWorkStage(Long workId, Integer role) {
         Specification<WorkStage> specification = Specification.where(WorkStageSpecifications.workIdEq(workId));
         if (role != null) {
             specification = specification.and(WorkStageSpecifications.roleEq(role));
         }
 
         List<WorkStage> workStages = workStageRepository.findAll(specification);
-        if(loadFact) {
-            updWorkStage(workId, workStages);
-        }
         return workStages;
     }
 
@@ -133,27 +131,26 @@ public class WorkStageService {
 //        }
 //    }
 
-    private MapStringFloat getWorkTimeAnaliseFact(Long workId) {
+    private MapStringFloat getWorkTimeAnaliseFact(Long workId,String nikName) {
         try {
-            return workServiceIntegration.getWorkTimeStageFact(workId, null);
+            return workServiceIntegration.getWorkTimeStageFact(workId, nikName);
         } catch (RuntimeException ex) {
             return new MapStringFloat();
         }
     }
 
-    private void updWorkStage(Long workId, List<WorkStage> workStages) {
-        MapStringFloat mapStringFloat = getWorkTimeAnaliseFact(workId);
+    public void updWorkStage(Long workId, List<WorkStageDto> workStages) {
+        MapStringFloat mapStringFloat = getWorkTimeAnaliseFact(workId,null);
         if (mapStringFloat.getList().size() != 0) {
-            Map<String, WorkStage> workStageMap = new HashMap<>();
+            Map<String, WorkStageDto> workStageMap = new HashMap<>();
             workStages.forEach(workStage -> workStageMap.put(workStage.getNikName(), workStage));
             mapStringFloat.getList().forEach((nikName, time) -> {
-                WorkStage workStage = workStageMap.get(nikName);
+                WorkStageDto workStage = workStageMap.get(nikName);
                 if (workStage != null) {
-                    if (workStage.getStage0() == null || time > workStage.getStage0()) {
-                        workStage.setStage0(time);
-                    }
+                        workStage.setStage0Fact(time);
                 } else {
-                    workStage = new WorkStage(-1L, nikName, -1, time, 0f, 0f, 0f, 0f, workId);
+                    workStage = new WorkStageDto(-1L, nikName, -1, 0f, 0f, 0f, 0f, 0f, workId);
+                    workStage.setStage0Fact(time);
                     workStages.add(workStage);
                 }
             });
@@ -168,7 +165,7 @@ public class WorkStageService {
 //        }
 //    }
 
-    public List<WorkStage> findWorkStage(Long workId,boolean loadFact) {
-        return findWorkStage(workId, null, loadFact);
+    public List<WorkStage> findWorkStage(Long workId) {
+        return findWorkStage(workId, null);
     }
 }

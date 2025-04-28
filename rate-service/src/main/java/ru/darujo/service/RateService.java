@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.dto.ratestage.WorkStageDto;
+import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.model.WorkCriteria;
 import ru.darujo.model.WorkStage;
 
@@ -27,7 +28,7 @@ public class RateService {
         this.workCriteriaService = workCriteriaService;
     }
 
-    public AttrDto<Float> ComparisonStageCriteria(Long workId,boolean loadFact) {
+    public AttrDto<Float> ComparisonStageCriteria(Long workId) {
         AtomicReference<Float> timeCriteria = new AtomicReference<>();
         AtomicReference<Float> timeStage = new AtomicReference<>();
         timeCriteria.set( 0f);
@@ -36,7 +37,7 @@ public class RateService {
         workCriteriaList.forEach(
                 workCriteria -> timeCriteria.set(
                 timeCriteria.get() + getTime(workCriteria.getDevelop10()) + getTime(workCriteria.getDevelop50()) + getTime(workCriteria.getDevelop100())));
-        List<WorkStage> workStageList = workStageService.findWorkStage(workId, 1, loadFact);
+        List<WorkStage> workStageList = workStageService.findWorkStage(workId, 1);
         workStageList.forEach(
                 workStage -> timeStage.set(timeStage.get()
                 + getTime(workStage.getStage0())
@@ -62,13 +63,16 @@ public class RateService {
     }
 
     public WorkStageDto AllTime(Long workId, boolean loadFact) {
+        if(loadFact){
+            throw new ResourceNotFoundException("Загрузка с фактом не поддерживается");
+        }
         final Float[] stage = new Float[5];
         stage[0] = 0f;
         stage[1] = 0f;
         stage[2] = 0f;
         stage[3] = 0f;
         stage[4] = 0f;
-        workStageService.findWorkStage(workId,loadFact).forEach(workStage -> {
+        workStageService.findWorkStage(workId).forEach(workStage -> {
             stage[0] = stage[0] + getTime(workStage.getStage0());
             stage[1] = stage[1] + getTime(workStage.getStage1());
             stage[2] = stage[2] + getTime(workStage.getStage2());
