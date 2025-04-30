@@ -107,6 +107,7 @@
 angular.module('workTimeService').controller('indexController', function ($rootScope, $scope, $http, $location, $localStorage) {
     const constPatchAuth = window.location.origin;
     const constPatchUser = window.location.origin + '/users';
+    const constPatchRole = window.location.origin + '/roles';
     const constPatchCode = window.location.origin + '/task-service/v1/';
 
     $scope.tryToAuth = function () {
@@ -382,12 +383,33 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         });
 
     }
+    let loadRoles = function () {
+        console.log("Roles")
+
+        $http({
+            url: constPatchRole,
+            method: "get"
+
+        }).then(function (response) {
+            console.log("response role");
+            console.log(response.data);
+            $location.RoleList = response.data;
+
+        }, function errorCallback(response) {
+            console.log(" --- response user");
+            console.log(response)
+            if ($location.checkAuthorized(response)) {
+                alert(response.data.message);
+            }
+        });
+
+    }
     $scope.saveSetting = function () {
         $localStorage.UserSettingWorkTime = $scope.SettingUser;
     }
     $scope.SettingUser = $localStorage.UserSettingWorkTime;
     if ($scope.isUserLoggedIn) {
-
+        loadRoles();
         loadUsers();
         $scope.getUser();
     }

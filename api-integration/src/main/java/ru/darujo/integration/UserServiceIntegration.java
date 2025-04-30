@@ -1,14 +1,18 @@
 package ru.darujo.integration;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import ru.darujo.dto.CustomPageImpl;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 
 import java.util.List;
+import java.util.Objects;
+
 
 @Component
 public class UserServiceIntegration {
@@ -61,14 +65,15 @@ public class UserServiceIntegration {
             stringBuilder.append("role=").append(role);
         }
         try {
-            return webClientUser.get().uri( stringBuilder.toString())
+            return Objects.requireNonNull(webClientUser.get().uri(stringBuilder.toString())
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные пользователю")))
-                    .bodyToFlux(UserDto.class)
-                    .collectList()
-                    .block();
-        } catch (RuntimeException ex) {
+                    .bodyToMono(new ParameterizedTypeReference<CustomPageImpl<UserDto>>() {
+                    })
+                    .block()).getContent();
+        }
+        catch (RuntimeException ex) {
             if (ex instanceof ResourceNotFoundException)
             {
                 throw ex;
@@ -77,5 +82,7 @@ public class UserServiceIntegration {
                 throw new ResourceNotFoundException("Что-то пошло не так не удалось получить пользователя (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
             }
         }
+
     }
+
 }

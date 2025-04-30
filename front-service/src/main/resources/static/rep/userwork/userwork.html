@@ -14,6 +14,9 @@
                                     {{user.lastName}}
                                     {{user.firstName}} {{user.patronymic}}
                                 </option>
+                                <option ng-repeat="role in RoleList" ng-value="'ROLE_' + role.code" value="'ROLE_' + role.code">
+                                    {{role.name}}
+                                </option>
 
                                 <option ng-value="" value="">Мои</option>
 
