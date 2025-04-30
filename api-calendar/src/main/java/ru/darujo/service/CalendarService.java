@@ -148,9 +148,9 @@ public class CalendarService {
                 }
                 DateInfo dateInfo = productionCalendar.getDateInfo(date);
                 if(dateInfo.getType() == DayType.SHORTDAY){
-                    time = time + 7;
+                    time = time + getDayTime(date) - 1;
                 } else if(dateInfo.getType() == DayType.WORKDAY){
-                    time = time + 8;
+                    time = time + getDayTime(date);
                 }
 
             }
@@ -169,11 +169,17 @@ public class CalendarService {
         for (LocalDate date =dayStart;date.compareTo(dayEnd) <= 0;date = date.plusDays(1)){
             DateInfo dateInfo = productionCalendar.getDateInfo(date);
             if(dateInfo.getType() == DayType.SHORTDAY){
-                time = time + 7;
+                time = time + getDayTime(date) - 1;
             } else if(dateInfo.getType() == DayType.WORKDAY){
-                time = time + 8;
+                time = time + getDayTime(date);
             }
         }
         return time;
+    }
+    public Float getDayTime(LocalDate date){
+        if(date.getDayOfWeek().equals(DayOfWeek.FRIDAY)){
+            return 7f;
+        }
+        return 8.25f;
     }
 }
