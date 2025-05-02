@@ -435,10 +435,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         console.log("userLoad");
         console.log(userLoad);
         while (!userLoad) {
-            console.log("1111")
-           console.log(userLoad);
         }
-        console.log("222")
         return UserList;
     }
     $scope.saveSetting = function () {
