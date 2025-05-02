@@ -80,6 +80,13 @@ angular.module('workTimeService').controller('workFactRepController', function (
     if ($scope.Filt === null) {
         $scope.clearFilter(false);
     }
-    $scope.UserList = $location.getUsers();
+    let callBackUser = function (response){
+        console.log("callBackUser");
+        console.log(response);
+        $scope.UserList = response;
+    }
+
+    $location.getUsers(callBackUser);
+
     $scope.loadWork();
 })

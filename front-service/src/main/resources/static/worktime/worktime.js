@@ -475,9 +475,17 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
     console.log("Start");
     showWorkTime();
     console.log("Show ok");
-    $scope.UserList = $location.getUsers();
-    $scope.RoleList = $location.getRoles();
+    let callBackUser = function (response){
+        console.log("callBackUser");
+        console.log(response);
+        $scope.UserList = response;
+    }
+    let callBackRole = function (response){
+        $scope.RoleList = response;
+    }
 
+    $location.getUsers(callBackUser);
+    $location.getRoles(callBackRole);
     $scope.loadWorkTime();
     console.log("----------------------------------------")
     console.log($location.UserList);

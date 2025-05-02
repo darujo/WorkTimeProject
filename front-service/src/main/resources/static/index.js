@@ -425,18 +425,26 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         });
 
     }
-    $location.getRoles = function () {
-        while (!roleLoad) {
-
-        }
-        return RoleList;
+    function wait() {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve('Timeout resolved');
+            }, 100);
+        });
     }
-    $location.getUsers = function () {
+    $location.getRoles = async function (callBack) {
+        while (!roleLoad) {
+            await wait();
+        }
+        callBack(RoleList);
+    }
+    $location.getUsers = async function (callBack) {
         console.log("userLoad");
         console.log(userLoad);
         while (!userLoad) {
+            await wait();
         }
-        return UserList;
+        callBack( UserList);
     }
     $scope.saveSetting = function () {
         $localStorage.UserSettingWorkTime = $scope.SettingUser;
