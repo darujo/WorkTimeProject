@@ -159,10 +159,7 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
 
 
         }).then(function (response) {
-            console.log("sssssss");
             $scope.setFormWorkTime();
-            console.log("response :");
-            console.log(response);
             console.log("response,data :");
             console.log(response.data);
             if (typeof response.data.content === "undefined") {
