@@ -74,8 +74,8 @@ angular.module('workTimeService').controller('userWorkController', function ($sc
         }
     };
     $scope.clearFilter(false);
-    $scope.UserList = $location.UserList;
-    $scope.RoleList = $location.RoleList;
+    $scope.UserList = $location.getUsers();
+    $scope.RoleList = $location.getRoles();
     $scope.UserList.push({firstName: "Все", nikName: "All"});
     $scope.loadWorkTime();
 })

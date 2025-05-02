@@ -475,11 +475,11 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
     console.log("Start");
     showWorkTime();
     console.log("Show ok");
+    $scope.UserList = $location.getUsers();
+    $scope.RoleList = $location.getRoles();
 
     $scope.loadWorkTime();
     console.log("----------------------------------------")
     console.log($location.UserList);
-    $scope.UserList = $location.UserList;
-    $scope.RoleList = $location.RoleList;
 
 })

@@ -83,7 +83,7 @@
                 document.getElementById("DetailPrim").open = true;
             }
         });
-        $rootScope.$on('$routeChangeSuccess', function() {
+        $rootScope.$on('$routeChangeSuccess', function () {
             if (location.hash !== "#!/") {
                 $location.parserFilter("");
             }
@@ -344,9 +344,8 @@ angular.module('workTimeService').controller('indexController', function ($rootS
 
             }
             myFilter = filter;
-            myHash = location.hash.substring(location.hash.indexOf("/") + 1,location.hash.indexOf("?"));
-        }
-        else{
+            myHash = location.hash.substring(location.hash.indexOf("/") + 1, location.hash.indexOf("?"));
+        } else {
             myHash = location.hash.substring(location.hash.indexOf("/") + 1);
             myFilter = {};
         }
@@ -377,6 +376,8 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             }
         }
     }
+    let userLoad = false;
+    let UserList ;
     let loadUsers = function () {
         console.log("Users")
 
@@ -387,17 +388,20 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         }).then(function (response) {
             console.log("response user");
             console.log(response.data);
-            $location.UserList = response.data.content;
-
+            UserList = response.data.content;
+            userLoad = true;
         }, function errorCallback(response) {
             console.log(" --- response user");
             console.log(response)
+            userLoad = true;
             if ($location.checkAuthorized(response)) {
                 alert(response.data.message);
             }
         });
-        return {userList: $location.UserList};
+
     }
+    let roleLoad = false;
+    let RoleList;
     let loadRoles = function () {
         console.log("Roles")
 
@@ -408,7 +412,8 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         }).then(function (response) {
             console.log("response role");
             console.log(response.data);
-            $location.RoleList = response.data;
+            RoleList = response.data;
+            roleLoad = true;
 
         }, function errorCallback(response) {
             console.log(" --- response user");
@@ -416,8 +421,25 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             if ($location.checkAuthorized(response)) {
                 alert(response.data.message);
             }
+            roleLoad = true;
         });
 
+    }
+    $location.getRoles = function () {
+        while (!roleLoad) {
+
+        }
+        return RoleList;
+    }
+    $location.getUsers = function () {
+        console.log("userLoad");
+        console.log(userLoad);
+        while (!userLoad) {
+            console.log("1111")
+           console.log(userLoad);
+        }
+        console.log("222")
+        return UserList;
     }
     $scope.saveSetting = function () {
         $localStorage.UserSettingWorkTime = $scope.SettingUser;
