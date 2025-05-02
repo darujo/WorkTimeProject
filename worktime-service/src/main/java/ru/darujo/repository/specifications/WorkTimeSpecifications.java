@@ -23,10 +23,6 @@ public class WorkTimeSpecifications {
     public static Specification<WorkTime> taskIdEQ(Long taskId){
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("taskId"),taskId));
     }
-    public static Specification<WorkTime> userNikNameEQ(String nikName){
-        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("nikName"),nikName));
-    }
-
     public static Specification<WorkTime> typeEq(Integer type) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("type"),type));
     }
@@ -47,7 +43,7 @@ public class WorkTimeSpecifications {
         }
         return specification;
     }
-    public static Specification<WorkTime> in(String field, List<Long> value){
+    private static Specification<WorkTime> in(String field, List<Long> value){
         return ((root, query, criteriaBuilder) ->
                 root.get(field).in(value));
     }
@@ -57,7 +53,25 @@ public class WorkTimeSpecifications {
         }
         return specification;
     }
-    public static Specification<WorkTime> eq(String field, Long value){
+    private static Specification<WorkTime> eq(String field, Long value){
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(field),value));
+
+    }
+    public static Specification<WorkTime> in(Specification<WorkTime> specification, String field, List<String> value){
+        if(value != null && value.size() > 0){
+            if(value.size() == 1){
+                specification = specification.and(eq (field,value.get(0)));
+            } else {
+                specification = specification.and(inString(field, value));
+            }
+        }
+        return specification;
+    }
+    private static Specification<WorkTime> inString(String field, List<String> value){
+        return ((root, query, criteriaBuilder) ->
+                root.get(field).in(value));
+    }
+    private static Specification<WorkTime> eq(String field, String value){
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(field),value));
 
     }

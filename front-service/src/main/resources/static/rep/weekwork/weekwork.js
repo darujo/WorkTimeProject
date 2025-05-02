@@ -133,5 +133,6 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
         $scope.clearFilter(false);
     }
     $scope.UserList = $location.UserList;
+    $scope.RoleList = $location.RoleList;
     $scope.loadWorkTime();
 })

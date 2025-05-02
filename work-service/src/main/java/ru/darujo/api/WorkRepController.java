@@ -92,6 +92,7 @@ public class WorkRepController extends DateParser {
                                           @RequestParam(required = false) String nikName,
                                           @RequestParam(required = false) Boolean addTotal,
                                           @RequestParam(required = false) Boolean weekSplit,
+
                                           @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
                                           @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr,
 

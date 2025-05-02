@@ -177,15 +177,10 @@ public class WorkTimeRepService {
         }
         List<UserDto> userDTOs;
 
-        if (nikName == null) {
+        if (nikName == null || nikName.equalsIgnoreCase("all")) {
             userDTOs = workTimeService.getUsers(null);
-        } else if (nikName.equalsIgnoreCase("all")) {
-            userDTOs = workTimeService.getUsers(null);
-        } else if (nikName.length() > 5 && nikName.substring(0, 5).equalsIgnoreCase("role_")) {
-            userDTOs = workTimeService.getUsers(nikName.substring(5));
         } else {
-            userDTOs = new ArrayList<>();
-            userDTOs.add(new UserDto(nikName));
+            userDTOs = workTimeService.getUsers(nikName);
         }
         if (userDTOs == null || userDTOs.size() == 0) {
 

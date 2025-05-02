@@ -34,14 +34,18 @@ public class UserController {
     }
 
     @GetMapping("")
-    public Page<UserDto> getUserList(@RequestParam(required = false) String role,
-                                     @RequestParam(required = false) Integer page,
+    public Page<UserDto> getUserList(@RequestParam(required = false) Integer page,
                                      @RequestParam(required = false) Integer size,
                                      @RequestParam(required = false) String nikName,
                                      @RequestParam(required = false) String lastName,
                                      @RequestParam(required = false) String firstName,
                                      @RequestParam(required = false) String patronymic) {
-        return  userService.getUserList(role, page, size, nikName, lastName, firstName, patronymic).map(UserConvertor::getUserDto);
+        String role = null;
+        if (nikName != null && nikName.length() > 5 && nikName.substring(0, 5).equalsIgnoreCase("role_")) {
+            role = nikName.substring(5);
+            nikName = null;
+        }
+        return userService.getUserList(role, page, size, nikName, lastName, firstName, patronymic).map(UserConvertor::getUserDto);
 
 
     }

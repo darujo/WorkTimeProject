@@ -54,15 +54,15 @@ public class UserServiceIntegration {
             }
         }
     }
-    public List<UserDto> getUserDTOs(String role) {
+    public List<UserDto> getUserDTOs(String nikNameOrRole) {
         StringBuilder stringBuilder = new StringBuilder();
-        if (role != null) {
+        if (nikNameOrRole != null) {
             if (stringBuilder.length() != 0) {
                 stringBuilder.append("&");
             } else {
                 stringBuilder.append("?");
             }
-            stringBuilder.append("role=").append(role);
+            stringBuilder.append("nikName=").append(nikNameOrRole);
         }
         try {
             return Objects.requireNonNull(webClientUser.get().uri(stringBuilder.toString())

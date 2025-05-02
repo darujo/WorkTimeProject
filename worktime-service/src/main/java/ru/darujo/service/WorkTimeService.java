@@ -19,6 +19,7 @@ import ru.darujo.repository.WorkTimeRepository;
 import ru.darujo.repository.specifications.WorkTimeSpecifications;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Primary
@@ -84,11 +85,20 @@ public class WorkTimeService {
             }
         }
         if (nikName != null) {
-            specification = specification.and(WorkTimeSpecifications.userNikNameEQ(nikName));
-            if (sort == null)
-                sort = Sort.by("nikName");
-            else {
-                sort.and(Sort.by("nikName"));
+            try {
+                List<String> users = Objects.requireNonNull(getUsers(nikName)).stream().map(UserDto::getNikName).collect(Collectors.toList());
+                specification = WorkTimeSpecifications.in(specification, "nikName", users);
+                if (users.size() == 1) {
+                    if (sort == null)
+                        sort = Sort.by("nikName");
+                    else {
+                        sort.and(Sort.by("nikName"));
+                    }
+                }
+
+            }
+            catch (NullPointerException ex) {
+                throw new ResourceNotFoundException("Нет пользователей с Ролью или Логином " + nikName);
             }
         }
         if (dateLt != null) {
@@ -125,7 +135,7 @@ public class WorkTimeService {
     public List<WorkTime> findWorkTimeTask(String taskDEVBO, String taskBts, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, String comment) {
         List<WorkTime> workTimes = new ArrayList<>();
         List<Long> taskIdList = taskServiceIntegration.getTaskList(taskDEVBO, taskBts);
-        if( taskIdList == null){
+        if (taskIdList == null) {
             return null;
         }
 

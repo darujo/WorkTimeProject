@@ -1,4 +1,4 @@
-angular.module('workTimeService').controller('userworkController', function ($scope, $http, $location, $localStorage) {
+angular.module('workTimeService').controller('userWorkController', function ($scope, $http, $location, $localStorage) {
 
     const constPatchWork = window.location.origin + '/worktime-service/v1';
     $scope.clearFilter =function (load){
@@ -44,6 +44,8 @@ angular.module('workTimeService').controller('userworkController', function ($sc
             $scope.UserPeriodList = response.data;
         }, function errorCallback(response) {
             console.log(response)
+            console.log("rrrrr");
+            console.log(location);
             if ($location.checkAuthorized(response)) {
                 //     alert(response.data.message);
             }

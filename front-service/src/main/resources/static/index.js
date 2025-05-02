@@ -6,24 +6,25 @@
 
     function config($routeProvider) {
         let ver = "1.2.1";
+        console.log(ver);
         $routeProvider
             .when('/', {
                 templateUrl: 'welcome/welcome.html',
                 controller: 'welcomeController'
             })
-            .when('/worktime', {
+            .when('/workTime'.toLowerCase(), {
 
-                templateUrl: 'worktime/worktime.html?ver=' + ver,
-                controller: 'worktimeController'
+                templateUrl: 'workTime/workTime.html?ver='.toLowerCase() + ver,
+                controller: 'workTimeController'
             })
-            .when('/worktimerep', {
+            .when('/workTimeRep'.toLowerCase(), {
 
-                templateUrl: 'rep/worktimerep.html?ver=' + ver,
+                templateUrl: 'rep/workTimeRep.html?ver='.toLowerCase() + ver,
                 controller: 'workTimeRepController'
             })
             .when('/work/fact', {
 
-                templateUrl: 'rep/factwork.html?ver=' + ver,
+                templateUrl: 'rep/factWork.html?ver='.toLowerCase() + ver,
                 controller: 'workFactRepController'
             })
             .when('/work', {
@@ -35,20 +36,20 @@
                 controller: 'taskController'
             })
             .when('/rate', {
-                templateUrl: 'workrate/workrate.html?ver=' + ver,
+                templateUrl: 'workRate/workRate.html?ver='.toLowerCase() + ver,
                 controller: 'workRateController'
             })
             .when('/calendar', {
                 templateUrl: 'calendar/calendar.html?ver=' + ver,
                 controller: 'calendarController'
             })
-            .when('/weekwork', {
-                templateUrl: 'rep/weekwork/weekwork.html?ver=' + ver,
+            .when('/weekWork'.toLowerCase(), {
+                templateUrl: 'rep/weekWork/weekWork.html?ver='.toLowerCase() + ver,
                 controller: 'weekWorkController'
             })
-            .when('/userwork', {
-                templateUrl: 'rep/userwork/userwork.html?ver=' + ver,
-                controller: 'userworkController'
+            .when('/userWork'.toLowerCase(), {
+                templateUrl: 'rep/userWork/userWork.html?ver='.toLowerCase() + ver,
+                controller: 'userWorkController'
             })
             .when('/user', {
                 templateUrl: 'admin/user/user.html?ver=' + ver,
@@ -72,7 +73,7 @@
 
     }
 
-    function run($rootScope, $http, $localStorage) {
+    function run($rootScope, $http, $localStorage, $location) {
         $rootScope.$on('$routeChangeStart', function (event, next, current) {
             if (typeof current !== 'undefined') {
                 console.log("detail close");
@@ -81,6 +82,12 @@
                 console.log("detail open");
                 document.getElementById("DetailPrim").open = true;
             }
+        });
+        $rootScope.$on('$routeChangeSuccess', function() {
+            if (location.hash !== "#!/") {
+                $location.parserFilter("");
+            }
+
         });
         console.log($localStorage.authUser)
         if ($localStorage.authUser) {
@@ -123,8 +130,8 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                         username: null,
                         password: null
                     };
-
-                    $location.path('/').search({});
+                    // $location.path('/').search({});
+                    $location.path(myHash).search(myFilter);
                     document.getElementById("DetailPrim").open = true;
                 }
             }, function errorCallback(response) {
@@ -156,11 +163,10 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         };
         console.log($localStorage.WorkTime);
         console.log(window.location);
-        console.log(window.location.hash === "#!/worktime");
-        if (window.location.hash === "#!/worktime") {
+        if (window.location.hash === "#!/workTime".toLowerCase()) {
             $location.openEdit().search({});
         } else {
-            $location.path('/worktime').search({});
+            $location.path('/workTime'.toLowerCase()).search({});
         }
     };
 
@@ -193,7 +199,6 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             return false;
         }
     };
-
 
     $location.checkAuthorized = function (response) {
         console.log("response.status");
@@ -278,9 +283,12 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         return null;
 
     }
+    let myHash;
+    let myFilter = {};
     $location.parserFilter = function (filter) {
         console.log("parserFilter");
         console.log(location.href);
+
         if (location.href.indexOf("?") !== -1) {
             let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
             for (let [key, value] of paramsStr.entries()) {
@@ -318,11 +326,11 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                     filter[key] = paramsStr.get(key) !== "false";
                 } else if (key.indexOf("listId") !== -1) {
                     console.log("listId");
-                    console.log(typeof  filter[key]);
+                    console.log(typeof filter[key]);
                     console.log(paramsStr.get(key));
                     console.log(paramsStr.getAll(key));
 
-                    if(typeof  filter[key] === "undefined"){
+                    if (typeof filter[key] === "undefined") {
                         filter[key] = [];
                     }
                     filter[key].push(parseInt(value));
@@ -335,9 +343,16 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                 }
 
             }
-            console.log(filter);
-
+            myFilter = filter;
+            myHash = location.hash.substring(location.hash.indexOf("/") + 1,location.hash.indexOf("?"));
         }
+        else{
+            myHash = location.hash.substring(location.hash.indexOf("/") + 1);
+            myFilter = {};
+        }
+        console.log("myHash")
+        console.log(myHash);
+        console.log(filter);
         return filter;
     }
     $scope.delFilter = function () {
@@ -381,7 +396,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                 alert(response.data.message);
             }
         });
-
+        return {userList: $location.UserList};
     }
     let loadRoles = function () {
         console.log("Roles")

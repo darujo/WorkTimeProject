@@ -1,4 +1,4 @@
-angular.module('workTimeService').controller('worktimeController', function ($scope, $http, $location, $localStorage) {
+angular.module('workTimeService').controller('workTimeController', function ($scope, $http, $location, $localStorage) {
 
     const constPatchWorkTime = window.location.origin + '/worktime-service/v1';
     const constPatchTask = window.location.origin + '/task-service/v1';
@@ -480,5 +480,6 @@ angular.module('workTimeService').controller('worktimeController', function ($sc
     console.log("----------------------------------------")
     console.log($location.UserList);
     $scope.UserList = $location.UserList;
+    $scope.RoleList = $location.RoleList;
 
 })
