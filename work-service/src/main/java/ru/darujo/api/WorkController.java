@@ -26,11 +26,11 @@ public class WorkController {
 
     Random random = new Random();
 
-    @GetMapping("/conv")
-    public WorkDto workConv() {
-        workService.findWorks(1, 10000, null, null, null, null, null, null, null, null).map(work -> workService.saveWork(WorkConvertor.getWork(WorkConvertor.getWorkEditDto(work))));
-        return new WorkDto();
-    }
+//    @GetMapping("/conv")
+//    public WorkDto workConv() {
+//        workService.findWorks(1, 10000, null, null, null, null, null, null, null, null).map(work -> workService.saveWork(WorkConvertor.getWork(WorkConvertor.getWorkEditDto(work))));
+//        return new WorkDto();
+//    }
 
     @GetMapping("/find")
     public Iterable<Work> workList(@RequestParam(required = false) String name,
@@ -83,8 +83,6 @@ public class WorkController {
                     null,
                     null,
                     8,
-                    null,
-                    null,
                     null);
             workService.saveWork(work);
             System.out.println("создана задача " + i);
@@ -95,7 +93,8 @@ public class WorkController {
 
     @GetMapping("/{id}")
     public WorkEditDto WorkEdit(@PathVariable long id) {
-        WorkEditDto workEditDto = WorkConvertor.getWorkEditDto(workService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Задача не найден")));
+        Work work = workService.findById(id);
+        WorkEditDto workEditDto = WorkConvertor.getWorkEditDto(work);
         workService.updWorkPlanTime(workEditDto);
         return workEditDto;
     }
@@ -104,8 +103,8 @@ public class WorkController {
     public boolean checkRight(@PathVariable String right,
                               @RequestHeader(defaultValue = "false", name = "ZI_EDIT") boolean rightEdit,
                               @RequestHeader(defaultValue = "false", name = "ZI_CREATE") boolean rightCreate) {
-        return workService.checkRight(right,rightEdit,rightCreate);
-            }
+        return workService.checkRight(right, rightEdit, rightCreate);
+    }
 
     @PostMapping("")
     public WorkDto WorkSave(@RequestBody WorkEditDto workDto,
@@ -113,7 +112,8 @@ public class WorkController {
         if (!right) {
             throw new ResourceNotFoundException("У вас нет права ZI_EDIT");
         }
-        return WorkConvertor.getWorkDto(workService.saveWork(WorkConvertor.getWork(workDto)));
+        Work work = workService.saveWork(WorkConvertor.getWork(workDto));
+        return WorkConvertor.getWorkDto(work);
     }
 
     @DeleteMapping("/{id}")
@@ -129,8 +129,8 @@ public class WorkController {
                                   @RequestParam(required = false) Long codeSap,
                                   @RequestParam(required = false) String codeZi,
                                   @RequestParam(required = false) String task,
-                                  @RequestParam(required = false) String release,
-                                  @RequestParam(defaultValue = "release") String sort) {
+                                  @RequestParam(required = false) Long releaseId,
+                                  @RequestParam(defaultValue = "release.name") String sort) {
         Integer stageZiLe = null;
         Integer stageZiGe = null;
         if (stageZi != null) {
@@ -142,7 +142,8 @@ public class WorkController {
             }
         }
         long curTime = System.nanoTime();
-        Page<WorkDto> workDTOs = workService.findWorks(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, release).map(WorkConvertor::getWorkDto);
+        Page<WorkDto> workDTOs = workService.findWorks(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId)
+                .map(WorkConvertor::getWorkDto);
         workDTOs.forEach(workService::updWorkPlanTime);
         float time_last = (curTime - System.nanoTime()) * 0.000000001f;
         System.out.println("Время выполнения " + time_last);
@@ -166,7 +167,7 @@ public class WorkController {
                 stageZiLe = stageZi - 10;
             }
         }
-        return ((Page<WorkLittle>) workService.findWorkLittle(page, size, name, sort, stageZiGe, stageZiLe,null,null,null,null)).map(WorkConvertor::getWorkLittleDto);
+        return ((Page<WorkLittle>) workService.findWorkLittle(page, size, name, sort, stageZiGe, stageZiLe, null, null, null, null)).map(WorkConvertor::getWorkLittleDto);
     }
 
     @GetMapping("/obj/little/{id}")

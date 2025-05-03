@@ -32,7 +32,8 @@ public class WorkLittle {
     private Integer stageZI;
     @Column(name = "task")
     private String task;
-    @Column(name = "release")
-    private String release;
+    @ManyToOne
+    @JoinColumn(name="release_id")
+    private Release release;
 
 }

@@ -12,7 +12,12 @@
                             <input class="vvod40" type="text" id="ZiName" step="any" ng-model="Filt.ziName"/>
                             <p class="p-head">№ Релиза</p>
                             <br>
-                            <input class="vvod20" type="text" id="Release" step="any" ng-model="Filt.release"/>
+                            <select class="vvod40mar10" name="choice" id="ReleaseFilt" ng-model="Filt.releaseId">
+                                <option ng-repeat="release in ReleaseList" ng-value="release.id" value="release.id">
+                                    {{release.name}}
+                                </option>
+                                <option  ng-value="" value="">Все</option>
+                            </select>
                         </div>
                         <div class="horiz">
                             <p class="p-head">Текущий этап ЗИ :</p>
@@ -60,7 +65,7 @@
             <td class="tablehead1" colspan="4"> I этап</td>
             <td class="tablehead2" colspan="4"> II этап</td>
             <td class="tablecol1" rowspan="5">
-                <button class="tablehead2 buttontable" ng-click="addSort('release')">№ релиза</button>
+                <button class="tablehead2 buttontable" ng-click="addSort('releaseId')">№ релиза</button>
             </td>
             <td class="tablecol1" colspan="2" rowspan="3"> Выдача релиза</td>
             <td class="tablehead1" colspan="4"> III этап</td>

@@ -13,6 +13,7 @@ import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.integration.TaskServiceIntegration;
 import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.integration.WorkTimeServiceIntegration;
+import ru.darujo.model.Release;
 import ru.darujo.model.Work;
 import ru.darujo.model.WorkLittle;
 
@@ -50,9 +51,9 @@ public class WorkRepService {
         this.workService = workService;
     }
 
-    public List<WorkRepDto> getWorkRep(String name, Boolean availWork, Integer stageZiGe, Integer stageZiLe, String release, String[] sort) {
+    public List<WorkRepDto> getWorkRep(String name, Boolean availWork, Integer stageZiGe, Integer stageZiLe, Long releaseId, String[] sort) {
         List<WorkRepDto> workRepDTOs = new ArrayList<>();
-        List<Work> works = workService.getWorkList(name, stageZiGe, stageZiLe, release, sort);
+        List<Work> works = workService.getWorkList(name, stageZiGe, stageZiLe, releaseId, sort);
         works.forEach(work ->
                 {
                     boolean availWorkTime = false;
@@ -75,9 +76,9 @@ public class WorkRepService {
                                         work.getDevelopEndFact(),
                                         work.getDebugEndPlan(),
                                         work.getDebugEndFact(),
-                                        work.getRelease(),
-                                        work.getIssuingReleasePlan(),
-                                        work.getIssuingReleaseFact(),
+                                        work.getRelease() != null ? work.getRelease().getName() : null,
+                                        work.getRelease() != null ? work.getRelease().getIssuingReleasePlan() : null,
+                                        work.getRelease() != null ? work.getRelease().getIssuingReleaseFact() : null,
                                         work.getReleaseEndPlan(),
                                         work.getReleaseEndFact(),
                                         work.getOpeEndPlan(),
@@ -108,12 +109,12 @@ public class WorkRepService {
                                                Long codeSap,
                                                String codeZiSearch,
                                                String task,
-                                               String release,
+                                               Long releaseId,
                                                String sort,
                                                boolean hideNotTime) {
         AtomicInteger num = new AtomicInteger();
         List<WorkFactDto> workFactDTOs = new ArrayList<>();
-        Page<Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, release);
+        Page<Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, releaseId);
         workPage.forEach(work -> {
                     Set<String> users = taskServiceIntegration.getListUser(work.getId(), null).getList();
                     if (userName != null) {
@@ -196,7 +197,7 @@ public class WorkRepService {
         MapStringFloat mapStringFloat = new MapStringFloat();
         Map<String, Float> usersTime = new HashMap<>();
         mapStringFloat.setList(usersTime);
-        Work work = workService.findById(workId).orElseThrow(() -> new ResourceNotFoundException("Не найдено ЗИ с id = " + workId));
+        Work work = workService.findById(workId);
         Set<String> users;
         if (nikName != null && !nikName.equals("")) {
             users = new HashSet<>();
@@ -214,7 +215,7 @@ public class WorkRepService {
     }
 
     public Float getFactWork(Long workId, Integer stage, String nikName) {
-        Work work = workService.findById(workId).orElseThrow(() -> new ResourceNotFoundException("Не найдено ЗИ с id = " + workId));
+        Work work = workService.findById(workId);
         return getFactWork(work, stage, nikName);
     }
 
@@ -280,10 +281,10 @@ public class WorkRepService {
 
 
     public List<WorkUserTime> getWeekWork(boolean ziSplit, Boolean addTotal, String nikName, Boolean weekSplit, Timestamp dateStart, Timestamp dateEnd,
-                                          Integer page, Integer size, String name, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, String release, String sort) {
+                                          Integer page, Integer size, String name, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId, String sort) {
         List<WorkUserTime> workUserTimes = new ArrayList<>();
         if (ziSplit) {
-            Iterable<WorkLittle> works = workService.findWorkLittle(page, size, name, sort, stageZiGe, stageZiLe,codeSap,codeZi,task,release);
+            Iterable<WorkLittle> works = workService.findWorkLittle(page, size, name, sort, stageZiGe, stageZiLe,codeSap,codeZi,task,releaseId);
             works.forEach(work ->
                     workUserTimes.add(new WorkUserTime(
                             work.getId(),

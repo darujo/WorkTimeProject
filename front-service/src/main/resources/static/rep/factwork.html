@@ -56,7 +56,12 @@
                         </select>
                         <p class="p-head">№ Релиза</p>
                         <br>
-                        <input class="vvod20" type="text" id="ReleaseFilt" step="any" ng-model="Filt.release"/>
+                        <select class="vvod40mar10" name="choice" id="ReleaseFilt" ng-model="Filt.releaseId">
+                            <option ng-repeat="release in ReleaseList" ng-value="release.id" value="release.id">
+                                {{release.name}}
+                            </option>
+                            <option  ng-value="" value="">Все</option>
+                        </select>
                     </div>
                     <div class="horiz">
                         <button type="submit" class="headbutton">Применить</button>

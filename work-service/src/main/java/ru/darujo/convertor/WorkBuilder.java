@@ -3,6 +3,7 @@ package ru.darujo.convertor;
 import ru.darujo.dto.work.WorkDto;
 import ru.darujo.dto.work.WorkEditDto;
 import ru.darujo.dto.work.WorkLittleDto;
+import ru.darujo.model.Release;
 import ru.darujo.model.Work;
 
 
@@ -48,6 +49,7 @@ public class WorkBuilder {
     // Текущий этап ЗИ
     private Integer stageZI;
     // Порядковый номер релиза
+    private Long releaseId;
     private String release;
     // Выдача релиза даты План
     private Timestamp issuingReleasePlan;
@@ -206,6 +208,7 @@ public class WorkBuilder {
                 startTaskPlan,
                 startTaskFact,
                 stageZI,
+                releaseId,
                 release,
                 issuingReleasePlan,
                 issuingReleaseFact);
@@ -231,9 +234,7 @@ public class WorkBuilder {
                 startTaskPlan,
                 startTaskFact,
                 stageZI,
-                release,
-                issuingReleasePlan,
-                issuingReleaseFact);
+                releaseId != null ? new Release(releaseId,release,issuingReleasePlan,issuingReleaseFact) : null);
     }
 
     public WorkLittleDto getWorkLittleDto() {
@@ -250,5 +251,10 @@ public class WorkBuilder {
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
         return new Timestamp(c.getTimeInMillis());
+    }
+
+    public WorkBuilder setReleaseId(Long releaseId) {
+        this.releaseId = releaseId;
+        return this;
     }
 }

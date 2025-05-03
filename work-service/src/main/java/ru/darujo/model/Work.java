@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
@@ -73,13 +74,7 @@ public class Work {
     @Column(name = "stageZI")
     private Integer stageZI;
     // Порядковый номер релиза
-    @Column(name = "release")
-    private String release;
-    // Выдача релиза даты План
-    @Column(name = "issuingReleasePlan")
-    private Timestamp issuingReleasePlan;
-    // Выдача релиза дата факт
-    @Column(name = "issuingReleaseFact")
-    private Timestamp issuingReleaseFact;
-
+    @ManyToOne
+    @JoinColumn(name="release_id")
+    private Release release;
 }

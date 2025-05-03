@@ -72,7 +72,7 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
                 codeSap: Filt ? Filt.codeSap : null,
                 codeZi: Filt ? Filt.codeZi : null,
                 stageZi: Filt ? Filt.stageZi : null,
-                release: Filt ? Filt.release : null
+                releaseId: Filt ? Filt.releaseId : null
             }
         }).then(function (response) {
             console.log(response.data);
@@ -143,6 +143,8 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
 
     $location.getUsers(callBackUser);
     $location.getRoles(callBackRole);
+    $location.getReleases().then(function (result) {$scope.ReleaseList = result; });
+
 
     $scope.loadWorkTime();
 })

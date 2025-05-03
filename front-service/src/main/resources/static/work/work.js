@@ -1,11 +1,11 @@
 angular.module('workTimeService').controller('workController', function ($scope, $http, $location, $localStorage) {
     console.log(window.location)
     const constPatchWork = window.location.origin + '/work-service/v1';
-    var showWork = function () {
+    let showWork = function () {
         document.getElementById("WorkList").style.display = "block";
         document.getElementById("FormEdit").style.display = "none";
     };
-    var showFormEdit = function () {
+    let showFormEdit = function () {
         console.log("showFormEdit");
         checkRight("Edit", false);
         document.getElementById("WorkList").style.display = "none";
@@ -13,10 +13,10 @@ angular.module('workTimeService').controller('workController', function ($scope,
 
     };
 
-    var checkRight = function (right, message) {
+    let checkRight = function (right, message) {
         document.getElementById("ButtonSaveDown").style.display = "none";
         document.getElementById("ButtonSaveUp").style.display = "none";
-        var flag;
+        let flag;
         $scope.Resp = {message: null}
         $http({
             url: constPatchWork + "/works/right/" + right,
@@ -53,12 +53,12 @@ angular.module('workTimeService').controller('workController', function ($scope,
     $scope.sendFilter = function () {
         $location.sendFilter(location.hash,$scope.Filt);
     }
-    var maxpage = 1;
+    let maxPage = 1;
     $scope.findPage = function (diffPage) {
         console.log(diffPage)
-        var page = parseInt(document.getElementById("Page").value) + diffPage;
-        if (page > maxpage) {
-            page = maxpage;
+        let page = parseInt(document.getElementById("Page").value) + diffPage;
+        if (page > maxPage) {
+            page = maxPage;
 
         }
         if (page < 1) {
@@ -84,7 +84,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 codeSap: Filt ? Filt.codeSap : null,
                 codeZi: Filt ? Filt.codeZi : null,
                 task: Filt ? Filt.task : null,
-                release: Filt ? Filt.release :null,
+                releaseId: Filt ? Filt.releaseId :null,
                 sort: Filt ? Filt.sort : null,
                 stageZi: Filt ? Filt.stageZi : null
             }
@@ -92,7 +92,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
             console.log(response);
             $scope.WorkList = response.data.content;
             console.log($scope.WorkList);
-            maxpage = response.data.totalPages;
+            maxPage = response.data.totalPages;
             showWork();
         }, function errorCallback(response) {
             console.log(response)
@@ -113,6 +113,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
             codeSap: $scope.Filt ? $scope.Filt.codeSap : null,
             codeZi: $scope.Filt ? $scope.Filt.codeZi : null,
             task: $scope.Filt ? $scope.Filt.task : null,
+            releaseId: $scope.Filt ? $scope.Filt.releaseId :null,
             stageZi: $scope.Filt ? $scope.Filt.stageZi : null
         };
         console.log("sort");
@@ -125,7 +126,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
         $scope.findPage(0);
     };
 
-    var WorkIdEdit = null;
+    let WorkIdEdit = null;
 
     $scope.createWork = function () {
         checkRight("create", true);
@@ -210,7 +211,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 // showFindTask();
             });
     };
-    var sendSave = false;
+    let sendSave = false;
     $scope.saveWork = function () {
         console.log()
         console.log($scope.Work);
@@ -261,6 +262,10 @@ angular.module('workTimeService').controller('workController', function ($scope,
     if($scope.Filt === null) {
         $scope.clearFilter(false);
     }
+    let callBackRelease = function (result){
+
+    }
+    $location.getReleases().then(function (result) {$scope.ReleaseList = result; console.log("result releaseList"); console.log(result); });
     console.log("workFilter");
     console.log($scope.Filt);
     $scope.loadWork();

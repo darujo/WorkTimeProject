@@ -31,6 +31,10 @@
                 templateUrl: 'work/work.html?ver=' + ver,
                 controller: 'workController'
             })
+            .when('/release', {
+                templateUrl: 'work/release.html?ver=' + ver,
+                controller: 'releaseController'
+            })
             .when('/task', {
                 templateUrl: 'task/task.html?ver=' + ver,
                 controller: 'taskController'
@@ -116,6 +120,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     const constPatchUser = window.location.origin + '/users';
     const constPatchRole = window.location.origin + '/roles';
     const constPatchCode = window.location.origin + '/task-service/v1/';
+    const constPatchRelease = window.location.origin + '/work-service/v1/release';
 
     $scope.tryToAuth = function () {
         $http.post(constPatchAuth + '/auth', $scope.user)
@@ -425,6 +430,30 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         });
 
     }
+    let releaseLoad = false;
+    let ReleaseList ;
+    let loadRelease = function () {
+        console.log("Release")
+
+        $http({
+            url: constPatchRelease,
+            method: "get"
+
+        }).then(function (response) {
+            console.log("response Release");
+            console.log(response.data);
+            ReleaseList = response.data;
+            releaseLoad = true;
+        }, function errorCallback(response) {
+            console.log(" --- response Release");
+            console.log(response)
+            releaseLoad = true;
+            if ($location.checkAuthorized(response)) {
+                alert(response.data.message);
+            }
+        });
+
+    }
     function wait() {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
@@ -437,6 +466,12 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             await wait();
         }
         callBack(RoleList);
+    }
+    $location.getReleases = async function () {
+        while (!releaseLoad) {
+            await wait();
+        }
+        return ReleaseList ;
     }
     $location.getUsers = async function (callBack) {
         console.log("userLoad");
@@ -453,6 +488,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     if ($scope.isUserLoggedIn) {
         loadRoles();
         loadUsers();
+        loadRelease();
         $scope.getUser();
     }
 

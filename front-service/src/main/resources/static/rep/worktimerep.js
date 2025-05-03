@@ -24,7 +24,7 @@ angular.module('workTimeService').controller('workTimeRepController', function (
                 userName: Filt ? Filt.userName : null,
                 stageZi: Filt ? Filt.stageZi : null,
                 availWork: Filt ? Filt.availWork : null,
-                release: Filt ? Filt.release : null,
+                releaseId: Filt ? Filt.releaseId : null,
                 sort: $scope.WorkSort ? $scope.WorkSort : null,
                 ziName: Filt ? Filt.ziName : null
 
@@ -62,7 +62,9 @@ angular.module('workTimeService').controller('workTimeRepController', function (
         if ($scope.Filt === null ) {
             $scope.clearFilter(false);
         }
-        $scope.addSort("release");
+        $location.getReleases().then(function (result) {$scope.ReleaseList = result; console.log("result releaseList"); console.log(result); });
+
+        $scope.addSort("releaseId");
         $scope.loadWorkTime();
     }
 
@@ -94,7 +96,7 @@ angular.module('workTimeService').controller('workTimeRepController', function (
             return "Начало доработки план";
         } else if (element === "startTaskFact") {
             return "Начало доработки факт";
-        } else if (element === "release") {
+        } else if (element === "releaseId") {
             return "Релиз";
         } else if (element === "codeZI") {
             return "Код ЗИ";

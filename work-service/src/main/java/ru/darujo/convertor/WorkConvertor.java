@@ -7,8 +7,8 @@ import ru.darujo.model.Work;
 import ru.darujo.model.WorkLittle;
 
 public class WorkConvertor {
-    public static WorkBuilder setWorkBulderBase(Work work){
-        return WorkBuilder
+    public static WorkBuilder setWorkBuilderBase(Work work) {
+        WorkBuilder workBuilder = WorkBuilder
                 .createWork()
                 .setId(work.getId())
                 .setCodeSap(work.getCodeSap())
@@ -24,25 +24,32 @@ public class WorkConvertor {
                 .setDescription(work.getDescription())
                 .setStartTaskPlan(work.getStartTaskPlan())
                 .setStartTaskFact(work.getStartTaskFact())
-                .setStageZI(work.getStageZI())
-                .setRelease(work.getRelease())
-                .setIssuingReleaseFact(work.getIssuingReleaseFact())
-                .setIssuingReleasePlan(work.getIssuingReleasePlan());
-
+                .setStageZI(work.getStageZI());
+        if (work.getRelease() != null) {
+            workBuilder
+                    .setReleaseId(work.getRelease().getId())
+                    .setRelease(work.getRelease().getName())
+                    .setIssuingReleaseFact(work.getRelease().getIssuingReleaseFact())
+                    .setIssuingReleasePlan(work.getRelease().getIssuingReleasePlan());
+        }
+        return workBuilder;
     }
-    public static WorkDto getWorkDto(Work work){
-        return setWorkBulderBase(work)
+
+    public static WorkDto getWorkDto(Work work) {
+        return setWorkBuilderBase(work)
                 .getWorkDto();
     }
-    public static WorkEditDto getWorkEditDto(Work work){
-        return setWorkBulderBase(work)
+
+    public static WorkEditDto getWorkEditDto(Work work) {
+        return setWorkBuilderBase(work)
                 .setDebugEndPlan(work.getDebugEndPlan())
                 .setDevelopEndPlan(work.getDevelopEndPlan())
                 .setOpeEndPlan(work.getOpeEndPlan())
                 .setReleaseEndPlan(work.getReleaseEndPlan())
                 .getWorkEditDto();
     }
-    public static Work getWork(WorkEditDto workDto){
+
+    public static Work getWork(WorkEditDto workDto) {
         return WorkBuilder
                 .createWork()
                 .setId(workDto.getId())
@@ -59,14 +66,16 @@ public class WorkConvertor {
                 .setStartTaskPlan(workDto.getStartTaskPlan())
                 .setStartTaskFact(workDto.getStartTaskFact())
                 .setStageZI(workDto.getStageZI())
-                .setRelease(workDto.getRelease())
+                .setReleaseId(workDto.getReleaseId())
                 .setIssuingReleaseFact(workDto.getIssuingReleaseFact())
                 .setIssuingReleasePlan(workDto.getIssuingReleasePlan())
                 .setDebugEndPlan(workDto.getDebugEndPlan())
                 .setDevelopEndPlan(workDto.getDevelopEndPlan())
                 .setOpeEndPlan(workDto.getOpeEndPlan())
-                .setReleaseEndPlan(workDto.getReleaseEndPlan())
-                .setAnaliseEndPlan(workDto.getAnaliseEndPlan())
+                .setReleaseId(workDto.getReleaseId())
+                .setRelease(workDto.getRelease())
+                .setIssuingReleaseFact(workDto.getIssuingReleaseFact())
+                .setIssuingReleasePlan(workDto.getIssuingReleasePlan())
                 .getWork();
     }
 

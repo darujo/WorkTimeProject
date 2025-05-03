@@ -54,6 +54,7 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
     // Текущий этап ЗИ
     private Integer stageZI;
     // Порядковый номер релиза
+    private Long releaseId;
     private String release;
     // Выдача релиза даты План
     private Timestamp issuingReleasePlan;
@@ -79,6 +80,7 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
                        Timestamp startTaskPlan,
                        Timestamp startTaskFact,
                        Integer stageZI,
+                       Long releaseId,
                        String release,
                        Timestamp issuingReleasePlan,
                        Timestamp issuingReleaseFact) {
@@ -101,6 +103,7 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
         this.startTaskPlan = startTaskPlan;
         this.startTaskFact = startTaskFact;
         this.stageZI = stageZI;
+        this.releaseId = releaseId;
         this.release = release;
         this.issuingReleasePlan = issuingReleasePlan;
         this.issuingReleaseFact = issuingReleaseFact;
@@ -216,6 +219,10 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
 
     public Timestamp getAnaliseEndPlan() {
         return analiseEndPlan;
+    }
+
+    public Long getReleaseId() {
+        return releaseId;
     }
 
     @Override

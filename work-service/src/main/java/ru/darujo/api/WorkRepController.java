@@ -30,7 +30,7 @@ public class WorkRepController extends DateParser {
     public List<WorkRepDto> getTimeWork(@RequestParam(required = false) String ziName,
                                         @RequestParam(required = false) Boolean availWork,
                                         @RequestParam(defaultValue = "15") Integer stageZi,
-                                        @RequestParam(required = false) String release,
+                                        @RequestParam(required = false) Long releaseId,
                                         @RequestParam(required = false) String[] sort) {
         Integer stageZiLe = null;
         Integer stageZiGe = null;
@@ -42,7 +42,7 @@ public class WorkRepController extends DateParser {
                 stageZiLe = stageZi - 10;
             }
         }
-        return workRepService.getWorkRep(ziName, availWork, stageZiGe, stageZiLe, release, sort);
+        return workRepService.getWorkRep(ziName, availWork, stageZiGe, stageZiLe, releaseId, sort);
     }
 
     @GetMapping("/work/fact")
@@ -54,7 +54,7 @@ public class WorkRepController extends DateParser {
                                             @RequestParam(required = false) Long codeSap,
                                             @RequestParam(required = false) String codeZi,
                                             @RequestParam(required = false) String task,
-                                            @RequestParam(required = false) String release,
+                                            @RequestParam(required = false) Long releaseId,
                                             @RequestParam(defaultValue = "release") String sort,
                                             @RequestParam(defaultValue = "true") boolean hideNotTime) {
         if (nikName != null && nikName.equals("")) {
@@ -70,7 +70,7 @@ public class WorkRepController extends DateParser {
                 stageZiLe = stageZi - 10;
             }
         }
-        return workRepService.getWorkFactRep(page, size, nikName, name, stageZiGe, stageZiLe, codeSap, codeZi, task, release, sort, hideNotTime);
+        return workRepService.getWorkFactRep(page, size, nikName, name, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId, sort, hideNotTime);
     }
 
     @GetMapping("/time/fact")
@@ -103,7 +103,7 @@ public class WorkRepController extends DateParser {
                                           @RequestParam(required = false) Long codeSap,
                                           @RequestParam(required = false) String codeZi,
                                           @RequestParam(required = false) String task,
-                                          @RequestParam(required = false) String release,
+                                          @RequestParam(required = false) Long releaseId,
                                           @RequestParam(defaultValue = "release") String sort) {
         Timestamp dateStart = stringToDate(dateStartStr, "dateStart = ", true);
         Timestamp dateEnd = stringToDate(dateEndStr, "dateEnd = ", true);
@@ -118,7 +118,7 @@ public class WorkRepController extends DateParser {
             }
         }
         return workRepService.getWeekWork(ziSplit, addTotal, nikName, weekSplit, dateStart, dateEnd,
-                page, size, name, stageZiGe, stageZiLe, codeSap, codeZi, task,release,sort);
+                page, size, name, stageZiGe, stageZiLe, codeSap, codeZi, task,releaseId,sort);
     }
 
 }

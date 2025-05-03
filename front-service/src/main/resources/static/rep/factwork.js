@@ -47,7 +47,7 @@ angular.module('workTimeService').controller('workFactRepController', function (
                 codeSap: Filt ? Filt.codeSap : null,
                 codeZi: Filt ? Filt.codeZi : null,
                 task: Filt ? Filt.task : null,
-                release: Filt ? Filt.release : null,
+                releaseId: Filt ? Filt.releaseId : null,
                 sort: Filt ? Filt.sort : null,
                 stageZi: Filt ? Filt.stageZi : null,
                 hideNotTime: Filt ? Filt.hideNotTime : null
@@ -87,6 +87,7 @@ angular.module('workTimeService').controller('workFactRepController', function (
     }
 
     $location.getUsers(callBackUser);
+    $location.getReleases().then(function (result) {$scope.ReleaseList = result; console.log("result releaseList"); console.log(result); });
 
     $scope.loadWork();
 })

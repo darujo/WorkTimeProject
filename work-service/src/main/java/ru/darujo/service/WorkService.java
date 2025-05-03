@@ -10,12 +10,14 @@ import ru.darujo.dto.ratestage.WorkStageDto;
 import ru.darujo.dto.work.WorkPlanTime;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.integration.RateServiceIntegration;
+import ru.darujo.model.Release;
 import ru.darujo.model.Work;
 import ru.darujo.model.WorkLittle;
 import ru.darujo.repository.WorkLittleRepository;
 import ru.darujo.repository.WorkRepository;
 import ru.darujo.repository.specifications.WorkSpecifications;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 @Service
@@ -42,15 +44,48 @@ public class WorkService {
         this.rateServiceIntegration = rateServiceIntegration;
     }
 
-    public Optional<Work> findById(long id) {
-        return workRepository.findById(id);
+    ReleaseService releaseService;
+
+    @Autowired
+    public void setReleaseService(ReleaseService releaseService) {
+        this.releaseService = releaseService;
+    }
+
+    public Work findById(long id) {
+        return workRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Задача не найден"));
     }
 
     public Optional<WorkLittle> findLittleById(long id) {
         return workLittleRepository.findById(id);
     }
 
+    public void checkWork(Work work) {
+        Release release;
+        if(work.getId() != null) {
+            release = workRepository.findById(work.getId()).orElseThrow(() -> new ResourceNotFoundException("ЗИ пропало(((")).getRelease();
+            if (release!= null ){
+                if(release.getIssuingReleaseFact() != null && work.getRelease() == null || work.getRelease().getId().equals(release.getId()) ) {
+                    throw new ResourceNotFoundException("Нельзя исключать ЗИ из релиза. Релиз выпущен.");
+                }
+            } else {
+                if(work.getRelease() != null && work.getRelease().getId() != null){
+                    release = releaseService.findById(work.getRelease().getId());
+                    if (release.getIssuingReleaseFact() !=  null){
+                        throw new ResourceNotFoundException("Нельзя включать ЗИ в выпущеный релиз");
+                    }
+                }
+            }
+        } else {
+            if(work.getRelease() != null && work.getRelease().getId() != null){
+                release = releaseService.findById(work.getRelease().getId());
+                if (release.getIssuingReleaseFact() !=  null){
+                    throw new ResourceNotFoundException("Нельзя включать ЗИ в выпущеный релиз");
+                }
+            }
+        }
+    }
     public Work saveWork(Work work) {
+        checkWork(work);
         return workRepository.save(work);
     }
 
@@ -58,6 +93,7 @@ public class WorkService {
         workLittleRepository.deleteById(id);
     }
 
+    @Transactional
     public Page<Work> findWorks(int page,
                                 int size,
                                 String name,
@@ -67,9 +103,9 @@ public class WorkService {
                                 Long codeSap,
                                 String codeZi,
                                 String task,
-                                String release
+                                Long releaseId
     ) {
-        return (Page<Work>) findAll(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, release);
+        return (Page<Work>) findAll(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId);
     }
 
 
@@ -82,16 +118,19 @@ public class WorkService {
                                   Long codeSap,
                                   String codeZi,
                                   String task,
-                                  String release
+                                  Long releaseId
     ) {
-        Specification<Work> specification = Specification.where(WorkSpecifications.queryDistinctTrue());
+        Specification<Work> specification;
+        if (sort != null && sort.length() > 8 && sort.startsWith("release.")) {
+            specification = Specification.where(null);
+        } else {
+            specification = Specification.where(WorkSpecifications.queryDistinctTrue());
+        }
         specification = getWorkSpecificationLike("name", name, specification);
         specification = getWorkSpecificationLike("codeZI", codeZi, specification);
         specification = getWorkSpecificationLike("task", task, specification);
-        specification = getWorkSpecificationLike("release", release, specification);
-        if (codeSap != null) {
-            specification = specification.and(WorkSpecifications.codeSapEq(codeSap));
-        }
+        specification = WorkSpecifications.eq(specification, "release", releaseId);
+        specification = WorkSpecifications.eq(specification, "codeSap", codeSap);
 
         if (stageZiLe != null && stageZiLe.equals(stageZiGe)) {
             specification = specification.and(WorkSpecifications.stageZiEq(stageZiLe));
@@ -148,16 +187,18 @@ public class WorkService {
                                                Long codeSap,
                                                String codeZi,
                                                String task,
-                                               String release) {
-        Specification<WorkLittle> specification = Specification.where(WorkSpecifications.queryDistinctTrueLittle());
+                                               Long releaseId) {
+        Specification<WorkLittle> specification;
+        if (sort != null && sort.length() > 8 && sort.startsWith("release.")) {
+            specification = Specification.where(null);
+        } else {
+            specification = Specification.where(WorkSpecifications.queryDistinctTrueLittle());
+        }
         specification = getWorkLittleSpecificationLike("name", name, specification);
         specification = getWorkLittleSpecificationLike("codeZI", codeZi, specification);
         specification = getWorkLittleSpecificationLike("task", task, specification);
-        specification = getWorkLittleSpecificationLike("release", release, specification);
-
-        if (codeSap != null) {
-            specification = specification.and(WorkSpecifications.codeSapEqLittle(codeSap));
-        }
+        specification = WorkSpecifications.eqLittle(specification, "release", releaseId);
+        specification = WorkSpecifications.eqLittle(specification, "codeSap", codeSap);
 
         if (stageZiLe != null) {
             specification = specification.and(WorkSpecifications.workLittleStageZiLe(stageZiLe));
@@ -181,7 +222,7 @@ public class WorkService {
         return workPage;
     }
 
-    public List<Work> getWorkList(String name, Integer stageZiGe, Integer stageZiLe, String release, String[] sort) {
+    public List<Work> getWorkList(String name, Integer stageZiGe, Integer stageZiLe, Long release, String[] sort) {
         List<Work> works;
         Specification<Work> specification = Specification.where(null);
         Sort sortWork = null;
@@ -192,7 +233,7 @@ public class WorkService {
             }
         }
         specification = getWorkSpecificationLike("name", name, specification);
-        specification = getWorkSpecificationLike("release", release, specification);
+        specification = WorkSpecifications.eq(specification,"release", release);
 
         if (stageZiGe != null) {
             specification = specification.and(WorkSpecifications.stageZiGe(stageZiGe));
@@ -238,4 +279,6 @@ public class WorkService {
         }
         return true;
     }
+
+
 }
