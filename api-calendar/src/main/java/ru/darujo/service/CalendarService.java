@@ -48,15 +48,11 @@ public class CalendarService {
         DayOfWeek dayOfWeek = dayStart.getDayOfWeek();
         LocalDate date = dayStart;
         DayDto [] days = new DayDto[7];
-        DateInfo dateInfo = productionCalendar.getDateInfo(date);
-        DayDto dayDto = new DayDto(
-                date.getDayOfMonth(),
-                dateInfo.getType() == DayType.HOLIDAY,
-                dateInfo.getType() == DayType.SHORTDAY,
-                dateInfo.getTitle());
-        days[dayOfWeek.getValue() - 1] = dayDto;
-        for (int i = dayOfWeek.getValue(); i < 7;i++){
-            date =date.plusDays(1);
+
+        for (int i = dayOfWeek.getValue() - 1; i < 7;i++){
+            DayDto dayDto;
+            DateInfo dateInfo;
+
             dateInfo = productionCalendar.getDateInfo(date);
             dayDto = new DayDto(
                     date.getDayOfMonth(),
@@ -64,6 +60,7 @@ public class CalendarService {
                     dateInfo.getType() == DayType.SHORTDAY,
                     dateInfo.getTitle());
             days[i] =dayDto;
+            date =date.plusDays(1);
         }
         WeekDto weekDto = new WeekDto(
                 days[0],
@@ -76,7 +73,8 @@ public class CalendarService {
         weekDTOs.add(weekDto);
         while (date.compareTo(dayEnd) <= 0 ){
             for (int i = 0;i < 7 ;i++){
-                date =date.plusDays(1);
+                DayDto dayDto;
+                DateInfo dateInfo;
 
                 dateInfo = productionCalendar.getDateInfo(date);
                 if (date.compareTo(dayEnd) > 0)
@@ -91,6 +89,7 @@ public class CalendarService {
                             dateInfo.getTitle());
                 }
                 days[i] =dayDto;
+                date =date.plusDays(1);
             }
             weekDto = new WeekDto(
                     days[0],
