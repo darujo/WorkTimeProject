@@ -1,4 +1,4 @@
-angular.module('workTimeService').controller('workController', function ($scope, $http, $location, $localStorage) {
+angular.module('workTimeService').controller('workController', function ($scope, $http, $location) {
     console.log(window.location)
     const constPatchWork = window.location.origin + '/work-service/v1';
     let showWork = function () {
@@ -228,7 +228,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
                     sendSave = false;
                     console.log(response)
                     if ($location.checkAuthorized(response)) {
-                        //     alert(response.data.message);
+                            alert(response.data.message);
                     }
 
                     // showFindTask();
@@ -261,9 +261,6 @@ angular.module('workTimeService').controller('workController', function ($scope,
     console.log($scope.Filt );
     if($scope.Filt === null) {
         $scope.clearFilter(false);
-    }
-    let callBackRelease = function (result){
-
     }
     $location.getReleases().then(function (result) {$scope.ReleaseList = result; console.log("result releaseList"); console.log(result); });
     console.log("workFilter");

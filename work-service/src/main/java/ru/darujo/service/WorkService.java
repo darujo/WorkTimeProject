@@ -64,8 +64,17 @@ public class WorkService {
         if(work.getId() != null) {
             release = workRepository.findById(work.getId()).orElseThrow(() -> new ResourceNotFoundException("ЗИ пропало(((")).getRelease();
             if (release!= null ){
-                if(release.getIssuingReleaseFact() != null && work.getRelease() == null || work.getRelease().getId().equals(release.getId()) ) {
-                    throw new ResourceNotFoundException("Нельзя исключать ЗИ из релиза. Релиз выпущен.");
+                if(release.getIssuingReleaseFact() != null) {
+                    if(work.getRelease() == null || !work.getRelease().getId().equals(release.getId()) ) {
+                        throw new ResourceNotFoundException("Нельзя исключать ЗИ из релиза. Релиз выпущен.");
+                    }
+                } else {
+                    if(work.getRelease() != null && !work.getRelease().getId().equals(release.getId()) ) {
+                        release = releaseService.findById(work.getRelease().getId());
+                        if (release.getIssuingReleaseFact() != null) {
+                            throw new ResourceNotFoundException("Нельзя включать ЗИ в выпущеный релиз");
+                        }
+                    }
                 }
             } else {
                 if(work.getRelease() != null && work.getRelease().getId() != null){
