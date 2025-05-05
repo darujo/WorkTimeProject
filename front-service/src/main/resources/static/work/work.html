@@ -47,7 +47,7 @@
                             <option ng-repeat="release in ReleaseList" ng-value="release.id" value="release.id">
                                 {{release.name}}
                             </option>
-                            <option  ng-value="" value="">Все</option>
+                            <option ng-value="" value="">Все</option>
                         </select>
 
                     </div>
@@ -310,8 +310,8 @@
             </select>
             <br>
             <p class="p-form">Порядковый номер релиза :</p>
-            <select class="vvod40mar10" name="choice" id="Release" ng-model="Work.releaseId">
-                <option ng-repeat="release in ReleaseList" ng-value="release.id" value="release.id">
+            <select class="vvod40mar10" name="choice" id="Release" ng-model="Work.releaseId" ng-disabled ="releaseOptin(Work)">
+                <option ng-repeat="release in ReleaseList"   ng-disabled ="releaseOptin(release)" ng-value="release.id" value="release.id">
                     {{release.name}}
                 </option>
                 <option  ng-value="" value="">

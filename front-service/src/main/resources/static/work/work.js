@@ -192,7 +192,9 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 // Выдача релиза даты План
                 $scope.Work.issuingReleasePlan = new Date(response.data.issuingReleasePlan);
                 // Выдача релиза дата факт
-                $scope.Work.issuingReleaseFact = new Date(response.data.issuingReleaseFact);
+                if (typeof  response.data.issuingReleaseFact !== "undefined"){
+                    $scope.Work.issuingReleaseFact = new Date(response.data.issuingReleaseFact);
+                }
 
                 showFormEdit();
             });
@@ -254,6 +256,12 @@ angular.module('workTimeService').controller('workController', function ($scope,
         if(load){
             $scope.filterWork();
         }
+    }
+    $scope.releaseOption= function (release){
+        if(typeof release.issuingReleaseFact !== "undefined"){
+            return "disabled";
+        }
+        return false;
     }
     showWork();
     console.log("---workFilter---");
