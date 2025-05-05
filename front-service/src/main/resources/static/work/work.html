@@ -311,7 +311,7 @@
             <br>
             <p class="p-form">Порядковый номер релиза :</p>
             <select class="vvod40mar10" name="choice" id="Release" ng-model="Work.releaseId" ng-disabled ="releaseOption(Work)">
-                <option ng-repeat="release in ReleaseList"   ng-disabled ="releaseOptin(release)" ng-value="release.id" value="release.id">
+                <option ng-repeat="release in ReleaseList"   ng-disabled ="releaseOption(release)" ng-value="release.id" value="release.id">
                     {{release.name}}
                 </option>
                 <option  ng-value="" value="">
