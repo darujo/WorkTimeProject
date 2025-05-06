@@ -3,7 +3,7 @@
         <details class="detailsblock">
             <summary class="p-head">Фильтр</summary>
 
-            <form novalidate ng-submit="filterWork()" ; class="filter">
+            <form novalidate ng-submit="filterWork()" class="filter">
                 <!--      <input class="vvod" type="number" inputmode="decimal" id="WorkId" step="any" ng-model="Filt.workId"/>-->
                 <!--      <br>-->
                 <!--      <input class="vvod" type="number" inputmode="decimal" id="DateLE" value="1" ng-model="Filt.dateLe"/>-->
@@ -152,7 +152,7 @@
             </td>
             <td>{{work.task}}</td>
             <td class="textleft">{{work.description}}</td>
-            <td type="date">{{work.analiseEndPlan}}</td>
+            <td class="date">{{work.analiseEndPlan}}</td>
             <td class="date">{{work.startTaskPlan}}</td>
             <td>{{work.startTaskFact}}</td>
             <td>{{work.laborAnalise}}</td>
@@ -192,7 +192,7 @@
     <form novalidate ng-submit="saveWork()">
         <p class="p-form">{{Resp.message}}</p>
         <button type="submit" class="button" id="ButtonSaveUp">Сохранить</button>
-        <button type="reset" ng-click="loadWork()" class="button">Вернуться к списку</button>
+        <button type="button" ng-click="loadWork()" class="button">Вернуться к списку</button>
         <div class="horiz">
             <p class="p-form"> Код SAP : </p> <input class="vvod40" type="number" inputmode="decimal" id="CodeSap"
                                                      step="1"
@@ -342,7 +342,7 @@
             </div>
         </details>
         <button type="submit" class="button" id="ButtonSaveDown">Сохранить</button>
-        <button type="reset" ng-click="loadWork()" class="button">Вернуться к списку</button>
+        <button type="button" ng-click="loadWork()" class="button">Вернуться к списку</button>
     </form>
 
 
