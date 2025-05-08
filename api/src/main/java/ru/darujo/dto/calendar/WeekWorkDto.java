@@ -1,12 +1,12 @@
 package ru.darujo.dto.calendar;
 
-import ru.darujo.dto.WorkTimeDto;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-public class WeekWorkDto implements Serializable {
+public class WeekWorkDto implements Serializable,Cloneable {
     public WeekWorkDto() {
     }
 
@@ -33,4 +33,36 @@ public class WeekWorkDto implements Serializable {
         return time;
     }
 
+    public void setTime(Float time) {
+        this.time = time;
+    }
+
+    @Override
+    public Object clone()  {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM");
+
+
+    private String dateToText(Date date) {
+        if (date == null) {
+            return null;
+        }
+        return sdf.format(date);
+    }
+    public String getPeriod() {
+        if(getDayStart() == null){
+            return "Итого";
+        }
+        else if (getDayEnd() == null || getDayStart().equals(getDayEnd())) {
+            return dateToText(getDayStart());
+        } else {
+            return dateToText(getDayStart()) + " - " + dateToText(getDayEnd());
+        }
+
+    }
 }

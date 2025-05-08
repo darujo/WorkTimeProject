@@ -1,11 +1,12 @@
 package ru.darujo.dto.workperiod;
 
+import ru.darujo.dto.printer.DataPrinter;
 import ru.darujo.dto.user.UserFio;
 import ru.darujo.service.CodeService;
 
 import java.util.*;
 
-public class UserWorkDto implements UserFio {
+public class UserWorkDto extends DataPrinter implements UserFio {
     public UserWorkDto() {
     }
     private Integer userCol;

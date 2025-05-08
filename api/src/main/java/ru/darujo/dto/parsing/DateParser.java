@@ -23,7 +23,7 @@ public class DateParser {
             return new Timestamp(c.getTimeInMillis());
 
         } else if (checkNull) {
-            throw new ResourceNotFoundException("Не не передан обязательный параметр " + text + " null ");
+            throw new ResourceNotFoundException("Не передан обязательный параметр " + text + " null ");
         }
         return null;
     }

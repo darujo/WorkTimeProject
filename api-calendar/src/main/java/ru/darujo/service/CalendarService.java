@@ -29,27 +29,26 @@ public class CalendarService {
         int day = 31;
         LocalDate dayEnd = LocalDate.now();
 
-        if (month != null){
-            dayStart = LocalDate.of(year,month,1);
+        if (month != null) {
+            dayStart = LocalDate.of(year, month, 1);
             boolean ok = false;
             while (!ok) {
                 try {
                     dayEnd = LocalDate.of(year, month, day);
                     ok = true;
                 } catch (DateTimeException ex) {
-                   day--;
+                    day--;
                 }
             }
-        }
-        else {
-            dayStart = LocalDate.of(year,1,1);
-            dayEnd   = LocalDate.of(year,12,31);
+        } else {
+            dayStart = LocalDate.of(year, 1, 1);
+            dayEnd = LocalDate.of(year, 12, 31);
         }
         DayOfWeek dayOfWeek = dayStart.getDayOfWeek();
         LocalDate date = dayStart;
-        DayDto [] days = new DayDto[7];
+        DayDto[] days = new DayDto[7];
 
-        for (int i = dayOfWeek.getValue() - 1; i < 7;i++){
+        for (int i = dayOfWeek.getValue() - 1; i < 7; i++) {
             DayDto dayDto;
             DateInfo dateInfo;
 
@@ -59,8 +58,8 @@ public class CalendarService {
                     dateInfo.getType() == DayType.HOLIDAY,
                     dateInfo.getType() == DayType.SHORTDAY,
                     dateInfo.getTitle());
-            days[i] =dayDto;
-            date =date.plusDays(1);
+            days[i] = dayDto;
+            date = date.plusDays(1);
         }
         WeekDto weekDto = new WeekDto(
                 days[0],
@@ -69,27 +68,25 @@ public class CalendarService {
                 days[3],
                 days[4],
                 days[5],
-                days[6],month);
+                days[6], month);
         weekDTOs.add(weekDto);
-        while (date.compareTo(dayEnd) <= 0 ){
-            for (int i = 0;i < 7 ;i++){
+        while (date.compareTo(dayEnd) <= 0) {
+            for (int i = 0; i < 7; i++) {
                 DayDto dayDto;
                 DateInfo dateInfo;
 
                 dateInfo = productionCalendar.getDateInfo(date);
-                if (date.compareTo(dayEnd) > 0)
-                {
+                if (date.compareTo(dayEnd) > 0) {
                     dayDto = null;
-                }
-                else {
+                } else {
                     dayDto = new DayDto(
                             date.getDayOfMonth(),
                             dateInfo.getType() == DayType.HOLIDAY,
                             dateInfo.getType() == DayType.SHORTDAY,
                             dateInfo.getTitle());
                 }
-                days[i] =dayDto;
-                date =date.plusDays(1);
+                days[i] = dayDto;
+                date = date.plusDays(1);
             }
             weekDto = new WeekDto(
                     days[0],
@@ -98,85 +95,192 @@ public class CalendarService {
                     days[3],
                     days[4],
                     days[5],
-                    days[6],month);
+                    days[6], month);
             weekDTOs.add(weekDto);
         }
 
         return weekDTOs;
     }
-    private LocalDate weekStart(LocalDate date){
+
+    private LocalDate weekStart(LocalDate date) {
         return date.minusDays(date.getDayOfWeek().getValue() - 1);
     }
-    private LocalDate weekEnd(LocalDate date){
-        return date.plusDays(7 -date.getDayOfWeek().getValue() );
+
+    private LocalDate weekEnd(LocalDate date) {
+        return date.plusDays(7 - date.getDayOfWeek().getValue());
     }
 
-    public List<WeekWorkDto> getPeriodTime(Date dateStart, Date dateEnd,String period) {
+    private LocalDate monthStart(LocalDate date) {
+        return date.minusDays(date.getDayOfMonth() - 1);
+    }
+
+    private LocalDate monthEnd(LocalDate date) {
+        return monthStart(date).plusMonths(1).minusDays(1);
+    }
+
+    private LocalDate yearStart(LocalDate date) {
+        return date.minusDays(date.getDayOfYear()-1);
+    }
+
+    private LocalDate yearEnd(LocalDate date) {
+        return yearStart(date).plusYears(1).minusDays(1);
+    }
+
+    public List<WeekWorkDto> getPeriodTime(Date dateStart, Date dateEnd, String periodSplit) {
+        switch (periodSplit) {
+            case "1" -> periodSplit = "day";
+            case "2" -> periodSplit = "week_day";
+            case "3" -> periodSplit = "week";
+            case "4" -> periodSplit = "month";
+            case "5" -> periodSplit = "month_day";
+            case "6" -> periodSplit = "month_week";
+            case "7" -> periodSplit = "month3";
+            case "8" -> periodSplit = "month3_day";
+            case "9" -> periodSplit = "month3_week";
+            case "10" -> periodSplit = "year";
+            case "11" -> periodSplit = "year_day";
+            case "12" -> periodSplit = "year_week";
+        }
+        String period;
+        String split = null;
+        switch (periodSplit) {
+            case "week_day" -> {
+                period = "week";
+                split = "day";
+            }
+            case "year_day" -> {
+                period = "year";
+                split = "day";
+            }
+            case "year_week" -> {
+                period = "year";
+                split = "week";
+            }
+            case "month_day" -> {
+                period = "month";
+                split = "day";
+            }
+            case "month_week" -> {
+                period = "month";
+                split = "week";
+            }
+            case "month3_day" -> {
+                period = "month3";
+                split = "day";
+            }
+            case "month3_week" -> {
+                period = "month3";
+                split = "week";
+            }
+            default -> period = periodSplit;
+        }
+        return getPeriodTime(dateStart, dateEnd, period, split);
+    }
+
+    public List<WeekWorkDto> getPeriodTime(Date dateStart, Date dateEnd, String period, String split) {
         List<WeekWorkDto> weekWorkDTOs = new ArrayList<>();
         LocalDate dayStart;
         LocalDate dayEnd;
-        int periodDay = 7;
-        if (period == null || period.equals("week") || period.equals("week_day")) {
-            dayStart = weekStart(dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-            dayEnd= weekEnd(dateEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-        } else if(period.equals("day")){
-            dayStart = dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            dayEnd   = dateEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        } else {
-            throw new ResourceNotFoundException("Не верный период " + period);
+        int periodDay;
+        if (period == null){
+            period = "week";
         }
-        if (period!= null && (period.equals("day") || period.equals("week_day"))){
+
+        switch (period) {
+            case "week" -> {
+                dayStart = weekStart(dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+                dayEnd = weekEnd(dateEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+            }
+            case "day" -> {
+                dayStart = dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                dayEnd = dateEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            }
+            case "month" -> {
+                dayStart = monthStart(dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+                dayEnd = monthEnd(dateEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+            }
+            case "month3" -> {
+                dayStart = monthStart(dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+                dayEnd = monthEnd(dateEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).plusMonths(2);
+            }
+            case "year" -> {
+                dayStart = yearStart(dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+                dayEnd = yearEnd(dateEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+            }
+            default -> throw new ResourceNotFoundException("Не верный период " + period);
+        }
+        if (split == null) {
+            periodDay = switch (period) {
+                case "day" -> 1;
+                case "month" -> dayEnd.getDayOfMonth();
+                case "month3" -> 92;
+                case "year" -> dayEnd.getDayOfYear();
+                default -> 7;
+            };
+        } else if (split.equals("day")) {
             periodDay = 1;
+        } else if (split.equals("week")) {
+            dayStart = weekStart(dayStart);
+            dayEnd = weekEnd(dayEnd);
+            periodDay = 7;
+        } else {
+            periodDay = 7;
         }
 
 
         LocalDate date = dayStart.minusDays(1);
 
-        while (date.compareTo(dayEnd) < 0 ){
-            Timestamp periodStart =null;
-            Timestamp periodEnd= null;
+        while (date.compareTo(dayEnd) < 0) {
+            Timestamp periodStart = null;
+            Timestamp periodEnd = null;
             float time = 0f;
-            for (int i = 0;i < periodDay ;i++) {
+            for (int i = 0; i < periodDay; i++) {
 
                 date = date.plusDays(1);
-                if (i ==0) {
+                if (i == 0) {
                     periodStart = Timestamp.valueOf(date.atStartOfDay());
                 }
-                if (i == periodDay - 1 ) {
+                if (i == periodDay - 1) {
                     periodEnd = Timestamp.valueOf(date.atStartOfDay());
                 }
-                DateInfo dateInfo = productionCalendar.getDateInfo(date);
-                if(dateInfo.getType() == DayType.SHORTDAY){
-                    time = time + getDayTime(date) - 1;
-                } else if(dateInfo.getType() == DayType.WORKDAY){
-                    time = time + getDayTime(date);
-                }
+                time = time + getTimeDay(date);
 
             }
-            WeekWorkDto weekWorkDto= new WeekWorkDto(
-                    periodStart,periodEnd,time);
+            WeekWorkDto weekWorkDto = new WeekWorkDto(
+                    periodStart, periodEnd, time);
             weekWorkDTOs.add(weekWorkDto);
         }
 
         return weekWorkDTOs;
     }
 
+    public float getTimeDay(LocalDate date) {
+        DateInfo dateInfo = productionCalendar.getDateInfo(date);
+        if (dateInfo.getType() == DayType.SHORTDAY) {
+            return getDayTime(date) - 1;
+        } else if (dateInfo.getType() == DayType.WORKDAY) {
+            return getDayTime(date);
+        }
+        return 0f;
+    }
+
     public Float getWorkTime(Date dateStart, Date dateEnd) {
         LocalDate dayStart = dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate dayEnd = dateEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        float time= 0f;
-        for (LocalDate date =dayStart;date.compareTo(dayEnd) <= 0;date = date.plusDays(1)){
+        float time = 0f;
+        for (LocalDate date = dayStart; date.compareTo(dayEnd) <= 0; date = date.plusDays(1)) {
             DateInfo dateInfo = productionCalendar.getDateInfo(date);
-            if(dateInfo.getType() == DayType.SHORTDAY){
+            if (dateInfo.getType() == DayType.SHORTDAY) {
                 time = time + getDayTime(date) - 1;
-            } else if(dateInfo.getType() == DayType.WORKDAY){
+            } else if (dateInfo.getType() == DayType.WORKDAY) {
                 time = time + getDayTime(date);
             }
         }
         return time;
     }
-    public Float getDayTime(LocalDate date){
-        if(date.getDayOfWeek().equals(DayOfWeek.FRIDAY)){
+
+    public Float getDayTime(LocalDate date) {
+        if (date.getDayOfWeek().equals(DayOfWeek.FRIDAY)) {
             return 7f;
         }
         return 8.25f;

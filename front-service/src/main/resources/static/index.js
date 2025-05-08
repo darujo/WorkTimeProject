@@ -71,6 +71,15 @@
                 templateUrl: 'admin/role/role_right.html?ver=' + ver,
                 controller: 'roleRightController'
             })
+            .when('/vacation', {
+                templateUrl: 'calendar/vacation/vacation.html?ver=' + ver,
+                controller: 'vacationController'
+            })
+            .when('/userVacation'.toLowerCase(), {
+                templateUrl: 'rep/userVacation/userVacation.html?ver='.toLowerCase() + ver,
+                controller: 'userVacationController'
+            })
+
             .otherwise({
                 redirectTo: '/'
             });

@@ -1,0 +1,96 @@
+package ru.darujo.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
+import ru.darujo.dto.calendar.UserVacation;
+import ru.darujo.dto.calendar.UserVacationsDto;
+import ru.darujo.dto.calendar.WeekWorkDto;
+import ru.darujo.dto.user.UserDto;
+import ru.darujo.integration.UserServiceIntegration;
+import ru.darujo.model.Vacation;
+
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+@Primary
+public class VacationReportService {
+
+    VacationService vacationService;
+
+    @Autowired
+    public void setVacationService(VacationService vacationService) {
+        this.vacationService = vacationService;
+    }
+
+    CalendarService calendarService;
+
+    @Autowired
+    public void setCalendarService(CalendarService calendarService) {
+        this.calendarService = calendarService;
+    }
+
+    UserServiceIntegration userServiceIntegration;
+
+    @Autowired
+    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+        this.userServiceIntegration = userServiceIntegration;
+    }
+
+    public UserVacationsDto getUserVacations(String nikName, Timestamp dateStart, Timestamp dateEnd, String periodSplit) {
+        if (periodSplit == null) {
+            periodSplit = "day";
+        }
+        List<WeekWorkDto> weekWorkDTOs = calendarService.getPeriodTime(dateStart, dateEnd, periodSplit);
+        return new UserVacationsDto(weekWorkDTOs, getUserVacations(nikName, weekWorkDTOs));
+    }
+
+    private List<UserVacation> getUserVacations(String nikName, List<WeekWorkDto> weekWorkDTOs) {
+        List<UserVacation> userVacations = new ArrayList<>();
+        List<UserDto> userDTOs = userServiceIntegration.getUserDTOs(nikName);
+        userDTOs.forEach(userDto -> {
+            List<WeekWorkDto> weekWorkUserList = new ArrayList<>();
+            for (WeekWorkDto weekWorkDto : weekWorkDTOs) {
+                weekWorkUserList.add((WeekWorkDto) weekWorkDto.clone());
+            }
+            UserVacation userVacation = new UserVacation(userDto.getNikName(), weekWorkUserList);
+            userVacation.setFirstName(userDto.getFirstName());
+            userVacation.setLastName(userDto.getLastName());
+            userVacation.setPatronymic(userDto.getPatronymic());
+            userVacations.add(userVacation);
+            Vacation vacation = null;
+            LocalDate dayEndVacation = null;
+            for (WeekWorkDto weekWorkDto : weekWorkUserList) {
+                LocalDate day = weekWorkDto.getDayStart().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().minusDays(1);
+                LocalDate dayEnd = weekWorkDto.getDayEnd().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                float timeAll = 0f;
+                boolean flagDay = weekWorkDto.getDayStart().equals(weekWorkDto.getDayEnd());
+                while (day.compareTo(dayEnd) < 0) {
+                    day = day.plusDays(1);
+                    float time = calendarService.getTimeDay(day);
+                    if (time > 0f || flagDay) {
+                        if (vacation == null || dayEndVacation == null || day.compareTo(dayEndVacation) > 0) {
+                            vacation = vacationService.findOneDateInVacation(userDto.getNikName(), day);
+                            if (vacation != null) {
+                                dayEndVacation = vacation.getDateEnd().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                            }
+                        }
+                        if (vacation != null) {
+
+                            time = flagDay ?  -1f : 0f;
+
+                        }
+                        timeAll = timeAll + time;
+                    }
+                }
+                weekWorkDto.setTime(timeAll);
+            }
+        });
+        return userVacations;
+    }
+
+}

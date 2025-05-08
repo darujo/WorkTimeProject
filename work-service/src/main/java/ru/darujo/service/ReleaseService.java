@@ -9,7 +9,6 @@ import ru.darujo.model.Release;
 import ru.darujo.repository.ReleaseRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ReleaseService {
@@ -30,7 +29,7 @@ public class ReleaseService {
         return releaseRepository.save(release);
     }
 
-    public void deleteWork(Long id) {
+    public void deleteRelease(Long id) {
         releaseRepository.deleteById(id);
     }
 

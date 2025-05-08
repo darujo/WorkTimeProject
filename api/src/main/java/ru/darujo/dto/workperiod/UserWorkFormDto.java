@@ -9,14 +9,6 @@ import java.util.*;
 public class UserWorkFormDto extends UserWorkDto {
     public UserWorkFormDto() {
     }
-    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-
-    private String dateToText(Date date){
-        if (date == null){
-            return null;
-        }
-        return sdf.format(date);
-    }
     public String getDateStartStr() {
         return dateToText(dateStart);
     }

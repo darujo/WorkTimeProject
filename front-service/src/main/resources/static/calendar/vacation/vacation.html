@@ -1,0 +1,117 @@
+<div id="VacationList" class="headtextelem">
+    <div class="filter containerfilt">
+<!--        <details class="detailsblock">-->
+<!--            <summary class="p-head">Фильтр</summary>-->
+
+<!--            <form novalidate ng-submit="filterUser()" class="filter">-->
+<!--                <div class="filter">-->
+<!--                    <div class="filterblock">-->
+
+<!--                        <div class="horiz">-->
+<!--                            <p class="p-head">Логин:</p>-->
+<!--                            <br>-->
+<!--                            <input class="vvod30mar" type="text" id="UserLoginFilter"-->
+<!--                                   ng-model="Filt.nikName"/>-->
+<!--                            &lt;!&ndash;                        </div>&ndash;&gt;-->
+<!--                            &lt;!&ndash;                        <div class="horiz">&ndash;&gt;-->
+<!--                            <p class="p-head">Фамилия:</p>-->
+<!--                            <br>-->
+<!--                            <input class="vvod30mar" type="text" id="LastNameFilter"-->
+<!--                                   ng-model="Filt.lastName"/>-->
+<!--                        </div>-->
+<!--                        <div class="horiz">-->
+<!--                            <p class="p-head">Имя:</p>-->
+<!--                            <br>-->
+<!--                            <input class="vvod30mar" type="text" id="FirstNameFilter"-->
+<!--                                   ng-model="Filt.firstName"/>-->
+<!--                            <p class="p-head"> Отчество: </p>-->
+<!--                            <input class="vvod30mar" type="text" id="PatronymicFilter"-->
+<!--                                   ng-model="Filt.patronymic"/>-->
+<!--                        </div>-->
+<!--                        <button type="submit" class="button" id="FilterButton">Применить</button>-->
+<!--                        <button type="button" class="headbutton" ng-click="clearFilter(true)">Сбросить</button>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </form>-->
+<!--        </details>-->
+        <button class="headbutton" ng-click="createVacation()">Добавить отпуск</button>
+    </div>
+<!--    <div class="filter containerfilt">-->
+<!--        <button class="headbutton" ng-click="findPage(-1)">PrevPage</button>-->
+<!--        <input class="vvod" type="number" id="Page" value="1"/>-->
+<!--        <button class="headbutton" ng-click="findPage(1)">NextPage</button>-->
+<!--        <p class="p-head">Количество элементов</p>-->
+<!--        <select class="vvod20" name="choice" id="WorkTimeSize" ng-model="Filt.size" ng-change="filterUser()">-->
+<!--            <option ng-value="10" value="10" selected>10</option>-->
+<!--            <option ng-value="25" value="25">25</option>-->
+<!--            <option ng-value="50" value="50">50</option>-->
+<!--            <option ng-value="100" value="100">100</option>-->
+<!--            <option ng-value="500" value="500">500</option>-->
+<!--            <option ng-value="1000" value="1000">1000</option>-->
+<!--            <option ng-value="10000" value="10000">10000</option>-->
+<!--        </select>-->
+<!--    </div>-->
+    <h1>Отпуска</h1>
+    <table>
+        <tr>
+            <td class="tablehead2">ФИО</td>
+            <td class="tablehead2">Дата начала отпуска</td>
+            <td class="tablehead2">Дата конца отпуска</td>
+
+            <td class="tablehead2"></td>
+            <td class="tablehead2"></td>
+<!--            <td class="tablehead2"></td>-->
+
+        </tr>
+        <tbody>
+        <tr ng-repeat="vacation in VacationList">
+
+            <td ng-if="!vacation.firstName">{{vacation.nikName}}</td>
+            <td ng-if="vacation.firstName">{{vacation.lastName}} {{vacation.firstName}}
+                {{vacation.patronymic}}
+            </td>
+            <td>{{vacation.dateStartStr}}</td>
+            <td>{{vacation.dateEndStr}}</td>
+            <td>
+                <button ng-click="editVacation(vacation.id)">Изменить</button>
+            </td>
+            <td>
+                <button ng-click="deleteVacation(vacation.id)">Удалить</button>
+            </td>
+<!--            <td>-->
+<!--                <button ng-click="deleteWorkTime(user.id)">Удалить</button>-->
+<!--            </td>-->
+
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<div id="FormEdit" class="divform containerfilt">
+
+    <form novalidate ng-submit="saveVacation()">
+        <div class="horiz">
+            <p class="formlablep">ФИО:</p>
+            <select class="vvod40mar10" name="choice" id="UserVacation" ng-model="Vacation.nikName">
+                <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">{{user.lastName}}
+                    {{user.firstName}} {{user.patronymic}}
+                </option>
+            </select>
+
+        </div>
+        <div class="horiz">
+            <p class="formlablep">Дата выдачи план:</p> <input class="vvod40mar10" type="date" id="DateStart" step="any"
+                                                   ng-model="Vacation.dateStart"/>
+            <br>
+        </div>
+        <div class="horiz">
+            <p class="formlablep">Дата выдачи факт:</p> <input class="vvod40mar10" type="date" id="DateEnd" step="any"
+                                                   ng-model="Vacation.dateEnd"/>
+            <br>
+        </div>
+        <button type="submit" class="button" id="ButtonSaveDown">Сохранить</button>
+        <button type="button" ng-click="loadVacation()" class="button">Вернуться к списку</button>
+
+    </form>
+</div>

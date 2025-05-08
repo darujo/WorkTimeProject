@@ -35,8 +35,8 @@ public class ReleaseController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteWork(@PathVariable long id) {
-        releaseService.deleteWork(id);
+    public void deleteRelease(@PathVariable long id) {
+        releaseService.deleteRelease(id);
     }
 
     @GetMapping("")
