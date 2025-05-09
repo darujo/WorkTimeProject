@@ -62,6 +62,9 @@ public class VacationService {
         if (calendarService.isHoliday(vacation.getDateEnd())){
             throw new ResourceNotFoundException("Дата конца отпуска не может быть праздником");
         }
+        if (!calendarService.existWorkDay(vacation.getDateStart(),vacation.getDateEnd())){
+            throw new ResourceNotFoundException("Отпуск должен содержать рабочий день");
+        }
         Vacation vacationSave = findOneDateBetween(vacation.getNikName(),"dateStart",vacation.getDateStart(),vacation.getDateEnd());
         if(vacationSave != null && !vacationSave.getId().equals(vacation.getId())){
             throw new ResourceNotFoundException("Отпуск пересекаются с отпуском " + dateToText (vacationSave.getDateStart()) + " - " + dateToText(vacationSave.getDateEnd()) );

@@ -71,9 +71,10 @@ public class ProductionCalendar {
      */
     public boolean isWorkDay(LocalDate date) {
         if (days.containsKey(date)) {
-            if (days.get(date).getType().equals(DayType.WORKDAY) || days.get(date).getType().equals(DayType.SHORTDAY))
+            DayType dayType = days.get(date).getType();
+            if (dayType.equals(DayType.WORKDAY) || dayType.equals(DayType.SHORTDAY))
                 return true;
-            if (days.get(date).getType().equals(DayType.HOLIDAY))
+            if (dayType.equals(DayType.HOLIDAY) || dayType.equals(DayType.WEEK_END))
                 return false;
         }
         return isWorkWeekNotCalendar(date);
@@ -194,7 +195,7 @@ public class ProductionCalendar {
         else if (isWorkDay(date))
             return new DateInfo(date, DayType.WORKDAY);
         else if (isWeekEnd(date))
-            return new DateInfo(date, DayType.HOLIDAY);
+            return new DateInfo(date, DayType.WEEK_END);
         else
             return null;
     }
@@ -226,6 +227,16 @@ public class ProductionCalendar {
             dateStart = dateStart.plusDays(1);
         }
         return dateStart;
+    }
+
+    public boolean existWorkDay(LocalDate dateStart, LocalDate dateEnd) {
+        while (dateStart.compareTo(dateEnd) <= 0) {
+            if (isWorkDay(dateStart)) {
+                return true;
+            }
+            dateStart = dateStart.plusDays(1);
+        }
+        return false;
     }
 }
 

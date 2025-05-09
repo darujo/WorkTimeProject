@@ -308,4 +308,13 @@ public class CalendarService {
     private boolean isHoliday(LocalDate date) {
         return productionCalendar.isHoliday(date);
     }
+
+    public boolean existWorkDay(Timestamp dateStart, Timestamp dateEnd) {
+        return existWorkDay(dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                dateEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+    }
+
+    private boolean existWorkDay(LocalDate dateStart, LocalDate dateEnd) {
+        return productionCalendar.existWorkDay(dateStart, dateEnd);
+    }
 }
