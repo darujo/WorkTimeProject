@@ -4,6 +4,7 @@ package ru.darujo.utils.calendar.structure;
  * Типы дат
  */
 public enum DayType {
+    WEEK_END,
 
     /**
      * Нерабочий или праздницный день.

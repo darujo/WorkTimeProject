@@ -87,7 +87,8 @@ angular.module('workTimeService').controller('vacationController', function ($sc
             id: null,
             nikName: null,
             dateStart: null,
-            dateEnd: null
+            dateEnd: null,
+            days: null
         };
 
         console.log($scope.Vacation);
@@ -101,8 +102,8 @@ angular.module('workTimeService').controller('vacationController', function ($sc
             .then(function (response) {
                 $scope.Vacation = response.data;
                 console.log($scope.Vacation);
-                // $scope.Release.issuingReleaseFact = new Date( $scope.Release.issuingReleaseFact);
-                // $scope.Release.issuingReleasePlan = new Date( $scope.Release.issuingReleasePlan);
+                 $scope.Vacation.dateStart = new Date( $scope.Vacation.dateStart);
+                 $scope.Vacation.dateEnd = new Date( $scope.Vacation.dateEnd);
                 showFormEdit();
 
             }, function errorCallback(response) {

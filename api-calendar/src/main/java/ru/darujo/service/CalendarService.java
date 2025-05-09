@@ -7,7 +7,6 @@ import ru.darujo.dto.calendar.WeekDto;
 import ru.darujo.dto.calendar.WeekWorkDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.utils.calendar.ProductionCalendar;
-import ru.darujo.utils.calendar.days.RU_Days;
 import ru.darujo.utils.calendar.structure.DateInfo;
 import ru.darujo.utils.calendar.structure.DayType;
 
@@ -21,7 +20,7 @@ import java.util.*;
 @Service
 @Primary
 public class CalendarService {
-    ProductionCalendar productionCalendar = new ProductionCalendar(new RU_Days());
+    ProductionCalendar productionCalendar = new ProductionCalendar();
 
     public List<WeekDto> getWeekList(Integer month, Integer year) {
         List<WeekDto> weekDTOs = new ArrayList<>();
@@ -284,5 +283,29 @@ public class CalendarService {
             return 7f;
         }
         return 8.25f;
+    }
+
+    public int getDayNotHoliday(Date dateStart, Date dateEnd) {
+        return getDayNotHoliday(dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                dateEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+    }
+    public int getDayNotHoliday(LocalDate dateStart, LocalDate dateEnd) {
+        return productionCalendar.iDaysNotHoliday(dateStart, dateEnd);
+    }
+
+    public Timestamp getDateEndNotHoliday(Timestamp dateStart, Integer days) {
+        return Timestamp.valueOf(getDateEndNotHoliday(dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),days).atStartOfDay());
+    }
+
+    private LocalDate getDateEndNotHoliday(LocalDate dateStart, Integer days) {
+        return productionCalendar.getDateEndNotHoliday(dateStart, days);
+    }
+
+    public boolean isHoliday(Timestamp date) {
+        return  isHoliday(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+    }
+
+    private boolean isHoliday(LocalDate date) {
+        return productionCalendar.isHoliday(date);
     }
 }

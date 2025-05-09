@@ -34,6 +34,12 @@ public class VacationService {
     public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
+    CalendarService calendarService;
+
+    @Autowired
+    public void setCalendarService(CalendarService calendarService) {
+        this.calendarService = calendarService;
+    }
 
     public Vacation findById(long id) {
         return vacationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Не найдена запись с ID" + id));
@@ -52,6 +58,9 @@ public class VacationService {
         }
         if (vacation.getDateStart() == null || vacation.getDateEnd() == null){
             throw new ResourceNotFoundException("Дата начала и конца периода должны быть заполнены");
+        }
+        if (calendarService.isHoliday(vacation.getDateEnd())){
+            throw new ResourceNotFoundException("Дата конца отпуска не может быть праздником");
         }
         Vacation vacationSave = findOneDateBetween(vacation.getNikName(),"dateStart",vacation.getDateStart(),vacation.getDateEnd());
         if(vacationSave != null && !vacationSave.getId().equals(vacation.getId())){
@@ -121,5 +130,15 @@ public class VacationService {
             System.out.println(e.getMessage());
             userFio.setFirstName("Не найден пользователь с ником " + userFio.getNikName());
         }
+    }
+    public int getDayNotHoliday(Date dateStart, Date dateEnd){
+        return  calendarService.getDayNotHoliday(dateStart, dateEnd);
+    }
+
+    public Timestamp getNewDate(Timestamp dateStart, Timestamp dateEnd, Integer days) {
+        if (dateStart == null || days == null || days < 1){
+            return dateEnd;
+        }
+        return calendarService.getDateEndNotHoliday(dateStart,days);
     }
 }

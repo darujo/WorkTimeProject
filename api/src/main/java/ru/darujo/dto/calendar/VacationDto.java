@@ -25,7 +25,7 @@ public class VacationDto extends DataPrinter implements UserFio {
     private String patronymic;
     private Timestamp dateStart;
     private Timestamp dateEnd;
-
+    private Integer days;
     public Long getId() {
         return id;
     }
@@ -48,6 +48,10 @@ public class VacationDto extends DataPrinter implements UserFio {
 
     public String getDateEndStr() {
         return dateToText(dateEnd);
+    }
+
+    public Integer getDays() {
+        return days;
     }
 
     public String getFirstName() {
@@ -79,5 +83,13 @@ public class VacationDto extends DataPrinter implements UserFio {
     @Override
     public void setPatronymic(String patronymic) {
         this.patronymic = patronymic;
+    }
+
+    public void setDays(Integer days) {
+        this.days = days;
+    }
+
+    public void setDateEnd(Timestamp dateEnd) {
+        this.dateEnd = dateEnd;
     }
 }

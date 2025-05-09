@@ -57,6 +57,7 @@
             <td class="tablehead2">ФИО</td>
             <td class="tablehead2">Дата начала отпуска</td>
             <td class="tablehead2">Дата конца отпуска</td>
+            <td class="tablehead2">Кол-во дней отпуска</td>
 
             <td class="tablehead2"></td>
             <td class="tablehead2"></td>
@@ -72,6 +73,7 @@
             </td>
             <td>{{vacation.dateStartStr}}</td>
             <td>{{vacation.dateEndStr}}</td>
+            <td>{{vacation.days}}</td>
             <td>
                 <button ng-click="editVacation(vacation.id)">Изменить</button>
             </td>
@@ -101,13 +103,18 @@
 
         </div>
         <div class="horiz">
-            <p class="formlablep">Дата выдачи план:</p> <input class="vvod40mar10" type="date" id="DateStart" step="any"
+            <p class="formlablep">Дата начала:</p> <input class="vvod40mar10" type="date" id="DateStart" step="any"
                                                    ng-model="Vacation.dateStart"/>
             <br>
         </div>
         <div class="horiz">
-            <p class="formlablep">Дата выдачи факт:</p> <input class="vvod40mar10" type="date" id="DateEnd" step="any"
+            <p class="formlablep">Дата конца:</p> <input class="vvod40mar10" type="date" id="DateEnd" step="any" ng-change = "Vacation.days = null"
                                                    ng-model="Vacation.dateEnd"/>
+            <br>
+        </div>
+        <div class="horiz">
+            <p class="formlablep">Дней:</p> <input class="vvod40mar10" type="number" id="Days" step="any" step="1" ng-change = "Vacation.dateEnd = null"
+                                                         ng-model="Vacation.days"/>
             <br>
         </div>
         <button type="submit" class="button" id="ButtonSaveDown">Сохранить</button>

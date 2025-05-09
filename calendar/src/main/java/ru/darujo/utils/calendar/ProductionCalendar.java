@@ -2,6 +2,7 @@ package ru.darujo.utils.calendar;
 
 import ru.darujo.utils.calendar.days.DefaultDays;
 import ru.darujo.utils.calendar.days.ProductionCalendarDaysInterface;
+import ru.darujo.utils.calendar.days.RU_Days;
 import ru.darujo.utils.calendar.structure.DateInfo;
 import ru.darujo.utils.calendar.structure.DayType;
 
@@ -24,8 +25,7 @@ public class ProductionCalendar {
      * Конструктор по умолчанию. Без локального производственного календаря.
      */
     public ProductionCalendar() {
-        DefaultDays defaultDays = new DefaultDays();
-        this.days = defaultDays.getDays();
+        this(new RU_Days());
     }
 
     /**
@@ -34,7 +34,7 @@ public class ProductionCalendar {
      * @param date LocalDate - Дата для проверки
      * @return boolean
      */
-    public boolean isWeekEnd(LocalDate date){
+    public boolean isWeekEndNotCalendar(LocalDate date) {
         DayOfWeek dayOfWeek = date.getDayOfWeek();
         return dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY;
     }
@@ -45,7 +45,7 @@ public class ProductionCalendar {
      * @param date LocalDate - Дата для проверки
      * @return boolean
      */
-    public boolean isWorkWeek(LocalDate date){
+    public boolean isWorkWeekNotCalendar(LocalDate date) {
         DayOfWeek dayOfWeek = date.getDayOfWeek();
         return dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY;
     }
@@ -69,14 +69,14 @@ public class ProductionCalendar {
      * @param date LocalDate - Дата для проверки
      * @return boolean
      */
-    public boolean isWorkDay(LocalDate date){
+    public boolean isWorkDay(LocalDate date) {
         if (days.containsKey(date)) {
-            if (days.get(date).getType().equals(DayType.WORKDAY))
+            if (days.get(date).getType().equals(DayType.WORKDAY) || days.get(date).getType().equals(DayType.SHORTDAY))
                 return true;
             if (days.get(date).getType().equals(DayType.HOLIDAY))
                 return false;
         }
-        return isWorkWeek(date);
+        return isWorkWeekNotCalendar(date);
     }
 
     /**
@@ -87,14 +87,15 @@ public class ProductionCalendar {
      * @param date LocalDate - Дата для проверки
      * @return boolean
      */
-    public boolean isHoliday(LocalDate date){
-        if(days.containsKey(date)) {
-            if (days.get(date).getType().equals(DayType.HOLIDAY))
+    public boolean isWeekEnd(LocalDate date) {
+        if (days.containsKey(date)) {
+            DayType dayType = days.get(date).getType();
+            if (dayType.equals(DayType.HOLIDAY) || dayType.equals(DayType.WEEK_END))
                 return true;
-            if (days.get(date).getType().equals(DayType.WORKDAY) || days.get(date).getType().equals(DayType.SHORTDAY))
+            if (dayType.equals(DayType.WORKDAY) || dayType.equals(DayType.SHORTDAY))
                 return false;
         }
-        return isWeekEnd(date);
+        return isWeekEndNotCalendar(date);
     }
 
     /**
@@ -130,7 +131,7 @@ public class ProductionCalendar {
      */
     public LocalDate getWorkDateAfterInterval(LocalDate date, int dayInterval) {
         LocalDate result = date.plusDays(dayInterval);
-        while (isHoliday(result))
+        while (isWeekEnd(result))
             result = result.plusDays(1);
         return result;
     }
@@ -146,7 +147,7 @@ public class ProductionCalendar {
     public LocalDate getWorkDateAfterInterval(LocalDate date, int dayInterval, boolean includeFirstDay) {
         if (includeFirstDay && dayInterval > 0) dayInterval--;
         LocalDate result = date.plusDays(dayInterval);
-        while (isHoliday(result))
+        while (isWeekEnd(result))
             result = result.plusDays(1);
         return result;
     }
@@ -154,7 +155,7 @@ public class ProductionCalendar {
     /**
      * Возвращает ближайший рабочий день через dayInterval РАБОЧИХ дней от date
      *
-     * @param date LocalDate - дата начала отсчета
+     * @param date            LocalDate - дата начала отсчета
      * @param workDayInterval int - интервал в РАБОЧИХ днях
      * @return LocalDate
      */
@@ -180,6 +181,7 @@ public class ProductionCalendar {
         }
         return date;
     }
+
     /**
      * Возвращает информацию об указанной дате (дата, тип, наименование праздника)
      *
@@ -191,9 +193,39 @@ public class ProductionCalendar {
             return days.get(date);
         else if (isWorkDay(date))
             return new DateInfo(date, DayType.WORKDAY);
-        else if (isHoliday(date))
+        else if (isWeekEnd(date))
             return new DateInfo(date, DayType.HOLIDAY);
         else
             return null;
     }
+
+    public boolean isHoliday(LocalDate date) {
+        if (days.containsKey(date)) {
+            return days.get(date).getType().equals(DayType.HOLIDAY);
+        }
+        return false;
+    }
+
+    public Integer iDaysNotHoliday(LocalDate dateStart, LocalDate dateEnd) {
+        int days = 0;
+        while (dateStart.compareTo(dateEnd) <= 0) {
+            if (!isHoliday(dateStart)) {
+                days++;
+            }
+            dateStart = dateStart.plusDays(1);
+        }
+        return days;
+    }
+
+    public LocalDate getDateEndNotHoliday(LocalDate dateStart, int daysAdd) {
+        int days = 1;
+        while (days < daysAdd || isHoliday(dateStart)) {
+            if (!isHoliday(dateStart)) {
+                days++;
+            }
+            dateStart = dateStart.plusDays(1);
+        }
+        return dateStart;
+    }
 }
+
