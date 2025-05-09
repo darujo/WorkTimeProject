@@ -18,17 +18,17 @@ angular.module('workTimeService').controller('vacationController', function ($sc
 
     let maxPage = 1;
     $scope.findPage = function (diffPage) {
-        // console.log("findPage");
-        // let page = parseInt(document.getElementById("Page").value) + diffPage;
-        // if (maxPage < page) {
-        //     page = maxPage;
-        // }
-        // // должно быть после если maxPage = 0
-        // if (page < 1) {
-        //     page = 1;
-        // }
-        // document.getElementById("Page").value = page;
-        // console.log("запрос данных");
+        console.log("findPage");
+        let page = parseInt(document.getElementById("Page").value) + diffPage;
+        if (maxPage < page) {
+            page = maxPage;
+        }
+        // должно быть после если maxPage = 0
+        if (page < 1) {
+            page = 1;
+        }
+        document.getElementById("Page").value = page;
+        console.log("запрос данных");
 
         if (typeof $scope.Filt === "undefined") {
             $scope.Filt = {size: 10};
@@ -38,17 +38,14 @@ angular.module('workTimeService').controller('vacationController', function ($sc
         console.log(Filter);
         $http({
             url: constPatchVacation,
-            method: "get"
-            // ,
-            // params: {
-            //     page: page,
-            //     size: Filter ? Filter.size : null,
-            //     nikName: Filter ? Filter.nikName : null,
-            //     password: Filter ? Filter.password : null,
-            //     lastName: Filter ? Filter.lastName : null,
-            //     firstName: Filter ? Filter.firstName : null,
-            //     patronymic: Filter ? Filter.patronymic : null
-            // }
+            method: "get",
+            params: {
+                page: page,
+                size: Filter ? Filter.size : null,
+                nikName: Filter ? Filter.nikName : null,
+                dateStart: Filter ? Filter.dateStart : null,
+                dateEnd: Filter ? Filter.dateEnd : null
+            }
 
 
         }).then(function (response) {
@@ -59,7 +56,7 @@ angular.module('workTimeService').controller('vacationController', function ($sc
                 maxPage = 1;
             } else {
                 $scope.VacationList = response.data.content;
-                // maxPage = response.data.totalPages;
+                maxPage = response.data.totalPages;
             }
 
             showList();
@@ -153,9 +150,9 @@ angular.module('workTimeService').controller('vacationController', function ($sc
 
     $scope.clearFilter = function (load) {
         console.log("clearFilter");
-        // $scope.Filt = {
-        //     size: 10
-        // };
+        $scope.Filt = {
+            size: 10
+        };
         console.log($scope.Filt);
         if (load) {
             $scope.filterVacation();
@@ -178,6 +175,6 @@ angular.module('workTimeService').controller('vacationController', function ($sc
     console.log("Start");
     showList();
     console.log("Show ok");
-
+    $scope.clearFilter(false);
     $scope.loadVacation();
 })

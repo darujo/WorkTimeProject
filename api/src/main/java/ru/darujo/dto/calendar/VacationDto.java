@@ -3,9 +3,10 @@ package ru.darujo.dto.calendar;
 import ru.darujo.dto.printer.DataPrinter;
 import ru.darujo.dto.user.UserFio;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class VacationDto extends DataPrinter implements UserFio {
+public class VacationDto extends DataPrinter implements UserFio, Serializable {
     public VacationDto() {
     }
 

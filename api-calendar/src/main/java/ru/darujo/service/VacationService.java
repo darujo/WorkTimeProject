@@ -2,6 +2,9 @@ package ru.darujo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.user.UserDto;
@@ -34,6 +37,7 @@ public class VacationService {
     public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
+
     CalendarService calendarService;
 
     @Autowired
@@ -46,39 +50,42 @@ public class VacationService {
     }
 
     SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-    private String dateToText(Date date){
-        if (date == null){
+
+    private String dateToText(Date date) {
+        if (date == null) {
             return null;
         }
         return sdf.format(date);
     }
+
     public void checkVacation(Vacation vacation) {
-        if (vacation.getNikName() == null ){
+        if (vacation.getNikName() == null) {
             throw new ResourceNotFoundException("ФИО должно быть заполнено");
         }
-        if (vacation.getDateStart() == null || vacation.getDateEnd() == null){
+        if (vacation.getDateStart() == null || vacation.getDateEnd() == null) {
             throw new ResourceNotFoundException("Дата начала и конца периода должны быть заполнены");
         }
-        if (calendarService.isHoliday(vacation.getDateEnd())){
+        if (calendarService.isHoliday(vacation.getDateEnd())) {
             throw new ResourceNotFoundException("Дата конца отпуска не может быть праздником");
         }
-        if (!calendarService.existWorkDay(vacation.getDateStart(),vacation.getDateEnd())){
+        if (!calendarService.existWorkDay(vacation.getDateStart(), vacation.getDateEnd())) {
             throw new ResourceNotFoundException("Отпуск должен содержать рабочий день");
         }
-        Vacation vacationSave = findOneDateBetween(vacation.getNikName(),"dateStart",vacation.getDateStart(),vacation.getDateEnd());
-        if(vacationSave != null && !vacationSave.getId().equals(vacation.getId())){
-            throw new ResourceNotFoundException("Отпуск пересекаются с отпуском " + dateToText (vacationSave.getDateStart()) + " - " + dateToText(vacationSave.getDateEnd()) );
+        Vacation vacationSave = findOneDateBetween(vacation.getNikName(), "dateStart", vacation.getDateStart(), vacation.getDateEnd());
+        if (vacationSave != null && !vacationSave.getId().equals(vacation.getId())) {
+            throw new ResourceNotFoundException("Отпуск пересекаются с отпуском " + dateToText(vacationSave.getDateStart()) + " - " + dateToText(vacationSave.getDateEnd()));
         }
-        vacationSave = findOneDateBetween(vacation.getNikName(),"dateEnd",vacation.getDateStart(),vacation.getDateEnd());
-        if(vacationSave != null && !vacationSave.getId().equals(vacation.getId())){
-            throw new ResourceNotFoundException("Отпуск пересекаются с отпуском " + dateToText (vacationSave.getDateStart()) + " - " + dateToText(vacationSave.getDateEnd()) );
+        vacationSave = findOneDateBetween(vacation.getNikName(), "dateEnd", vacation.getDateStart(), vacation.getDateEnd());
+        if (vacationSave != null && !vacationSave.getId().equals(vacation.getId())) {
+            throw new ResourceNotFoundException("Отпуск пересекаются с отпуском " + dateToText(vacationSave.getDateStart()) + " - " + dateToText(vacationSave.getDateEnd()));
         }
         vacationSave = findOneDateInVacation(vacation.getNikName(), vacation.getDateStart());
-        if(vacationSave != null && !vacationSave.getId().equals(vacation.getId())){
-            throw new ResourceNotFoundException("Отпуск пересекаются с отпуском " + dateToText (vacationSave.getDateStart()) + " - " + dateToText(vacationSave.getDateEnd()) );
+        if (vacationSave != null && !vacationSave.getId().equals(vacation.getId())) {
+            throw new ResourceNotFoundException("Отпуск пересекаются с отпуском " + dateToText(vacationSave.getDateStart()) + " - " + dateToText(vacationSave.getDateEnd()));
         }
         // вторую дату проверять не надо  так как этот  случай покрывается предыдущими случаями
     }
+
     public Vacation saveVacation(Vacation vacation) {
         checkVacation(vacation);
         return vacationRepository.save(vacation);
@@ -88,30 +95,39 @@ public class VacationService {
         vacationRepository.deleteById(id);
     }
 
-    public List<Vacation> findAll(String nikName) {
+    public Page<Vacation> findAll(String nikName, Timestamp dateStart, Timestamp dateEnd, Integer page, Integer size) {
         List<String> users = Objects.requireNonNull(userServiceIntegration.getUserDTOs(nikName)).stream().map(UserDto::getNikName).collect(Collectors.toList());
         Specification<Vacation> specification = Specification.where(null);
-        specification = VacationSpecifications.in(specification,"nikName",users);
-        return vacationRepository.findAll(specification);
+        specification = VacationSpecifications.in(specification, "nikName", users);
+        specification = VacationSpecifications.dateGe(specification, "dateEnd", dateStart);
+        specification = VacationSpecifications.dateLe(specification, "dateStart", dateEnd);
+
+        if (page != null && size != null) {
+            return vacationRepository.findAll(specification
+                    , PageRequest.of(page - 1, size));
+        } else {
+            return new PageImpl<>(vacationRepository.findAll(specification));
+        }
     }
 
     public Vacation findOneDateBetween(String nikName, String field, Date dateGe, Date dateLe) {
         Specification<Vacation> specification = Specification.where(null);
-        specification = VacationSpecifications.eq(specification,"nikName",nikName);
-        specification = VacationSpecifications.dateGe(specification,field,dateGe);
-        specification = VacationSpecifications.dateLe(specification,field,dateLe);
+        specification = VacationSpecifications.eq(specification, "nikName", nikName);
+        specification = VacationSpecifications.dateGe(specification, field, dateGe);
+        specification = VacationSpecifications.dateLe(specification, field, dateLe);
         return vacationRepository.findOne(specification).orElse(null);
     }
+
     public Vacation findOneDateInVacation(String nikName, LocalDate localDate) {
-        return findOneDateInVacation(nikName,Timestamp.valueOf(localDate.atStartOfDay()));
+        return findOneDateInVacation(nikName, Timestamp.valueOf(localDate.atStartOfDay()));
 
     }
 
-    public Vacation findOneDateInVacation(String nikName,Date date) {
+    public Vacation findOneDateInVacation(String nikName, Date date) {
         Specification<Vacation> specification = Specification.where(null);
-        specification = VacationSpecifications.eq(specification,"nikName",nikName);
-        specification = VacationSpecifications.dateLe(specification,"dateStart",date);
-        specification = VacationSpecifications.dateGe(specification,"dateEnd",date);
+        specification = VacationSpecifications.eq(specification, "nikName", nikName);
+        specification = VacationSpecifications.dateLe(specification, "dateStart", date);
+        specification = VacationSpecifications.dateGe(specification, "dateEnd", date);
         return vacationRepository.findOne(specification).orElse(null);
     }
 
@@ -134,14 +150,16 @@ public class VacationService {
             userFio.setFirstName("Не найден пользователь с ником " + userFio.getNikName());
         }
     }
-    public int getDayNotHoliday(Date dateStart, Date dateEnd){
-        return  calendarService.getDayNotHoliday(dateStart, dateEnd);
+
+    public int getDayNotHoliday(Date dateStart, Date dateEnd) {
+        return calendarService.getDayNotHoliday(dateStart, dateEnd);
     }
 
     public Timestamp getNewDate(Timestamp dateStart, Timestamp dateEnd, Integer days) {
-        if (dateStart == null || days == null || days < 1){
+        if (dateStart == null || days == null || days < 1) {
             return dateEnd;
         }
-        return calendarService.getDateEndNotHoliday(dateStart,days);
+        return calendarService.getDateEndNotHoliday(dateStart, days);
     }
+
 }

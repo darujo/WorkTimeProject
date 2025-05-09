@@ -1,18 +1,21 @@
 package ru.darujo.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.converter.VacationConvertor;
 import ru.darujo.dto.calendar.VacationDto;
+import ru.darujo.dto.parsing.DateParser;
 import ru.darujo.model.Vacation;
 import ru.darujo.service.VacationService;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 
 @RestController()
 @RequestMapping("/v1/vacation")
-public class VacationController {
+public class VacationController extends DateParser {
     private VacationService vacationService;
 
     @Autowired
@@ -40,8 +43,15 @@ public class VacationController {
     }
 
     @GetMapping("")
-    public List<VacationDto> VacationPage(@RequestParam(required = false) String nikName) {
-        return vacationService.findAll(nikName).stream().map(this::getVacationDtoAndAddFio).collect(Collectors.toList());
+    public Page<VacationDto> VacationPage(@RequestParam(required = false) String nikName,
+                                          @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
+                                          @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr,
+                                          @RequestParam(required = false) Integer page,
+                                          @RequestParam(defaultValue = "10") Integer size) {
+        Timestamp dateStart = stringToDate(dateStartStr, "dateStart = ");
+        Timestamp dateEnd = stringToDate(dateEndStr, "dateEnd = ");
+
+        return vacationService.findAll(nikName,dateStart,dateEnd,page,size).map(this::getVacationDtoAndAddFio);
     }
 
     private VacationDto getVacationDtoAndAddDay(Vacation vacation) {
