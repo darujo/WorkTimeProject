@@ -129,6 +129,5 @@ angular.module('workTimeService').controller('userVacationController', function 
     $scope.clearFilter(false);
     $location.getUsers(callBackUser);
     $location.getRoles(callBackRole);
-    $scope.UserList.push({firstName: "Все", nikName: "All"});
     $scope.loadWorkTime();
 })
