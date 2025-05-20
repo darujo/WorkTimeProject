@@ -15,6 +15,7 @@ import ru.darujo.model.Vacation;
 import ru.darujo.repository.VacationRepository;
 import ru.darujo.repository.specification.VacationSpecifications;
 
+import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -68,9 +69,6 @@ public class VacationService {
         if (calendarService.isHoliday(vacation.getDateEnd())) {
             throw new ResourceNotFoundException("Дата конца отпуска не может быть праздником");
         }
-        if (!calendarService.existWorkDay(vacation.getDateStart(), vacation.getDateEnd())) {
-            throw new ResourceNotFoundException("Отпуск должен содержать рабочий день");
-        }
         Vacation vacationSave = findOneDateBetween(vacation.getNikName(), "dateStart", vacation.getDateStart(), vacation.getDateEnd());
         if (vacationSave != null && !vacationSave.getId().equals(vacation.getId())) {
             throw new ResourceNotFoundException("Отпуск пересекаются с отпуском " + dateToText(vacationSave.getDateStart()) + " - " + dateToText(vacationSave.getDateEnd()));
@@ -85,9 +83,30 @@ public class VacationService {
         }
         // вторую дату проверять не надо  так как этот  случай покрывается предыдущими случаями
     }
-
+    private Timestamp addDay(Timestamp date, int day){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DAY_OF_WEEK, day);
+        return new Timestamp(cal.getTime().getTime());
+    }
+    @Transactional
     public Vacation saveVacation(Vacation vacation) {
         checkVacation(vacation);
+        Timestamp date = addDay(vacation.getDateStart(), -1 );
+        Vacation vacationSave = findOneDateBetween(vacation.getNikName(), "dateEnd", date, date);
+        if (vacationSave != null){
+            vacation.setDateStart(vacationSave.getDateStart());
+            vacationRepository.delete(vacationSave);
+        }
+        date = addDay(vacation.getDateEnd(), 1 );
+        vacationSave = findOneDateBetween(vacation.getNikName(), "dateStart", date, date);
+        if (vacationSave != null){
+            vacation.setDateEnd(vacationSave.getDateEnd());
+            vacationRepository.delete(vacationSave);
+        }
+        if (!calendarService.existWorkDay(vacation.getDateStart(), vacation.getDateEnd())) {
+            throw new ResourceNotFoundException("Отпуск должен содержать рабочий день");
+        }
         return vacationRepository.save(vacation);
     }
 

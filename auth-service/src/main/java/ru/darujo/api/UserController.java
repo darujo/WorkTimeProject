@@ -41,9 +41,13 @@ public class UserController {
                                      @RequestParam(required = false) String firstName,
                                      @RequestParam(required = false) String patronymic) {
         String role = null;
-        if (nikName != null && nikName.length() > 5 && nikName.substring(0, 5).equalsIgnoreCase("role_")) {
-            role = nikName.substring(5);
-            nikName = null;
+        if (nikName != null) {
+            if (nikName.equals("All")) {
+                nikName = null;
+            } else if (nikName.length() > 5 && nikName.substring(0, 5).equalsIgnoreCase("role_")) {
+                role = nikName.substring(5);
+                nikName = null;
+            }
         }
         return userService.getUserList(role, page, size, nikName, lastName, firstName, patronymic).map(UserConvertor::getUserDto);
 

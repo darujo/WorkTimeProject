@@ -81,12 +81,20 @@ angular.module('workTimeService').controller('taskController', function ($scope,
         // }
         console.log(document.getElementById("WorkIdEdit").value);
     }
-
+    let maxPage = 1;
     $scope.findPage = function (diffPage) {
         console.log("findPage");
         let page = parseInt(document.getElementById("Page").value) + diffPage;
-        document.getElementById("Page").value = page;
         console.log("запрос данных7");
+        if (page > maxPage) {
+            page = maxPage;
+
+        }
+        if (page < 1) {
+            page = 1;
+        }
+        document.getElementById("Page").value = page;
+
         let Filt;
         Filt = $scope.Filt;
         console.log(Filt);
@@ -114,8 +122,10 @@ angular.module('workTimeService').controller('taskController', function ($scope,
                 console.log(response.data.content);
                 if (typeof response.data.content === "undefined") {
                     $scope.TaskList = response.data;
+                    maxPage = 1;
                 } else {
                     $scope.TaskList = response.data.content;
+                    maxPage = response.data.totalPages;
                 }
                 showTask();
             }, function errorCallback(response) {

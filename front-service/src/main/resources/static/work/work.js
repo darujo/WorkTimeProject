@@ -134,12 +134,8 @@ angular.module('workTimeService').controller('workController', function ($scope,
     let WorkIdEdit = null;
 
     $scope.createWork = function () {
-        checkRight("create", true);
-    }
-    $scope.createWorkRun = function () {
-        WorkIdEdit = null;
-        console.log("сбрасываем значения");
         $scope.Work = {
+            id: null,
             codeZI: "",
             codeSap: "",
             WorkName: "",
@@ -167,6 +163,12 @@ angular.module('workTimeService').controller('workController', function ($scope,
             issuingReleaseFact: null
 
         };
+        checkRight("create", true);
+    }
+    $scope.createWorkRun = function () {
+        WorkIdEdit = null;
+        console.log("сбрасываем значения");
+
         console.log("сбрасываем значения 4")
         showFormEdit();
 
@@ -264,7 +266,10 @@ angular.module('workTimeService').controller('workController', function ($scope,
         }
     }
     $scope.releaseOption= function (release){
-        if(typeof release.issuingReleaseFact !== "undefined"){
+        console.log("----- rlesewwww")
+        console.log(release)
+        console.log(typeof release.issuingReleaseFact !== "undefined" && release.issuingReleaseFact !== null)
+        if(typeof release.issuingReleaseFact !== "undefined"  && release.issuingReleaseFact !== null){
             return "disabled";
         }
         return false;

@@ -54,7 +54,7 @@ public class CalendarService {
             dateInfo = productionCalendar.getDateInfo(date);
             dayDto = new DayDto(
                     date.getDayOfMonth(),
-                    dateInfo.getType() == DayType.HOLIDAY,
+                    dateInfo.getType() == DayType.HOLIDAY || dateInfo.getType() == DayType.WEEK_END,
                     dateInfo.getType() == DayType.SHORTDAY,
                     dateInfo.getTitle());
             days[i] = dayDto;
@@ -80,7 +80,7 @@ public class CalendarService {
                 } else {
                     dayDto = new DayDto(
                             date.getDayOfMonth(),
-                            dateInfo.getType() == DayType.HOLIDAY,
+                            dateInfo.getType() == DayType.HOLIDAY  || dateInfo.getType() == DayType.WEEK_END,
                             dateInfo.getType() == DayType.SHORTDAY,
                             dateInfo.getTitle());
                 }
@@ -126,52 +126,55 @@ public class CalendarService {
     }
 
     public List<WeekWorkDto> getPeriodTime(Date dateStart, Date dateEnd, String periodSplit) {
-        switch (periodSplit) {
-            case "1" -> periodSplit = "day";
-            case "2" -> periodSplit = "week_day";
-            case "3" -> periodSplit = "week";
-            case "4" -> periodSplit = "month";
-            case "5" -> periodSplit = "month_day";
-            case "6" -> periodSplit = "month_week";
-            case "7" -> periodSplit = "month3";
-            case "8" -> periodSplit = "month3_day";
-            case "9" -> periodSplit = "month3_week";
-            case "10" -> periodSplit = "year";
-            case "11" -> periodSplit = "year_day";
-            case "12" -> periodSplit = "year_week";
-        }
-        String period;
+        String period = null;
         String split = null;
-        switch (periodSplit) {
-            case "week_day" -> {
-                period = "week";
-                split = "day";
+
+        if(periodSplit != null) {
+            switch (periodSplit) {
+                case "1" -> periodSplit = "day";
+                case "2" -> periodSplit = "week_day";
+                case "3" -> periodSplit = "week";
+                case "4" -> periodSplit = "month";
+                case "5" -> periodSplit = "month_day";
+                case "6" -> periodSplit = "month_week";
+                case "7" -> periodSplit = "month3";
+                case "8" -> periodSplit = "month3_day";
+                case "9" -> periodSplit = "month3_week";
+                case "10" -> periodSplit = "year";
+                case "11" -> periodSplit = "year_day";
+                case "12" -> periodSplit = "year_week";
             }
-            case "year_day" -> {
-                period = "year";
-                split = "day";
+            switch (periodSplit) {
+                case "week_day" -> {
+                    period = "week";
+                    split = "day";
+                }
+                case "year_day" -> {
+                    period = "year";
+                    split = "day";
+                }
+                case "year_week" -> {
+                    period = "year";
+                    split = "week";
+                }
+                case "month_day" -> {
+                    period = "month";
+                    split = "day";
+                }
+                case "month_week" -> {
+                    period = "month";
+                    split = "week";
+                }
+                case "month3_day" -> {
+                    period = "month3";
+                    split = "day";
+                }
+                case "month3_week" -> {
+                    period = "month3";
+                    split = "week";
+                }
+                default -> period = periodSplit;
             }
-            case "year_week" -> {
-                period = "year";
-                split = "week";
-            }
-            case "month_day" -> {
-                period = "month";
-                split = "day";
-            }
-            case "month_week" -> {
-                period = "month";
-                split = "week";
-            }
-            case "month3_day" -> {
-                period = "month3";
-                split = "day";
-            }
-            case "month3_week" -> {
-                period = "month3";
-                split = "week";
-            }
-            default -> period = periodSplit;
         }
         return getPeriodTime(dateStart, dateEnd, period, split);
     }

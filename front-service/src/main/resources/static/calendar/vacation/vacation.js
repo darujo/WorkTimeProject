@@ -165,13 +165,9 @@ angular.module('workTimeService').controller('vacationController', function ($sc
         $scope.clearFilter(false);
     }
 
-    let callBackUser = function (response) {
-        console.log("callBackUser");
-        console.log(response);
-        $scope.UserList = response;
-    }
-
-    $location.getUsers(callBackUser);
+    $location.getUsers().then(function (result) {$scope.UserList = result;
+        console.log("result UserList"); console.log(result);
+    });
     console.log("Start");
     showList();
     console.log("Show ok");

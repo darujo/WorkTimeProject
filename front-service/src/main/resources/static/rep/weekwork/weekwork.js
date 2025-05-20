@@ -132,17 +132,13 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
     if ($scope.Filt === null) {
         $scope.clearFilter(false);
     }
-    let callBackUser = function (response){
-        console.log("callBackUser");
-        console.log(response);
-        $scope.UserList = response;
-    }
-    let callBackRole = function (response){
-        $scope.RoleList = response;
-    }
 
-    $location.getUsers(callBackUser);
-    $location.getRoles(callBackRole);
+    $location.getUsers().then(function (result) {$scope.UserList = result;
+        console.log("result UserList"); console.log(result);
+    });
+    $location.getRoles().then(function (result) {$scope.RoleList = result;
+        console.log("result RoleList"); console.log(result);
+    });
     $location.getReleases().then(function (result) {$scope.ReleaseList = result; });
 
 

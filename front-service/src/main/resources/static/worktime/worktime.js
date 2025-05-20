@@ -472,17 +472,13 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
     console.log("Start");
     showWorkTime();
     console.log("Show ok");
-    let callBackUser = function (response){
-        console.log("callBackUser");
-        console.log(response);
-        $scope.UserList = response;
-    }
-    let callBackRole = function (response){
-        $scope.RoleList = response;
-    }
 
-    $location.getUsers(callBackUser);
-    $location.getRoles(callBackRole);
+    $location.getUsers().then(function (result) {$scope.UserList = result;
+        console.log("result UserList"); console.log(result);
+    });
+    $location.getRoles().then(function (result) {$scope.RoleList = result;
+        console.log("result RoleList"); console.log(result);
+    });
     $scope.loadWorkTime();
     console.log("----------------------------------------")
     console.log($location.UserList);

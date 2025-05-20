@@ -73,17 +73,17 @@ angular.module('workTimeService').controller('userWorkController', function ($sc
             }
         }
     };
-    let callBackUser = function (response){
-        console.log("callBackUser");
-        console.log(response);
-        $scope.UserList = response;
-    }
-    let callBackRole = function (response){
-        $scope.RoleList = response;
-    }
     $scope.clearFilter(false);
-    $location.getUsers(callBackUser);
-    $location.getRoles(callBackRole);
-    $scope.UserList.push({firstName: "Все", nikName: "All"});
+    $location.getUsers().then(function (result) {$scope.UserList = result;
+        $scope.UserList = structuredClone(result);
+        $scope.UserList.push({firstName: "Все", nikName: "All"});
+
+        console.log("result UserList"); console.log(result);
+    });
+    $location.getRoles().then(function (result) {$scope.RoleList = result;
+        console.log("result RoleList"); console.log(result);
+    });
+
+
     $scope.loadWorkTime();
 })

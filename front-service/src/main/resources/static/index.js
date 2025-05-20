@@ -304,7 +304,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         console.log(location.href);
 
         if (location.href.indexOf("?") !== -1) {
-            let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
+            let paramsStr = new URLSearchParams(location.href.substring(location.href.lastIndexOf("?")));
             for (let [key, value] of paramsStr.entries()) {
                 if (key.toLowerCase().indexOf("stage") !== -1
                     || key.toLowerCase().indexOf("size") !== -1
@@ -470,11 +470,11 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             }, 100);
         });
     }
-    $location.getRoles = async function (callBack) {
+    $location.getRoles = async function () {
         while (!roleLoad) {
             await wait();
         }
-        callBack(RoleList);
+        return RoleList;
     }
     $location.getReleases = async function () {
         while (!releaseLoad) {
@@ -482,13 +482,13 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         }
         return ReleaseList ;
     }
-    $location.getUsers = async function (callBack) {
+    $location.getUsers = async function () {
         console.log("userLoad");
         console.log(userLoad);
         while (!userLoad) {
             await wait();
         }
-        callBack( UserList);
+        return UserList;
     }
     $scope.saveSetting = function () {
         $localStorage.UserSettingWorkTime = $scope.SettingUser;
