@@ -58,7 +58,7 @@
         <tbody>
         <tr ng-repeat="user in UserPeriodList">
             <td>{{user.lastName}} {{user.firstName}} {{user.patronymic}}</td>
-            <td ng-repeat="work in user.workPeriodDTOs" class="tdtop">
+            <td ng-repeat="work in user.workPeriodDTOs" class="tdtop" ng-style="getStyleVacation(work)">
                 <div ng-repeat="task in work.list" class="tdtask">
                     <p>{{task.taskCodeBTS}}
                     {{task.taskCodeDEVBO}}

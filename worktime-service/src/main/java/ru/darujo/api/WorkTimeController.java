@@ -13,7 +13,6 @@ import ru.darujo.service.WorkTimeService;
 
 import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController()
 @RequestMapping("/v1/worktime")
@@ -65,7 +64,7 @@ public class WorkTimeController extends DateParser {
     }
 
     @GetMapping("")
-    public Iterable<WorkTimeDto> findWorkTime(@RequestHeader String username,
+    public Page<WorkTimeDto> findWorkTime(@RequestHeader String username,
                                               @RequestParam(required = false, name = "dateLt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLtStr,
                                               @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
                                               @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
@@ -89,7 +88,7 @@ public class WorkTimeController extends DateParser {
 
         workTimeService.clearCash();
         if ((taskBTS == null && taskDEVBO == null) || taskId != null) {
-            return ((Page<WorkTime>) workTimeService.findWorkTime(taskId,
+            return workTimeService.findWorkTime(taskId,
                     nikName,
                     dateLt,
                     dateLe,
@@ -98,9 +97,9 @@ public class WorkTimeController extends DateParser {
                     type,
                     comment,
                     page,
-                    size)).map(workTimeService::getWorkTimeDtoAndUpd);
+                    size).map(workTimeService::getWorkTimeDtoAndUpd);
         } else {
-            List<WorkTime> workTimeDTOs = workTimeService.findWorkTimeTask(
+            Page<WorkTime> workTimeDTOs = workTimeService.findWorkTimeTask(
                     taskDEVBO,
                     taskBTS,
                     nikName,
@@ -109,8 +108,10 @@ public class WorkTimeController extends DateParser {
                     dateGt,
                     dateGe,
                     type,
-                    comment);
-            return workTimeDTOs.stream().map(workTimeService::getWorkTimeDtoAndUpd).collect(Collectors.toList());
+                    comment,
+                    page,
+                    size);
+            return workTimeDTOs.map(workTimeService::getWorkTimeDtoAndUpd);
 
         }
     }

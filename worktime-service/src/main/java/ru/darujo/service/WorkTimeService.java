@@ -2,6 +2,8 @@ package ru.darujo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -75,7 +77,7 @@ public class WorkTimeService {
         workTimeRepository.deleteById(id);
     }
 
-    public Iterable<WorkTime> findWorkTime(Long[] taskId, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, String comment, Integer page, Integer size) {
+    public Page<WorkTime> findWorkTime(Long[] taskId, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, String comment, Integer page, Integer size) {
         Specification<WorkTime> specification = Specification.where(null);
         Sort sort = null;
         if (taskId != null) {
@@ -125,22 +127,22 @@ public class WorkTimeService {
             sort = sort.and(Sort.by(Sort.Direction.DESC, "workDate"));
         }
         if (page == null) {
-            return workTimeRepository.findAll(specification, sort);
+            return new PageImpl<>(workTimeRepository.findAll(specification, sort));
 
         } else {
             return workTimeRepository.findAll(specification, PageRequest.of(page - 1, size, sort));
         }
     }
 
-    public List<WorkTime> findWorkTimeTask(String taskDEVBO, String taskBts, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, String comment) {
-        List<WorkTime> workTimes = new ArrayList<>();
+    public Page<WorkTime> findWorkTimeTask(String taskDEVBO, String taskBts, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, String comment,Integer page, Integer size) {
+        Page<WorkTime> workTimes;
         List<Long> taskIdList = taskServiceIntegration.getTaskList(taskDEVBO, taskBts);
-        if (taskIdList == null) {
-            return null;
+        if (taskIdList == null || taskIdList.size() == 0) {
+            return new PageImpl<>(new ArrayList<>());
         }
 
-        findWorkTime(taskIdList.toArray(new Long[0]), nikName, dateLt, dateLe, dateGT, dateGE, type, comment, null, null)
-                .forEach(workTimes::add)
+        workTimes = findWorkTime(taskIdList.toArray(new Long[0]), nikName, dateLt, dateLe, dateGT, dateGE, type, comment, page, size)
+
         ;
         return workTimes;
     }

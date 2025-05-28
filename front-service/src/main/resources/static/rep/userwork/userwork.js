@@ -73,6 +73,28 @@ angular.module('workTimeService').controller('userWorkController', function ($sc
             }
         }
     };
+    $scope.getStyleVacation = function (work) {
+        console.log("getStyleVacation")
+        console.log(work)
+        console.log(work.allVacation)
+        console.log(work.shotVacation)
+
+        if (typeof work.allVacation !== "undefined" && work.allVacation ) {
+            return {
+                'background-color': 'LightCoral'
+                // ,
+                // 'color': 'white'
+            };
+        } else {
+            if (typeof work.shotVacation !== "undefined" && work.shotVacation ) {
+                return {
+                    'background-color': 'LemonChiffon'
+                };
+            } else {
+                return {};
+            }
+        }
+    };
     $scope.clearFilter(false);
     $location.getUsers().then(function (result) {$scope.UserList = result;
         $scope.UserList = structuredClone(result);

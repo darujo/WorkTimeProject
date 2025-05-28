@@ -13,7 +13,9 @@
                             <input class="vvod40" type="number" id="WorkIdFilt" step="any" ng-model="Filt.workId"/>
                             <p class="p-head">Тип задачи :</p>
                             <select class="vvod20" name="choice" id="TypeFilt" ng-model="Filt.type">
-                                <option ng-repeat="task in TaskListType" ng-value="task.codeInt" value="task.codeInt">{{task.value}}</option>
+                                <option ng-repeat="task in TaskListType" ng-value="task.codeInt" value="task.codeInt">
+                                    {{task.value}}
+                                </option>
                                 <option ng-value="" value="">Все</option>
                             </select>
                         </div>
@@ -21,8 +23,8 @@
                             <p class="p-head">BTS:</p>
                             <br>
                             <input class="vvod20" type="text" id="BtsFilt" step="any" ng-model="Filt.bts"/>
-<!--                        </div>-->
-<!--                        <div class="horiz">-->
+                            <!--                        </div>-->
+                            <!--                        <div class="horiz">-->
                             <p class="p-head">DEVBO :</p>
                             <br>
                             <input class="vvod20" type="text" id="DevboFilt" step="any" ng-model="Filt.devbo"/>
@@ -39,8 +41,8 @@
                         </div>
                         <div class="horiz">
                             <p class="p-head">Избранное</p> <input class="vvod20" type="checkbox"
-                                                                    id="FavoritTask"
-                                                                    ng-model="Filt.favouriteTask"/>
+                                                                   id="FavoritTask"
+                                                                   ng-model="Filt.favouriteTask"/>
                             <button type="submit" class="headbutton">Применить</button>
                             <button type="button" class="headbutton" ng-click="clearFilter(true)">Сбросить</button>
                             <button type="button" class="headbutton" ng-click="sendFilter()">Поделиться</button>
@@ -56,7 +58,7 @@
         <input class="vvod" type="number" id="Page" value="1"/>
         <button class="headbutton" ng-click="findPage(1)">NextPage</button>
         <p class="p-head">Количество элементов</p>
-        <select class="vvod20" name="choice" id="TaskSize" ng-model="Filt.size" ng-change="filterTask()" >
+        <select class="vvod20" name="choice" id="TaskSize" ng-model="Filt.size" ng-change="filterTask()">
             <option ng-value="10" value="10" selected>10</option>
             <option ng-value="25" value="25">25</option>
             <option ng-value="50" value="50">50</option>
@@ -119,10 +121,10 @@
         <button type="button" ng-click="loadTask()" class="button">Вернуться к списку</button>
         <br>
         <br>
-<!--        Задача : -->
+        <!--        Задача : -->
         <input class="vvod" type="hidden" inputmode="number" id="TaskIdEdit" placeholder="Ведите код задачи"
-                        ng-model="Task.id"/>
-<!--        <br>-->
+               ng-model="Task.id"/>
+        <!--        <br>-->
         № запроса (BTS) : <input class="vvod" type="text" id="CodeBTS" placeholder="Ведите наименование"
                                  ng-model="Task.codeBTS"/>
 
@@ -137,17 +139,21 @@
         <br>
         Тип задачи :
         <select class="vvod" name="choice" id="Type" ng-model="Task.type">
-            <option ng-repeat="task in TaskListType" ng-value="task.codeInt" value="task.codeInt">{{task.value}}</option>
+            <option ng-repeat="task in TaskListType" ng-value="task.codeInt" value="task.codeInt">{{task.value}}
+            </option>
         </select>
         <br>
     </form>
     <div id="WorkNum">
         Наименование ЗИ
         <br>
-        <input class="vvod80" type="hidden" step="1" id="WorkIdEdit"
+        <input class="vvod40" type="hidden" step="1" id="WorkIdEdit"
                ng-model="Task.workId"/>
-        <input type="text" id="WorkName" class="vvod80" readonly>
-        <button type="button" ng-click="findWork(WorkTime.taskId)" class="headbutton">Найти</button>
+        <div class="horiz"><input type="text" id="WorkName" class="vvod80" readonly>
+
+            <button type="button" ng-click="findWork(WorkTime.taskId)" class="headbutton">Найти</button>
+            <button type="button" ng-click="clearWork()" class="headbutton">Убрать</button>
+        </div>
         <br>
     </div>
     <div id="FindWork">
@@ -176,7 +182,7 @@
             <input class="vvod" type="number" id="PageWork" value="1"/>
             <button type="button" class="headbutton" ng-click="loadWork(1)">NextPage</button>
             <p class="p-head">Количество элементов</p>
-            <select class="vvod20" name="choice" id="WorkSize" ng-model="FiltWork.size" ng-change="filterWork()" >
+            <select class="vvod20" name="choice" id="WorkSize" ng-model="FiltWork.size" ng-change="filterWork()">
                 <option ng-value="10" value="10" selected>10</option>
                 <option ng-value="25" value="25">25</option>
                 <option ng-value="50" value="50">50</option>

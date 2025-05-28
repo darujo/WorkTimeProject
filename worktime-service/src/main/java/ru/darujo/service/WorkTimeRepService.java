@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.*;
+import ru.darujo.dto.calendar.VacationDto;
 import ru.darujo.dto.calendar.WeekWorkDto;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.workperiod.UserWorkDto;
@@ -200,6 +201,7 @@ public class WorkTimeRepService {
                         workTimeDtoList.add(workTimeDto);
                         AtomicReference<Float> timeFactOne = new AtomicReference<>(0f);
                         timePlan.set(timePlan.get() + weekWorkDto.getTime());
+                        // добавим работы за период
                         workTimeService.findWorkTime(
                                         null,
                                         user.getNikName(),
@@ -216,8 +218,12 @@ public class WorkTimeRepService {
                                     timeFactOne.set(timeFactOne.get() + workTime.getWorkTime());
                                     workTimeDtoList.add(workTimeService.getWorkTimeDtoAndUpd(workTime));
                                 });
+                        // установим потраченое время
                         workTimeDto.setWorkTime(timeFactOne.get());
-                        weekWorkPeriodDTOs.add(new WorkPeriodDto(weekWorkDto, workTimeDtoList));
+                        // добавим период и работы также устновим был ли отпуск
+                        WorkPeriodDto workPeriodDto = new WorkPeriodDto(weekWorkDto, workTimeDtoList);
+                        addVacation(user.getNikName(), workPeriodDto);
+                        weekWorkPeriodDTOs.add(workPeriodDto);
                     });
             WorkTimeDto workTimeDto = new WorkTimeDto(null, null, null, null, null, timeFact + " из " + timePlan, null);
             List<WorkTimeDto> workTimeDTOs = new ArrayList<>();
@@ -230,5 +236,21 @@ public class WorkTimeRepService {
             userWeekWorkPeriodDTOs.add(userWorkPeriodDto);
         }
         return userWeekWorkPeriodDTOs;
+    }
+
+    private void addVacation(String nikName, WeekWorkDto workPeriodDto) {
+        try {
+            List<VacationDto> vacationDTOs = calendarServiceIntegration.getVacation(nikName, workPeriodDto.getDayStart(), workPeriodDto.getDayEnd());
+            if (vacationDTOs.size() == 0) {
+                return;
+            }
+            if (vacationDTOs.size() == 1 && vacationDTOs.get(0).getDateStart().compareTo(workPeriodDto.getDayStart()) <= 0 && vacationDTOs.get(0).getDateEnd().compareTo(workPeriodDto.getDayEnd()) >= 0) {
+                workPeriodDto.setAllVacation(true);
+            } else {
+                workPeriodDto.setShotVacation(true);
+            }
+        } catch (RuntimeException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 }

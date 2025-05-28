@@ -13,6 +13,8 @@ public class WeekWorkDto implements Serializable,Cloneable {
     private Timestamp dayStart;
     private Timestamp dayEnd;
     private Float time;
+    private Boolean isShotVacation;
+    private Boolean isAllVacation;
 
 
     public WeekWorkDto(Timestamp dayStart, Timestamp dayEnd, Float time) {
@@ -35,6 +37,22 @@ public class WeekWorkDto implements Serializable,Cloneable {
 
     public void setTime(Float time) {
         this.time = time;
+    }
+
+    public Boolean getShotVacation() {
+        return isShotVacation;
+    }
+
+    public Boolean getAllVacation() {
+        return isAllVacation;
+    }
+
+    public void setShotVacation(Boolean shotVacation) {
+        isShotVacation = shotVacation;
+    }
+
+    public void setAllVacation(Boolean allVacation) {
+        isAllVacation = allVacation;
     }
 
     @Override

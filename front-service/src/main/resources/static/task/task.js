@@ -358,6 +358,10 @@ angular.module('workTimeService').controller('taskController', function ($scope,
         console.log(document.getElementById("PageWork").value)
         $scope.loadWork(0);
     };
+    $scope.clearWork = function () {
+        $scope.Task.workId = null;
+        document.getElementById("WorkName").value = "";
+    }
     $scope.setWork = function (workId) {
         document.getElementById("WorkIdEdit").value = workId;
         $scope.Task.workId = workId;
