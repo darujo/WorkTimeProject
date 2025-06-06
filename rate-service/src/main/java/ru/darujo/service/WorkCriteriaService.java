@@ -31,10 +31,9 @@ public class WorkCriteriaService {
         if (workCriteria.getCriteria() == null && workCriteria.getCriteria() < 1)  {
             throw new ResourceNotFoundException("Не заполнено ФИО");
         }
-        Specification<WorkCriteria> specification = Specification
-                .where(WorkCriteriaSpecifications.workIdEq(workCriteria.getWorkId()))
-                .and(WorkCriteriaSpecifications.criteriaEq(workCriteria.getCriteria()));
-
+        Specification<WorkCriteria> specification = Specification.where(WorkCriteriaSpecifications.workIdEq(workCriteria.getWorkId()));
+        specification = WorkCriteriaSpecifications.eq(specification,"criteria",workCriteria.getCriteria());
+        specification = WorkCriteriaSpecifications.ne(specification,"id", workCriteria.getId());
         WorkCriteria workCriteriaFind = workCriteriaRepository.findOne(specification).orElse(null);
         if(workCriteriaFind != null){
             throw new ResourceNotFoundException("Уже есть запись с таким критерием");

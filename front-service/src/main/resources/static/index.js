@@ -219,8 +219,10 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         console.log(response.status);
         if (parseInt(response.status) === 500) {
             alert("Произошла ошибка. Обратитесь к администратору. " + response.data.message);
+            return false;
         } else if (parseInt(response.status) === 403) {
             alert("Нет прав: " + response.data);
+            return false;
         } else if (parseInt(response.status) === 401) {
             checkToken("Вы не авторизованы " + response.data);
             $scope.tryToLogout();

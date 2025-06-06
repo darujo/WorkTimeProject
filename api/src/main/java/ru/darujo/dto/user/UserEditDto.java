@@ -15,8 +15,9 @@ public class UserEditDto implements Serializable {
 
     private String patronymic;
     private String userPassword;
+    private String textPassword;
 
-    public UserEditDto(Long id, String nikName, String firstName, String lastName, String patronymic,String userPassword) {
+    public UserEditDto(Long id, String nikName, String firstName, String lastName, String patronymic,String userPassword,String textPassword) {
         this.id = id;
         this.nikName = nikName;
         this.firstName = firstName;
@@ -51,5 +52,9 @@ public class UserEditDto implements Serializable {
 
     public String getUserPassword() {
         return userPassword;
+    }
+
+    public String getTextPassword() {
+        return textPassword;
     }
 }

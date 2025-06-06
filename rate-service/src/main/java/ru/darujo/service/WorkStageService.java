@@ -57,24 +57,18 @@ public class WorkStageService {
             throw new ResourceNotFoundException("Не заполнено роль");
         }
 
-        if (workStage.getId() == null) {
-            checkAvailUser(workStage.getWorkId(), workStage.getNikName());
-        } else {
-            WorkStage workStageOld = workStageRepository.findById(workStage.getId()).orElseThrow(() -> new ResourceNotFoundException("Кто-то удалил запись"));
-            if (!workStage.getNikName().equals(workStageOld.getNikName())) {
-                checkAvailUser(workStage.getWorkId(), workStage.getNikName());
-            }
-        }
+        checkAvailUser(workStage);
+
     }
 
-    private void checkAvailUser(Long workId, String nikName) {
-        Specification<WorkStage> specification = Specification.where(WorkStageSpecifications.workIdEq(workId)).and(WorkStageSpecifications.nikNameEq(nikName))
-//                    .and(WorkStageSpecifications.roleEq(workStage.getRole()))
-                ;
-
+    private void checkAvailUser(WorkStage workStage) {
+        Specification<WorkStage> specification = WorkStageSpecifications.eq(Specification.where(null),"workId",workStage.getWorkId());
+        specification = WorkStageSpecifications.eq(specification,"nikName",workStage.getNikName());
+        specification = WorkStageSpecifications.eq(specification,"role",workStage.getRole());
+        specification = WorkStageSpecifications.ne(specification,"id",workStage.getId());
         WorkStage workStageFind = workStageRepository.findOne(specification).orElse(null);
         if (workStageFind != null) {
-            throw new ResourceNotFoundException("Уже есть запись с таким ФИО");
+            throw new ResourceNotFoundException("Уже есть запись с таким ФИО и ролью");
         }
     }
 
@@ -91,12 +85,9 @@ public class WorkStageService {
 
     public List<WorkStage> findWorkStage(Long workId, Integer role) {
         Specification<WorkStage> specification = Specification.where(WorkStageSpecifications.workIdEq(workId));
-        if (role != null) {
-            specification = specification.and(WorkStageSpecifications.roleEq(role));
-        }
+        specification = WorkStageSpecifications.eq(specification,"role",role);
 
-        List<WorkStage> workStages = workStageRepository.findAll(specification);
-        return workStages;
+        return workStageRepository.findAll(specification);
     }
 
     private final Map<String, UserDto> userDtoMap = new HashMap<>();
@@ -118,18 +109,6 @@ public class WorkStageService {
             userFio.setFirstName("Не найден пользователь с ником " + userFio.getNikName());
         }
     }
-
-//    private Float getWorkTimeAnaliseFact(Long workId, String nikName) {
-//        try {
-//            MapStringFloat mapStringFloat = workServiceIntegration.getWorkTimeStageFact(workId, 0, nikName);
-//            if (mapStringFloat.getList().size() == 0) {
-//                return 0f;
-//            }
-//            return mapStringFloat.getList().get(nikName);
-//        } catch (RuntimeException ex) {
-//            return 0f;
-//        }
-//    }
 
     private MapStringFloat getWorkTimeAnaliseFact(Long workId,String nikName) {
         try {
@@ -157,13 +136,6 @@ public class WorkStageService {
         }
 
     }
-
-//    private void updWorkStage(WorkStage workStage) {
-//        Float time = getWorkTimeAnaliseFact(workStage.getWorkId(), workStage.getNikName());
-//        if (workStage.getStage0() == null || time > workStage.getStage0()) {
-//            workStage.setStage0(time);
-//        }
-//    }
 
     public List<WorkStage> findWorkStage(Long workId) {
         return findWorkStage(workId, null);

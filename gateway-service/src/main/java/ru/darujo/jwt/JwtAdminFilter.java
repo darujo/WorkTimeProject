@@ -13,16 +13,14 @@ public class JwtAdminFilter extends JwtAuthFilter {
    protected void populateRequestHeader(ServerWebExchange exchange, String token) {
         Claims claims = jwtUtil.getAllClamsForToken(token);
         ArrayList<String> listString = claims.get("authorities", ArrayList.class);
-        if(!listString.contains("EDIT_USER".toUpperCase() )){
-            throw new RuntimeException("У вас недостаточно прав");
+        if(listString==null  || !listString.contains("EDIT_USER".toUpperCase() )){
+            throw new RuntimeException("У вас недостаточно прав (EDIT_USER)");
         }
 
         ServerHttpRequest.Builder builder =
                 exchange.getRequest().mutate()
                         .header("username", claims.getSubject());
-        if (listString != null) {
-            listString.forEach(s -> builder.header(s, "true"));
-        }
+        listString.forEach(s -> builder.header(s, "true"));
         builder.build();
     }
 }

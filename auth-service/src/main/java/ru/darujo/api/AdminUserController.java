@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.UserConvertor;
+import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.dto.user.UserEditDto;
 import ru.darujo.dto.user.UserRoleDto;
 import ru.darujo.service.UserService;
@@ -35,7 +36,7 @@ public class AdminUserController {
     public UserEditDto setUserEditDto(@RequestBody UserEditDto user) {
         System.out.println(user);
         return UserConvertor.getUserEditDto(
-                userService.saveUser(UserConvertor.getUser(user)));
+                userService.saveUser(UserConvertor.getUser(user),user.getTextPassword()));
     }
 
     @GetMapping("/user/roles/{userId}")
@@ -46,6 +47,18 @@ public class AdminUserController {
     @PostMapping("/user/roles")
     public UserRoleDto getUserRoles(@RequestBody UserRoleDto userRoleDto) {
         return userService.setUserRoles(userRoleDto);
+
+    }
+    @GetMapping("/user/password/hash")
+    public AttrDto<?> getPasswordHash(@RequestParam String textPassword) {
+        return new AttrDto<>("passwordHash", userService.hashPassword(textPassword));
+
+    }
+    @GetMapping("/user/password/check")
+    public Boolean getPasswordCheck(@RequestParam String passwordText,
+                                    @RequestParam String passwordHash) {
+        return userService.checkPassword(passwordText,passwordHash);
+
 
     }
 }

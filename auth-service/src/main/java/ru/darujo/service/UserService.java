@@ -1,5 +1,6 @@
 package ru.darujo.service;
 
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -50,7 +51,7 @@ public class UserService {
         }
     }
 
-    public User saveUser(User user) {
+    public User saveUser(User user, String textPassword) {
         checkNull(user.getNikName(), "логин");
         checkNull(user.getFirstName(), "имя");
         checkNull(user.getLastName(), "фамилия");
@@ -66,6 +67,15 @@ public class UserService {
             if (userRepository.findByNikNameIgnoreCase(user.getNikName()).isPresent()) {
                 throw new ResourceNotFoundException("Уже есть пользователь с таким ником");
             }
+        }
+        if(textPassword != null && !textPassword.equals("")){
+           if (user.getPassword() == null || user.getPassword().isEmpty()){
+               user.setPassword(hashPassword(textPassword));
+           } else {
+               if (!checkPassword(textPassword,user.getPassword())){
+                   throw new ResourceNotFoundException("Пароль и хаш не совпадают");
+               }
+           }
         }
         return userRepository.save(user);
     }
@@ -128,5 +138,12 @@ public class UserService {
         });
         userRepository.save(user);
         return getUserRoles(user.getId());
+    }
+
+    public String hashPassword(String plainTextPassword){
+        return BCrypt.hashpw(plainTextPassword, BCrypt.gensalt());
+    }
+    public boolean checkPassword(String plainTextPassword,String hashPassword){
+        return BCrypt.checkpw(plainTextPassword, hashPassword);
     }
 }

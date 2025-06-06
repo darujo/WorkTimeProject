@@ -18,7 +18,8 @@ public class UserConvertor {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getPatronymic(),
-                user.getPassword());
+                user.getPassword(),
+                "");
     }
 
     public static User getUser(UserEditDto user){

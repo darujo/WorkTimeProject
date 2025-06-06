@@ -100,6 +100,13 @@
             <br>
         </div>
         <div class="horiz">
+            <p class="formlablep">Пароль текст:</p> <input class="vvod40mar10" type="text" id="textPassword"
+                                                                 step="any"
+                                                                 ng-model="User.textPassword"/>
+            <button class="headbutton" ype="button" ng-click="genHash()" id="GenHash">Сгенерить хаш</button>
+            <br>
+        </div>
+        <div class="horiz">
             <p class="formlablep">Пароль Hash bcrypt:</p> <input class="vvod80mar10" type="text" id="UserPassword"
                                                                  step="any"
                                                                  ng-model="User.userPassword"/>

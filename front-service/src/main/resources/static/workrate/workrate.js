@@ -284,7 +284,9 @@ angular.module('workTimeService').controller('workRateController', function ($sc
 
     };
     console.log("Start workRate");
-    $scope.UserList = $location.UserList;
+    $location.getUsers().then(function (result) {$scope.UserList = result;
+        console.log("result UserList"); console.log(result);
+    });
     $scope.showWorkStageAdd();
     $scope.showWorkCriteriaAdd();
     $scope.loadWork();

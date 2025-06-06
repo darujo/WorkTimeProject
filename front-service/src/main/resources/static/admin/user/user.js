@@ -89,6 +89,7 @@
             id: null,
             nikName: null,
             password: null,
+            passwordText: null,
             lastName: null,
             firstName: null,
             patronymic: null
@@ -167,6 +168,33 @@
         $location.path('/user_role' ).search({userId: userId});
 
     }
+
+     $scope.genHash = function (){
+         $http({
+             url: constPatchAdmin + "/user/password/hash" ,
+             method: "get",
+             params: {
+                 textPassword: $scope.User ? $scope.User.textPassword : null
+             }
+
+
+         }).then(function (response) {
+             console.log("response :");
+             console.log(response);
+             $scope.User.userPassword= response.data.value;
+
+         }, function errorCallback(response) {
+
+             console.log(response)
+             if ($location.checkAuthorized(response)) {
+                     alert(response.data.message);
+             }
+
+         });
+
+
+     }
+
     // $scope.UserList = $location.UserList;
     $scope.Filt = $location.getFilter("userFilter");
     if ($scope.Filt === null) {
