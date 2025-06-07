@@ -103,7 +103,7 @@
             <p class="formlablep">Пароль текст:</p> <input class="vvod40mar10" type="text" id="textPassword"
                                                                  step="any"
                                                                  ng-model="User.textPassword"/>
-            <button class="headbutton" ype="button" ng-click="genHash()" id="GenHash">Сгенерить хаш</button>
+            <button class="headbutton" type="button" ng-click="genHash()" id="GenHash">Сгенерить хаш</button>
             <br>
         </div>
         <div class="horiz">
@@ -116,6 +116,11 @@
             <p class="formlablep">Фамилия:</p> <input class="vvod80mar10" type="text" id="LastName" step="any"
                                                       ng-model="User.lastName"/>
             <br>
+        </div>
+        <div class="horiz">
+            <p class="formlablep">Сменить пароль при входе</p> <input class="vvod20" type="checkbox"
+                                                    id="CurrentUser"
+                                                    ng-model="User.passwordChange"/>
         </div>
         <div class="horiz">
             <p class="formlablep">Имя:</p> <input class="vvod80mar10" type="text" id="FirstName" step="any"

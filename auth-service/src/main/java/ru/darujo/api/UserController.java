@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.UserConvertor;
 
 import ru.darujo.dto.user.UserDto;
+import ru.darujo.dto.user.UserPasswordChangeDto;
 import ru.darujo.service.UserService;
 
 
@@ -54,4 +55,10 @@ public class UserController {
 
     }
 
+    @PostMapping("/user/password/change")
+    public boolean changePassword(@RequestBody UserPasswordChangeDto userPasswordChangeDto,
+                                  @RequestHeader String username) {
+        return userService.changePassword(username, userPasswordChangeDto.getPasswordOld(), userPasswordChangeDto.getPasswordNew());
+
+    }
 }

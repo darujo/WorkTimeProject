@@ -79,7 +79,10 @@
                 templateUrl: 'rep/userVacation/userVacation.html?ver='.toLowerCase() + ver,
                 controller: 'userVacationController'
             })
-
+            .when('/userPassword'.toLowerCase(), {
+                templateUrl: 'admin/user/user_password.html?ver=' + ver,
+                controller: 'userChangeController'
+            })
             .otherwise({
                 redirectTo: '/'
             });
@@ -153,6 +156,11 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                 alert("Не удалось авторизоваться")
             });
     };
+    $location.backPage = function () {
+        $scope.getUser();
+        $location.path(myHash).search(myFilter);
+    }
+
     $scope.getUser = function () {
         console.log($localStorage.authUser);
         if (typeof $localStorage.authUser !== "undefined") {
@@ -163,7 +171,13 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             $http.get(constPatchAuth + '/users/user?nikName=' + nikName)
                 .then(function successCallback(response) {
                     console.log(response)
-                    $scope.user = response.data;
+                    $scope.UserLogin = response.data;
+                    if($scope.UserLogin.passwordChange){
+                        $location.path('/userPassword'.toLowerCase()).search({});
+
+                    }
+
+
                     // document.getElementById("UserName").value = response.data.lastName + " " + response.data.firstName + " " + response.data.patronymic;
                 }, function errorCallback(response) {
                     console.log(response);
@@ -211,6 +225,14 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         } else {
             $location.path('/').search({});
             return false;
+        }
+    };
+
+    $scope.isUserLoggedInAndPasOk = function () {
+        if (typeof $scope.UserLogin === "undefined") {
+            return $scope.isUserLoggedIn();
+        } else {
+            return !$scope.UserLogin.passwordChange && $scope.isUserLoggedIn();
         }
     };
 

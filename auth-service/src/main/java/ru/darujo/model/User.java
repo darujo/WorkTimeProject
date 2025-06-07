@@ -24,6 +24,9 @@ public class User {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "passwordChange")
+    private Boolean passwordChange;
+
     @Column(name = "firstName")
     private String firstName;
 
@@ -45,13 +48,14 @@ public class User {
             inverseJoinColumns = @JoinColumn(name ="right_id"))
     private Collection<Right> rights;
 
-    public User(Long id, String nikName, String password, String firstName, String lastName, String patronymic) {
+    public User(Long id, String nikName, String password, String firstName, String lastName, String patronymic, Boolean passwordChange) {
         this.id = id;
         this.nikName = nikName;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.patronymic = patronymic;
+        this.passwordChange = passwordChange;
     }
 
 

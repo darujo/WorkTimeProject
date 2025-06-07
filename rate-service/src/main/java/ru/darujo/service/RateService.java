@@ -37,7 +37,7 @@ public class RateService {
         workCriteriaList.forEach(
                 workCriteria -> timeCriteria.set(
                 timeCriteria.get() + getTime(workCriteria.getDevelop10()) + getTime(workCriteria.getDevelop50()) + getTime(workCriteria.getDevelop100())));
-        List<WorkStage> workStageList = workStageService.findWorkStage(workId, 1);
+        List<WorkStage> workStageList = workStageService.findWorkStage(workId, null);
         workStageList.forEach(
                 workStage -> timeStage.set(timeStage.get()
                 + getTime(workStage.getStage0())

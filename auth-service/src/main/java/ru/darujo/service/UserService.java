@@ -51,6 +51,11 @@ public class UserService {
         }
     }
 
+    public User saveUser(User user) {
+        return saveUser(user, null);
+    }
+
+    @Transactional
     public User saveUser(User user, String textPassword) {
         checkNull(user.getNikName(), "логин");
         checkNull(user.getFirstName(), "имя");
@@ -68,14 +73,14 @@ public class UserService {
                 throw new ResourceNotFoundException("Уже есть пользователь с таким ником");
             }
         }
-        if(textPassword != null && !textPassword.equals("")){
-           if (user.getPassword() == null || user.getPassword().isEmpty()){
-               user.setPassword(hashPassword(textPassword));
-           } else {
-               if (!checkPassword(textPassword,user.getPassword())){
-                   throw new ResourceNotFoundException("Пароль и хаш не совпадают");
-               }
-           }
+        if (textPassword != null && !textPassword.equals("")) {
+            if (user.getPassword() == null || user.getPassword().isEmpty()) {
+                user.setPassword(hashPassword(textPassword));
+            } else {
+                if (!checkPassword(textPassword, user.getPassword())) {
+                    throw new ResourceNotFoundException("Пароль и хэш не совпадают");
+                }
+            }
         }
         return userRepository.save(user);
     }
@@ -140,10 +145,31 @@ public class UserService {
         return getUserRoles(user.getId());
     }
 
-    public String hashPassword(String plainTextPassword){
+    public String hashPassword(String plainTextPassword) {
         return BCrypt.hashpw(plainTextPassword, BCrypt.gensalt());
     }
-    public boolean checkPassword(String plainTextPassword,String hashPassword){
+
+    public boolean checkPassword(String plainTextPassword, String hashPassword) {
         return BCrypt.checkpw(plainTextPassword, hashPassword);
     }
+
+    public boolean changePassword(String username, String passwordOld, String passwordNew) {
+        User user = userRepository.findByNikNameIgnoreCase(username).orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
+        if (!checkPassword(passwordOld, user.getPassword())) {
+            throw new ResourceNotFoundException("Старый пароль не действителен");
+        }
+
+        if (passwordNew == null || passwordNew.equals("")) {
+            throw new ResourceNotFoundException("Новый пароль не должен быть пустым");
+        }
+        if (checkPassword(passwordNew, user.getPassword())) {
+            throw new ResourceNotFoundException("Новый пароль не должен совпадать со старым");
+        }
+        user.setPassword(hashPassword(passwordNew));
+        user.setPasswordChange(false);
+        user = saveUser(user);
+
+        return user != null;
+    }
+
 }

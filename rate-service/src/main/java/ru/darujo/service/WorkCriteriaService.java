@@ -2,6 +2,7 @@ package ru.darujo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.exceptions.ResourceNotFoundException;
@@ -54,7 +55,7 @@ public class WorkCriteriaService {
         Specification<WorkCriteria> specification = Specification.where(WorkCriteriaSpecifications.workIdEq(workId));
 
 
-        return workCriteriaRepository.findAll(specification);
+        return workCriteriaRepository.findAll(specification, Sort.by("workId").and(Sort.by("criteria")));
     }
 
 }

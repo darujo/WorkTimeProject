@@ -1,4 +1,4 @@
- angular.module('workTimeService').controller('userController', function ($scope, $http, $location, $localStorage) {
+ angular.module('workTimeService').controller('userController', function ($scope, $http, $location) {
 
     const constPatchUser = window.location.origin + '/users';
     const constPatchAdmin = window.location.origin + '/admin/users';
@@ -92,7 +92,8 @@
             passwordText: null,
             lastName: null,
             firstName: null,
-            patronymic: null
+            patronymic: null,
+            passwordChange: true
         };
 
         console.log($scope.User);

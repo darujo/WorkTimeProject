@@ -17,7 +17,7 @@
     <nav>
         <div class="" id="navbarNav">
             <ul class="">
-                <div class="horiz" ng-show="isUserLoggedIn()">
+                <div class="horiz" ng-show="isUserLoggedInAndPasOk()">
                     <details class="detailsblockmenu" open id="DetailPrim">
                         <summary class="p-head">Меню</summary>
                         <li class="nav-item">
@@ -71,6 +71,9 @@
                                                                    ng-change="saveSetting()"/>
                         </div>
                         <button ng-click="delFilter()">Удалить сохраненные фильтры</button>
+                        <br>
+                        <a class="nav-link" href="#!/userpassword">Сменить пароль</a>
+
                     </details>
                 </div>
                 <li class="nav-item" ng-show="!isUserLoggedIn()">
@@ -104,7 +107,7 @@
     </div>
     <div class="nav-item" ng-show="isUserLoggedIn()" style="padding: 4px;">
         <div class="userview">
-            <p class="p-form">{{user.lastName}} {{user.firstName}} {{user.patronymic}}</p>
+            <p class="p-form">{{UserLogin.lastName}} {{UserLogin.firstName}} {{UserLogin.patronymic}}</p>
         </div>
 
         <!--    <input id="UserName" class="userview""-->
@@ -133,6 +136,8 @@
     <script src="admin/role/role_right.js?ver=1.2"></script>
     <script src="calendar/vacation/vacation.js?ver=1.2"></script>
     <script src="rep/uservacation/uservacation.js?ver=1.2"></script>
+    <script src="admin/user/user_password.js?ver=1.2"></script>
+
 
 </div>
 </body>
