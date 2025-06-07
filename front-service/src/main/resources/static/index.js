@@ -158,8 +158,6 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     };
     $location.backPage = function () {
         $scope.getUser();
-        console.log("ddddd")
-        console.log(myHash)
         if(myHash === "userpassword"){
             $location.path("").search({});
         }
