@@ -111,7 +111,7 @@
             try {
                 let jwt = $localStorage.authUser.token;
                 let payLoad = JSON.parse(atob(jwt.split(".")[1]));
-                let currTime = parseInt(new Date().getTime() / 1000);
+                let currTime = parseInt((new Date().getTime() / 1000).toString());
                 if (currTime > payLoad.exp) {
                     console.log("токен просрочен");
                     delete $localStorage.authUser;
@@ -133,7 +133,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     const constPatchRole = window.location.origin + '/roles';
     const constPatchCode = window.location.origin + '/task-service/v1/';
     const constPatchRelease = window.location.origin + '/work-service/v1/release';
-
+    $scope.loadFilter = null;
     $scope.tryToAuth = function () {
         $http.post(constPatchAuth + '/auth', $scope.user)
             .then(function successCallback(response) {
@@ -158,7 +158,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     };
     $location.backPage = function () {
         $scope.getUser();
-        if(myHash === "userpassword"){
+        if(myHash === "userPassword".toLowerCase()){
             $location.path("").search({});
         }
         else {
@@ -406,7 +406,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             try {
                 let jwt = $localStorage.authUser.token;
                 let payLoad = JSON.parse(atob(jwt.split(".")[1]));
-                let currTime = parseInt(new Date().getTime() / 1000);
+                let currTime = parseInt((new Date().getTime() / 1000).toString());
                 if (currTime > payLoad.exp) {
                     alert("Токен просрочен авторизуйтесь заново.");
                     delete $localStorage.authUser;
@@ -494,6 +494,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     }
     function wait() {
         return new Promise((resolve, reject) => {
+            console.log(reject);
             setTimeout(() => {
                 resolve('Timeout resolved');
             }, 100);

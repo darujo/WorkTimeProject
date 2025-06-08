@@ -19,7 +19,7 @@
 
     let maxPage = 1;
     $scope.findPage = function (diffPage) {
-        console.log("findPage");
+        console.log("findPage user");
         let page = parseInt(document.getElementById("Page").value) + diffPage;
         if (maxPage < page) {
             page = maxPage;

@@ -1,7 +1,8 @@
-angular.module('workTimeService').controller('userRoleController', function ($scope, $http, $location, $localStorage) {
+angular.module('workTimeService').controller('userRoleController', function ($scope, $http, $location, ) {
 
     const constPatchUser = window.location.origin + '/admin/users/user/roles';
-
+    $scope.User = {roles:null};
+    $scope.User = null
     $scope.loadRole = function () {
         console.log("запрос данных");
         console.log(window.location);
@@ -48,7 +49,7 @@ angular.module('workTimeService').controller('userRoleController', function ($sc
                 });
         }
     }
-    $scope.backUser = function (userId){
+    $scope.backUser = function (){
         $location.path('/user' );
 
     }

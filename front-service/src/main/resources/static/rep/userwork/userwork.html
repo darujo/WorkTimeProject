@@ -1,14 +1,13 @@
-<div id="WorkTimeList" class="headtextelem">
+<div id="WorkTimeList" class="head_text_elem">
     <div class="filter container">
-        <details class="detailsblock">
+        <details class="details_block">
             <summary class="p-head">Фильтр</summary>
-            <form novalidate ng-submit="filterWorkTime()" ; class="filter">
+            <form novalidate ng-submit="filterWorkTime()" class="filter">
                 <div class="filter">
-                    <div class="filterblock">
+                    <div class="filter_block">
 
                         <div class="horiz">
-                            <p class="p-form">ФИО</p>
-
+                            <label for="User" class="p-head">ФИО</label>
                             <select class="vvod40 mar5" name="choice" id="User" ng-model="Filt.nikName">
                                 <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">
                                     {{user.lastName}}
@@ -22,7 +21,7 @@
 
                             </select>
 
-                            <p class="p-head">Разбивка по периодам</p>
+                            <label for="Period" class="p-head">Разбивка по периодам</label>
                             <select class="vvod40 mar5" name="choice" id="Period" ng-model="Filt.period">
                                 <option ng-value="1" value="1">Дни</option>
                                 <option ng-value="2" value="2">Недели по дням</option>
@@ -31,14 +30,15 @@
                             </select>
                         </div>
                         <div class="horiz">
+                            <label for="DateStart"></label>
                             <input class="vvod20" type="date" id="DateStart" step="any" ng-model="Filt.dateStart"/>
-                            <p class="p-head"> <= Дата <= </p>
+                            <label for="DateEnd" class="p-head"> <= Дата <= </label>
                             <input class="vvod20" type="date" id="DateEnd" step="any" ng-model="Filt.dateEnd"/>
                             <!--                <input  type="hidden" id="taskId" />-->
                             <br>
-                            <button type="submit" class="headbutton">Применить</button>
-                            <button type="button" class="headbutton" ng-click="clearFilter(true)">Сбросить</button>
-                            <button type="button" class="headbutton" ng-click="sendFilter()">Поделиться</button>
+                            <button type="submit" class="head_button">Применить</button>
+                            <button type="button" class="head_button" ng-click="clearFilter(true)">Сбросить</button>
+                            <button type="button" class="head_button" ng-click="sendFilter()">Поделиться</button>
                         </div>
 
                     </div>
@@ -58,8 +58,8 @@
         <tbody>
         <tr ng-repeat="user in UserPeriodList">
             <td>{{user.lastName}} {{user.firstName}} {{user.patronymic}}</td>
-            <td ng-repeat="work in user.workPeriodDTOs" class="tdtop" ng-style="getStyleVacation(work)">
-                <div ng-repeat="task in work.list" class="tdtask">
+            <td ng-repeat="work in user.workPeriodDTOs" class="td_top" ng-style="getStyleVacation(work)">
+                <div ng-repeat="task in work.list" class="td_task">
                     <p>{{task.taskCodeBTS}}
                     {{task.taskCodeDEVBO}}
                      {{task.comment}} {{task.workTime}}ч</p>

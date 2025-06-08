@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="workTimeService">
+<html ng-app="workTimeService" lang="ru">
 <head>
     <meta charset="UTF-8">
     <script src="angular/jquery.min.js"></script>
@@ -16,56 +16,58 @@
 <div class="container horiz" ng-controller="indexController">
     <nav>
         <div class="" id="navbarNav">
-            <ul class="">
+            <div>
                 <div class="horiz" ng-show="isUserLoggedInAndPasOk()">
-                    <details class="detailsblockmenu" open id="DetailPrim">
+                    <details class="details_block_menu" open id="DetailPrim">
                         <summary class="p-head">Меню</summary>
-                        <li class="nav-item">
+                        <div class="nav-item">
                             <a class="nav-link" href="#!/release">Релизы</a>
-                        </li>
+                        </div>
 
-                        <li class="nav-item">
+                        <div class="nav-item">
                             <a class="nav-link" href="#!/work">Список ЗИ</a>
-                        </li>
-                        <li class="nav-item">
+                        </div>
+                        <div class="nav-item">
                             <a class="nav-link" href="#!/task">Все задачи</a>
-                        </li>
-                        <li class="nav-item">
+                        </div>
+                        <div class="nav-item">
                             <a class="nav-link" href="#!/worktime">Все работы</a>
-                        </li>
-                        <li class="nav-item">
+                        </div>
+                        <div class="nav-item">
                             <a class="nav-link" href="#!/worktimerep">Статус задач</a>
-                        </li>
-                        <li class="nav-item">
+                        </div>
+                        <div class="nav-item">
                             <a class="nav-link" href="#!/work/fact">Факт затрат ЗИ</a>
-                        </li>
-                        <li class="nav-item">
+                        </div>
+                        <div class="nav-item">
                             <a class="nav-link" href="#!/weekwork">Факт загрузки</a>
-                        </li>
-                        <li class="nav-item">
+                        </div>
+                        <div class="nav-item">
                             <a class="nav-link" href="#!/userwork">Работы за период</a>
-                        </li>
+                        </div>
 
-                        <li class="nav-item">
+                        <div class="nav-item">
                             <a class="nav-link" href="#!/calendar">Производственный календарь</a>
-                        </li>
-                        <li class="nav-item">
+                        </div>
+                        <div class="nav-item">
                             <a class="nav-link" href="#!/user">Пользователи</a>
-                        </li>
-                        <li class="nav-item">
+                        </div>
+                        <div class="nav-item">
                             <a class="nav-link" href="#!/role">Группы</a>
-                        </li>
+                        </div>
                     </details>
-                    <details class="detailsblockmenu">
+                    <details class="details_block_menu">
                         <summary class="p-head">Фильтры</summary>
                         <div class="horiz">
-                            <p class="p-form">Сохранять</p> <input class="vvod20" type="checkbox"
+                            <label for="SaveFilter" class="p-form">Сохранять</label>
+                            <input class="vvod20" type="checkbox"
                                                                    id="SaveFilter"
                                                                    ng-model="SettingUser.saveFilter"
                                                                    ng-change="saveSetting()"/>
                         </div>
                         <div class="horiz">
-                            <p class="p-form">Загружать</p> <input class="vvod20" type="checkbox"
+                            <label for="LoadFilter" class="p-form">Загружать</label>
+                            <input class="vvod20" type="checkbox"
                                                                    id="LoadFilter"
                                                                    ng-model="SettingUser.loadFilter"
                                                                    ng-change="saveSetting()"/>
@@ -76,41 +78,43 @@
 
                     </details>
                 </div>
-                <li class="nav-item" ng-show="!isUserLoggedIn()">
+                <div class="nav-item" ng-show="!isUserLoggedIn()">
                     <form class="" ng-submit="tryToAuth()">
                         <div class="input-group input-group-sm" style="padding: 4px;">
-                            Логин: <input id="navLoginField" class="vvod" ng-model="user.username" type="text"
-                                          aria-describedby="inputGroup-sizing-sm" style="margin-left: 10px;">
+                            <label for="navLoginField">Логин:</label>
+                            <input id="navLoginField" class="vvod" ng-model="user.username" type="text"
+                                                                             aria-describedby="inputGroup-sizing-sm" style="margin-left: 10px;">
 
-                            Пароль: <input id="navPasswordField" class="vvod" ng-model="user.password"
-                                           type="password"
-                                           aria-describedby="inputGroup-sizing-sm" style="margin-left: 10px;">
+                            <label for="navPasswordField">Пароль:</label>
+                            <input id="navPasswordField" class="vvod" ng-model="user.password"
+                                                                                 type="password"
+                                                                                 aria-describedby="inputGroup-sizing-sm" style="margin-left: 10px;">
 
-                            <button id="navLoginSubmit" class="headbutton"
+                            <button id="navLoginSubmit" class="head_button"
                                     style="margin-left: 10px;" type="submit">Войти
                             </button>
                         </div>
                     </form>
-                </li>
+                </div>
 
 
-            </ul>
+            </div>
 
         </div>
 
     </nav>
     <div class="nav-item" ng-show="isUserLoggedIn()" style="padding: 4px;">
-        <button type="button" class="headbutton" ng-click="addTime()">Заполнить отработаное время</button>
+        <button type="button" class="head_button" ng-click="addTime()">Заполнить отработаное время</button>
     </div>
     <div class="nav-item" ng-show="isUserLoggedIn()" style="padding: 4px;">
-        <button class="headbutton" ng-click="tryToLogout()">Выйти</button>
+        <button class="head_button" ng-click="tryToLogout()">Выйти</button>
     </div>
     <div class="nav-item" ng-show="isUserLoggedIn()" style="padding: 4px;">
-        <div class="userview">
+        <div class="user_view">
             <p class="p-form">{{UserLogin.lastName}} {{UserLogin.firstName}} {{UserLogin.patronymic}}</p>
         </div>
 
-        <!--    <input id="UserName" class="userview""-->
+        <!--    <input id="UserName" class="user_view""-->
         <!--           type="readonly"-->
         <!--    >-->
     </div>

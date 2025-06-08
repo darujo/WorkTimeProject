@@ -1,4 +1,4 @@
- angular.module('workTimeService').controller('releaseController', function ($scope, $http, $location) {
+angular.module('workTimeService').controller('releaseController', function ($scope, $http, $location) {
 
     const constPatchRelease = window.location.origin + '/work-service/v1/release';
 
@@ -15,21 +15,14 @@
         showRelease();
         $scope.findPage(0);
     };
-
+    $scope.Release = {
+        issuingReleasePlanStr: null,
+        issuingReleaseFactStr: null
+    };
+    $scope.Release = null;
     let maxPage = 1;
     $scope.findPage = function (diffPage) {
-        // console.log("findPage");
-        // let page = parseInt(document.getElementById("Page").value) + diffPage;
-        // if (maxPage < page) {
-        //     page = maxPage;
-        // }
-        // // должно быть после если maxPage = 0
-        // if (page < 1) {
-        //     page = 1;
-        // }
-        // document.getElementById("Page").value = page;
-        // console.log("запрос данных");
-
+        console.log(diffPage);
         if (typeof $scope.Filt === "undefined") {
             $scope.Filt = {size: 10};
         }
@@ -37,7 +30,7 @@
         Filter = $scope.Filt;
         console.log(Filter);
         $http({
-            url: constPatchRelease ,
+            url: constPatchRelease,
             method: "get"
             // ,
             // params: {
@@ -102,8 +95,8 @@
             .then(function (response) {
                 $scope.Release = response.data;
                 console.log($scope.Release);
-                $scope.Release.issuingReleaseFact = new Date( $scope.Release.issuingReleaseFact);
-                $scope.Release.issuingReleasePlan = new Date( $scope.Release.issuingReleasePlan);
+                $scope.Release.issuingReleaseFact = new Date($scope.Release.issuingReleaseFact);
+                $scope.Release.issuingReleasePlan = new Date($scope.Release.issuingReleasePlan);
                 showFormEdit();
 
             }, function errorCallback(response) {
@@ -153,16 +146,12 @@
 
     $scope.clearFilter = function (load) {
         console.log("clearFilter");
-        // $scope.Filt = {
-        //     size: 10
-        // };
         console.log($scope.Filt);
         if (load) {
             $scope.filterRelease();
         }
     }
 
-    // $scope.UserList = $location.UserList;
     $scope.Filt = $location.getFilter("releaseFilter");
     if ($scope.Filt === null) {
         $scope.clearFilter(false);

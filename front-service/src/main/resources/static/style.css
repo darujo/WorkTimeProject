@@ -9,7 +9,7 @@
     margin: 0 auto;
 }
 
-.containerfilt {
+.container_filter {
     max-width: 1140px;
     margin: 0 auto;
 
@@ -23,7 +23,7 @@ body {
     font-family: sans-serif;
 }
 
-.headtextelem {
+.head_text_elem {
     margin-top: 30px;
     -webkit-box-flex: 1;
     -ms-flex-positive: 1;
@@ -31,7 +31,7 @@ body {
 }
 
 
-.headbutton {
+.head_button {
     font-size: 16px;
     line-height: 26px;
     text-align: center;
@@ -46,10 +46,10 @@ body {
     text-decoration: none;
     margin: 10px;
 }
-.tdtop{
+.td_top{
     vertical-align:top
 }
-.tdtask{
+.td_task{
     font-size: 16px;
     line-height: 26px;
     text-align: center;
@@ -65,7 +65,7 @@ body {
     text-decoration: none;
     margin: 10px;
 }
-.sortbutton {
+.sort_button {
     font-size: 16px;
     line-height: 26px;
     text-align: center;
@@ -81,12 +81,12 @@ body {
     margin: 10px;
 }
 
-.divform {
+.div_form {
     margin-top: 30px;
 }
 
 
-.userview {
+.user_view {
     padding: 10px 10px;
     border: 1px solid #356EAD;
     box-sizing: border-box;
@@ -228,26 +228,18 @@ body {
     margin-top: 10px;
     margin-bottom: 10px;
 }
-.vvodmar10 {
-    padding: 10px 10px;
-    border: 1px solid #356EAD;
-    box-sizing: border-box;
-    border-radius: 10px;
-    opacity: 0.4;
-    width: 100%;
-    margin: 10px;
-}
 
-.detailsblock {
+.details_block {
     border-radius: 10px;
     border: 1px solid #356EAD;;
     margin: 10px;
     padding: 5px;
-    width: -webkit-fill-available;
     height: max-content;
+    /*noinspection CssInvalidPropertyValue*/
+    width: -webkit-fill-available;
 }
 
-.detailsblockmenu {
+.details_block_menu {
     border-radius: 10px;
     border: 1px solid #356EAD;;
     margin: 10px;
@@ -282,7 +274,7 @@ TABLE {
     /*border-spacing: 7px 5px; !* Расстояние между границ *!*/
 }
 
-.tablecalend {
+.table_cal_end {
     width: 90%; /* Ширина таблицы */
     border: 1px solid #399; /* Граница вокруг таблицы */
 }
@@ -295,52 +287,54 @@ TD {
 
 }
 
-.textleft {
+.text_left {
     /*border: 1px solid #333; !* Граница вокруг ячеек *!*/
     /*padding: 5px; !* Поля в ячейках *!*/
     /*height: 1px; !*  нужно чтобы элемент в нутри растянулся*!*/
     text-align: left;
 }
-.textnotwrap{
+.text_not_wrap{
     white-space: nowrap;
 }
 
 
-.tablehead1 {
+.table_head1 {
     text-align: center;
     background: rgb(255, 242, 204);
 }
 
-.tablehead2 {
+.table_head2 {
     text-align: center;
     background-color: rgb(255, 217, 102);
 }
 
-.tablehead3 {
+.table_head3 {
     text-align: center;
     background-color: rgb(255, 192, 0);
 }
 
-.tablecol1 {
+.table_col1 {
     background-color: rgb(180, 192, 231);
 }
 
-.buttontable {
+.button_table {
     width: 100%;
     height: 100%;
 }
 
-.tablecol2 {
+.table_col2 {
     background-color: rgb(248, 203, 173);
 }
 
 .filter {
     display: flex;
+    /*noinspection CssInvalidPropertyValue*/
     width: -webkit-fill-available;
 }
 
-.filterblock {
+.filter_block {
     display: block;
+    /*noinspection CssInvalidPropertyValue*/
     width: -webkit-fill-available;
 }
 
@@ -360,7 +354,7 @@ TD {
     font-size: 30px;
     text-align: center;
 }
-.p-filt {
+.p-filter {
 
     width: inherit;
     margin: auto;
@@ -387,41 +381,35 @@ TD {
     margin: 10px auto;
 }
 
-.findbr {
-    width: inherit;
-    margin: auto;
-    font-weight: 500;
-    font-size: 15px;
-    text-align: center;
-}
-.minblock300{
+.min_block300{
     min-width: 300px;
 }
 
-.minblock200{
+.min_block200{
     min-width: 200px;
 }
 .mar5{
     margin: 5px;
 }
-.twodate{
+.two_date{
     min-width: 180px;
     max-width: 180px;
 }
-.fieldfio{
+.field_fio{
     min-width: 300px;
 }
-.weekworkpalntime{
+.week_work_plan_time{
     width: 100px;
 }
-.stagetime{
+.stage_time{
     max-width: 110px;
 }
-.formlablep{
+
+.form_label{
     width: 150px;
     text-align: right;
+    align-self: center;
 }
-
 .p-td {
     padding: 5px 10px;
     border: 1px solid #356EAD;
@@ -436,10 +424,11 @@ TD {
 
 .div-type {
     min-width: 45px;
+    /*noinspection CssInvalidPropertyValue*/
     width: -webkit-fill-available;
     margin: 1px;
 }
-.check-box-filt{
+.check-box-filter{
     border: 1px solid #356EAD;
     box-sizing: border-box;
     border-radius: 10px;
@@ -474,7 +463,7 @@ TD {
     /*min-width: 100px;*/
     /*max-width: 100px;*/
     white-space: nowrap;
-    left: 0px;
+    left: 0;
 }
 
 .second-col {

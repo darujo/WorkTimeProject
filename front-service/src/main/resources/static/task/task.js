@@ -48,12 +48,11 @@ angular.module('workTimeService').controller('taskController', function ($scope,
             }
         )
     }
-
+    $scope.Filt = {favouriteTask:null}
     let TaskIdEdit = null;
     let arrTaskId = [];
     $scope.loadTask = function () {
         console.log("loadTask");
-        console.log("$location.WorkId " + $location.WorkId);
 
         $location.parserFilter($scope.Filt);
 
@@ -62,23 +61,6 @@ angular.module('workTimeService').controller('taskController', function ($scope,
 
     $scope.setFormTask = function () {
         console.log("setFormTask");
-        // console.log(Filt);
-        // if (typeof Filt != "undefined") {
-        //     if (Filt.workId != null) {
-        //         $scope.Filt =
-        //             {
-        //                 size: $scope.Filt ? $scope.Filt.size : null,
-        //                 workId: Filt.workId,
-        //                 codeBTS: $scope.Filt ? $scope.Filt.bts : null,
-        //                 codeDEVBO: $scope.Filt ? $scope.Filt.devbo : null,
-        //                 description: $scope.Filt ? $scope.Filt.desc : null,
-        //                 ziName: $scope.Filt ? $scope.Filt.ziName : null,
-        //                 type: $scope.Filt ? $scope.Filt.type : null
-        //
-        //             }
-        //         // Filt.workId;
-        //     }
-        // }
         console.log(document.getElementById("WorkIdEdit").value);
     }
     let maxPage = 1;
@@ -95,22 +77,22 @@ angular.module('workTimeService').controller('taskController', function ($scope,
         }
         document.getElementById("Page").value = page;
 
-        let Filt;
-        Filt = $scope.Filt;
-        console.log(Filt);
+        let Filter;
+        Filter = $scope.Filt;
+        console.log(Filter);
         $http({
             url: constPatchTask + "/task",
             method: "get",
             params: {
                 page: page,
-                size: Filt ? Filt.size : null,
-                workId: Filt ? Filt.workId : null,
-                codeBTS: Filt ? Filt.bts : null,
-                codeDEVBO: Filt ? Filt.devbo : null,
-                description: Filt ? Filt.desc : null,
-                ziName: Filt ? Filt.ziName : null,
-                type: Filt ? Filt.type : null,
-                arrTaskId: Filt.favouriteTask ? arrTaskId : Filt ? Filt.listId :null,
+                size: Filter ? Filter.size : null,
+                workId: Filter ? Filter.workId : null,
+                codeBTS: Filter ? Filter.bts : null,
+                codeDEVBO: Filter ? Filter.devbo : null,
+                description: Filter ? Filter.desc : null,
+                ziName: Filter ? Filter.ziName : null,
+                type: Filter ? Filter.type : null,
+                arrTaskId: Filter.favouriteTask ? arrTaskId : Filter ? Filter.listId :null,
 
             }
         }).then(function (response) {
@@ -125,7 +107,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
                     maxPage = 1;
                 } else {
                     $scope.TaskList = response.data.content;
-                    maxPage = response.data.totalPages;
+                    maxPage = response.data["totalPages"];
                 }
                 showTask();
             }, function errorCallback(response) {
@@ -168,7 +150,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
         // $scope
         console.log($scope.Task);
         console.log("создаем 5");
-        $scope.Task.workId = parseInt(document.getElementById("WorkIdFilt").value);
+        $scope.Task.workId = parseInt(document.getElementById("WorkIdFilter").value);
         console.log($scope.Task.workId);
         if (!isNaN($scope.Task.workId)) {
             findNameWork($scope.Task.workId);
@@ -279,7 +261,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
     }
     $scope.addTime = function (taskId) {
         console.log("Другая");
-        $location.path('/worktime').search({taskId: taskId, currentUser: false});
+        $location.path('/workTime'.toLowerCase()).search({taskId: taskId, currentUser: false});
     }
     let findNameWork = function (workId) {
         console.log("findNameWork")
@@ -323,16 +305,16 @@ angular.module('workTimeService').controller('taskController', function ($scope,
         console.log("page");
         console.log(page);
         console.log(diffPage);
-        let FiltWork;
-        FiltWork = $scope.FiltWork;
+        let FilterWork;
+        FilterWork = $scope.FiltWork;
 
         $http({
             url: constPatchWork + "/works/obj/little",
             method: "get",
             params: {
                 page: page,
-                size: FiltWork ? FiltWork.size : null,
-                name: FiltWork ? FiltWork.name : null
+                size: FilterWork ? FilterWork.size : null,
+                name: FilterWork ? FilterWork.name : null
 
             }
         }).then(function (response) {

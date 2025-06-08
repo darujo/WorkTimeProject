@@ -77,27 +77,27 @@ angular.module('workTimeService').controller('workController', function ($scope,
         if (typeof $scope.Filt === "undefined") {
             $scope.Filt = {size: 10};
         }
-        let Filt = $scope.Filt;
+        let Filter = $scope.Filt;
         console.log($scope.Filt)
         $http({
             url: constPatchWork + "/works",
             method: "get",
             params: {
                 page: page,
-                size: Filt ? Filt.size : null,
-                name: Filt ? Filt.name : null,
-                codeSap: Filt ? Filt.codeSap : null,
-                codeZi: Filt ? Filt.codeZi : null,
-                task: Filt ? Filt.task : null,
-                releaseId: Filt ? Filt.releaseId :null,
-                sort: Filt ? Filt.sort : null,
-                stageZi: Filt ? Filt.stageZi : null
+                size: Filter ? Filter.size : null,
+                name: Filter ? Filter.name : null,
+                codeSap: Filter ? Filter.codeSap : null,
+                codeZi: Filter ? Filter.codeZi : null,
+                task: Filter ? Filter.task : null,
+                releaseId: Filter ? Filter.releaseId :null,
+                sort: Filter ? Filter.sort : null,
+                stageZi: Filter ? Filter.stageZi : null
             }
         }).then(function (response) {
             console.log(response);
             $scope.WorkList = response.data.content;
             console.log($scope.WorkList);
-            maxPage = response.data.totalPages;
+            maxPage = response.data["totalPages"];
             showWork();
         }, function errorCallback(response) {
             console.log(response)
@@ -266,8 +266,6 @@ angular.module('workTimeService').controller('workController', function ($scope,
         }
     }
     $scope.releaseOption= function (release){
-        console.log("----- rlesewwww")
-        console.log(release)
         console.log(typeof release.issuingReleaseFact !== "undefined" && release.issuingReleaseFact !== null)
         if(typeof release.issuingReleaseFact !== "undefined"  && release.issuingReleaseFact !== null){
             return "disabled";

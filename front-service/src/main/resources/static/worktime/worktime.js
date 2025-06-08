@@ -1,6 +1,6 @@
 angular.module('workTimeService').controller('workTimeController', function ($scope, $http, $location, $localStorage) {
 
-    const constPatchWorkTime = window.location.origin + '/worktime-service/v1';
+    const constPatchWorkTime = window.location.origin + '/workTime-service/v1'.toLowerCase();
     const constPatchTask = window.location.origin + '/task-service/v1';
 
     let showWorkTime = function () {
@@ -31,13 +31,43 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
         // $scope.createWorkTimeRun();
 
     };
-
+    $scope.Filter = {
+        size: null,
+        dateLe: null,
+        dateGe: null,
+        taskId: null,
+        taskDevbo: null,
+        taskBts: null,
+        nikName: null,
+        currentUser: null
+    }
+    $scope.FiltTask = {
+        size: null,
+        workId: null,
+        bts: null,
+        devbo: null,
+        desc: null,
+        ziName: null,
+        type: null,
+        nikName: null
+    }
+    $scope.workTime = {
+        authorFirstName:null,
+        authorLastName:null,
+        authorPatronymic:null,
+        workDateStr: null,
+        taskCodeDEVBO: null,
+        taskCodeBTS:null,
+        taskDescription:null,
+        typeStr:null,
+        nameZi:null
+    }
     let checkRight = function (right, message, callBack) {
         document.getElementById("ButtonSaveDown").style.display = "none";
         // document.getElementById("ButtonSaveUp").style.display = "none";
         $scope.Resp = {message: null}
         $http({
-            url: constPatchWorkTime + "/worktime/right/" + right,
+            url: constPatchWorkTime + "/workTime/right/".toLowerCase() + right,
             method: "get"
         }).then(function (response) {
                 console.log(response)
@@ -57,12 +87,11 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
         )
     }
     $location.openEdit = function () {
-        console.log("$localStorage.openEdit worktime ");
+        console.log("$localStorage.openEdit workTime ");
         $scope.loadWorkTime();
     };
     $scope.loadWorkTime = function () {
         showWorkTime();
-        console.log("$location.TaskId " + $location.TaskId);
         console.log("$location.WorkTime " + $localStorage.WorkTime);
         console.log($localStorage.WorkTime);
         console.log(typeof $localStorage.WorkTime !== "undefined");
@@ -87,37 +116,37 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
 
     };
     $scope.sendFilter = function () {
-        $scope.Filt["currentUser"] = $scope.Filt.currentUser ? true : false;
+        $scope.Filter["currentUser"] = !!$scope.Filter.currentUser;
         $location.sendFilter(location.hash, $scope.Filt);
     }
 
     $scope.setFormWorkTime = function () {
-        if (typeof $scope.Filt !== "undefined") {
-            // if (Filt.taskId != null) {
-            //     $scope.Filt = {
-            //         size: $scope.Filt ? $scope.Filt.size : null,
-            //         dateLe: $scope.Filt ? $scope.Filt.dateLe : null,
-            //         dateGe: $scope.Filt ? $scope.Filt.dateGe : null,
-            //         taskId: Filt ? Filt.taskId : null,
-            //         taskDevbo: $scope.Filt ? $scope.Filt.taskDevbo : null,
-            //         taskBts: $scope.Filt ? $scope.Filt.taskBts : null,
-            //         nikName: $scope.Filt ? $scope.Filt.nikName : null,
-            //         currentUser: $scope.Filt ? $scope.Filt.currentUser : null
+        if (typeof $scope.Filter !== "undefined") {
+            // if (Filter.taskId != null) {
+            //     $scope.Filter = {
+            //         size: $scope.Filter ? $scope.Filter.size : null,
+            //         dateLe: $scope.Filter ? $scope.Filter.dateLe : null,
+            //         dateGe: $scope.Filter ? $scope.Filter.dateGe : null,
+            //         taskId: Filter ? Filter.taskId : null,
+            //         taskDevbo: $scope.Filter ? $scope.Filter.taskDevbo : null,
+            //         taskBts: $scope.Filter ? $scope.Filter.taskBts : null,
+            //         nikName: $scope.Filter ? $scope.Filter.nikName : null,
+            //         currentUser: $scope.Filter ? $scope.Filter.currentUser : null
             //     }
-            //     // document.getElementById("TaskId").value = Filt.taskId;
+            //     // document.getElementById("TaskId").value = Filter.taskId;
             // }
-            if ($scope.Filt.dateLe != null) {
-                console.log("Filt.dateLe");
-                console.log($scope.Filt.dateLe);
-                let vdate = new Date($scope.Filt.dateLe);
-                vdate.setHours(6);
-                document.getElementById("DateLe").valueAsDate = vdate;
+            if ($scope.Filter.dateLe != null) {
+                console.log("Filter.dateLe");
+                console.log($scope.Filter.dateLe);
+                let vDate = new Date($scope.Filter.dateLe);
+                vDate.setHours(6);
+                document.getElementById("DateLe").valueAsDate = vDate;
             }
-            if ($scope.Filt.dateGe != null) {
-                let vdate = new Date($scope.Filt.dateGe);
-                vdate.setHours(6);
+            if ($scope.Filter.dateGe != null) {
+                let vDate = new Date($scope.Filter.dateGe);
+                vDate.setHours(6);
 
-                document.getElementById("DateGe").valueAsDate = vdate;
+                document.getElementById("DateGe").valueAsDate = vDate;
             }
         }
     }
@@ -128,33 +157,33 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
         document.getElementById("Page").value = page;
         console.log("запрос данных");
 
-        // if (typeof $scope.Filt !== "undefined") {
-        //     // Filt = {size: 10, currentUser: true};
-        //     Filt = $scope.Filt;
+        // if (typeof $scope.Filter !== "undefined") {
+        //     // Filter = {size: 10, currentUser: true};
+        //     Filter = $scope.Filter;
         // } else
-        if (typeof $scope.Filt === "undefined") {
-            $scope.Filt = {size: 10, currentUser: true};
-            // Filt = $scope.Filt;
+        if (typeof $scope.Filter === "undefined") {
+            $scope.Filter = {size: 10, currentUser: true};
+            // Filter = $scope.Filter;
         }
-        let Filt;
-        Filt = $scope.Filt;
-        console.log(Filt);
+        let Filter;
+        Filter = $scope.Filter;
+        console.log(Filter);
         $http({
-            url: constPatchWorkTime + "/worktime",
+            url: constPatchWorkTime + "/workTime".toLowerCase(),
             method: "get",
             params: {
                 page: page,
-                size: Filt ? Filt.size : null,
-                dateLe: Filt ? Filt.dateLe : null,
-                dateGe: Filt ? Filt.dateGe : null,
+                size: Filter ? Filter.size : null,
+                dateLe: Filter ? Filter.dateLe : null,
+                dateGe: Filter ? Filter.dateGe : null,
 
-                taskDEVBO: Filt ? Filt.taskDevbo : null,
-                taskBTS: Filt ? Filt.taskBts : null,
-                nikName: Filt ? Filt.nikName : null,
-                currentUser: Filt ? Filt.currentUser : null,
-                type: Filt ? Filt.type : null,
-                comment: Filt ? Filt.comment : null,
-                taskId: Filt ? Filt.listId ? Filt.listId :Filt.taskId : null
+                taskDEVBO: Filter ? Filter.taskDevbo : null,
+                taskBTS: Filter ? Filter.taskBts : null,
+                nikName: Filter ? Filter.nikName : null,
+                currentUser: Filter ? Filter.currentUser : null,
+                type: Filter ? Filter.type : null,
+                comment: Filter ? Filter.comment : null,
+                taskId: Filter ? Filter.listId ? Filter.listId : Filter.taskId : null
 
             }
 
@@ -183,9 +212,9 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
     };
     $scope.filterWorkTime = function () {
         console.log("filterWorkTime")
-        // Filt = $scope.Filt;
-        // console.log(Filt)
-        $location.saveFilter("wortTimeFilter", $scope.Filt);
+        // Filter = $scope.Filter;
+        // console.log(Filter)
+        $location.saveFilter("wortTimeFilter", $scope.Filter);
         document.getElementById("Page").value = "1";
         $scope.findPage(0);
     };
@@ -224,10 +253,9 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
     };
 
     $scope.editWorkTime = function (workTimeId) {
-        // $scope.FiltWork = {size: 10};
         showTaskNum();
         console.log("edit");
-        $http.get(constPatchWorkTime + "/worktime/" + workTimeId)
+        $http.get(constPatchWorkTime + "/workTime/".toLowerCase() + workTimeId)
             .then(function (response) {
                 WorkTimeIdEdit = response.data.id;
                 $scope.WorkTime = response.data;
@@ -250,10 +278,9 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
     };
 
     $scope.copyWorkTime = function (workTimeId) {
-        // $scope.FiltWork = {size: 10};
         showTaskNum();
         console.log("edit");
-        $http.get(constPatchWorkTime + "/worktime/" + workTimeId)
+        $http.get(constPatchWorkTime + "/workTime/".toLowerCase() + workTimeId)
             .then(function (response) {
                 WorkTimeIdEdit = response.data.id;
                 $scope.WorkTime = response.data;
@@ -279,7 +306,7 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
             });
     };
     $scope.deleteWorkTime = function (workTimeId) {
-        $http.delete(constPatchWorkTime + "/worktime/" + workTimeId)
+        $http.delete(constPatchWorkTime + "/workTime/".toLowerCase() + workTimeId)
             .then(function (response) {
                 console.log("Delete response")
                 console.log(response);
@@ -300,7 +327,7 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
         console.log(WorkTimeIdEdit);
         if (!sendSave) {
             sendSave = true;
-            $http.post(constPatchWorkTime + "/worktime", $scope.WorkTime)
+            $http.post(constPatchWorkTime + "/workTime".toLowerCase(), $scope.WorkTime)
                 .then(function (response) {
                     console.log("Save response")
                     console.log(response);
@@ -317,7 +344,6 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
                 });
         }
     }
-    // var FiltTask;
     let TaskType;
     let findNameTask = function (taskId) {
         console.log("findNameTask")
@@ -358,24 +384,24 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
         if (page < 1) {
             page = 1;
         }
-        let FiltTask;
-        FiltTask = $scope.FiltTask;
+        let FilterTask;
+        FilterTask = $scope.FiltTask;
         console.log(page);
-        console.log(FiltTask);
+        console.log(FilterTask);
         document.getElementById("PageTask").value = page;
         $http({
             url: constPatchTask + "/task",
             method: "get",
             params: {
                 page: page,
-                size: FiltTask ? FiltTask.size : null,
-                workId: FiltTask ? FiltTask.workId : null,
-                codeBTS: FiltTask ? FiltTask.bts : null,
-                codeDEVBO: FiltTask ? FiltTask.devbo : null,
-                description: FiltTask ? FiltTask.desc : null,
-                ziName: FiltTask ? FiltTask.ziName : null,
-                type: FiltTask ? FiltTask.type : null,
-                nikName: FiltTask ? FiltTask.nikName : null
+                size: FilterTask ? FilterTask.size : null,
+                workId: FilterTask ? FilterTask.workId : null,
+                codeBTS: FilterTask ? FilterTask.bts : null,
+                codeDEVBO: FilterTask ? FilterTask.devbo : null,
+                description: FilterTask ? FilterTask.desc : null,
+                ziName: FilterTask ? FilterTask.ziName : null,
+                type: FilterTask ? FilterTask.type : null,
+                nikName: FilterTask ? FilterTask.nikName : null
             }
         }).then(function (response) {
             console.log("/task.response");
@@ -383,7 +409,7 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
             console.log("response,data :");
             console.log(response.data);
             $scope.TaskList = response.data.content;
-            maxPage = response.data.totalPages;
+            maxPage = response.data["totalPages"];
             // showTask();
 
         }, function errorCallback(response) {
@@ -398,7 +424,6 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
     }
     $scope.filterTask = function () {
         console.log("filterTask");
-        // FiltTask = $scope.FiltTask;
         document.getElementById("PageTask").value = "1";
         $location.saveFilter("wortTimeEditFilter", $scope.FiltTask);
         $scope.loadTask(0);
@@ -443,12 +468,12 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
     }
     $scope.clearFilter = function (load) {
         console.log("clearFilter");
-        $scope.Filt = {
+        $scope.Filter = {
             taskId: null,
             currentUser: true,
             size: 10
         };
-        console.log($scope.Filt);
+        console.log($scope.Filter);
         if (load) {
             $scope.filterWorkTime();
         }
@@ -463,22 +488,26 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
             $scope.filterTask();
         }
     }
-    $scope.Filt = $location.getFilter("wortTimeFilter");
+    $scope.Filter = $location.getFilter("wortTimeFilter");
     $scope.FiltTask = $location.getFilter("wortTimeEditFilter");
-    if ($scope.Filt === null) {
+    if ($scope.Filter === null) {
         $scope.clearFilter(false);
     }
     $scope.clearFilterTask(false);
-    checkRight("changeuser", false, callBackUserChange);
+    checkRight("changeUser".toLowerCase(), false, callBackUserChange);
     console.log("Start");
     showWorkTime();
     console.log("Show ok");
 
-    $location.getUsers().then(function (result) {$scope.UserList = result;
-        console.log("result UserList"); console.log(result);
+    $location.getUsers().then(function (result) {
+        $scope.UserList = result;
+        console.log("result UserList");
+        console.log(result);
     });
-    $location.getRoles().then(function (result) {$scope.RoleList = result;
-        console.log("result RoleList"); console.log(result);
+    $location.getRoles().then(function (result) {
+        $scope.RoleList = result;
+        console.log("result RoleList");
+        console.log(result);
     });
     $scope.loadWorkTime();
     console.log("----------------------------------------")

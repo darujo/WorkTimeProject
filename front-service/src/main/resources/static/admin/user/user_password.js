@@ -1,6 +1,9 @@
- angular.module('workTimeService').controller('userChangeController', function ($scope, $http, $location) {
 
+angular.module('workTimeService').controller('userChangeController', function ($scope, $http, $location) {
     const constPatchUser = window.location.origin + '/users';
+    $scope.User = { passwordNew:    null,
+                    passwordNew2:   null,
+                    passwordOld:    null}
     let sendSave = false;
     $scope.saveUser = function () {
         console.log("saveUser");

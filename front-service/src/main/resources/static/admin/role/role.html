@@ -1,43 +1,39 @@
-<div id="RoleList" class="headtextelem">
-    <div class="filter containerfilt">
-        <details class="detailsblock">
+<div id="RoleList" class="head_text_elem">
+    <div class="filter container_filter">
+        <details class="details_block">
             <summary class="p-head">Фильтр</summary>
 
-            <form novalidate ng-submit="filterRole()" ; class="filter">
+            <form novalidate ng-submit="filterRole()" class="filter">
                 <div class="filter">
-                    <div class="filterblock">
+                    <div class="filter_block">
 
                         <div class="horiz">
-                            <p class="p-head">Код:</p>
-                            <br>
+                            <label for="CodeFilter" class="p-head">Код:</label>
                             <input class="vvod30mar" type="text" id="CodeFilter"
-                                   ng-model="Filt.code"/>
-                            <!--                        </div>-->
-                            <!--                        <div class="horiz">-->
-                            <p class="p-head">Наименование:</p>
-                            <br>
+                                                                   ng-model="Filt.code"/>
+                            <label for="NameFilter" class="p-head">Наименование:</label>
                             <input class="vvod30mar" type="text" id="NameFilter"
                                    ng-model="Filt.name"/>
                         </div>
-                        <button type="submit" class="headbutton" id="FilterButton">Применить</button>
-                        <button type="button" class="headbutton" ng-click="clearFilter(true)">Сбросить</button>
+                        <button type="submit" class="head_button" id="FilterButton">Применить</button>
+                        <button type="button" class="head_button" ng-click="clearFilter(true)">Сбросить</button>
                     </div>
                 </div>
             </form>
         </details>
-        <button class="headbutton" ng-click="createRole()">Добавить группу</button>
+        <button class="head_button" ng-click="createRole()">Добавить группу</button>
 
     </div>
 
     <h1>Список ролей</h1>
     <table>
         <tr>
-            <td class="tablehead2">Код</td>
-            <td class="tablehead2">Наименвание</td>
+            <td class="table_head2">Код</td>
+            <td class="table_head2">Наименвание</td>
 
-            <td class="tablehead2"></td>
-            <td class="tablehead2"></td>
-            <td class="tablehead2"></td>
+            <td class="table_head2"></td>
+            <td class="table_head2"></td>
+            <td class="table_head2"></td>
 
         </tr>
         <tbody>
@@ -61,16 +57,18 @@
 
 </div>
 
-<div id="FormEdit" class="divform containerfilt">
+<div id="FormEdit" class="div_form container_filter">
 
     <form novalidate ng-submit="saveRole()">
         <div class="horiz">
-            <p class="formlablep">Код:</p> <input class="vvod80mar10" type="text" id="CodeEdit" step="any"
+            <label for="CodeEdit" class="form_label">Код:</label>
+            <input class="vvod80mar10" type="text" id="CodeEdit" step="any"
                                                    ng-model="Role.code"/>
             <br>
         </div>
         <div class="horiz">
-            <p class="formlablep">Наименование:</p> <input class="vvod80mar10" type="text" id="NaneEdit" step="any"
+            <label for="NaneEdit" class="form_label">Наименование:</label>
+            <input class="vvod80mar10" type="text" id="NaneEdit" step="any"
                                                    ng-model="Role.name"/>
             <br>
         </div>

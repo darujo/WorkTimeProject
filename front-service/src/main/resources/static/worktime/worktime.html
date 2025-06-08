@@ -1,46 +1,43 @@
-<div id="WorkTimeList" class="headtextelem">
-    <div class="filter containerfilt">
-        <details class="detailsblock">
+<div id="WorkTimeList" class="head_text_elem">
+    <div class="filter container_filter">
+        <details class="details_block">
             <summary class="p-head">Фильтр</summary>
 
-            <form novalidate ng-submit="filterWorkTime()" ; class="filter">
+            <form novalidate ng-submit="filterWorkTime()" class="filter">
                 <div class="filter">
-                    <div class="filterblock">
+                    <div class="filter_block">
 
                         <div class="horiz">
-                            <p class="p-head">Id задачи</p>
-                            <br>
+                            <label class="p-head" for="TaskId">Id задачи</label>
                             <input class="vvod30mar" type="number" inputmode="numeric" id="TaskId" step="any"
-                                   ng-model="Filt.taskId"/>
+                                   ng-model="Filter.taskId"/>
                             <!--                        </div>-->
                             <!--                        <div class="horiz">-->
-                            <p class="p-head">DEVBO</p>
-                            <br>
+                            <label class="p-head" for="TaskDevbo">DEVBO</label>
                             <input class="vvod30mar" type="text" id="TaskDevbo"
-                                   ng-model="Filt.taskDevbo"/>
+                                   ng-model="Filter.taskDevbo"/>
                             <!--                        </div>-->
                             <!--                        <div class="horiz">-->
-                            <p class="p-head">BTS</p>
-                            <br>
+                            <label class="p-head" for="TaskBts">BTS</label>
                             <input class="vvod30mar" type="text" id="TaskBts"
-                                   ng-model="Filt.taskBts"/>
+                                   ng-model="Filter.taskBts"/>
                         </div>
                         <div class="horiz">
-                            <p class="p-head">ФИО</p>
-                            <br>
-                            <select class="vvod40mar10" name="choice" id="UserFilt" ng-model="Filt.nikName">
+                            <label class="p-head" for="UserFilter">ФИО</label>
+                            <select class="vvod40mar10" name="choice" id="UserFilter" ng-model="Filter.nikName">
                                 <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">
                                     {{user.lastName}}
                                     {{user.firstName}} {{user.patronymic}}
                                 </option>
-                                <option ng-repeat="role in RoleList" ng-value="'ROLE_' + role.code" value="'ROLE_' + role.code">
+                                <option ng-repeat="role in RoleList" ng-value="'ROLE_' + role.code"
+                                        value="'ROLE_' + role.code">
                                     {{role.name}}
                                 </option>
 
                                 <option ng-value="" value="">Все</option>
                             </select>
-                            <p class="p-head"> Тип: </p>
-                            <select class="vvod20mar10" name="choice" id="TypefFilt" ng-model="Filt.type">
+                            <label class="p-head" for="TypeFFilter">Тип:</label>
+                            <select class="vvod20mar10" name="choice" id="TypeFFilter" ng-model="Filter.type">
                                 <!--                                при добавление надо прописать workTimeService.getTimeWork-->
                                 <option ng-value="1" value="1">Разработка</option>
                                 <option ng-value="2" value="2">Консультация</option>
@@ -52,40 +49,44 @@
                                 <!--            <option ng-value="1000" value="1000">1000</option>-->
                                 <!--            <option ng-value="10000" value="10000">10000</option>-->
                             </select>
-                            <p class="p-head">Мои работы</p> <input class="vvod20" type="checkbox"
-                                                                    id="CurrentUser"
-                                                                    ng-model="Filt.currentUser"/>
+                            <label class="p-head" for="CurrentUser">Мои работы</label>
+                            <input class="vvod20" type="checkbox"
+                                   id="CurrentUser"
+                                   ng-model="Filter.currentUser"/>
                         </div>
                         <div class="horiz">
-                            <input class="vvod40mar10" type="date" id="DateGe" ng-model="Filt.dateGe"/>
-                            <p class="p-head"> <= Дата <= </p>
-                            <input class="vvod40mar10" type="date" id="DateLe" ng-model="Filt.dateLe"/>
+                            <label class="p-head" for="DateGe"></label>
+                            <input class="vvod40mar10" type="date" id="DateGe" ng-model="Filter.dateGe"/>
+                            <p class="p-head"></p>
+                            <label class="p-head" for="DateLe"><= Дата <=</label>
+
+                            <input class="vvod40mar10" type="date" id="DateLe" ng-model="Filter.dateLe"/>
                             <!--                <input  type="hidden" id="taskId" />-->
                             <br>
 
                         </div>
                         <div class="horiz">
-                            <p class="p-head">Комментарий</p>
-                            <br>
-                            <input class="vvod40mar10" type="text" id="CommentFilt"
-                                   ng-model="Filt.comment"/>
-                            <button type="submit" class="headbutton">Применить</button>
-                            <button type="button" class="headbutton" ng-click="clearFilter(true)">Сбросить</button>
-                            <button type="button" class="headbutton" ng-click="sendFilter()">Поделиться</button>
+                            <label class="p-head" for="CommentFilter">Комментарий</label>
+                            <input class="vvod40mar10" type="text" id="CommentFilter"
+                                   ng-model="Filter.comment"/>
+                            <button type="submit" class="head_button">Применить</button>
+                            <button type="button" class="head_button" ng-click="clearFilter(true)">Сбросить</button>
+                            <button type="button" class="head_button" ng-click="sendFilter()">Поделиться</button>
 
                         </div>
                     </div>
                 </div>
             </form>
         </details>
-        <button class="headbutton" ng-click="createWorkTime()">Добавить время</button>
+        <button class="head_button" ng-click="createWorkTime()">Добавить время</button>
     </div>
-    <div class="filter containerfilt">
-        <button class="headbutton" ng-click="findPage(-1)">PrevPage</button>
+    <div class="filter container_filter">
+        <button class="head_button" ng-click="findPage(-1)">PrevPage</button>
+        <label class="p-head" for="Page"></label>
         <input class="vvod" type="number" id="Page" value="1"/>
-        <button class="headbutton" ng-click="findPage(1)">NextPage</button>
-        <p class="p-head">Количество элементов</p>
-        <select class="vvod20" name="choice" id="WorkTimeSize" ng-model="Filt.size" ng-change="filterWorkTime()">
+        <button class="head_button" ng-click="findPage(1)">NextPage</button>
+        <label class="p-head" for="WorkTimeSize">Количество элементов</label>
+        <select class="vvod20" name="choice" id="WorkTimeSize" ng-model="Filter.size" ng-change="filterWorkTime()">
             <option ng-value="10" value="10" selected>10</option>
             <option ng-value="25" value="25">25</option>
             <option ng-value="50" value="50">50</option>
@@ -98,46 +99,46 @@
     <h1>Список работ</h1>
     <table>
         <tr>
-            <td class="tablehead2">Пользователь</td>
-            <td class="tablehead2">Дата</td>
-            <td class="tablehead2">Время</td>
-            <td class="tablehead2">Комментарий</td>
-            <td class="tablehead2">Devbo</td>
-            <td class="tablehead2">Bts</td>
-            <td class="tablehead2">Описание задачи</td>
-            <td class="tablehead2">Тип</td>
+            <td class="table_head2">Пользователь</td>
+            <td class="table_head2">Дата</td>
+            <td class="table_head2">Время</td>
+            <td class="table_head2">Комментарий</td>
+            <td class="table_head2">Devbo</td>
+            <td class="table_head2">Bts</td>
+            <td class="table_head2">Описание задачи</td>
+            <td class="table_head2">Тип</td>
 
-            <td class="tablehead2"></td>
-            <td class="tablehead2"></td>
-            <td class="tablehead2"></td>
+            <td class="table_head2"></td>
+            <td class="table_head2"></td>
+            <td class="table_head2"></td>
 
         </tr>
         <tbody>
-        <tr ng-repeat="worktime in WorkTimeList">
-            <td ng-if="!worktime.authorFirstName">{{worktime.nikName}}</td>
-            <td ng-if="worktime.authorFirstName">{{worktime.authorLastName}} {{worktime.authorFirstName}}
-                {{worktime.authorPatronymic}}
+        <tr ng-repeat="workTime in WorkTimeList">
+            <td ng-if="!workTime.authorFirstName">{{workTime.nikName}}</td>
+            <td ng-if="workTime.authorFirstName">{{workTime.authorLastName}} {{workTime.authorFirstName}}
+                {{workTime.authorPatronymic}}
             </td>
 
-            <td>{{worktime.workDateStr}}</td>
-            <td>{{worktime.workTime}}</td>
-            <td class="textleft">{{worktime.comment}}</td>
-            <td class="textnotwrap">
-                <button ng-click="copyWorkTime(worktime.id)">{{worktime.taskCodeDEVBO}}</button>
+            <td>{{workTime.workDateStr}}</td>
+            <td>{{workTime.workTime}}</td>
+            <td class="text_left">{{workTime.comment}}</td>
+            <td class="text_not_wrap">
+                <button ng-click="copyWorkTime(workTime.id)">{{workTime.taskCodeDEVBO}}</button>
             </td>
-            <td class="textnotwrap">{{worktime.taskCodeBTS}}</td>
-            <td class="textleft">{{worktime.taskDescription}}</td>
+            <td class="text_not_wrap">{{workTime.taskCodeBTS}}</td>
+            <td class="text_left">{{workTime.taskDescription}}</td>
             <td>
-                {{worktime.typeStr}}
+                {{workTime.typeStr}}
             </td>
             <td>
-                <button ng-click="copyWorkTime(worktime.id)">копировать</button>
+                <button ng-click="copyWorkTime(workTime.id)">копировать</button>
 
             <td>
-                <button ng-click="editWorkTime(worktime.id)">Изменить</button>
+                <button ng-click="editWorkTime(workTime.id)">Изменить</button>
             </td>
             <td>
-                <button ng-click="deleteWorkTime(worktime.id)">Удалить</button>
+                <button ng-click="deleteWorkTime(workTime.id)">Удалить</button>
             </td>
 
         </tr>
@@ -146,37 +147,41 @@
 
 </div>
 
-<div id="FormEdit" class="divform containerfilt">
+<div id="FormEdit" class="div_form container_filter">
     <p class="p-form">{{Resp.message}}</p>
     <div class="filter" id="TaskNum">
         <div class="horiz">
-            <p class="p-filt">Задача:</p> <input class="vvod80" type="hidden" inputmode="number" id="TaskIdEdit"
-                                                 placeholder="Ведите код задачи"
-                                                 ng-model="WorkTime.taskId"/>
+            <label for="TaskName" class="p-filter">Задача: </label>
+
+            <input class="vvod80" type="hidden" inputmode="number" id="TaskIdEdit"
+                   placeholder="Ведите код задачи"
+                   ng-model="WorkTime.taskId"/>
+
             <input type="text" id="TaskName" class="vvod80" readonly>
-            <button type="button" ng-click="findTask(WorkTime.taskId)" class="headbutton">Найти</button>
+            <button type="button" ng-click="findTask(WorkTime.taskId)" class="head_button">Найти</button>
         </div>
     </div>
     <div id="FindTask">
-        <details class="detailsblock">
+        <details class="details_block">
             <summary class="p-head">Фильтр</summary>
 
             <div class="filter">
-                <div class="filterblock">
+                <div class="filter_block">
 
                     <div class="horiz">
-                        <p class="p-filt">Id задачи</p>
-                        <br>
-                        <input class="vvod20" type="number" id="WorkIdFilt" step="any" ng-model="FiltTask.workId"/>
-                        <p>ФИО: </p>
-                        <select class="vvod40mar10" name="choice" id="UserTaskFiltr" ng-model="FiltTask.nikName">
+                        <label for="WorkIdFilter" class="p-filter">Id задачи</label>
+                        <input class="vvod20" type="number" id="WorkIdFilter" step="any" ng-model="FiltTask.workId"/>
+                        <label for="UserTaskFilter" class="p-filter">ФИО:</label>
+
+                        <select class="vvod40mar10" name="choice" id="UserTaskFilter" ng-model="FiltTask.nikName">
                             <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">
                                 {{user.lastName}}
                                 {{user.firstName}} {{user.patronymic}}
                             </option>
                             <option ng-value="" value="">Все</option>
                         </select>
-                        <p class="p-filt">Тип задачи :</p>
+                        <p class="p-filter"></p>
+                        <label for="Type" class="p-filter">Тип задачи:</label>
                         <select class="vvod20mar" name="choice" id="Type" ng-model="FiltTask.type">
                             <option ng-value="1" value="1" selected>ЗИ</option>
                             <option ng-value="2" value="2">Вендерка</option>
@@ -185,36 +190,31 @@
                         </select>
                     </div>
                     <div class="horiz">
-                        <p class="p-filt">BTS:</p>
-                        <br>
-                        <input class="vvod40" type="text" id="BtsFilt" step="any" ng-model="FiltTask.bts"/>
-                        <!--                    </div>-->
-                        <!--                    <div class="horiz">-->
-                        <p class="p-filt">DEVBO :</p>
-                        <br>
-                        <input class="vvod40" type="text" id="DevboFilt" step="any" ng-model="FiltTask.devbo"/>
+                        <label for="BtsFilter" class="p-filter">BTS:</label>
+                        <input class="vvod40" type="text" id="BtsFilter" step="any" ng-model="FiltTask.bts"/>
+                        <label for="DevBoFilter" class="p-filter">DEVBO :</label>
+                        <input class="vvod40" type="text" id="DevBoFilter" step="any" ng-model="FiltTask.devbo"/>
                     </div>
                     <div class="horiz">
-                        <p class="p-filt">Описание:</p>
-                        <br>
-                        <input class="vvod80" type="text" id="DescFilt" step="any" ng-model="FiltTask.desc"/>
+                        <label for="DescFilter" class="p-filter">Описание:</label>
+                        <input class="vvod80" type="text" id="DescFilter" step="any" ng-model="FiltTask.desc"/>
                     </div>
                     <div class="horiz">
-                        <p class="p-filt">Наименование ЗИ</p>
-                        <br>
-                        <input class="vvod80" type="text" id="ZiNameFilt" step="any" ng-model="FiltTask.ziName"/>
+                        <label for="ZiNameFilter" class="p-filter">Наименование ЗИ:</label>
+                        <input class="vvod80" type="text" id="ZiNameFilter" step="any" ng-model="FiltTask.ziName"/>
                     </div>
                 </div>
             </div>
         </details>
         <div class="filter">
-            <button type="button" class="headbutton" ng-click="loadTask(-1)">PrevPage</button>
+            <button type="button" class="head_button" ng-click="loadTask(-1)">PrevPage</button>
+            <label for="PageTask" class="p-head"></label>
             <input class="vvod" type="number" id="PageTask" value="1"/>
-            <button type="button" class="headbutton" ng-click="loadTask(1)">NextPage</button>
-            <button type="button" ng-click="filterTask()" class="headbutton">Применить</button>
-            <button type="button" class="headbutton" ng-click="clearFilterTask(true)">Сбросить</button>
+            <button type="button" class="head_button" ng-click="loadTask(1)">NextPage</button>
+            <button type="button" ng-click="filterTask()" class="head_button">Применить</button>
+            <button type="button" class="head_button" ng-click="clearFilterTask(true)">Сбросить</button>
 
-            <p class="p-head">Количество элементов</p>
+            <label for="TaskSize" class="p-head">Количество элементов</label>
             <select class="vvod20" name="choice" id="TaskSize" ng-model="FiltTask.size" ng-change="filterTask()">
                 <option ng-value="10" value="10" selected>10</option>
                 <option ng-value="25" value="25">25</option>
@@ -259,13 +259,14 @@
 
     <form novalidate ng-submit="saveWorkTime()">
         <div class="horiz">
-            <p class="formlablep">Дата:</p> <input class="vvod40mar10" type="date" id="WorkTimeDate" step="any"
-                                                   ng-model="WorkTime.workDate"/>
+            <label for="WorkTimeDate" class="form_label">Дата:</label>
+            <input class="vvod40mar10" type="date" id="WorkTimeDate" step="any"
+                   ng-model="WorkTime.workDate"/>
             <br>
         </div>
-        <div class="horiz">
-            <p class="formlablep" ng-if="showUser()">Пользователь: </p>
-            <select ng-if="showUser()" class="vvod40mar10" name="choice" id="UserWorkTime" ng-model="WorkTime.nikName">
+        <div class="horiz" ng-if="showUser()">
+            <label for="UserWorkTime" class="form_label">Пользователь:</label>
+            <select class="vvod40mar10" name="choice" id="UserWorkTime" ng-model="WorkTime.nikName">
                 <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">{{user.lastName}}
                     {{user.firstName}} {{user.patronymic}}
                 </option>
@@ -274,14 +275,14 @@
             <br ng-if="showUser()">
         </div>
         <div class="horiz">
-            <p class="formlablep">Время:</p>
+            <label for="WorkTimeTime" class="form_label">Время:</label>
             <input class="vvod20mar10" type="number" step="0.1" id="WorkTimeTime"
                    min="0" max="10"
                    ng-model="WorkTime.workTime"/>
         </div>
-        <div class="horiz">
-            <p class="formlablep" ng-if="showType()">Тип:</p>
-            <select ng-if="showType()" class="vvod20mar10" name="choice" id="TypeWorkTime" ng-model="WorkTime.type">
+        <div class="horiz" ng-if="showType()">
+            <label for="TypeWorkTime" class="form_label">Тип:</label>
+            <select class="vvod20mar10" name="choice" id="TypeWorkTime" ng-model="WorkTime.type">
                 <option ng-value="1" value="1">Разработка</option>
                 <option ng-value="2" value="2">Консультация</option>
                 <option ng-value="3" value="3">Анализ ТЗ</option>
@@ -291,7 +292,7 @@
             <br>
         </div>
         <div class="horiz">
-            <p class="formlablep">Комментарий :</p>
+            <label for="Comment" class="form_label">Комментарий :</label>
             <input class="vvod80mar10" type="text" id="Comment"
                    placeholder="Ведите комментарий"
                    ng-model="WorkTime.comment"/>

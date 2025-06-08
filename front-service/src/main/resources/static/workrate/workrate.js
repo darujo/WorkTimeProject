@@ -1,8 +1,14 @@
-angular.module('workTimeService').controller('workRateController', function ($scope, $http, $location, $localStorage) {
+angular.module('workTimeService').controller('workRateController', function ($scope, $http, $location) {
 
     const constPatchWorkRate = window.location.origin + '/rate-service/v1';
     const constPatchRight = window.location.origin + '/work-service/v1';
     const constPatchWork = window.location.origin + '/work-service/v1';
+    $scope.work = {
+        roleStr: null,
+        stage0Fact: null,
+        stageAll: null,
+        criteriaStr: null
+    }
     $scope.showWorkStageAdd = function () {
         document.getElementById("WorkStageAdd").style.display = "block";
         document.getElementById("FormWorkStage").style.display = "none";
@@ -208,7 +214,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
         }
     };
     let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
-    WorkId =paramsStr.get('workId');
+    WorkId = paramsStr.get('workId');
     $scope.stageCreate = false;
     $scope.stageEdit = false;
     $scope.criteriaCreate = false;
@@ -284,8 +290,10 @@ angular.module('workTimeService').controller('workRateController', function ($sc
 
     };
     console.log("Start workRate");
-    $location.getUsers().then(function (result) {$scope.UserList = result;
-        console.log("result UserList"); console.log(result);
+    $location.getUsers().then(function (result) {
+        $scope.UserList = result;
+        console.log("result UserList");
+        console.log(result);
     });
     $scope.showWorkStageAdd();
     $scope.showWorkCriteriaAdd();

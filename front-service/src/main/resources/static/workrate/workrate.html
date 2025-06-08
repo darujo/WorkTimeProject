@@ -1,26 +1,26 @@
-<div id="WorkStageList" class="headtextelem">
+<div id="WorkStageList" class="head_text_elem">
     <h1>{{ZI.codeSap}} </h1>
     <h1>{{ZI.codeZI}} {{ZI.name}} </h1>
     <h1 ng-style="getStyle(RateStatus.code)">{{RateStatus.value}}</h1>
     <div class="horiz">
         <h1>Плановая оценка</h1>
-        <button type="button" class="headbutton mar5" id="WorkPage" ng-click="workPage()">Назад</button>
+        <button type="button" class="head_button mar5" id="WorkPage" ng-click="workPage()">Назад</button>
     </div>
     <table>
         <tr>
-            <td class="tablehead1">№ п/п</td>
-            <td class="tablehead2">ФИО</td>
-            <td class="tablehead1">Вид работ</td>
-            <td class="tablehead2">0 факт</td>
-            <td class="tablehead2">0 этап</td>
-            <td class="tablehead1">I этап</td>
-            <td class="tablehead2">II этап</td>
-            <td class="tablehead1">III этап</td>
-            <td class="tablehead2">IV этап</td>
-            <td class="tablehead1">Итого, ч/часов</td>
-            <td class="tablehead2" ng-if="stageEdit"></td>
-            <td class="tablehead1" ng-if="stageEdit"></td>
-            <td class="tablehead1" ng-if="stageEdit"></td>
+            <td class="table_head1">№ п/п</td>
+            <td class="table_head2">ФИО</td>
+            <td class="table_head1">Вид работ</td>
+            <td class="table_head2">0 факт</td>
+            <td class="table_head2">0 этап</td>
+            <td class="table_head1">I этап</td>
+            <td class="table_head2">II этап</td>
+            <td class="table_head1">III этап</td>
+            <td class="table_head2">IV этап</td>
+            <td class="table_head1">Итого, ч/часов</td>
+            <td class="table_head2" ng-if="stageEdit"></td>
+            <td class="table_head1" ng-if="stageEdit"></td>
+            <td class="table_head1" ng-if="stageEdit"></td>
 
         </tr>
         <tbody>
@@ -49,62 +49,55 @@
         </tbody>
     </table>
     <div id="WorkStageAdd" >
-        <button ng-if="stageCreate" type="button" class="headbutton" id="AddWorkStage" ng-click="createWorkStage()">Добавить</button>
+        <button ng-if="stageCreate" type="button" class="head_button" id="AddWorkStage" ng-click="createWorkStage()">Добавить</button>
 
     </div>
     <form id="FormWorkStage" ng-submit="saveWorkStage()">
         <div class="horiz">
 
-            <div class="filterblock minblock300 mar5">
-                <p class="p-form">ФИО</p>
-
+            <div class="filter_block min_block300 mar5">
+                <label for="User" class="p-form">ФИО</label>
                 <select class="vvod" name="choice" id="User" ng-model="WorkStage.nikName">
                     <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">{{user.lastName}}
                         {{user.firstName}} {{user.patronymic}}
                     </option>
                 </select>
             </div>
-            <div class="filterblock minblock200 mar5">
-                <p class="p-form">Вид Работ</p>
-
+            <div class="filter_block min_block200 mar5">
+                <label for="Role" class="p-form">Вид Работ</label>
                 <select class="vvod" name="choice" id="Role" ng-model="WorkStage.role">
                     <option ng-value="1" value="1">Разработка и отладка</option>
                     <option ng-value="2" value="2">Внутренее тестирование</option>
                 </select>
             </div>
-            <div class="filterblock mar5">
-                <p class="p-form">Этап 0</p>
-
+            <div class="filter_block mar5">
+                <label for="Stage0" class="p-form">Этап 0</label>
                 <input class="vvod" type="number" inputmode="numeric" id="Stage0" step="any"
-                       ng-model="WorkStage.stage0"/>
+                                                   ng-model="WorkStage.stage0"/>
 
             </div>
-            <div class="filterblock mar5">
-                <p class="p-form">Этап 1</p>
-
+            <div class="filter_block mar5">
+                <label for="Stage1" class="p-form">Этап 1</label>
                 <input class="vvod" type="number" inputmode="numeric" id="Stage1" step="any"
-                       ng-model="WorkStage.stage1"/>
+                                                   ng-model="WorkStage.stage1"/>
 
             </div>
-            <div class="filterblock mar5">
-                <p class="p-form">Этап 2</p>
-
+            <div class="filter_block mar5">
+                <label for="Stage2" class="p-form">Этап 2</label>
                 <input class="vvod" type="number" inputmode="numeric" id="Stage2" step="any"
-                       ng-model="WorkStage.stage2"/>
+                                                   ng-model="WorkStage.stage2"/>
 
             </div>
-            <div class="filterblock mar5">
-                <p class="p-form">Этап 3</p>
-
+            <div class="filter_block mar5">
+                <label for="Stage3" class="p-form">Этап 3</label>
                 <input class="vvod" type="number" inputmode="numeric" id="Stage3" step="any"
-                       ng-model="WorkStage.stage3"/>
+                                                   ng-model="WorkStage.stage3"/>
 
             </div>
-            <div class="filterblock mar5">
-                <p class="p-form">Этап 4</p>
-
+            <div class="filter_block mar5">
+                <label for="Stage4" class="p-form">Этап 4</label>
                 <input class="vvod" type="number" inputmode="numeric" id="Stage4" step="any"
-                       ng-model="WorkStage.stage4"/>
+                                                   ng-model="WorkStage.stage4"/>
 
             </div>
         </div>
@@ -113,18 +106,18 @@
     </form>
 </div>
 
-<div id="WorkCriteriaList" class="headtextelem">
+<div id="WorkCriteriaList" class="head_text_elem">
     <div class="horiz">
         <h1>Критерии</h1>
     </div>
     <table>
         <tr>
-            <td class="tablehead2">База</td>
-            <td class="tablehead1">Минимальная доработка (10% кода) ед.</td>
-            <td class="tablehead2">Общая переработка (50% кода) ед.</td>
-            <td class="tablehead1">Новая доработка или реинженеринг кода ед.</td>
-            <td class="tablehead2" ng-if="criteriaEdit"></td>
-            <td class="tablehead1" ng-if="criteriaEdit"></td>
+            <td class="table_head2">База</td>
+            <td class="table_head1">Минимальная доработка (10% кода) ед.</td>
+            <td class="table_head2">Общая переработка (50% кода) ед.</td>
+            <td class="table_head1">Новая доработка или реинженеринг кода ед.</td>
+            <td class="table_head2" ng-if="criteriaEdit"></td>
+            <td class="table_head1" ng-if="criteriaEdit"></td>
 
         </tr>
         <tbody>
@@ -143,15 +136,14 @@
         </tbody>
     </table>
     <div id="WorkCriteriaAdd" >
-        <button ng-if="criteriaCreate" type="button" class="headbutton" id="AddWorkCriteria" ng-click="createWorkCriteria()">Добавить</button>
+        <button ng-if="criteriaCreate" type="button" class="head_button" id="AddWorkCriteria" ng-click="createWorkCriteria()">Добавить</button>
 
     </div>
     <form id="FormWorkCriteria" ng-submit="saveWorkCriteria()">
         <div class="horiz">
 
-            <div class="filterblock minblock200 mar5">
-                <p class="p-form">Вид Работ</p>
-
+            <div class="filter_block min_block200 mar5">
+                <label for="Type" class="p-form">Вид Работ</label>
                 <select class="vvod" name="choice" id="Type" ng-model="WorkCriteria.criteria">
                     <option ng-value="1" value="1">Реализация импорта данных</option>
                     <option ng-value="2" value="2">Реализация хранения данных</option>
@@ -163,25 +155,22 @@
                     <option ng-value="7" value="7">Реализация внешнего сервиса (ОС Linux)</option>
                 </select>
             </div>
-            <div class="filterblock mar5">
-                <p class="p-form">Переработка 10%</p>
-
+            <div class="filter_block mar5">
+                <label for="Criteria10" class="p-form">Переработка 10%</label>
                 <input class="vvod" type="number" inputmode="numeric" id="Criteria10" step="any"
-                       ng-model="WorkCriteria.develop10"/>
+                                                       ng-model="WorkCriteria.develop10"/>
 
             </div>
-            <div class="filterblock mar5">
-                <p class="p-form">Переработка 50%</p>
-
+            <div class="filter_block mar5">
+                <label for="Criteria50" class="p-form">Переработка 50%</label>
                 <input class="vvod" type="number" inputmode="numeric" id="Criteria50" step="any"
-                       ng-model="WorkCriteria.develop50"/>
+                                                       ng-model="WorkCriteria.develop50"/>
 
             </div>
-            <div class="filterblock mar5">
-                <p class="p-form">Переработка 100%</p>
-
+            <div class="filter_block mar5">
+                <label for="Criteria100" class="p-form">Переработка 100%</label>
                 <input class="vvod" type="number" inputmode="numeric" id="Criteria100" step="any"
-                       ng-model="WorkCriteria.develop100"/>
+                                                        ng-model="WorkCriteria.develop100"/>
 
             </div>
 

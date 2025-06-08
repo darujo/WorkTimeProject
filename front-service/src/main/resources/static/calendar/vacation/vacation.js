@@ -15,7 +15,10 @@ angular.module('workTimeService').controller('vacationController', function ($sc
         showList();
         $scope.findPage(0);
     };
-
+    $scope.vacation = {
+        dateStartStr: null,
+        dateEndStr: null
+    }
     let maxPage = 1;
     $scope.findPage = function (diffPage) {
         console.log("findPage");
@@ -99,8 +102,8 @@ angular.module('workTimeService').controller('vacationController', function ($sc
             .then(function (response) {
                 $scope.Vacation = response.data;
                 console.log($scope.Vacation);
-                 $scope.Vacation.dateStart = new Date( $scope.Vacation.dateStart);
-                 $scope.Vacation.dateEnd = new Date( $scope.Vacation.dateEnd);
+                $scope.Vacation.dateStart = new Date($scope.Vacation.dateStart);
+                $scope.Vacation.dateEnd = new Date($scope.Vacation.dateEnd);
                 showFormEdit();
 
             }, function errorCallback(response) {
@@ -165,8 +168,10 @@ angular.module('workTimeService').controller('vacationController', function ($sc
         $scope.clearFilter(false);
     }
 
-    $location.getUsers().then(function (result) {$scope.UserList = result;
-        console.log("result UserList"); console.log(result);
+    $location.getUsers().then(function (result) {
+        $scope.UserList = result;
+        console.log("result UserList");
+        console.log(result);
     });
     console.log("Start");
     showList();

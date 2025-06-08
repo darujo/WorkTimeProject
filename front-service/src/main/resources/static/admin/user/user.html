@@ -1,50 +1,46 @@
-<div id="UserList" class="headtextelem">
+<div id="UserList" class="head_text_elem">
     <ul class="container">
         <li class="nav-item"><a class="nav-link" href="#!/vacation">Отпуска</a></li>
         <li class="nav-item"><a class="nav-link" href="#!/uservacation">График отпусков</a></li>
     </ul>
-    <div class="filter containerfilt">
-        <details class="detailsblock">
+    <div class="filter container_filter">
+        <details class="details_block">
             <summary class="p-head">Фильтр</summary>
 
-            <form novalidate ng-submit="filterUser()" ; class="filter">
+            <form novalidate ng-submit="filterUser()" class="filter">
                 <div class="filter">
-                    <div class="filterblock">
+                    <div class="filter_block">
 
                         <div class="horiz">
-                            <p class="p-head">Логин:</p>
-                            <br>
+                            <label for="UserLoginFilter" class="p-head">Логин:</label>
                             <input class="vvod30mar" type="text" id="UserLoginFilter"
                                    ng-model="Filt.nikName"/>
-                            <!--                        </div>-->
-                            <!--                        <div class="horiz">-->
-                            <p class="p-head">Фамилия:</p>
-                            <br>
+                            <label for="LastNameFilter" class="p-head">Фамилия:</label>
                             <input class="vvod30mar" type="text" id="LastNameFilter"
                                    ng-model="Filt.lastName"/>
                         </div>
                         <div class="horiz">
-                            <p class="p-head">Имя:</p>
-                            <br>
+                            <label for="FirstNameFilter" class="p-head">Имя:</label>
                             <input class="vvod30mar" type="text" id="FirstNameFilter"
                                    ng-model="Filt.firstName"/>
-                            <p class="p-head"> Отчество: </p>
+                            <label for="PatronymicFilter" class="p-head">Отчество:</label>
                             <input class="vvod30mar" type="text" id="PatronymicFilter"
                                    ng-model="Filt.patronymic"/>
                         </div>
-                        <button type="submit" class="headbutton" id="FilterButton">Применить</button>
-                        <button type="button" class="headbutton" ng-click="clearFilter(true)">Сбросить</button>
+                        <button type="submit" class="head_button" id="FilterButton">Применить</button>
+                        <button type="button" class="head_button" ng-click="clearFilter(true)">Сбросить</button>
                     </div>
                 </div>
             </form>
         </details>
-        <button class="headbutton" ng-click="createUser()">Добавить пользователя</button>
+        <button class="head_button" ng-click="createUser()">Добавить пользователя</button>
     </div>
-    <div class="filter containerfilt">
-        <button class="headbutton" ng-click="findPage(-1)">PrevPage</button>
+    <div class="filter container_filter">
+        <button class="head_button" ng-click="findPage(-1)">PrevPage</button>
+        <label for="Page"></label>
         <input class="vvod" type="number" id="Page" value="1"/>
-        <button class="headbutton" ng-click="findPage(1)">NextPage</button>
-        <p class="p-head">Количество элементов</p>
+        <button class="head_button" ng-click="findPage(1)">NextPage</button>
+        <label for="WorkTimeSize" class="p-head">Количество элементов</label>
         <select class="vvod20" name="choice" id="WorkTimeSize" ng-model="Filt.size" ng-change="filterUser()">
             <option ng-value="10" value="10" selected>10</option>
             <option ng-value="25" value="25">25</option>
@@ -58,14 +54,14 @@
     <h1>Список пользователей</h1>
     <table>
         <tr>
-            <td class="tablehead2">Логин</td>
-            <td class="tablehead2">Фамилия</td>
-            <td class="tablehead2">Имя</td>
-            <td class="tablehead2">Отчество</td>
+            <td class="table_head2">Логин</td>
+            <td class="table_head2">Фамилия</td>
+            <td class="table_head2">Имя</td>
+            <td class="table_head2">Отчество</td>
 
-            <td class="tablehead2"></td>
-            <td class="tablehead2"></td>
-            <!--            <td class="tablehead2"></td>-->
+            <td class="table_head2"></td>
+            <td class="table_head2"></td>
+            <!--            <td class="table_head2"></td>-->
 
         </tr>
         <tbody>
@@ -73,8 +69,8 @@
 
             <td>{{user.nikName}}</td>
             <td>{{user.lastName}}</td>
-            <td class="textleft">{{user.firstName}}</td>
-            <td class="textleft">{{user.patronymic}}</td>
+            <td class="text_left">{{user.firstName}}</td>
+            <td class="text_left">{{user.patronymic}}</td>
             <td>
                 <button ng-click="editRole(user.id)">Роли</button>
             </td>
@@ -91,44 +87,51 @@
 
 </div>
 
-<div id="FormEdit" class="divform containerfilt">
+<div id="FormEdit" class="div_form container_filter">
 
     <form novalidate ng-submit="saveUser()">
         <div class="horiz">
-            <p class="formlablep">Логин:</p> <input class="vvod80mar10" type="text" id="NikName" step="any"
-                                                    ng-model="User.nikName"/>
+            <label for="NikName" class="form_label">Логин:</label>
+            <input class="vvod80mar10" type="text" id="NikName" step="any"
+                   ng-model="User.nikName"/>
             <br>
         </div>
         <div class="horiz">
-            <p class="formlablep">Пароль текст:</p> <input class="vvod40mar10" type="text" id="textPassword"
-                                                                 step="any"
-                                                                 ng-model="User.textPassword"/>
-            <button class="headbutton" type="button" ng-click="genHash()" id="GenHash">Сгенерить хаш</button>
+            <label for="TextPassword" class="form_label">Пароль текст:</label>
+            <input class="vvod40mar10" type="text" id="TextPassword"
+                   step="any"
+                   ng-model="User.textPassword"/>
+            <button class="head_button" type="button" ng-click="genHash()" id="GenHash">Сгенерить хаш</button>
             <br>
         </div>
         <div class="horiz">
-            <p class="formlablep">Пароль Hash bcrypt:</p> <input class="vvod80mar10" type="text" id="UserPassword"
-                                                                 step="any"
-                                                                 ng-model="User.userPassword"/>
+            <label for="UserPassword" class="form_label">Пароль Hash bcrypt:</label>
+            <input class="vvod80mar10" type="text" id="UserPassword"
+                   step="any"
+                   ng-model="User.userPassword"/>
             <br>
         </div>
         <div class="horiz">
-            <p class="formlablep">Фамилия:</p> <input class="vvod80mar10" type="text" id="LastName" step="any"
-                                                      ng-model="User.lastName"/>
+            <label for="LastName" class="form_label">Фамилия:</label>
+            <input class="vvod80mar10" type="text" id="LastName" step="any"
+                   ng-model="User.lastName"/>
             <br>
         </div>
         <div class="horiz">
-            <p class="formlablep">Сменить пароль при входе</p> <input class="vvod20" type="checkbox"
-                                                    id="CurrentUser"
-                                                    ng-model="User.passwordChange"/>
+            <label for="CurrentUser" class="form_label">Сменить пароль при входе</label>
+            <input class="vvod20" type="checkbox"
+                   id="CurrentUser"
+                   ng-model="User.passwordChange"/>
         </div>
         <div class="horiz">
-            <p class="formlablep">Имя:</p> <input class="vvod80mar10" type="text" id="FirstName" step="any"
+            <label for="FirstName" class="form_label">Имя:</label>
+            <input class="vvod80mar10" type="text" id="FirstName" step="any"
                                                   ng-model="User.firstName"/>
             <br>
         </div>
         <div class="horiz">
-            <p class="formlablep">Отчество:</p> <input class="vvod80mar10" type="text" id="Patronymic" step="any"
+            <label for="Patronymic" class="form_label">Отчество:</label>
+            <input class="vvod80mar10" type="text" id="Patronymic" step="any"
                                                        ng-model="User.patronymic"/>
             <br>
         </div>

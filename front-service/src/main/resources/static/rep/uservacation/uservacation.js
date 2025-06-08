@@ -13,6 +13,8 @@ angular.module('workTimeService').controller('userVacationController', function 
             $scope.filterWorkTime();
         }
     }
+    $scope.weekWorkDtos = null;
+    $scope.userVacations = null;
 
     $scope.loadWorkTime = function () {
         console.log("loadWorkTime");
@@ -28,15 +30,15 @@ angular.module('workTimeService').controller('userVacationController', function 
     }
     $scope.findPage = function () {
         console.log("findPage");
-        let Filt = $scope.Filt;
+        let Filter = $scope.Filt;
         $http({
             url: constPatchWork + "/user",
             method: "get",
             params: {
-                nikName: Filt ? Filt.nikName : null,
-                dateStart: Filt ? Filt.dateStart : new Date(),
-                dateEnd: Filt ? Filt.dateEnd : new Date(),
-                periodSplit: Filt ? Filt.period : null
+                nikName: Filter ? Filter.nikName : null,
+                dateStart: Filter ? Filter.dateStart : new Date(),
+                dateEnd: Filter ? Filter.dateEnd : new Date(),
+                periodSplit: Filter ? Filter.period : null
             }
         }).then(function (response) {
             console.log(response.data);
@@ -44,7 +46,6 @@ angular.module('workTimeService').controller('userVacationController', function 
             $scope.UserPeriodList = response.data.userVacations;
         }, function errorCallback(response) {
             console.log(response)
-            console.log("rrrrr");
             console.log(location);
             if ($location.checkAuthorized(response)) {
                 //     alert(response.data.message);

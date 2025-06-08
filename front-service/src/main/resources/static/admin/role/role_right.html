@@ -1,18 +1,18 @@
-<div id="RoleList" class="headtextelem">
+<div id="RoleList" class="head_text_elem">
     <p class="p-head">{{Role.code}} {{Role.name}} </p>
     <div class="horiz">
-        <button ng-if="Role" type="button" class="headbutton" ng-click="saveRole()">Сохранить</button>
-        <button type="button" class="headbutton" ng-click="backRole()">Назад</button>
+        <button ng-if="Role" type="button" class="head_button" ng-click="saveRole()">Сохранить</button>
+        <button type="button" class="head_button" ng-click="backRole()">Назад</button>
     </div>
     <h1>Список прав роли</h1>
 
 
     <table>
         <tr>
-            <td class="tablehead2">Код</td>
-            <td class="tablehead2">Название</td>
-            <td class="tablehead2"></td>
-            <!--            <td class="tablehead2"></td>-->
+            <td class="table_head2">Код</td>
+            <td class="table_head2">Название</td>
+            <td class="table_head2"></td>
+            <!--            <td class="table_head2"></td>-->
 
         </tr>
         <tbody>
@@ -21,7 +21,10 @@
             <td>{{right.code}}</td>
             <td>{{right.name}}</td>
             <td>
-                <input class="vvod20" type="checkbox" ng-model="right.active"/>
+                <label for="checkBox" class="p-filter"></label>
+
+                <input id="checkBox"  class="vvod20" type="checkbox" ng-model="right.active"/>
+
 
             </td>
 

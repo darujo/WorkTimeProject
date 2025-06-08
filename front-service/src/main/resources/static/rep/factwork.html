@@ -1,19 +1,12 @@
-<div id="WorkTimeList" class="headtextelem">
+<div id="WorkTimeList" class="head_text_elem">
     <div class="filter container">
-        <details class="detailsblock">
+        <details class="details_block">
             <summary class="p-head">Фильтр</summary>
 
-            <form novalidate ng-submit="filterWork()" ; class="filter">
-                <!--      <input class="vvod" type="number" inputmode="decimal" id="WorkId" step="any" ng-model="Filt.workId"/>-->
-                <!--      <br>-->
-                <!--      <input class="vvod" type="number" inputmode="decimal" id="DateLE" value="1" ng-model="Filt.dateLe"/>-->
-
-                <!--      <p class="p-head"> <= Цена <= </p>-->
-                <!--      <input class="vvod" type="number" inputmode="decimal" id="DateGe" step="any" ng-model="Filt.dateGe"/>-->
-                <div class="filterblock">
+            <form novalidate ng-submit="filterWork()" class="filter">
+                <div class="filter_block">
                     <div class="horiz">
-                        <p class="p-form">ФИО</p>
-
+                        <label for="User" class="p-head">ФИО</label>
                         <select class="vvod40 mar5" name="choice" id="User" ng-model="Filt.nikName">
                             <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">{{user.lastName}}
                                 {{user.firstName}} {{user.patronymic}}
@@ -21,29 +14,33 @@
                             <option ng-value="" value="">Все</option>
 
                         </select>
-                        <p class="p-head">Скрыть ЗИ без работ</p> <input class="vvod20" type="checkbox"
+                        <label for="HideNotTime" class="p-head">Скрыть ЗИ без работ</label>
+                        <input class="vvod20" type="checkbox"
                                                                 id="HideNotTime"
                                                                 ng-model="Filt.hideNotTime"/>
                     </div>
                     <div class="horiz">
-                        <p class="p-head"> Наименование </p> <input class="vvod80" inputmode="text" id="Name"
-                                                                    ng-model="Filt.name"/>
+                        <label for="Name" class="p-head"> Наименование </label>
+                        <input class="vvod80" inputmode="text" id="Name"
+                                                         ng-model="Filt.name"/>
                         <br>
                     </div>
                     <div class="horiz">
-                        <p class="p-head"> Devbo </p> <input class="vvod20" inputmode="text" id="WorkNameFilt"
-                                                             ng-model="Filt.task"/>
-                        <p class="p-head"> № Sap </p> <input class="vvod20" type="number" inputmode="numeric" id="CodeSapFilt"
-                                                             step="1"
-                                                             ng-model="Filt.codeSap"/>
-                        <p class="p-head"> ZI- </p> <input class="vvod20" inputmode="text" id="CodeZiFilt"
-                                                           ng-model="Filt.codeZi"/>
+                        <label for="WorkNameFilter" class="p-head"> Devbo </label>
+                        <input class="vvod20" inputmode="text" id="WorkNameFilter"
+                                                                 ng-model="Filt.task"/>
+                        <label for="CodeSapFilter" class="p-head"> № Sap </label>
+                        <input class="vvod20" type="number" inputmode="numeric" id="CodeSapFilter"
+                                                                step="1"
+                                                                ng-model="Filt.codeSap"/>
+                        <label for="CodeZiFilter" class="p-head"> ZI- </label>
+                        <input class="vvod20" inputmode="text" id="CodeZiFilter"
+                                                               ng-model="Filt.codeZi"/>
 
-                        <!--                <input  type="hidden" id="wwwwId" />-->
                     </div>
                     <div class="horiz">
-                        <p class="p-head">Текущий этап ЗИ :</p>
-                        <select class="vvod20" name="choice" id="StageZFilt" ng-model="Filt.stageZi">
+                        <label for="StageZFilter" class="p-head">Текущий этап ЗИ :</label>
+                        <select class="vvod20" name="choice" id="StageZFilter" ng-model="Filt.stageZi">
                             <option ng-value="0" value="0">0</option>
                             <option ng-value="1" value="1">I</option>
                             <option ng-value="2" value="2">II</option>
@@ -54,9 +51,8 @@
                             <option ng-value="6" value="6">Закрытые</option>
                             <option ng-value="19" value="19">Все</option>
                         </select>
-                        <p class="p-head">№ Релиза</p>
-                        <br>
-                        <select class="vvod40mar10" name="choice" id="ReleaseFilt" ng-model="Filt.releaseId">
+                        <label for="ReleaseFilter" class="p-head">№ Релиза</label>
+                        <select class="vvod40mar10" name="choice" id="ReleaseFilter" ng-model="Filt.releaseId">
                             <option ng-repeat="release in ReleaseList" ng-value="release.id" value="release.id">
                                 {{release.name}}
                             </option>
@@ -64,20 +60,21 @@
                         </select>
                     </div>
                     <div class="horiz">
-                        <button type="submit" class="headbutton">Применить</button>
-                        <button type="button" class="headbutton" ng-click="clearFilter(true)">Сбросить</button>
-                        <button type="button" class="headbutton" ng-click="sendFilter()">Поделиться</button>
+                        <button type="submit" class="head_button">Применить</button>
+                        <button type="button" class="head_button" ng-click="clearFilter(true)">Сбросить</button>
+                        <button type="button" class="head_button" ng-click="sendFilter()">Поделиться</button>
 
                     </div>
                 </div>
             </form>
         </details>
     </div>
-    <div class="filter containerfilt">
-        <button class="headbutton" ng-click="findPage(-1)">PrevPage</button>
+    <div class="filter container_filter">
+        <button class="head_button" ng-click="findPage(-1)">PrevPage</button>
+        <label for="Page"></label>
         <input class="vvod" type="number" id="Page" value="1"/>
-        <button class="headbutton" ng-click="findPage(1)">NextPage</button>
-        <p class="p-head">Количество ЗИ</p>
+        <button class="head_button" ng-click="findPage(1)">NextPage</button>
+        <label for="StageZI" class="p-head">Количество ЗИ</label>
         <select class="vvod20" name="choice" id="StageZI" ng-model="Filt.size" ng-change="filterWork()">
             <option ng-value="10" value="10">10</option>
             <option ng-value="25" value="25">25</option>
@@ -91,33 +88,33 @@
     <h1>Факт затрат ЗИ</h1>
     <table>
         <tr>
-            <td class="tablehead1" rowspan="2">№ п/п</td>
-            <td class="tablehead2" rowspan="2">№ ЗИ (ZI)</td>
-            <td class="tablehead1" rowspan="2">Наименование ЗИ</td>
-            <td class="tablehead2" rowspan="2">Исполнитель</td>
-            <td class="tablehead1" colspan="6">Факт трудозатрат, чел/час</td>
+            <td class="table_head1" rowspan="2">№ п/п</td>
+            <td class="table_head2" rowspan="2">№ ЗИ (ZI)</td>
+            <td class="table_head1" rowspan="2">Наименование ЗИ</td>
+            <td class="table_head2" rowspan="2">Исполнитель</td>
+            <td class="table_head1" colspan="6">Факт трудозатрат, чел/час</td>
         </tr>
         <tr>
-            <td class="tablehead1 stagetime">0 этап <br> Согласование требований</td>
-            <td class="tablehead2 stagetime">I этап <br> Разработка прототипа</td>
-            <td class="tablehead1 stagetime">II этап <br> Стабилизация прототипа</td>
-            <td class="tablehead2 stagetime">III этап <br> Стабилизация релиза</td>
-            <td class="tablehead1 stagetime">IV этап <br> ОПЭ релиза</td>
-            <td class="tablehead2 stagetime">V этап <br> Вендерка</td>
+            <td class="table_head1 stage_time">0 этап <br> Согласование требований</td>
+            <td class="table_head2 stage_time">I этап <br> Разработка прототипа</td>
+            <td class="table_head1 stage_time">II этап <br> Стабилизация прототипа</td>
+            <td class="table_head2 stage_time">III этап <br> Стабилизация релиза</td>
+            <td class="table_head1 stage_time">IV этап <br> ОПЭ релиза</td>
+            <td class="table_head2 stage_time">V этап <br> Вендерка</td>
         </tr>
 <!--        <tr>-->
-<!--            <td class="tablehead1">Факт</td>-->
-<!--            <td class="tablehead2">Факт</td>-->
-<!--            <td class="tablehead1">Факт</td>-->
-<!--            <td class="tablehead2">Факт</td>-->
-<!--            <td class="tablehead1">Факт</td>-->
-<!--            <td class="tablehead2">Факт</td>-->
+<!--            <td class="table_head1">Факт</td>-->
+<!--            <td class="table_head2">Факт</td>-->
+<!--            <td class="table_head1">Факт</td>-->
+<!--            <td class="table_head2">Факт</td>-->
+<!--            <td class="table_head1">Факт</td>-->
+<!--            <td class="table_head2">Факт</td>-->
 <!--        </tr>-->
 
         <tbody>
         <tr ng-repeat="work in WorkTimeList">
             <td>{{work.num}}</td>
-            <td rowspan="{{work.userCol}}" ng-if="work.codeZi != null" class="textnotwrap">{{work.codeZi}}</td>
+            <td rowspan="{{work.userCol}}" ng-if="work.codeZi != null" class="text_not_wrap">{{work.codeZi}}</td>
             <td rowspan="{{work.userCol}}" ng-if="work.codeZi != null">{{work.name}}</td>
             <td ng-if="!work.authorFirstName">{{work.nikName}}</td>
             <td ng-if="work.authorFirstName">{{work.authorLastName}} {{work.authorFirstName}}

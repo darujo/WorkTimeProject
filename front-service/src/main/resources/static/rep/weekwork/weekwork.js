@@ -1,6 +1,15 @@
-angular.module('workTimeService').controller('weekWorkController', function ($scope, $http, $location, $localStorage) {
+angular.module('workTimeService').controller('weekWorkController', function ($scope, $http, $location) {
 
     const constPatchWork = window.location.origin + '/work-service/v1/works';
+    $scope.userWorkFormDTOs = null;
+    $scope.work = {
+        userCol: null,
+        codeInt: null,
+        workTaskColAttr: null,
+        workTimeAttr: null,
+        workPlan: null,
+        workAllFact: null
+    }
     $scope.clearFilter = function (load) {
         console.log("clearFilter");
         $scope.Filt = {
@@ -29,12 +38,12 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
         $scope.findPage(0);
     };
     $scope.sendFilter = function () {
-        $scope.Filt["weekSplit"] = $scope.Filt.weekSplit ? true : false;
-        $scope.Filt["workTask"] = $scope.Filt.workTask ? true : false;
-        $scope.Filt["workTime"] = $scope.Filt.workTime ? true : false;
-        $scope.Filt["workPercent"] = $scope.Filt.workPercent ? true : false;
-        $scope.Filt["addTotal"] = $scope.Filt.addTotal ? true : false;
-        $scope.Filt["ziSplit"] = $scope.Filt.ziSplit ? true : false;
+        $scope.Filt["weekSplit"] = $scope.Filt.weekSplit;
+        $scope.Filt["workTask"] = $scope.Filt.workTask;
+        $scope.Filt["workTime"] = $scope.Filt.workTime;
+        $scope.Filt["workPercent"] = $scope.Filt.workPercent;
+        $scope.Filt["addTotal"] = $scope.Filt.addTotal;
+        $scope.Filt["ziSplit"] = $scope.Filt.ziSplit;
 
 
         $location.sendFilter(location.hash, $scope.Filt);
@@ -52,32 +61,32 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
             page = 1;
         }
         $scope.Filt.page = page;
-        let Filt = $scope.Filt;
+        let Filter = $scope.Filt;
 
         $http({
             url: constPatchWork + "/rep/fact/week",
             method: "get",
             params: {
-                nikName: Filt ? Filt.nikName : null,
-                dateStart: Filt ? Filt.dateStart : new Date(),
-                dateEnd: Filt ? Filt.dateEnd : new Date(),
-                weekSplit: Filt ? Filt.weekSplit : null,
-                ziSplit: Filt ? Filt.ziSplit : null,
-                addTotal: Filt ? Filt.addTotal : null,
+                nikName: Filter ? Filter.nikName : null,
+                dateStart: Filter ? Filter.dateStart : new Date(),
+                dateEnd: Filter ? Filter.dateEnd : new Date(),
+                weekSplit: Filter ? Filter.weekSplit : null,
+                ziSplit: Filter ? Filter.ziSplit : null,
+                addTotal: Filter ? Filter.addTotal : null,
                 //ЗИ
-                page: Filt ? Filt.page : 1,
-                size: Filt ? Filt.size : 10,
-                name: Filt ? Filt.name : null,
-                task: Filt ? Filt.task : null,
-                codeSap: Filt ? Filt.codeSap : null,
-                codeZi: Filt ? Filt.codeZi : null,
-                stageZi: Filt ? Filt.stageZi : null,
-                releaseId: Filt ? Filt.releaseId : null
+                page: Filter ? Filter.page : 1,
+                size: Filter ? Filter.size : 10,
+                name: Filter ? Filter.name : null,
+                task: Filter ? Filter.task : null,
+                codeSap: Filter ? Filter.codeSap : null,
+                codeZi: Filter ? Filter.codeZi : null,
+                stageZi: Filter ? Filter.stageZi : null,
+                releaseId: Filter ? Filter.releaseId : null
             }
         }).then(function (response) {
             console.log(response.data);
             $scope.WeekWorkList = response.data;
-            $scope.ziSplit = Filt.ziSplit;
+            $scope.ziSplit = Filter.ziSplit;
         }, function errorCallback(response) {
             console.log(response)
             if ($location.checkAuthorized(response)) {
@@ -89,7 +98,7 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
     $scope.filterWorkTime = function () {
         console.log("filterWorkTime");
         $scope.Filt.page = 1;
-        $location.saveFilter("week_work",$scope.Filt);
+        $location.saveFilter("week_work", $scope.Filt);
         $scope.findPage(0);
     };
     let callBackType = function (response) {
@@ -117,7 +126,7 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
     }
     $scope.openWorkTime = function (nikName, task, type, dateGe, dateLe) {
         if (typeof task[type] !== "undefined") {
-            $location.path("/worktime").search({
+            $location.path("/workTime".toLowerCase()).search({
                 listId: task[type],
                 nikName: nikName,
                 currentUser: false,
@@ -133,13 +142,19 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
         $scope.clearFilter(false);
     }
 
-    $location.getUsers().then(function (result) {$scope.UserList = result;
-        console.log("result UserList"); console.log(result);
+    $location.getUsers().then(function (result) {
+        $scope.UserList = result;
+        console.log("result UserList");
+        console.log(result);
     });
-    $location.getRoles().then(function (result) {$scope.RoleList = result;
-        console.log("result RoleList"); console.log(result);
+    $location.getRoles().then(function (result) {
+        $scope.RoleList = result;
+        console.log("result RoleList");
+        console.log(result);
     });
-    $location.getReleases().then(function (result) {$scope.ReleaseList = result; });
+    $location.getReleases().then(function (result) {
+        $scope.ReleaseList = result;
+    });
 
 
     $scope.loadWorkTime();

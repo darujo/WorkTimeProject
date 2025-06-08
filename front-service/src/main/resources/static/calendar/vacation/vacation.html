@@ -1,14 +1,13 @@
-<div id="VacationList" class="headtextelem">
+<div id="VacationList" class="head_text_elem">
     <div class="filter container">
-        <details class="detailsblock">
+        <details class="details_block">
             <summary class="p-head">Фильтр</summary>
             <form novalidate ng-submit="filterVacation()" class="filter">
                 <div class="filter">
-                    <div class="filterblock">
+                    <div class="filter_block">
 
                         <div class="horiz">
-                            <p class="p-form">ФИО</p>
-
+                            <label for="User" class="p-head">ФИО</label>
                             <select class="vvod40 mar5" name="choice" id="User" ng-model="Filt.nikName">
                                 <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">
                                     {{user.lastName}}
@@ -23,45 +22,30 @@
 
                             </select>
 
-<!--                            <p class="p-head">Разбивка по периодам</p>-->
-<!--                            <select class="vvod40 mar5" name="choice" id="Period" ng-model="Filt.period">-->
-<!--                                <option ng-value="1" value="1">Дни</option>-->
-<!--                                <option ng-value="2" value="2">Недели по дням</option>-->
-<!--                                <option ng-value="3" value="3">Недели</option>-->
-<!--                                <option ng-value="4" value="4">Месяц</option>-->
-<!--                                <option ng-value="5" value="5">Месяц по дням</option>-->
-<!--                                <option ng-value="6" value="6">Месяц по неделям</option>-->
-<!--                                <option ng-value="7" value="7">3 Месяц</option>-->
-<!--                                <option ng-value="8" value="8">3 Месяц по дням</option>-->
-<!--                                <option ng-value="9" value="9">3 Месяц по неделям</option>-->
-<!--                                <option ng-value="10" value="10">Год</option>-->
-<!--                                <option ng-value="11" value="11">Год по дням</option>-->
-<!--                                <option ng-value="12" value="12">Год по неделям</option>-->
-
-<!--                            </select>-->
                         </div>
                         <div class="horiz">
-                            <input class="vvod20" type="date" id="FiltDateStart" step="any" ng-model="Filt.dateStart"/>
-                            <p class="p-head"> <= Дата <= </p>
-                            <input class="vvod20" type="date" id="FiltDateEnd" step="any" ng-model="Filt.dateEnd"/>
-                            <!--                <input  type="hidden" id="taskId" />-->
+                            <label for="FilterDateStart"></label>
+                            <input class="vvod20" type="date" id="FilterDateStart" step="any" ng-model="Filt.dateStart"/>
+                            <label for="FilterDateEnd" class="p-head"> <= Дата <= </label>
+                            <input class="vvod20" type="date" id="FilterDateEnd" step="any" ng-model="Filt.dateEnd"/>
                             <br>
-                            <button type="submit" class="headbutton">Применить</button>
-                            <button type="button" class="headbutton" ng-click="clearFilter(true)">Сбросить</button>
-                            <button type="button" class="headbutton" ng-click="sendFilter()">Поделиться</button>
+                            <button type="submit" class="head_button">Применить</button>
+                            <button type="button" class="head_button" ng-click="clearFilter(true)">Сбросить</button>
+                            <button type="button" class="head_button" ng-click="sendFilter()">Поделиться</button>
                         </div>
 
                     </div>
                 </div>
             </form>
         </details>
-        <button class="headbutton" ng-click="createVacation()">Добавить отпуск</button>
+        <button class="head_button" ng-click="createVacation()">Добавить отпуск</button>
     </div>
-    <div class="filter containerfilt">
-        <button class="headbutton" ng-click="findPage(-1)">PrevPage</button>
+    <div class="filter container_filter">
+        <button class="head_button" ng-click="findPage(-1)">PrevPage</button>
+        <label for="Page"></label>
         <input class="vvod" type="number" id="Page" value="1"/>
-        <button class="headbutton" ng-click="findPage(1)">NextPage</button>
-        <p class="p-head">Количество элементов</p>
+        <button class="head_button" ng-click="findPage(1)">NextPage</button>
+        <label for="WorkTimeSize" class="p-head">Количество элементов</label>
         <select class="vvod20" name="choice" id="WorkTimeSize" ng-model="Filt.size" ng-change="filterUser()">
             <option ng-value="10" value="10" selected>10</option>
             <option ng-value="25" value="25">25</option>
@@ -75,14 +59,14 @@
     <h1>Отпуска</h1>
     <table>
         <tr>
-            <td class="tablehead2">ФИО</td>
-            <td class="tablehead2">Дата начала отпуска</td>
-            <td class="tablehead2">Дата конца отпуска</td>
-            <td class="tablehead2">Кол-во дней отпуска</td>
+            <td class="table_head2">ФИО</td>
+            <td class="table_head2">Дата начала отпуска</td>
+            <td class="table_head2">Дата конца отпуска</td>
+            <td class="table_head2">Кол-во дней отпуска</td>
 
-            <td class="tablehead2"></td>
-            <td class="tablehead2"></td>
-            <!--            <td class="tablehead2"></td>-->
+            <td class="table_head2"></td>
+            <td class="table_head2"></td>
+            <!--            <td class="table_head2"></td>-->
 
         </tr>
         <tbody>
@@ -111,11 +95,11 @@
 
 </div>
 
-<div id="FormEdit" class="divform containerfilt">
+<div id="FormEdit" class="div_form container_filter">
 
     <form novalidate ng-submit="saveVacation()">
         <div class="horiz">
-            <p class="formlablep">ФИО:</p>
+            <label for="UserVacation" class="form_label">ФИО:</label>
             <select class="vvod40mar10" name="choice" id="UserVacation" ng-model="Vacation.nikName">
                 <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">{{user.lastName}}
                     {{user.firstName}} {{user.patronymic}}
@@ -124,20 +108,23 @@
 
         </div>
         <div class="horiz">
-            <p class="formlablep">Дата начала:</p> <input class="vvod40mar10" type="date" id="DateStart" step="any"
-                                                          ng-model="Vacation.dateStart"/>
+            <label for="DateStart" class="form_label">Дата начала:</label>
+            <input class="vvod40mar10" type="date" id="DateStart" step="any"
+                                                  ng-model="Vacation.dateStart"/>
             <br>
         </div>
         <div class="horiz">
-            <p class="formlablep">Дата конца:</p> <input class="vvod40mar10" type="date" id="DateEnd" step="any"
-                                                         ng-change="Vacation.days = null"
-                                                         ng-model="Vacation.dateEnd"/>
+            <label for="DateEnd" class="form_label">Дата конца:</label>
+            <input class="vvod40mar10" type="date" id="DateEnd" step="any"
+                                                ng-change="Vacation.days = null"
+                                                ng-model="Vacation.dateEnd"/>
             <br>
         </div>
         <div class="horiz">
-            <p class="formlablep">Дней:</p> <input class="vvod40mar10" type="number" id="Days" step="1"
-                                                   ng-change="Vacation.dateEnd = null"
-                                                   ng-model="Vacation.days"/>
+            <label for="Days" class="form_label">Дней:</label>
+            <input class="vvod40mar10" type="number" id="Days" step="1"
+                                             ng-change="Vacation.dateEnd = null"
+                                             ng-model="Vacation.days"/>
             <br>
         </div>
         <button type="submit" class="button" id="ButtonSaveDown">Сохранить</button>

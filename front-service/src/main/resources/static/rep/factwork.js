@@ -1,6 +1,15 @@
-angular.module('workTimeService').controller('workFactRepController', function ($scope, $http, $location, $localStorage) {
+angular.module('workTimeService').controller('workFactRepController', function ($scope, $http, $location) {
 
     const constPatchWork = window.location.origin + '/work-service/v1';
+    $scope.work = {
+        num: null,
+        timeAnalise: null,
+        timeDevelop: null,
+        timeDebug: null,
+        timeRelease: null,
+        timeOPE: null,
+        timeWender: null
+    }
 
     $scope.loadWork = function () {
         console.log("loadWorkTime");
@@ -10,7 +19,7 @@ angular.module('workTimeService').controller('workFactRepController', function (
         $scope.filterWork();
     };
     $scope.sendFilter = function () {
-        $scope.Filt["hideNotTime"] = $scope.Filt.hideNotTime ? true : false;
+        $scope.Filt["hideNotTime"] = $scope.Filt.hideNotTime;
         $location.sendFilter(location.hash, $scope.Filt);
     }
     $scope.filterWork = function () {
@@ -18,12 +27,12 @@ angular.module('workTimeService').controller('workFactRepController', function (
         document.getElementById("Page").value = "1";
         $scope.findPage(0);
     };
-    var maxpage = 1;
+    let maxPage = 1;
     $scope.findPage = function (diffPage) {
         console.log(diffPage)
-        var page = parseInt(document.getElementById("Page").value) + diffPage;
-        if (page > maxpage) {
-            page = maxpage;
+        let page = parseInt(document.getElementById("Page").value) + diffPage;
+        if (page > maxPage) {
+            page = maxPage;
 
         }
         if (page < 1) {
@@ -33,29 +42,29 @@ angular.module('workTimeService').controller('workFactRepController', function (
         console.log("page");
         console.log(page);
         document.getElementById("Page").value = page;
-        let Filt;
-        Filt = $scope.Filt;
+        let Filter;
+        Filter = $scope.Filt;
 
         $http({
             url: constPatchWork + "/works/rep/work/fact",
             method: "get",
             params: {
-                nikName: Filt ? Filt.nikName : null,
+                nikName: Filter ? Filter.nikName : null,
                 page: page,
-                size: Filt ? Filt.size : null,
-                name: Filt ? Filt.name : null,
-                codeSap: Filt ? Filt.codeSap : null,
-                codeZi: Filt ? Filt.codeZi : null,
-                task: Filt ? Filt.task : null,
-                releaseId: Filt ? Filt.releaseId : null,
-                sort: Filt ? Filt.sort : null,
-                stageZi: Filt ? Filt.stageZi : null,
-                hideNotTime: Filt ? Filt.hideNotTime : null
+                size: Filter ? Filter.size : null,
+                name: Filter ? Filter.name : null,
+                codeSap: Filter ? Filter.codeSap : null,
+                codeZi: Filter ? Filter.codeZi : null,
+                task: Filter ? Filter.task : null,
+                releaseId: Filter ? Filter.releaseId : null,
+                sort: Filter ? Filter.sort : null,
+                stageZi: Filter ? Filter.stageZi : null,
+                hideNotTime: Filter ? Filter.hideNotTime : null
             }
         }).then(function (response) {
             console.log(response.data);
             $scope.WorkTimeList = response.data.content;
-            maxpage = response.data.totalPages;
+            maxPage = response.data["totalPages"];
         }, function errorCallback(response) {
             console.log(response)
             if ($location.checkAuthorized(response)) {
@@ -80,11 +89,17 @@ angular.module('workTimeService').controller('workFactRepController', function (
     if ($scope.Filt === null) {
         $scope.clearFilter(false);
     }
-    $location.getUsers().then(function (result) {$scope.UserList = result;
-        console.log("result UserList"); console.log(result);
+    $location.getUsers().then(function (result) {
+        $scope.UserList = result;
+        console.log("result UserList");
+        console.log(result);
     });
 
-    $location.getReleases().then(function (result) {$scope.ReleaseList = result; console.log("result releaseList"); console.log(result); });
+    $location.getReleases().then(function (result) {
+        $scope.ReleaseList = result;
+        console.log("result releaseList");
+        console.log(result);
+    });
 
     $scope.loadWork();
 })

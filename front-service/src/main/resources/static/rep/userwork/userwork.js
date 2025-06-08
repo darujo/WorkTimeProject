@@ -1,6 +1,6 @@
-angular.module('workTimeService').controller('userWorkController', function ($scope, $http, $location, $localStorage) {
+angular.module('workTimeService').controller('userWorkController', function ($scope, $http, $location) {
 
-    const constPatchWork = window.location.origin + '/worktime-service/v1';
+    const constPatchWork = window.location.origin + '/workTime-service/v1'.toLowerCase();
     $scope.clearFilter =function (load){
         console.log("clearFilter");
         $scope.Filt =  {
@@ -13,7 +13,9 @@ angular.module('workTimeService').controller('userWorkController', function ($sc
             $scope.filterWorkTime();
         }
     }
-
+    $scope.workPeriodDTOs = null;
+    $scope.work = {allVacation:null,
+        shotVacation:null}
     $scope.loadWorkTime = function () {
         console.log("loadWorkTime");
         console.log($scope.Filt);
@@ -28,15 +30,15 @@ angular.module('workTimeService').controller('userWorkController', function ($sc
     }
     $scope.findPage = function () {
         console.log("findPage");
-        let Filt = $scope.Filt;
+        let Filter = $scope.Filt;
         $http({
-            url: constPatchWork + "/worktime/rep/fact/user/work",
+            url: constPatchWork + "/workTime/rep/fact/user/work".toLowerCase(),
             method: "get",
             params: {
-                nikName: Filt ? Filt.nikName : null,
-                dateStart: Filt ? Filt.dateStart : new Date(),
-                dateEnd: Filt ? Filt.dateEnd : new Date(),
-                periodSplit: Filt ? Filt.period : null
+                nikName: Filter ? Filter.nikName : null,
+                dateStart: Filter ? Filter.dateStart : new Date(),
+                dateEnd: Filter ? Filter.dateEnd : new Date(),
+                periodSplit: Filter ? Filter.period : null
             }
         }).then(function (response) {
             console.log(response.data);
@@ -44,7 +46,6 @@ angular.module('workTimeService').controller('userWorkController', function ($sc
             $scope.UserPeriodList = response.data;
         }, function errorCallback(response) {
             console.log(response)
-            console.log("rrrrr");
             console.log(location);
             if ($location.checkAuthorized(response)) {
                 //     alert(response.data.message);

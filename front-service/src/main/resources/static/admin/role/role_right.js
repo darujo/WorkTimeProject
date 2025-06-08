@@ -1,7 +1,8 @@
-angular.module('workTimeService').controller('roleRightController', function ($scope, $http, $location, $localStorage) {
+angular.module('workTimeService').controller('roleRightController', function ($scope, $http, $location) {
 
     const constPatchUser = window.location.origin + '/admin/roles/role/rights';
-
+    $scope.Role = {rights:null}
+    $scope.Role = null;
     $scope.loadRight = function () {
         console.log("запрос данных");
         console.log(window.location);

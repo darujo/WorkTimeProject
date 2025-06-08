@@ -1,8 +1,12 @@
-angular.module('workTimeService').controller('workTimeRepController', function ($scope, $http, $location, $localStorage) {
+angular.module('workTimeService').controller('workTimeRepController', function ($scope, $http, $location) {
 
     const constPatchWork = window.location.origin + '/work-service/v1';
 
-
+    $scope.work = {
+        laborAnalise: null,
+        timePlan: null,
+        timeFact: null
+    }
     $scope.loadWorkTime = function () {
         console.log("loadWorkTime");
         $location.parserFilter($scope.Filt);
@@ -15,18 +19,18 @@ angular.module('workTimeService').controller('workTimeRepController', function (
     $scope.findPage = function () {
         console.log("findPage");
         console.log($scope.WorkSort);
-        let Filt;
-        Filt = $scope.Filt;
+        let Filter;
+        Filter = $scope.Filt;
         $http({
             url: constPatchWork + "/works/rep",
             method: "get",
             params: {
-                userName: Filt ? Filt.userName : null,
-                stageZi: Filt ? Filt.stageZi : null,
-                availWork: Filt ? Filt.availWork : null,
-                releaseId: Filt ? Filt.releaseId : null,
+                userName: Filter ? Filter.userName : null,
+                stageZi: Filter ? Filter.stageZi : null,
+                availWork: Filter ? Filter.availWork : null,
+                releaseId: Filter ? Filter.releaseId : null,
                 sort: $scope.WorkSort ? $scope.WorkSort : null,
-                ziName: Filt ? Filt.ziName : null
+                ziName: Filter ? Filter.ziName : null
 
 
             }
@@ -43,26 +47,30 @@ angular.module('workTimeService').controller('workTimeRepController', function (
         });
     };
     $scope.filterWork = function () {
-        $location.saveFilter("workTimeRepFilter",$scope.Filt);
+        $location.saveFilter("workTimeRepFilter", $scope.Filt);
         $scope.findPage();
     };
-    $scope.clearFilter =function (load){
+    $scope.clearFilter = function (load) {
         console.log("clearFilter");
         $scope.Filt = {
             stageZi: 15,
             availWork: true
         };
         console.log($scope.Filt);
-        if(load){
+        if (load) {
             $scope.filterWork();
         }
     }
-    var init = function () {
+    let init = function () {
         $scope.Filt = $location.getFilter("workTimeRepFilter");
-        if ($scope.Filt === null ) {
+        if ($scope.Filt === null) {
             $scope.clearFilter(false);
         }
-        $location.getReleases().then(function (result) {$scope.ReleaseList = result; console.log("result releaseList"); console.log(result); });
+        $location.getReleases().then(function (result) {
+            $scope.ReleaseList = result;
+            console.log("result releaseList");
+            console.log(result);
+        });
 
         $scope.addSort("releaseId");
         $scope.loadWorkTime();

@@ -1,4 +1,4 @@
- angular.module('workTimeService').controller('roleController', function ($scope, $http, $location, $localStorage) {
+ angular.module('workTimeService').controller('roleController', function ($scope, $http, $location) {
 
     const constPatchUser = window.location.origin + '/roles';
     const constPatchAdmin = window.location.origin + '/admin/roles';
