@@ -56,7 +56,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
         $scope.findPage(0);
     };
     $scope.sendFilter = function () {
-        $location.sendFilter(location.hash,$scope.Filt);
+        $location.sendFilter(location.hash, $scope.Filt);
     }
     let maxPage = 1;
     $scope.findPage = function (diffPage) {
@@ -89,7 +89,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 codeSap: Filter ? Filter.codeSap : null,
                 codeZi: Filter ? Filter.codeZi : null,
                 task: Filter ? Filter.task : null,
-                releaseId: Filter ? Filter.releaseId :null,
+                releaseId: Filter ? Filter.releaseId : null,
                 sort: Filter ? Filter.sort : null,
                 stageZi: Filter ? Filter.stageZi : null
             }
@@ -118,7 +118,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
             codeSap: $scope.Filt ? $scope.Filt.codeSap : null,
             codeZi: $scope.Filt ? $scope.Filt.codeZi : null,
             task: $scope.Filt ? $scope.Filt.task : null,
-            releaseId: $scope.Filt ? $scope.Filt.releaseId :null,
+            releaseId: $scope.Filt ? $scope.Filt.releaseId : null,
             stageZi: $scope.Filt ? $scope.Filt.stageZi : null
         };
         console.log("sort");
@@ -126,7 +126,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
         $scope.filterWork();
     }
     $scope.filterWork = function () {
-        $location.saveFilter("workFilter",$scope.Filt);
+        $location.saveFilter("workFilter", $scope.Filt);
         document.getElementById("Page").value = "1";
         $scope.findPage(0);
     };
@@ -182,25 +182,25 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 WorkIdEdit = response.data.id;
                 $scope.Work = response.data;
                 console.log($scope.Work);
-                $scope.Work.developEndFact = typeof  response.data.developEndFact === "undefined" ? null : new Date(response.data.developEndFact);
-                $scope.Work.debugEndFact = typeof  response.data.debugEndFact === "undefined" ? null : new Date(response.data.debugEndFact);
-                $scope.Work.releaseEndFact = typeof  response.data.releaseEndFact === "undefined" ? null : new Date(response.data.releaseEndFact);
-                $scope.Work.opeEndFact = typeof  response.data.opeEndFact === "undefined" ? null : new Date(response.data.opeEndFact);
-                $scope.Work.analiseEndFact = typeof  response.data.analiseEndFact === "undefined" ? null : new Date(response.data.analiseEndFact);
-                $scope.Work.developEndPlan = typeof  response.data.developEndPlan === "undefined" ? null : new Date(response.data.developEndPlan);
-                $scope.Work.debugEndPlan = typeof  response.data.debugEndPlan === "undefined" ? null : new Date(response.data.debugEndPlan);
-                $scope.Work.releaseEndPlan = typeof  response.data.releaseEndPlan === "undefined" ? null : new Date(response.data.releaseEndPlan);
-                $scope.Work.opeEndPlan = typeof  response.data.opeEndPlan === "undefined" ? null : new Date(response.data.opeEndPlan);
-                $scope.Work.analiseEndPlan = typeof  response.data.analiseEndPlan === "undefined" ? null : new Date(response.data.analiseEndPlan);
+                $scope.Work.developEndFact = typeof response.data.developEndFact === "undefined" ? null : new Date(response.data.developEndFact);
+                $scope.Work.debugEndFact = typeof response.data.debugEndFact === "undefined" ? null : new Date(response.data.debugEndFact);
+                $scope.Work.releaseEndFact = typeof response.data.releaseEndFact === "undefined" ? null : new Date(response.data.releaseEndFact);
+                $scope.Work.opeEndFact = typeof response.data.opeEndFact === "undefined" ? null : new Date(response.data.opeEndFact);
+                $scope.Work.analiseEndFact = typeof response.data.analiseEndFact === "undefined" ? null : new Date(response.data.analiseEndFact);
+                $scope.Work.developEndPlan = typeof response.data.developEndPlan === "undefined" ? null : new Date(response.data.developEndPlan);
+                $scope.Work.debugEndPlan = typeof response.data.debugEndPlan === "undefined" ? null : new Date(response.data.debugEndPlan);
+                $scope.Work.releaseEndPlan = typeof response.data.releaseEndPlan === "undefined" ? null : new Date(response.data.releaseEndPlan);
+                $scope.Work.opeEndPlan = typeof response.data.opeEndPlan === "undefined" ? null : new Date(response.data.opeEndPlan);
+                $scope.Work.analiseEndPlan = typeof response.data.analiseEndPlan === "undefined" ? null : new Date(response.data.analiseEndPlan);
 
-                $scope.Work.startTaskPlan = typeof  response.data.startTaskPlan === "undefined" ? null : new Date(response.data.startTaskPlan);
+                $scope.Work.startTaskPlan = typeof response.data.startTaskPlan === "undefined" ? null : new Date(response.data.startTaskPlan);
                 // Дата начала доработки Факт
-                $scope.Work.startTaskFact = typeof  response.data.startTaskFact === "undefined" ? null : new Date(response.data.startTaskFact);
+                $scope.Work.startTaskFact = typeof response.data.startTaskFact === "undefined" ? null : new Date(response.data.startTaskFact);
                 // Выдача релиза даты План
-                console.log(typeof  response.data.issuingReleasePlan === "undefined")
-                $scope.Work.issuingReleasePlan = typeof  response.data.issuingReleasePlan === "undefined" ? null : new Date(response.data.issuingReleasePlan);
+                console.log(typeof response.data.issuingReleasePlan === "undefined")
+                $scope.Work.issuingReleasePlan = typeof response.data.issuingReleasePlan === "undefined" ? null : new Date(response.data.issuingReleasePlan);
                 // Выдача релиза дата факт
-                if (typeof  response.data.issuingReleaseFact !== "undefined"){
+                if (typeof response.data.issuingReleaseFact !== "undefined") {
                     $scope.Work.issuingReleaseFact = new Date(response.data.issuingReleaseFact);
                 }
                 console.log($scope.Work)
@@ -238,7 +238,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
                     sendSave = false;
                     console.log(response)
                     if ($location.checkAuthorized(response)) {
-                            alert(response.data.message);
+                        alert(response.data.message);
                     }
 
                     // showFindTask();
@@ -247,27 +247,28 @@ angular.module('workTimeService').controller('workController', function ($scope,
     };
 
     $scope.addTime = function (workId) {
-        $location.path('/task').search({workId : workId});
+        $location.path('/task').search({workId: workId});
         // window.open('#!/task',"_parent");
     }
     $scope.addRate = function (workId) {
         console.log("Другая");
         $location.path('/rate').search({workId: workId});
     }
-    $scope.clearFilter =function (load){
+    $scope.clearFilter = function (load) {
         console.log("clearFilter");
         $scope.Filt = {
             stageZi: 15,
             size: 10
         }
         console.log($scope.Filt);
-        if(load){
+        if (load) {
             $scope.filterWork();
         }
     }
-    $scope.releaseOption= function (release){
-        console.log(typeof release.issuingReleaseFact !== "undefined" && release.issuingReleaseFact !== null)
-        if(typeof release.issuingReleaseFact !== "undefined"  && release.issuingReleaseFact !== null){
+    $scope.releaseOption = function (release) {
+        // console.log(release)
+        console.log(typeof release !== "undefined" && release.issuingReleaseFact !== "undefined" && release.issuingReleaseFact !== null)
+        if (typeof release !== "undefined" && typeof release.issuingReleaseFact !== "undefined" && release.issuingReleaseFact !== null) {
             return "disabled";
         }
         return false;
@@ -275,11 +276,15 @@ angular.module('workTimeService').controller('workController', function ($scope,
     showWork();
     console.log("---workFilter---");
     $scope.Filt = $location.getFilter("workFilter");
-    console.log($scope.Filt );
-    if($scope.Filt === null) {
+    console.log($scope.Filt);
+    if ($scope.Filt === null) {
         $scope.clearFilter(false);
     }
-    $location.getReleases().then(function (result) {$scope.ReleaseList = result; console.log("result releaseList"); console.log(result); });
+    $location.getReleases().then(function (result) {
+        $scope.ReleaseList = result;
+        console.log("result releaseList");
+        console.log(result);
+    });
     console.log("workFilter");
     console.log($scope.Filt);
     $scope.loadWork();

@@ -57,7 +57,7 @@
 
             <div class="filter_block min_block300 mar5">
                 <label for="User" class="p-form">ФИО</label>
-                <select class="vvod" name="choice" id="User" ng-model="WorkStage.nikName">
+                <select class="vvod" name="UserFilterWorkStageSelect" id="User" ng-model="WorkStage.nikName">
                     <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">{{user.lastName}}
                         {{user.firstName}} {{user.patronymic}}
                     </option>
@@ -65,7 +65,7 @@
             </div>
             <div class="filter_block min_block200 mar5">
                 <label for="Role" class="p-form">Вид Работ</label>
-                <select class="vvod" name="choice" id="Role" ng-model="WorkStage.role">
+                <select class="vvod" name="RoleWorkStageSelect" id="Role" ng-model="WorkStage.role">
                     <option ng-value="1" value="1">Разработка и отладка</option>
                     <option ng-value="2" value="2">Внутренее тестирование</option>
                 </select>
@@ -144,7 +144,7 @@
 
             <div class="filter_block min_block200 mar5">
                 <label for="Type" class="p-form">Вид Работ</label>
-                <select class="vvod" name="choice" id="Type" ng-model="WorkCriteria.criteria">
+                <select class="vvod" name="TypeWorkCriteriaSelect" id="Type" ng-model="WorkCriteria.criteria">
                     <option ng-value="1" value="1">Реализация импорта данных</option>
                     <option ng-value="2" value="2">Реализация хранения данных</option>
                     <option ng-value="3" value="3">Реализация обработки и сравнения данных</option>

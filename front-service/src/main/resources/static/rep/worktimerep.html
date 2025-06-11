@@ -10,7 +10,7 @@
                             <label for="ZiName" class="p-head">Наименование ЗИ</label>
                             <input class="vvod40" type="text" id="ZiName" step="any" ng-model="Filt.ziName"/>
                             <label for="ReleaseFilter" class="p-head">№ Релиза</label>
-                            <select class="vvod40mar10" name="choice" id="ReleaseFilter" ng-model="Filt.releaseId">
+                            <select class="vvod40mar10" name="ReleaseFilterWorkTimeRepSelect" id="ReleaseFilter" ng-model="Filt.releaseId">
                                 <option ng-repeat="release in ReleaseList" ng-value="release.id" value="release.id">
                                     {{release.name}}
                                 </option>
@@ -19,7 +19,7 @@
                         </div>
                         <div class="horiz">
                             <label for="StageZiFilter" class="p-head">Текущий этап ЗИ :</label>
-                            <select class="vvod20" name="choice" id="StageZiFilter" ng-model="Filt.stageZi">
+                            <select class="vvod20" name="StageZiFilterWorkTimeRepSelect" id="StageZiFilter" ng-model="Filt.stageZi">
                                 <option ng-value="0" value="0">0</option>
                                 <option ng-value="1" value="1">I</option>
                                 <option ng-value="2" value="2">II</option>
@@ -31,7 +31,7 @@
                                 <option ng-value="" value="">Все</option>
                             </select>
                             <label for="AvailWorkFilter" class="p-head">ЗИ :</label>
-                            <select class="vvod20" name="choice" id="AvailWorkFilter" ng-model="Filt.availWork">
+                            <select class="vvod20" name="AvailWorkFilterWorkTimeRepSelect" id="AvailWorkFilter" ng-model="Filt.availWork">
                                 <option ng-value="true" value="true">С работами</option>
                                 <option ng-value="false" value="false">Без работ</option>
                                 <option ng-value="" value="">Все</option>

@@ -8,7 +8,7 @@
 
                         <div class="horiz">
                             <label for="User" class="p-head">ФИО</label>
-                            <select class="vvod40 mar5" name="choice" id="User" ng-model="Filt.nikName">
+                            <select class="vvod40 mar5" name="UserFilterUserWorkSelect" id="User" ng-model="Filt.nikName">
                                 <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">
                                     {{user.lastName}}
                                     {{user.firstName}} {{user.patronymic}}
@@ -22,7 +22,7 @@
                             </select>
 
                             <label for="Period" class="p-head">Разбивка по периодам</label>
-                            <select class="vvod40 mar5" name="choice" id="Period" ng-model="Filt.period">
+                            <select class="vvod40 mar5" name="PeriodFilterUserWorkSelect" id="Period" ng-model="Filt.period">
                                 <option ng-value="1" value="1">Дни</option>
                                 <option ng-value="2" value="2">Недели по дням</option>
                                 <option ng-value="3" value="3">Недели</option>

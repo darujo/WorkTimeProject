@@ -158,10 +158,9 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     };
     $location.backPage = function () {
         $scope.getUser();
-        if(myHash === "userPassword".toLowerCase()){
+        if (myHash === "userPassword".toLowerCase()) {
             $location.path("").search({});
-        }
-        else {
+        } else {
             $location.path(myHash).search(myFilter);
         }
     }
@@ -177,7 +176,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                 .then(function successCallback(response) {
                     console.log(response)
                     $scope.UserLogin = response.data;
-                    if($scope.UserLogin.passwordChange){
+                    if ($scope.UserLogin.passwordChange) {
                         $location.path('/userPassword'.toLowerCase()).search({});
 
                     }
@@ -330,10 +329,22 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     let myFilter = {};
     $location.parserFilter = function (filter) {
         console.log("parserFilter");
+        console.log(location);
         console.log(location.href);
+        let strPars;
+        console.log(location.href.lastIndexOf("#!"))
+        if (location.href.lastIndexOf("#!") > location.href.indexOf("?")) {
+            strPars = location.href.substring(location.href.lastIndexOf("#!"));
+            console.log(strPars)
+            window.open(location.origin + "/" + strPars, "_self");
+            return;
+        } else {
+            strPars = location.href;
+        }
+        if (strPars.indexOf("?") !== -1) {
 
-        if (location.href.indexOf("?") !== -1) {
-            let paramsStr = new URLSearchParams(location.href.substring(location.href.lastIndexOf("?")));
+            console.log(strPars)
+            let paramsStr = new URLSearchParams(strPars.substring(strPars.lastIndexOf("?")));
             for (let [key, value] of paramsStr.entries()) {
                 if (key.toLowerCase().indexOf("stage") !== -1
                     || key.toLowerCase().indexOf("size") !== -1
@@ -420,7 +431,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         }
     }
     let userLoad = false;
-    let UserList ;
+    let UserList;
     let loadUsers = function () {
         console.log("Users")
 
@@ -469,7 +480,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
 
     }
     let releaseLoad = false;
-    let ReleaseList ;
+    let ReleaseList;
     let loadRelease = function () {
         console.log("Release")
 
@@ -492,6 +503,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         });
 
     }
+
     function wait() {
         return new Promise((resolve, reject) => {
             console.log(reject);
@@ -500,6 +512,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             }, 100);
         });
     }
+
     $location.getRoles = async function () {
         while (!roleLoad) {
             await wait();
@@ -510,7 +523,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         while (!releaseLoad) {
             await wait();
         }
-        return ReleaseList ;
+        return ReleaseList;
     }
     $location.getUsers = async function () {
         console.log("userLoad");

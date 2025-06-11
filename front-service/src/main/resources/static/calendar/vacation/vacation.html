@@ -8,7 +8,7 @@
 
                         <div class="horiz">
                             <label for="User" class="p-head">ФИО</label>
-                            <select class="vvod40 mar5" name="choice" id="User" ng-model="Filt.nikName">
+                            <select class="vvod40 mar5" name="UserFilterVacationSelect" id="User" ng-model="Filt.nikName">
                                 <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">
                                     {{user.lastName}}
                                     {{user.firstName}} {{user.patronymic}}
@@ -45,8 +45,8 @@
         <label for="Page"></label>
         <input class="vvod" type="number" id="Page" value="1"/>
         <button class="head_button" ng-click="findPage(1)">NextPage</button>
-        <label for="WorkTimeSize" class="p-head">Количество элементов</label>
-        <select class="vvod20" name="choice" id="WorkTimeSize" ng-model="Filt.size" ng-change="filterUser()">
+        <label for="VacationSize" class="p-head">Количество элементов</label>
+        <select class="vvod20" name="VacationSizeSelect" id="VacationSize" ng-model="Filt.size" ng-change="filterUser()">
             <option ng-value="10" value="10" selected>10</option>
             <option ng-value="25" value="25">25</option>
             <option ng-value="50" value="50">50</option>
@@ -100,7 +100,7 @@
     <form novalidate ng-submit="saveVacation()">
         <div class="horiz">
             <label for="UserVacation" class="form_label">ФИО:</label>
-            <select class="vvod40mar10" name="choice" id="UserVacation" ng-model="Vacation.nikName">
+            <select class="vvod40mar10" name="UserVacationSelect" id="UserVacation" ng-model="Vacation.nikName">
                 <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">{{user.lastName}}
                     {{user.firstName}} {{user.patronymic}}
                 </option>

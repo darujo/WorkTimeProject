@@ -24,7 +24,7 @@
                         </div>
                         <div class="horiz">
                             <label class="p-head" for="UserFilter">ФИО</label>
-                            <select class="vvod40mar10" name="choice" id="UserFilter" ng-model="Filter.nikName">
+                            <select class="vvod40mar10" name="UserFilterWorkTimeSelect" id="UserFilter" ng-model="Filter.nikName">
                                 <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">
                                     {{user.lastName}}
                                     {{user.firstName}} {{user.patronymic}}
@@ -36,8 +36,8 @@
 
                                 <option ng-value="" value="">Все</option>
                             </select>
-                            <label class="p-head" for="TypeFFilter">Тип:</label>
-                            <select class="vvod20mar10" name="choice" id="TypeFFilter" ng-model="Filter.type">
+                            <label class="p-head" for="TypeFilter">Тип:</label>
+                            <select class="vvod20mar10" name="TypeFilterWorkTimeSelect" id="TypeFilter" ng-model="Filter.type">
                                 <!--                                при добавление надо прописать workTimeService.getTimeWork-->
                                 <option ng-value="1" value="1">Разработка</option>
                                 <option ng-value="2" value="2">Консультация</option>
@@ -86,7 +86,7 @@
         <input class="vvod" type="number" id="Page" value="1"/>
         <button class="head_button" ng-click="findPage(1)">NextPage</button>
         <label class="p-head" for="WorkTimeSize">Количество элементов</label>
-        <select class="vvod20" name="choice" id="WorkTimeSize" ng-model="Filter.size" ng-change="filterWorkTime()">
+        <select class="vvod20" name="SizeFilterWorkTimeSelect" id="WorkTimeSize" ng-model="Filter.size" ng-change="filterWorkTime()">
             <option ng-value="10" value="10" selected>10</option>
             <option ng-value="25" value="25">25</option>
             <option ng-value="50" value="50">50</option>
@@ -173,7 +173,7 @@
                         <input class="vvod20" type="number" id="WorkIdFilter" step="any" ng-model="FiltTask.workId"/>
                         <label for="UserTaskFilter" class="p-filter">ФИО:</label>
 
-                        <select class="vvod40mar10" name="choice" id="UserTaskFilter" ng-model="FiltTask.nikName">
+                        <select class="vvod40mar10" name="UserTaskFilterWorkTimeSelect" id="UserTaskFilter" ng-model="FiltTask.nikName">
                             <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">
                                 {{user.lastName}}
                                 {{user.firstName}} {{user.patronymic}}
@@ -182,7 +182,7 @@
                         </select>
                         <p class="p-filter"></p>
                         <label for="Type" class="p-filter">Тип задачи:</label>
-                        <select class="vvod20mar" name="choice" id="Type" ng-model="FiltTask.type">
+                        <select class="vvod20mar" name="TypeTaskFilterWorkTimeSelect" id="Type" ng-model="FiltTask.type">
                             <option ng-value="1" value="1" selected>ЗИ</option>
                             <option ng-value="2" value="2">Вендерка</option>
                             <option ng-value="3" value="3">Админ</option>
@@ -215,7 +215,7 @@
             <button type="button" class="head_button" ng-click="clearFilterTask(true)">Сбросить</button>
 
             <label for="TaskSize" class="p-head">Количество элементов</label>
-            <select class="vvod20" name="choice" id="TaskSize" ng-model="FiltTask.size" ng-change="filterTask()">
+            <select class="vvod20" name="SizeTaskFilterWorkTimeSelect" id="TaskSize" ng-model="FiltTask.size" ng-change="filterTask()">
                 <option ng-value="10" value="10" selected>10</option>
                 <option ng-value="25" value="25">25</option>
                 <option ng-value="50" value="50">50</option>
@@ -266,7 +266,7 @@
         </div>
         <div class="horiz" ng-if="showUser()">
             <label for="UserWorkTime" class="form_label">Пользователь:</label>
-            <select class="vvod40mar10" name="choice" id="UserWorkTime" ng-model="WorkTime.nikName">
+            <select class="vvod40mar10" name="UserWorkTimeSelect" id="UserWorkTime" ng-model="WorkTime.nikName">
                 <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">{{user.lastName}}
                     {{user.firstName}} {{user.patronymic}}
                 </option>
@@ -282,7 +282,7 @@
         </div>
         <div class="horiz" ng-if="showType()">
             <label for="TypeWorkTime" class="form_label">Тип:</label>
-            <select class="vvod20mar10" name="choice" id="TypeWorkTime" ng-model="WorkTime.type">
+            <select class="vvod20mar10" name="TypeWorkTimeSelect" id="TypeWorkTime" ng-model="WorkTime.type">
                 <option ng-value="1" value="1">Разработка</option>
                 <option ng-value="2" value="2">Консультация</option>
                 <option ng-value="3" value="3">Анализ ТЗ</option>

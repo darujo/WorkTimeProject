@@ -26,8 +26,8 @@
 
                     </div>
                     <div class="horiz">
-                        <label for="StageZFilter" class="p-head">Текущий этап ЗИ :</label>
-                        <select class="vvod20" name="choice" id="StageZFilter" ng-model="Filt.stageZi">
+                        <label for="StageZiFilter" class="p-head">Текущий этап ЗИ :</label>
+                        <select class="vvod20" name="StageZiFilterWorkSelect" id="StageZiFilter" ng-model="Filt.stageZi">
                             <option ng-value="0" value="0">0</option>
                             <option ng-value="1" value="1">I</option>
                             <option ng-value="2" value="2">II</option>
@@ -39,7 +39,7 @@
                             <option ng-value="19" value="19">Все</option>
                         </select>
                         <label for="ReleaseFilter" class="p-head">№ Релиза</label>
-                        <select class="vvod40mar10" name="choice" id="ReleaseFilter" ng-model="Filt.releaseId">
+                        <select class="vvod40mar10" name="ReleaseFilterWorkSelect" id="ReleaseFilter" ng-model="Filt.releaseId">
                             <option ng-repeat="release in ReleaseList" ng-value="release.id" value="release.id">
                                 {{release.name}}
                             </option>
@@ -64,8 +64,8 @@
         <label for="Page"></label>
         <input class="vvod" type="number" id="Page" value="1"/>
         <button class="head_button" ng-click="findPage(1)">NextPage</button>
-        <label for="StageZI" class="p-head">Количество элементов</label>
-        <select class="vvod20" name="choice" id="StageZI" ng-model="Filt.size" ng-change="filterWork()">
+        <label for="WorkSize" class="p-head">Количество элементов</label>
+        <select class="vvod20" name="SizeFilterWorkSelect" id="WorkSize" ng-model="Filt.size" ng-change="filterWork()">
             <option ng-value="10" value="10">10</option>
             <option ng-value="25" value="25">25</option>
             <option ng-value="50" value="50">50</option>
@@ -311,8 +311,8 @@
             </div>
         </details>
         <div class="horiz">
-            <label for="StageZEdit" class="p-form">Текущий этап ЗИ :</label>
-            <select class="vvod20" name="choice" id="StageZEdit" ng-model="Work.stageZI">
+            <label for="StageZiEdit" class="p-form">Текущий этап ЗИ :</label>
+            <select class="vvod20" name="StageZiWorkSelect" id="StageZiEdit" ng-model="Work.stageZI">
                 <option ng-value="0" value="0" selected>0</option>
                 <option ng-value="1" value="1">I</option>
                 <option ng-value="2" value="2">II</option>
@@ -323,7 +323,7 @@
             </select>
             <br>
             <label for="Release" class="p-form">Порядковый номер релиза :</label>
-            <select class="vvod40mar10" name="choice" id="Release" ng-model="Work.releaseId"
+            <select class="vvod40mar10" name="ReleaseWorkSelect" id="Release" ng-model="Work.releaseId"
                     ng-disabled="releaseOption(Work)">
                 <option ng-repeat="release in ReleaseList" ng-disabled="releaseOption(release)" ng-value="release.id"
                         value="release.id">

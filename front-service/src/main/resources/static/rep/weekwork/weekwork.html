@@ -16,7 +16,7 @@
                                                                      id="AddTotal"
                                                                      ng-model="Filt.addTotal"/>
                                 <label for="User" class="p-head">ФИО</label>
-                                <select class="vvod40 mar5" name="choice" id="User" ng-model="Filt.nikName">
+                                <select class="vvod40 mar5" name="UserFilterWeekWorkSelect" id="User" ng-model="Filt.nikName">
                                     <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">
                                         {{user.lastName}}
                                         {{user.firstName}} {{user.patronymic}}
@@ -74,8 +74,8 @@
 
                                 </div>
                                 <div class="horiz">
-                                    <label for="StageZFilter" class="p-head">Текущий этап ЗИ :</label>
-                                    <select class="vvod20" name="choice" id="StageZFilter" ng-model="Filt.stageZi">
+                                    <label for="StageZiFilter" class="p-head">Текущий этап ЗИ :</label>
+                                    <select class="vvod20" name="StageZiFilterWeekWorkSelect" id="StageZiFilter" ng-model="Filt.stageZi">
                                         <option ng-value="0" value="0">0</option>
                                         <option ng-value="1" value="1">I</option>
                                         <option ng-value="2" value="2">II</option>
@@ -87,7 +87,7 @@
                                         <option ng-value="19" value="19">Все</option>
                                     </select>
                                     <label for="ReleaseFilter" class="p-head">№ Релиза</label>
-                                    <select class="vvod40mar10" name="choice" id="ReleaseFilter" ng-model="Filt.releaseId">
+                                    <select class="vvod40mar10" name="ReleaseFilterWeekWorkSelect" id="ReleaseFilter" ng-model="Filt.releaseId">
                                         <option ng-repeat="release in ReleaseList" ng-value="release.id" value="release.id">
                                             {{release.name}}
                                         </option>
@@ -128,7 +128,7 @@
             <input class="vvod" type="number" id="Page" value="1" ng-model="Filt.page"/>
             <button class="head_button" ng-click="findPage(1)">NextPage</button>
             <label for="StageZI" class="p-head">Количество элементов</label>
-            <select class="vvod20" name="choice" id="StageZI" ng-model="Filt.size" ng-change="filterWorkTime()">
+            <select class="vvod20" name="StageZiFilterWeekWorkSelect" id="StageZI" ng-model="Filt.size" ng-change="filterWorkTime()">
                 <option ng-value="10" value="10">10</option>
                 <option ng-value="25" value="25">25</option>
                 <option ng-value="50" value="50">50</option>
