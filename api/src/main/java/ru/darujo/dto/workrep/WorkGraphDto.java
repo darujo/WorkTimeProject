@@ -22,11 +22,11 @@ public class WorkGraphDto{
     }
 
     @SuppressWarnings("unused")
-    public List<WorkPeriodColorDto> getWorkPeriodColorPlanDtos() {
+    public List<WorkPeriodColorDto> getWorkPeriodColorPlanDTOs() {
         return workPeriodColorPlanDTOs;
     }
     @SuppressWarnings("unused")
-    public List<WorkPeriodColorDto> getWorkPeriodColorFactDtos() {
+    public List<WorkPeriodColorDto> getWorkPeriodColorFactDTOs() {
         return workPeriodColorFactDTOs;
     }
 }

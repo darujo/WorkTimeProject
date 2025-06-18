@@ -117,12 +117,12 @@
         <tbody ng-repeat="workGraph in WorkGraphDTOs">
         <tr>
             <td  class="sticky-col first-col" rowspan="2">{{workGraph.workLittleDto.name}}</td>
-            <td ng-repeat="workPeriod in workGraph.workPeriodColorPlanDtos"
+            <td ng-repeat="workPeriod in workGraph.workPeriodColorPlanDTOs"
                 ng-style="getStyleColorBack(workPeriod.colorDto.color)"></td>
         </tr>
         <tr>
 <!--            <td rowspan="2">{{workGraph.workLittleDto.name}}</td>-->
-            <td ng-repeat="workPeriod in workGraph.workPeriodColorFactDtos"
+            <td ng-repeat="workPeriod in workGraph.workPeriodColorFactDTOs"
                 ng-style="getStyleColorBack(workPeriod.colorDto.color)"></td>
         </tr>
         </tbody>
@@ -135,11 +135,31 @@
     <img ng-if="load" src="../gif/wait1.gif" alt="wait1" width="900" height="506"/>
 </div>
 <div>
+
+    <img ng-if="load" src="../gif/wait1_2.gif" alt="wait1" width="300" height="300"/>
+</div>
+<div>
     <img ng-if="load" src="../gif/wait2.gif" alt="wait2" width="250" height="250"/>
 </div>
 <div>
     <img ng-if="load" src="../gif/wait3.gif" alt="wait3" width="400" height="300"/>
 </div>
 <div>
+    <img ng-if="load" src="../gif/wait3_2.gif" alt="wait3" width="159" height="160"/>
+</div>
+
+<div>
     <img ng-if="load" src="../gif/wait4.gif" alt="wait4" width="800" height="600"/>
 </div>
+<div>
+    <img ng-if="load" src="../gif/wait4_2.gif" alt="wait4" width="448" height="76"/>
+</div>
+
+<div>
+    <img ng-if="load" src="../gif/wait5_2.gif" alt="wait4" width="235" height="235"/>
+</div>
+<div>
+    <img ng-if="load" src="../gif/wait6.gif" alt="wait4" width="396" height="373"/>
+</div>
+
+

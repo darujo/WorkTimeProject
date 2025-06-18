@@ -1,6 +1,9 @@
 <div id="WorkList" class="head_text_elem">
     <div class="filter container">
         <a class="nav-link" href="#!/work_graph">График ЗИ</a>
+    </div>
+
+    <div class="filter container">
         <details class="details_block">
             <summary class="p-head">Фильтр</summary>
 
@@ -79,15 +82,15 @@
         </select>
     </div>
     <h1>Список ЗИ</h1>
-    <table>
+    <table class="container">
         <tr>
-            <td class="table_head2 sticky-col first-col-1" rowspan="3">
-                <button class="table_head2 button_table" ng-click="workSort('codeSap')"> Код SAP</button>
+            <td class="sticky-col first-col-1 table_head2" rowspan="3">
+                <button class="button_table table_head2" ng-click="workSort('codeSap')"> Код SAP</button>
             </td>
-            <td class="table_head2 sticky-col second-col-1" rowspan="3">
+            <td class="sticky-col second-col-1 table_head2" rowspan="3">
                 <button class="table_head2 button_table" ng-click="workSort('codeZI')"> Код Зи</button>
             </td>
-            <td class="table_head2 sticky-col three-col-1" rowspan="3">
+            <td class="sticky-col three-col-1 table_head2" rowspan="3">
                 <button class="table_head2 button_table" ng-click="workSort('name')"> Наименование</button>
             </td>
             <td class="table_head2" rowspan="3"> № внутренней задачи (DEVBO)</td>
@@ -185,9 +188,8 @@
         </tr>
         </tbody>
     </table>
-    <div>
-
-        <img ng-if="load" src="../gif/wait1.gif" alt="Ждите" width="900" height="506"/>
+    <div class="wait_1_2">
+        <img ng-if="load" src="../gif/wait1_2.gif" alt="Лучше ждите" width="300" height="300"/>
     </div>
 </div>
 
@@ -216,16 +218,16 @@
             <summary class="p-form">Сроки этапов</summary>
             <table>
                 <thead>
-<!--                <tr>-->
-<!--                    <td class="table_head2" colspan="3">-->
-<!--                        <p class="p-form">План</p>-->
-<!--                    </td>-->
-<!--                    <td class="table_head2">-->
-<!--                    </td>-->
-<!--                    <td class="table_head2" colspan="3">-->
-<!--                        <p class="p-form">Факт</p>-->
-<!--                    </td>-->
-<!--                </tr>-->
+                <!--                <tr>-->
+                <!--                    <td class="table_head2" colspan="3">-->
+                <!--                        <p class="p-form">План</p>-->
+                <!--                    </td>-->
+                <!--                    <td class="table_head2">-->
+                <!--                    </td>-->
+                <!--                    <td class="table_head2" colspan="3">-->
+                <!--                        <p class="p-form">Факт</p>-->
+                <!--                    </td>-->
+                <!--                </tr>-->
                 </thead>
                 <tbody>
 
@@ -277,7 +279,7 @@
                                ng-model="Work.analiseEndFact"/>
                     </td>
                 </tr>
-<!--    Разработка            -->
+                <!--    Разработка            -->
                 <tr>
                     <td colspan="7">
                         <p>Разработка прототипа</p>
@@ -326,7 +328,7 @@
                                ng-model="Work.developEndFact"/>
                     </td>
                 </tr>
-<!--      Отладка          -->
+                <!--      Отладка          -->
                 <tr>
                     <td colspan="7">
                         <p>Стабилизация прототипа</p>
@@ -375,7 +377,7 @@
                                ng-model="Work.debugEndFact"/>
                     </td>
                 </tr>
-<!--    релиз            -->
+                <!--    релиз            -->
                 <tr>
                     <td colspan="7">
                         <p>Стабилизация релиза</p>

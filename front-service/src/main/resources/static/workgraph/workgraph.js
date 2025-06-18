@@ -12,6 +12,12 @@ angular.module('workTimeService').controller('workGraphController', function ($s
     $scope.sendFilter = function () {
         $location.sendFilter(location.hash, $scope.Filt);
     }
+    $scope.work = {workLittleDto : null,
+        workPeriodColorPlanDTOs: null,
+        weekWorkDTOs:null,
+        workGraphDTOs:null,
+        workPeriodColorFactDTOs:null,
+        colorDto:null};
 
     let maxPage = 1;
     $scope.load = false;

@@ -3,6 +3,10 @@
 /*  margin: 0;*/
 /*  padding: 0;*/
 /*}*/
+.sticky-col {
+    position: sticky;
+    background-color: white;
+}
 
 .container {
     max-width: 1140px;
@@ -452,11 +456,14 @@ TD {
 
 }
 
-.sticky-col {
-    position: sticky;
-    background-color: white;
-}
 
+.left_0 {
+    /*width: 100px;*/
+    /*min-width: 100px;*/
+    /*max-width: 100px;*/
+    /*white-space: nowrap;*/
+    right: 0;
+}
 
 .first-col {
     /*width: 100px;*/
@@ -487,4 +494,10 @@ TD {
     /*max-width: 80px;*/
     white-space: nowrap;
     left: 214px;
+}
+
+.wait_1_2{
+    margin-left: auto;
+    margin-right: auto;
+    width: 300px;
 }

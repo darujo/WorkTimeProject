@@ -11,12 +11,10 @@ import ru.darujo.dto.work.WorkEditDto;
 import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.model.Work;
-import ru.darujo.model.WorkLittle;
 import ru.darujo.service.WorkService;
 
 import java.sql.Timestamp;
 import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.Random;
 
 @RestController()
@@ -30,12 +28,6 @@ public class WorkController extends DateParser {
     }
 
     Random random = new Random();
-
-//    @GetMapping("/conv")
-//    public WorkDto workConv() {
-//        workService.findWorks(1, 10000, null, null, null, null, null, null, null, null).map(work -> workService.saveWork(WorkConvertor.getWork(WorkConvertor.getWorkEditDto(work))));
-//        return new WorkDto();
-//    }
 
     @GetMapping("/find")
     public Iterable<Work> workList(@RequestParam(required = false) String name,
