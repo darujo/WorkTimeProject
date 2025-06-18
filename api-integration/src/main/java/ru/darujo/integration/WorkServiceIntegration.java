@@ -9,6 +9,8 @@ import ru.darujo.dto.MapStringFloat;
 import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 
+import java.util.Date;
+
 
 @Component
 public class WorkServiceIntegration extends ServiceIntegration{
@@ -42,7 +44,7 @@ public class WorkServiceIntegration extends ServiceIntegration{
         addTeg(stringBuilder,"workId",workId);
 
         try {
-            return webClientWork.get().uri("/rep/time/fact/stage0?" + stringBuilder)
+            return webClientWork.get().uri("/rep/time/fact/stage0" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
@@ -53,6 +55,20 @@ public class WorkServiceIntegration extends ServiceIntegration{
             System.out.println(ex.getMessage());
             throw new ResourceNotFoundException("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
+    }
+
+    public Boolean setWorkDate(Long workId, Date dateWork) {
+        if(workId!= null && dateWork != null) {
+            StringBuilder stringBuilder = new StringBuilder();
+            addTeg(stringBuilder, "date", dateWork);
+            return webClientWork.get().uri("/refresh/" + workId + stringBuilder)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundException("Задача c id = " + workId + " не найдена")))
+                    .bodyToMono(Boolean.class)
+                    .block();
+        }
+        return false;
     }
 
 }

@@ -3,23 +3,28 @@ package ru.darujo.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import ru.darujo.assistant.color.ColorRGB;
+import ru.darujo.convertor.WorkConvertor;
+import ru.darujo.dto.ColorDto;
 import ru.darujo.dto.MapStringFloat;
 import ru.darujo.dto.PageDto;
+import ru.darujo.dto.PageObjDto;
+import ru.darujo.dto.calendar.WeekWorkDto;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.workperiod.WorkUserTime;
-import ru.darujo.dto.workrep.WorkFactDto;
-import ru.darujo.dto.workrep.WorkRepDto;
+import ru.darujo.dto.workrep.*;
 import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.integration.CalendarServiceIntegration;
 import ru.darujo.integration.TaskServiceIntegration;
 import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.integration.WorkTimeServiceIntegration;
-import ru.darujo.model.Release;
 import ru.darujo.model.Work;
 import ru.darujo.model.WorkLittle;
 
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 public class WorkRepService {
@@ -49,6 +54,13 @@ public class WorkRepService {
     @Autowired
     public void setWorkService(WorkService workService) {
         this.workService = workService;
+    }
+
+    CalendarServiceIntegration calendarServiceIntegration;
+
+    @Autowired
+    public void setCalendarServiceIntegration(CalendarServiceIntegration calendarServiceIntegration) {
+        this.calendarServiceIntegration = calendarServiceIntegration;
     }
 
     public List<WorkRepDto> getWorkRep(String name, Boolean availWork, Integer stageZiGe, Integer stageZiLe, Long releaseId, String[] sort) {
@@ -284,7 +296,7 @@ public class WorkRepService {
                                           Integer page, Integer size, String name, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId, String sort) {
         List<WorkUserTime> workUserTimes = new ArrayList<>();
         if (ziSplit) {
-            Iterable<WorkLittle> works = workService.findWorkLittle(page, size, name, sort, stageZiGe, stageZiLe,codeSap,codeZi,task,releaseId);
+            Iterable<WorkLittle> works = workService.findWorkLittle(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId);
             works.forEach(work ->
                     workUserTimes.add(new WorkUserTime(
                             work.getId(),
@@ -311,4 +323,160 @@ public class WorkRepService {
         }
         return workUserTimes;
     }
+
+    public PageObjDto<WorkGraphsDto> getWorkGraphRep(Integer page,
+                                                     Integer size,
+                                                     String nameZi,
+                                                     Integer stageZiGe,
+                                                     Integer stageZiLe,
+                                                     Long codeSap,
+                                                     String codeZiSearch,
+                                                     String task,
+                                                     Long releaseId,
+                                                     String sort,
+                                                     Timestamp dateStart,
+                                                     Timestamp dateEnd,
+                                                     String period) {
+        List<WeekWorkDto> weekWorkDTOs = calendarServiceIntegration.getPeriodTime(dateStart, dateEnd, period);
+        Page<Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, releaseId);
+        List<WorkGraphDto> workGraphDTOs =
+                workPage.map(work -> new WorkGraphDto(WorkConvertor.getWorkLittleDto(work),
+                        weekWorkDTOs.stream().map(weekWorkDto -> new WorkPeriodColorDto(weekWorkDto, getColor(weekWorkDto, work, true))).collect(Collectors.toList()),
+                        weekWorkDTOs.stream().map(weekWorkDto -> new WorkPeriodColorDto(weekWorkDto, getColor(weekWorkDto, work, false))).collect(Collectors.toList())
+                )).toList();
+        WorkGraphsDto workFactDTOs = new WorkGraphsDto(weekWorkDTOs, workGraphDTOs);
+
+        return new PageObjDto<>(workPage.getTotalPages(), workPage.getNumber(), workPage.getSize(), workFactDTOs);
+    }
+
+    ColorRGB color;
+
+    Map<Integer, ColorDto> colorDtoMap = new HashMap<>();
+
+    private ColorDto getColor(WeekWorkDto weekWorkDto, Work work, boolean plan) {
+        List<String> colorTypes;
+        if (plan) {
+            colorTypes = getPeriodPlanTypes(work, weekWorkDto.getDayStart(), weekWorkDto.getDayEnd());
+        } else {
+            colorTypes = getPeriodFactTypes(work, weekWorkDto.getDayStart(), weekWorkDto.getDayEnd());
+        }
+        return getColor(colorTypes);
+
+    }
+
+    public Timestamp getDatePluseDay(Timestamp date, Integer day) {
+        if (date == null) {
+            return null;
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DATE, day);
+        return new Timestamp(cal.getTimeInMillis());
+
+    }
+
+    private List<String> getPeriodFactTypes(Work work, Timestamp dayStart, Timestamp dayEnd) {
+        List<String> colorTypes = new ArrayList<>();
+        if (isPeriodIntersect(work.getAnaliseStartFact(), work.getAnaliseEndFact(), dayStart, dayEnd)) {
+            colorTypes.add("analise");
+        }
+        if (isPeriodIntersect(work.getDevelopStartFact(), work.getDevelopEndFact(), dayStart, dayEnd)) {
+            colorTypes.add("develop");
+        }
+        if (isPeriodIntersect(work.getDebugStartFact(), work.getDebugEndFact(), dayStart, dayEnd)) {
+            colorTypes.add("debug");
+        }
+        if (isPeriodIntersect(work.getReleaseStartFact(), work.getReleaseEndFact(), dayStart, dayEnd)) {
+            colorTypes.add("release");
+        }
+        if (isPeriodIntersect(work.getOpeStartFact(), work.getOpeEndFact(), dayStart, dayEnd)) {
+            colorTypes.add("Ope");
+        }
+        return colorTypes;
+    }
+
+    private List<String> getPeriodPlanTypes(Work work, Timestamp dayStart, Timestamp dayEnd) {
+        List<String> colorTypes = new ArrayList<>();
+        if (isPeriodIntersect(work.getAnaliseStartPlan(), work.getAnaliseEndPlan(), dayStart, dayEnd)) {
+            colorTypes.add("analise");
+        }
+        if (isPeriodIntersect(work.getDevelopStartPlan(), work.getDevelopEndPlan(), dayStart, dayEnd)) {
+            colorTypes.add("develop");
+        }
+        if (isPeriodIntersect(work.getDebugStartPlan(), work.getDebugEndPlan(), dayStart, dayEnd)) {
+            colorTypes.add("debug");
+        }
+        if (isPeriodIntersect(work.getReleaseStartPlan(), work.getReleaseEndPlan(), dayStart, dayEnd)) {
+            colorTypes.add("release");
+        }
+        if (isPeriodIntersect(work.getOpeStartPlan(), work.getOpeEndPlan(), dayStart, dayEnd)) {
+            colorTypes.add("ope");
+        }
+        if (isPeriodIntersect(getDatePluseDay(work.getOpeEndPlan(), 1), getDatePluseDay(work.getOpeEndPlan(), 15), dayStart, dayEnd)) {
+            colorTypes.add("public");
+        }
+        return colorTypes;
+    }
+
+    private boolean isPeriodIntersect(Timestamp analiseStartFact, Timestamp analiseEndFact, Timestamp dayStart, Timestamp dayEnd) {
+        if (analiseStartFact == null || analiseEndFact == null) {
+            return false;
+        }
+        boolean a1 = analiseStartFact.compareTo(dayStart) <= 0;
+        boolean a2 = dayStart.compareTo(analiseEndFact) <= 0;
+        boolean a3 = analiseStartFact.compareTo(dayEnd) <= 0;
+        boolean a4 = dayEnd.compareTo(analiseEndFact) <= 0;
+        boolean a5 = dayStart.compareTo(analiseEndFact) <= 0;
+        boolean a6 = analiseEndFact.compareTo(dayEnd) <= 0;
+        System.out.println((a1 && a2) || (a3 && a4) || (a5 && a6));
+        return (analiseStartFact.compareTo(dayStart) <= 0 && dayStart.compareTo(analiseEndFact) <= 0)
+                || (analiseStartFact.compareTo(dayEnd) <= 0 && dayEnd.compareTo(analiseEndFact) <= 0)
+                || (dayStart.compareTo(analiseEndFact) <= 0 && analiseEndFact.compareTo(dayEnd) <= 0);
+    }
+
+    private ColorDto getColor(List<String> types) {
+        ColorDto colorDto = colorDtoMap.get(types.hashCode());
+        if (colorDto != null) {
+            return colorDto;
+        }
+        color = null;
+        types.forEach(type -> addColor(getColor(type)));
+        if (color == null) {
+            return new ColorRGB(255, 255, 255);
+        }
+        color.save();
+        return color;
+
+    }
+
+    private ColorRGB getColor(String type) {
+        if (type.equals("analise")) {
+            return new ColorRGB(244, 176, 132);
+        }
+        if (type.equals("develop")) {
+            return new ColorRGB(255, 153, 255);
+        }
+        if (type.equals("debug")) {
+            return new ColorRGB(255, 255, 0);
+        }
+        if (type.equals("release")) {
+            return new ColorRGB(255, 192, 0);
+        }
+        if (type.equals("ope")) {
+            return new ColorRGB(0, 176, 240);
+        }
+        if (type.equals("public")) {
+            return new ColorRGB(0, 176, 80);
+        }
+        return new ColorRGB(255, 255, 255);
+    }
+
+    private void addColor(ColorRGB colorRGB) {
+        if (color == null) {
+            color = colorRGB;
+        } else {
+            color.addColor(colorRGB);
+        }
+    }
+
 }

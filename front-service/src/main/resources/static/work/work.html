@@ -1,5 +1,6 @@
 <div id="WorkList" class="head_text_elem">
     <div class="filter container">
+        <a class="nav-link" href="#!/work_graph">График ЗИ</a>
         <details class="details_block">
             <summary class="p-head">Фильтр</summary>
 
@@ -27,7 +28,8 @@
                     </div>
                     <div class="horiz">
                         <label for="StageZiFilter" class="p-head">Текущий этап ЗИ :</label>
-                        <select class="vvod20" name="StageZiFilterWorkSelect" id="StageZiFilter" ng-model="Filt.stageZi">
+                        <select class="vvod20" name="StageZiFilterWorkSelect" id="StageZiFilter"
+                                ng-model="Filt.stageZi">
                             <option ng-value="0" value="0">0</option>
                             <option ng-value="1" value="1">I</option>
                             <option ng-value="2" value="2">II</option>
@@ -39,7 +41,8 @@
                             <option ng-value="19" value="19">Все</option>
                         </select>
                         <label for="ReleaseFilter" class="p-head">№ Релиза</label>
-                        <select class="vvod40mar10" name="ReleaseFilterWorkSelect" id="ReleaseFilter" ng-model="Filt.releaseId">
+                        <select class="vvod20mar10" name="ReleaseFilterWorkSelect" id="ReleaseFilter"
+                                ng-model="Filt.releaseId">
                             <option ng-repeat="release in ReleaseList" ng-value="release.id" value="release.id">
                                 {{release.name}}
                             </option>
@@ -78,13 +81,13 @@
     <h1>Список ЗИ</h1>
     <table>
         <tr>
-            <td class="table_head2" rowspan="3">
+            <td class="table_head2 sticky-col first-col-1" rowspan="3">
                 <button class="table_head2 button_table" ng-click="workSort('codeSap')"> Код SAP</button>
             </td>
-            <td class="table_head2" rowspan="3">
+            <td class="table_head2 sticky-col second-col-1" rowspan="3">
                 <button class="table_head2 button_table" ng-click="workSort('codeZI')"> Код Зи</button>
             </td>
-            <td class="table_head2" rowspan="3">
+            <td class="table_head2 sticky-col three-col-1" rowspan="3">
                 <button class="table_head2 button_table" ng-click="workSort('name')"> Наименование</button>
             </td>
             <td class="table_head2" rowspan="3"> № внутренней задачи (DEVBO)</td>
@@ -142,13 +145,13 @@
         </tr>
         <tbody>
         <tr ng-repeat="work in WorkList">
-            <td>{{work.codeSap}}</td>
-            <td class="text_not_wrap">{{work.codeZI}}</td>
-            <td class="text_left">
+            <td class="sticky-col first-col-1">{{work.codeSap}}</td>
+            <td class="sticky-col second-col-1">{{work.codeZI}}</td>
+            <td class="text_left sticky-col three-col-1">
                 <button ng-click="addTime(work.id)">{{work.name}}</button>
             </td>
             <td>{{work.task}}</td>
-            <td class="text_left">{{work.description}}</td>
+            <td class="text_left text_not_wrap">{{work.description}}</td>
             <td class="date">{{work.analiseEndPlan}}</td>
             <td class="date">{{work.startTaskPlan}}</td>
             <td>{{work.startTaskFact}}</td>
@@ -182,7 +185,10 @@
         </tr>
         </tbody>
     </table>
+    <div>
 
+        <img ng-if="load" src="../gif/wait1.gif" alt="Ждите" width="900" height="506"/>
+    </div>
 </div>
 
 <div id="FormEdit" class="div_form container_filter">
@@ -208,62 +214,269 @@
         <br>
         <details class="details_block">
             <summary class="p-form">Сроки этапов</summary>
-            <p class="p-form">Дата завершения анализа</p>
-            <div class="horiz">
-                <label for="AnaliseEndPlan" class="p-form"> План : </label>
-                <input class="vvod40" type="date" id="AnaliseEndPlan" step="any"
-                       ng-model="Work.analiseEndPlan"/>
-                <br>
-                <label for="AnaliseEndFact" class="p-form">Факт : </label>
-                <input class="vvod40" type="date" id="AnaliseEndFact" step="any"
-                       ng-model="Work.analiseEndFact"/>
-                <br>
-            </div>
-            <p class="p-form">Дата окончания разработка прототипа </p>
-            <div class="horiz">
-                <label for="DevelopEndPlan" class="p-form">План: </label>
-                <input class="vvod40" type="date" id="DevelopEndPlan" step="any"
-                       ng-model="Work.developEndPlan"/>
-                <br>
-                <label for="DevelopEndFact" class="p-form">Факт:</label>
-                <input class="vvod40" type="date" id="DevelopEndFact" step="any"
-                       ng-model="Work.developEndFact"/>
+            <table>
+                <thead>
+<!--                <tr>-->
+<!--                    <td class="table_head2" colspan="3">-->
+<!--                        <p class="p-form">План</p>-->
+<!--                    </td>-->
+<!--                    <td class="table_head2">-->
+<!--                    </td>-->
+<!--                    <td class="table_head2" colspan="3">-->
+<!--                        <p class="p-form">Факт</p>-->
+<!--                    </td>-->
+<!--                </tr>-->
+                </thead>
+                <tbody>
 
-                <br>
-            </div>
-            <p class="p-form">Дата окончания стабилизация прототипа </p>
-            <div class="horiz">
-                <label for="DebugEndPlan" class="p-form">План:</label>
-                <input class="vvod40" type="date" id="DebugEndPlan" step="any"
-                       ng-model="Work.debugEndPlan"/>
-                <br>
-                <label for="DebugEndFact" class="p-form">Факт:</label>
-                <input class="vvod40" type="date" id="DebugEndFact" step="any"
-                       ng-model="Work.debugEndFact"/>
-                <br>
-            </div>
-            <p class="p-form">Дата окончания стабилизация релиза</p>
-            <div class="horiz">
-                <label for="ReleaseEndPlan" class="p-form">План:</label>
-                <input class="vvod40" type="date" id="ReleaseEndPlan" step="any"
-                       ng-model="Work.releaseEndPlan"/>
-                <br>
-                <label for="ReleaseEndFact" class="p-form">Факт:</label>
-                <input class="vvod40" type="date" id="ReleaseEndFact" step="any"
-                       ng-model="Work.releaseEndFact"/>
-                <br>
-            </div>
-            <p class="p-form">Дата окончания ОПЭ релиза</p>
-            <div class="horiz">
-                <label for="OpeEndPlan" class="p-form">План:</label>
-                <input class="vvod40" type="date" id="OpeEndPlan" step="any"
-                       ng-model="Work.opeEndPlan"/>
-                <br>
-                <label for="OpeEndFact" class="p-form">Факт:</label>
-                <input class="vvod40" type="date" id="OpeEndFact" step="any"
-                       ng-model="Work.opeEndFact"/>
-                <br>
-            </div>
+                <tr>
+                    <td colspan="7">
+                        <p>Анализ</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table_head2" colspan="3">
+                        <p class="p-form">План</p>
+                    </td>
+                    <td class="table_head2">
+                    </td>
+                    <td class="table_head2" colspan="3">
+                        <p class="p-form">Факт</p>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label for="AnaliseStartPlan" class="p-form">
+                            <input class="vvod" type="date" id="AnaliseStartPlan" step="any"
+                                   ng-model="Work.analiseStartPlan"/>
+                        </label>
+                    </td>
+                    <td>
+                        <p>-</p>
+                    </td>
+                    <td>
+                        <label for="AnaliseEndPlan" class="p-form">
+                            <input class="vvod" type="date" id="AnaliseEndPlan" step="any"
+                                   ng-model="Work.analiseEndPlan"/>
+                        </label>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <label for="AnaliseStartFact" class="p-form"></label>
+                        <input class="vvod" type="date" id="AnaliseStartFact" step="any"
+                               ng-model="Work.analiseStartFact"/>
+                    </td>
+                    <td>
+                        <p>-</p>
+                    </td>
+                    <td>
+                        <label for="AnaliseEndFact" class="p-form"></label>
+                        <input class="vvod" type="date" id="AnaliseEndFact" step="any"
+                               ng-model="Work.analiseEndFact"/>
+                    </td>
+                </tr>
+<!--    Разработка            -->
+                <tr>
+                    <td colspan="7">
+                        <p>Разработка прототипа</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table_head2" colspan="3">
+                        <p class="p-form">План</p>
+                    </td>
+                    <td class="table_head2">
+                    </td>
+                    <td class="table_head2" colspan="3">
+                        <p class="p-form">Факт</p>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label for="DevelopStartPlan" class="p-form">
+                            <input class="vvod" type="date" id="DevelopStartPlan" step="any"
+                                   ng-model="Work.developStartPlan"/>
+                        </label>
+                    </td>
+                    <td>
+                        <p>-</p>
+                    </td>
+                    <td>
+                        <label for="DevelopEndPlan" class="p-form">
+                            <input class="vvod" type="date" id="DevelopEndPlan" step="any"
+                                   ng-model="Work.developEndPlan"/>
+                        </label>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <label for="DevelopStartFact" class="p-form"></label>
+                        <input class="vvod" type="date" id="DevelopStartFact" step="any"
+                               ng-model="Work.developStartFact"/>
+                    </td>
+                    <td>
+                        <p>-</p>
+                    </td>
+                    <td>
+                        <label for="DevelopEndFact" class="p-form"></label>
+                        <input class="vvod" type="date" id="DevelopEndFact" step="any"
+                               ng-model="Work.developEndFact"/>
+                    </td>
+                </tr>
+<!--      Отладка          -->
+                <tr>
+                    <td colspan="7">
+                        <p>Стабилизация прототипа</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table_head2" colspan="3">
+                        <p class="p-form">План</p>
+                    </td>
+                    <td class="table_head2">
+                    </td>
+                    <td class="table_head2" colspan="3">
+                        <p class="p-form">Факт</p>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label for="DebugStartPlan" class="p-form">
+                            <input class="vvod" type="date" id="DebugStartPlan" step="any"
+                                   ng-model="Work.debugStartPlan"/>
+                        </label>
+                    </td>
+                    <td>
+                        <p>-</p>
+                    </td>
+                    <td>
+                        <label for="DebugEndPlan" class="p-form">
+                            <input class="vvod" type="date" id="DebugEndPlan" step="any"
+                                   ng-model="Work.debugEndPlan"/>
+                        </label>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <label for="DebugStartFact" class="p-form"></label>
+                        <input class="vvod" type="date" id="DebugStartFact" step="any"
+                               ng-model="Work.debugStartFact"/>
+                    </td>
+                    <td>
+                        <p>-</p>
+                    </td>
+                    <td>
+                        <label for="DebugEndFact" class="p-form"></label>
+                        <input class="vvod" type="date" id="DebugEndFact" step="any"
+                               ng-model="Work.debugEndFact"/>
+                    </td>
+                </tr>
+<!--    релиз            -->
+                <tr>
+                    <td colspan="7">
+                        <p>Стабилизация релиза</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table_head2" colspan="3">
+                        <p class="p-form">План</p>
+                    </td>
+                    <td class="table_head2">
+                    </td>
+                    <td class="table_head2" colspan="3">
+                        <p class="p-form">Факт</p>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label for="ReleaseStartPlan" class="p-form">
+                            <input class="vvod" type="date" id="ReleaseStartPlan" step="any"
+                                   ng-model="Work.releaseStartPlan"/>
+                        </label>
+                    </td>
+                    <td>
+                        <p>-</p>
+                    </td>
+                    <td>
+                        <label for="ReleaseEndPlan" class="p-form">
+                            <input class="vvod" type="date" id="ReleaseEndPlan" step="any"
+                                   ng-model="Work.releaseEndPlan"/>
+                        </label>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <label for="ReleaseStartFact" class="p-form"></label>
+                        <input class="vvod" type="date" id="ReleaseStartFact" step="any"
+                               ng-model="Work.releaseStartFact"/>
+                    </td>
+                    <td>
+                        <p>-</p>
+                    </td>
+                    <td>
+                        <label for="ReleaseEndFact" class="p-form"></label>
+                        <input class="vvod" type="date" id="ReleaseEndFact" step="any"
+                               ng-model="Work.releaseEndFact"/>
+                    </td>
+                </tr>
+                <!--    ОПЭ            -->
+                <tr>
+                    <td colspan="7">
+                        <p>ОПЭ релиза</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table_head2" colspan="3">
+                        <p class="p-form">План</p>
+                    </td>
+                    <td class="table_head2">
+                    </td>
+                    <td class="table_head2" colspan="3">
+                        <p class="p-form">Факт</p>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label for="OpeStartPlan" class="p-form">
+                            <input class="vvod" type="date" id="OpeStartPlan" step="any"
+                                   ng-model="Work.opeStartPlan"/>
+                        </label>
+                    </td>
+                    <td>
+                        <p>-</p>
+                    </td>
+                    <td>
+                        <label for="OpeEndPlan" class="p-form">
+                            <input class="vvod" type="date" id="OpeEndPlan" step="any"
+                                   ng-model="Work.opeEndPlan"/>
+                        </label>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <label for="OpeStartFact" class="p-form"></label>
+                        <input class="vvod" type="date" id="OpeStartFact" step="any"
+                               ng-model="Work.opeStartFact"/>
+                    </td>
+                    <td>
+                        <p>-</p>
+                    </td>
+                    <td>
+                        <label for="OpeEndFact" class="p-form"></label>
+                        <input class="vvod" type="date" id="OpeEndFact" step="any"
+                               ng-model="Work.opeEndFact"/>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+
         </details>
 
         <label for="Task">№ внутренней задачи (DEVBO) :</label>

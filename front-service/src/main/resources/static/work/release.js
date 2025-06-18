@@ -23,48 +23,45 @@ angular.module('workTimeService').controller('releaseController', function ($sco
     let maxPage = 1;
     $scope.findPage = function (diffPage) {
         console.log(diffPage);
-        if (typeof $scope.Filt === "undefined") {
-            $scope.Filt = {size: 10};
+        if ($scope.load) {
+            alert("Подождите обрабатывается предыдущий запрос")
+        } else {
+            $scope.load = true;
+            $scope.ReleaseList = null;
+            if (typeof $scope.Filt === "undefined") {
+                $scope.Filt = {size: 10};
+            }
+            let Filter;
+            Filter = $scope.Filt;
+            console.log(Filter);
+            $http({
+                url: constPatchRelease,
+                method: "get"
+
+
+            }).then(function (response) {
+                $scope.load = false;
+                console.log("response,data :");
+                console.log(response.data);
+                if (typeof response.data.content === "undefined") {
+                    $scope.ReleaseList = response.data;
+                    maxPage = 1;
+                } else {
+                    $scope.ReleaseList = response.data.content;
+                    // maxPage = response.data.totalPages;
+                }
+
+                showRelease();
+
+            }, function errorCallback(response) {
+                $scope.load = false;
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                    //     alert(response.data.message);
+                }
+
+            });
         }
-        let Filter;
-        Filter = $scope.Filt;
-        console.log(Filter);
-        $http({
-            url: constPatchRelease,
-            method: "get"
-            // ,
-            // params: {
-            //     page: page,
-            //     size: Filter ? Filter.size : null,
-            //     nikName: Filter ? Filter.nikName : null,
-            //     password: Filter ? Filter.password : null,
-            //     lastName: Filter ? Filter.lastName : null,
-            //     firstName: Filter ? Filter.firstName : null,
-            //     patronymic: Filter ? Filter.patronymic : null
-            // }
-
-
-        }).then(function (response) {
-            console.log("response,data :");
-            console.log(response.data);
-            if (typeof response.data.content === "undefined") {
-                $scope.ReleaseList = response.data;
-                maxPage = 1;
-            } else {
-                $scope.ReleaseList = response.data.content;
-                // maxPage = response.data.totalPages;
-            }
-
-            showRelease();
-
-        }, function errorCallback(response) {
-            console.log(response)
-            if ($location.checkAuthorized(response)) {
-                //     alert(response.data.message);
-            }
-
-        });
-
     };
     $scope.filterRelease = function () {
         console.log("filterUser")

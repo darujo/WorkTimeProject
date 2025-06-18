@@ -6,7 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.converter.VacationConvertor;
 import ru.darujo.dto.calendar.VacationDto;
-import ru.darujo.dto.parsing.DateParser;
+import ru.darujo.assistant.parsing.DateParser;
 import ru.darujo.model.Vacation;
 import ru.darujo.service.VacationService;
 

@@ -61,38 +61,47 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
             page = 1;
         }
         $scope.Filt.page = page;
-        let Filter = $scope.Filt;
+        if ($scope.load) {
+            alert("Подождите обрабатывается предыдущий запрос")
+        }
+        else {
+            $scope.load = true;
+            $scope.WeekWorkList = null;
+            let Filter = $scope.Filt;
 
-        $http({
-            url: constPatchWork + "/rep/fact/week",
-            method: "get",
-            params: {
-                nikName: Filter ? Filter.nikName : null,
-                dateStart: Filter ? Filter.dateStart : new Date(),
-                dateEnd: Filter ? Filter.dateEnd : new Date(),
-                weekSplit: Filter ? Filter.weekSplit : null,
-                ziSplit: Filter ? Filter.ziSplit : null,
-                addTotal: Filter ? Filter.addTotal : null,
-                //ЗИ
-                page: Filter ? Filter.page : 1,
-                size: Filter ? Filter.size : 10,
-                name: Filter ? Filter.name : null,
-                task: Filter ? Filter.task : null,
-                codeSap: Filter ? Filter.codeSap : null,
-                codeZi: Filter ? Filter.codeZi : null,
-                stageZi: Filter ? Filter.stageZi : null,
-                releaseId: Filter ? Filter.releaseId : null
-            }
-        }).then(function (response) {
-            console.log(response.data);
-            $scope.WeekWorkList = response.data;
-            $scope.ziSplit = Filter.ziSplit;
-        }, function errorCallback(response) {
-            console.log(response)
-            if ($location.checkAuthorized(response)) {
-                //     alert(response.data.message);
-            }
-        });
+            $http({
+                url: constPatchWork + "/rep/fact/week",
+                method: "get",
+                params: {
+                    nikName: Filter ? Filter.nikName : null,
+                    dateStart: Filter ? Filter.dateStart : new Date(),
+                    dateEnd: Filter ? Filter.dateEnd : new Date(),
+                    weekSplit: Filter ? Filter.weekSplit : null,
+                    ziSplit: Filter ? Filter.ziSplit : null,
+                    addTotal: Filter ? Filter.addTotal : null,
+                    //ЗИ
+                    page: Filter ? Filter.page : 1,
+                    size: Filter ? Filter.size : 10,
+                    name: Filter ? Filter.name : null,
+                    task: Filter ? Filter.task : null,
+                    codeSap: Filter ? Filter.codeSap : null,
+                    codeZi: Filter ? Filter.codeZi : null,
+                    stageZi: Filter ? Filter.stageZi : null,
+                    releaseId: Filter ? Filter.releaseId : null
+                }
+            }).then(function (response) {
+                $scope.load = false;
+                console.log(response.data);
+                $scope.WeekWorkList = response.data;
+                $scope.ziSplit = Filter.ziSplit;
+            }, function errorCallback(response) {
+                $scope.load = false;
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                    //     alert(response.data.message);
+                }
+            });
+        }
     };
 
     $scope.filterWorkTime = function () {

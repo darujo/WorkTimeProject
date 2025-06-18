@@ -8,9 +8,11 @@ public abstract  class ServiceIntegration {
         addTeg(stringBuilder,str,dateToText(value));
     }
     protected void addTeg(StringBuilder stringBuilder, String str, String value) {
-        if (value != null) {
+        if (value != null && !value.isEmpty() ) {
             if (stringBuilder.length() != 0) {
                 stringBuilder.append("&");
+            } else {
+                stringBuilder.append("?");
             }
             stringBuilder.append(str).append("=").append(value);
         }
@@ -27,6 +29,8 @@ public abstract  class ServiceIntegration {
         if (value != null) {
             if (stringBuilder.length() != 0) {
                 stringBuilder.append("&");
+            } else {
+                stringBuilder.append("?");
             }
             stringBuilder.append(str).append("=").append(value);
         }
@@ -35,6 +39,8 @@ public abstract  class ServiceIntegration {
         if (value != null) {
             if (stringBuilder.length() != 0) {
                 stringBuilder.append("&");
+            } else {
+                stringBuilder.append("?");
             }
             stringBuilder.append(str).append("=").append(value);
         }

@@ -1,6 +1,6 @@
 package ru.darujo.dto.workperiod;
 
-import ru.darujo.dto.printer.DataPrinter;
+import ru.darujo.assistant.printer.DataPrinter;
 import ru.darujo.dto.user.UserFio;
 import ru.darujo.service.CodeService;
 

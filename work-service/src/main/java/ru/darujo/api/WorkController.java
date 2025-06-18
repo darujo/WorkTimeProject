@@ -2,7 +2,9 @@ package ru.darujo.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import ru.darujo.assistant.parsing.DateParser;
 import ru.darujo.convertor.WorkConvertor;
 import ru.darujo.dto.work.WorkDto;
 import ru.darujo.dto.work.WorkEditDto;
@@ -12,11 +14,14 @@ import ru.darujo.model.Work;
 import ru.darujo.model.WorkLittle;
 import ru.darujo.service.WorkService;
 
+import java.sql.Timestamp;
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.Random;
 
 @RestController()
 @RequestMapping("/v1/works")
-public class WorkController {
+public class WorkController extends DateParser {
     private WorkService workService;
 
     @Autowired
@@ -83,6 +88,16 @@ public class WorkController {
                     null,
                     null,
                     8,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
                     null);
             workService.saveWork(work);
             System.out.println("создана задача " + i);
@@ -167,11 +182,20 @@ public class WorkController {
                 stageZiLe = stageZi - 10;
             }
         }
-        return ((Page<WorkLittle>) workService.findWorkLittle(page, size, name, sort, stageZiGe, stageZiLe, null, null, null, null)).map(WorkConvertor::getWorkLittleDto);
+        return (workService.findWorkLittle(page, size, name, sort, stageZiGe, stageZiLe, null, null, null, null)).map(WorkConvertor::getWorkLittleDto);
     }
 
     @GetMapping("/obj/little/{id}")
     public WorkLittleDto WorkLittleDto(@PathVariable long id) {
         return WorkConvertor.getWorkLittleDto(workService.findLittleById(id).orElseThrow(() -> new ResourceNotFoundException("Задача не найден")));
+    }
+
+    @GetMapping("/refresh/{id}")
+    public boolean TaskRefresh(@PathVariable long id,
+                               @RequestParam(required = false, name = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStr
+    ) {
+        Timestamp date = stringToDate(dateStr,"date",true);
+        return workService.setWorkDate(id,date);
+
     }
 }

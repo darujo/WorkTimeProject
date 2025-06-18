@@ -453,10 +453,10 @@ TD {
 }
 
 .sticky-col {
-    position: -webkit-sticky;
     position: sticky;
     background-color: white;
 }
+
 
 .first-col {
     /*width: 100px;*/
@@ -466,9 +466,25 @@ TD {
     left: 0;
 }
 
-.second-col {
-    width: 150px;
-    min-width: 150px;
-    max-width: 150px;
-    /*left: 100px;*/
+.first-col-1 {
+    /*width: 100px;*/
+    min-width: 110px;
+    max-width: 110px;
+    white-space: nowrap;
+    left: 0;
+}
+
+.second-col-1 {
+    /*width: 150px;*/
+    min-width: 80px;
+    max-width: 80px;
+    left: 122px;
+}
+
+.three-col-1 {
+    /*width: 150px;*/
+    /*min-width: 80px;*/
+    /*max-width: 80px;*/
+    white-space: nowrap;
+    left: 214px;
 }

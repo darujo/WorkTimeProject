@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.darujo.dto.calendar.UserVacationsDto;
-import ru.darujo.dto.parsing.DateParser;
+import ru.darujo.assistant.parsing.DateParser;
 import ru.darujo.service.VacationReportService;
 
 import java.sql.Timestamp;

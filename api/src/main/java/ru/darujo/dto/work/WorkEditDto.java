@@ -61,6 +61,28 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
     // Выдача релиза дата факт
     private Timestamp issuingReleaseFact;
 
+    // ВЕНДЕРКА Факт
+    private Timestamp analiseStartFact;
+    private Timestamp developStartFact;
+    // Стабилизация прототипа Факт
+    private Timestamp debugStartFact;
+    // Стабилизация релиза Факт
+    private Timestamp releaseStartFact;
+    // ОПЭ релиза Факт
+    private Timestamp opeStartFact;
+
+    // ВЕНДЕРКА Факт
+    private Timestamp analiseStartPlan;
+    //начало разработки план
+    private Timestamp developStartPlan;
+    // Стабилизация релиза Факт
+    private Timestamp debugStartPlan;
+    // Стабилизация релиза plan
+    private Timestamp releaseStartPlan;
+    // ОПЭ релиза Факт
+    private Timestamp opeStartPlan;
+
+
     public WorkEditDto(Long id,
                        Long codeSap,
                        String codeZI,
@@ -83,7 +105,17 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
                        Long releaseId,
                        String release,
                        Timestamp issuingReleasePlan,
-                       Timestamp issuingReleaseFact) {
+                       Timestamp issuingReleaseFact,
+                       Timestamp analiseStartFact,
+                       Timestamp developStartFact,
+                       Timestamp debugStartFact,
+                       Timestamp releaseStartFact,
+                       Timestamp opeStartFact,
+                       Timestamp analiseStartPlan,
+                       Timestamp developStartPlan,
+                       Timestamp debugStartPlan,
+                       Timestamp releaseStartPlan,
+                       Timestamp opeStartPlan) {
         this.id = id;
         this.codeSap = codeSap;
         this.codeZI = codeZI;
@@ -107,6 +139,16 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
         this.release = release;
         this.issuingReleasePlan = issuingReleasePlan;
         this.issuingReleaseFact = issuingReleaseFact;
+        this.analiseStartFact = analiseStartFact;
+        this.developStartFact = developStartFact;
+        this.debugStartFact = debugStartFact;
+        this.releaseStartFact = releaseStartFact;
+        this.opeStartFact = opeStartFact;
+        this.analiseStartPlan = analiseStartPlan;
+        this.developStartPlan = developStartPlan;
+        this.debugStartPlan = debugStartPlan;
+        this.releaseStartPlan = releaseStartPlan;
+        this.opeStartPlan = opeStartPlan;
     }
 
     @Override
@@ -134,7 +176,9 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
         return analiseEndFact;
     }
 
-    public String getName() {return name; }
+    public String getName() {
+        return name;
+    }
 
     public String getTask() {
         return task;
@@ -152,22 +196,27 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
         return startTaskFact;
     }
 
+    @SuppressWarnings("unused")
     public Float getLaborAnalise() {
         return laborAnalise;
     }
 
+    @SuppressWarnings("unused")
     public Float getLaborDevelop() {
         return laborDevelop;
     }
 
+    @SuppressWarnings("unused")
     public Float getLaborDebug() {
         return laborDebug;
     }
 
+    @SuppressWarnings("unused")
     public Float getLaborRelease() {
         return laborRelease;
     }
 
+    @SuppressWarnings("unused")
     public Float getLaborOPE() {
         return laborOPE;
     }
@@ -189,6 +238,7 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
     }
 
 
+    @SuppressWarnings("unused")
     public WorkEditDto() {
     }
 
@@ -248,5 +298,45 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
     @Override
     public void setLaborOPE(Float laborOPE) {
         this.laborOPE = laborOPE;
+    }
+
+    public Timestamp getAnaliseStartFact() {
+        return analiseStartFact;
+    }
+
+    public Timestamp getDevelopStartFact() {
+        return developStartFact;
+    }
+
+    public Timestamp getDebugStartFact() {
+        return debugStartFact;
+    }
+
+    public Timestamp getReleaseStartFact() {
+        return releaseStartFact;
+    }
+
+    public Timestamp getOpeStartFact() {
+        return opeStartFact;
+    }
+
+    public Timestamp getAnaliseStartPlan() {
+        return analiseStartPlan;
+    }
+
+    public Timestamp getDevelopStartPlan() {
+        return developStartPlan;
+    }
+
+    public Timestamp getDebugStartPlan() {
+        return debugStartPlan;
+    }
+
+    public Timestamp getReleaseStartPlan() {
+        return releaseStartPlan;
+    }
+
+    public Timestamp getOpeStartPlan() {
+        return opeStartPlan;
     }
 }

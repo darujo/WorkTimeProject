@@ -21,36 +21,42 @@
     $scope.findPage = function () {
         console.log("findPage");
         console.log("запрос данных");
+        if ($scope.load) {
+            alert("Подождите обрабатывается предыдущий запрос")
+        }
+        else {
+            $scope.load = true;
+            $scope.RoleList = null;
+            let Filter;
+            Filter = $scope.Filt;
+            console.log(Filter);
+            $http({
+                url: constPatchUser,
+                method: "get",
+                params: {
+                    code: Filter ? Filter.code : null,
+                    name: Filter ? Filter.name : null
 
-        let Filter;
-        Filter = $scope.Filt;
-        console.log(Filter);
-        $http({
-            url: constPatchUser ,
-            method: "get",
-            params: {
-                code: Filter ? Filter.code : null,
-                name: Filter ? Filter.name : null
-
-            }
+                }
 
 
-        }).then(function (response) {
-            console.log("response :");
-            console.log(response);
-            console.log("response,data :");
-            console.log(response.data);
-            $scope.RoleList = response.data;
-            showRoles();
+            }).then(function (response) {
+                console.log("response :");
+                console.log(response);
+                console.log("response,data :");
+                console.log(response.data);
+                $scope.RoleList = response.data;
+                showRoles();
+                $scope.load = false;
+            }, function errorCallback(response) {
+                $scope.load = false;
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                    //     alert(response.data.message);
+                }
 
-        }, function errorCallback(response) {
-            console.log(response)
-            if ($location.checkAuthorized(response)) {
-                //     alert(response.data.message);
-            }
-
-        });
-
+            });
+        }
     };
     $scope.filterRole = function () {
         console.log("filterRole")

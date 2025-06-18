@@ -29,51 +29,59 @@
             page = 1;
         }
         document.getElementById("Page").value = page;
-        console.log("запрос данных");
-
-        if (typeof $scope.Filt === "undefined") {
-            $scope.Filt = {size: 10};
+        if ($scope.load) {
+            alert("Подождите обрабатывается предыдущий запрос")
         }
-        let Filter;
-        Filter = $scope.Filt;
-        console.log(Filter);
-        $http({
-            url: constPatchUser ,
-            method: "get",
-            params: {
-                page: page,
-                size: Filter ? Filter.size : null,
-                nikName: Filter ? Filter.nikName : null,
-                password: Filter ? Filter.password : null,
-                lastName: Filter ? Filter.lastName : null,
-                firstName: Filter ? Filter.firstName : null,
-                patronymic: Filter ? Filter.patronymic : null
+        else {
+            $scope.load = true;
+            $scope.UserList = null;
+            console.log("запрос данных");
+
+            if (typeof $scope.Filt === "undefined") {
+                $scope.Filt = {size: 10};
             }
+            let Filter;
+            Filter = $scope.Filt;
+            console.log(Filter);
+            $http({
+                url: constPatchUser,
+                method: "get",
+                params: {
+                    page: page,
+                    size: Filter ? Filter.size : null,
+                    nikName: Filter ? Filter.nikName : null,
+                    password: Filter ? Filter.password : null,
+                    lastName: Filter ? Filter.lastName : null,
+                    firstName: Filter ? Filter.firstName : null,
+                    patronymic: Filter ? Filter.patronymic : null
+                }
 
 
-        }).then(function (response) {
-            console.log("response :");
-            console.log(response);
-            console.log("response,data :");
-            console.log(response.data);
-            if (typeof response.data.content === "undefined") {
-                $scope.UserList = response.data;
-                maxPage = 1;
-            } else {
-                $scope.UserList = response.data.content;
-                maxPage = response.data.totalPages;
-            }
+            }).then(function (response) {
+                $scope.load = false;
+                console.log("response :");
+                console.log(response);
+                console.log("response,data :");
+                console.log(response.data);
+                if (typeof response.data.content === "undefined") {
+                    $scope.UserList = response.data;
+                    maxPage = 1;
+                } else {
+                    $scope.UserList = response.data.content;
+                    maxPage = response.data.totalPages;
+                }
 
-            showUsers();
+                showUsers();
 
-        }, function errorCallback(response) {
-            console.log(response)
-            if ($location.checkAuthorized(response)) {
-                //     alert(response.data.message);
-            }
+            }, function errorCallback(response) {
+                $scope.load = false;
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                    //     alert(response.data.message);
+                }
 
-        });
-
+            });
+        }
     };
     $scope.filterUser = function () {
         console.log("filterUser")

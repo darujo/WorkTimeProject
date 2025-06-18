@@ -9,23 +9,29 @@ angular.module('workTimeService').controller('roleRightController', function ($s
         let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
         let roleId =paramsStr.get('roleId');
         console.log(roleId)
+        if ($scope.load) {
+            alert("Подождите обрабатывается предыдущий запрос")
+        }
+        else {
+            $scope.load = true;
+            $scope.Role = null;
+            $http({
+                url: constPatchUser + "/" + roleId,
+                method: "get"
+            }).then(function (response) {
+                console.log("response :");
+                console.log(response);
+                $scope.load = false;
+                $scope.Role = response.data;
+            }, function errorCallback(response) {
+                $scope.load = false;
+                console.log(response);
+                if ($location.checkAuthorized(response)) {
+                    //     alert(response.data.message);
+                }
 
-        $http({
-            url: constPatchUser + "/" + roleId ,
-            method: "get"
-        }).then(function (response) {
-            console.log("response :");
-            console.log(response);
-
-            $scope.Role = response.data;
-       }, function errorCallback(response) {
-            console.log(response);
-            if ($location.checkAuthorized(response)) {
-                //     alert(response.data.message);
-            }
-
-        });
-
+            });
+        }
     };
     let sendSave = false;
     $scope.saveRole = function () {

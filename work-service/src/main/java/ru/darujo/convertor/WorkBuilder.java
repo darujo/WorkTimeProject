@@ -55,6 +55,26 @@ public class WorkBuilder {
     private Timestamp issuingReleasePlan;
     // Выдача релиза дата факт
     private Timestamp issuingReleaseFact;
+    // ВЕНДЕРКА Факт
+    private Timestamp analiseStartFact;
+    private Timestamp developStartFact;
+    // Стабилизация прототипа Факт
+    private Timestamp debugStartFact;
+    // Стабилизация релиза Факт
+    private Timestamp releaseStartFact;
+    // ОПЭ релиза Факт
+    private Timestamp opeStartFact;
+
+    // ВЕНДЕРКА Факт
+    private Timestamp analiseStartPlan;
+    //начало разработки план
+    private Timestamp developStartPlan;
+    // Стабилизация релиза Факт
+    private Timestamp debugStartPlan;
+    // Стабилизация релиза plan
+    private Timestamp releaseStartPlan;
+    // ОПЭ релиза Факт
+    private Timestamp opeStartPlan;
 
     public WorkBuilder setTask(String task) {
         this.task = task;
@@ -121,18 +141,22 @@ public class WorkBuilder {
         this.developEndFact = dateToStartTime(developEndFact);
         return this;
     }
+
     public WorkBuilder setDebugEndFact(Timestamp debugEndFact) {
         this.debugEndFact = dateToStartTime(debugEndFact);
         return this;
     }
+
     public WorkBuilder setReleaseEndFact(Timestamp releaseEndFact) {
         this.releaseEndFact = dateToStartTime(releaseEndFact);
         return this;
     }
+
     public WorkBuilder setOpeEndFact(Timestamp opeEndFact) {
         this.opeEndFact = dateToStartTime(opeEndFact);
         return this;
     }
+
     public WorkBuilder setAnaliseEndFact(Timestamp analiseEndFact) {
         this.analiseEndFact = dateToStartTime(analiseEndFact);
         return this;
@@ -163,10 +187,61 @@ public class WorkBuilder {
         return this;
     }
 
-    public static WorkBuilder createWork () {
+    public WorkBuilder setAnaliseStartFact(Timestamp analiseStartFact) {
+        this.analiseStartFact = analiseStartFact;
+        return this;
+    }
+
+    public WorkBuilder setDevelopStartFact(Timestamp developStartFact) {
+        this.developStartFact = developStartFact;
+        return this;
+    }
+
+    public WorkBuilder setDebugStartFact(Timestamp debugStartFact) {
+        this.debugStartFact = debugStartFact;
+        return this;
+    }
+
+    public WorkBuilder setReleaseStartFact(Timestamp releaseStartFact) {
+        this.releaseStartFact = releaseStartFact;
+        return this;
+    }
+
+    public WorkBuilder setOpeStartFact(Timestamp opeStartFact) {
+        this.opeStartFact = opeStartFact;
+        return this;
+    }
+
+    public WorkBuilder setAnaliseStartPlan(Timestamp analiseStartPlan) {
+        this.analiseStartPlan = analiseStartPlan;
+        return this;
+    }
+
+    public WorkBuilder setDevelopStartPlan(Timestamp developStartPlan) {
+        this.developStartPlan = developStartPlan;
+        return this;
+    }
+
+    public WorkBuilder setDebugStartPlan(Timestamp debugStartPlan) {
+        this.debugStartPlan = debugStartPlan;
+        return this;
+    }
+
+    public WorkBuilder setReleaseStartPlan(Timestamp releaseStartPlan) {
+        this.releaseStartPlan = releaseStartPlan;
+        return this;
+    }
+
+    public WorkBuilder setOpeStartPlan(Timestamp opeStartPlan) {
+        this.opeStartPlan = opeStartPlan;
+        return this;
+    }
+
+    public static WorkBuilder createWork() {
         return new WorkBuilder();
     }
-    public WorkDto getWorkDto(){
+
+    public WorkDto getWorkDto() {
         return new WorkDto(
                 id,
                 codeSap,
@@ -187,7 +262,8 @@ public class WorkBuilder {
                 issuingReleasePlan,
                 issuingReleaseFact);
     }
-    public WorkEditDto getWorkEditDto(){
+
+    public WorkEditDto getWorkEditDto() {
         return new WorkEditDto(
                 id,
                 codeSap,
@@ -211,9 +287,30 @@ public class WorkBuilder {
                 releaseId,
                 release,
                 issuingReleasePlan,
-                issuingReleaseFact);
+                issuingReleaseFact,
+                analiseStartFact,
+                developStartFact,
+                debugStartFact,
+                releaseStartFact,
+                opeStartFact,
+                analiseStartPlan,
+                developStartPlan,
+                debugStartPlan,
+                releaseStartPlan,
+                opeStartPlan);
     }
-    public Work getWork(){
+
+    public Work getWork() {
+        analiseEndFact = getDate(analiseEndFact, developStartFact);
+        developEndFact = getDate(developEndFact, debugStartFact);
+        debugEndFact = getDate(debugEndFact, releaseStartFact);
+        releaseEndFact = getDate(releaseEndFact, opeStartFact);
+
+        analiseEndPlan = getDate(analiseEndPlan, developStartPlan);
+        developEndPlan = getDate(developEndPlan, debugStartPlan);
+        debugEndPlan = getDate(debugEndPlan, releaseStartPlan);
+        releaseEndPlan = getDate(releaseEndPlan, opeStartPlan);
+
         return new Work(
                 id,
                 codeSap,
@@ -234,14 +331,25 @@ public class WorkBuilder {
                 startTaskPlan,
                 startTaskFact,
                 stageZI,
-                releaseId != null ? new Release(releaseId,release,issuingReleasePlan,issuingReleaseFact) : null);
+                releaseId != null ? new Release(releaseId, release, issuingReleasePlan, issuingReleaseFact) : null,
+                analiseStartFact,
+                developStartFact,
+                debugStartFact,
+                releaseStartFact,
+                opeStartFact,
+                analiseStartPlan,
+                developStartPlan,
+                debugStartPlan,
+                releaseStartPlan,
+                opeStartPlan);
     }
 
     public WorkLittleDto getWorkLittleDto() {
         return new WorkLittleDto(id, codeSap, codeZI, name, stageZI);
     }
+
     public Timestamp dateToStartTime(Timestamp timestamp) {
-        if(timestamp== null){
+        if (timestamp == null) {
             return null;
         }
         Calendar c = Calendar.getInstance();
@@ -256,5 +364,19 @@ public class WorkBuilder {
     public WorkBuilder setReleaseId(Long releaseId) {
         this.releaseId = releaseId;
         return this;
+    }
+
+    public Timestamp getDate(Timestamp date, Timestamp dateMinus) {
+        if (date != null) {
+            return date;
+        }
+        if (dateMinus == null) {
+            return null;
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(dateMinus);
+        cal.add(Calendar.DATE, -1);
+        return new Timestamp(cal.getTimeInMillis());
+
     }
 }

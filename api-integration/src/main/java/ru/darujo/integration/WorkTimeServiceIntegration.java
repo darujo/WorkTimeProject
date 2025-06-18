@@ -31,14 +31,11 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "type", type);
         addTeg(stringBuilder, "dateLe", dateLE);
         addTeg(stringBuilder, "dateGt", dateGT);
-        String str = "";
-        if (stringBuilder.length() != 0) {
-            str = "?" + stringBuilder;
-        }
-        System.out.println("/rep/fact/time" + str);
+
+        System.out.println("/rep/fact/time" + stringBuilder);
 
         try {
-            return webClientWorkTime.get().uri("/rep/fact/time" + str)
+            return webClientWorkTime.get().uri("/rep/fact/time" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
@@ -56,7 +53,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "dateLe", dateLe);
 
         try {
-            return webClientWorkTime.get().uri("/rep/fact/user?" + stringBuilder)
+            return webClientWorkTime.get().uri("/rep/fact/user" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
@@ -69,14 +66,12 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
 
     public Boolean availTime(Long taskId) {
         try {
-            Boolean b
-                    = webClientWorkTime.get().uri("/rep/fact/availTime/" + taskId)
+            return webClientWorkTime.get().uri("/rep/fact/availTime/" + taskId)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
                     .bodyToMono(Boolean.class)
                     .block();
-            return b;
         } catch (RuntimeException ex) {
             return false;
         }
@@ -98,7 +93,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "dateEnd", dateEnd);
 
         try {
-            return webClientWorkTime.get().uri("/rep/fact/week?" + stringBuilder)
+            return webClientWorkTime.get().uri("/rep/fact/week" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
@@ -126,7 +121,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "dateEnd", dateEnd);
 
         try {
-            return webClientWorkTime.get().uri("/rep/fact/week?" + stringBuilder)
+            return webClientWorkTime.get().uri("/rep/fact/week" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))

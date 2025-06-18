@@ -238,7 +238,7 @@ public class WorkTimeRepService {
         return userWeekWorkPeriodDTOs;
     }
 
-    private void addVacation(String nikName, WeekWorkDto workPeriodDto) {
+    private void addVacation(String nikName, WorkPeriodDto workPeriodDto) {
         try {
             List<VacationDto> vacationDTOs = calendarServiceIntegration.getVacation(nikName, workPeriodDto.getDayStart(), workPeriodDto.getDayEnd());
             if (vacationDTOs.size() == 0) {

@@ -1,4 +1,4 @@
-package ru.darujo.dto.printer;
+package ru.darujo.assistant.printer;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

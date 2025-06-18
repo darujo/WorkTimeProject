@@ -5,7 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.dto.calendar.WeekDto;
 import ru.darujo.dto.calendar.WeekWorkDto;
-import ru.darujo.dto.parsing.DateParser;
+import ru.darujo.assistant.parsing.DateParser;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.service.CalendarService;
 

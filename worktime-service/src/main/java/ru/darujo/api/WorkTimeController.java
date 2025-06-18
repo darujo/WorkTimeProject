@@ -6,7 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.WorkTimeConvertor;
 import ru.darujo.dto.WorkTimeDto;
-import ru.darujo.dto.parsing.DateParser;
+import ru.darujo.assistant.parsing.DateParser;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.model.WorkTime;
 import ru.darujo.service.WorkTimeService;

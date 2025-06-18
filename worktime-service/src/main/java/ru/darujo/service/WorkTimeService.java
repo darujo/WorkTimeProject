@@ -20,6 +20,7 @@ import ru.darujo.model.WorkTime;
 import ru.darujo.repository.WorkTimeRepository;
 import ru.darujo.repository.specifications.WorkTimeSpecifications;
 
+import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -62,12 +63,19 @@ public class WorkTimeService {
         return saveWorkTime(workTime, true);
     }
 
+    @Transactional
     public WorkTime saveWorkTime(WorkTime workTime, boolean check) {
         if (check) {
             validWorkTime(workTime);
         }
 
-        Boolean ok = taskServiceIntegration.setTaskRefreshTime(workTime.getTaskId());
+        Boolean ok;
+        if(workTime.getType() == 1  || workTime.getType() == 4) {
+            ok = taskServiceIntegration.setTaskRefreshTime(workTime.getTaskId(), workTime.getWorkDate());
+        } else {
+            ok = taskServiceIntegration.setTaskRefreshTime(workTime.getTaskId());
+
+        }
         System.out.println("обновили время у задачи " + ok);
 
         return workTimeRepository.save(workTime);

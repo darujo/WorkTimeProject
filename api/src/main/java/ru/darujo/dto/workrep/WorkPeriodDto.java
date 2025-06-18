@@ -5,22 +5,15 @@ import ru.darujo.dto.calendar.WeekWorkDto;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 public class WorkPeriodDto extends WeekWorkDto implements Serializable {
+
+    private Boolean isShotVacation;
+    private Boolean isAllVacation;
+
+    @SuppressWarnings("unused")
     public WorkPeriodDto() {
-    }
-
-    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM");
-
-
-    private String dateToText(Date date) {
-        if (date == null) {
-            return null;
-        }
-        return sdf.format(date);
     }
 
     public WorkPeriodDto(WeekWorkDto weekWorkDto, List<WorkTimeDto> list) {
@@ -38,16 +31,28 @@ public class WorkPeriodDto extends WeekWorkDto implements Serializable {
         return list;
     }
 
-    public String getPeriod() {
-        if(getDayStart() == null){
-            return "Итого";
-        }
-        else if (getDayEnd() == null || getDayStart().equals(getDayEnd())) {
-            return dateToText(getDayStart());
-        } else {
-            return dateToText(getDayStart()) + " - " + dateToText(getDayEnd());
-        }
+    @SuppressWarnings("unused")
+    public Boolean getShotVacation() {
+        return isShotVacation;
+    }
 
+    @SuppressWarnings("unused")
+    public Boolean getAllVacation() {
+        return isAllVacation;
+    }
+
+    public void setShotVacation(Boolean shotVacation) {
+        isShotVacation = shotVacation;
+    }
+
+    public void setAllVacation(Boolean allVacation) {
+        isAllVacation = allVacation;
+    }
+
+
+    @Override
+    public String getPeriod() {
+        return super.getPeriod();
     }
 
 }

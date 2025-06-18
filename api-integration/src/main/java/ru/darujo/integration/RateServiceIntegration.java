@@ -27,7 +27,7 @@ public class RateServiceIntegration extends ServiceIntegration {
             }
             StringBuilder stringBuilder = new StringBuilder();
             addTeg(stringBuilder, "workId", workId);
-            return webClientRate.get().uri("/time/all?" + stringBuilder)
+            return webClientRate.get().uri("/time/all" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить плановые трудозатраты")))

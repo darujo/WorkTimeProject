@@ -4,28 +4,36 @@ angular.module('workTimeService').controller('userRoleController', function ($sc
     $scope.User = {roles:null};
     $scope.User = null
     $scope.loadRole = function () {
-        console.log("запрос данных");
-        console.log(window.location);
-        let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
-        let userId =paramsStr.get('userId');
-        console.log(userId)
+        if ($scope.load) {
+            alert("Подождите обрабатывается предыдущий запрос")
+        }
+        else {
+            $scope.load = true;
+            $scope.User = null;
+            console.log("запрос данных");
+            console.log(window.location);
+            let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
+            let userId = paramsStr.get('userId');
+            console.log(userId)
 
-        $http({
-            url: constPatchUser + "/" + userId ,
-            method: "get"
-        }).then(function (response) {
-            console.log("response :");
-            console.log(response);
+            $http({
+                url: constPatchUser + "/" + userId,
+                method: "get"
+            }).then(function (response) {
+                $scope.load = false;
+                console.log("response :");
+                console.log(response);
 
-            $scope.User = response.data;
-       }, function errorCallback(response) {
-            console.log(response);
-            if ($location.checkAuthorized(response)) {
-                //     alert(response.data.message);
-            }
+                $scope.User = response.data;
+            }, function errorCallback(response) {
+                $scope.load = false;
+                console.log(response);
+                if ($location.checkAuthorized(response)) {
+                    //     alert(response.data.message);
+                }
 
-        });
-
+            });
+        }
     };
     let sendSave = false;
     $scope.saveUser = function () {

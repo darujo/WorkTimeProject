@@ -7,6 +7,7 @@ import ru.darujo.model.Work;
 import ru.darujo.model.WorkLittle;
 
 public class WorkConvertor {
+    
     public static WorkBuilder setWorkBuilderBase(Work work) {
         WorkBuilder workBuilder = WorkBuilder
                 .createWork()
@@ -46,6 +47,19 @@ public class WorkConvertor {
                 .setDevelopEndPlan(work.getDevelopEndPlan())
                 .setOpeEndPlan(work.getOpeEndPlan())
                 .setReleaseEndPlan(work.getReleaseEndPlan())
+
+                .setAnaliseStartPlan(work.getAnaliseStartPlan())
+                .setDevelopStartPlan(work.getDevelopStartPlan())
+                .setDebugStartPlan(work.getDebugStartPlan())
+                .setReleaseStartPlan(work.getReleaseStartPlan())
+                .setOpeStartPlan(work.getOpeStartPlan())
+
+                .setAnaliseStartFact(work.getAnaliseStartFact())
+                .setDevelopStartFact(work.getDevelopStartFact())
+                .setDebugStartFact(work.getDebugStartFact())
+                .setReleaseStartFact(work.getReleaseStartFact())
+                .setOpeStartFact(work.getOpeStartFact())
+
                 .getWorkEditDto();
     }
 
@@ -77,6 +91,18 @@ public class WorkConvertor {
                 .setRelease(workDto.getRelease())
                 .setIssuingReleaseFact(workDto.getIssuingReleaseFact())
                 .setIssuingReleasePlan(workDto.getIssuingReleasePlan())
+                .setAnaliseStartPlan(workDto.getAnaliseStartPlan())
+                .setDevelopStartPlan(workDto.getDevelopStartPlan())
+                .setDebugStartPlan(workDto.getDebugStartPlan())
+                .setReleaseStartPlan(workDto.getReleaseStartPlan())
+                .setOpeStartPlan(workDto.getOpeStartPlan())
+
+                .setAnaliseStartFact(workDto.getAnaliseStartFact())
+                .setDevelopStartFact(workDto.getDevelopStartFact())
+                .setDebugStartFact(workDto.getDebugStartFact())
+                .setReleaseStartFact(workDto.getReleaseStartFact())
+                .setOpeStartFact(workDto.getOpeStartFact())
+
                 .getWork();
     }
 
@@ -92,4 +118,17 @@ public class WorkConvertor {
 
 
     }
+    public static WorkLittleDto getWorkLittleDto(Work work) {
+        return WorkBuilder
+                .createWork()
+                .setId(work.getId())
+                .setCodeSap(work.getCodeSap())
+                .setCodeZI(work.getCodeZI())
+                .setStageZI(work.getStageZI())
+                .setName(work.getName())
+                .getWorkLittleDto();
+
+
+    }
+
 }

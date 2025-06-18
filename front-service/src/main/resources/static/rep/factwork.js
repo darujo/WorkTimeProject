@@ -42,36 +42,46 @@ angular.module('workTimeService').controller('workFactRepController', function (
         console.log("page");
         console.log(page);
         document.getElementById("Page").value = page;
-        let Filter;
-        Filter = $scope.Filt;
+        if ($scope.load) {
+            alert("Подождите обрабатывается предыдущий запрос")
+        }
+        else {
+            $scope.load = true;
+            $scope.WorkTimeList = null;
+            let Filter;
+            Filter = $scope.Filt;
 
-        $http({
-            url: constPatchWork + "/works/rep/work/fact",
-            method: "get",
-            params: {
-                nikName: Filter ? Filter.nikName : null,
-                page: page,
-                size: Filter ? Filter.size : null,
-                name: Filter ? Filter.name : null,
-                codeSap: Filter ? Filter.codeSap : null,
-                codeZi: Filter ? Filter.codeZi : null,
-                task: Filter ? Filter.task : null,
-                releaseId: Filter ? Filter.releaseId : null,
-                sort: Filter ? Filter.sort : null,
-                stageZi: Filter ? Filter.stageZi : null,
-                hideNotTime: Filter ? Filter.hideNotTime : null
-            }
-        }).then(function (response) {
-            console.log(response.data);
-            $scope.WorkTimeList = response.data.content;
-            maxPage = response.data["totalPages"];
-        }, function errorCallback(response) {
-            console.log(response)
-            if ($location.checkAuthorized(response)) {
-                //     alert(response.data.message);
-            }
-        });
+            $http({
+                url: constPatchWork + "/works/rep/work/fact",
+                method: "get",
+                params: {
+                    nikName: Filter ? Filter.nikName : null,
+                    page: page,
+                    size: Filter ? Filter.size : null,
+                    name: Filter ? Filter.name : null,
+                    codeSap: Filter ? Filter.codeSap : null,
+                    codeZi: Filter ? Filter.codeZi : null,
+                    task: Filter ? Filter.task : null,
+                    releaseId: Filter ? Filter.releaseId : null,
+                    sort: Filter ? Filter.sort : null,
+                    stageZi: Filter ? Filter.stageZi : null,
+                    hideNotTime: Filter ? Filter.hideNotTime : null
+                }
+            }).then(function (response) {
+                $scope.load = false;
+                console.log(response.data);
+                $scope.WorkTimeList = response.data.content;
+                maxPage = response.data["totalPages"];
+            }, function errorCallback(response) {
+                $scope.load = false;
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                    //     alert(response.data.message);
+                }
+            });
+        }
     };
+
     $scope.clearFilter = function (load) {
         console.log("clearFilter");
         $scope.Filt = {

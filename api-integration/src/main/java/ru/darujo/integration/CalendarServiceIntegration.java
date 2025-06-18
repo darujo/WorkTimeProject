@@ -34,7 +34,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
         StringBuilder stringBuilder = getStringBuilder(dateStart, dateEnd);
         addTeg(stringBuilder,"period",period);
         try {
-            return webClientCalendar.get().uri("/calendar/period/time?" + stringBuilder)
+            return webClientCalendar.get().uri("/calendar/period/time" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить работы за период")))
@@ -49,7 +49,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
         StringBuilder stringBuilder = getStringBuilder(dateStart, dateEnd);
 
         try {
-            return webClientCalendar.get().uri("/calendar/work/time?" + stringBuilder)
+            return webClientCalendar.get().uri("/calendar/work/time" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить отпуск за период")))
@@ -65,7 +65,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder,"nikName",nikName);
 
         try {
-            return Objects.requireNonNull(webClientCalendar.get().uri("/vacation/?" + stringBuilder)
+            return Objects.requireNonNull(webClientCalendar.get().uri("/vacation" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить отпуск за период")))

@@ -96,9 +96,10 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
         console.log($localStorage.WorkTime);
         console.log(typeof $localStorage.WorkTime !== "undefined");
         if (location.href.indexOf("?") !== -1) {
-            $location.parserFilter($scope.Filt);
+
+            $location.parserFilter($scope.Filter);
             $scope.findPage(0);
-            console.log($scope.Filt);
+            console.log($scope.Filter);
         } else if (typeof $localStorage.WorkTime !== "undefined") {
             console.log($localStorage.WorkTime);
             if (typeof $localStorage.WorkTime.edit !== "undefined") {
@@ -117,7 +118,7 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
     };
     $scope.sendFilter = function () {
         $scope.Filter["currentUser"] = !!$scope.Filter.currentUser;
-        $location.sendFilter(location.hash, $scope.Filt);
+        $location.sendFilter(location.hash, $scope.Filter);
     }
 
     $scope.setFormWorkTime = function () {
@@ -155,60 +156,67 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
         console.log("findPage");
         let page = parseInt(document.getElementById("Page").value) + diffPage;
         document.getElementById("Page").value = page;
-        console.log("запрос данных");
+        if ($scope.load) {
+            alert("Подождите обрабатывается предыдущий запрос")
+        } else {
+            $scope.load = true;
+            $scope.WorkTimeList = null;
+            console.log("запрос данных");
 
-        // if (typeof $scope.Filter !== "undefined") {
-        //     // Filter = {size: 10, currentUser: true};
-        //     Filter = $scope.Filter;
-        // } else
-        if (typeof $scope.Filter === "undefined") {
-            $scope.Filter = {size: 10, currentUser: true};
-            // Filter = $scope.Filter;
+            // if (typeof $scope.Filter !== "undefined") {
+            //     // Filter = {size: 10, currentUser: true};
+            //     Filter = $scope.Filter;
+            // } else
+            if (typeof $scope.Filter === "undefined") {
+                $scope.Filter = {size: 10, currentUser: true};
+                // Filter = $scope.Filter;
+            }
+            let Filter;
+            Filter = $scope.Filter;
+            console.log(Filter);
+            $http({
+                url: constPatchWorkTime + "/workTime".toLowerCase(),
+                method: "get",
+                params: {
+                    page: page,
+                    size: Filter ? Filter.size : null,
+                    dateLe: Filter ? Filter.dateLe : null,
+                    dateGe: Filter ? Filter.dateGe : null,
+
+                    taskDEVBO: Filter ? Filter.taskDevbo : null,
+                    taskBTS: Filter ? Filter.taskBts : null,
+                    nikName: Filter ? Filter.nikName : null,
+                    currentUser: Filter ? Filter.currentUser : null,
+                    type: Filter ? Filter.type : null,
+                    comment: Filter ? Filter.comment : null,
+                    taskId: Filter ? Filter.listId ? Filter.listId : Filter.taskId : null
+
+                }
+
+
+            }).then(function (response) {
+                $scope.load = false;
+                $scope.setFormWorkTime();
+                console.log("response,data :");
+                console.log(response.data);
+                if (typeof response.data.content === "undefined") {
+                    $scope.WorkTimeList = response.data;
+                } else {
+                    $scope.WorkTimeList = response.data.content;
+                }
+
+                showWorkTime();
+
+            }, function errorCallback(response) {
+                $scope.load = false;
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                    //     alert(response.data.message);
+                }
+
+                // showFindTask();
+            });
         }
-        let Filter;
-        Filter = $scope.Filter;
-        console.log(Filter);
-        $http({
-            url: constPatchWorkTime + "/workTime".toLowerCase(),
-            method: "get",
-            params: {
-                page: page,
-                size: Filter ? Filter.size : null,
-                dateLe: Filter ? Filter.dateLe : null,
-                dateGe: Filter ? Filter.dateGe : null,
-
-                taskDEVBO: Filter ? Filter.taskDevbo : null,
-                taskBTS: Filter ? Filter.taskBts : null,
-                nikName: Filter ? Filter.nikName : null,
-                currentUser: Filter ? Filter.currentUser : null,
-                type: Filter ? Filter.type : null,
-                comment: Filter ? Filter.comment : null,
-                taskId: Filter ? Filter.listId ? Filter.listId : Filter.taskId : null
-
-            }
-
-
-        }).then(function (response) {
-            $scope.setFormWorkTime();
-            console.log("response,data :");
-            console.log(response.data);
-            if (typeof response.data.content === "undefined") {
-                $scope.WorkTimeList = response.data;
-            } else {
-                $scope.WorkTimeList = response.data.content;
-            }
-
-            showWorkTime();
-
-        }, function errorCallback(response) {
-            console.log(response)
-            if ($location.checkAuthorized(response)) {
-                //     alert(response.data.message);
-            }
-
-            // showFindTask();
-        });
-
     };
     $scope.filterWorkTime = function () {
         console.log("filterWorkTime")
@@ -384,43 +392,51 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
         if (page < 1) {
             page = 1;
         }
-        let FilterTask;
-        FilterTask = $scope.FiltTask;
-        console.log(page);
-        console.log(FilterTask);
         document.getElementById("PageTask").value = page;
-        $http({
-            url: constPatchTask + "/task",
-            method: "get",
-            params: {
-                page: page,
-                size: FilterTask ? FilterTask.size : null,
-                workId: FilterTask ? FilterTask.workId : null,
-                codeBTS: FilterTask ? FilterTask.bts : null,
-                codeDEVBO: FilterTask ? FilterTask.devbo : null,
-                description: FilterTask ? FilterTask.desc : null,
-                ziName: FilterTask ? FilterTask.ziName : null,
-                type: FilterTask ? FilterTask.type : null,
-                nikName: FilterTask ? FilterTask.nikName : null
-            }
-        }).then(function (response) {
-            console.log("/task.response");
-            console.log(response);
-            console.log("response,data :");
-            console.log(response.data);
-            $scope.TaskList = response.data.content;
-            maxPage = response.data["totalPages"];
-            // showTask();
+        if ($scope.loadTaskWait) {
+            alert("Подождите обрабатывается предыдущий запрос")
+        } else {
+            $scope.loadTaskWait = true;
+            $scope.TaskList = null;
+            let FilterTask;
+            FilterTask = $scope.FiltTask;
+            console.log(page);
+            console.log(FilterTask);
 
-        }, function errorCallback(response) {
-            console.log(response)
-            if ($location.checkAuthorized(response)) {
-                //     alert(response.data.message);
-            }
+            $http({
+                url: constPatchTask + "/task",
+                method: "get",
+                params: {
+                    page: page,
+                    size: FilterTask ? FilterTask.size : null,
+                    workId: FilterTask ? FilterTask.workId : null,
+                    codeBTS: FilterTask ? FilterTask.bts : null,
+                    codeDEVBO: FilterTask ? FilterTask.devbo : null,
+                    description: FilterTask ? FilterTask.desc : null,
+                    ziName: FilterTask ? FilterTask.ziName : null,
+                    type: FilterTask ? FilterTask.type : null,
+                    nikName: FilterTask ? FilterTask.nikName : null
+                }
+            }).then(function (response) {
+                $scope.loadTaskWait = false;
+                console.log("/task.response");
+                console.log(response);
+                console.log("response,data :");
+                console.log(response.data);
+                $scope.TaskList = response.data.content;
+                maxPage = response.data["totalPages"];
+                // showTask();
 
-            // showFindTask();
-        });
+            }, function errorCallback(response) {
+                $scope.loadTaskWait = false;
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                    //     alert(response.data.message);
+                }
 
+                // showFindTask();
+            });
+        }
     }
     $scope.filterTask = function () {
         console.log("filterTask");
@@ -483,7 +499,7 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
         if ($scope.FiltTask === null) {
             $scope.FiltTask = {size: 10}
         }
-        console.log($scope.Filt);
+        console.log($scope.FiltTask);
         if (load) {
             $scope.filterTask();
         }

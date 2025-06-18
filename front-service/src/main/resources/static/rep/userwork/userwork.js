@@ -30,27 +30,36 @@ angular.module('workTimeService').controller('userWorkController', function ($sc
     }
     $scope.findPage = function () {
         console.log("findPage");
-        let Filter = $scope.Filt;
-        $http({
-            url: constPatchWork + "/workTime/rep/fact/user/work".toLowerCase(),
-            method: "get",
-            params: {
-                nikName: Filter ? Filter.nikName : null,
-                dateStart: Filter ? Filter.dateStart : new Date(),
-                dateEnd: Filter ? Filter.dateEnd : new Date(),
-                periodSplit: Filter ? Filter.period : null
-            }
-        }).then(function (response) {
-            console.log(response.data);
-            $scope.WeekWorkList = response.data[0].workPeriodDTOs;
-            $scope.UserPeriodList = response.data;
-        }, function errorCallback(response) {
-            console.log(response)
-            console.log(location);
-            if ($location.checkAuthorized(response)) {
-                //     alert(response.data.message);
-            }
-        });
+        if ($scope.load) {
+            alert("Подождите обрабатывается предыдущий запрос")
+        }
+        else {
+            $scope.load = true;
+            $scope.UserPeriodList = null;
+            let Filter = $scope.Filt;
+            $http({
+                url: constPatchWork + "/workTime/rep/fact/user/work".toLowerCase(),
+                method: "get",
+                params: {
+                    nikName: Filter ? Filter.nikName : null,
+                    dateStart: Filter ? Filter.dateStart : new Date(),
+                    dateEnd: Filter ? Filter.dateEnd : new Date(),
+                    periodSplit: Filter ? Filter.period : null
+                }
+            }).then(function (response) {
+                $scope.load = false;
+                console.log(response.data);
+                $scope.WeekWorkList = response.data[0].workPeriodDTOs;
+                $scope.UserPeriodList = response.data;
+            }, function errorCallback(response) {
+                $scope.load = false;
+                console.log(response)
+                console.log(location);
+                if ($location.checkAuthorized(response)) {
+                    //     alert(response.data.message);
+                }
+            });
+        }
     };
 
     $scope.filterWorkTime = function () {

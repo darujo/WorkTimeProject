@@ -72,42 +72,51 @@ angular.module('workTimeService').controller('workController', function ($scope,
         console.log("page");
         console.log(page);
         document.getElementById("Page").value = page;
-        console.log("отправляем запрос /works");
-        console.log($scope.Filt);
-        if (typeof $scope.Filt === "undefined") {
-            $scope.Filt = {size: 10};
+        if ($scope.load) {
+            alert("Подождите обрабатывается предыдущий запрос")
         }
-        let Filter = $scope.Filt;
-        console.log($scope.Filt)
-        $http({
-            url: constPatchWork + "/works",
-            method: "get",
-            params: {
-                page: page,
-                size: Filter ? Filter.size : null,
-                name: Filter ? Filter.name : null,
-                codeSap: Filter ? Filter.codeSap : null,
-                codeZi: Filter ? Filter.codeZi : null,
-                task: Filter ? Filter.task : null,
-                releaseId: Filter ? Filter.releaseId : null,
-                sort: Filter ? Filter.sort : null,
-                stageZi: Filter ? Filter.stageZi : null
+        else {
+            $scope.load = true;
+            $scope.WorkList = null;
+            console.log("отправляем запрос /works");
+            console.log($scope.Filt);
+            if (typeof $scope.Filt === "undefined") {
+                $scope.Filt = {size: 10};
             }
-        }).then(function (response) {
-            console.log(response);
-            $scope.WorkList = response.data.content;
-            console.log($scope.WorkList);
-            maxPage = response.data["totalPages"];
-            showWork();
-        }, function errorCallback(response) {
-            console.log(response)
-            if ($location.checkAuthorized(response)) {
-                alert(response.data.message);
-            }
+            let Filter = $scope.Filt;
+            console.log($scope.Filt)
+            $http({
+                url: constPatchWork + "/works",
+                method: "get",
+                params: {
+                    page: page,
+                    size: Filter ? Filter.size : null,
+                    name: Filter ? Filter.name : null,
+                    codeSap: Filter ? Filter.codeSap : null,
+                    codeZi: Filter ? Filter.codeZi : null,
+                    task: Filter ? Filter.task : null,
+                    releaseId: Filter ? Filter.releaseId : null,
+                    sort: Filter ? Filter.sort : null,
+                    stageZi: Filter ? Filter.stageZi : null
+                }
+            }).then(function (response) {
+                console.log(response);
+                $scope.WorkList = response.data.content;
+                console.log($scope.WorkList);
+                maxPage = response.data["totalPages"];
+                $scope.load = false;
+                showWork();
+            }, function errorCallback(response) {
+                maxPage = 1;
+                console.log(response)
+                $scope.load = false;
+                if ($location.checkAuthorized(response)) {
+                    alert(response.data.message);
+                }
 
-            // showFindTask();
-        });
-
+                // showFindTask();
+            });
+        }
     };
 
     $scope.workSort = function (sort) {
@@ -182,6 +191,20 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 WorkIdEdit = response.data.id;
                 $scope.Work = response.data;
                 console.log($scope.Work);
+
+                $scope.Work.developStartFact = typeof response.data.developStartFact === "undefined" ? null : new Date(response.data.developStartFact);
+                $scope.Work.debugStartFact = typeof response.data.debugStartFact === "undefined" ? null : new Date(response.data.debugStartFact);
+                $scope.Work.releaseStartFact = typeof response.data.releaseStartFact === "undefined" ? null : new Date(response.data.releaseStartFact);
+                $scope.Work.opeStartFact = typeof response.data.opeStartFact === "undefined" ? null : new Date(response.data.opeStartFact);
+                $scope.Work.analiseStartFact = typeof response.data.analiseStartFact === "undefined" ? null : new Date(response.data.analiseStartFact);
+                $scope.Work.developStartPlan = typeof response.data.developStartPlan === "undefined" ? null : new Date(response.data.developStartPlan);
+                $scope.Work.debugStartPlan = typeof response.data.debugStartPlan === "undefined" ? null : new Date(response.data.debugStartPlan);
+                $scope.Work.releaseStartPlan = typeof response.data.releaseStartPlan === "undefined" ? null : new Date(response.data.releaseStartPlan);
+                $scope.Work.opeStartPlan = typeof response.data.opeStartPlan === "undefined" ? null : new Date(response.data.opeStartPlan);
+                $scope.Work.analiseStartPlan = typeof response.data.analiseStartPlan === "undefined" ? null : new Date(response.data.analiseStartPlan);
+
+
+
                 $scope.Work.developEndFact = typeof response.data.developEndFact === "undefined" ? null : new Date(response.data.developEndFact);
                 $scope.Work.debugEndFact = typeof response.data.debugEndFact === "undefined" ? null : new Date(response.data.debugEndFact);
                 $scope.Work.releaseEndFact = typeof response.data.releaseEndFact === "undefined" ? null : new Date(response.data.releaseEndFact);

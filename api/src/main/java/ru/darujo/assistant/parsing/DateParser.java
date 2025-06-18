@@ -1,4 +1,4 @@
-package ru.darujo.dto.parsing;
+package ru.darujo.assistant.parsing;
 
 import ru.darujo.exceptions.ResourceNotFoundException;
 

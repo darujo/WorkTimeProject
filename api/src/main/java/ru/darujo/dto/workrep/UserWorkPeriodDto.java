@@ -44,6 +44,7 @@ public class UserWorkPeriodDto implements UserFio {
         return patronymic;
     }
 
+    @SuppressWarnings("unused")
     public List<WorkPeriodDto> getWorkPeriodDTOs() {
         return workPeriodDTOs;
     }
@@ -53,6 +54,7 @@ public class UserWorkPeriodDto implements UserFio {
         this.workPeriodDTOs = workPeriodDTOs;
     }
 
+    @SuppressWarnings("unused")
     public UserWorkPeriodDto() {
     }
 }

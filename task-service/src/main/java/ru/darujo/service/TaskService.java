@@ -123,10 +123,13 @@ public class TaskService {
 
 
     @Transactional
-    public boolean refreshTime(long id) {
+    public boolean refreshTime(long id,Date date) {
+
         Task task = findById(id).orElseThrow(() -> new ResourceNotFoundException("Отмеченая работа не найден"));
         task.setRefresh(new Timestamp(System.currentTimeMillis()));
         taskRepository.save(task);
+        boolean ok = workServiceIntegration.setWorkDate(task.getWorkId(),date);
+        System.out.println("Обновили даты в ЗИ? " + ok);
         return true;
     }
     public String taskCheck(TaskDto taskDto){

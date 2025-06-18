@@ -1,7 +1,7 @@
 package ru.darujo.api;
 
 import org.springframework.web.bind.annotation.*;
-import ru.darujo.dto.parsing.DateParser;
+import ru.darujo.assistant.parsing.DateParser;
 import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.service.CodeService;
 

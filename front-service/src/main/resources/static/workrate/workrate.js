@@ -38,22 +38,30 @@ angular.module('workTimeService').controller('workRateController', function ($sc
 
     $scope.loadWorkStage = function () {
         console.log("loadWorkStage");
-        $http({
-            url: constPatchWorkRate + "/stage",
-            method: "get",
-            params: {
-                workId: WorkId,
-                loadFact: true
+        if ($scope.load1) {
+            alert("Подождите обрабатывается предыдущий запрос")
+        } else {
+            $scope.load1 = true;
+            $scope.WorkStageList = null;
+            $http({
+                url: constPatchWorkRate + "/stage",
+                method: "get",
+                params: {
+                    workId: WorkId,
+                    loadFact: true
 
-            }
-        }).then(function (response) {
-            console.log(response.data);
-            $scope.WorkStageList = response.data;
-        }, function errorCallback(response) {
-            console.log(response)
-            if ($location.checkAuthorized(response)) {
-            }
-        });
+                }
+            }).then(function (response) {
+                $scope.load1 = false;
+                console.log(response.data);
+                $scope.WorkStageList = response.data;
+            }, function errorCallback(response) {
+                $scope.load1 = false;
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                }
+            });
+        }
     };
 
     $scope.createWorkStage = function () {
@@ -134,21 +142,29 @@ angular.module('workTimeService').controller('workRateController', function ($sc
     };
     $scope.loadWorkCriteria = function () {
         console.log("loadWorkCriteria");
-        $http({
-            url: constPatchWorkRate + "/criteria",
-            method: "get",
-            params: {
-                workId: WorkId
+        if ($scope.load2) {
+            alert("Подождите обрабатывается предыдущий запрос")
+        } else {
+            $scope.load2 = true;
+            $scope.WorkCriteriaList = null;
+            $http({
+                url: constPatchWorkRate + "/criteria",
+                method: "get",
+                params: {
+                    workId: WorkId
 
-            }
-        }).then(function (response) {
-            console.log(response.data);
-            $scope.WorkCriteriaList = response.data;
-        }, function errorCallback(response) {
-            console.log(response)
-            if ($location.checkAuthorized(response)) {
-            }
-        });
+                }
+            }).then(function (response) {
+                $scope.load2 = false;
+                console.log(response.data);
+                $scope.WorkCriteriaList = response.data;
+            }, function errorCallback(response) {
+                $scope.load2 = false;
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                }
+            });
+        }
     };
 
     $scope.createWorkCriteria = function () {

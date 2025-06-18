@@ -2,20 +2,22 @@ package ru.darujo.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.TaskConvertor;
 import ru.darujo.dto.TaskDto;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.dto.work.WorkLittleDto;
-import ru.darujo.dto.parsing.DateParser;
+import ru.darujo.assistant.parsing.DateParser;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.integration.WorkServiceIntegration;
 import ru.darujo.model.Task;
 import ru.darujo.service.TaskService;
 
-import java.lang.reflect.Array;
+import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @RestController()
@@ -48,8 +50,11 @@ public class TaskController extends DateParser {
     }
 
     @GetMapping("/refresh/{id}")
-    public boolean TaskRefresh(@PathVariable long id) {
-        return taskService.refreshTime(id);
+    public boolean TaskRefresh(@PathVariable long id,
+                               @RequestParam(required = false, name = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStr
+                               ) {
+        Timestamp date = stringToDate(dateStr,"date");
+        return taskService.refreshTime(id,date);
 
     }
 

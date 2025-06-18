@@ -34,13 +34,9 @@ public class TaskServiceIntegration extends ServiceIntegration {
         addTeg( stringBuilder, "dateLe",dateLe);
         addTeg( stringBuilder, "dateGt",dateGt);
         addTeg( stringBuilder, "type",type);
-        String str = "";
-        if (stringBuilder.length() != 0) {
-            str = "?" + stringBuilder;
-        }
-        System.out.println("/rep/fact/time" + str);
+
         try {
-            return webClientTask.get().uri("/rep/fact/time" + str)
+            return webClientTask.get().uri("/rep/fact/time" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
@@ -55,14 +51,11 @@ public class TaskServiceIntegration extends ServiceIntegration {
         StringBuilder stringBuilder = new StringBuilder();
         if(workID == null){
             throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору не задан workId" );
-
         }
-
         addTeg(stringBuilder,"workId",workID);
-
         addTeg(stringBuilder,"dateLe",dateLe);
         try {
-            return webClientTask.get().uri("/rep/fact/user?" + stringBuilder)
+            return webClientTask.get().uri("/rep/fact/user" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
@@ -84,25 +77,11 @@ public class TaskServiceIntegration extends ServiceIntegration {
 
     public List<Long> getTaskList(String taskDEVBO, String taskBts) {
         StringBuilder stringBuilder = new StringBuilder();
-        if (taskDEVBO != null) {
-            if (stringBuilder.length() != 0) {
-                stringBuilder.append("&");
-            }
-            stringBuilder.append("codeDEVBO=").append(taskDEVBO);
-        }
-        if (taskBts != null) {
-            if (stringBuilder.length() != 0) {
-                stringBuilder.append("&");
-            }
-            stringBuilder.append("codeBTS=").append(taskBts);
-        }
-        String str = "";
-        if (stringBuilder.length() != 0) {
-            str = "?" + stringBuilder;
-        }
-        System.out.println("/list/id" + str);
+        addTeg(stringBuilder,"codeDEVBO", taskDEVBO);
+        addTeg(stringBuilder,"codeBTS", taskBts);
+        System.out.println("/list/id" + stringBuilder);
 
-        return webClientTask.get().uri("/list/id" + str)
+        return webClientTask.get().uri("/list/id" + stringBuilder)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                         clientResponse -> Mono.error(new ResourceNotFoundException("Задачи не найдены")))
@@ -122,9 +101,13 @@ public class TaskServiceIntegration extends ServiceIntegration {
             return false;
         }
     }
-
     public Boolean setTaskRefreshTime(Long taskId) {
-        return webClientTask.get().uri("/refresh/" + taskId)
+        return setTaskRefreshTime(taskId, null);
+    }
+    public Boolean setTaskRefreshTime(Long taskId,Date dateWork) {
+        StringBuilder stringBuilder = new StringBuilder();
+        addTeg(stringBuilder,"date", dateWork);
+        return webClientTask.get().uri("/refresh/" + taskId + stringBuilder)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                         clientResponse -> Mono.error(new ResourceNotFoundException("Задача c id = " + taskId + " не найдена")))
@@ -136,13 +119,12 @@ public class TaskServiceIntegration extends ServiceIntegration {
             String nikName,
             Boolean addTotal) {
         StringBuilder stringBuilder = new StringBuilder();
-
         addTeg(stringBuilder, "workId", workId);
         addTeg(stringBuilder, "nikName", nikName);
         addTeg(stringBuilder, "addTotal", addTotal);
 
         try {
-            return webClientTask.get().uri("/rep/fact/week?" + stringBuilder)
+            return webClientTask.get().uri("/rep/fact/week" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))

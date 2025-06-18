@@ -2,6 +2,7 @@ package ru.darujo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -18,6 +19,7 @@ import ru.darujo.repository.WorkRepository;
 import ru.darujo.repository.specifications.WorkSpecifications;
 
 import javax.transaction.Transactional;
+import java.sql.Timestamp;
 import java.util.*;
 
 @Service
@@ -61,15 +63,15 @@ public class WorkService {
 
     public void checkWork(Work work) {
         Release release;
-        if(work.getId() != null) {
+        if (work.getId() != null) {
             release = workRepository.findById(work.getId()).orElseThrow(() -> new ResourceNotFoundException("ЗИ пропало(((")).getRelease();
-            if (release!= null ){
-                if(release.getIssuingReleaseFact() != null) {
-                    if(work.getRelease() == null || !work.getRelease().getId().equals(release.getId()) ) {
+            if (release != null) {
+                if (release.getIssuingReleaseFact() != null) {
+                    if (work.getRelease() == null || !work.getRelease().getId().equals(release.getId())) {
                         throw new ResourceNotFoundException("Нельзя исключать ЗИ из релиза. Релиз выпущен.");
                     }
                 } else {
-                    if(work.getRelease() != null && !work.getRelease().getId().equals(release.getId()) ) {
+                    if (work.getRelease() != null && !work.getRelease().getId().equals(release.getId())) {
                         release = releaseService.findById(work.getRelease().getId());
                         if (release.getIssuingReleaseFact() != null) {
                             throw new ResourceNotFoundException("Нельзя включать ЗИ в выпущеный релиз");
@@ -77,22 +79,54 @@ public class WorkService {
                     }
                 }
             } else {
-                if(work.getRelease() != null && work.getRelease().getId() != null){
+                if (work.getRelease() != null && work.getRelease().getId() != null) {
                     release = releaseService.findById(work.getRelease().getId());
-                    if (release.getIssuingReleaseFact() !=  null){
+                    if (release.getIssuingReleaseFact() != null) {
                         throw new ResourceNotFoundException("Нельзя включать ЗИ в выпущеный релиз");
                     }
                 }
             }
         } else {
-            if(work.getRelease() != null && work.getRelease().getId() != null){
+            if (work.getRelease() != null && work.getRelease().getId() != null) {
                 release = releaseService.findById(work.getRelease().getId());
-                if (release.getIssuingReleaseFact() !=  null){
+                if (release.getIssuingReleaseFact() != null) {
                     throw new ResourceNotFoundException("Нельзя включать ЗИ в выпущеный релиз");
                 }
             }
         }
+        checkDate(work.getAnaliseStartFact(), work.getAnaliseEndFact(), "начала анализа (факт)", "конца анализа (факт)");
+        checkDate(work.getDevelopStartFact(), work.getDevelopEndFact(), "начала разработки (факт)", "конца разработки (факт)");
+        checkDate(work.getDebugStartFact(), work.getDebugEndFact(), "начала отладки (факт)", "конца отладки (факт)");
+        checkDate(work.getReleaseStartFact(), work.getReleaseEndFact(), "начала тестирования релиза (факт)", "конца тестирования релиза (факт)");
+        checkDate(work.getOpeStartFact(), work.getOpeEndFact(), "начала ОПЭ (факт)", "конца ОПЭ (факт)");
+
+        checkDate(work.getAnaliseEndFact(), work.getDevelopEndFact(), "конца анализа (факт)", "конца разработки (факт)");
+        checkDate(work.getDevelopEndFact(), work.getDebugEndFact(), "конца разработки (факт)", "конца отладки (факт)");
+        checkDate(work.getDebugEndFact(), work.getReleaseEndFact(), "конца отладки (факт)", "конца тестирования релиза (факт)");
+        checkDate(work.getReleaseEndFact(), work.getOpeEndFact(), "конца тестирования релиза (факт)", "конца ОПЭ (факт)");
+
+        checkDate(work.getAnaliseStartPlan(), work.getAnaliseEndPlan(), "начала анализа (план)", "конца анализа (план)");
+        checkDate(work.getDevelopStartPlan(), work.getDevelopEndPlan(), "начала разработки (план)", "конца разработки (план)");
+        checkDate(work.getDebugStartPlan(), work.getDebugEndPlan(), "начала отладки (план)", "конца отладки (план)");
+        checkDate(work.getReleaseStartPlan(), work.getReleaseEndPlan(), "начала тестирования релиза (план)", "конца тестирования релиза (план)");
+        checkDate(work.getOpeStartPlan(), work.getOpeEndPlan(), "начала ОПЭ (план)", "конца ОПЭ (план)");
+
+        checkDate(work.getAnaliseEndPlan(), work.getDevelopEndPlan(), "конца анализа (план)", "конца разработки (план)");
+        checkDate(work.getDevelopEndPlan(), work.getDebugEndPlan(), "конца разработки (план)", "конца отладки (план)");
+        checkDate(work.getDebugEndPlan(), work.getReleaseEndPlan(), "конца отладки (план)", "конца тестирования релиза (план)");
+        checkDate(work.getReleaseEndPlan(), work.getOpeEndPlan(), "конца тестирования релиза (план)", "конца ОПЭ (план)");
+
+
     }
+
+    public void checkDate(Timestamp dateStart, Timestamp dateEnd, String dateStartMes, String dateEndMes) {
+        if (dateStart != null
+                && dateEnd != null
+                && dateStart.compareTo(dateEnd) > 0) {
+            throw new ResourceNotFoundException("Дата " + dateEndMes + " не может быть раньше " + dateStartMes);
+        }
+    }
+
     public Work saveWork(Work work) {
         checkWork(work);
         return workRepository.save(work);
@@ -187,16 +221,16 @@ public class WorkService {
         return specification;
     }
 
-    public Iterable<WorkLittle> findWorkLittle(Integer page,
-                                               Integer size,
-                                               String name,
-                                               String sort,
-                                               Integer stageZiGe,
-                                               Integer stageZiLe,
-                                               Long codeSap,
-                                               String codeZi,
-                                               String task,
-                                               Long releaseId) {
+    public Page<WorkLittle> findWorkLittle(Integer page,
+                                           Integer size,
+                                           String name,
+                                           String sort,
+                                           Integer stageZiGe,
+                                           Integer stageZiLe,
+                                           Long codeSap,
+                                           String codeZi,
+                                           String task,
+                                           Long releaseId) {
         Specification<WorkLittle> specification;
         if (sort != null && sort.length() > 8 && sort.startsWith("release.")) {
             specification = Specification.where(null);
@@ -216,12 +250,12 @@ public class WorkService {
             specification = specification.and(WorkSpecifications.workLittleStageZiGe(stageZiGe));
         }
         System.out.println("Page = " + page);
-        Iterable<WorkLittle> workPage;
+        Page<WorkLittle> workPage;
         if (page == null) {
             if (sort == null) {
-                workPage = workLittleRepository.findAll(specification);
+                workPage = new PageImpl<>(workLittleRepository.findAll(specification));
             } else {
-                workPage = workLittleRepository.findAll(specification, Sort.by(sort));
+                workPage = new PageImpl<>(workLittleRepository.findAll(specification, Sort.by(sort)));
             }
         } else if (sort == null) {
             workPage = workLittleRepository.findAll(specification, PageRequest.of(page - 1, size));
@@ -242,7 +276,7 @@ public class WorkService {
             }
         }
         specification = getWorkSpecificationLike("name", name, specification);
-        specification = WorkSpecifications.eq(specification,"release", release);
+        specification = WorkSpecifications.eq(specification, "release", release);
 
         if (stageZiGe != null) {
             specification = specification.and(WorkSpecifications.stageZiGe(stageZiGe));
@@ -290,4 +324,23 @@ public class WorkService {
     }
 
 
+    public boolean setWorkDate(long id, Timestamp date) {
+        Work work = workRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Не найдено ЗИ с id = " + id));
+        boolean save = false;
+        if (work.getDevelopStartFact() == null || work.getDevelopStartFact().after(date)) {
+            work.setDevelopStartFact(date);
+            save = true;
+        }
+        if ( (work.getDebugStartFact() == null || work.getDebugStartFact().after(date))
+                && work.getAnaliseEndFact() != null
+                && work.getAnaliseEndFact().before(date)
+                && (work.getDevelopEndFact() == null || work.getDevelopEndFact().before(date))) {
+            work.setDevelopEndFact(date);
+            save = true;
+        }
+        if (save) {
+            workRepository.save(work);
+        }
+        return save;
+    }
 }

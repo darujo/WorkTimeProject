@@ -50,6 +50,7 @@ public class UserVacation implements UserFio {
         return patronymic;
     }
 
+    @SuppressWarnings("unused")
     public List<WeekWorkDto> getWeekWorkDtos() {
         return weekWorkDtos;
     }

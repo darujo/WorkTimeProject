@@ -10,54 +10,67 @@ angular.module('workTimeService').controller('workTimeRepController', function (
     $scope.loadWorkTime = function () {
         console.log("loadWorkTime");
         $location.parserFilter($scope.Filt);
+        console.log("findPage 1");
         $scope.findPage();
     };
     $scope.sendFilter = function () {
         $location.sendFilter(location.hash, $scope.Filt);
     }
-
+    $scope.load = false;
     $scope.findPage = function () {
         console.log("findPage");
-        console.log($scope.WorkSort);
-        let Filter;
-        Filter = $scope.Filt;
-        $http({
-            url: constPatchWork + "/works/rep",
-            method: "get",
-            params: {
-                userName: Filter ? Filter.userName : null,
-                stageZi: Filter ? Filter.stageZi : null,
-                availWork: Filter ? Filter.availWork : null,
-                releaseId: Filter ? Filter.releaseId : null,
-                sort: $scope.WorkSort ? $scope.WorkSort : null,
-                ziName: Filter ? Filter.ziName : null
+        if ($scope.load) {
+            alert("Подождите обрабатывается предыдущий запрос")
+        } else {
+            $scope.load = true;
+            $scope.WorkTimeList = null;
+            console.log($scope.WorkSort);
+            let Filter;
+            Filter = $scope.Filt;
+            $http({
+                url: constPatchWork + "/works/rep",
+                method: "get",
+                params: {
+                    userName: Filter ? Filter.userName : null,
+                    stageZi: Filter ? Filter.stageZi : null,
+                    availWork: Filter ? Filter.availWork : null,
+                    releaseId: Filter ? Filter.releaseId : null,
+                    sort: $scope.WorkSort ? $scope.WorkSort : null,
+                    ziName: Filter ? Filter.ziName : null
 
 
-            }
-        }).then(function (response) {
+                }
+            }).then(function (response) {
+                $scope.load = false;
+                console.log(response.data);
+                $scope.WorkTimeList = response.data;
 
-            console.log(response.data);
-            $scope.WorkTimeList = response.data;
-
-        }, function errorCallback(response) {
-            console.log(response)
-            if ($location.checkAuthorized(response)) {
-                //     alert(response.data.message);
-            }
-        });
+            }, function errorCallback(response) {
+                $scope.load = false;
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                    //     alert(response.data.message);
+                }
+            });
+        }
     };
     $scope.filterWork = function () {
         $location.saveFilter("workTimeRepFilter", $scope.Filt);
+        console.log("findPage 2");
         $scope.findPage();
     };
     $scope.clearFilter = function (load) {
         console.log("clearFilter");
+        console.log(load);
         $scope.Filt = {
             stageZi: 15,
             availWork: true
         };
         console.log($scope.Filt);
+
         if (load) {
+            console.log("load ?");
+            console.log(load);
             $scope.filterWork();
         }
     }
@@ -72,12 +85,18 @@ angular.module('workTimeService').controller('workTimeRepController', function (
             console.log(result);
         });
 
-        $scope.addSort("releaseId");
+        $scope.addSortNotLoad ("releaseId");
         $scope.loadWorkTime();
     }
 
     let arrSort = [];
     $scope.addSort = function (elemSort) {
+        console.log("addSort");
+
+        $scope.addSortNotLoad(elemSort)
+        $scope.filterWork();
+    }
+    $scope.addSortNotLoad = function (elemSort) {
         console.log("addSort");
 
         let i = arrSort.indexOf(elemSort);
@@ -86,7 +105,6 @@ angular.module('workTimeService').controller('workTimeRepController', function (
             $scope.WorkSort = arrSort;
             console.log($scope.WorkSort);
         }
-        $scope.filterWork();
     }
     $scope.delSort = function (elemSort) {
         console.log("delSort");

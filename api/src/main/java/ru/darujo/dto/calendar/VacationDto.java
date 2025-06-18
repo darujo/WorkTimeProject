@@ -1,6 +1,6 @@
 package ru.darujo.dto.calendar;
 
-import ru.darujo.dto.printer.DataPrinter;
+import ru.darujo.assistant.printer.DataPrinter;
 import ru.darujo.dto.user.UserFio;
 
 import java.io.Serializable;

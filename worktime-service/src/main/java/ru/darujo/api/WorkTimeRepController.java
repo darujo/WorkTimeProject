@@ -5,7 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.workperiod.UserWorkDto;
-import ru.darujo.dto.parsing.DateParser;
+import ru.darujo.assistant.parsing.DateParser;
 import ru.darujo.dto.workrep.UserWorkPeriodDto;
 import ru.darujo.service.WorkTimeRepService;
 

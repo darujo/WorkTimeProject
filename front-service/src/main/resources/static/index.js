@@ -83,6 +83,10 @@
                 templateUrl: 'admin/user/user_password.html?ver=' + ver,
                 controller: 'userChangeController'
             })
+            .when('/work_graph', {
+                templateUrl: 'workGraph/workGraph.html?ver='.toLowerCase() + ver,
+                controller: 'workGraphController'
+            })
             .otherwise({
                 redirectTo: '/'
             });
@@ -355,6 +359,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                 ) {
                     console.log("int");
                     console.log(key);
+                    console.log(value);
                     filter[key] = parseInt(value);
                 } else if (key.toLowerCase().indexOf("date") !== -1) {
                     console.log(key);

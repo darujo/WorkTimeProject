@@ -6,8 +6,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 //@JsonIgnoreProperties(value = { "chequeLines" })
@@ -77,4 +75,36 @@ public class Work {
     @ManyToOne
     @JoinColumn(name="release_id")
     private Release release;
+
+    // ВЕНДЕРКА Факт
+    @Column(name = "analiseStartFact")
+    private Timestamp analiseStartFact;
+    @Column(name = "developStartFact")
+    private Timestamp developStartFact;
+    // Стабилизация прототипа Факт
+    @Column(name = "debugStartFact")
+    private Timestamp debugStartFact;
+    // Стабилизация релиза Факт
+    @Column(name = "releaseStartFact")
+    private Timestamp releaseStartFact;
+    // ОПЭ релиза Факт
+    @Column(name = "opeStartFact")
+    private Timestamp opeStartFact;
+
+    // ВЕНДЕРКА Факт
+    @Column(name = "analiseStartPlan")
+    private Timestamp analiseStartPlan;
+    //начало разработки план
+    @Column(name = "developStartPlan")
+    private Timestamp developStartPlan;
+    // Стабилизация релиза Факт
+    @Column(name = "debugStartPlan")
+    private Timestamp debugStartPlan;
+    // Стабилизация релиза plan
+    @Column(name = "releaseStartPlan")
+    private Timestamp releaseStartPlan;
+    // ОПЭ релиза Факт
+    @Column(name = "opeStartPlan")
+    private Timestamp opeStartPlan;
+
 }
