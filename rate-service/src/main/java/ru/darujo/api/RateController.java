@@ -21,6 +21,14 @@ public class RateController {
         return rateService.ComparisonStageCriteria(workId);
     }
 
+    @GetMapping("/compare/st")
+    public AttrDto<Float> ComparisonStageType(@RequestParam Long workId) {
+        return rateService.ComparisonStageType(workId);
+    }
+    @GetMapping("/compare/ct")
+    public AttrDto<Float> ComparisonCriteriaType(@RequestParam Long workId) {
+        return rateService.ComparisonCriteriaType(workId);
+    }
     @GetMapping("/time/all")
     public WorkStageDto AllTime(@RequestParam Long workId,
                                 @RequestParam (defaultValue = "false") boolean loadFact ) {

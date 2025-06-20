@@ -66,6 +66,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
 
     $scope.createWorkStage = function () {
         $scope.WorkStage = {
+            id: null,
             workId: WorkId,
             nikName: "",
             role: "",
@@ -120,6 +121,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
                     console.log(response);
                     $scope.showWorkStageAdd();
                     $scope.loadWorkStage();
+                    loadRateStatusS();
                 }, function errorCallback(response) {
                     sendSave = false;
                     console.log(response)
@@ -169,6 +171,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
 
     $scope.createWorkCriteria = function () {
         $scope.WorkCriteria = {
+            id: null,
             workId: WorkId,
             criteria: "",
             develop10: "",
@@ -220,6 +223,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
                     console.log(response);
                     $scope.showWorkCriteriaAdd();
                     $scope.loadWorkCriteria();
+                    loadRateStatusC();
                 }, function errorCallback(response) {
                     sendSaveCriteria = false;
                     console.log(response)
@@ -229,12 +233,114 @@ angular.module('workTimeService').controller('workRateController', function ($sc
                 });
         }
     };
+    // ----------------------------------------------------------------------------
+    $scope.showWorkTypeAdd = function () {
+        document.getElementById("WorkTypeAdd").style.display = "block";
+        document.getElementById("FormWorkType").style.display = "none";
+    };
+    let showWorkTypeEdit = function () {
+        document.getElementById("WorkTypeAdd").style.display = "none";
+        document.getElementById("FormWorkType").style.display = "block";
+    };
+    $scope.loadWorkType = function () {
+        console.log("loadWorkType");
+        if ($scope.load3) {
+            alert("Подождите обрабатывается предыдущий запрос")
+        } else {
+            $scope.load3 = true;
+            $scope.WorkTypeList = null;
+            $http({
+                url: constPatchWorkRate + "/type",
+                method: "get",
+                params: {
+                    workId: WorkId
+
+                }
+            }).then(function (response) {
+                $scope.load3 = false;
+                console.log(response.data);
+                $scope.WorkTypeList = response.data;
+            }, function errorCallback(response) {
+                $scope.load3 = false;
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                }
+            });
+        }
+    };
+
+    $scope.createWorkType = function () {
+        $scope.WorkType = {
+            id: null,
+            workId: WorkId,
+            type: "",
+            time: ""
+        }
+        showWorkTypeEdit();
+    }
+    $scope.editWorkType = function (workTypeId) {
+        $http.get(constPatchWorkRate + "/type/" + workTypeId)
+            .then(function (response) {
+                // WorkTimeIdEdit = response.data.id;
+                $scope.WorkType = response.data;
+                console.log($scope.WorkType);
+
+                showWorkTypeEdit();
+
+            }, function errorCallback(response) {
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                }
+            });
+    }
+    $scope.deleteWorkType = function (workTypeId) {
+        $http.delete(constPatchWorkRate + "/type/" + workTypeId)
+            .then(function (response) {
+                // WorkTimeIdEdit = response.data.id;
+                $scope.WorkType = response.data;
+                console.log($scope.WorkType);
+
+                $scope.showWorkTypeAdd();
+                $scope.loadWorkType();
+
+            }, function errorCallback(response) {
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                }
+            });
+    }
+    let sendSaveType = false;
+    $scope.saveWorkType = function () {
+        console.log()
+        console.log($scope.WorkType);
+        if (!sendSaveType) {
+            sendSaveType = true;
+            $http.post(constPatchWorkRate + "/type", $scope.WorkType)
+                .then(function (response) {
+                    sendSaveType = false;
+                    console.log(response);
+                    $scope.showWorkTypeAdd();
+                    $scope.loadWorkType();
+                    loadRateStatusT();
+                }, function errorCallback(response) {
+                    sendSaveType = false;
+                    console.log(response)
+                    if ($location.checkAuthorized(response)) {
+                        alert(response.data.message);
+                    }
+                });
+        }
+    };
+// ---------------------------------------------------------------------------------
+
     let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
     WorkId = paramsStr.get('workId');
     $scope.stageCreate = false;
     $scope.stageEdit = false;
     $scope.criteriaCreate = false;
     $scope.criteriaEdit = false;
+    $scope.typeCreate = false;
+    $scope.typeEdit = false;
     let checkRight = function (right, message, callBack) {
         // document.getElementById("ButtonSaveUp").style.display = "none";
         $scope.Resp = {message: null}
@@ -271,12 +377,37 @@ angular.module('workTimeService').controller('workRateController', function ($sc
     let callBackCriteriaEdit = function () {
         $scope.criteriaEdit = true;
     }
+    let callBackTypeCreate = function () {
+        $scope.typeCreate = true;
+    }
+    let callBackTypeEdit = function () {
+        $scope.typeEdit = true;
+    }
     checkRight("stageCreate", false, callBackStageCreate);
     checkRight("stageEdit", false, callBackStageEdit);
     checkRight("criteriaCreate", false, callBackCriteriaCreate);
     checkRight("criteriaEdit", false, callBackCriteriaEdit);
-    $scope.loadRateStatus = function () {
-        console.log("loadRateStatus");
+    checkRight("typeCreate", false, callBackTypeCreate);
+    checkRight("typeEdit", false, callBackTypeEdit);
+    let loadRateStatus = function (){
+        loadRateStatusST();
+        loadRateStatusCT();
+        loadRateStatusSC();
+    }
+    let loadRateStatusS = function (){
+        loadRateStatusST();
+        loadRateStatusSC();
+    }
+    let loadRateStatusC = function (){
+        loadRateStatusCT();
+        loadRateStatusSC();
+    }
+    let loadRateStatusT = function (){
+        loadRateStatusST();
+        loadRateStatusCT();
+    }
+    let loadRateStatusSC = function () {
+        console.log("loadRateStatus1");
         $http({
             url: constPatchWorkRate + "/rate/compare/sc",
             method: "get",
@@ -286,7 +417,43 @@ angular.module('workTimeService').controller('workRateController', function ($sc
             }
         }).then(function (response) {
             console.log(response.data);
-            $scope.RateStatus = response.data;
+            $scope.RateStatusSC = response.data;
+        }, function errorCallback(response) {
+            console.log(response)
+            if ($location.checkAuthorized(response)) {
+            }
+        });
+    };
+    let loadRateStatusST = function () {
+        console.log("loadRateStatus2");
+        $http({
+            url: constPatchWorkRate + "/rate/compare/st",
+            method: "get",
+            params: {
+                workId: WorkId
+
+            }
+        }).then(function (response) {
+            console.log(response.data);
+            $scope.RateStatusST = response.data;
+        }, function errorCallback(response) {
+            console.log(response)
+            if ($location.checkAuthorized(response)) {
+            }
+        });
+    };
+    let loadRateStatusCT = function () {
+        console.log("loadRateStatusCT");
+        $http({
+            url: constPatchWorkRate + "/rate/compare/ct",
+            method: "get",
+            params: {
+                workId: WorkId
+
+            }
+        }).then(function (response) {
+            console.log(response.data);
+            $scope.RateStatusCT = response.data;
         }, function errorCallback(response) {
             console.log(response)
             if ($location.checkAuthorized(response)) {
@@ -313,8 +480,10 @@ angular.module('workTimeService').controller('workRateController', function ($sc
     });
     $scope.showWorkStageAdd();
     $scope.showWorkCriteriaAdd();
+    $scope.showWorkTypeAdd();
     $scope.loadWork();
     $scope.loadWorkCriteria();
+    $scope.loadWorkType();
     $scope.loadWorkStage();
-    $scope.loadRateStatus();
+    loadRateStatus();
 })

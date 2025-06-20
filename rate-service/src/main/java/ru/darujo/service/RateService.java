@@ -8,6 +8,7 @@ import ru.darujo.dto.ratestage.WorkStageDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.model.WorkCriteria;
 import ru.darujo.model.WorkStage;
+import ru.darujo.model.WorkType;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -17,6 +18,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class RateService {
     WorkStageService workStageService;
     WorkCriteriaService workCriteriaService;
+    WorkTypeService workTypeService;
 
     @Autowired
     public void setWorkStageService(WorkStageService workStageService) {
@@ -28,25 +30,56 @@ public class RateService {
         this.workCriteriaService = workCriteriaService;
     }
 
-    public AttrDto<Float> ComparisonStageCriteria(Long workId) {
-        AtomicReference<Float> timeCriteria = new AtomicReference<>();
+    @Autowired
+    public void setWorkTypeService(WorkTypeService workTypeService) {
+        this.workTypeService = workTypeService;
+    }
+
+    public Float getTimeStage(Long workId){
         AtomicReference<Float> timeStage = new AtomicReference<>();
-        timeCriteria.set( 0f);
         timeStage.set( 0f);
-        List<WorkCriteria> workCriteriaList = workCriteriaService.findWorkCriteria(workId);
-        workCriteriaList.forEach(
-                workCriteria -> timeCriteria.set(
-                timeCriteria.get() + getTime(workCriteria.getDevelop10()) + getTime(workCriteria.getDevelop50()) + getTime(workCriteria.getDevelop100())));
         List<WorkStage> workStageList = workStageService.findWorkStage(workId, null);
         workStageList.forEach(
                 workStage -> timeStage.set(timeStage.get()
-                + getTime(workStage.getStage0())
-                + getTime(workStage.getStage1())
-                + getTime(workStage.getStage2())
-                + getTime(workStage.getStage3())
-                + getTime(workStage.getStage4())
-        ));
-        float time = timeCriteria.get() - timeStage.get();
+                        + getTime(workStage.getStage0())
+                        + getTime(workStage.getStage1())
+                        + getTime(workStage.getStage2())
+                        + getTime(workStage.getStage3())
+                        + getTime(workStage.getStage4())
+                ));
+        return timeStage.get();
+    }
+
+    public Float getTimeCriteria(Long workId){
+        AtomicReference<Float> timeCriteria = new AtomicReference<>();
+
+        timeCriteria.set( 0f);
+
+        List<WorkCriteria> workCriteriaList = workCriteriaService.findWorkCriteria(workId);
+        workCriteriaList.forEach(
+                workCriteria -> timeCriteria.set(
+                        timeCriteria.get() + getTime(workCriteria.getDevelop10()) + getTime(workCriteria.getDevelop50()) + getTime(workCriteria.getDevelop100())));
+       return timeCriteria.get();
+
+    }
+
+    public Float getTimeType(Long workId){
+        AtomicReference<Float> timeType = new AtomicReference<>();
+
+        timeType.set( 0f);
+
+        List<WorkType> workTypeList = workTypeService.findWorkCriteria(workId);
+        workTypeList.forEach(
+                workType -> timeType.set(
+                        timeType.get() + getTime(workType.getTime()) ));
+        return timeType.get();
+
+    }
+
+    public AttrDto<Float> ComparisonStageCriteria(Long workId) {
+        Float timeStage = getTimeStage(workId);
+        Float timeCriteria = getTimeCriteria(workId);
+        float time = timeCriteria - timeStage;
         if (time < 0) {
             return new AttrDto<>(time, "Плановой оценки больше чем критериев на " + time * -1);
         }
@@ -55,6 +88,33 @@ public class RateService {
         }
         return new AttrDto<>(time, "Критериев больше чем плановой оценки на " + time);
     }
+
+    public AttrDto<Float> ComparisonCriteriaType(Long workId) {
+        Float timeType = getTimeType(workId);
+        Float timeCriteria = getTimeCriteria(workId);
+        float time = timeCriteria - timeType;
+        if (time < 0) {
+            return new AttrDto<>(time, "Работ больше чем критериев на " + time * -1);
+        }
+        if (time == 0) {
+            return new AttrDto<>(time, "");
+        }
+        return new AttrDto<>(time, "Критериев больше чем работ на " + time);
+    }
+
+    public AttrDto<Float> ComparisonStageType(Long workId) {
+        Float timeStage = getTimeStage(workId);
+        Float timeType = getTimeType(workId);
+        float time = timeType - timeStage;
+        if (time < 0) {
+            return new AttrDto<>(time, "Плановой оценки больше чем работ на " + time * -1);
+        }
+        if (time == 0) {
+            return new AttrDto<>(time, "");
+        }
+        return new AttrDto<>(time, "Работ больше чем плановой оценки на " + time);
+    }
+
     private Float getTime(Float time){
         if (time == null){
             return 0f;

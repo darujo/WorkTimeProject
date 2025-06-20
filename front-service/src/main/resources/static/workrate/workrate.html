@@ -1,7 +1,9 @@
 <div id="WorkStageList" class="head_text_elem">
     <h1>{{ZI.codeSap}} </h1>
     <h1>{{ZI.codeZI}} {{ZI.name}} </h1>
-    <h1 ng-style="getStyle(RateStatus.code)">{{RateStatus.value}}</h1>
+    <h1 ng-style="getStyle(RateStatusSC.code)">{{RateStatusSC.value}}</h1>
+    <h1 ng-style="getStyle(RateStatusST.code)">{{RateStatusST.value}}</h1>
+    <h1 ng-style="getStyle(RateStatusCT.code)">{{RateStatusCT.value}}</h1>
     <div class="horiz">
         <h1>Плановая оценка</h1>
         <button type="button" class="head_button mar5" id="WorkPage" ng-click="workPage()">Назад</button>
@@ -20,8 +22,7 @@
             <td class="table_head1">Итого, ч/часов</td>
             <td class="table_head2" ng-if="stageEdit"></td>
             <td class="table_head1" ng-if="stageEdit"></td>
-            <td class="table_head1" ng-if="stageEdit"></td>
-
+            
         </tr>
         <tbody>
         <tr ng-repeat="work in WorkStageList">
@@ -139,7 +140,7 @@
         </tbody>
     </table>
     <div class="wait_1_2">
-        <img ng-if="load" src="../gif/wait1_2.gif" alt="Лучше ждите" width="300" height="300"/>
+        <img ng-if="load2" src="../gif/wait1_2.gif" alt="Лучше ждите" width="300" height="300"/>
     </div>
     <div id="WorkCriteriaAdd" >
         <button ng-if="criteriaCreate" type="button" class="head_button" id="AddWorkCriteria" ng-click="createWorkCriteria()">Добавить</button>
@@ -183,5 +184,61 @@
         </div>
         <button type="submit" class="button" id="ButtonSaveDownCriteria">Сохранить</button>
         <button type="button" ng-click="showWorkCriteriaAdd()" class="button">Вернуться к списку</button>
+    </form>
+</div>
+
+<div id="WorkTypeList" class="head_text_elem">
+    <div class="horiz">
+        <h1>Работы</h1>
+    </div>
+    <table>
+        <tr>
+            <td class="table_head2">Планируемые ТрЗ</td>
+            <td class="table_head1">Часы</td>
+            <td class="table_head2">Р/дн</td>
+            <td class="table_head2" ng-if="typeEdit"></td>
+            <td class="table_head1" ng-if="typeEdit"></td>
+
+        </tr>
+        <tbody>
+        <tr ng-repeat="work in WorkTypeList">
+            <td>{{work.type}}</td>
+            <td>{{work.time}}</td>
+            <td>{{work.time / 8}}</td>
+            <td ng-if="typeEdit">
+                <button ng-click="editWorkType(work.id)">Изменить</button>
+            </td>
+            <td ng-if="typeEdit">
+                <button ng-click="deleteWorkType(work.id)">Удалить</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="wait_1_2">
+        <img ng-if="load3" src="../gif/wait1_2.gif" alt="Лучше ждите" width="300" height="300"/>
+    </div>
+    <div id="WorkTypeAdd" >
+        <button ng-if="typeCreate" type="button" class="head_button" id="AddWorkType" ng-click="createWorkType()">Добавить</button>
+
+    </div>
+    <form id="FormWorkType" ng-submit="saveWorkType()">
+        <div class="horiz">
+
+            <div class="filter_block min_block200 mar5">
+                <label for="TypeType" class="p-form">Работа</label>
+                <input class="vvod" type="text" id="TypeType"
+                       ng-model="WorkType.type"/>
+
+            </div>
+            <div class="filter_block mar5">
+                <label for="Time" class="p-form">Часы</label>
+                <input class="vvod" type="number" inputmode="numeric" id="Time" step="any"
+                       ng-model="WorkType.time"/>
+
+            </div>
+
+        </div>
+        <button type="submit" class="button" id="ButtonSaveDownType">Сохранить</button>
+        <button type="button" ng-click="showWorkTypeAdd()" class="button">Вернуться к списку</button>
     </form>
 </div>

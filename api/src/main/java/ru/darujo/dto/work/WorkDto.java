@@ -50,6 +50,7 @@ public class WorkDto implements Serializable, WorkPlanTime {
     // Выдача релиза дата факт
     private Date issuingReleaseFact;
 
+    @SuppressWarnings("unused")
     public String getAnaliseEndPlan() {
         return dateToText(analiseEndPlan);
     }
@@ -105,22 +106,27 @@ public class WorkDto implements Serializable, WorkPlanTime {
         return description;
     }
 
+    @SuppressWarnings("unused")
     public Float getLaborDevelop() {
         return laborDevelop;
     }
 
+    @SuppressWarnings("unused")
     public Float getLaborDebug() {
         return laborDebug;
     }
 
+    @SuppressWarnings("unused")
     public Float getLaborRelease() {
         return laborRelease;
     }
 
+    @SuppressWarnings("unused")
     public Float getLaborOPE() {
         return laborOPE;
     }
 
+    @SuppressWarnings("unused")
     public Integer getStageZI() {
         return stageZI;
     }
@@ -129,38 +135,47 @@ public class WorkDto implements Serializable, WorkPlanTime {
         return release;
     }
 
+    @SuppressWarnings("unused")
     public String getDevelopEndFact() {
         return dateToText(developEndFact);
     }
 
+    @SuppressWarnings("unused")
     public String getDebugEndFact() {
         return dateToText(debugEndFact);
     }
 
+    @SuppressWarnings("unused")
     public String getReleaseEndFact() {
         return dateToText(releaseEndFact);
     }
 
+    @SuppressWarnings("unused")
     public String getOpeEndFact() {
         return dateToText(opeEndFact);
     }
 
+    @SuppressWarnings("unused")
     public String getAnaliseEndFact() {
         return dateToText(analiseEndFact);
     }
 
+    @SuppressWarnings("unused")
     public String getStartTaskPlan() {
         return dateToText(startTaskPlan);
     }
 
+    @SuppressWarnings("unused")
     public String getStartTaskFact() {
         return dateToText(startTaskFact);
     }
 
+    @SuppressWarnings("unused")
     public String getIssuingReleasePlan() {
         return dateToText(issuingReleasePlan);
     }
 
+    @SuppressWarnings("unused")
     public String getIssuingReleaseFact() {
         return dateToText(issuingReleaseFact);
     }
@@ -171,10 +186,12 @@ public class WorkDto implements Serializable, WorkPlanTime {
         return codeSap;
     }
 
+    @SuppressWarnings("unused")
     public String getCodeZI() {
         return codeZI;
     }
 
+    @SuppressWarnings("unused")
     public Float getLaborAnalise() {
         return laborAnalise;
     }

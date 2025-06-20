@@ -32,7 +32,7 @@ public class WorkCriteriaController {
 
     @DeleteMapping("/{id}")
     public void deleteWorkStage(@PathVariable long id) {
-        workCriteriaService.deleteWorkStage(id);
+        workCriteriaService.deleteWorkCriteria(id);
     }
 
     @GetMapping("")

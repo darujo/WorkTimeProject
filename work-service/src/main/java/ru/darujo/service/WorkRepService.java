@@ -422,13 +422,6 @@ public class WorkRepService {
         if (analiseStartFact == null || analiseEndFact == null) {
             return false;
         }
-        boolean a1 = analiseStartFact.compareTo(dayStart) <= 0;
-        boolean a2 = dayStart.compareTo(analiseEndFact) <= 0;
-        boolean a3 = analiseStartFact.compareTo(dayEnd) <= 0;
-        boolean a4 = dayEnd.compareTo(analiseEndFact) <= 0;
-        boolean a5 = dayStart.compareTo(analiseEndFact) <= 0;
-        boolean a6 = analiseEndFact.compareTo(dayEnd) <= 0;
-        System.out.println((a1 && a2) || (a3 && a4) || (a5 && a6));
         return (analiseStartFact.compareTo(dayStart) <= 0 && dayStart.compareTo(analiseEndFact) <= 0)
                 || (analiseStartFact.compareTo(dayEnd) <= 0 && dayEnd.compareTo(analiseEndFact) <= 0)
                 || (dayStart.compareTo(analiseEndFact) <= 0 && analiseEndFact.compareTo(dayEnd) <= 0);

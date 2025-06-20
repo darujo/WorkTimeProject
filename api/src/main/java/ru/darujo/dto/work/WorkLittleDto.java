@@ -23,6 +23,7 @@ public class WorkLittleDto implements Serializable {
         this.stageZI = stageZI;
     }
 
+    @SuppressWarnings("unused")
     public Integer getStageZI() {
         return stageZI;
     }

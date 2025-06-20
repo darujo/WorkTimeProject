@@ -30,7 +30,7 @@ public class WorkCriteriaService {
             throw new ResourceNotFoundException("Не могу найти привязку к ЗИ");
         }
         if (workCriteria.getCriteria() == null && workCriteria.getCriteria() < 1)  {
-            throw new ResourceNotFoundException("Не заполнено ФИО");
+            throw new ResourceNotFoundException("Не заполнено критерий");
         }
         Specification<WorkCriteria> specification = Specification.where(WorkCriteriaSpecifications.workIdEq(workCriteria.getWorkId()));
         specification = WorkCriteriaSpecifications.eq(specification,"criteria",workCriteria.getCriteria());
@@ -46,7 +46,7 @@ public class WorkCriteriaService {
         return workCriteriaRepository.save(workCriteria);
     }
 
-    public void deleteWorkStage(Long id) {
+    public void deleteWorkCriteria(Long id) {
         workCriteriaRepository.deleteById(id);
     }
 

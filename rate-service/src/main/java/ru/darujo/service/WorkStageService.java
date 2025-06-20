@@ -128,8 +128,9 @@ public class WorkStageService {
                 if (workStage != null) {
                         workStage.setStage0Fact(time);
                 } else {
-                    workStage = new WorkStageDto(-1L, nikName, -1, 0f, 0f, 0f, 0f, 0f, workId);
+                    workStage = new WorkStageDto(-1L, nikName, -1, null, null, null, null, null, workId);
                     workStage.setStage0Fact(time);
+                    updFio(workStage);
                     workStages.add(workStage);
                 }
             });
