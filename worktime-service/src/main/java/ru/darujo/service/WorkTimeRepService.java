@@ -79,12 +79,12 @@ public class WorkTimeRepService {
         List<WeekWorkDto> weekWorkDTOs;
         if (taskId != null) {
             weekWorkDTOs = new ArrayList<>();
-            weekWorkDTOs.add(new WeekWorkDto(null, null, 0f));
+            weekWorkDTOs.add(new WeekWorkDto(null, null, null,null));
         } else if (weekSplit) {
             weekWorkDTOs = calendarServiceIntegration.getWeekTime(dateStart, dateEnd);
         } else {
             weekWorkDTOs = new ArrayList<>();
-            weekWorkDTOs.add(new WeekWorkDto(dateStart, dateEnd, calendarServiceIntegration.getWorkTime(dateStart, dateEnd)));
+            weekWorkDTOs.add(new WeekWorkDto(dateStart, dateEnd, calendarServiceIntegration.getWorkTime(dateStart, dateEnd), null));
         }
         Map<Long, Integer> tasks = new HashMap<>();
         weekWorkDTOs
@@ -174,7 +174,7 @@ public class WorkTimeRepService {
             weekWorkDTOs = calendarServiceIntegration.getPeriodTime(dateStart, dateEnd, periodSplit);
         } else {
             weekWorkDTOs = new ArrayList<>();
-            weekWorkDTOs.add(new WeekWorkDto(dateStart, dateEnd, calendarServiceIntegration.getWorkTime(dateStart, dateEnd)));
+            weekWorkDTOs.add(new WeekWorkDto(dateStart, dateEnd, calendarServiceIntegration.getWorkTime(dateStart, dateEnd), null));
         }
         List<UserDto> userDTOs;
 
@@ -200,7 +200,7 @@ public class WorkTimeRepService {
                         WorkTimeDto workTimeDto = new WorkTimeDto();
                         workTimeDtoList.add(workTimeDto);
                         AtomicReference<Float> timeFactOne = new AtomicReference<>(0f);
-                        timePlan.set(timePlan.get() + weekWorkDto.getTime());
+
                         // добавим работы за период
                         workTimeService.findWorkTime(
                                         null,
@@ -223,13 +223,17 @@ public class WorkTimeRepService {
                         // добавим период и работы также устновим был ли отпуск
                         WorkPeriodDto workPeriodDto = new WorkPeriodDto(weekWorkDto, workTimeDtoList);
                         addVacation(user.getNikName(), workPeriodDto);
+                        if(workPeriodDto.getAllVacation() == null || !workPeriodDto.getAllVacation()) {
+                            timePlan.set(timePlan.get() + weekWorkDto.getTime());
+                        }
                         weekWorkPeriodDTOs.add(workPeriodDto);
                     });
             WorkTimeDto workTimeDto = new WorkTimeDto(null, null, null, null, null, timeFact + " из " + timePlan, null);
             List<WorkTimeDto> workTimeDTOs = new ArrayList<>();
             workTimeDTOs.add(workTimeDto);
             // Добавим итог
-            WorkPeriodDto workPeriodDto = new WorkPeriodDto(null, null, 8f, workTimeDTOs);
+            // TODO может зря убрал 8 часов
+            WorkPeriodDto workPeriodDto = new WorkPeriodDto(null, null, null, null, workTimeDTOs);
             weekWorkPeriodDTOs.add(workPeriodDto);
             UserWorkPeriodDto userWorkPeriodDto = new UserWorkPeriodDto(user.getNikName(), weekWorkPeriodDTOs);
             workTimeService.updFio(userWorkPeriodDto);
@@ -246,6 +250,7 @@ public class WorkTimeRepService {
             }
             if (vacationDTOs.size() == 1 && vacationDTOs.get(0).getDateStart().compareTo(workPeriodDto.getDayStart()) <= 0 && vacationDTOs.get(0).getDateEnd().compareTo(workPeriodDto.getDayEnd()) >= 0) {
                 workPeriodDto.setAllVacation(true);
+
             } else {
                 workPeriodDto.setShotVacation(true);
             }

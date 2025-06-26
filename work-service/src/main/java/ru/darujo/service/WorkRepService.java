@@ -349,7 +349,7 @@ public class WorkRepService {
         return new PageObjDto<>(workPage.getTotalPages(), workPage.getNumber(), workPage.getSize(), workFactDTOs);
     }
 
-    ColorRGB color;
+
 
     Map<Integer, ColorDto> colorDtoMap = new HashMap<>();
 
@@ -364,7 +364,7 @@ public class WorkRepService {
 
     }
 
-    public Timestamp getDatePluseDay(Timestamp date, Integer day) {
+    public Timestamp getDatePlusDay(Timestamp date, Integer day) {
         if (date == null) {
             return null;
         }
@@ -412,7 +412,7 @@ public class WorkRepService {
         if (isPeriodIntersect(work.getOpeStartPlan(), work.getOpeEndPlan(), dayStart, dayEnd)) {
             colorTypes.add("ope");
         }
-        if (isPeriodIntersect(getDatePluseDay(work.getOpeEndPlan(), 1), getDatePluseDay(work.getOpeEndPlan(), 15), dayStart, dayEnd)) {
+        if (isPeriodIntersect(getDatePlusDay(work.getOpeEndPlan(), 1), getDatePlusDay(work.getOpeEndPlan(), 15), dayStart, dayEnd)) {
             colorTypes.add("public");
         }
         return colorTypes;
@@ -426,7 +426,7 @@ public class WorkRepService {
                 || (analiseStartFact.compareTo(dayEnd) <= 0 && dayEnd.compareTo(analiseEndFact) <= 0)
                 || (dayStart.compareTo(analiseEndFact) <= 0 && analiseEndFact.compareTo(dayEnd) <= 0);
     }
-
+    ColorRGB color;
     private ColorDto getColor(List<String> types) {
         ColorDto colorDto = colorDtoMap.get(types.hashCode());
         if (colorDto != null) {

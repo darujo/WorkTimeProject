@@ -22,6 +22,9 @@ public abstract  class ServiceIntegration {
             if (stringBuilder.length() != 0) {
                 stringBuilder.append("&");
             }
+            else {
+                stringBuilder.append("?");
+            }
             stringBuilder.append(str).append("=").append(value);
         }
     }

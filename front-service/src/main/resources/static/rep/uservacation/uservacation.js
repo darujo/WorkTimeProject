@@ -1,15 +1,15 @@
 angular.module('workTimeService').controller('userVacationController', function ($scope, $http, $location) {
 
     const constPatchWork = window.location.origin + '/calendar-service/v1/vacation/report';
-    $scope.clearFilter =function (load){
+    $scope.clearFilter = function (load) {
         console.log("clearFilter");
-        $scope.Filt =  {
+        $scope.Filt = {
             dateStart: new Date(),
             dateEnd: new Date(),
             period: 2
         };
         console.log($scope.Filt);
-        if(load){
+        if (load) {
             $scope.filterWorkTime();
         }
     }
@@ -33,8 +33,7 @@ angular.module('workTimeService').controller('userVacationController', function 
         let Filter = $scope.Filt;
         if ($scope.load) {
             alert("Подождите обрабатывается предыдущий запрос")
-        }
-        else {
+        } else {
             $scope.load = true;
             $scope.UserPeriodList = null;
             $http({
@@ -68,13 +67,13 @@ angular.module('workTimeService').controller('userVacationController', function 
         $scope.findPage();
     };
     $scope.getStyle = function (time) {
-        if (time === 0 ) {
+        if (time === 0) {
             return {
                 'background-color': 'red',
                 'color': 'white'
             };
         } else {
-            if (time < 8 ) {
+            if (time < 8) {
                 return {
                     'background-color': 'yellow'
                 };
@@ -95,45 +94,58 @@ angular.module('workTimeService').controller('userVacationController', function 
             }
         }
     }
-    $scope.getStyleUserPeriod = function (work) {
-        let timePeriod = searchJson($scope.WeekWorkList,"period",work.period,"time");
-        return getStyleUserPeriod(work.time,timePeriod);
-    };
-    let getStyleUserPeriod = function (time,timePeriod) {
-        console.log("getStyleUserPeriod")
-        console.log(time)
-        console.log(timePeriod)
-        if (time === 0 && !($scope.Filt.period ===1
-                      || $scope.Filt.period ===2
-            || $scope.Filt.period ===5
-            || $scope.Filt.period ===8
-            || $scope.Filt.period ===11)) {
+    $scope.getStyleUserPeriod = function (color) {
+        if(typeof color.color !== "undefined") {
             return {
-                'background-color': 'red',
-                'color': 'red'
+                'background-color': color.color,
+                'color': color.color
             };
         }
-        else if (time < 0) {
-            return {
-                'background-color': 'red',
-                'color': 'red'
-            };
-        } else {
-            if (time < timePeriod ) {
-                return {
-                    'background-color': 'yellow'
-                };
-            } else {
-                return {'color': 'white'};
-            }
-        }
-    };
+        return {};
+    }
+    // $scope.getStyleUserPeriod = function (work) {
+    //     let timePeriod = searchJson($scope.WeekWorkList,"period",work.period,"time");
+    //     return getStyleUserPeriod(work.time,timePeriod);
+    // };
+    // let getStyleUserPeriod = function (time,timePeriod) {
+    //     // console.log("getStyleUserPeriod")
+    //     // console.log(time)
+    //     // console.log(timePeriod)
+    //     if (time === 0 && !($scope.Filt.period ===1
+    //                   || $scope.Filt.period ===2
+    //         || $scope.Filt.period ===5
+    //         || $scope.Filt.period ===8
+    //         || $scope.Filt.period ===11)) {
+    //         return {
+    //             'background-color': 'red',
+    //             'color': 'red'
+    //         };
+    //     }
+    //     else if (time < 0) {
+    //         return {
+    //             'background-color': 'red',
+    //             'color': 'red'
+    //         };
+    //     } else {
+    //         if (time < timePeriod ) {
+    //             return {
+    //                 'background-color': 'yellow'
+    //             };
+    //         } else {
+    //             return {'color': 'white'};
+    //         }
+    //     }
+    // };
     $scope.clearFilter(false);
-    $location.getUsers().then(function (result) {$scope.UserList = result;
-        console.log("result UserList"); console.log(result);
+    $location.getUsers().then(function (result) {
+        $scope.UserList = result;
+        console.log("result UserList");
+        console.log(result);
     });
-    $location.getRoles().then(function (result) {$scope.RoleList = result;
-        console.log("result RoleList"); console.log(result);
+    $location.getRoles().then(function (result) {
+        $scope.RoleList = result;
+        console.log("result RoleList");
+        console.log(result);
     });
     $scope.loadWorkTime();
 })

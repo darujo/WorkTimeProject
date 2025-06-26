@@ -32,7 +32,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "dateLe", dateLE);
         addTeg(stringBuilder, "dateGt", dateGT);
 
-        System.out.println("/rep/fact/time" + stringBuilder);
+
 
         try {
             return webClientWorkTime.get().uri("/rep/fact/time" + stringBuilder)
@@ -42,6 +42,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .bodyToMono(Float.class)
                     .block();
         } catch (RuntimeException ex) {
+            System.out.println("/rep/fact/time" + stringBuilder);
             throw new ResourceNotFoundException("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -60,6 +61,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .bodyToMono(ListString.class)
                     .block();
         } catch (RuntimeException ex) {
+            System.out.println("/rep/fact/user" + stringBuilder);
             throw new ResourceNotFoundException("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -101,6 +103,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .collectList()
                     .block();
         } catch (RuntimeException ex) {
+            System.out.println("/rep/fact/week" + stringBuilder);
             throw new ResourceNotFoundException("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -129,6 +132,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .collectList()
                     .block();
         } catch (RuntimeException ex) {
+            System.out.println("/rep/fact/week" + stringBuilder);
             throw new ResourceNotFoundException("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }

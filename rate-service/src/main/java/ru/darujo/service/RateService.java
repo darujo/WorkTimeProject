@@ -35,13 +35,13 @@ public class RateService {
         this.workTypeService = workTypeService;
     }
 
-    public Float getTimeStage(Long workId){
+    public Float getTimeStageNotAnalise(Long workId){
         AtomicReference<Float> timeStage = new AtomicReference<>();
         timeStage.set( 0f);
         List<WorkStage> workStageList = workStageService.findWorkStage(workId, null);
         workStageList.forEach(
                 workStage -> timeStage.set(timeStage.get()
-                        + getTime(workStage.getStage0())
+//                        + getTime(workStage.getStage0())
                         + getTime(workStage.getStage1())
                         + getTime(workStage.getStage2())
                         + getTime(workStage.getStage3())
@@ -49,6 +49,7 @@ public class RateService {
                 ));
         return timeStage.get();
     }
+
 
     public Float getTimeCriteria(Long workId){
         AtomicReference<Float> timeCriteria = new AtomicReference<>();
@@ -77,7 +78,7 @@ public class RateService {
     }
 
     public AttrDto<Float> ComparisonStageCriteria(Long workId) {
-        Float timeStage = getTimeStage(workId);
+        Float timeStage = getTimeStageNotAnalise(workId);
         Float timeCriteria = getTimeCriteria(workId);
         float time = timeCriteria - timeStage;
         if (time < 0) {
@@ -103,7 +104,7 @@ public class RateService {
     }
 
     public AttrDto<Float> ComparisonStageType(Long workId) {
-        Float timeStage = getTimeStage(workId);
+        Float timeStage = getTimeStageNotAnalise(workId);
         Float timeType = getTimeType(workId);
         float time = timeType - timeStage;
         if (time < 0) {

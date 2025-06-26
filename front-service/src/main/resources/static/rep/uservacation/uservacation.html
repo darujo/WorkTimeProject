@@ -72,8 +72,8 @@
                 <tbody>
                 <tr ng-repeat="user in UserPeriodList">
                     <td class="sticky-col first-col">{{user.lastName}} {{user.firstName}} {{user.patronymic}}</td>
-                    <td ng-repeat="work in user.weekWorkDtos" ng-style="getStyleUserPeriod(work)">
-                        {{work.time}}
+                    <td ng-repeat="work in user.weekWorkDtos" ng-style="getStyleUserPeriod(work.colorDto)">
+<!--                        {{work.time}}-->
 
                     </td>
                 </tr>

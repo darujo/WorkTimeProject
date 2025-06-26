@@ -1,10 +1,12 @@
 package ru.darujo.dto.workrep;
 
 import ru.darujo.dto.WorkTimeDto;
+import ru.darujo.dto.calendar.DayTypeDto;
 import ru.darujo.dto.calendar.WeekWorkDto;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.List;
 
 public class WorkPeriodDto extends WeekWorkDto implements Serializable {
@@ -17,11 +19,11 @@ public class WorkPeriodDto extends WeekWorkDto implements Serializable {
     }
 
     public WorkPeriodDto(WeekWorkDto weekWorkDto, List<WorkTimeDto> list) {
-        this(weekWorkDto.getDayStart(), weekWorkDto.getDayEnd(), weekWorkDto.getTime(), list);
+        this(weekWorkDto.getDayStart(), weekWorkDto.getDayEnd(), weekWorkDto.getTime(),weekWorkDto.getDayTypes() , list);
     }
 
-    public WorkPeriodDto(Timestamp dayStart, Timestamp dayEnd, Float time, List<WorkTimeDto> list) {
-        super(dayStart, dayEnd, time);
+    public WorkPeriodDto(Timestamp dayStart, Timestamp dayEnd, Float time, HashSet<DayTypeDto> dayTypes, List<WorkTimeDto> list) {
+        super(dayStart, dayEnd, time,dayTypes);
         this.list = list;
     }
 
@@ -47,6 +49,7 @@ public class WorkPeriodDto extends WeekWorkDto implements Serializable {
 
     public void setAllVacation(Boolean allVacation) {
         isAllVacation = allVacation;
+        super.setTime(0f);
     }
 
 

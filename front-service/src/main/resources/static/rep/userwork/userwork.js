@@ -84,10 +84,10 @@ angular.module('workTimeService').controller('userWorkController', function ($sc
         }
     };
     $scope.getStyleVacation = function (work) {
-        console.log("getStyleVacation")
-        console.log(work)
-        console.log(work.allVacation)
-        console.log(work.shotVacation)
+        // console.log("getStyleVacation")
+        // console.log(work)
+        // console.log(work.allVacation)
+        // console.log(work.shotVacation)
 
         if (typeof work.allVacation !== "undefined" && work.allVacation ) {
             return {

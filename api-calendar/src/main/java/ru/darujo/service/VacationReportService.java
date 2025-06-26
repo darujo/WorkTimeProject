@@ -3,6 +3,7 @@ package ru.darujo.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import ru.darujo.dto.calendar.DayTypeDto;
 import ru.darujo.dto.calendar.UserVacation;
 import ru.darujo.dto.calendar.UserVacationsDto;
 import ru.darujo.dto.calendar.WeekWorkDto;
@@ -67,24 +68,23 @@ public class VacationReportService {
             for (WeekWorkDto weekWorkDto : weekWorkUserList) {
                 LocalDate day = weekWorkDto.getDayStart().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().minusDays(1);
                 LocalDate dayEnd = weekWorkDto.getDayEnd().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                float timeAll = 0f;
+                float timeAll;
                 boolean flagDay = weekWorkDto.getDayStart().equals(weekWorkDto.getDayEnd());
+                timeAll = weekWorkDto.getTime();
                 while (day.compareTo(dayEnd) < 0) {
                     day = day.plusDays(1);
-                    float time = calendarService.getTimeDay(day);
-                    if (time > 0f || flagDay) {
-                        if (vacation == null || dayEndVacation == null || day.compareTo(dayEndVacation) > 0) {
-                            vacation = vacationService.findOneDateInVacation(userDto.getNikName(), day);
-                            if (vacation != null) {
-                                dayEndVacation = vacation.getDateEnd().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                            }
-                        }
+                    if (vacation == null || dayEndVacation == null || day.compareTo(dayEndVacation) > 0) {
+                        vacation = vacationService.findOneDateInVacation(userDto.getNikName(), day);
                         if (vacation != null) {
-
-                            time = flagDay ?  -1f : 0f;
-
+                            dayEndVacation = vacation.getDateEnd().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                         }
-                        timeAll = timeAll + time;
+                    }
+                    if (vacation != null) {
+                        float time = calendarService.getTimeDay(day);
+                        weekWorkDto.addDayType(DayTypeDto.VACATION);
+                        if (time > 0f) {
+                            timeAll = timeAll - time + (flagDay ? -1f : 0f);
+                        }
                     }
                 }
                 weekWorkDto.setTime(timeAll);

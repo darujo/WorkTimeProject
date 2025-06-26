@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.darujo.dto.calendar.DayDto;
 import ru.darujo.dto.calendar.WeekDto;
 import ru.darujo.dto.calendar.WeekWorkDto;
+import ru.darujo.dto.calendar.DayTypeDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.utils.calendar.ProductionCalendar;
 import ru.darujo.utils.calendar.structure.DateInfo;
@@ -236,6 +237,7 @@ public class CalendarService {
             Timestamp periodStart = null;
             Timestamp periodEnd = null;
             float time = 0f;
+            HashSet<DayTypeDto> dayTypes = new HashSet<>();
             for (int i = 0; i < periodDay; i++) {
 
                 date = date.plusDays(1);
@@ -245,11 +247,20 @@ public class CalendarService {
                 if (i == periodDay - 1) {
                     periodEnd = Timestamp.valueOf(date.atStartOfDay());
                 }
-                time = time + getTimeDay(date);
-
+                DateInfo dateInfo = productionCalendar.getDateInfo(date);
+                if(dateInfo.getType().equals(DayType.WEEK_END) ) {
+                    dayTypes.add(DayTypeDto.WEEK_END);
+                } else if(dateInfo.getType().equals(DayType.WORKDAY) ) {
+                    dayTypes.add(DayTypeDto.WORKDAY);
+                } else if(dateInfo.getType().equals(DayType.HOLIDAY) ) {
+                    dayTypes.add(DayTypeDto.HOLIDAY);
+                } else if(dateInfo.getType().equals(DayType.SHORTDAY) ) {
+                    dayTypes.add(DayTypeDto.SHORTDAY);
+                }
+                time = time + getTimeDay(dateInfo);
             }
             WeekWorkDto weekWorkDto = new WeekWorkDto(
-                    periodStart, periodEnd, time);
+                    periodStart, periodEnd, time, dayTypes);
             weekWorkDTOs.add(weekWorkDto);
         }
 
@@ -258,13 +269,17 @@ public class CalendarService {
 
     public float getTimeDay(LocalDate date) {
         DateInfo dateInfo = productionCalendar.getDateInfo(date);
+        return getTimeDay(dateInfo);
+    }
+    public float getTimeDay(DateInfo dateInfo) {
         if (dateInfo.getType() == DayType.SHORTDAY) {
-            return getDayTime(date) - 1;
+            return getDayTime(dateInfo.getDate()) - 1;
         } else if (dateInfo.getType() == DayType.WORKDAY) {
-            return getDayTime(date);
+            return getDayTime(dateInfo.getDate());
         }
         return 0f;
     }
+
 
     public Float getWorkTime(Date dateStart, Date dateEnd) {
         LocalDate dayStart = dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
