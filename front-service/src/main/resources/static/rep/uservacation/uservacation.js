@@ -95,7 +95,7 @@ angular.module('workTimeService').controller('userVacationController', function 
         }
     }
     $scope.getStyleUserPeriod = function (color) {
-        if(typeof color.color !== "undefined") {
+        if(typeof color !== "undefined" && typeof color.color !== "undefined") {
             return {
                 'background-color': color.color,
                 'color': color.color
@@ -103,49 +103,20 @@ angular.module('workTimeService').controller('userVacationController', function 
         }
         return {};
     }
-    // $scope.getStyleUserPeriod = function (work) {
-    //     let timePeriod = searchJson($scope.WeekWorkList,"period",work.period,"time");
-    //     return getStyleUserPeriod(work.time,timePeriod);
-    // };
-    // let getStyleUserPeriod = function (time,timePeriod) {
-    //     // console.log("getStyleUserPeriod")
-    //     // console.log(time)
-    //     // console.log(timePeriod)
-    //     if (time === 0 && !($scope.Filt.period ===1
-    //                   || $scope.Filt.period ===2
-    //         || $scope.Filt.period ===5
-    //         || $scope.Filt.period ===8
-    //         || $scope.Filt.period ===11)) {
-    //         return {
-    //             'background-color': 'red',
-    //             'color': 'red'
-    //         };
-    //     }
-    //     else if (time < 0) {
-    //         return {
-    //             'background-color': 'red',
-    //             'color': 'red'
-    //         };
-    //     } else {
-    //         if (time < timePeriod ) {
-    //             return {
-    //                 'background-color': 'yellow'
-    //             };
-    //         } else {
-    //             return {'color': 'white'};
-    //         }
-    //     }
-    // };
+
     $scope.clearFilter(false);
+
     $location.getUsers().then(function (result) {
         $scope.UserList = result;
         console.log("result UserList");
         console.log(result);
     });
+
     $location.getRoles().then(function (result) {
         $scope.RoleList = result;
         console.log("result RoleList");
         console.log(result);
     });
+
     $scope.loadWorkTime();
 })
