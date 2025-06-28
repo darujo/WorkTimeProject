@@ -63,7 +63,7 @@ public class WorkServiceIntegration extends ServiceIntegration{
             return webClientWork.get().uri("/refresh/" + workId + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundException("Задача c id = " + workId + " не найдена")))
+                            clientResponse -> Mono.error(new ResourceNotFoundException("ЗИ c id = " + workId + " не найдена")))
                     .bodyToMono(Boolean.class)
                     .block();
         }
