@@ -8,6 +8,7 @@
 		<module>api</module>
 		<module>calendar</module>
 		<module>api-integration</module>
+		<module>repository</module>
 		<module>api-calendar</module>
 		<module>auth-service</module>
 		<module>worktime-service</module>
@@ -23,7 +24,7 @@
 	<groupId>ru.darujo</groupId>
 	<artifactId>WorkTimeProject</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<description>work</description>
+	<description>repository</description>
 
 	<properties>
 		<java.version>17</java.version>

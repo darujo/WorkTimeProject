@@ -9,7 +9,7 @@ import ru.darujo.dto.workperiod.UserWorkDto;
 import ru.darujo.integration.WorkTimeServiceIntegration;
 import ru.darujo.model.Task;
 import ru.darujo.repository.TaskRepository;
-import ru.darujo.repository.specifications.TaskSpecifications;
+import ru.darujo.specifications.Specifications;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -68,7 +68,7 @@ public class TaskRepService {
 
     public Boolean getAvailTime(long workId) {
         Specification<Task> specification = Specification.where(null);
-        specification = specification.and(TaskSpecifications.workIdEQ(workId));
+        specification = Specifications.eq(specification,"workId",workId);
         List<Task> tasks = taskRepository.findAll(specification);
         if (tasks.size() == 0) {
             return false;

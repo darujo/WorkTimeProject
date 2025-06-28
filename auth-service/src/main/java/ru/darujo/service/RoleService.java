@@ -10,7 +10,7 @@ import ru.darujo.dto.user.RoleRightDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.model.Role;
 import ru.darujo.repository.RoleRepository;
-import ru.darujo.repository.specification.RoleSpecifications;
+import ru.darujo.specifications.Specifications;
 
 import javax.transaction.Transactional;
 import java.util.*;
@@ -91,15 +91,14 @@ public class RoleService {
 
     public Collection<Role> getRoleList(String code, String name) {
         Specification<Role> specification = Specification.where(null);
-        specification = RoleSpecifications.like(specification,"code",code);
-        specification = RoleSpecifications.like(specification,"name",name);
+        specification = Specifications.like(specification,"code",code);
+        specification = Specifications.like(specification,"name",name);
         return new ArrayList<>(roleRepository.findAll(specification, Sort.by("name")));
     }
 
     @Transactional
     public void deleteRole(long id) {
         Role role = roleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Группа не найдена"));
-
-        roleRepository.deleteById(id);
+        roleRepository.delete(role);
     }
 }

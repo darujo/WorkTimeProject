@@ -38,9 +38,8 @@ public class WorkServiceIntegration extends ServiceIntegration{
         }
     }
 
-    public MapStringFloat getWorkTimeStageFact(Long workId, String nikName ){
+    public MapStringFloat getWorkTimeStageFact(Long workId){
         StringBuilder stringBuilder = new StringBuilder();
-        addTeg(stringBuilder,"nikName",nikName);
         addTeg(stringBuilder,"workId",workId);
 
         try {

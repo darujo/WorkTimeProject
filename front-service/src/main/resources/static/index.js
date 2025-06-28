@@ -144,8 +144,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                 if (response.data.token) {
                     $http.defaults.headers.common.Authorization = 'Bearer ' + response.data.token;
                     $localStorage.authUser = {username: $scope.user.username, token: response.data.token};
-                    $scope.getUser();
-                    loadUsers();
+                    init();
 
                     $scope.user = {
                         username: null,
@@ -463,7 +462,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     let RoleList;
     let loadRoles = function () {
         console.log("Roles")
-
+        roleLoad = false;
         $http({
             url: constPatchRole,
             method: "get"
@@ -484,11 +483,11 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         });
 
     }
-    let releaseLoad = false;
+    let releaseLoad;
     let ReleaseList;
     let loadRelease = function () {
-        console.log("Release")
-
+        console.log("start loadRelease")
+        releaseLoad = false;
         $http({
             url: constPatchRelease,
             method: "get"
@@ -542,11 +541,15 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         $localStorage.UserSettingWorkTime = $scope.SettingUser;
     }
     $scope.SettingUser = $localStorage.UserSettingWorkTime;
-    if ($scope.isUserLoggedIn) {
+    let init = function () {
         loadRoles();
         loadUsers();
         loadRelease();
         $scope.getUser();
+
+    }
+    if ($scope.isUserLoggedIn) {
+        init();
     }
 
     console.log("loan index.js end");

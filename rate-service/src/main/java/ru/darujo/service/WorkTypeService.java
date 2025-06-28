@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.model.WorkType;
 import ru.darujo.repository.WorkTypeRepository;
-import ru.darujo.repository.specifications.WorkTypeSpecifications;
+import ru.darujo.specifications.Specifications;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,12 +29,9 @@ public class WorkTypeService {
         if (workType.getWorkId() == null) {
             throw new ResourceNotFoundException("Не могу найти привязку к ЗИ");
         }
-//        if (workType.getCriteria() == null && workType.getCriteria() < 1)  {
-//            throw new ResourceNotFoundException("Не заполнено ФИО");
-//        }
-        Specification<WorkType> specification = Specification.where(WorkTypeSpecifications.workIdEq(workType.getWorkId()));
-        specification = WorkTypeSpecifications.eqIgnoreCase(specification,"type",workType.getType());
-        specification = WorkTypeSpecifications.ne(specification,"id", workType.getId());
+        Specification<WorkType> specification = Specification.where(Specifications.eq(null,"workId",workType.getWorkId()));
+        specification = Specifications.eqIgnoreCase(specification,"type",workType.getType());
+        specification = Specifications.ne(specification,"id", workType.getId());
         WorkType workTypeFind = workTypeRepository.findOne(specification).orElse(null);
         if(workTypeFind != null){
             throw new ResourceNotFoundException("Уже есть запись с такой работой");
@@ -52,9 +49,7 @@ public class WorkTypeService {
 
 
     public List<WorkType> findWorkCriteria(Long workId) {
-        Specification<WorkType> specification = Specification.where(WorkTypeSpecifications.workIdEq(workId));
-
-
+        Specification<WorkType> specification = Specification.where(Specifications.eq(null, "workId", workId));
         return workTypeRepository.findAll(specification, Sort.by("workId").and(Sort.by("type")));
     }
 

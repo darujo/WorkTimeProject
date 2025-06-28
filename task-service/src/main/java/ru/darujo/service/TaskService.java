@@ -12,7 +12,7 @@ import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.integration.WorkServiceIntegration;
 import ru.darujo.model.Task;
 import ru.darujo.repository.TaskRepository;
-import ru.darujo.repository.specifications.TaskSpecifications;
+import ru.darujo.specifications.Specifications;
 
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
@@ -49,18 +49,18 @@ public class TaskService {
             }
         }
         if (task.getType().equals(1) || task.getType().equals(5) || task.getType().equals(4)) {
-            if (task.getWorkId() == null){
+            if (task.getWorkId() == null) {
                 throw new ResourceNotFoundException("Не выбрано ЗИ");
             }
             workServiceIntegration.getWorEditDto(task.getWorkId());
         }
-        if (task.getType() == 1 && (task.getCodeBTS() != null && !task.getCodeBTS().equals(""))){
+        if (task.getType() == 1 && (task.getCodeBTS() != null && !task.getCodeBTS().equals(""))) {
             task.setType(5);
         }
         task.setRefresh(new Timestamp(System.currentTimeMillis()));
         if (task.getId() != null) {
             Task taskSave = findById(task.getId()).orElseThrow(() -> new ResourceNotFoundException("Отмеченая работа не найден"));
-            if(task.getTimeCreate() == null && taskSave.getTimeCreate() != null){
+            if (task.getTimeCreate() == null && taskSave.getTimeCreate() != null) {
                 task.setTimeCreate(taskSave.getTimeCreate());
             }
         } else {
@@ -72,6 +72,7 @@ public class TaskService {
     public void deleteWorkTime(Long id) {
         taskRepository.deleteById(id);
     }
+
     public Iterable<Task> findTask(String nikName,
                                    String codeBTS,
                                    String codeDEVBO,
@@ -79,8 +80,8 @@ public class TaskService {
                                    Long workId,
                                    Integer type,
                                    Integer page,
-                                   Integer size){
-       return findTask(nikName,
+                                   Integer size) {
+        return findTask(nikName,
                 codeBTS,
                 codeDEVBO,
                 description,
@@ -100,18 +101,14 @@ public class TaskService {
                                    List<Long> listTaskId,
                                    Integer page,
                                    Integer size) {
-        Specification<Task> specification = Specification.where(TaskSpecifications.queryDistinctTrue());
-        specification = TaskSpecifications.in(specification,"id", listTaskId);
-        specification = TaskSpecifications.like("nikName", nikName, specification);
-        specification = TaskSpecifications.like("codeBTS", codeBTS, specification);
-        specification = TaskSpecifications.like("codeDEVBO", codeDEVBO, specification);
-        specification = TaskSpecifications.like("description", description, specification);
-        if (type != null) {
-            specification = specification.and(TaskSpecifications.typeEq(type));
-        }
-        if (workId != null) {
-            specification = specification.and(TaskSpecifications.workIdEQ(workId));
-        }
+        Specification<Task> specification = Specification.where(Specifications.queryDistinctTrue());
+        specification = Specifications.inLong(specification, "id", listTaskId);
+        specification = Specifications.like(specification,"nikName", nikName );
+        specification = Specifications.like(specification,"codeBTS", codeBTS);
+        specification = Specifications.like(specification,"codeDEVBO", codeDEVBO);
+        specification = Specifications.like(specification,"description", description);
+        specification = Specifications.eq(specification, "type", type);
+        specification = Specifications.eq(specification, "workId", workId);
         if (page != null) {
             return taskRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "refresh")));
         } else {
@@ -121,31 +118,32 @@ public class TaskService {
     }
 
 
-
     @Transactional
-    public boolean refreshTime(long id,Date date) {
+    public boolean refreshTime(long id, Date date) {
 
         Task task = findById(id).orElseThrow(() -> new ResourceNotFoundException("Отмеченая работа не найден"));
         task.setRefresh(new Timestamp(System.currentTimeMillis()));
         taskRepository.save(task);
-        boolean ok = workServiceIntegration.setWorkDate(task.getWorkId(),date);
+        boolean ok = workServiceIntegration.setWorkDate(task.getWorkId(), date);
         System.out.println("Обновили даты в ЗИ? " + ok);
         return true;
     }
-    public String taskCheck(TaskDto taskDto){
+
+    public String taskCheck(TaskDto taskDto) {
         String text = null;
-        if (taskDto.getWorkId() != null && taskDto.getType() == 1 && (taskDto.getCodeBTS() != null && !taskDto.getCodeBTS().equals(""))){
+        if (taskDto.getWorkId() != null && taskDto.getType() == 1 && (taskDto.getCodeBTS() != null && !taskDto.getCodeBTS().equals(""))) {
             text = "Тип задачи будет изменен на Запросы по ЗИ та как тип задачи ЗИ и по ней введен номер запроса";
         }
         String testAvail = taskCheckAvail(taskDto.getId(), taskDto.getWorkId(), taskDto.getCodeDEVBO(), taskDto.getCodeBTS());
-        if (text == null){
+        if (text == null) {
             return testAvail;
         }
-        if (testAvail == null){
+        if (testAvail == null) {
             return text;
         }
-        return  text + " " + testAvail;
+        return text + " " + testAvail;
     }
+
     public String taskCheckAvail(Long id, Long workId, String codeDEVBO, String codeBTS) {
 
         String text = checkAvail(id, workId, "codeBTS", codeBTS);
@@ -161,13 +159,11 @@ public class TaskService {
         Specification<Task> specification = Specification.where(null);
 
         if (value != null && !value.equals("")) {
-            specification = TaskSpecifications.like(dbField, value, specification);
-            if (id != null) {
-                specification = specification.and(TaskSpecifications.notEqual("id", id));
-            }
+            specification = Specifications.like(specification, dbField, value);
+            specification = Specifications.notEqual(specification,"id", id);
             Page<Task> page;
             if (workId != null) {
-                Specification<Task> specificationNotWork = specification.and(TaskSpecifications.notEqual("workId", workId));
+                Specification<Task> specificationNotWork = Specifications.notEqual(specification,"workId", workId);
                 page = taskRepository.findAll(specificationNotWork, PageRequest.of(0, 5));
                 if (page.getTotalElements() > 0) {
                     return "Уже есть с " + dbField + ": " + value + "  по другим ЗИ " + page.getTotalElements() + " записей";

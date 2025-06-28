@@ -18,7 +18,7 @@ import ru.darujo.integration.TaskServiceIntegration;
 import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.model.WorkTime;
 import ru.darujo.repository.WorkTimeRepository;
-import ru.darujo.repository.specifications.WorkTimeSpecifications;
+import ru.darujo.specifications.Specifications;
 
 import javax.transaction.Transactional;
 import java.util.*;
@@ -70,7 +70,7 @@ public class WorkTimeService {
         }
 
         Boolean ok;
-        if(workTime.getType() == 1  || workTime.getType() == 4) {
+        if (workTime.getType() == 1 || workTime.getType() == 4) {
             ok = taskServiceIntegration.setTaskRefreshTime(workTime.getTaskId(), workTime.getWorkDate());
         } else {
             ok = taskServiceIntegration.setTaskRefreshTime(workTime.getTaskId());
@@ -89,7 +89,7 @@ public class WorkTimeService {
         Specification<WorkTime> specification = Specification.where(null);
         Sort sort = null;
         if (taskId != null) {
-            specification = WorkTimeSpecifications.in(specification, "taskId", taskId);
+            specification = Specifications.in(specification, "taskId", taskId);
             if (taskId.length == 1) {
                 sort = Sort.by("taskId");
             }
@@ -97,7 +97,7 @@ public class WorkTimeService {
         if (nikName != null) {
             try {
                 List<String> users = Objects.requireNonNull(getUsers(nikName)).stream().map(UserDto::getNikName).collect(Collectors.toList());
-                specification = WorkTimeSpecifications.in(specification, "nikName", users);
+                specification = Specifications.in(specification, "nikName", users);
                 if (users.size() == 1) {
                     if (sort == null)
                         sort = Sort.by("nikName");
@@ -106,29 +106,16 @@ public class WorkTimeService {
                     }
                 }
 
-            }
-            catch (NullPointerException ex) {
+            } catch (NullPointerException ex) {
                 throw new ResourceNotFoundException("Нет пользователей с Ролью или Логином " + nikName);
             }
         }
-        if (dateLt != null) {
-            specification = specification.and(WorkTimeSpecifications.dateLt(dateLt));
-        }
-        if (dateLe != null) {
-            specification = specification.and(WorkTimeSpecifications.dateLe(dateLe));
-        }
-        if (dateGE != null) {
-            specification = specification.and(WorkTimeSpecifications.dateGE(dateGE));
-        }
-        if (dateGT != null) {
-            specification = specification.and(WorkTimeSpecifications.dateGT(dateGT));
-        }
-        if (type != null) {
-            specification = specification.and(WorkTimeSpecifications.typeEq(type));
-        }
-        if (comment != null && !comment.equals("")) {
-            specification = specification.and(WorkTimeSpecifications.like("comment", comment));
-        }
+        specification = Specifications.lt(specification, "workDate", dateLt);
+        specification = Specifications.le(specification, "workDate", dateLe);
+        specification = Specifications.ge(specification, "workDate", dateGE);
+        specification = Specifications.gt(specification, "workDate", dateGT);
+        specification = Specifications.eq(specification, "type", type);
+        specification = Specifications.like(specification, "comment", comment);
         if (sort == null)
             sort = Sort.by(Sort.Direction.DESC, "workDate");
         else {
@@ -142,7 +129,7 @@ public class WorkTimeService {
         }
     }
 
-    public Page<WorkTime> findWorkTimeTask(String taskDEVBO, String taskBts, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, String comment,Integer page, Integer size) {
+    public Page<WorkTime> findWorkTimeTask(String taskDEVBO, String taskBts, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, String comment, Integer page, Integer size) {
         Page<WorkTime> workTimes;
         List<Long> taskIdList = taskServiceIntegration.getTaskList(taskDEVBO, taskBts);
         if (taskIdList == null || taskIdList.size() == 0) {
@@ -239,7 +226,7 @@ public class WorkTimeService {
     }
 
     public Boolean getAvailTime(long taskId) {
-        Specification<WorkTime> specification = Specification.where(WorkTimeSpecifications.taskIdEQ(taskId));
+        Specification<WorkTime> specification = Specification.where(Specifications.eq(null,"taskId",taskId));
         return workTimeRepository.findAll(specification).size() > 0;
     }
 

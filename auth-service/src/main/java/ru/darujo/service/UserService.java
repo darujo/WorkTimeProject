@@ -15,7 +15,7 @@ import ru.darujo.dto.user.UserRoleDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.model.User;
 import ru.darujo.repository.UserRepository;
-import ru.darujo.repository.specification.UserSpecifications;
+import ru.darujo.specifications.Specifications;
 
 import javax.transaction.Transactional;
 import java.util.*;
@@ -100,14 +100,14 @@ public class UserService {
                                   String patronymic) {
         Specification<User> specification = Specification.where(null);
         if (role != null && !role.isEmpty()) {
-            specification = UserSpecifications.in(specification, "nikName", roleService.findByName(role).orElseThrow(() -> new UsernameNotFoundException("Роль не найдена " + role))
+            specification = Specifications.in(specification, "nikName", roleService.findByName(role).orElseThrow(() -> new UsernameNotFoundException("Роль не найдена " + role))
                     .getUsers()
                     .stream().map(User::getNikName).collect(Collectors.toList()));
         }
-        specification = UserSpecifications.like(specification, "nikName", nikName);
-        specification = UserSpecifications.like(specification, "lastName", lastName);
-        specification = UserSpecifications.like(specification, "firstName", firstName);
-        specification = UserSpecifications.like(specification, "patronymic", patronymic);
+        specification = Specifications.like(specification, "nikName", nikName);
+        specification = Specifications.like(specification, "lastName", lastName);
+        specification = Specifications.like(specification, "firstName", firstName);
+        specification = Specifications.like(specification, "patronymic", patronymic);
         Sort sort = Sort.by("lastName")
                 .and(Sort.by("firstName"));
         Page<User> userPage;
@@ -168,7 +168,6 @@ public class UserService {
         user.setPassword(hashPassword(passwordNew));
         user.setPasswordChange(false);
         user = saveUser(user);
-
         return user != null;
     }
 

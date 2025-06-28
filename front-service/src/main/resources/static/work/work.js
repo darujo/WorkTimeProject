@@ -290,7 +290,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
     }
     $scope.releaseOption = function (release) {
         // console.log(release)
-        console.log(typeof release !== "undefined" && release.issuingReleaseFact !== "undefined" && release.issuingReleaseFact !== null)
+        // console.log(typeof release !== "undefined" && release.issuingReleaseFact !== "undefined" && release.issuingReleaseFact !== null)
         if (typeof release !== "undefined" && typeof release.issuingReleaseFact !== "undefined" && release.issuingReleaseFact !== null) {
             return "disabled";
         }

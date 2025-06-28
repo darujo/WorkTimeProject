@@ -13,7 +13,7 @@ import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.integration.WorkServiceIntegration;
 import ru.darujo.model.WorkStage;
 import ru.darujo.repository.WorkStageRepository;
-import ru.darujo.repository.specifications.WorkStageSpecifications;
+import ru.darujo.specifications.Specifications;
 
 import javax.transaction.Transactional;
 import java.util.*;
@@ -62,10 +62,10 @@ public class WorkStageService {
     }
 
     private void checkAvailUser(WorkStage workStage) {
-        Specification<WorkStage> specification = WorkStageSpecifications.eq(Specification.where(null),"workId",workStage.getWorkId());
-        specification = WorkStageSpecifications.eq(specification,"nikName",workStage.getNikName());
-        specification = WorkStageSpecifications.eq(specification,"role",workStage.getRole());
-        specification = WorkStageSpecifications.ne(specification,"id",workStage.getId());
+        Specification<WorkStage> specification = Specifications.eq(null, "workId", workStage.getWorkId());
+        specification = Specifications.eq(specification, "nikName", workStage.getNikName());
+        specification = Specifications.eq(specification, "role", workStage.getRole());
+        specification = Specifications.ne(specification, "id", workStage.getId());
         WorkStage workStageFind = workStageRepository.findOne(specification).orElse(null);
         if (workStageFind != null) {
             throw new ResourceNotFoundException("Уже есть запись с таким ФИО и ролью");
@@ -84,9 +84,8 @@ public class WorkStageService {
 
 
     public List<WorkStage> findWorkStage(Long workId, Integer role) {
-        Specification<WorkStage> specification = Specification.where(WorkStageSpecifications.workIdEq(workId));
-        specification = WorkStageSpecifications.eq(specification,"role",role);
-
+        Specification<WorkStage> specification = Specification.where(Specifications.eq(null,"workId",workId));
+        specification = Specifications.eq(specification, "role", role);
         return workStageRepository.findAll(specification);
     }
 
@@ -110,23 +109,23 @@ public class WorkStageService {
         }
     }
 
-    private MapStringFloat getWorkTimeAnaliseFact(Long workId,String nikName) {
+    private MapStringFloat getWorkTimeAnaliseFact(Long workId) {
         try {
-            return workServiceIntegration.getWorkTimeStageFact(workId, nikName);
+            return workServiceIntegration.getWorkTimeStageFact(workId);
         } catch (RuntimeException ex) {
             return new MapStringFloat();
         }
     }
 
     public void updWorkStage(Long workId, List<WorkStageDto> workStages) {
-        MapStringFloat mapStringFloat = getWorkTimeAnaliseFact(workId,null);
+        MapStringFloat mapStringFloat = getWorkTimeAnaliseFact(workId);
         if (mapStringFloat.getList().size() != 0) {
             Map<String, WorkStageDto> workStageMap = new HashMap<>();
             workStages.forEach(workStage -> workStageMap.put(workStage.getNikName(), workStage));
             mapStringFloat.getList().forEach((nikName, time) -> {
                 WorkStageDto workStage = workStageMap.get(nikName);
                 if (workStage != null) {
-                        workStage.setStage0Fact(time);
+                    workStage.setStage0Fact(time);
                 } else {
                     workStage = new WorkStageDto(-1L, nikName, -1, null, null, null, null, null, workId);
                     workStage.setStage0Fact(time);
@@ -135,7 +134,6 @@ public class WorkStageService {
                 }
             });
         }
-
     }
 
     public List<WorkStage> findWorkStage(Long workId) {

@@ -16,7 +16,7 @@ import ru.darujo.model.Work;
 import ru.darujo.model.WorkLittle;
 import ru.darujo.repository.WorkLittleRepository;
 import ru.darujo.repository.WorkRepository;
-import ru.darujo.repository.specifications.WorkSpecifications;
+import ru.darujo.specifications.Specifications;
 
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
@@ -167,23 +167,23 @@ public class WorkService {
         if (sort != null && sort.length() > 8 && sort.startsWith("release.")) {
             specification = Specification.where(null);
         } else {
-            specification = Specification.where(WorkSpecifications.queryDistinctTrue());
+            specification = Specification.where(Specifications.queryDistinctTrue());
         }
-        specification = getWorkSpecificationLike("name", name, specification);
-        specification = getWorkSpecificationLike("codeZI", codeZi, specification);
-        specification = getWorkSpecificationLike("task", task, specification);
-        specification = WorkSpecifications.eq(specification, "release", releaseId);
-        specification = WorkSpecifications.eq(specification, "codeSap", codeSap);
+        specification = Specifications.like(specification, "name", name);
+        specification = Specifications.like(specification, "codeZI", codeZi);
+        specification = Specifications.like(specification, "task", task);
+        specification = Specifications.eq(specification, "release", releaseId);
+        specification = Specifications.eq(specification, "codeSap", codeSap);
 
         if (stageZiLe != null && stageZiLe.equals(stageZiGe)) {
-            specification = specification.and(WorkSpecifications.stageZiEq(stageZiLe));
+            specification = Specifications.eq(specification, "stageZI", stageZiLe);
 
         } else {
             if (stageZiLe != null) {
-                specification = specification.and(WorkSpecifications.stageZiLe(stageZiLe));
+                specification = Specifications.le(specification, "stageZI", stageZiLe);
             }
             if (stageZiGe != null) {
-                specification = specification.and(WorkSpecifications.stageZiGe(stageZiGe));
+                specification = Specifications.ge(specification, "stageZI", stageZiGe);
             }
         }
 
@@ -207,20 +207,6 @@ public class WorkService {
         return workPage;
     }
 
-    private Specification<Work> getWorkSpecificationLike(String field, String value, Specification<Work> specification) {
-        if (value != null && !value.equals("")) {
-            specification = specification.and(WorkSpecifications.like(field, value));
-        }
-        return specification;
-    }
-
-    private Specification<WorkLittle> getWorkLittleSpecificationLike(String field, String value, Specification<WorkLittle> specification) {
-        if (value != null && !value.equals("")) {
-            specification = specification.and(WorkSpecifications.likeLittle(field, value));
-        }
-        return specification;
-    }
-
     public Page<WorkLittle> findWorkLittle(Integer page,
                                            Integer size,
                                            String name,
@@ -235,19 +221,19 @@ public class WorkService {
         if (sort != null && sort.length() > 8 && sort.startsWith("release.")) {
             specification = Specification.where(null);
         } else {
-            specification = Specification.where(WorkSpecifications.queryDistinctTrueLittle());
+            specification = Specification.where(Specifications.queryDistinctTrue());
         }
-        specification = getWorkLittleSpecificationLike("name", name, specification);
-        specification = getWorkLittleSpecificationLike("codeZI", codeZi, specification);
-        specification = getWorkLittleSpecificationLike("task", task, specification);
-        specification = WorkSpecifications.eqLittle(specification, "release", releaseId);
-        specification = WorkSpecifications.eqLittle(specification, "codeSap", codeSap);
+        specification = Specifications.like(specification, "codeZI", codeZi);
+        specification = Specifications.like(specification, "name", name);
+        specification = Specifications.like(specification, "task", task);
+        specification = Specifications.eq(specification, "release", releaseId);
+        specification = Specifications.eq(specification, "codeSap", codeSap);
 
         if (stageZiLe != null) {
-            specification = specification.and(WorkSpecifications.workLittleStageZiLe(stageZiLe));
+            specification = Specifications.le(specification, "stageZI", stageZiLe);
         }
         if (stageZiGe != null) {
-            specification = specification.and(WorkSpecifications.workLittleStageZiGe(stageZiGe));
+            specification = Specifications.ge(specification, "stageZI", stageZiGe);
         }
         System.out.println("Page = " + page);
         Page<WorkLittle> workPage;
@@ -275,15 +261,11 @@ public class WorkService {
                 sortWork = sortWork.and(Sort.by(sort[i]));
             }
         }
-        specification = getWorkSpecificationLike("name", name, specification);
-        specification = WorkSpecifications.eq(specification, "release", release);
+        specification = Specifications.like(specification, "name", name);
+        specification = Specifications.eq(specification, "release", release);
 
-        if (stageZiGe != null) {
-            specification = specification.and(WorkSpecifications.stageZiGe(stageZiGe));
-        }
-        if (stageZiLe != null) {
-            specification = specification.and(WorkSpecifications.stageZiLe(stageZiLe));
-        }
+        specification = Specifications.ge(specification, "stageZI", stageZiGe);
+        specification = Specifications.le(specification, "stageZI", stageZiLe);
 
         if (sortWork == null) {
             works = workRepository.findAll(specification);
@@ -331,7 +313,7 @@ public class WorkService {
             work.setDevelopStartFact(date);
             save = true;
         }
-        if ( (work.getDebugStartFact() == null || work.getDebugStartFact().after(date))
+        if ((work.getDebugStartFact() == null || work.getDebugStartFact().after(date))
                 && work.getAnaliseEndFact() != null
                 && work.getAnaliseEndFact().before(date)
                 && (work.getDevelopEndFact() == null || work.getDevelopEndFact().before(date))) {
