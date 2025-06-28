@@ -237,7 +237,7 @@ public class CalendarService {
             Timestamp periodStart = null;
             Timestamp periodEnd = null;
             float time = 0f;
-            HashSet<DayTypeDto> dayTypes = new HashSet<>();
+            HashMap<DayTypeDto,Integer> dayTypes = new HashMap<>();
             for (int i = 0; i < periodDay; i++) {
 
                 date = date.plusDays(1);
@@ -249,13 +249,13 @@ public class CalendarService {
                 }
                 DateInfo dateInfo = productionCalendar.getDateInfo(date);
                 if(dateInfo.getType().equals(DayType.WEEK_END) ) {
-                    dayTypes.add(DayTypeDto.WEEK_END);
+                    addDayType(dayTypes, DayTypeDto.WEEK_END);
                 } else if(dateInfo.getType().equals(DayType.WORKDAY) ) {
-                    dayTypes.add(DayTypeDto.WORKDAY);
+                    addDayType(dayTypes, DayTypeDto.WORKDAY);
                 } else if(dateInfo.getType().equals(DayType.HOLIDAY) ) {
-                    dayTypes.add(DayTypeDto.HOLIDAY);
+                    addDayType(dayTypes, DayTypeDto.HOLIDAY);
                 } else if(dateInfo.getType().equals(DayType.SHORTDAY) ) {
-                    dayTypes.add(DayTypeDto.SHORTDAY);
+                    addDayType(dayTypes, DayTypeDto.SHORTDAY);
                 }
                 time = time + getTimeDay(dateInfo);
             }
@@ -265,6 +265,14 @@ public class CalendarService {
         }
 
         return weekWorkDTOs;
+    }
+    private void addDayType (HashMap<DayTypeDto,Integer> dayTypes, DayTypeDto dayType){
+        Integer day = dayTypes.get(dayType);
+        if(day == null){
+            dayTypes.put(dayType,1);
+        } else {
+            dayTypes.put(dayType,++day);
+        }
     }
 
     public float getTimeDay(LocalDate date) {
@@ -323,7 +331,7 @@ public class CalendarService {
         return  isHoliday(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
     }
 
-    private boolean isHoliday(LocalDate date) {
+    public boolean isHoliday(LocalDate date) {
         return productionCalendar.isHoliday(date);
     }
 

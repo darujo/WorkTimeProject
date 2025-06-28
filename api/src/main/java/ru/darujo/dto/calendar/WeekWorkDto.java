@@ -6,20 +6,29 @@ import ru.darujo.dto.ColorDto;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.HashMap;
 
 public class WeekWorkDto implements Serializable, Cloneable {
     public WeekWorkDto() {
     }
 
+    private final Integer HOLIDAY_RED = 188; //255; //178;
+    private final Integer HOLIDAY_GREEN = 143; //69; //34;
+    private final Integer HOLIDAY_BLUE = 143; //0; //34;
+    private final ColorRGB HOLIDAY_COLOR = new ColorRGB(HOLIDAY_RED, HOLIDAY_GREEN, HOLIDAY_BLUE);
+    private final Integer VACATION_RED = 165; // 240
+    private final Integer VACATION_GREEN = 42; // 128
+    private final Integer VACATION_BLUE = 42;  // 128
+    private final ColorRGB VACATION_COLOR = new ColorRGB(VACATION_RED, VACATION_GREEN, VACATION_BLUE);
     private Timestamp dayStart;
     private Timestamp dayEnd;
     private Float time;
-    private HashSet<DayTypeDto> dayTypes;
+    private HashMap<DayTypeDto, Integer> dayTypes;
 
 
-    public WeekWorkDto(Timestamp dayStart, Timestamp dayEnd, Float time, HashSet<DayTypeDto> dayTypes) {
+    public WeekWorkDto(Timestamp dayStart, Timestamp dayEnd, Float time, HashMap<DayTypeDto, Integer> dayTypes) {
         this.dayStart = dayStart;
         this.dayEnd = dayEnd;
         this.time = time;
@@ -43,7 +52,16 @@ public class WeekWorkDto implements Serializable, Cloneable {
     }
 
     public void addDayType(DayTypeDto dayType) {
-        dayTypes.add(dayType);
+        Integer day = dayTypes.get(dayType);
+        if (day == null) {
+            dayTypes.put(dayType, 1);
+        } else {
+            dayTypes.put(dayType, ++day);
+        }
+    }
+
+    public void deleteDayType(DayTypeDto dayType) {
+        dayTypes.remove(dayType);
     }
 
 
@@ -52,17 +70,43 @@ public class WeekWorkDto implements Serializable, Cloneable {
         if (dayTypes == null) {
             return null;
         }
-        if (dayTypes.contains(DayTypeDto.VACATION)) {
-            if (dayTypes.contains(DayTypeDto.HOLIDAY)) {
-                return new ColorRGB(178, 34, 34);
+        int countColor = 0;
+        ColorRGB colorRGB = null;
+        Integer count = dayTypes.get(DayTypeDto.VACATION);
+        if (count != null) {
+            colorRGB = new ColorRGB(VACATION_RED, VACATION_GREEN, VACATION_BLUE);
+            countColor++;
+            for (int i = 1; i < count - 1; i++) {
+                colorRGB.addColor(VACATION_COLOR);
+                countColor++;
+            }
+
+        }
+        count = dayTypes.get(DayTypeDto.HOLIDAY);
+        if (count != null) {
+            if (colorRGB == null) {
+                colorRGB = new ColorRGB(HOLIDAY_RED, HOLIDAY_GREEN, HOLIDAY_BLUE);
             } else {
-                return new ColorRGB(240, 128, 128);
+                colorRGB.addColor(HOLIDAY_COLOR);
+            }
+            countColor++;
+            for (int i = 1; i < count - 1; i++) {
+                colorRGB.addColor(HOLIDAY_COLOR);
+                countColor++;
             }
         }
-        return null;
+        if (colorRGB != null) {
+            long days = Duration.between(dayStart.toLocalDateTime(), dayEnd.toLocalDateTime()).toDays() + 1;
+            ColorRGB withe = new ColorRGB(255, 255, 255);
+            for (long i = 1; i < days - countColor; i++) {
+                colorRGB.addColor(withe);
+            }
+
+        }
+        return colorRGB;
     }
 
-    public HashSet<DayTypeDto> getDayTypes() {
+    public HashMap<DayTypeDto, Integer> getDayTypes() {
         return dayTypes;
     }
 
@@ -92,7 +136,7 @@ public class WeekWorkDto implements Serializable, Cloneable {
     public Object clone() {
         try {
             WeekWorkDto weekWorkDto = (WeekWorkDto) super.clone();
-            weekWorkDto.dayTypes = new HashSet<>(weekWorkDto.dayTypes);
+            weekWorkDto.dayTypes = new HashMap<>(weekWorkDto.dayTypes);
 
             return weekWorkDto;
         } catch (CloneNotSupportedException e) {

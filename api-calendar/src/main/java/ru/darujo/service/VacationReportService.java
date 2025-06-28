@@ -71,6 +71,7 @@ public class VacationReportService {
                 float timeAll;
                 boolean flagDay = weekWorkDto.getDayStart().equals(weekWorkDto.getDayEnd());
                 timeAll = weekWorkDto.getTime();
+                weekWorkDto.deleteDayType(DayTypeDto.HOLIDAY);
                 while (day.compareTo(dayEnd) < 0) {
                     day = day.plusDays(1);
                     if (vacation == null || dayEndVacation == null || day.compareTo(dayEndVacation) > 0) {
@@ -81,7 +82,11 @@ public class VacationReportService {
                     }
                     if (vacation != null) {
                         float time = calendarService.getTimeDay(day);
-                        weekWorkDto.addDayType(DayTypeDto.VACATION);
+                        if (!calendarService.isHoliday(day)) {
+                            weekWorkDto.addDayType(DayTypeDto.VACATION);
+                        } else {
+                            weekWorkDto.addDayType(DayTypeDto.HOLIDAY);
+                        }
                         if (time > 0f) {
                             timeAll = timeAll - time + (flagDay ? -1f : 0f);
                         }
