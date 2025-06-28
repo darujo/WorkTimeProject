@@ -49,7 +49,7 @@ public class WeekWorkDto implements Serializable, Cloneable {
 
     @SuppressWarnings("unused")
     public ColorDto getColorDto() {
-        if(dayTypes == null){
+        if (dayTypes == null) {
             return null;
         }
         if (dayTypes.contains(DayTypeDto.VACATION)) {
@@ -92,7 +92,8 @@ public class WeekWorkDto implements Serializable, Cloneable {
     public Object clone() {
         try {
             WeekWorkDto weekWorkDto = (WeekWorkDto) super.clone();
-            weekWorkDto.dayTypes = (HashSet<DayTypeDto>)  weekWorkDto.dayTypes.clone();
+            weekWorkDto.dayTypes = new HashSet<>(weekWorkDto.dayTypes);
+
             return weekWorkDto;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
