@@ -118,5 +118,9 @@ angular.module('workTimeService').controller('userVacationController', function 
         console.log(result);
     });
 
+    $scope.backUser = function (){
+        $location.path('/user' );
+
+    }
     $scope.loadWorkTime();
 })

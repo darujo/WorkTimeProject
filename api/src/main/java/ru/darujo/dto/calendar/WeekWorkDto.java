@@ -49,6 +49,9 @@ public class WeekWorkDto implements Serializable, Cloneable {
 
     @SuppressWarnings("unused")
     public ColorDto getColorDto() {
+        if(dayTypes == null){
+            return null;
+        }
         if (dayTypes.contains(DayTypeDto.VACATION)) {
             if (dayTypes.contains(DayTypeDto.HOLIDAY)) {
                 return new ColorRGB(178, 34, 34);

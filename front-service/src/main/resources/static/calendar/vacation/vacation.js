@@ -181,6 +181,12 @@ angular.module('workTimeService').controller('vacationController', function ($sc
         console.log("result UserList");
         console.log(result);
     });
+
+    $scope.backUser = function (){
+        $location.path('/user' );
+
+    }
+
     console.log("Start");
     showList();
     console.log("Show ok");

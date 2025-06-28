@@ -496,8 +496,12 @@ TD {
     left: 214px;
 }
 
-.wait_1_2{
+.wait_1_2 {
     margin-left: auto;
     margin-right: auto;
     width: 300px;
+}
+.check_box_td{
+    height: 100%;
+    margin: 5px;
 }
