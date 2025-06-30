@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import ru.darujo.assistant.color.ColorRGB;
+import ru.darujo.assistant.helper.ColorHelper;
 import ru.darujo.convertor.WorkConvertor;
 import ru.darujo.dto.ColorDto;
 import ru.darujo.dto.MapStringFloat;
@@ -435,7 +436,7 @@ public class WorkRepService {
         color = null;
         types.forEach(type -> addColor(getColor(type)));
         if (color == null) {
-            return new ColorRGB(255, 255, 255);
+            return ColorHelper.WHITE;
         }
         color.save();
         return color;
@@ -444,24 +445,24 @@ public class WorkRepService {
 
     private ColorRGB getColor(String type) {
         if (type.equals("analise")) {
-            return new ColorRGB(244, 176, 132);
+            return ColorHelper.ANALISE;
         }
         if (type.equals("develop")) {
-            return new ColorRGB(255, 153, 255);
+            return ColorHelper.DEVELOP;
         }
         if (type.equals("debug")) {
-            return new ColorRGB(255, 255, 0);
+            return ColorHelper.DEBUG;
         }
         if (type.equals("release")) {
-            return new ColorRGB(255, 192, 0);
+            return ColorHelper.RELEASE;
         }
         if (type.equals("ope")) {
-            return new ColorRGB(0, 176, 240);
+            return ColorHelper.OPE;
         }
         if (type.equals("public")) {
-            return new ColorRGB(0, 176, 80);
+            return ColorHelper.PUBLIC;
         }
-        return new ColorRGB(255, 255, 255);
+        return ColorHelper.WHITE;
     }
 
     private void addColor(ColorRGB colorRGB) {
