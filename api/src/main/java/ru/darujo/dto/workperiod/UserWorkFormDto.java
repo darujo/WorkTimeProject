@@ -1,33 +1,37 @@
 package ru.darujo.dto.workperiod;
 
-import ru.darujo.dto.workperiod.UserWorkDto;
+import ru.darujo.assistant.helper.DataHelper;
 import ru.darujo.dto.ratestage.AttrDto;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class UserWorkFormDto extends UserWorkDto {
     public UserWorkFormDto() {
     }
+    @SuppressWarnings("unused")
     public String getDateStartStr() {
-        return dateToText(dateStart);
+        return DataHelper.dateToDDMMYYYY(dateStart);
     }
 
+    @SuppressWarnings("unused")
     public String getDateEndStr() {
-        return dateToText(dateEnd);
+        return DataHelper.dateToDDMMYYYY(dateEnd);
     }
 
 
+    @SuppressWarnings("unused")
     public List<AttrDto<Integer>> getWorkTimeAttr() {
         List<AttrDto<Integer>> attrDTOs = new ArrayList<>();
         workTime.forEach((type, time) -> attrDTOs.add(new AttrDto<>(type,time.toString())) );
         return attrDTOs;
     }
+    @SuppressWarnings("unused")
     public List<AttrDto<Integer>> getWorkTaskColAttr() {
         List<AttrDto<Integer>> attrDTOs = new ArrayList<>();
         workTask.forEach((type, listTask) -> attrDTOs.add(new AttrDto<>(type,String.valueOf(listTask.size()))) );
         return attrDTOs;
     }
+    @SuppressWarnings("unused")
     public List<AttrDto<Integer>> getWorkPercent() {
 
         List<AttrDto<Integer>> attrDTOs = new ArrayList<>();

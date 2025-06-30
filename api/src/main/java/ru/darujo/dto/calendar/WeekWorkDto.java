@@ -1,27 +1,20 @@
 package ru.darujo.dto.calendar;
 
 import ru.darujo.assistant.color.ColorRGB;
+import ru.darujo.assistant.helper.ColorHelper;
+import ru.darujo.assistant.helper.DataHelper;
 import ru.darujo.dto.ColorDto;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.Date;
 import java.util.HashMap;
 
 public class WeekWorkDto implements Serializable, Cloneable {
     public WeekWorkDto() {
     }
 
-    private final Integer HOLIDAY_RED = 188; //255; //178;
-    private final Integer HOLIDAY_GREEN = 143; //69; //34;
-    private final Integer HOLIDAY_BLUE = 143; //0; //34;
-    private final ColorRGB HOLIDAY_COLOR = new ColorRGB(HOLIDAY_RED, HOLIDAY_GREEN, HOLIDAY_BLUE);
-    private final Integer VACATION_RED = 165; // 240
-    private final Integer VACATION_GREEN = 42; // 128
-    private final Integer VACATION_BLUE = 42;  // 128
-    private final ColorRGB VACATION_COLOR = new ColorRGB(VACATION_RED, VACATION_GREEN, VACATION_BLUE);
+
     private Timestamp dayStart;
     private Timestamp dayEnd;
     private Float time;
@@ -74,10 +67,10 @@ public class WeekWorkDto implements Serializable, Cloneable {
         ColorRGB colorRGB = null;
         Integer count = dayTypes.get(DayTypeDto.VACATION);
         if (count != null) {
-            colorRGB = new ColorRGB(VACATION_RED, VACATION_GREEN, VACATION_BLUE);
+            colorRGB = new ColorRGB(ColorHelper.VACATION_RED, ColorHelper.VACATION_GREEN, ColorHelper.VACATION_BLUE);
             countColor++;
             for (int i = 1; i < count - 1; i++) {
-                colorRGB.addColor(VACATION_COLOR);
+                colorRGB.addColor(ColorHelper.VACATION_COLOR);
                 countColor++;
             }
 
@@ -85,21 +78,20 @@ public class WeekWorkDto implements Serializable, Cloneable {
         count = dayTypes.get(DayTypeDto.HOLIDAY);
         if (count != null) {
             if (colorRGB == null) {
-                colorRGB = new ColorRGB(HOLIDAY_RED, HOLIDAY_GREEN, HOLIDAY_BLUE);
+                colorRGB = new ColorRGB(ColorHelper.HOLIDAY_RED, ColorHelper.HOLIDAY_GREEN, ColorHelper.HOLIDAY_BLUE);
             } else {
-                colorRGB.addColor(HOLIDAY_COLOR);
+                colorRGB.addColor(ColorHelper.HOLIDAY_COLOR);
             }
             countColor++;
             for (int i = 1; i < count - 1; i++) {
-                colorRGB.addColor(HOLIDAY_COLOR);
+                colorRGB.addColor(ColorHelper.HOLIDAY_COLOR);
                 countColor++;
             }
         }
         if (colorRGB != null) {
             long days = Duration.between(dayStart.toLocalDateTime(), dayEnd.toLocalDateTime()).toDays() + 1;
-            ColorRGB withe = new ColorRGB(255, 255, 255);
             for (long i = 1; i < days - countColor; i++) {
-                colorRGB.addColor(withe);
+                colorRGB.addColor(ColorHelper.WHITE);
             }
 
         }
@@ -110,24 +102,16 @@ public class WeekWorkDto implements Serializable, Cloneable {
         return dayTypes;
     }
 
-    final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM");
 
-
-    protected String dateToText(Date date) {
-        if (date == null) {
-            return null;
-        }
-        return sdf.format(date);
-    }
 
     @SuppressWarnings("unused")
     public String getPeriod() {
         if (getDayStart() == null) {
             return "Итого";
         } else if (getDayEnd() == null || getDayStart().equals(getDayEnd())) {
-            return dateToText(getDayStart());
+            return DataHelper.dateToDDMM(getDayStart());
         } else {
-            return dateToText(getDayStart()) + " - " + dateToText(getDayEnd());
+            return DataHelper.dateToDDMM(getDayStart()) + " - " + DataHelper.dateToDDMM(getDayEnd());
         }
 
     }

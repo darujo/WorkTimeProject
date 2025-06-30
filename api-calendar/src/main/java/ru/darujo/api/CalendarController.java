@@ -3,9 +3,9 @@ package ru.darujo.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import ru.darujo.assistant.helper.DataHelper;
 import ru.darujo.dto.calendar.WeekDto;
 import ru.darujo.dto.calendar.WeekWorkDto;
-import ru.darujo.assistant.parsing.DateParser;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.service.CalendarService;
 
@@ -14,7 +14,7 @@ import java.util.*;
 
 @RestController()
 @RequestMapping("/v1/calendar")
-public class CalendarController extends DateParser {
+public class CalendarController {
     private CalendarService calendarService;
 
     @Autowired
@@ -41,8 +41,8 @@ public class CalendarController extends DateParser {
                                             @RequestParam(name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr,
                                             @RequestParam(required = false) String period
     ) {
-        Date dateStart = stringToDate(dateStartStr, "dateStart = ");
-        Date dateEnd = stringToDate(dateEndStr, "dateEnd = ");
+        Date dateStart = DataHelper.DTZToDate(dateStartStr, "dateStart = ");
+        Date dateEnd = DataHelper.DTZToDate(dateEndStr, "dateEnd = ");
 
 
         return calendarService.getPeriodTime(dateStart, dateEnd, period);
@@ -52,8 +52,8 @@ public class CalendarController extends DateParser {
     public Float WorkTime(@RequestParam(name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
                           @RequestParam(name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr
     ) {
-        Date dateStart = stringToDate(dateStartStr, "dateStart = ");
-        Date dateEnd = stringToDate(dateEndStr, "dateEnd = ");
+        Date dateStart = DataHelper.DTZToDate(dateStartStr, "dateStart = ");
+        Date dateEnd = DataHelper.DTZToDate(dateEndStr, "dateEnd = ");
 
 
         return calendarService.getWorkTime(dateStart, dateEnd);

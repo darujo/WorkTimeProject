@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import ru.darujo.assistant.helper.DataHelper;
 import ru.darujo.convertor.WorkTimeConvertor;
 import ru.darujo.dto.WorkTimeDto;
-import ru.darujo.assistant.parsing.DateParser;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.model.WorkTime;
 import ru.darujo.service.WorkTimeService;
@@ -16,7 +16,7 @@ import java.util.*;
 
 @RestController()
 @RequestMapping("/v1/worktime")
-public class WorkTimeController extends DateParser {
+public class WorkTimeController {
     private WorkTimeService workTimeService;
 
     @Autowired
@@ -26,7 +26,7 @@ public class WorkTimeController extends DateParser {
 
     @GetMapping("/conv")
     public WorkTimeDto workConv() {
-        workTimeService.findWorkTime(null, null, null, null, null, null, null, null,null,null).forEach(workTime -> workTimeService.saveWorkTime(WorkTimeConvertor.getWorkTime(WorkTimeConvertor.getWorkTimeDto(workTime)), false));
+        workTimeService.findWorkTime(null, null, null, null, null, null, null, null, null, null).forEach(workTime -> workTimeService.saveWorkTime(WorkTimeConvertor.getWorkTime(WorkTimeConvertor.getWorkTimeDto(workTime)), false));
         return new WorkTimeDto();
     }
 
@@ -40,7 +40,7 @@ public class WorkTimeController extends DateParser {
                               @RequestHeader(defaultValue = "false", name = "WORK_TIME_EDIT") boolean rightEdit,
                               @RequestHeader(defaultValue = "false", name = "WORK_TIME_CREATE") boolean rightCreate,
                               @RequestHeader(defaultValue = "false", name = "WORK_TIME_CHANGE_USER") boolean rightChangeUser) {
-       return workTimeService.checkRight(right,rightEdit, rightCreate, rightChangeUser);
+        return workTimeService.checkRight(right, rightEdit, rightCreate, rightChangeUser);
 
 
     }
@@ -65,24 +65,24 @@ public class WorkTimeController extends DateParser {
 
     @GetMapping("")
     public Page<WorkTimeDto> findWorkTime(@RequestHeader String username,
-                                              @RequestParam(required = false, name = "dateLt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLtStr,
-                                              @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
-                                              @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
-                                              @RequestParam(required = false, name = "dateGe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGeStr,
-                                              @RequestParam(required = false) Long[] taskId,
-                                              @RequestParam(required = false) String taskDEVBO,
-                                              @RequestParam(required = false) String taskBTS,
-                                              @RequestParam(required = false) String nikName,
-                                              @RequestParam(required = false) Integer type,
-                                              @RequestParam(required = false) String comment,
-                                              @RequestParam(defaultValue = "false") boolean currentUser,
-                                              @RequestParam(defaultValue = "1") Integer page,
-                                              @RequestParam(defaultValue = "10") Integer size) {
-        Date dateLt = stringToDate(dateLtStr, "dateLt = ");
-        Date dateLe = stringToDate(dateLeStr, "dateLe = ", false);
-        Date dateGt = stringToDate(dateGtStr, "dateGt = ", false);
-        Date dateGe = stringToDate(dateGeStr, "dateGe = ");
-        if ((nikName == null || nikName.equals(""))  && currentUser) {
+                                          @RequestParam(required = false, name = "dateLt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLtStr,
+                                          @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
+                                          @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
+                                          @RequestParam(required = false, name = "dateGe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGeStr,
+                                          @RequestParam(required = false) Long[] taskId,
+                                          @RequestParam(required = false) String taskDEVBO,
+                                          @RequestParam(required = false) String taskBTS,
+                                          @RequestParam(required = false) String nikName,
+                                          @RequestParam(required = false) Integer type,
+                                          @RequestParam(required = false) String comment,
+                                          @RequestParam(defaultValue = "false") boolean currentUser,
+                                          @RequestParam(defaultValue = "1") Integer page,
+                                          @RequestParam(defaultValue = "10") Integer size) {
+        Date dateLt = DataHelper.DTZToDate(dateLtStr, "dateLt = ");
+        Date dateLe = DataHelper.DTZToDate(dateLeStr, "dateLe = ", false);
+        Date dateGt = DataHelper.DTZToDate(dateGtStr, "dateGt = ", false);
+        Date dateGe = DataHelper.DTZToDate(dateGeStr, "dateGe = ");
+        if ((nikName == null || nikName.equals("")) && currentUser) {
             nikName = username;
         }
 

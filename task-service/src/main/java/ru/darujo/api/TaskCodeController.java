@@ -1,7 +1,6 @@
 package ru.darujo.api;
 
 import org.springframework.web.bind.annotation.*;
-import ru.darujo.assistant.parsing.DateParser;
 import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.service.CodeService;
 
@@ -9,7 +8,7 @@ import java.util.*;
 
 @RestController()
 @RequestMapping("/v1/task/code")
-public class TaskCodeController extends DateParser {
+public class TaskCodeController{
 
     @GetMapping("/type/{id}")
     public String getTaskType(@PathVariable Integer id) {

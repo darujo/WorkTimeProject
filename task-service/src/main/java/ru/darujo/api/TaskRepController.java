@@ -3,9 +3,9 @@ package ru.darujo.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import ru.darujo.assistant.helper.DataHelper;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.workperiod.UserWorkDto;
-import ru.darujo.assistant.parsing.DateParser;
 import ru.darujo.service.TaskRepService;
 
 import java.time.ZonedDateTime;
@@ -13,7 +13,7 @@ import java.util.*;
 
 @RestController()
 @RequestMapping("/v1/task/rep/fact")
-public class TaskRepController extends DateParser {
+public class TaskRepController {
     private TaskRepService taskRepService;
 
     @Autowired
@@ -31,8 +31,8 @@ public class TaskRepController extends DateParser {
                              @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
                              @RequestParam(required = false) String type
     ) {
-        Date dateLe = stringToDate(dateLeStr, "dateLe = ");
-        Date dateGt = stringToDate(dateGtStr, "dateGt = ");
+        Date dateLe = DataHelper.DTZToDate(dateLeStr, "dateLe = ");
+        Date dateGt = DataHelper.DTZToDate(dateGtStr, "dateGt = ");
         return taskRepService.getTaskTime(
                 nikName,
                 codeBTS,
@@ -48,7 +48,7 @@ public class TaskRepController extends DateParser {
     public ListString getFactUsers(@RequestParam(required = false) Long workId,
                                    @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr
                                    ) {
-        Date dateLe = stringToDate(dateLeStr, "dateLe = ");
+        Date dateLe = DataHelper.DTZToDate(dateLeStr, "dateLe = ");
 
         return taskRepService.getFactUsers(
                 workId,dateLe);

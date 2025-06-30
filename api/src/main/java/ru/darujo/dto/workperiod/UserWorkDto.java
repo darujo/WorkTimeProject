@@ -1,14 +1,12 @@
 package ru.darujo.dto.workperiod;
 
-import ru.darujo.assistant.printer.DataPrinter;
 import ru.darujo.dto.user.UserFio;
 import ru.darujo.service.CodeService;
 
 import java.util.*;
 
-public class UserWorkDto extends DataPrinter implements UserFio {
-    public UserWorkDto() {
-    }
+public class UserWorkDto implements UserFio {
+    public UserWorkDto() { }
     private Integer userCol;
     private String nikName;
     private String authorFirstName;
@@ -70,23 +68,28 @@ public class UserWorkDto extends DataPrinter implements UserFio {
         this.authorPatronymic = authorPatronymic;
     }
 
+    @SuppressWarnings("unused")
     public Integer getUserCol() {
         return userCol;
     }
 
+    @SuppressWarnings("unused")
     public String getAuthorFirstName() {
         return authorFirstName;
     }
 
+    @SuppressWarnings("unused")
     public String getAuthorLastName() {
         return authorLastName;
     }
 
+    @SuppressWarnings("unused")
     public String getAuthorPatronymic() {
         return authorPatronymic;
     }
 
 
+    @SuppressWarnings("unused")
     public Float getWorkPlan() {
         return workPlan;
     }
@@ -111,10 +114,12 @@ public class UserWorkDto extends DataPrinter implements UserFio {
         return dateEnd;
     }
 
+    @SuppressWarnings("unused")
     public Map<Integer, Float> getWorkTime() {
         return workTime;
     }
 
+    @SuppressWarnings("unused")
     public Map<Integer, Set<Long>> getWorkTask() {
         return workTask;
     }

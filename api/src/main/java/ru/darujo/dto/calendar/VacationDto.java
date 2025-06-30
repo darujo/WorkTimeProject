@@ -1,12 +1,13 @@
 package ru.darujo.dto.calendar;
 
-import ru.darujo.assistant.printer.DataPrinter;
+import ru.darujo.assistant.helper.DataHelper;
 import ru.darujo.dto.user.UserFio;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class VacationDto extends DataPrinter implements UserFio, Serializable {
+public class VacationDto implements UserFio, Serializable {
+    @SuppressWarnings("unused")
     public VacationDto() {
     }
 
@@ -43,12 +44,14 @@ public class VacationDto extends DataPrinter implements UserFio, Serializable {
         return dateEnd;
     }
 
+    @SuppressWarnings("unused")
     public String getDateStartStr() {
-        return dateToText(dateStart);
+        return DataHelper.dateToDDMMYYYY(dateStart);
     }
 
+    @SuppressWarnings("unused")
     public String getDateEndStr() {
-        return dateToText(dateEnd);
+        return DataHelper.dateToDDMMYYYY(dateEnd);
     }
 
     public Integer getDays() {
