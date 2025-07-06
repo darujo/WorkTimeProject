@@ -7,7 +7,7 @@ spring:
     banner-mode: off
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres?options=--search_path%3Dwork_time
+    url: jdbc:postgresql://localhost:5432/postgres?options=--search_path%3Dwork_time_project
     username: postgres
     password: 5397
 
@@ -16,7 +16,7 @@ spring:
     database: postgresql
     show-sql: true
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
 
   jackson:
     default-property-inclusion: non_absent
