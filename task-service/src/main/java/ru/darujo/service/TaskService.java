@@ -48,7 +48,7 @@ public class TaskService {
                 throw new ResourceNotFoundException("Не задан номер DEVBO и BTS");
             }
         }
-        if (task.getType().equals(1) || task.getType().equals(5) || task.getType().equals(4)) {
+        if (CodeService.getTaskTypeIsZi(task.getType())) {
             if (task.getWorkId() == null) {
                 throw new ResourceNotFoundException("Не выбрано ЗИ");
             }

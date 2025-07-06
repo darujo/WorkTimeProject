@@ -10,13 +10,13 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "workstage")
+@Table(name = "work_stage")
 public class WorkStage {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "nikName")
+    @Column(name = "nik_name")
     private String nikName;
     @Column(name = "role")
     private Integer role;
@@ -30,7 +30,7 @@ public class WorkStage {
     private Float stage3;
     @Column(name = "stage4")
     private Float stage4;
-    @Column(name = "workId")
+    @Column(name = "work_id")
     private Long workId;
 
 }

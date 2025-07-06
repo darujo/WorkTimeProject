@@ -1,12 +1,14 @@
 package ru.darujo.service;
 
+import ru.darujo.model.TaskType;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
 public class CodeService {
-    Map<String, Map<Integer, String>> codes = new HashMap<>();
+    Map<String, Map<Integer, TaskType>> codes = new HashMap<>();
 
     private CodeService() {
         initCode();
@@ -17,23 +19,28 @@ public class CodeService {
 
     }
 
-    private Map<Integer, String> newTaskTypes() {
-        Map<Integer, String> code = new LinkedHashMap<>();
-        code.put(1, "ЗИ");
-        code.put(5, "Запросы по ЗИ");
-        code.put(4, "Изменение по ТЗ");
-        code.put(2, "Вендорные запросы");
-        code.put(3, "Админ");
+    private Map<Integer, TaskType> newTaskTypes() {
+        Map<Integer, TaskType> code = new LinkedHashMap<>();
+        code.put(1, new TaskType("ЗИ",true));
+        code.put(5, new TaskType("Запросы по ЗИ",true));
+        code.put(4, new TaskType("Изменение по ТЗ",true));
+        code.put(2, new TaskType("Вендорные запросы",false));
+        code.put(3, new TaskType("Админ",false));
         return code;
     }
 
-    public static Map<Integer, String> getTaskTypes() {
+    public static Map<Integer, TaskType> getTaskTypes() {
         return getInstance().codes.get("taskType");
     }
 
     public static String getTaskType(Integer code) {
-        String codeName = getInstance().codes.get("taskType").get(code);
+        String codeName = getInstance().codes.get("taskType").get(code).getName();
         return Objects.requireNonNullElseGet(codeName, () -> "Неизвестный код " + code);
+    }
+
+    public static Boolean getTaskTypeIsZi(Integer code) {
+        Boolean isZi = getInstance().codes.get("taskType").get(code).isZi();
+        return Objects.requireNonNullElse(isZi, false);
     }
 
     private static CodeService obj;

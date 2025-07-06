@@ -18,7 +18,7 @@ public class Work {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     // Код SAP
-    @Column(name = "codeSap")
+    @Column(name = "code_sap")
     private Long codeSap;
     // Код Зи
     @Column(name = "codeZI")
@@ -28,33 +28,33 @@ public class Work {
     private String name;
     // Разработка прототипа Факт
     // ВЕНДЕРКА Факт
-    @Column(name = "analiseEndFact")
+    @Column(name = "analise_end_fact")
     private Timestamp analiseEndFact;
     // ВЕНДЕРКА Факт
-    @Column(name = "analiseEndPlan")
+    @Column(name = "analise_end_plan")
     private Timestamp analiseEndPlan;
-    @Column(name = "developEndFact")
+    @Column(name = "develop_end_fact")
     private Timestamp developEndFact;
     //начало разработки план
-    @Column(name = "developEndPlan")
+    @Column(name = "develop_end_plan")
     private Timestamp developEndPlan;
     // Стабилизация прототипа Факт
-    @Column(name = "debugEndFact")
+    @Column(name = "debug_end_fact")
     private Timestamp debugEndFact;
     // Стабилизация релиза Факт
-    @Column(name = "debugEndPlan")
+    @Column(name = "debug_end_plan")
     private Timestamp debugEndPlan;
     // Стабилизация релиза Факт
-    @Column(name = "releaseEndFact")
+    @Column(name = "release_end_fact")
     private Timestamp releaseEndFact;
     // Стабилизация релиза plan
-    @Column(name = "releaseEndPlan")
+    @Column(name = "release_end_plan")
     private Timestamp releaseEndPlan;
     // ОПЭ релиза Факт
-    @Column(name = "opeEndFact")
+    @Column(name = "ope_end_fact")
     private Timestamp opeEndFact;
     // ОПЭ релиза Факт
-    @Column(name = "opeEndPlan")
+    @Column(name = "ope_end_plan")
     private Timestamp opeEndPlan;
     // № внутренней задачи (DEVBO)
     @Column(name = "task")
@@ -63,10 +63,10 @@ public class Work {
     @Column(name = "description")
     private String description;
     // Дата начала доработки План
-    @Column(name = "startTaskPlan")
+    @Column(name = "start_task_plan")
     private Timestamp startTaskPlan;
     // Дата начала доработки Факт
-    @Column(name = "startTaskFact")
+    @Column(name = "start_task_fact")
     private Timestamp startTaskFact;
     // Текущий этап ЗИ
     @Column(name = "stageZI")
@@ -77,34 +77,34 @@ public class Work {
     private Release release;
 
     // ВЕНДЕРКА Факт
-    @Column(name = "analiseStartFact")
+    @Column(name = "analise_start_fact")
     private Timestamp analiseStartFact;
-    @Column(name = "developStartFact")
+    @Column(name = "develop_start_fact")
     private Timestamp developStartFact;
     // Стабилизация прототипа Факт
-    @Column(name = "debugStartFact")
+    @Column(name = "debug_start_fact")
     private Timestamp debugStartFact;
     // Стабилизация релиза Факт
-    @Column(name = "releaseStartFact")
+    @Column(name = "release_start_fact")
     private Timestamp releaseStartFact;
     // ОПЭ релиза Факт
-    @Column(name = "opeStartFact")
+    @Column(name = "ope_start_fact")
     private Timestamp opeStartFact;
 
     // ВЕНДЕРКА Факт
-    @Column(name = "analiseStartPlan")
+    @Column(name = "analise_start_plan")
     private Timestamp analiseStartPlan;
     //начало разработки план
-    @Column(name = "developStartPlan")
+    @Column(name = "develop_start_plan")
     private Timestamp developStartPlan;
     // Стабилизация релиза Факт
-    @Column(name = "debugStartPlan")
+    @Column(name = "debug_start_plan")
     private Timestamp debugStartPlan;
     // Стабилизация релиза plan
-    @Column(name = "releaseStartPlan")
+    @Column(name = "release_start_plan")
     private Timestamp releaseStartPlan;
     // ОПЭ релиза Факт
-    @Column(name = "opeStartPlan")
+    @Column(name = "ope_start_plan")
     private Timestamp opeStartPlan;
 
 }

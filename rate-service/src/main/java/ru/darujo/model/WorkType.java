@@ -10,7 +10,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "worktype")
+@Table(name = "work_type")
 public class WorkType {
     @Id
     @Column(name = "id")
@@ -20,7 +20,7 @@ public class WorkType {
     private String type;
     @Column(name = "time")
     private Float time;
-    @Column(name = "workId")
+    @Column(name = "work_id")
     private Long workId;
 
 }

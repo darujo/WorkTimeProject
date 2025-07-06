@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,7 +17,7 @@ public class WorkLittle {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     // Код SAP
-    @Column(name = "codeSap")
+    @Column(name = "code_sap")
     private Long codeSap;
     // Код Зи
     @Column(name = "codeZI")

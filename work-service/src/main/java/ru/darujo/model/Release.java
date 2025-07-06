@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,10 +21,10 @@ public class Release {
     @Column(name = "name")
     private String name;
     // Выдача релиза даты План
-    @Column(name = "issuingReleasePlan")
+    @Column(name = "issuing_release_plan")
     private Timestamp issuingReleasePlan;
     // Выдача релиза дата факт
-    @Column(name = "issuingReleaseFact")
+    @Column(name = "issuing_release_fact")
     private Timestamp issuingReleaseFact;
 
 }

@@ -18,7 +18,7 @@ public class TaskCodeController{
     @GetMapping("/type")
     public List<AttrDto<Integer>> getTaskTypes() {
         List<AttrDto<Integer>> attrDTOs = new ArrayList<>();
-        CodeService.getTaskTypes().forEach((type, name) -> attrDTOs.add(new AttrDto<>(type,name)));
+        CodeService.getTaskTypes().forEach((typeCode, type ) -> attrDTOs.add(new AttrDto<>(typeCode,type.getName())));
         return attrDTOs;
     }
 

@@ -6,25 +6,24 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Date;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "workTime")
+@Table(name = "work_time")
 public class  WorkTime {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "nikName")
+    @Column(name = "nik_name")
     private String nikName;
-    @Column(name = "workDate")
+    @Column(name = "work_date")
     private Timestamp workDate;
-    @Column(name = "workTime")
+    @Column(name = "work_time")
     private Float workTime;
-    @Column(name = "taskId")
+    @Column(name = "task_id")
     private Long taskId;
     @Column(name = "comment")
     private String comment;

@@ -8,6 +8,8 @@ server:
     keyAlias: tomcat
 
 spring:
+  main:
+    banner-mode: off
   application:
     name: gateway-service
   cloud:

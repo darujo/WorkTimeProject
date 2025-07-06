@@ -18,19 +18,19 @@ public class User {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "nikName", unique = true)
+    @Column(name = "nik_name", unique = true)
     private String nikName;
 
     @Column(name = "password")
     private String password;
 
-    @Column(name = "passwordChange")
+    @Column(name = "password_change")
     private Boolean passwordChange;
 
-    @Column(name = "firstName")
+    @Column(name = "first_name")
     private String firstName;
 
-    @Column(name = "lastName")
+    @Column(name = "last_name")
     private String lastName;
 
     @Column(name = "patronymic")

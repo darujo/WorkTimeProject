@@ -11,13 +11,13 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "Task")
+@Table(name = "task")
 public class Task {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "nikName")
+    @Column(name = "nik_name")
     private String nikName;
     // № запроса (BTS)
     @Column(name = "codeBTS")
@@ -32,10 +32,10 @@ public class Task {
     @Column(name = "type")
     private  Integer type;
     // № ЗИ (ZI)
-    @Column(name = "workId")
+    @Column(name = "work_id")
     private  Long workId;
     @Column(name = "refresh")
     private Timestamp refresh;
-    @Column(name = "timeCreate")
+    @Column(name = "time_create")
     private Timestamp timeCreate;
 }
