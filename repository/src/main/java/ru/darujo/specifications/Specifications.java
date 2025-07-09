@@ -63,7 +63,7 @@ public class Specifications {
     }
 
     private static <T> Specification<T> gt(String field, Date value) {
-        return ((root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get(field), value));
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.greaterThan(root.get(field), value));
 
     }
 
@@ -75,7 +75,7 @@ public class Specifications {
     }
 
     private static <T> Specification<T> lt(String field, Date value) {
-        return ((root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get(field), value));
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.lessThan(root.get(field), value));
     }
 
     public static <T> Specification<T> eq(Specification<T> specification, String field, Integer value) {
