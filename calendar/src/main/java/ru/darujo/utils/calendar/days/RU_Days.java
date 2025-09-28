@@ -22,7 +22,7 @@ public class RU_Days extends DefaultDays {
 
     @Override
     public void init() {
-        for (int year = 2025; year < 2032; year++) {
+        for (int year = 2025; year < 2050; year++) {
             add(year + "-01-01", DayType.HOLIDAY, NEW_YEAR);
             add(year + "-01-02", DayType.HOLIDAY, NEW_YEAR);
             add(year + "-01-03", DayType.HOLIDAY, NEW_YEAR);
@@ -46,11 +46,14 @@ public class RU_Days extends DefaultDays {
             setShortDay(year,12,31);
         }
         add("2025-05-02", DayType.WEEK_END,"с субботы 4 января на пятницу 2 мая");
-        add("2025-12-31", DayType.WEEK_END,"с воскресенья 5 января на среду 31 декабря;");
+        add("2025-12-31", DayType.WEEK_END,"с воскресенья 5 января на среду 31 декабря");
         add("2025-05-08", DayType.WEEK_END,"с воскресенья 23 февраля на четверг 8 мая");
         add("2025-06-13", DayType.WEEK_END,"с субботы 8 марта на пятницу 13 июня;");
         add("2025-11-01", DayType.WORKDAY,"с субботы 1 ноября на понедельник 3 ноября");
         add("2025-11-03", DayType.WEEK_END,"с субботы 1 ноября на понедельник 3 ноября");
+
+        add("2026-01-09", DayType.WEEK_END,"с субботы 3 января на пятницу 9 января");
+        add("2026-12-31", DayType.WEEK_END,"с воскресенья 4 января на четверг 31 декабря");
 
 
 
