@@ -149,10 +149,12 @@ angular.module('workTimeService').controller('workController', function ($scope,
             codeSap: "",
             WorkName: "",
             developEndFact: null,
+            issuePrototypeFact: null,
             debugEndFact: null,
             releaseEndFact: null,
             opeEndFact: null,
             analiseEndFact: null,
+            issuePrototypePlan: null,
             developEndPlan: null,
             debugEndPlan: null,
             releaseEndPlan: null,
@@ -206,11 +208,13 @@ angular.module('workTimeService').controller('workController', function ($scope,
 
 
                 $scope.Work.developEndFact = typeof response.data.developEndFact === "undefined" ? null : new Date(response.data.developEndFact);
+                $scope.Work.issuePrototypeFact = typeof response.data.issuePrototypeFact === "undefined" ? null : new Date(response.data.issuePrototypeFact);
                 $scope.Work.debugEndFact = typeof response.data.debugEndFact === "undefined" ? null : new Date(response.data.debugEndFact);
                 $scope.Work.releaseEndFact = typeof response.data.releaseEndFact === "undefined" ? null : new Date(response.data.releaseEndFact);
                 $scope.Work.opeEndFact = typeof response.data.opeEndFact === "undefined" ? null : new Date(response.data.opeEndFact);
                 $scope.Work.analiseEndFact = typeof response.data.analiseEndFact === "undefined" ? null : new Date(response.data.analiseEndFact);
                 $scope.Work.developEndPlan = typeof response.data.developEndPlan === "undefined" ? null : new Date(response.data.developEndPlan);
+                $scope.Work.issuePrototypePlan = typeof response.data.issuePrototypePlan === "undefined" ? null : new Date(response.data.issuePrototypePlan);
                 $scope.Work.debugEndPlan = typeof response.data.debugEndPlan === "undefined" ? null : new Date(response.data.debugEndPlan);
                 $scope.Work.releaseEndPlan = typeof response.data.releaseEndPlan === "undefined" ? null : new Date(response.data.releaseEndPlan);
                 $scope.Work.opeEndPlan = typeof response.data.opeEndPlan === "undefined" ? null : new Date(response.data.opeEndPlan);

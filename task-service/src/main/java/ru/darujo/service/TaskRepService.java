@@ -11,6 +11,7 @@ import ru.darujo.model.Task;
 import ru.darujo.repository.TaskRepository;
 import ru.darujo.specifications.Specifications;
 
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -82,5 +83,11 @@ public class TaskRepService {
 
         return workTimeServiceIntegration.getWorkUserOrZi(tasks.stream().map(Task::getId).collect(Collectors.toList()), nikName, addTotal, false, null, null);
 
+    }
+
+    public Timestamp getLastTime(long workId) {
+        List<Task> tasks = (List<Task>) taskService.findTask(null, null, null, null, workId, null, null, null);
+
+        return workTimeServiceIntegration.getLastTime(tasks.stream().map(Task::getId).collect(Collectors.toList()));
     }
 }

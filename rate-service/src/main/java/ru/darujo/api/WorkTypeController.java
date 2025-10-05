@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.WorkTypeConvertor;
 import ru.darujo.dto.ratestage.WorkTypeDto;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.service.WorkTypeService;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class WorkTypeController {
 
     @GetMapping("/{id}")
     public WorkTypeDto WorkCriteriaEdit(@PathVariable long id) {
-        return WorkTypeConvertor.getWorkTypeDto(workTypeService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Не найдена разбивка")));
+        return WorkTypeConvertor.getWorkTypeDto(workTypeService.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Не найдена разбивка")));
     }
 
     @PostMapping("")

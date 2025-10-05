@@ -8,7 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.TaskDto;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.WorkServiceIntegration;
 import ru.darujo.model.Task;
 import ru.darujo.repository.TaskRepository;
@@ -45,12 +45,12 @@ public class TaskService {
     public Task saveWorkTime(Task task) {
         if (task.getCodeDEVBO() == null || task.getCodeDEVBO().equals("") || task.getCodeDEVBO().equalsIgnoreCase("DeVbo-000")) {
             if (task.getCodeBTS() == null || task.getCodeBTS().equals("")) {
-                throw new ResourceNotFoundException("Не задан номер DEVBO и BTS");
+                throw new ResourceNotFoundRunTime("Не задан номер DEVBO и BTS");
             }
         }
         if (CodeService.getTaskTypeIsZi(task.getType())) {
             if (task.getWorkId() == null) {
-                throw new ResourceNotFoundException("Не выбрано ЗИ");
+                throw new ResourceNotFoundRunTime("Не выбрано ЗИ");
             }
             workServiceIntegration.getWorEditDto(task.getWorkId());
         }
@@ -59,7 +59,7 @@ public class TaskService {
         }
         task.setRefresh(new Timestamp(System.currentTimeMillis()));
         if (task.getId() != null) {
-            Task taskSave = findById(task.getId()).orElseThrow(() -> new ResourceNotFoundException("Отмеченая работа не найден"));
+            Task taskSave = findById(task.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Отмеченая работа не найден"));
             if (task.getTimeCreate() == null && taskSave.getTimeCreate() != null) {
                 task.setTimeCreate(taskSave.getTimeCreate());
             }
@@ -121,7 +121,7 @@ public class TaskService {
     @Transactional
     public boolean refreshTime(long id, Date date) {
 
-        Task task = findById(id).orElseThrow(() -> new ResourceNotFoundException("Отмеченая работа не найден"));
+        Task task = findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Отмеченая работа не найден"));
         task.setRefresh(new Timestamp(System.currentTimeMillis()));
         taskRepository.save(task);
         boolean ok = workServiceIntegration.setWorkDate(task.getWorkId(), date);

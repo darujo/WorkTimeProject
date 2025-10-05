@@ -9,7 +9,9 @@ import ru.darujo.dto.ListString;
 import ru.darujo.dto.TaskDto;
 import ru.darujo.dto.workperiod.UserWorkFormDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -39,18 +41,18 @@ public class TaskServiceIntegration extends ServiceIntegration {
             return webClientTask.get().uri("/rep/fact/time" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по затраченому времени")))
                     .bodyToMono(Float.class)
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календатрь (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календатрь (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 
     public ListString getListUser(Long workID,Date dateLe) {
         StringBuilder stringBuilder = new StringBuilder();
         if(workID == null){
-            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору не задан workId" );
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору не задан workId" );
         }
         addTeg(stringBuilder,"workId",workID);
         addTeg(stringBuilder,"dateLe",dateLe);
@@ -58,11 +60,11 @@ public class TaskServiceIntegration extends ServiceIntegration {
             return webClientTask.get().uri("/rep/fact/user" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по затраченому времени")))
                     .bodyToMono(ListString.class)
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 
@@ -70,7 +72,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
         return webClientTask.get().uri("/" + id)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                        clientResponse -> Mono.error(new ResourceNotFoundException("Задача c id = " + id + " не найдена")))
+                        clientResponse -> Mono.error(new ResourceNotFoundRunTime("Задача c id = " + id + " не найдена")))
                 .bodyToMono(TaskDto.class)
                 .block();
     }
@@ -84,7 +86,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
         return webClientTask.get().uri("/list/id" + stringBuilder)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                        clientResponse -> Mono.error(new ResourceNotFoundException("Задачи не найдены")))
+                        clientResponse -> Mono.error(new ResourceNotFoundRunTime("Задачи не найдены")))
                 .bodyToFlux(Long.class).collectList()
                 .block();
     }
@@ -94,7 +96,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
             return webClientTask.get().uri("/rep/fact/avail/" + id)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundException("Задача c id = " + id + " не найдена")))
+                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Задача c id = " + id + " не найдена")))
                     .bodyToMono(Boolean.class)
                     .block();
         } catch (RuntimeException ex) {
@@ -110,14 +112,14 @@ public class TaskServiceIntegration extends ServiceIntegration {
         return webClientTask.get().uri("/refresh/" + taskId + stringBuilder)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                        clientResponse -> Mono.error(new ResourceNotFoundException("Задача c id = " + taskId + " не найдена")))
+                        clientResponse -> Mono.error(new ResourceNotFoundRunTime("Задача c id = " + taskId + " не найдена")))
                 .bodyToMono(Boolean.class)
                 .block();
     }
     public List<UserWorkFormDto> getWorkUserOrZi(
             Long workId,
             String nikName,
-            Boolean addTotal) {
+            Boolean addTotal) throws ResourceNotFoundRunTime {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "workId", workId);
         addTeg(stringBuilder, "nikName", nikName);
@@ -127,12 +129,27 @@ public class TaskServiceIntegration extends ServiceIntegration {
             return webClientTask.get().uri("/rep/fact/week" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по затраченому времени")))
                     .bodyToFlux(UserWorkFormDto.class)
                     .collectList()
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
+    }
+    public Timestamp getLastTime(Long workId,Timestamp date) throws ResourceNotFoundException {
+        StringBuilder stringBuilder = new StringBuilder();
+        addTeg(stringBuilder, "workId", workId);
+        addTeg(stringBuilder, "dateLe", date);
+        try {
+        return webClientTask.get().uri("/rep/fact/lastTime" + stringBuilder)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Задача c id = " + workId + " не найдена")))
+                    .bodyToMono(Timestamp.class)
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundException( "Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 }

@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.WorkCriteria;
 import ru.darujo.repository.WorkCriteriaRepository;
 import ru.darujo.specifications.Specifications;
@@ -29,17 +29,17 @@ public class WorkCriteriaService {
 
     private void validWorkCriteria(WorkCriteria workCriteria) {
         if (workCriteria.getWorkId() == null) {
-            throw new ResourceNotFoundException("Не могу найти привязку к ЗИ");
+            throw new ResourceNotFoundRunTime("Не могу найти привязку к ЗИ");
         }
         if (workCriteria.getCriteria() == null && workCriteria.getCriteria() < 1) {
-            throw new ResourceNotFoundException("Не заполнено критерий");
+            throw new ResourceNotFoundRunTime("Не заполнено критерий");
         }
         Specification<WorkCriteria> specification = Specification.where(Specifications.eq(null, "workId", workCriteria.getWorkId()));
         specification = Specifications.eq(specification, "criteria", workCriteria.getCriteria());
         specification = Specifications.ne(specification, "id", workCriteria.getId());
         WorkCriteria workCriteriaFind = workCriteriaRepository.findOne(specification).orElse(null);
         if (workCriteriaFind != null) {
-            throw new ResourceNotFoundException("Уже есть запись с таким критерием");
+            throw new ResourceNotFoundRunTime("Уже есть запись с таким критерием");
         }
 
     }

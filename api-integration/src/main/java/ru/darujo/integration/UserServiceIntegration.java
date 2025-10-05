@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.darujo.dto.CustomPageImpl;
 import ru.darujo.dto.user.UserDto;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
 import java.util.List;
 import java.util.Objects;
@@ -41,16 +41,16 @@ public class UserServiceIntegration {
             return webClientUser.get().uri("/user" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные пользователю")))
+                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные пользователю")))
                     .bodyToMono(UserDto.class)
                     .block();
         } catch (RuntimeException ex) {
-            if (ex instanceof ResourceNotFoundException)
+            if (ex instanceof ResourceNotFoundRunTime)
             {
               throw ex;
             }
             else {
-                throw new ResourceNotFoundException("Что-то пошло не так не удалось получить пользователя (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+                throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить пользователя (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
             }
         }
     }
@@ -68,18 +68,18 @@ public class UserServiceIntegration {
             return Objects.requireNonNull(webClientUser.get().uri(stringBuilder.toString())
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные пользователю")))
+                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные пользователю")))
                     .bodyToMono(new ParameterizedTypeReference<CustomPageImpl<UserDto>>() {
                     })
                     .block()).getContent();
         }
         catch (RuntimeException ex) {
-            if (ex instanceof ResourceNotFoundException)
+            if (ex instanceof ResourceNotFoundRunTime)
             {
                 throw ex;
             }
             else {
-                throw new ResourceNotFoundException("Что-то пошло не так не удалось получить пользователя (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+                throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить пользователя (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
             }
         }
 

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.darujo.assistant.helper.DataHelper;
 import ru.darujo.convertor.WorkTimeConvertor;
 import ru.darujo.dto.WorkTimeDto;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.WorkTime;
 import ru.darujo.service.WorkTimeService;
 
@@ -32,7 +32,7 @@ public class WorkTimeController {
 
     @GetMapping("/{id}")
     public WorkTimeDto WorkTimeEdit(@PathVariable long id) {
-        return WorkTimeConvertor.getWorkTimeDto(workTimeService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Отмеченая работа не найден")));
+        return WorkTimeConvertor.getWorkTimeDto(workTimeService.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Отмеченая работа не найден")));
     }
 
     @GetMapping("/right/{right}")
@@ -50,7 +50,7 @@ public class WorkTimeController {
                                     @RequestBody WorkTimeDto workTimeDto,
                                     @RequestHeader(defaultValue = "false", name = "WORK_TIME_EDIT") boolean right) {
         if (!right) {
-            throw new ResourceNotFoundException("У вас нет права WORK_TIME_EDIT");
+            throw new ResourceNotFoundRunTime("У вас нет права WORK_TIME_EDIT");
         }
         if (workTimeDto.getNikName() == null || workTimeDto.getNikName().equals("")) {
             workTimeDto.setNikName(username);

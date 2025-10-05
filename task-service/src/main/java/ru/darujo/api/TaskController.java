@@ -10,7 +10,7 @@ import ru.darujo.dto.TaskDto;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.dto.work.WorkLittleDto;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.integration.WorkServiceIntegration;
 import ru.darujo.model.Task;
@@ -46,7 +46,7 @@ public class TaskController {
 
     @GetMapping("/{id}")
     public TaskDto TaskEdit(@PathVariable long id) {
-        return TaskConvertor.getTaskDto(taskService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Отмеченая работа не найден")));
+        return TaskConvertor.getTaskDto(taskService.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Отмеченая работа не найден")));
     }
 
     @GetMapping("/refresh/{id}")
@@ -65,12 +65,12 @@ public class TaskController {
         right = right.toLowerCase();
         if( right.equals("edit")){
             if(!rightEdit) {
-                throw new ResourceNotFoundException("У вас нет права на редактирование TASK_EDIT");
+                throw new ResourceNotFoundRunTime("У вас нет права на редактирование TASK_EDIT");
             }
         }
         else if( right.equals("create")){
             if(!rightCreate) {
-                throw new ResourceNotFoundException("У вас нет права на редактирование TASK_CREATE");
+                throw new ResourceNotFoundRunTime("У вас нет права на редактирование TASK_CREATE");
             }
         }
         return true;
@@ -81,7 +81,7 @@ public class TaskController {
                             @RequestBody TaskDto taskDto,
                             @RequestHeader(defaultValue = "false", name = "TASK_EDIT") boolean right) {
         if (!right) {
-            throw new ResourceNotFoundException("У вас нет права TASK_EDIT");
+            throw new ResourceNotFoundRunTime("У вас нет права TASK_EDIT");
         }
         if (taskDto.getNikName() == null || !taskDto.getNikName().equals("")) {
             taskDto.setNikName(username);
@@ -182,7 +182,7 @@ public class TaskController {
             }
             taskDto.setCodeZi(workLittleDto.getCodeZI());
             taskDto.setNameZi(workLittleDto.getName());
-        } catch (ResourceNotFoundException e) {
+        } catch (ResourceNotFoundRunTime e) {
             System.out.println(e.getMessage());
             if (task.getType() == 1) {
                 taskDto.setCodeZi("Нет ЗИ с ID = " + taskDto.getWorkId());
@@ -198,7 +198,7 @@ public class TaskController {
             taskDto.setFirstName(userDto.getFirstName());
             taskDto.setLastName(userDto.getLastName());
             taskDto.setPatronymic(userDto.getPatronymic());
-        } catch (ResourceNotFoundException e) {
+        } catch (ResourceNotFoundRunTime e) {
             taskDto.setFirstName("Нет пользователя с ником " + task.getNikName());
 
             System.out.println(e.getMessage());

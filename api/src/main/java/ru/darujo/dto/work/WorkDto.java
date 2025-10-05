@@ -16,7 +16,7 @@ public class WorkDto implements Serializable, WorkPlanTime {
     // анализ
     private Date analiseEndPlan;
     private Date analiseEndFact;
-    private Date developEndFact;
+    private Date issuePrototypeFact;
     // Стабилизация прототипа
     private Date debugEndFact;
     // Стабилизация релиза
@@ -79,7 +79,7 @@ public class WorkDto implements Serializable, WorkPlanTime {
         this.name = name;
         this.analiseEndPlan = analiseEndPlan;
         this.analiseEndFact = analiseEndFact;
-        this.developEndFact = developEndFact;
+        this.issuePrototypeFact = developEndFact;
         this.debugEndFact = debugEndFact;
         this.releaseEndFact = releaseEndFact;
         this.opeEndFact = opeEndFact;
@@ -136,8 +136,8 @@ public class WorkDto implements Serializable, WorkPlanTime {
     }
 
     @SuppressWarnings("unused")
-    public String getDevelopEndFact() {
-        return dateToText(developEndFact);
+    public String getIssuePrototypeFact() {
+        return dateToText(issuePrototypeFact);
     }
 
     @SuppressWarnings("unused")

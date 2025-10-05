@@ -15,11 +15,15 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
     private Timestamp analiseEndFact;
     // ВЕНДЕРКА План
     private Timestamp analiseEndPlan;
-
     //конец разработки факт
     private Timestamp developEndFact;
     //конец разработки план
     private Timestamp developEndPlan;
+
+    //выдача прототипа
+    private Timestamp issuePrototypeFact;
+    //выдача прототипа план
+    private Timestamp issuePrototypePlan;
     // конец Стабилизация прототипа факт
     private Timestamp debugEndFact;
     // конец Стабилизация прототипа план
@@ -91,6 +95,8 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
                        Timestamp analiseEndPlan,
                        Timestamp developEndFact,
                        Timestamp developEndPlan,
+                       Timestamp issuePrototypeFact,
+                       Timestamp issuePrototypePlan,
                        Timestamp debugEndFact,
                        Timestamp debugEndPlan,
                        Timestamp releaseEndFact,
@@ -124,6 +130,8 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
         this.analiseEndPlan = analiseEndPlan;
         this.developEndFact = developEndFact;
         this.developEndPlan = developEndPlan;
+        this.issuePrototypeFact = issuePrototypeFact;
+        this.issuePrototypePlan = issuePrototypePlan;
         this.debugEndFact = debugEndFact;
         this.debugEndPlan = debugEndPlan;
         this.releaseEndFact = releaseEndFact;
@@ -156,8 +164,8 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
         return id;
     }
 
-    public Timestamp getDevelopEndFact() {
-        return developEndFact;
+    public Timestamp getIssuePrototypeFact() {
+        return issuePrototypeFact;
     }
 
     public Timestamp getDebugEndFact() {
@@ -251,8 +259,8 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
         return codeZI;
     }
 
-    public Timestamp getDevelopEndPlan() {
-        return developEndPlan;
+    public Timestamp getIssuePrototypePlan() {
+        return issuePrototypePlan;
     }
 
     public Timestamp getDebugEndPlan() {
@@ -338,5 +346,13 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
 
     public Timestamp getOpeStartPlan() {
         return opeStartPlan;
+    }
+
+    public Timestamp getDevelopEndFact() {
+        return developEndFact;
+    }
+
+    public Timestamp getDevelopEndPlan() {
+        return developEndPlan;
     }
 }
