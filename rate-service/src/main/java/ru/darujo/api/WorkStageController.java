@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.WorkStageConvertor;
 import ru.darujo.dto.ratestage.WorkStageDto;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.service.WorkStageService;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ public class WorkStageController {
 
     @GetMapping("/{id}")
     public WorkStageDto WorkStageEdit(@PathVariable long id) {
-        return WorkStageConvertor.getWorkStageDto(workStageService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Не найдена разбивка")));
+        return WorkStageConvertor.getWorkStageDto(workStageService.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Не найдена разбивка")));
     }
 
     @PostMapping("")

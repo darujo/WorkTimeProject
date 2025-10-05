@@ -6,9 +6,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+
 @NoArgsConstructor
-@AllArgsConstructor
-//@JsonIgnoreProperties(value = { "chequeLines" })
 @Data
 @Entity
 @Table(name = "work")
@@ -38,6 +37,12 @@ public class Work {
     //начало разработки план
     @Column(name = "develop_end_plan")
     private Timestamp developEndPlan;
+
+    @Column(name = "issue_prototype_fact")
+    private Timestamp issuePrototypeFact;
+    //Выдача прототипа
+    @Column(name = "issue_prototype_plan")
+    private Timestamp issuePrototypePlan;
     // Стабилизация прототипа Факт
     @Column(name = "debug_end_fact")
     private Timestamp debugEndFact;
@@ -73,7 +78,7 @@ public class Work {
     private Integer stageZI;
     // Порядковый номер релиза
     @ManyToOne
-    @JoinColumn(name="release_id")
+    @JoinColumn(name = "release_id")
     private Release release;
 
     // ВЕНДЕРКА Факт
@@ -107,4 +112,69 @@ public class Work {
     @Column(name = "ope_start_plan")
     private Timestamp opeStartPlan;
 
+    public Work(Long id,
+                Long codeSap,
+                String codeZI,
+                String name,
+                Timestamp analiseEndFact,
+                Timestamp analiseEndPlan,
+                Timestamp developEndFact,
+                Timestamp developEndPlan,
+                Timestamp issuePrototypeFact,
+                Timestamp issuePrototypePlan,
+                Timestamp debugEndFact,
+                Timestamp debugEndPlan,
+                Timestamp releaseEndFact,
+                Timestamp releaseEndPlan,
+                Timestamp opeEndFact,
+                Timestamp opeEndPlan,
+                String task,
+                String description,
+                Timestamp startTaskPlan,
+                Timestamp startTaskFact,
+                Integer stageZI,
+                Release release,
+                Timestamp analiseStartFact,
+                Timestamp developStartFact,
+                Timestamp debugStartFact,
+                Timestamp releaseStartFact,
+                Timestamp opeStartFact,
+                Timestamp analiseStartPlan,
+                Timestamp developStartPlan,
+                Timestamp debugStartPlan,
+                Timestamp releaseStartPlan,
+                Timestamp opeStartPlan) {
+        this.id = id;
+        this.codeSap = codeSap;
+        this.codeZI = codeZI;
+        this.name = name;
+        this.analiseEndFact = analiseEndFact;
+        this.analiseEndPlan = analiseEndPlan;
+        this.developEndFact = developEndFact;
+        this.developEndPlan = developEndPlan;
+        this.issuePrototypeFact = issuePrototypeFact;
+        this.issuePrototypePlan = issuePrototypePlan;
+        this.debugEndFact = debugEndFact;
+        this.debugEndPlan = debugEndPlan;
+        this.releaseEndFact = releaseEndFact;
+        this.releaseEndPlan = releaseEndPlan;
+        this.opeEndFact = opeEndFact;
+        this.opeEndPlan = opeEndPlan;
+        this.task = task;
+        this.description = description;
+        this.startTaskPlan = startTaskPlan;
+        this.startTaskFact = startTaskFact;
+        this.stageZI = stageZI;
+        this.release = release;
+        this.analiseStartFact = analiseStartFact;
+        this.developStartFact = developStartFact;
+        this.debugStartFact = debugStartFact;
+        this.releaseStartFact = releaseStartFact;
+        this.opeStartFact = opeStartFact;
+        this.analiseStartPlan = analiseStartPlan;
+        this.developStartPlan = developStartPlan;
+        this.debugStartPlan = debugStartPlan;
+        this.releaseStartPlan = releaseStartPlan;
+        this.opeStartPlan = opeStartPlan;
+    }
 }

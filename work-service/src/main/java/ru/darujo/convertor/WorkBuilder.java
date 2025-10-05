@@ -7,6 +7,7 @@ import ru.darujo.model.Release;
 import ru.darujo.model.Work;
 
 
+import javax.persistence.Column;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
@@ -19,7 +20,7 @@ public class WorkBuilder {
     // Наименование
     private String name;
     // Разработка прототипа
-    private Timestamp developEndFact;
+    private Timestamp issuePrototypeFact;
     // Стабилизация прототипа
     private Timestamp debugEndFact;
     // Стабилизация релиза
@@ -29,7 +30,7 @@ public class WorkBuilder {
     // ВЕНДЕРКА
     private Timestamp analiseEndFact;
     // Разработка прототипа
-    private Timestamp developEndPlan;
+    private Timestamp issuePrototypePlan;
     // Стабилизация прототипа
     private Timestamp debugEndPlan;
     // Стабилизация релиза
@@ -75,6 +76,10 @@ public class WorkBuilder {
     private Timestamp releaseStartPlan;
     // ОПЭ релиза Факт
     private Timestamp opeStartPlan;
+
+    private Timestamp developEndFact;
+    //начало разработки план
+    private Timestamp developEndPlan;
 
     public WorkBuilder setTask(String task) {
         this.task = task;
@@ -142,6 +147,11 @@ public class WorkBuilder {
         return this;
     }
 
+    public WorkBuilder setIssuePrototypeFact(Timestamp issuePrototypeFact) {
+        this.issuePrototypeFact = dateToStartTime(issuePrototypeFact);
+        return this;
+    }
+
     public WorkBuilder setDebugEndFact(Timestamp debugEndFact) {
         this.debugEndFact = dateToStartTime(debugEndFact);
         return this;
@@ -164,6 +174,11 @@ public class WorkBuilder {
 
     public WorkBuilder setDevelopEndPlan(Timestamp developEndPlan) {
         this.developEndPlan = dateToStartTime(developEndPlan);
+        return this;
+    }
+
+    public WorkBuilder setIssuePrototypePlan(Timestamp issuePrototypePlan) {
+        this.issuePrototypePlan = dateToStartTime(issuePrototypePlan);
         return this;
     }
 
@@ -249,7 +264,7 @@ public class WorkBuilder {
                 name,
                 analiseEndPlan,
                 analiseEndFact,
-                developEndFact,
+                issuePrototypeFact,
                 debugEndFact,
                 releaseEndFact,
                 opeEndFact,
@@ -273,6 +288,8 @@ public class WorkBuilder {
                 analiseEndPlan,
                 developEndFact,
                 developEndPlan,
+                issuePrototypeFact,
+                issuePrototypePlan,
                 debugEndFact,
                 debugEndPlan,
                 releaseEndFact,
@@ -302,12 +319,14 @@ public class WorkBuilder {
 
     public Work getWork() {
         analiseEndFact = getDate(analiseEndFact, developStartFact);
-        developEndFact = getDate(developEndFact, debugStartFact);
+//        issuePrototypeFact = getDate(issuePrototypeFact, debugStartFact);
+        debugStartFact = getDateAddDay(debugStartFact,issuePrototypeFact);
         debugEndFact = getDate(debugEndFact, releaseStartFact);
         releaseEndFact = getDate(releaseEndFact, opeStartFact);
 
         analiseEndPlan = getDate(analiseEndPlan, developStartPlan);
-        developEndPlan = getDate(developEndPlan, debugStartPlan);
+//        issuePrototypePlan = getDate(issuePrototypePlan, debugStartPlan);
+        debugStartPlan = getDateAddDay(debugStartPlan,issuePrototypePlan);
         debugEndPlan = getDate(debugEndPlan, releaseStartPlan);
         releaseEndPlan = getDate(releaseEndPlan, opeStartPlan);
 
@@ -320,6 +339,8 @@ public class WorkBuilder {
                 analiseEndPlan,
                 developEndFact,
                 developEndPlan,
+                issuePrototypeFact,
+                issuePrototypePlan,
                 debugEndFact,
                 debugEndPlan,
                 releaseEndFact,
@@ -379,4 +400,21 @@ public class WorkBuilder {
         return new Timestamp(cal.getTimeInMillis());
 
     }
+
+    public Timestamp getDateAddDay(Timestamp date, Timestamp datePlus) {
+
+        if (datePlus == null) {
+            return date;
+        } else {
+            if (date != null && date.after(datePlus)) {
+                return date;
+            }
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(datePlus);
+        cal.add(Calendar.DATE, 1);
+        return new Timestamp(cal.getTimeInMillis());
+
+    }
+
 }

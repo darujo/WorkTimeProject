@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.WorkCriteriaConvertor;
 import ru.darujo.dto.ratestage.WorkCriteriaDto;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.service.WorkCriteriaService;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class WorkCriteriaController {
 
     @GetMapping("/{id}")
     public WorkCriteriaDto WorkCriteriaEdit(@PathVariable long id) {
-        return WorkCriteriaConvertor.getWorkCriteriaDto(workCriteriaService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Не найдена разбивка")));
+        return WorkCriteriaConvertor.getWorkCriteriaDto(workCriteriaService.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Не найдена разбивка")));
     }
 
     @PostMapping("")

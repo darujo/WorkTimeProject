@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.darujo.assistant.helper.DataHelper;
 import ru.darujo.dto.calendar.WeekDto;
 import ru.darujo.dto.calendar.WeekWorkDto;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.service.CalendarService;
 
 import java.time.ZonedDateTime;
@@ -27,10 +27,10 @@ public class CalendarController {
                                   @RequestParam(required = false) Integer year
     ) {
         if (month != null && (month < 1 || month > 12)) {
-            throw new ResourceNotFoundException("Месяц должен быть от 1 до 12");
+            throw new ResourceNotFoundRunTime("Месяц должен быть от 1 до 12");
         }
         if (year == null) {
-            throw new ResourceNotFoundException("Не задан год (year)");
+            throw new ResourceNotFoundRunTime("Не задан год (year)");
         }
 
         return calendarService.getWeekList(month, year);

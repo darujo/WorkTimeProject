@@ -60,7 +60,7 @@
             <td class="sticky-col first-col table_head1" rowspan="5"><button class="table_head1 button_table" ng-click="addSort('name')"> Наименование</button> </td>
             <td class="table_head2" colspan="4"> 0 этап</td>
             <td class="table_head2" colspan="2" rowspan="4"> Дата начала доработки</td>
-            <td class="table_head1" colspan="4"> I этап</td>
+            <td class="table_head1" colspan="6"> I этап</td>
             <td class="table_head2" colspan="4"> II этап</td>
             <td class="table_col1" rowspan="5">
                 <button class="table_head2 button_table" ng-click="addSort('releaseId')">№ релиза</button>
@@ -76,7 +76,7 @@
         </tr>
         <tr> <!--row 2-->
             <td class="table_head2" colspan="4"> Согласование требований к доработке</td>
-            <td class="table_head1" colspan="4"> Разработка прототипа</td>
+            <td class="table_head1" colspan="6"> Разработка прототипа</td>
             <td class="table_head2" colspan="4"> Стабилизация прототипа (30 дней)</td>
             <td class="table_head1" colspan="4"> Стабилизация релиза (30 дней)</td>
             <td class="table_head2" colspan="4"> ОПЭ релиза (30 дней)</td>
@@ -84,7 +84,7 @@
         </tr>
         <tr> <!--row 3-->
             <td class="table_head2" colspan="4"> Результат: внутреннее согласование ТЗ</td>
-            <td class="table_head1" colspan="4"> Результат: выдача прототипа в соответствии с ТЗ</td>
+            <td class="table_head1" colspan="6"> Результат: выдача прототипа в соответствии с ТЗ</td>
             <td class="table_head2" colspan="4"> Результат: тестирования ЦК Рязань завершено</td>
             <td class="table_head1" colspan="4"> Результат: регресс тестирование ЦК Рязань завершено</td>
             <td class="table_head2" colspan="4"> Результат: завершение ОПЭ</td>
@@ -94,6 +94,7 @@
             <td class="table_head2" colspan="2"> Дата передачи ТЗ в работу</td>
             <td class="table_head2" colspan="2"> Трудозатраты, чел/час</td>
             <td class="table_head1" colspan="2"> Трудозатраты, чел/час</td>
+            <td class="table_head1" colspan="2"> Дата окончания разработки</td>
             <td class="table_head1" colspan="2"> Дата выдачи прототипа</td>
             <td class="table_head2" colspan="2"> Дата</td>
             <td class="table_head2" colspan="2"> Трудозатраты, чел/час</td>
@@ -105,6 +106,8 @@
 
         </tr>
         <tr> <!--row 5-->
+            <td class="table_head2"> План</td>
+            <td class="table_head2"> Факт</td>
             <td class="table_head2"> План</td>
             <td class="table_head2"> Факт</td>
             <td class="table_head2"> План</td>
@@ -159,7 +162,11 @@
             <td class="table_col2">{{work.developEndPlan}}</td>
             <!--        //начало разработки факт-->
             <td class="table_col2">{{work.developEndFact}}</td>
-            <!--        // Стабилизация прототипа план-->
+            <td class="table_col2">{{work.issuePrototypePlan}}</td>
+            <!--        //начало разработки факт-->
+            <td class="table_col2">{{work.issuePrototypeFact}}</td>
+                        
+<!--        // Стабилизация прототипа план-->
             <td>{{work.debugEndPlan}}</td>
             <!--        // Стабилизация прототипа факт-->
             <td>{{work.debugEndFact}}</td>

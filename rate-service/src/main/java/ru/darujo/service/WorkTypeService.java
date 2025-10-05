@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.WorkType;
 import ru.darujo.repository.WorkTypeRepository;
 import ru.darujo.specifications.Specifications;
@@ -27,14 +27,14 @@ public class WorkTypeService {
     }
     private void validWorkType(WorkType workType){
         if (workType.getWorkId() == null) {
-            throw new ResourceNotFoundException("Не могу найти привязку к ЗИ");
+            throw new ResourceNotFoundRunTime("Не могу найти привязку к ЗИ");
         }
         Specification<WorkType> specification = Specification.where(Specifications.eq(null,"workId",workType.getWorkId()));
         specification = Specifications.eqIgnoreCase(specification,"type",workType.getType());
         specification = Specifications.ne(specification,"id", workType.getId());
         WorkType workTypeFind = workTypeRepository.findOne(specification).orElse(null);
         if(workTypeFind != null){
-            throw new ResourceNotFoundException("Уже есть запись с такой работой");
+            throw new ResourceNotFoundRunTime("Уже есть запись с такой работой");
         }
 
     }

@@ -43,6 +43,21 @@ public class WorkTimeRepService {
     }
 
     public float getTimeWork(Long[] taskId, String nikName, Date dateGt, Date dateLe, String typeStr) {
+        ArrayList<Integer> types = getTypeForWork(typeStr);
+
+        AtomicReference<Float> time = new AtomicReference<>((float) 0);
+        for (Integer type : types) {
+
+            workTimeService.findWorkTime(taskId, nikName, null, dateLe, dateGt, null, type, null, null, null).
+
+                    forEach(workTime ->
+                            time.set(time.get() + workTime.getWorkTime())
+                    );
+        }
+        return time.get();
+    }
+
+    private ArrayList<Integer> getTypeForWork(String typeStr) {
         ArrayList<Integer> types = new ArrayList<>();
 
         if (typeStr != null && typeStr.equals("analise")) {
@@ -55,17 +70,7 @@ public class WorkTimeRepService {
         } else {
             types.add(null);
         }
-
-        AtomicReference<Float> time = new AtomicReference<>((float) 0);
-        for (Integer type : types) {
-
-            workTimeService.findWorkTime(taskId, nikName, null, dateLe, dateGt, null, type, null, null, null).
-
-                    forEach(workTime ->
-                            time.set(time.get() + workTime.getWorkTime())
-                    );
-        }
-        return time.get();
+        return types;
     }
 
     public ListString getFactUser(Long[] taskId, Date dateLe) {
@@ -257,5 +262,9 @@ public class WorkTimeRepService {
         } catch (RuntimeException ex) {
             System.out.println(ex.getMessage());
         }
+    }
+
+    public Timestamp getLastTime(Long [] taskId){
+        return workTimeService.getLastTime(taskId);
     }
 }

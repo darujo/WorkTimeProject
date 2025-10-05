@@ -8,7 +8,7 @@ import ru.darujo.dto.MapStringFloat;
 import ru.darujo.dto.ratestage.WorkStageDto;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.user.UserFio;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.integration.WorkServiceIntegration;
 import ru.darujo.model.WorkStage;
@@ -48,13 +48,13 @@ public class WorkStageService {
 
     private void validWorkStage(WorkStage workStage) {
         if (workStage.getWorkId() == null) {
-            throw new ResourceNotFoundException("Не могу найти привязку к ЗИ");
+            throw new ResourceNotFoundRunTime("Не могу найти привязку к ЗИ");
         }
         if (workStage.getNikName() == null || workStage.getNikName().equals("")) {
-            throw new ResourceNotFoundException("Не заполнено ФИО");
+            throw new ResourceNotFoundRunTime("Не заполнено ФИО");
         }
         if (workStage.getRole() == null) {
-            throw new ResourceNotFoundException("Не заполнено роль");
+            throw new ResourceNotFoundRunTime("Не заполнено роль");
         }
 
         checkAvailUser(workStage);
@@ -68,7 +68,7 @@ public class WorkStageService {
         specification = Specifications.ne(specification, "id", workStage.getId());
         WorkStage workStageFind = workStageRepository.findOne(specification).orElse(null);
         if (workStageFind != null) {
-            throw new ResourceNotFoundException("Уже есть запись с таким ФИО и ролью");
+            throw new ResourceNotFoundRunTime("Уже есть запись с таким ФИО и ролью");
         }
     }
 
@@ -103,7 +103,7 @@ public class WorkStageService {
                 userFio.setLastName(userDto.getLastName());
                 userFio.setPatronymic(userDto.getPatronymic());
             }
-        } catch (ResourceNotFoundException e) {
+        } catch (ResourceNotFoundRunTime e) {
             System.out.println(e.getMessage());
             userFio.setFirstName("Не найден пользователь с ником " + userFio.getNikName());
         }

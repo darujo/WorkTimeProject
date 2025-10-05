@@ -8,6 +8,7 @@ import ru.darujo.dto.ListString;
 import ru.darujo.dto.workperiod.UserWorkDto;
 import ru.darujo.service.TaskRepService;
 
+import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -65,5 +66,11 @@ public class TaskRepController {
                                          @RequestParam(required = false) Boolean addTotal
     ){
         return taskRepService.getWeekWork(workId,nikName, addTotal);
+    }
+
+    @GetMapping("/lastTime/{workId}")
+    public Timestamp getLastTime(@PathVariable long workId
+    ) {
+        return taskRepService.getLastTime(workId);
     }
 }

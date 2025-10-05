@@ -14,7 +14,7 @@ import ru.darujo.dto.calendar.WeekWorkDto;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.workperiod.WorkUserTime;
 import ru.darujo.dto.workrep.*;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.CalendarServiceIntegration;
 import ru.darujo.integration.TaskServiceIntegration;
 import ru.darujo.integration.UserServiceIntegration;
@@ -85,8 +85,8 @@ public class WorkRepService {
                                         work.getStartTaskFact(),
                                         work.getAnaliseEndPlan(),
                                         work.getAnaliseEndFact(),
-                                        work.getDevelopEndPlan(),
-                                        work.getDevelopEndFact(),
+                                        work.getIssuePrototypePlan(),
+                                        work.getIssuePrototypeFact(),
                                         work.getDebugEndPlan(),
                                         work.getDebugEndFact(),
                                         work.getRelease() != null ? work.getRelease().getName() : null,
@@ -154,7 +154,7 @@ public class WorkRepService {
                             UserDto userDto;
                             try {
                                 userDto = userServiceIntegration.getUserDto(null, user);
-                            } catch (ResourceNotFoundException ex) {
+                            } catch (ResourceNotFoundRunTime ex) {
                                 userDto = new UserDto(-1L, "", "логином", "Не найден пользователь с", user);
                             }
                             workFactDTOs.add(
@@ -216,7 +216,7 @@ public class WorkRepService {
             users = new HashSet<>();
             users.add(nikName);
         } else {
-            users = taskServiceIntegration.getListUser(workId, work.getDevelopEndFact()).getList();
+            users = taskServiceIntegration.getListUser(workId, work.getIssuePrototypeFact()).getList();
         }
         users.forEach(user -> {
             Float time = getFactWork(work, 0, user);
@@ -281,13 +281,13 @@ public class WorkRepService {
 
     private Timestamp getTimeDevelop(Work work) {
         Timestamp timestampDevelop;
-        if (work.getDevelopEndFact() == null
+        if (work.getIssuePrototypeFact() == null
                 && work.getDebugEndFact() == null
                 && work.getReleaseEndFact() == null
                 && work.getOpeEndFact() == null) {
             timestampDevelop = new Timestamp(new Date().getTime());
         } else {
-            timestampDevelop = work.getDevelopEndFact();
+            timestampDevelop = work.getIssuePrototypeFact();
         }
         return timestampDevelop;
     }
@@ -381,7 +381,7 @@ public class WorkRepService {
         if (isPeriodIntersect(work.getAnaliseStartFact(), work.getAnaliseEndFact(), dayStart, dayEnd)) {
             colorTypes.add("analise");
         }
-        if (isPeriodIntersect(work.getDevelopStartFact(), work.getDevelopEndFact(), dayStart, dayEnd)) {
+        if (isPeriodIntersect(work.getDevelopStartFact(), work.getIssuePrototypeFact(), dayStart, dayEnd)) {
             colorTypes.add("develop");
         }
         if (isPeriodIntersect(work.getDebugStartFact(), work.getDebugEndFact(), dayStart, dayEnd)) {
@@ -401,7 +401,7 @@ public class WorkRepService {
         if (isPeriodIntersect(work.getAnaliseStartPlan(), work.getAnaliseEndPlan(), dayStart, dayEnd)) {
             colorTypes.add("analise");
         }
-        if (isPeriodIntersect(work.getDevelopStartPlan(), work.getDevelopEndPlan(), dayStart, dayEnd)) {
+        if (isPeriodIntersect(work.getDevelopStartPlan(), work.getIssuePrototypePlan(), dayStart, dayEnd)) {
             colorTypes.add("develop");
         }
         if (isPeriodIntersect(work.getDebugStartPlan(), work.getDebugEndPlan(), dayStart, dayEnd)) {

@@ -9,7 +9,7 @@ import ru.darujo.convertor.WorkConvertor;
 import ru.darujo.dto.work.WorkDto;
 import ru.darujo.dto.work.WorkEditDto;
 import ru.darujo.dto.work.WorkLittleDto;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.Work;
 import ru.darujo.service.WorkService;
 
@@ -75,6 +75,8 @@ public class WorkController {
                     null,
                     null,
                     null,
+                    null,
+                    null,
                     generateString(random, str, 15),
                     null,
                     null,
@@ -117,7 +119,7 @@ public class WorkController {
     public WorkDto WorkSave(@RequestBody WorkEditDto workDto,
                             @RequestHeader(defaultValue = "false", name = "ZI_EDIT") boolean right) {
         if (!right) {
-            throw new ResourceNotFoundException("У вас нет права ZI_EDIT");
+            throw new ResourceNotFoundRunTime("У вас нет права ZI_EDIT");
         }
         Work work = workService.saveWork(WorkConvertor.getWork(workDto));
         return WorkConvertor.getWorkDto(work);
@@ -179,14 +181,14 @@ public class WorkController {
 
     @GetMapping("/obj/little/{id}")
     public WorkLittleDto WorkLittleDto(@PathVariable long id) {
-        return WorkConvertor.getWorkLittleDto(workService.findLittleById(id).orElseThrow(() -> new ResourceNotFoundException("Задача не найден")));
+        return WorkConvertor.getWorkLittleDto(workService.findLittleById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Задача не найден")));
     }
 
     @GetMapping("/refresh/{id}")
     public boolean TaskRefresh(@PathVariable long id,
                                @RequestParam(required = false, name = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStr
     ) {
-        Timestamp date = DataHelper.DTZToDate(dateStr, "date", true);
+        Timestamp date = DataHelper.DTZToDate(dateStr, "date", false);
         return workService.setWorkDate(id, date);
 
     }

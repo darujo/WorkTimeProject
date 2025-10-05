@@ -6,7 +6,7 @@ import ru.darujo.dto.calendar.DayDto;
 import ru.darujo.dto.calendar.WeekDto;
 import ru.darujo.dto.calendar.WeekWorkDto;
 import ru.darujo.dto.calendar.DayTypeDto;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.utils.calendar.ProductionCalendar;
 import ru.darujo.utils.calendar.structure.DateInfo;
 import ru.darujo.utils.calendar.structure.DayType;
@@ -210,7 +210,7 @@ public class CalendarService {
                 dayStart = yearStart(dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
                 dayEnd = yearEnd(dateEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
             }
-            default -> throw new ResourceNotFoundException("Не верный период " + period);
+            default -> throw new ResourceNotFoundRunTime("Не верный период " + period);
         }
         if (split == null) {
             periodDay = switch (period) {

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.Release;
 import ru.darujo.repository.ReleaseRepository;
 
@@ -22,7 +22,7 @@ public class ReleaseService {
 
 
     public Release findById(long id) {
-        return releaseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Релиз с id " + id  + " не найден."));
+        return releaseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Релиз с id " + id  + " не найден."));
     }
 
     public Release saveRelease(Release release) {

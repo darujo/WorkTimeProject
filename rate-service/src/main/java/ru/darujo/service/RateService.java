@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.dto.ratestage.WorkStageDto;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.WorkCriteria;
 import ru.darujo.model.WorkStage;
 import ru.darujo.model.WorkType;
@@ -125,7 +125,7 @@ public class RateService {
 
     public WorkStageDto AllTime(Long workId, boolean loadFact) {
         if(loadFact){
-            throw new ResourceNotFoundException("Загрузка с фактом не поддерживается");
+            throw new ResourceNotFoundRunTime("Загрузка с фактом не поддерживается");
         }
         final Float[] stage = new Float[5];
         stage[0] = 0f;

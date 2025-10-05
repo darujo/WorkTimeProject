@@ -91,4 +91,9 @@ public class WorkTimeRepController {
         return workTimeRepService.getAvailTime(taskId);
     }
 
+    @GetMapping("/lastTime")
+    public Timestamp getLastTime(@RequestParam(required = false) Long[] taskId
+    ) {
+        return workTimeRepService.getLastTime(taskId);
+    }
 }

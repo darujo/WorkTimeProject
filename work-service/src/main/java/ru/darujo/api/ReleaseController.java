@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.ReleaseConvertor;
 import ru.darujo.dto.work.ReleaseDto;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.service.ReleaseService;
 
 import java.util.List;
@@ -29,7 +29,7 @@ public class ReleaseController {
     public ReleaseDto WorkSave(@RequestBody ReleaseDto releaseDto,
                             @RequestHeader(defaultValue = "false", name = "ZI_EDIT") boolean right) {
         if (!right) {
-            throw new ResourceNotFoundException("У вас нет права ZI_EDIT");
+            throw new ResourceNotFoundRunTime("У вас нет права ZI_EDIT");
         }
         return ReleaseConvertor.getReleaseDto(releaseService.saveRelease(ReleaseConvertor.getRelease(releaseDto)));
     }

@@ -225,4 +225,5 @@ public class Specifications {
     private static <T> Specification<T> eqIgnoreCase(String field, String value) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(criteriaBuilder.lower(root.get(field)), value.toLowerCase()));
     }
+
 }
