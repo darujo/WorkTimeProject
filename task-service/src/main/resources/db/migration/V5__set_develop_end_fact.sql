@@ -1,5 +1,5 @@
 UPDATE work_time_project."work"  w
-SET w.develop_end_fact  = 
+SET develop_end_fact  = 
 (
    select work_date  from work_time wt where task_id in (select id from task t where work_id = w.id)
                                          and (wt.type = 1 or wt.type = 4)
