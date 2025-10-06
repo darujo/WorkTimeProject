@@ -303,17 +303,23 @@ public class WorkService {
         boolean save = false;
         if (date != null) {
             if (work.getDevelopStartFact() == null || work.getDevelopStartFact().after(date)) {
-                work.setDevelopStartFact(date);
                 save = true;
             }
-            if ((work.getIssuePrototypeFact() != null && work.getIssuePrototypeFact().after(date)) && work.getAnaliseEndFact() != null && work.getAnaliseEndFact().before(date) && (work.getDevelopEndFact() == null || work.getDevelopEndFact().before(date))) {
-                work.setDevelopEndFact(date);
+            if ((work.getIssuePrototypeFact() == null
+                    || work.getIssuePrototypeFact().after(date))
+                    && work.getAnaliseEndFact() != null
+                    && work.getAnaliseEndFact().before(date)
+                    && (work.getDevelopEndFact() == null || work.getDevelopEndFact().before(date))) {
                 save = true;
             }
         } else {
-            if(work.getIssuePrototypeFact() != null) {
+            if (work.getIssuePrototypeFact() != null
+                    && work.getAnaliseEndFact() != null) {
                 try {
-                    work.setDevelopEndFact(getLastDateWorkBefore(work.getId(),work.getIssuePrototypeFact()));
+                    date = getLastDateWorkBefore(work.getId(), work.getIssuePrototypeFact());
+                    if (work.getAnaliseEndFact().before(date)) {
+                        save = true;
+                    }
                 } catch (ResourceNotFoundException ex) {
                     System.out.println(ex.getMessage());
                 }
@@ -321,6 +327,7 @@ public class WorkService {
         }
 
         if (save) {
+            work.setDevelopStartFact(date);
             workRepository.save(work);
         }
         return save;
