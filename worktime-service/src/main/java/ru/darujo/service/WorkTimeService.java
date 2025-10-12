@@ -253,8 +253,8 @@ public class WorkTimeService {
         return true;
     }
 
-    public Timestamp getLastTime(Long [] taskId) {
-        Page<WorkTime> workTimes = findWorkTime(taskId,null,null,null,null,null,null,null,1,1);
+    public Timestamp getLastTime(Long [] taskId,Timestamp dateGe, Timestamp dateLe) {
+        Page<WorkTime> workTimes = findWorkTime(taskId,null,null,dateLe,null,dateGe,null,null,1,1);
 
         return workTimes.getSize() == 1 ? workTimes.getContent().get(0).getWorkDate() : null ;
     }

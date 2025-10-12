@@ -42,9 +42,9 @@ public class WorkTimeRepController {
     @GetMapping("/user")
     public ListString getFactUser(@RequestParam(required = false) Long[] taskId,
                                   @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr
-                                  ) {
+    ) {
         Date dateLe = DataHelper.DTZToDate(dateLeStr, "dateLe = ", false);
-        return workTimeRepService.getFactUser(taskId,dateLe);
+        return workTimeRepService.getFactUser(taskId, dateLe);
     }
 
     @GetMapping("/user/work")
@@ -81,7 +81,7 @@ public class WorkTimeRepController {
                                          @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr) {
         Timestamp dateStart = DataHelper.DTZToDate(dateStartStr, "dateStart = ", false);
         Timestamp dateEnd = DataHelper.DTZToDate(dateEndStr, "dateEnd = ", false);
-        return workTimeRepService.getWeekWork(taskId,nikName,addTotal, weekSplit, dateStart, dateEnd);
+        return workTimeRepService.getWeekWork(taskId, nikName, addTotal, weekSplit, dateStart, dateEnd);
     }
 
 
@@ -92,8 +92,11 @@ public class WorkTimeRepController {
     }
 
     @GetMapping("/lastTime")
-    public Timestamp getLastTime(@RequestParam(required = false) Long[] taskId
-    ) {
-        return workTimeRepService.getLastTime(taskId);
+    public Timestamp getLastTime(@RequestParam(required = false) Long[] taskId,
+                                 @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
+                                 @RequestParam(required = false, name = "dateGe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGeStr) {
+            Timestamp dateLe = DataHelper.DTZToDate(dateLeStr, "dateLe = ", false);
+            Timestamp dateGe = DataHelper.DTZToDate(dateGeStr, "dateGe = ", false);
+            return workTimeRepService.getLastTime(taskId, dateGe, dateLe);
+        }
     }
-}

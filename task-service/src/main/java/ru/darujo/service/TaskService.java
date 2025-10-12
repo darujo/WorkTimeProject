@@ -132,7 +132,7 @@ public class TaskService {
     public String taskCheck(TaskDto taskDto) {
         String text = null;
         if (taskDto.getWorkId() != null && taskDto.getType() == 1 && (taskDto.getCodeBTS() != null && !taskDto.getCodeBTS().equals(""))) {
-            text = "Тип задачи будет изменен на Запросы по ЗИ та как тип задачи ЗИ и по ней введен номер запроса";
+            text = "Тип задачи будет изменен на \"Запросы по ЗИ\" так как тип задачи \"ЗИ\" и по ней введен номер запроса";
         }
         String testAvail = taskCheckAvail(taskDto.getId(), taskDto.getWorkId(), taskDto.getCodeDEVBO(), taskDto.getCodeBTS());
         if (text == null) {

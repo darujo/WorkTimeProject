@@ -137,10 +137,12 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
         }
     }
 
-    public Timestamp getLastTime(List<Long> taskIds) {
+    public Timestamp getLastTime(List<Long> taskIds, Timestamp dateLe, Timestamp dateGe) {
         try {
             StringBuilder stringBuilder = new StringBuilder();
             taskIds.forEach(taskId -> addTeg(stringBuilder, "taskId", taskId));
+            addTeg(stringBuilder, "dateLe", dateLe);
+            addTeg(stringBuilder, "dateGe", dateGe);
 
             return webClientWorkTime.get().uri("/rep/fact/lastTime" + stringBuilder)
                     .retrieve()
