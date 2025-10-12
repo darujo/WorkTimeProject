@@ -69,7 +69,7 @@ public class TaskRepService {
 
     public Boolean getAvailTime(long workId) {
         Specification<Task> specification = Specification.where(null);
-        specification = Specifications.eq(specification,"workId",workId);
+        specification = Specifications.eq(specification, "workId", workId);
         List<Task> tasks = taskRepository.findAll(specification);
         if (tasks.size() == 0) {
             return false;
@@ -85,9 +85,9 @@ public class TaskRepService {
 
     }
 
-    public Timestamp getLastTime(long workId) {
+    public Timestamp getLastTime(long workId, Timestamp dateLe, Timestamp dateGe) {
         List<Task> tasks = (List<Task>) taskService.findTask(null, null, null, null, workId, null, null, null);
 
-        return workTimeServiceIntegration.getLastTime(tasks.stream().map(Task::getId).collect(Collectors.toList()));
+        return workTimeServiceIntegration.getLastTime(tasks.stream().map(Task::getId).collect(Collectors.toList()), dateLe, dateGe);
     }
 }

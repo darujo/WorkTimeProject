@@ -145,12 +145,29 @@ public class WorkService {
         if (work.getId() == null) {
             return;
         }
-        try {
-            Timestamp date = getLastDateWorkBefore(work.getId(), work.getIssuePrototypeFact());
-            work.setDevelopEndFact(date);
-        } catch (ResourceNotFoundException ex) {
-            System.out.println(ex.getMessage());
+        Work workSave = null;
+        if (work.getId() != null) {
+            workSave = workRepository.findById(work.getId()).orElse(null);
         }
+        if (workSave == null) {
+            return;
+        }
+        if (((work.getAnaliseEndFact() != null
+                && !work.getAnaliseEndFact().equals(workSave.getAnaliseEndFact()))
+                || (work.getIssuePrototypeFact() == null
+                || !work.getIssuePrototypeFact().equals(workSave.getIssuePrototypeFact())))
+                || (work.getDevelopEndFact() == null
+                || work.getDevelopEndFact().after(work.getIssuePrototypeFact()))) {
+            SaveDateDevelopEndFact saveDateDevelopEndFact = checkSetDevelopEndDate(work, null);
+            if (saveDateDevelopEndFact.isSave()) {
+                if (work.getDevelopEndFact().before(saveDateDevelopEndFact.getDate())) {
+                    saveDateDevelopEndFact.setDate(work.getDevelopEndFact());
+                }
+
+                work.setDevelopEndFact(saveDateDevelopEndFact.getDate());
+            }
+        }
+
     }
 
     public void deleteWork(Long id) {
@@ -297,44 +314,86 @@ public class WorkService {
         return true;
     }
 
+    public class SaveDateDevelopEndFact {
+        private boolean save;
+        private Timestamp date;
 
-    public boolean setWorkDate(long id, Timestamp date) {
-        Work work = workRepository.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Не найдено ЗИ с id = " + id));
-        boolean save = false;
+
+        public boolean isSave() {
+            return save;
+        }
+
+        public Timestamp getDate() {
+            return date;
+        }
+
+        public SaveDateDevelopEndFact setSave(boolean save) {
+            this.save = save;
+            return this;
+        }
+
+        public SaveDateDevelopEndFact setDate(Timestamp date) {
+            this.date = date;
+            return this;
+        }
+    }
+
+    public SaveDateDevelopEndFact checkSetDevelopEndDate(Work work, Timestamp date) {
+        SaveDateDevelopEndFact save = new SaveDateDevelopEndFact();
         if (date != null) {
-            if (work.getDevelopStartFact() == null || work.getDevelopStartFact().after(date)) {
-                save = true;
-            }
             if ((work.getIssuePrototypeFact() == null
-                    || work.getIssuePrototypeFact().after(date))
+                    || (work.getIssuePrototypeFact().after(date)
+                    || work.getIssuePrototypeFact().equals(date)))
                     && work.getAnaliseEndFact() != null
-                    && work.getAnaliseEndFact().before(date)
+                    && (work.getAnaliseEndFact().equals(date) || work.getAnaliseEndFact().before(date))
                     && (work.getDevelopEndFact() == null || work.getDevelopEndFact().before(date))) {
-                save = true;
+                save.setSave(true).setDate(date);
             }
         } else {
             if (work.getIssuePrototypeFact() != null
                     && work.getAnaliseEndFact() != null) {
                 try {
                     date = getLastDateWorkBefore(work.getId(), work.getIssuePrototypeFact());
-                    if (work.getAnaliseEndFact().before(date)) {
-                        save = true;
+                    if (work.getAnaliseEndFact().equals(date) || work.getAnaliseEndFact().before(date)) {
+                        save.setSave(true).setDate(date);
                     }
                 } catch (ResourceNotFoundException ex) {
                     System.out.println(ex.getMessage());
                 }
             }
         }
+        return save;
+    }
 
-        if (save) {
+    public boolean setWorkDate(long id, Timestamp date) {
+        Work work = workRepository.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Не найдено ЗИ с id = " + id));
+        boolean save1 = checkSetDevelopStartDate(work, date);
+        if (save1) {
             work.setDevelopStartFact(date);
+        }
+        SaveDateDevelopEndFact save2 = checkSetDevelopEndDate(work, date);
+        if (save2.isSave()) {
+            work.setDevelopEndFact(save2.getDate());
+        }
+        if (save1 || save2.isSave()) {
             workRepository.save(work);
+        }
+
+        return save1 || save2.isSave();
+    }
+
+    private boolean checkSetDevelopStartDate(Work work, Timestamp date) {
+        boolean save = false;
+        if (date != null) {
+            if (work.getDevelopStartFact() == null || work.getDevelopStartFact().after(date)) {
+                save = true;
+            }
         }
         return save;
     }
 
     private Timestamp getLastDateWorkBefore(Long workId, Timestamp date) throws ResourceNotFoundException {
-        return taskServiceIntegration.getLastTime(workId, date);
+        return taskServiceIntegration.getLastTime(workId, date, null);
 
     }
 }

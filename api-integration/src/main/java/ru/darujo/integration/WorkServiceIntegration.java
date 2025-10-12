@@ -57,7 +57,7 @@ public class WorkServiceIntegration extends ServiceIntegration{
     }
 
     public Boolean setWorkDate(Long workId, Date dateWork) {
-        if(workId!= null && dateWork != null) {
+        if(workId!= null) {
             StringBuilder stringBuilder = new StringBuilder();
             addTeg(stringBuilder, "date", dateWork);
             return webClientWork.get().uri("/refresh/" + workId + stringBuilder)

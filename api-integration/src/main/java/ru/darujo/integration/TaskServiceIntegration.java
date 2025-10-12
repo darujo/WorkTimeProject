@@ -31,11 +31,11 @@ public class TaskServiceIntegration extends ServiceIntegration {
 
     public Float getTimeWork(Long workId, String nikName, Date dateGt, Date dateLe, String type) {
         StringBuilder stringBuilder = new StringBuilder();
-        addTeg( stringBuilder, "workId",workId);
-        addTeg( stringBuilder, "nikName",nikName);
-        addTeg( stringBuilder, "dateLe",dateLe);
-        addTeg( stringBuilder, "dateGt",dateGt);
-        addTeg( stringBuilder, "type",type);
+        addTeg(stringBuilder, "workId", workId);
+        addTeg(stringBuilder, "nikName", nikName);
+        addTeg(stringBuilder, "dateLe", dateLe);
+        addTeg(stringBuilder, "dateGt", dateGt);
+        addTeg(stringBuilder, "type", type);
 
         try {
             return webClientTask.get().uri("/rep/fact/time" + stringBuilder)
@@ -49,13 +49,13 @@ public class TaskServiceIntegration extends ServiceIntegration {
         }
     }
 
-    public ListString getListUser(Long workID,Date dateLe) {
+    public ListString getListUser(Long workID, Date dateLe) {
         StringBuilder stringBuilder = new StringBuilder();
-        if(workID == null){
-            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору не задан workId" );
+        if (workID == null) {
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору не задан workId");
         }
-        addTeg(stringBuilder,"workId",workID);
-        addTeg(stringBuilder,"dateLe",dateLe);
+        addTeg(stringBuilder, "workId", workID);
+        addTeg(stringBuilder, "dateLe", dateLe);
         try {
             return webClientTask.get().uri("/rep/fact/user" + stringBuilder)
                     .retrieve()
@@ -79,8 +79,8 @@ public class TaskServiceIntegration extends ServiceIntegration {
 
     public List<Long> getTaskList(String taskDEVBO, String taskBts) {
         StringBuilder stringBuilder = new StringBuilder();
-        addTeg(stringBuilder,"codeDEVBO", taskDEVBO);
-        addTeg(stringBuilder,"codeBTS", taskBts);
+        addTeg(stringBuilder, "codeDEVBO", taskDEVBO);
+        addTeg(stringBuilder, "codeBTS", taskBts);
         System.out.println("/list/id" + stringBuilder);
 
         return webClientTask.get().uri("/list/id" + stringBuilder)
@@ -103,12 +103,14 @@ public class TaskServiceIntegration extends ServiceIntegration {
             return false;
         }
     }
+
     public Boolean setTaskRefreshTime(Long taskId) {
         return setTaskRefreshTime(taskId, null);
     }
-    public Boolean setTaskRefreshTime(Long taskId,Date dateWork) {
+
+    public Boolean setTaskRefreshTime(Long taskId, Date dateWork) {
         StringBuilder stringBuilder = new StringBuilder();
-        addTeg(stringBuilder,"date", dateWork);
+        addTeg(stringBuilder, "date", dateWork);
         return webClientTask.get().uri("/refresh/" + taskId + stringBuilder)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
@@ -116,6 +118,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
                 .bodyToMono(Boolean.class)
                 .block();
     }
+
     public List<UserWorkFormDto> getWorkUserOrZi(
             Long workId,
             String nikName,
@@ -137,19 +140,21 @@ public class TaskServiceIntegration extends ServiceIntegration {
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
-    public Timestamp getLastTime(Long workId,Timestamp date) throws ResourceNotFoundException {
+
+    public Timestamp getLastTime(Long workId, Timestamp dateLe, Timestamp dateGe) throws ResourceNotFoundException {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "workId", workId);
-        addTeg(stringBuilder, "dateLe", date);
+        addTeg(stringBuilder, "dateLe", dateLe);
+        addTeg(stringBuilder, "dateGe", dateGe);
         try {
-        return webClientTask.get().uri("/rep/fact/lastTime" + stringBuilder)
+            return webClientTask.get().uri("/rep/fact/lastTime" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundRunTime("Задача c id = " + workId + " не найдена")))
                     .bodyToMono(Timestamp.class)
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundException( "Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 }
