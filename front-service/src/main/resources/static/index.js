@@ -87,6 +87,10 @@
                 templateUrl: 'workGraph/workGraph.html?ver='.toLowerCase() + ver,
                 controller: 'workGraphController'
             })
+            .when('/work_stage', {
+                templateUrl: 'work/work_stage.html?ver='.toLowerCase() + ver,
+                controller: 'workStageController'
+            })
             .otherwise({
                 redirectTo: '/'
             });
