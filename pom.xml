@@ -18,6 +18,7 @@
 		<module>front-service</module>
 		<module>gateway-service</module>
         <module>code-service</module>
+		<module>telegram-service</module>
 
 
     </modules>
