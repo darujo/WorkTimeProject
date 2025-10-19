@@ -1,0 +1,12 @@
+<h1>Drag the blue boxes into the red box and back</h1>
+<div id="big" (ondragenter)="dragEnter(event)"
+     (ondrop)="dragDrop(event)"
+     (ondragover)="dragOver(event)"></div>
+<section id="section"  (ondragenter)="dragEnter(event)"
+     (ondrop)="dragDrop(event)"
+     (ondragover)="dragOver(event)"
+>
+<div class="drag" id="boxA" draggable="true" (ondragstart)="dragStart()"
+   ></div>
+<div class="drag" id="boxB" draggable="true" ondragstart="dragStart(event)"></div>
+</section>
