@@ -129,6 +129,8 @@ public class WorkTimeDto implements Serializable, UserFio {
             return "Тестирование";
         } else if (type == 5) {
             return "Анализ ошибки";
+        } else if (type == 6) {
+            return "Акс";
         } else {
             return type.toString();
         }
