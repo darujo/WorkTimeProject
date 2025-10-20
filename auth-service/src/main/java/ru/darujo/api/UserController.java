@@ -61,4 +61,11 @@ public class UserController {
         return userService.changePassword(username, userPasswordChangeDto.getPasswordOld(), userPasswordChangeDto.getPasswordNew());
 
     }
+
+    @GetMapping("")
+    public String getGenSingleCode(@RequestHeader String username) {
+        return userService.getGenSingleCode(username);
+
+
+    }
 }

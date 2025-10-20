@@ -36,6 +36,9 @@ public class User {
     @Column(name = "patronymic")
     private String patronymic;
 
+    @Column(name = "telegram_id")
+    private Long telegramId;
+
     @ManyToMany
     @JoinTable(name = "user_roles",
     joinColumns = @JoinColumn(name ="user_id"),
