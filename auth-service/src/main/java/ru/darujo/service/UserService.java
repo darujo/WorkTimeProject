@@ -18,6 +18,7 @@ import ru.darujo.repository.UserRepository;
 import ru.darujo.specifications.Specifications;
 
 import javax.transaction.Transactional;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -170,5 +171,63 @@ public class UserService {
         user = saveUser(user);
         return user != null;
     }
+    private class SingleCode {
+        private String login;
+        private Timestamp timestamp;
+        private Integer code;
+        public SingleCode(String login, Timestamp timestamp, Integer code) {
+            this.login = login;
+            this.timestamp = timestamp;
+            this.code = code;
+        }
 
+        public void setCode(Integer code) {
+            this.code = code;
+        }
+
+        public void setTimestamp(Timestamp timestamp) {
+            this.timestamp = timestamp;
+        }
+
+        public String getLogin() {
+            return login;
+        }
+
+        public Timestamp getTimestamp() {
+            return timestamp;
+        }
+    }
+
+    private Map<Integer,SingleCode> mapCode = new HashMap<>();
+    private final Integer  TIME_CODE = 10;
+    public String getGenSingleCode(String login) {
+        clearMapCode(login);
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis() + TIME_CODE * 60 * 1000);
+        int code = (int) ((99999999 * Math.random()));
+            SingleCode singleCode = new SingleCode(login,timestamp,code);
+            mapCode.put(code,singleCode);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Для получения уведомлений перейдите t.me/DaruWorkBot. ") ;
+        sb.append("И отправте команду /link.");
+        sb.append("На запрос кода введите :");
+        sb.append(code);
+        sb.append("Внимание Код действует ");
+        sb.append(TIME_CODE);
+        sb.append(" минут.");
+        return sb.toString();
+    }
+    public void clearMapCode(String login) {
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis() + TIME_CODE * 60 * 1000);
+        mapCode.forEach((code, singleCode) -> {
+            if(singleCode.timestamp.before(timestamp) || (login != null && singleCode.login.equals(login))){
+            mapCode.remove(singleCode.code);
+        }});
+    }
+    public String linkCodeTelegram(Integer code,Long Id) {
+        clearMapCode(null);
+        SingleCode singleCode  = mapCode.get(code);
+        User user = findByNikName(singleCode.login).orElseThrow(() -> new ResourceNotFoundException("Пользовательне найден"));
+        user
+    }
 }
