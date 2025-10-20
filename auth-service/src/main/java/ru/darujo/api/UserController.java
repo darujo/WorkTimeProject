@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.UserConvertor;
 
+import ru.darujo.dto.ResultMes;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.user.UserPasswordChangeDto;
 import ru.darujo.service.UserService;
@@ -50,7 +51,7 @@ public class UserController {
                 nikName = null;
             }
         }
-        return userService.getUserList(role, page, size, nikName, lastName, firstName, patronymic).map(UserConvertor::getUserDto);
+        return userService.getUserList(role, page, size, nikName, lastName, firstName, patronymic, null).map(UserConvertor::getUserDto);
 
 
     }
@@ -62,10 +63,21 @@ public class UserController {
 
     }
 
-    @GetMapping("")
+    @GetMapping("/user/telegram/get")
     public String getGenSingleCode(@RequestHeader String username) {
         return userService.getGenSingleCode(username);
+    }
 
+    @GetMapping("/user/telegram/link")
+    public ResultMes linkSingleCode(@RequestParam(required = false) Integer code,
+                                    @RequestParam(required = false) Long telegramId
+    ) {
+        return userService.linkCodeTelegram(code, telegramId);
+    }
 
+    @GetMapping("/user/telegram/delete")
+    public void linkDeleteTelegram(@RequestParam(required = false) Long telegramId
+    ) {
+        userService.linkDeleteTelegram(telegramId);
     }
 }

@@ -1,4 +1,4 @@
-package ru.daru_jo.telegram_bot;
+package ru.darujo.telegram_bot;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

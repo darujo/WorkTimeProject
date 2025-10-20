@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.darujo.convertor.RoleConvertor;
+import ru.darujo.dto.ResultMes;
 import ru.darujo.dto.user.UserRoleActiveDto;
 import ru.darujo.dto.user.UserRoleDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
@@ -98,7 +99,8 @@ public class UserService {
                                   String nikName,
                                   String lastName,
                                   String firstName,
-                                  String patronymic) {
+                                  String patronymic,
+                                  Long telegramId) {
         Specification<User> specification = Specification.where(null);
         if (role != null && !role.isEmpty()) {
             specification = Specifications.in(specification, "nikName", roleService.findByName(role).orElseThrow(() -> new UsernameNotFoundException("Роль не найдена " + role))
@@ -109,6 +111,7 @@ public class UserService {
         specification = Specifications.like(specification, "lastName", lastName);
         specification = Specifications.like(specification, "firstName", firstName);
         specification = Specifications.like(specification, "patronymic", patronymic);
+        specification = Specifications.eq(specification, "telegramId", telegramId);
         Sort sort = Sort.by("lastName")
                 .and(Sort.by("firstName"));
         Page<User> userPage;
@@ -171,63 +174,86 @@ public class UserService {
         user = saveUser(user);
         return user != null;
     }
+
     private class SingleCode {
-        private String login;
-        private Timestamp timestamp;
-        private Integer code;
-        public SingleCode(String login, Timestamp timestamp, Integer code) {
+        private final String login;
+        private final Timestamp timestamp;
+
+        public SingleCode(String login, Timestamp timestamp) {
             this.login = login;
             this.timestamp = timestamp;
-            this.code = code;
         }
 
-        public void setCode(Integer code) {
-            this.code = code;
         }
 
-        public void setTimestamp(Timestamp timestamp) {
-            this.timestamp = timestamp;
-        }
+    private final Map<Integer, SingleCode> mapCode = new HashMap<>();
+    private final Integer TIME_CODE = 10;
 
-        public String getLogin() {
-            return login;
-        }
-
-        public Timestamp getTimestamp() {
-            return timestamp;
-        }
-    }
-
-    private Map<Integer,SingleCode> mapCode = new HashMap<>();
-    private final Integer  TIME_CODE = 10;
     public String getGenSingleCode(String login) {
+        if (login == null ){
+            return "пройдите авторизацию";
+        }
+        try {
+            findByNikName(login).orElseThrow(() -> new ru.darujo.exceptions.UsernameNotFoundException("Нет пользователя с логином"));
+        } catch (UsernameNotFoundException exception){
+            return exception.getMessage();
+        }
         clearMapCode(login);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis() + TIME_CODE * 60 * 1000);
         int code = (int) ((99999999 * Math.random()));
-            SingleCode singleCode = new SingleCode(login,timestamp,code);
-            mapCode.put(code,singleCode);
+        SingleCode singleCode = new SingleCode(login, timestamp);
+        mapCode.put(code, singleCode);
 
         StringBuilder sb = new StringBuilder();
-        sb.append("Для получения уведомлений перейдите t.me/DaruWorkBot. ") ;
+        sb.append("Для получения уведомлений перейдите t.me/DaruWorkBot. ");
         sb.append("И отправте команду /link.");
-        sb.append("На запрос кода введите :");
+        sb.append("На запрос кода введите: ");
         sb.append(code);
-        sb.append("Внимание Код действует ");
+        sb.append(". Внимание Код действует ");
         sb.append(TIME_CODE);
         sb.append(" минут.");
         return sb.toString();
     }
+
     public void clearMapCode(String login) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis() + TIME_CODE * 60 * 1000);
-        mapCode.forEach((code, singleCode) -> {
-            if(singleCode.timestamp.before(timestamp) || (login != null && singleCode.login.equals(login))){
-            mapCode.remove(singleCode.code);
-        }});
+        for (Map.Entry<Integer, SingleCode> entry : mapCode.entrySet()) {
+            if (entry.getValue().timestamp.after(timestamp) || (entry.getValue().login.equals(login))) {
+                mapCode.remove(entry.getKey());
+            }
+//            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+        }
+//        mapCode.forEach((code, singleCode) -> {
+//            if (singleCode.timestamp.before(timestamp) || (singleCode.login.equals(login))) {
+//                mapCode.remove(singleCode.code);
+//            }
+//        });
     }
-    public String linkCodeTelegram(Integer code,Long Id) {
+
+    public ResultMes linkCodeTelegram(Integer code, Long idTelegram) {
         clearMapCode(null);
-        SingleCode singleCode  = mapCode.get(code);
-        User user = findByNikName(singleCode.login).orElseThrow(() -> new ResourceNotFoundException("Пользовательне найден"));
-        user
+        SingleCode singleCode = mapCode.get(code);
+        if (singleCode == null){
+            return new ResultMes(false,"Не такого кода авторизации или он просрочен ");
+        }
+
+        User user = findByNikName(singleCode.login).orElse(null);
+        if (user == null){
+            return new ResultMes(false,"Пользовательне найден.");
+        }
+        user.setTelegramId(idTelegram);
+        saveUser(user);
+        mapCode.remove(code);
+        return new ResultMes(true,"Пользовательне найден.");
     }
+
+    @Transactional
+    public void linkDeleteTelegram(Long telegramId) {
+        getUserList(null, null, null, null, null, null, null, telegramId)
+                .forEach(user -> {
+                    user.setTelegramId(null);
+                    saveUser(user);
+                });
+    }
+
 }
