@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.darujo.dto.CustomPageImpl;
+import ru.darujo.dto.ResultMes;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
@@ -15,7 +16,7 @@ import java.util.Objects;
 
 
 @Component
-public class UserServiceIntegration {
+public class UserServiceIntegration extends ServiceIntegration {
     private WebClient webClientUser;
 
     @Autowired
@@ -28,14 +29,7 @@ public class UserServiceIntegration {
         if (userId != null) {
             stringBuilder.append("/").append(userId);
         } else {
-            if (nikName != null) {
-                if (stringBuilder.length() != 0) {
-                    stringBuilder.append("&");
-                } else {
-                    stringBuilder.append("?");
-                }
-                stringBuilder.append("nikName=").append(nikName);
-            }
+            addTeg(stringBuilder,"nikName",nikName);
         }
         try {
             return webClientUser.get().uri("/user" + stringBuilder)
@@ -56,14 +50,7 @@ public class UserServiceIntegration {
     }
     public List<UserDto> getUserDTOs(String nikNameOrRole) {
         StringBuilder stringBuilder = new StringBuilder();
-        if (nikNameOrRole != null) {
-            if (stringBuilder.length() != 0) {
-                stringBuilder.append("&");
-            } else {
-                stringBuilder.append("?");
-            }
-            stringBuilder.append("nikName=").append(nikNameOrRole);
-        }
+        addTeg(stringBuilder,"nikName",nikNameOrRole);
         try {
             return Objects.requireNonNull(webClientUser.get().uri(stringBuilder.toString())
                     .retrieve()
@@ -80,6 +67,51 @@ public class UserServiceIntegration {
             }
             else {
                 throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить пользователя (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            }
+        }
+
+    }
+    public ResultMes linkCodeTelegram(Integer code, Long telegramId) {
+        StringBuilder stringBuilder = new StringBuilder();
+        addTeg(stringBuilder,"code",code);
+        addTeg(stringBuilder,"telegramId",telegramId);
+        try {
+            return webClientUser.get().uri("/user/telegram/link" + stringBuilder)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные пользователю")))
+                    .bodyToMono(ResultMes.class)
+                    .block();
+        }
+        catch (RuntimeException ex) {
+            if (ex instanceof ResourceNotFoundException)
+            {
+                throw ex;
+            }
+            else {
+                throw new ResourceNotFoundException("Что-то пошло не так не удалось получить пользователя (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            }
+        }
+
+    }
+    public Boolean linkDeleteTelegram(Long telegramId) {
+        StringBuilder stringBuilder = new StringBuilder();
+        addTeg(stringBuilder,"telegramId",telegramId);
+        try {
+            return webClientUser.get().uri("/user/telegram/delete" + stringBuilder)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные пользователю")))
+                    .bodyToMono(Boolean.class)
+                    .block();
+        }
+        catch (RuntimeException ex) {
+            if (ex instanceof ResourceNotFoundException)
+            {
+                throw ex;
+            }
+            else {
+                throw new ResourceNotFoundException("Что-то пошло не так не удалось получить пользователя (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
             }
         }
 

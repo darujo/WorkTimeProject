@@ -1,0 +1,1 @@
+ALTER TABLE user_repo.users ADD telegram_id bigint NULL;
