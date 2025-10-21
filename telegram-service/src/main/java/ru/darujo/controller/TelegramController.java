@@ -21,8 +21,8 @@ public class TelegramController {
 
 
     @PostMapping(value = "/{userId}/notifications", consumes = MediaType.TEXT_PLAIN_VALUE)
-    public void sendMessageToTelegram(@PathVariable String userId, @RequestBody String text) throws TelegramApiException {
-        telegramBotSend.sendMessage(userId,text);
+    public void sendMessageToTelegram(@RequestHeader String username, @PathVariable String userId, @RequestBody String text) throws TelegramApiException {
+        telegramBotSend.sendMessage(username, userId, text);
     }
 }
 
