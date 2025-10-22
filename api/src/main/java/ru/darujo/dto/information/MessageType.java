@@ -1,0 +1,17 @@
+package ru.darujo.dto.information;
+
+public enum MessageType {
+        SYSTEM_INFO("Системные информационые сообщения"),
+        ESTIMATION_WORK("Проведена оценка"),
+        CHANGE_STATE_WORK("Смена статуса ЗИ");
+
+        private final String name;
+
+    MessageType(String name) {
+            this.name = name;
+        }
+
+    public String getName() {
+        return name;
+    }
+}

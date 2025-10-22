@@ -7,7 +7,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.darujo.dto.CustomPageImpl;
-import ru.darujo.dto.ResultMes;
+import ru.darujo.dto.information.MapUserInfoDto;
+import ru.darujo.dto.information.ResultMes;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
@@ -117,4 +118,23 @@ public class UserServiceIntegration extends ServiceIntegration {
 
     }
 
+    public MapUserInfoDto getUserMessageDTOs() {
+        try {
+            return webClientUser.get().uri("/information" )
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные пользователю")))
+                    .bodyToMono(MapUserInfoDto.class)
+                    .block();
+        }
+        catch (RuntimeException ex) {
+            if (ex instanceof ResourceNotFoundException)
+            {
+                throw ex;
+            }
+            else {
+                throw new ResourceNotFoundException("Что-то пошло не так не удалось получить пользователя (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            }
+        }
+    }
 }

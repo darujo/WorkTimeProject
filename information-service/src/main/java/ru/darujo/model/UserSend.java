@@ -21,6 +21,11 @@ public class UserSend {
     @Column(name = "send")
     private Boolean send;
     @ManyToOne
+    @JoinColumn(name = "mes_info_id")
     private MessageInformation messageInformation;
 
+    public UserSend(String chatId, MessageInformation messageInformation) {
+        this.chatId = chatId;
+        this.messageInformation = messageInformation;
+    }
 }
