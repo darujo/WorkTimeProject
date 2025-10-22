@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.UserConvertor;
 
+import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.ResultMes;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.user.UserPasswordChangeDto;
@@ -79,5 +80,11 @@ public class UserController {
     public void linkDeleteTelegram(@RequestParam(required = false) Long telegramId
     ) {
         userService.linkDeleteTelegram(telegramId);
+    }
+
+    @GetMapping("/information")
+    public MapUserInfoDto getUserMessageDTOs(    ) {
+        //ToDo Сделать Возврат
+        return null;
     }
 }

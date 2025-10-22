@@ -210,7 +210,19 @@ public class Specifications {
     public static <T> Specification<T> ne(String field, Long value) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.notEqual(root.get(field), value));
     }
-
+    public static <T> Specification<T> ne(Specification<T> specification, String field, Boolean value) {
+        if (value != null) {
+            if (specification == null) {
+                specification = ne(field, value);
+            } else {
+                specification = specification.and(ne(field, value));
+            }
+        }
+        return specification;
+    }
+    public static <T> Specification<T> ne(String field, Boolean value) {
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.notEqual(root.get(field), value));
+    }
     public static <T> Specification<T> eqIgnoreCase(Specification<T> specification, String field, String value) {
         if (value != null) {
             if (specification == null) {
