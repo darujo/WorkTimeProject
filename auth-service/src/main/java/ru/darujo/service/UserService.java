@@ -245,7 +245,8 @@ public class UserService {
         user.setTelegramId(idTelegram);
         saveUser(user);
         mapCode.remove(code);
-        return new ResultMes(true,"Пользовательне найден.");
+        //ToDo Сделать отправку пользователей для рассылки
+        return new ResultMes(true,"");
     }
 
     @Transactional

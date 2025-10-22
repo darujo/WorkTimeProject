@@ -2,17 +2,20 @@ package ru.darujo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.user.UserTelegramDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.integration.TelegramServiceIntegration;
 import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.model.MessageInformation;
 import ru.darujo.model.UserSend;
 import ru.darujo.repository.MessageInformationRepository;
 import ru.darujo.repository.UserSendRepository;
+import ru.darujo.specifications.Specifications;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -38,6 +41,12 @@ public class MessageInformationService {
     @Autowired
     public void setUserSendRepository(UserSendRepository userSendRepository) {
         this.userSendRepository = userSendRepository;
+    }
+    private TelegramServiceIntegration telegramServiceIntegration;
+
+    @Autowired
+    public void setTelegramServiceIntegration(TelegramServiceIntegration telegramServiceIntegration) {
+        this.telegramServiceIntegration = telegramServiceIntegration;
     }
 
     Map<MessageType, List<UserTelegramDto>> messageTypeListMap = null;
@@ -82,6 +91,8 @@ public class MessageInformationService {
             MessageInformation messageInformation =saveMessageInformation(new MessageInformation(null,messageInfoDto.getType().toString(), messageInfoDto.getText(), true,null));
             messageTypeListMap.get(messageInfoDto.getType()).forEach(userTelegramDto -> saveUserSend(new UserSend(Long.toString(userTelegramDto.getTelegramId()),messageInformation)));
         }
+        //ToDo пока отправляем сразу надо сделать отложеную отправку
+        sendAllNotSendMessage();
         return true;
 
     }
@@ -105,7 +116,18 @@ public class MessageInformationService {
     }
 
     public  void sendAllNotSendMessage(){
-        //TODo доделать отправку сообщений в сервисы
+        Specification<UserSend> specification = Specifications.ne(null,"send",false);
+        userSendRepository.findAll(specification).forEach(
+                userSend -> {
+                    try {
+                        telegramServiceIntegration.sendMessage(userSend.getChatId(), userSend.getMessageInformation().getText());
+                        userSend.setSend(true);
+                        userSendRepository.save(userSend);
+                    } catch (ResourceNotFoundException exception){
+                        System.out.println(exception.getMessage());
+                    }
+
+        });
     }
 
 
