@@ -5,9 +5,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.darujo.model.MessageSend;
 import ru.darujo.service.MessageSendService;
+
+import java.io.File;
 
 @Component
 public class TelegramBotSend {
@@ -27,6 +31,11 @@ public class TelegramBotSend {
     public void sendMessage (String author, String chatId,  String text) throws TelegramApiException {
         messageSendService.saveMessageSend(new MessageSend(null,author,chatId,text));
         SendMessage message =  new SendMessage(chatId, text);
+        tgClient.execute(message);
+    }
+    public void sendPhoto (String chatId) throws TelegramApiException {
+//        messageSendService.saveMessageSend(new MessageSend(null,author,chatId,text));
+        SendPhoto message =  new SendPhoto(chatId, new InputFile(new File("./src/main/resources/strait.png")));
         tgClient.execute(message);
     }
 }

@@ -68,13 +68,16 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
                         requestMessage.getChat().isGroupChat(),
                         requestMessage.getChat().isSuperGroupChat()));
         try {
+7777777yyyy6            //todo null and document
             if (requestMessage.getText().equals("/start")) {
                 defaultMsg(chatId, """
                         Напишите команду для показа списка мыслей:\s
                          /link - подписаться на уведомления от сервиса учета трудо затрат\s
                          /stop - отвязать акаунт от уведомлений""");
             } else if (requestMessage.getText().equals("/link")) {
+                telegramBotSend.sendPhoto(chatId);
                 defaultMsg(chatId, "Ведите однаразовый код:");
+
             } else if (requestMessage.getText().equals("/stop")) {
                 try {
                     if (userServiceIntegration.linkDeleteTelegram(requestMessage.getChatId())) {
