@@ -6,7 +6,7 @@ import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateC
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import ru.darujo.dto.ResultMes;
+import ru.darujo.dto.information.ResultMes;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.model.MessageReceive;

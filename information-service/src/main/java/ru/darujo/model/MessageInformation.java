@@ -21,7 +21,11 @@ public class MessageInformation {
     private String type;
     @Column(name = "text")
     private String text;
-    @OneToMany
+    @Column(name = "is_send")
+    private boolean isSend;
+
+
+    @OneToMany (mappedBy = "massage_information")
     private List<UserSend> users;
 
 }

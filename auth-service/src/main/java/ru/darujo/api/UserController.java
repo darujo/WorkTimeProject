@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.UserConvertor;
 
-import ru.darujo.dto.ResultMes;
+import ru.darujo.dto.information.ResultMes;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.user.UserPasswordChangeDto;
 import ru.darujo.service.UserService;

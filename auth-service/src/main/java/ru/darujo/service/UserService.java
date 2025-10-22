@@ -10,7 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.darujo.convertor.RoleConvertor;
-import ru.darujo.dto.ResultMes;
+import ru.darujo.dto.information.ResultMes;
 import ru.darujo.dto.user.UserRoleActiveDto;
 import ru.darujo.dto.user.UserRoleDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
@@ -70,6 +70,7 @@ public class UserService {
             User saveUser = userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundException("Пользователь с id " + user.getId() + " не найден"));
             user.setRights(saveUser.getRights());
             user.setRoles(saveUser.getRoles());
+            user.setTelegramId(saveUser.getTelegramId());
         } else {
             if (userRepository.findByNikNameIgnoreCase(user.getNikName()).isPresent()) {
                 throw new ResourceNotFoundException("Уже есть пользователь с таким ником");
