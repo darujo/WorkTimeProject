@@ -8,6 +8,7 @@ import ru.darujo.dto.ListString;
 import ru.darujo.dto.workperiod.UserWorkDto;
 import ru.darujo.service.TaskRepService;
 
+import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -47,12 +48,13 @@ public class TaskRepController {
     @GetMapping("/user")
     public ListString getFactUsers(@RequestParam(required = false) Long workId,
                                    @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr
-                                   ) {
-        Date dateLe = DataHelper.DTZToDate(dateLeStr, "dateLe = ");
+    ) {
+        Timestamp dateLe = DataHelper.DTZToDate(dateLeStr, "dateLe = ");
 
         return taskRepService.getFactUsers(
-                workId,dateLe);
+                workId, dateLe);
     }
+
     @GetMapping("/avail/{workId}")
     public Boolean getFactUsers(@PathVariable long workId
     ) {
@@ -63,7 +65,19 @@ public class TaskRepController {
     public List<UserWorkDto> getWeekWork(@RequestParam(required = false) Long workId,
                                          @RequestParam(required = false) String nikName,
                                          @RequestParam(required = false) Boolean addTotal
-    ){
-        return taskRepService.getWeekWork(workId,nikName, addTotal);
+    ) {
+        return taskRepService.getWeekWork(workId, nikName, addTotal);
+    }
+
+    @GetMapping("/lastTime")
+    public Timestamp getLastTime(@RequestParam long workId,
+                                 @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
+                                 @RequestParam(required = false, name = "dateGe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGeStr
+
+    ) {
+        Timestamp dateLe = DataHelper.DTZToDate(dateLeStr, "dateLe = ");
+        Timestamp dateGe = DataHelper.DTZToDate(dateGeStr, "dateGe = ");
+
+        return taskRepService.getLastTime(workId, dateLe, dateGe);
     }
 }

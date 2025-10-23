@@ -11,6 +11,7 @@ import ru.darujo.model.Task;
 import ru.darujo.repository.TaskRepository;
 import ru.darujo.specifications.Specifications;
 
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -68,7 +69,7 @@ public class TaskRepService {
 
     public Boolean getAvailTime(long workId) {
         Specification<Task> specification = Specification.where(null);
-        specification = Specifications.eq(specification,"workId",workId);
+        specification = Specifications.eq(specification, "workId", workId);
         List<Task> tasks = taskRepository.findAll(specification);
         if (tasks.size() == 0) {
             return false;
@@ -82,5 +83,11 @@ public class TaskRepService {
 
         return workTimeServiceIntegration.getWorkUserOrZi(tasks.stream().map(Task::getId).collect(Collectors.toList()), nikName, addTotal, false, null, null);
 
+    }
+
+    public Timestamp getLastTime(long workId, Timestamp dateLe, Timestamp dateGe) {
+        List<Task> tasks = (List<Task>) taskService.findTask(null, null, null, null, workId, null, null, null);
+
+        return workTimeServiceIntegration.getLastTime(tasks.stream().map(Task::getId).collect(Collectors.toList()), dateLe, dateGe);
     }
 }

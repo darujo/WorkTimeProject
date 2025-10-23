@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.darujo.convertor.RightConvertor;
 import ru.darujo.dto.user.RoleRightActiveDto;
 import ru.darujo.dto.user.RoleRightDto;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.Role;
 import ru.darujo.repository.RoleRepository;
 import ru.darujo.specifications.Specifications;
@@ -40,11 +40,11 @@ public class RoleService {
     }
 
     public Role findById(long id) {
-        return roleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Роль не найдена"));
+        return roleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Роль не найдена"));
     }
     public void checkNull(String filed, String text) {
         if (filed == null || filed.isEmpty()) {
-            throw new ResourceNotFoundException("Не заполнено поле " + text);
+            throw new ResourceNotFoundRunTime("Не заполнено поле " + text);
         }
     }
 
@@ -54,14 +54,14 @@ public class RoleService {
 
         if (role.getId() != null) {
             if (roleRepository.findByNameIgnoreCaseAndIdIsNot(role.getName(), role.getId()).isPresent()) {
-                throw new ResourceNotFoundException("Уже есть группа с таким кодом");
+                throw new ResourceNotFoundRunTime("Уже есть группа с таким кодом");
             }
-            Role saveRole = roleRepository.findById(role.getId()).orElseThrow(() -> new ResourceNotFoundException("Группа с id " + role.getId() + " не найден"));
+            Role saveRole = roleRepository.findById(role.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Группа с id " + role.getId() + " не найден"));
             role.setUsers(saveRole.getUsers());
             role.setRights(saveRole.getRights());
         } else {
             if (roleRepository.findByNameIgnoreCase(role.getName()).isPresent()) {
-                throw new ResourceNotFoundException("Уже есть группа с таким кодом");
+                throw new ResourceNotFoundRunTime("Уже есть группа с таким кодом");
             }
         }
         return roleRepository.save(role);
@@ -70,7 +70,7 @@ public class RoleService {
     @Transactional
     public RoleRightDto getRoleRight(Long roleId) {
 
-        Role rights = roleRepository.findById(roleId).orElseThrow(() -> new ResourceNotFoundException("Группа с id " + roleId + " не найден"));
+        Role rights = roleRepository.findById(roleId).orElseThrow(() -> new ResourceNotFoundRunTime("Группа с id " + roleId + " не найден"));
         Map<Long, RoleRightActiveDto> rightActiveDtoHashMap = new HashMap<>();
         rightService.getListRight().forEach(right -> rightActiveDtoHashMap.put(right.getId(), RightConvertor.getRoleRightActiveDto(right,Boolean.FALSE)));
         rights.getRights().forEach(right -> rightActiveDtoHashMap.get(right.getId()).setActive(Boolean.TRUE));
@@ -78,7 +78,7 @@ public class RoleService {
     }
     @Transactional
     public RoleRightDto setRoleRight(RoleRightDto roleRightDto) {
-        Role role = roleRepository.findById(roleRightDto.getId()).orElseThrow(() -> new ResourceNotFoundException("Группа с id " + roleRightDto.getId() + " не найден"));
+        Role role = roleRepository.findById(roleRightDto.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Группа с id " + roleRightDto.getId() + " не найден"));
         role.getRights().clear();
         roleRightDto.getRights().forEach((rightActiveDto) -> {
             if(rightActiveDto.getActive()){
@@ -98,7 +98,7 @@ public class RoleService {
 
     @Transactional
     public void deleteRole(long id) {
-        Role role = roleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Группа не найдена"));
+        Role role = roleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Группа не найдена"));
         roleRepository.delete(role);
     }
 }

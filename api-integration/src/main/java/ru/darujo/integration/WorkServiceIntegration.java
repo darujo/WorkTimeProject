@@ -7,7 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.darujo.dto.MapStringFloat;
 import ru.darujo.dto.work.WorkLittleDto;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
 import java.util.Date;
 
@@ -30,11 +30,11 @@ public class WorkServiceIntegration extends ServiceIntegration{
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
-                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по ЗИ с ID = " + workId)))
+                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по ЗИ с ID = " + workId)))
                     .bodyToMono(WorkLittleDto.class)
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 
@@ -47,23 +47,23 @@ public class WorkServiceIntegration extends ServiceIntegration{
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
-                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по ЗИ с ID = " + workId)))
+                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по ЗИ с ID = " + workId)))
                     .bodyToMono(MapStringFloat.class)
                     .block();
         } catch (RuntimeException ex) {
             System.out.println(ex.getMessage());
-            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 
     public Boolean setWorkDate(Long workId, Date dateWork) {
-        if(workId!= null && dateWork != null) {
+        if(workId!= null) {
             StringBuilder stringBuilder = new StringBuilder();
             addTeg(stringBuilder, "date", dateWork);
             return webClientWork.get().uri("/refresh/" + workId + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundException("ЗИ c id = " + workId + " не найдена")))
+                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("ЗИ c id = " + workId + " не найдена")))
                     .bodyToMono(Boolean.class)
                     .block();
         }

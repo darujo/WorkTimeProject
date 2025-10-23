@@ -1,6 +1,6 @@
 package ru.darujo.assistant.helper;
 
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -43,7 +43,7 @@ public class DataHelper {
             return new Timestamp(c.getTimeInMillis());
 
         } else if (checkNull) {
-            throw new ResourceNotFoundException("Не передан обязательный параметр " + text + " null ");
+            throw new ResourceNotFoundRunTime("Не передан обязательный параметр " + text + " null ");
         }
         return null;
     }

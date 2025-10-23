@@ -9,7 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.user.UserFio;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.model.Vacation;
 import ru.darujo.repository.VacationRepository;
@@ -47,7 +47,7 @@ public class VacationService {
     }
 
     public Vacation findById(long id) {
-        return vacationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Не найдена запись с ID" + id));
+        return vacationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Не найдена запись с ID" + id));
     }
 
     SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
@@ -61,25 +61,25 @@ public class VacationService {
 
     public void checkVacation(Vacation vacation) {
         if (vacation.getNikName() == null) {
-            throw new ResourceNotFoundException("ФИО должно быть заполнено");
+            throw new ResourceNotFoundRunTime("ФИО должно быть заполнено");
         }
         if (vacation.getDateStart() == null || vacation.getDateEnd() == null) {
-            throw new ResourceNotFoundException("Дата начала и конца периода должны быть заполнены");
+            throw new ResourceNotFoundRunTime("Дата начала и конца периода должны быть заполнены");
         }
         if (calendarService.isHoliday(vacation.getDateEnd())) {
-            throw new ResourceNotFoundException("Дата конца отпуска не может быть праздником");
+            throw new ResourceNotFoundRunTime("Дата конца отпуска не может быть праздником");
         }
         Vacation vacationSave = findOneDateBetween(vacation.getNikName(), "dateStart", vacation.getDateStart(), vacation.getDateEnd());
         if (vacationSave != null && !vacationSave.getId().equals(vacation.getId())) {
-            throw new ResourceNotFoundException("Отпуск пересекаются с отпуском " + dateToText(vacationSave.getDateStart()) + " - " + dateToText(vacationSave.getDateEnd()));
+            throw new ResourceNotFoundRunTime("Отпуск пересекаются с отпуском " + dateToText(vacationSave.getDateStart()) + " - " + dateToText(vacationSave.getDateEnd()));
         }
         vacationSave = findOneDateBetween(vacation.getNikName(), "dateEnd", vacation.getDateStart(), vacation.getDateEnd());
         if (vacationSave != null && !vacationSave.getId().equals(vacation.getId())) {
-            throw new ResourceNotFoundException("Отпуск пересекаются с отпуском " + dateToText(vacationSave.getDateStart()) + " - " + dateToText(vacationSave.getDateEnd()));
+            throw new ResourceNotFoundRunTime("Отпуск пересекаются с отпуском " + dateToText(vacationSave.getDateStart()) + " - " + dateToText(vacationSave.getDateEnd()));
         }
         vacationSave = findOneDateInVacation(vacation.getNikName(), vacation.getDateStart());
         if (vacationSave != null && !vacationSave.getId().equals(vacation.getId())) {
-            throw new ResourceNotFoundException("Отпуск пересекаются с отпуском " + dateToText(vacationSave.getDateStart()) + " - " + dateToText(vacationSave.getDateEnd()));
+            throw new ResourceNotFoundRunTime("Отпуск пересекаются с отпуском " + dateToText(vacationSave.getDateStart()) + " - " + dateToText(vacationSave.getDateEnd()));
         }
         // вторую дату проверять не надо  так как этот  случай покрывается предыдущими случаями
     }
@@ -105,7 +105,7 @@ public class VacationService {
             vacationRepository.delete(vacationSave);
         }
         if (!calendarService.existWorkDay(vacation.getDateStart(), vacation.getDateEnd())) {
-            throw new ResourceNotFoundException("Отпуск должен содержать рабочий день");
+            throw new ResourceNotFoundRunTime("Отпуск должен содержать рабочий день");
         }
         return vacationRepository.save(vacation);
     }
@@ -164,7 +164,7 @@ public class VacationService {
                 userFio.setLastName(userDto.getLastName());
                 userFio.setPatronymic(userDto.getPatronymic());
             }
-        } catch (ResourceNotFoundException e) {
+        } catch (ResourceNotFoundRunTime e) {
             System.out.println(e.getMessage());
             userFio.setFirstName("Не найден пользователь с ником " + userFio.getNikName());
         }

@@ -12,7 +12,7 @@ import ru.darujo.convertor.WorkTimeConvertor;
 import ru.darujo.dto.*;
 import ru.darujo.dto.user.UserFio;
 import ru.darujo.dto.user.UserDto;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.CalendarServiceIntegration;
 import ru.darujo.integration.TaskServiceIntegration;
 import ru.darujo.integration.UserServiceIntegration;
@@ -21,6 +21,7 @@ import ru.darujo.repository.WorkTimeRepository;
 import ru.darujo.specifications.Specifications;
 
 import javax.transaction.Transactional;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -107,7 +108,7 @@ public class WorkTimeService {
                 }
 
             } catch (NullPointerException ex) {
-                throw new ResourceNotFoundException("Нет пользователей с Ролью или Логином " + nikName);
+                throw new ResourceNotFoundRunTime("Нет пользователей с Ролью или Логином " + nikName);
             }
         }
         specification = Specifications.lt(specification, "workDate", dateLt);
@@ -144,22 +145,22 @@ public class WorkTimeService {
 
     private void validWorkTime(WorkTime workTime) {
         if (workTime.getTaskId() == null) {
-            throw new ResourceNotFoundException("Не выбрана задача");
+            throw new ResourceNotFoundRunTime("Не выбрана задача");
         }
         if (workTime.getWorkDate() == null) {
-            throw new ResourceNotFoundException("Не задана дата");
+            throw new ResourceNotFoundRunTime("Не задана дата");
         }
         if (workTime.getWorkTime() == null) {
-            throw new ResourceNotFoundException("Время должно быть от 0 до 10 часов");
+            throw new ResourceNotFoundRunTime("Время должно быть от 0 до 10 часов");
         }
         if (workTime.getWorkTime() <= 0) {
-            throw new ResourceNotFoundException("Время должно быть больше нуля");
+            throw new ResourceNotFoundRunTime("Время должно быть больше нуля");
         }
         if (workTime.getNikName() == null) {
-            throw new ResourceNotFoundException("Не удалось вас опознать пожалуста авторизуйтесь");
+            throw new ResourceNotFoundRunTime("Не удалось вас опознать пожалуста авторизуйтесь");
         }
         if (workTime.getComment() == null || workTime.getComment().isEmpty()) {
-            throw new ResourceNotFoundException("Не задан комментарий");
+            throw new ResourceNotFoundRunTime("Не задан комментарий");
         }
     }
 
@@ -190,7 +191,7 @@ public class WorkTimeService {
                 workTimeDto.setTaskCodeDEVBO(taskDto.getCodeDEVBO());
                 workTimeDto.setTaskType(taskDto.getType());
             }
-        } catch (ResourceNotFoundException e) {
+        } catch (ResourceNotFoundRunTime e) {
             System.out.println(e.getMessage());
             workTimeDto.setFirstName("Не найдена задача с id " + workTimeDto.getTaskId());
         }
@@ -210,7 +211,7 @@ public class WorkTimeService {
                 userFio.setLastName(userDto.getLastName());
                 userFio.setPatronymic(userDto.getPatronymic());
             }
-        } catch (ResourceNotFoundException e) {
+        } catch (ResourceNotFoundRunTime e) {
             System.out.println(e.getMessage());
             userFio.setFirstName("Не найден пользователь с ником " + userFio.getNikName());
         }
@@ -219,7 +220,7 @@ public class WorkTimeService {
     public List<UserDto> getUsers(String role) {
         try {
             return userServiceIntegration.getUserDTOs(role);
-        } catch (ResourceNotFoundException e) {
+        } catch (ResourceNotFoundRunTime e) {
             System.out.println(e.getMessage());
             return null;
         }
@@ -235,20 +236,26 @@ public class WorkTimeService {
         switch (right) {
             case "edit":
                 if (!rightEdit) {
-                    throw new ResourceNotFoundException("У вас нет права на редактирование WORK_TIME_EDIT");
+                    throw new ResourceNotFoundRunTime("У вас нет права на редактирование WORK_TIME_EDIT");
                 }
                 break;
             case "create":
                 if (!rightCreate) {
-                    throw new ResourceNotFoundException("У вас нет права на создание WORK_TIME_CREATE");
+                    throw new ResourceNotFoundRunTime("У вас нет права на создание WORK_TIME_CREATE");
                 }
                 break;
             case "changeuser":
                 if (!rightChangeUser) {
-                    throw new ResourceNotFoundException("У вас нет права на изменение пользователя WORK_TIME_CHANGE_USER");
+                    throw new ResourceNotFoundRunTime("У вас нет права на изменение пользователя WORK_TIME_CHANGE_USER");
                 }
                 break;
         }
         return true;
+    }
+
+    public Timestamp getLastTime(Long [] taskId,Timestamp dateGe, Timestamp dateLe) {
+        Page<WorkTime> workTimes = findWorkTime(taskId,null,null,dateLe,null,dateGe,null,null,1,1);
+
+        return workTimes.getSize() == 1 ? workTimes.getContent().get(0).getWorkDate() : null ;
     }
 }

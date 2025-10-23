@@ -43,18 +43,7 @@ public class WorkTimeRepService {
     }
 
     public float getTimeWork(Long[] taskId, String nikName, Date dateGt, Date dateLe, String typeStr) {
-        ArrayList<Integer> types = new ArrayList<>();
-
-        if (typeStr != null && typeStr.equals("analise")) {
-            types.add(2);
-            types.add(3);
-
-        } else if (typeStr != null && typeStr.equals("develop")) {
-            types.add(1);
-            types.add(4);
-        } else {
-            types.add(null);
-        }
+        ArrayList<Integer> types = getTypeForWork(typeStr);
 
         AtomicReference<Float> time = new AtomicReference<>((float) 0);
         for (Integer type : types) {
@@ -68,6 +57,22 @@ public class WorkTimeRepService {
         return time.get();
     }
 
+    private ArrayList<Integer> getTypeForWork(String typeStr) {
+        ArrayList<Integer> types = new ArrayList<>();
+
+        if (typeStr != null && typeStr.equals("analise")) {
+            types.add(2);
+            types.add(3);
+
+        } else if (typeStr != null && typeStr.equals("develop")) {
+            types.add(1);
+            types.add(4);
+        } else {
+            types.add(null);
+        }
+        return types;
+    }
+
     public ListString getFactUser(Long[] taskId, Date dateLe) {
         ListString users = new ListString();
         workTimeService.findWorkTime(taskId, null, null, dateLe, null, null, null, null, null, null).forEach(workTime -> users.getList().add(workTime.getNikName()));
@@ -79,7 +84,7 @@ public class WorkTimeRepService {
         List<WeekWorkDto> weekWorkDTOs;
         if (taskId != null) {
             weekWorkDTOs = new ArrayList<>();
-            weekWorkDTOs.add(new WeekWorkDto(null, null, null,null));
+            weekWorkDTOs.add(new WeekWorkDto(null, null, null, null));
         } else if (weekSplit) {
             weekWorkDTOs = calendarServiceIntegration.getWeekTime(dateStart, dateEnd);
         } else {
@@ -223,7 +228,7 @@ public class WorkTimeRepService {
                         // добавим период и работы также устновим был ли отпуск
                         WorkPeriodDto workPeriodDto = new WorkPeriodDto(weekWorkDto, workTimeDtoList);
                         addVacation(user.getNikName(), workPeriodDto);
-                        if(workPeriodDto.getAllVacation() == null || !workPeriodDto.getAllVacation()) {
+                        if (workPeriodDto.getAllVacation() == null || !workPeriodDto.getAllVacation()) {
                             timePlan.set(timePlan.get() + weekWorkDto.getTime());
                         }
                         weekWorkPeriodDTOs.add(workPeriodDto);
@@ -257,5 +262,9 @@ public class WorkTimeRepService {
         } catch (RuntimeException ex) {
             System.out.println(ex.getMessage());
         }
+    }
+
+    public Timestamp getLastTime(Long[] taskId, Timestamp dateGe, Timestamp dateLe) {
+        return workTimeService.getLastTime(taskId, dateGe, dateLe);
     }
 }

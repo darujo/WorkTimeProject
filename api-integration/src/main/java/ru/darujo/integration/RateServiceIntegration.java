@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.darujo.dto.ratestage.WorkStageDto;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
 @Component
 @ConditionalOnMissingClass
@@ -23,18 +23,18 @@ public class RateServiceIntegration extends ServiceIntegration {
     public WorkStageDto getTimePlan(Long workId) {
         try {
             if (workId == null) {
-                throw new ResourceNotFoundException("Не задана workId для получения плановых затрат");
+                throw new ResourceNotFoundRunTime("Не задана workId для получения плановых затрат");
             }
             StringBuilder stringBuilder = new StringBuilder();
             addTeg(stringBuilder, "workId", workId);
             return webClientRate.get().uri("/time/all" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить плановые трудозатраты")))
+                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить плановые трудозатраты")))
                     .bodyToMono(WorkStageDto.class)
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить План " + ex.getMessage());
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить План " + ex.getMessage());
         }
     }
 

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import ru.darujo.convertor.RoleConvertor;
 import ru.darujo.dto.user.UserRoleActiveDto;
 import ru.darujo.dto.user.UserRoleDto;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.User;
 import ru.darujo.repository.UserRepository;
 import ru.darujo.specifications.Specifications;
@@ -47,7 +47,7 @@ public class UserService {
 
     public void checkNull(String filed, String text) {
         if (filed == null || filed.isEmpty()) {
-            throw new ResourceNotFoundException("Не заполнено поле " + text);
+            throw new ResourceNotFoundRunTime("Не заполнено поле " + text);
         }
     }
 
@@ -63,14 +63,14 @@ public class UserService {
 
         if (user.getId() != null) {
             if (userRepository.findByNikNameIgnoreCaseAndIdIsNot(user.getNikName(), user.getId()).isPresent()) {
-                throw new ResourceNotFoundException("Уже есть пользователь с таким ником");
+                throw new ResourceNotFoundRunTime("Уже есть пользователь с таким ником");
             }
-            User saveUser = userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundException("Пользователь с id " + user.getId() + " не найден"));
+            User saveUser = userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + user.getId() + " не найден"));
             user.setRights(saveUser.getRights());
             user.setRoles(saveUser.getRoles());
         } else {
             if (userRepository.findByNikNameIgnoreCase(user.getNikName()).isPresent()) {
-                throw new ResourceNotFoundException("Уже есть пользователь с таким ником");
+                throw new ResourceNotFoundRunTime("Уже есть пользователь с таким ником");
             }
         }
         if (textPassword != null && !textPassword.equals("")) {
@@ -78,7 +78,7 @@ public class UserService {
                 user.setPassword(hashPassword(textPassword));
             } else {
                 if (!checkPassword(textPassword, user.getPassword())) {
-                    throw new ResourceNotFoundException("Пароль и хэш не совпадают");
+                    throw new ResourceNotFoundRunTime("Пароль и хэш не совпадают");
                 }
             }
         }
@@ -125,7 +125,7 @@ public class UserService {
     @Transactional
     public UserRoleDto getUserRoles(Long userId) {
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Пользователь с id " + userId + " не найден"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + userId + " не найден"));
         Map<Long, UserRoleActiveDto> roleActiveDtoMap = new HashMap<>();
         roleService.getListRole().forEach(role -> roleActiveDtoMap.put(role.getId(), RoleConvertor.getUserRoleActiveDto(role, Boolean.FALSE)));
         user.getRoles().forEach(role -> roleActiveDtoMap.get(role.getId()).setActive(Boolean.TRUE));
@@ -134,7 +134,7 @@ public class UserService {
 
     @Transactional
     public UserRoleDto setUserRoles(UserRoleDto userRole) {
-        User user = userRepository.findById(userRole.getId()).orElseThrow(() -> new ResourceNotFoundException("Пользователь с id " + userRole.getId() + " не найден"));
+        User user = userRepository.findById(userRole.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + userRole.getId() + " не найден"));
         user.getRoles().clear();
         userRole.getRoles().forEach((roleDto) -> {
             if (roleDto.getActive()) {
@@ -154,16 +154,16 @@ public class UserService {
     }
 
     public boolean changePassword(String username, String passwordOld, String passwordNew) {
-        User user = userRepository.findByNikNameIgnoreCase(username).orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
+        User user = userRepository.findByNikNameIgnoreCase(username).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь не найден"));
         if (!checkPassword(passwordOld, user.getPassword())) {
-            throw new ResourceNotFoundException("Старый пароль не действителен");
+            throw new ResourceNotFoundRunTime("Старый пароль не действителен");
         }
 
         if (passwordNew == null || passwordNew.equals("")) {
-            throw new ResourceNotFoundException("Новый пароль не должен быть пустым");
+            throw new ResourceNotFoundRunTime("Новый пароль не должен быть пустым");
         }
         if (checkPassword(passwordNew, user.getPassword())) {
-            throw new ResourceNotFoundException("Новый пароль не должен совпадать со старым");
+            throw new ResourceNotFoundRunTime("Новый пароль не должен совпадать со старым");
         }
         user.setPassword(hashPassword(passwordNew));
         user.setPasswordChange(false);
