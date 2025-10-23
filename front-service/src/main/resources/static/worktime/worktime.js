@@ -451,7 +451,7 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
 
     }
     $scope.findTask = function () {
-        $scope.loadTask(0);
+        // $scope.loadTask(0);
 
         showFindTask();
     }
