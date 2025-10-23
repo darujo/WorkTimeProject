@@ -15,7 +15,6 @@ import ru.darujo.service.WorkService;
 
 import java.sql.Timestamp;
 import java.time.ZonedDateTime;
-import java.util.Random;
 
 @RestController()
 @RequestMapping("/v1/works")
@@ -27,7 +26,6 @@ public class WorkController {
         this.workService = workService;
     }
 
-    Random random = new Random();
 
     @GetMapping("/find")
     public Iterable<Work> workList(@RequestParam(required = false) String name,
@@ -42,63 +40,6 @@ public class WorkController {
 
     }
 
-    public static String generateString(Random rng, String characters, int length) {
-        char[] text = new char[length];
-        for (int i = 0; i < length; i++) {
-            text[i] = characters.charAt(rng.nextInt(characters.length()));
-        }
-        return new String(text);
-    }
-
-    @GetMapping("/convAddWork")
-    public WorkDto workAddConv() {
-
-        for (int i = 0; i < 40000; i++) {
-            String str = "Зи с номером" + i + "или другим";
-            if (i % 1000 == 0) {
-                str = str + "тест";
-            }
-            str = str + "как-то так";
-
-
-            Work work = new Work(null,
-                    null,
-                    null,
-                    generateString(random, str, 15),
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    generateString(random, str, 15),
-                    null,
-                    null,
-                    null,
-                    8,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null);
-            workService.saveWork(work);
-            System.out.println("создана задача " + i);
-        }
-
-        return new WorkDto();
-    }
 
     @GetMapping("/{id}")
     public WorkEditDto WorkEdit(@PathVariable long id) {
@@ -116,12 +57,13 @@ public class WorkController {
     }
 
     @PostMapping("")
-    public WorkDto WorkSave(@RequestBody WorkEditDto workDto,
+    public WorkDto WorkSave( @RequestHeader String userName,
+                            @RequestBody WorkEditDto workDto,
                             @RequestHeader(defaultValue = "false", name = "ZI_EDIT") boolean right) {
         if (!right) {
             throw new ResourceNotFoundRunTime("У вас нет права ZI_EDIT");
         }
-        Work work = workService.saveWork(WorkConvertor.getWork(workDto));
+        Work work = workService.saveWork(userName, WorkConvertor.getWork(workDto));
         return WorkConvertor.getWorkDto(work);
     }
 

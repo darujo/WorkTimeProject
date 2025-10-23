@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.dto.information.MessageType;
-import ru.darujo.dto.user.UserTelegramDto;
+import ru.darujo.dto.user.UserInfoDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.integration.TelegramServiceIntegration;
 import ru.darujo.integration.UserServiceIntegration;
@@ -49,7 +49,7 @@ public class MessageInformationService {
         this.telegramServiceIntegration = telegramServiceIntegration;
     }
 
-    Map<MessageType, List<UserTelegramDto>> messageTypeListMap = null;
+    Map<MessageType, List<UserInfoDto>> messageTypeListMap = null;
 
     @PostConstruct
     public boolean init() {
@@ -57,14 +57,6 @@ public class MessageInformationService {
         try {
             messageTypeListMap = userServiceIntegration.getUserMessageDTOs().getMessageTypeListMap();
 
-//            for (MessageType type : MessageType.values()) {
-//                List<UserTelegramDto> userDTOs =
-//                if(messageTypeListMapLoad == null){
-//                    messageTypeListMapLoad = new HashMap<>();
-//                }
-//                messageTypeListMapLoad.put(type,userDTOs);
-//
-//            }
             loadOk = true;
         } catch (ResourceNotFoundException exception) {
             System.out.println(exception.getMessage());
@@ -72,7 +64,6 @@ public class MessageInformationService {
         }
        return loadOk;
     }
-    //todo Доделать обновление если у пользователя поменялась настройка
     public void setMessageTypeListMap(MapUserInfoDto messageTypeListMap) {
         this.messageTypeListMap = messageTypeListMap.getMessageTypeListMap();
     }
@@ -98,7 +89,13 @@ public class MessageInformationService {
     }
 
     private void updateAllNoAddUser() {
-        // Todo обновить записи по которым список пустой и еще не отправлены
+        Specification<MessageInformation> specification = Specifications.ne(null,"isSend",false);
+        messageInformationRepository
+                .findAll(specification)
+                .forEach(messageInformation -> {
+                    messageTypeListMap.get(MessageType.valueOf(messageInformation.getType())).forEach(userTelegramDto -> saveUserSend(new UserSend(Long.toString(userTelegramDto.getTelegramId()),messageInformation)));
+                messageInformation.setSend(true);
+                saveMessageInformation(messageInformation);});
 
     }
 

@@ -10,10 +10,16 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.darujo.convertor.RoleConvertor;
+import ru.darujo.convertor.UserConvertor;
+import ru.darujo.dto.information.MapUserInfoDto;
+import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.information.ResultMes;
 import ru.darujo.dto.user.UserRoleActiveDto;
 import ru.darujo.dto.user.UserRoleDto;
-import ru.darujo.exceptions.ResourceNotFoundRunTime;
+import ru.darujo.dto.user.UserInfoDto;
+import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.integration.InfoServiceIntegration;
+
 import ru.darujo.model.User;
 import ru.darujo.repository.UserRepository;
 import ru.darujo.specifications.Specifications;
@@ -39,6 +45,13 @@ public class UserService {
         this.roleService = roleService;
     }
 
+    private InfoServiceIntegration infoServiceIntegration;
+
+    @Autowired
+    public void setInfoServiceIntegration(InfoServiceIntegration infoServiceIntegration) {
+        this.infoServiceIntegration = infoServiceIntegration;
+    }
+
     public User findById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("Не наден пользователь c id " + id));
     }
@@ -49,7 +62,7 @@ public class UserService {
 
     public void checkNull(String filed, String text) {
         if (filed == null || filed.isEmpty()) {
-            throw new ResourceNotFoundRunTime("Не заполнено поле " + text);
+            throw new ResourceNotFoundException("Не заполнено поле " + text);
         }
     }
 
@@ -65,15 +78,15 @@ public class UserService {
 
         if (user.getId() != null) {
             if (userRepository.findByNikNameIgnoreCaseAndIdIsNot(user.getNikName(), user.getId()).isPresent()) {
-                throw new ResourceNotFoundRunTime("Уже есть пользователь с таким ником");
+                throw new ResourceNotFoundException("Уже есть пользователь с таким ником");
             }
-            User saveUser = userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + user.getId() + " не найден"));
+            User saveUser = userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundException("Пользователь с id " + user.getId() + " не найден"));
             user.setRights(saveUser.getRights());
             user.setRoles(saveUser.getRoles());
             user.setTelegramId(saveUser.getTelegramId());
         } else {
             if (userRepository.findByNikNameIgnoreCase(user.getNikName()).isPresent()) {
-                throw new ResourceNotFoundRunTime("Уже есть пользователь с таким ником");
+                throw new ResourceNotFoundException("Уже есть пользователь с таким ником");
             }
         }
         if (textPassword != null && !textPassword.equals("")) {
@@ -81,7 +94,7 @@ public class UserService {
                 user.setPassword(hashPassword(textPassword));
             } else {
                 if (!checkPassword(textPassword, user.getPassword())) {
-                    throw new ResourceNotFoundRunTime("Пароль и хэш не совпадают");
+                    throw new ResourceNotFoundException("Пароль и хэш не совпадают");
                 }
             }
         }
@@ -130,7 +143,7 @@ public class UserService {
     @Transactional
     public UserRoleDto getUserRoles(Long userId) {
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + userId + " не найден"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Пользователь с id " + userId + " не найден"));
         Map<Long, UserRoleActiveDto> roleActiveDtoMap = new HashMap<>();
         roleService.getListRole().forEach(role -> roleActiveDtoMap.put(role.getId(), RoleConvertor.getUserRoleActiveDto(role, Boolean.FALSE)));
         user.getRoles().forEach(role -> roleActiveDtoMap.get(role.getId()).setActive(Boolean.TRUE));
@@ -139,7 +152,7 @@ public class UserService {
 
     @Transactional
     public UserRoleDto setUserRoles(UserRoleDto userRole) {
-        User user = userRepository.findById(userRole.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + userRole.getId() + " не найден"));
+        User user = userRepository.findById(userRole.getId()).orElseThrow(() -> new ResourceNotFoundException("Пользователь с id " + userRole.getId() + " не найден"));
         user.getRoles().clear();
         userRole.getRoles().forEach((roleDto) -> {
             if (roleDto.getActive()) {
@@ -159,21 +172,30 @@ public class UserService {
     }
 
     public boolean changePassword(String username, String passwordOld, String passwordNew) {
-        User user = userRepository.findByNikNameIgnoreCase(username).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь не найден"));
+        User user = userRepository.findByNikNameIgnoreCase(username).orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
         if (!checkPassword(passwordOld, user.getPassword())) {
-            throw new ResourceNotFoundRunTime("Старый пароль не действителен");
+            throw new ResourceNotFoundException("Старый пароль не действителен");
         }
 
         if (passwordNew == null || passwordNew.equals("")) {
-            throw new ResourceNotFoundRunTime("Новый пароль не должен быть пустым");
+            throw new ResourceNotFoundException("Новый пароль не должен быть пустым");
         }
         if (checkPassword(passwordNew, user.getPassword())) {
-            throw new ResourceNotFoundRunTime("Новый пароль не должен совпадать со старым");
+            throw new ResourceNotFoundException("Новый пароль не должен совпадать со старым");
         }
         user.setPassword(hashPassword(passwordNew));
         user.setPasswordChange(false);
         user = saveUser(user);
         return user != null;
+    }
+
+    public MapUserInfoDto getUserMessageDTOs() {
+        Map<MessageType, List<UserInfoDto>> messageTypeListMap = new HashMap<>();
+        for (MessageType type : MessageType.values()) {
+            List<UserInfoDto> userDTOs = getUserList(null, null, null, null, null, null, null, null).getContent().stream().map(UserConvertor::getUserInfoDto).toList();
+            messageTypeListMap.put(type, userDTOs);
+        }
+        return new MapUserInfoDto(messageTypeListMap);
     }
 
     private class SingleCode {
@@ -185,13 +207,13 @@ public class UserService {
             this.timestamp = timestamp;
         }
 
-        }
+    }
 
     private final Map<Integer, SingleCode> mapCode = new HashMap<>();
     private final Integer TIME_CODE = 10;
 
     public String getGenSingleCode(String login) {
-        if (login == null ){
+        if (login == null) {
             return "пройдите авторизацию";
         }
         try {
@@ -222,31 +244,29 @@ public class UserService {
             if (entry.getValue().timestamp.after(timestamp) || (entry.getValue().login.equals(login))) {
                 mapCode.remove(entry.getKey());
             }
-//            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
         }
-//        mapCode.forEach((code, singleCode) -> {
-//            if (singleCode.timestamp.before(timestamp) || (singleCode.login.equals(login))) {
-//                mapCode.remove(singleCode.code);
-//            }
-//        });
     }
 
     public ResultMes linkCodeTelegram(Integer code, Long idTelegram) {
         clearMapCode(null);
         SingleCode singleCode = mapCode.get(code);
-        if (singleCode == null){
-            return new ResultMes(false,"Не такого кода авторизации или он просрочен ");
+        if (singleCode == null) {
+            return new ResultMes(false, "Не такого кода авторизации или он просрочен ");
         }
 
         User user = findByNikName(singleCode.login).orElse(null);
-        if (user == null){
-            return new ResultMes(false,"Пользовательне найден.");
+        if (user == null) {
+            return new ResultMes(false, "Пользовательне найден.");
         }
         user.setTelegramId(idTelegram);
         saveUser(user);
         mapCode.remove(code);
-        //ToDo Сделать отправку пользователей для рассылки
-        return new ResultMes(true,"");
+        try {
+            infoServiceIntegration.setMessageTypeListMap(getUserMessageDTOs());
+            return new ResultMes(true, "");
+        } catch (ResourceNotFoundException ex) {
+            return new ResultMes(false, "Пользователь добавлен, но что-то не так и уведомления будут приходить, после перезапуска сервиса уведомлений, Обратитесь к администратору или ждите");
+        }
     }
 
     @Transactional

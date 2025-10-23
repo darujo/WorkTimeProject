@@ -2,6 +2,7 @@ package ru.darujo.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.dto.ratestage.WorkCriteriaDto;
 import ru.darujo.service.MessageInformationService;
@@ -17,9 +18,13 @@ public class MessageInformationController {
 
 
 
-    @PostMapping("")
+    @PostMapping("/add/message")
     public Boolean addMessageInformation(@RequestBody MessageInfoDto messageInfoDto) {
         return messageInformationService.addMessage(messageInfoDto);
+    }
+    @PostMapping("/set/types")
+    public void setMessageTypeListMap(@RequestBody MapUserInfoDto messageTypeListMap){
+        messageInformationService.setMessageTypeListMap(messageTypeListMap);
     }
 
 

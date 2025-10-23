@@ -84,7 +84,6 @@ public class UserController {
 
     @GetMapping("/information")
     public MapUserInfoDto getUserMessageDTOs(    ) {
-        //ToDo Сделать Возврат
-        return null;
+        return userService.getUserMessageDTOs();
     }
 }

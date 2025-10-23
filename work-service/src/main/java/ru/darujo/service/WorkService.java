@@ -7,12 +7,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.darujo.dto.information.MessageInfoDto;
+import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.ratestage.WorkStageDto;
 import ru.darujo.dto.work.WorkPlanTime;
 import ru.darujo.exceptions.ResourceNotFoundException;
-import ru.darujo.exceptions.ResourceNotFoundRunTime;
+import ru.darujo.integration.InfoServiceIntegration;
 import ru.darujo.integration.RateServiceIntegration;
 import ru.darujo.integration.TaskServiceIntegration;
+
 import ru.darujo.model.Release;
 import ru.darujo.model.Work;
 import ru.darujo.model.WorkLittle;
@@ -55,15 +58,20 @@ public class WorkService {
         this.releaseService = releaseService;
     }
 
+    InfoServiceIntegration infoServiceIntegration;
+
+    @Autowired
+    public void setInfoServiceIntegration(InfoServiceIntegration infoServiceIntegration) {
+        this.infoServiceIntegration = infoServiceIntegration;
+    }
     TaskServiceIntegration taskServiceIntegration;
 
     @Autowired
     public void setTaskServiceIntegration(TaskServiceIntegration taskServiceIntegration) {
         this.taskServiceIntegration = taskServiceIntegration;
     }
-
     public Work findById(long id) {
-        return workRepository.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Задача не найден"));
+        return workRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Задача не найден"));
     }
 
     public Optional<WorkLittle> findLittleById(long id) {
@@ -73,17 +81,17 @@ public class WorkService {
     public void checkWork(Work work) {
         Release release;
         if (work.getId() != null) {
-            release = workRepository.findById(work.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("ЗИ пропало(((")).getRelease();
+            release = workRepository.findById(work.getId()).orElseThrow(() -> new ResourceNotFoundException("ЗИ пропало(((")).getRelease();
             if (release != null) {
                 if (release.getIssuingReleaseFact() != null) {
                     if (work.getRelease() == null || !work.getRelease().getId().equals(release.getId())) {
-                        throw new ResourceNotFoundRunTime("Нельзя исключать ЗИ из релиза. Релиз выпущен.");
+                        throw new ResourceNotFoundException("Нельзя исключать ЗИ из релиза. Релиз выпущен.");
                     }
                 } else {
                     if (work.getRelease() != null && !work.getRelease().getId().equals(release.getId())) {
                         release = releaseService.findById(work.getRelease().getId());
                         if (release.getIssuingReleaseFact() != null) {
-                            throw new ResourceNotFoundRunTime("Нельзя включать ЗИ в выпущеный релиз");
+                            throw new ResourceNotFoundException("Нельзя включать ЗИ в выпущеный релиз");
                         }
                     }
                 }
@@ -91,7 +99,7 @@ public class WorkService {
                 if (work.getRelease() != null && work.getRelease().getId() != null) {
                     release = releaseService.findById(work.getRelease().getId());
                     if (release.getIssuingReleaseFact() != null) {
-                        throw new ResourceNotFoundRunTime("Нельзя включать ЗИ в выпущеный релиз");
+                        throw new ResourceNotFoundException("Нельзя включать ЗИ в выпущеный релиз");
                     }
                 }
             }
@@ -99,7 +107,7 @@ public class WorkService {
             if (work.getRelease() != null && work.getRelease().getId() != null) {
                 release = releaseService.findById(work.getRelease().getId());
                 if (release.getIssuingReleaseFact() != null) {
-                    throw new ResourceNotFoundRunTime("Нельзя включать ЗИ в выпущеный релиз");
+                    throw new ResourceNotFoundException("Нельзя включать ЗИ в выпущеный релиз");
                 }
             }
         }
@@ -129,18 +137,34 @@ public class WorkService {
     }
 
     public void checkDate(Timestamp dateStart, Timestamp dateEnd, String dateStartMes, String dateEndMes) {
-        if (dateStart != null && dateEnd != null && dateStart.compareTo(dateEnd) > 0) {
-            throw new ResourceNotFoundRunTime("Дата " + dateEndMes + " не может быть раньше " + dateStartMes);
+        if (dateStart != null
+                && dateEnd != null
+                && dateStart.compareTo(dateEnd) > 0) {
+            throw new ResourceNotFoundException("Дата " + dateEndMes + " не может быть раньше " + dateStartMes);
         }
     }
 
-    public Work saveWork(Work work) {
+    @Transactional
+    public Work saveWork(String login, Work work) {
         checkWork(work);
+        Work workSave = null;
+        if (work.getId() != null) {
+            workSave = workRepository.findById(work.getId()).orElse(null);
+        }
         updateWorkLastDevelop(work);
-        return workRepository.save(work);
+        work = workRepository.save(work);
+        if (workSave != null && !workSave.getStageZI().equals(work.getStageZI())) {
+            infoServiceIntegration.addMessage(
+                    new MessageInfoDto(
+                            new Timestamp(
+                                    System.currentTimeMillis()),
+                            login,
+                            MessageType.CHANGE_STAGE_WORK,
+                            String.format("%s сменил этап ЗИ %s -> %s", login, workSave.getStageZI(), work.getStageZI())));
+        }
 
+        return work;
     }
-
     public void updateWorkLastDevelop(Work work) {
         if (work.getId() == null) {
             return;
@@ -169,18 +193,37 @@ public class WorkService {
         }
 
     }
-
     public void deleteWork(Long id) {
         workLittleRepository.deleteById(id);
     }
 
     @Transactional
-    public Page<Work> findWorks(int page, int size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId) {
+    public Page<Work> findWorks(int page,
+                                int size,
+                                String name,
+                                String sort,
+                                Integer stageZiGe,
+                                Integer stageZiLe,
+                                Long codeSap,
+                                String codeZi,
+                                String task,
+                                Long releaseId
+    ) {
         return (Page<Work>) findAll(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId);
     }
 
 
-    public Iterable<Work> findAll(Integer page, Integer size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId) {
+    public Iterable<Work> findAll(Integer page,
+                                  Integer size,
+                                  String name,
+                                  String sort,
+                                  Integer stageZiGe,
+                                  Integer stageZiLe,
+                                  Long codeSap,
+                                  String codeZi,
+                                  String task,
+                                  Long releaseId
+    ) {
         Specification<Work> specification;
         if (sort != null && sort.length() > 8 && sort.startsWith("release.")) {
             specification = Specification.where(null);
@@ -225,7 +268,16 @@ public class WorkService {
         return workPage;
     }
 
-    public Page<WorkLittle> findWorkLittle(Integer page, Integer size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId) {
+    public Page<WorkLittle> findWorkLittle(Integer page,
+                                           Integer size,
+                                           String name,
+                                           String sort,
+                                           Integer stageZiGe,
+                                           Integer stageZiLe,
+                                           Long codeSap,
+                                           String codeZi,
+                                           String task,
+                                           Long releaseId) {
         Specification<WorkLittle> specification;
         if (sort != null && sort.length() > 8 && sort.startsWith("release.")) {
             specification = Specification.where(null);
@@ -300,14 +352,14 @@ public class WorkService {
             case "stageedit":
             case "criteriaedit":
                 if (!rightEdit) {
-                    throw new ResourceNotFoundRunTime("У вас нет права на редактирование ZI_EDIT");
+                    throw new ResourceNotFoundException("У вас нет права на редактирование ZI_EDIT");
                 }
                 break;
             case "create":
             case "stagecreate":
             case "criteriacreate":
                 if (!rightCreate) {
-                    throw new ResourceNotFoundRunTime("У вас нет права на редактирование ZI_CREATE");
+                    throw new ResourceNotFoundException("У вас нет права на редактирование ZI_CREATE");
                 }
                 break;
         }

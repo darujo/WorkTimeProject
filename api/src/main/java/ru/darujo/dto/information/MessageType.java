@@ -3,7 +3,7 @@ package ru.darujo.dto.information;
 public enum MessageType {
         SYSTEM_INFO("Системные информационые сообщения"),
         ESTIMATION_WORK("Проведена оценка"),
-        CHANGE_STATE_WORK("Смена статуса ЗИ");
+        CHANGE_STAGE_WORK("Смена статуса ЗИ");
 
         private final String name;
 

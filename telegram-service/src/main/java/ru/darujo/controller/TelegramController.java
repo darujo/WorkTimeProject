@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.darujo.telegram_bot.TelegramBotSend;
 
 @RestController
-@RequestMapping("${app.http.bot}")
+@RequestMapping("$v1/{app.http.bot}")
 @SuppressWarnings("unused")
 public class TelegramController {
 
@@ -21,7 +21,9 @@ public class TelegramController {
 
 
     @PostMapping(value = "/{chatId}/notifications", consumes = MediaType.TEXT_PLAIN_VALUE)
-    public void sendMessageToTelegram(@RequestHeader String username, @PathVariable String chatId, @RequestBody String text) throws TelegramApiException {
+    public void sendMessageToTelegram(@RequestHeader String username,
+                                      @PathVariable String chatId,
+                                      @RequestBody String text, @PathVariable String app) throws TelegramApiException {
         telegramBotSend.sendMessage(username, chatId, text);
     }
 }
