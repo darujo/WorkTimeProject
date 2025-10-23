@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.darujo.dto.ListString;
+import ru.darujo.dto.information.MapUserInfoDto;
+import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 
 import java.util.Date;
@@ -22,19 +24,27 @@ public class InfoServiceIntegration extends ServiceIntegration {
 
 
 
-    public ListString getListUser(Long workID,Date dateLe) {
-        StringBuilder stringBuilder = new StringBuilder();
-        if(workID == null){
-            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору не задан workId" );
-        }
-        addTeg(stringBuilder,"workId",workID);
-        addTeg(stringBuilder,"dateLe",dateLe);
+    public void setMessageTypeListMap(MapUserInfoDto mapUserInfoDto) {
         try {
-            return webClientInfo.get().uri("/rep/fact/user" + stringBuilder)
+            webClientInfo.post().uri("/set/types")
+                    .bodyValue(mapUserInfoDto)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
-                    .bodyToMono(ListString.class)
+                    .bodyToMono(Void.class)
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
+    }
+    public void addMessage(MessageInfoDto messageInfoDto) {
+        try {
+            webClientInfo.post().uri("/add/message")
+                    .bodyValue(messageInfoDto)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                    .bodyToMono(Void.class)
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());

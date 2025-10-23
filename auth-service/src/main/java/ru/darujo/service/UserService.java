@@ -10,10 +10,15 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.darujo.convertor.RoleConvertor;
+import ru.darujo.convertor.UserConvertor;
+import ru.darujo.dto.information.MapUserInfoDto;
+import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.information.ResultMes;
 import ru.darujo.dto.user.UserRoleActiveDto;
 import ru.darujo.dto.user.UserRoleDto;
+import ru.darujo.dto.user.UserInfoDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.integration.InfoServiceIntegration;
 import ru.darujo.model.User;
 import ru.darujo.repository.UserRepository;
 import ru.darujo.specifications.Specifications;
@@ -37,6 +42,13 @@ public class UserService {
     @Autowired
     public void setRoleService(RoleService roleService) {
         this.roleService = roleService;
+    }
+
+    private InfoServiceIntegration infoServiceIntegration;
+
+    @Autowired
+    public void setInfoServiceIntegration(InfoServiceIntegration infoServiceIntegration) {
+        this.infoServiceIntegration = infoServiceIntegration;
     }
 
     public User findById(Long id) {
@@ -176,6 +188,15 @@ public class UserService {
         return user != null;
     }
 
+    public MapUserInfoDto getUserMessageDTOs() {
+        Map<MessageType, List<UserInfoDto>> messageTypeListMap = new HashMap<>();
+        for (MessageType type : MessageType.values()) {
+            List<UserInfoDto> userDTOs = getUserList(null, null, null, null, null, null, null, null).getContent().stream().map(UserConvertor::getUserInfoDto).toList();
+            messageTypeListMap.put(type, userDTOs);
+        }
+        return new MapUserInfoDto(messageTypeListMap);
+    }
+
     private class SingleCode {
         private final String login;
         private final Timestamp timestamp;
@@ -185,18 +206,18 @@ public class UserService {
             this.timestamp = timestamp;
         }
 
-        }
+    }
 
     private final Map<Integer, SingleCode> mapCode = new HashMap<>();
     private final Integer TIME_CODE = 10;
 
     public String getGenSingleCode(String login) {
-        if (login == null ){
+        if (login == null) {
             return "пройдите авторизацию";
         }
         try {
             findByNikName(login).orElseThrow(() -> new ru.darujo.exceptions.UsernameNotFoundException("Нет пользователя с логином"));
-        } catch (UsernameNotFoundException exception){
+        } catch (UsernameNotFoundException exception) {
             return exception.getMessage();
         }
         clearMapCode(login);
@@ -222,31 +243,29 @@ public class UserService {
             if (entry.getValue().timestamp.after(timestamp) || (entry.getValue().login.equals(login))) {
                 mapCode.remove(entry.getKey());
             }
-//            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
         }
-//        mapCode.forEach((code, singleCode) -> {
-//            if (singleCode.timestamp.before(timestamp) || (singleCode.login.equals(login))) {
-//                mapCode.remove(singleCode.code);
-//            }
-//        });
     }
 
     public ResultMes linkCodeTelegram(Integer code, Long idTelegram) {
         clearMapCode(null);
         SingleCode singleCode = mapCode.get(code);
-        if (singleCode == null){
-            return new ResultMes(false,"Не такого кода авторизации или он просрочен ");
+        if (singleCode == null) {
+            return new ResultMes(false, "Не такого кода авторизации или он просрочен ");
         }
 
         User user = findByNikName(singleCode.login).orElse(null);
-        if (user == null){
-            return new ResultMes(false,"Пользовательне найден.");
+        if (user == null) {
+            return new ResultMes(false, "Пользовательне найден.");
         }
         user.setTelegramId(idTelegram);
         saveUser(user);
         mapCode.remove(code);
-        //ToDo Сделать отправку пользователей для рассылки
-        return new ResultMes(true,"");
+        try {
+            infoServiceIntegration.setMessageTypeListMap(getUserMessageDTOs());
+            return new ResultMes(true, "");
+        } catch (ResourceNotFoundException ex) {
+            return new ResultMes(false, "Пользователь добавлен, но что-то не так и уведомления будут приходить, после перезапуска сервиса уведомлений, Обратитесь к администратору или ждите");
+        }
     }
 
     @Transactional

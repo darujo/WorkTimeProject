@@ -1,6 +1,6 @@
 package ru.darujo.dto.information;
 
-import ru.darujo.dto.user.UserTelegramDto;
+import ru.darujo.dto.user.UserInfoDto;
 
 import java.util.List;
 import java.util.Map;
@@ -10,13 +10,13 @@ public class MapUserInfoDto {
     public MapUserInfoDto() {
     }
 
-    private Map<MessageType, List<UserTelegramDto>> messageTypeListMap;
+    private Map<MessageType, List<UserInfoDto>> messageTypeListMap;
 
-    public Map<MessageType, List<UserTelegramDto>> getMessageTypeListMap() {
+    public Map<MessageType, List<UserInfoDto>> getMessageTypeListMap() {
         return messageTypeListMap;
     }
 
-    public MapUserInfoDto(Map<MessageType, List<UserTelegramDto>> messageTypeListMap) {
+    public MapUserInfoDto(Map<MessageType, List<UserInfoDto>> messageTypeListMap) {
         this.messageTypeListMap = messageTypeListMap;
     }
 }

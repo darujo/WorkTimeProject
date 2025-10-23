@@ -33,9 +33,12 @@ public class TelegramBotSend {
         SendMessage message =  new SendMessage(chatId, text);
         tgClient.execute(message);
     }
-    public void sendPhoto (String chatId) throws TelegramApiException {
+    public void sendPhoto (String chatId, File file, String text) throws TelegramApiException {
 //        messageSendService.saveMessageSend(new MessageSend(null,author,chatId,text));
-        SendPhoto message =  new SendPhoto(chatId, new InputFile(new File("./src/main/resources/strait.png")));
+        SendPhoto message =  new SendPhoto(chatId, new InputFile(file));
+        if (!text.isEmpty()){
+            message.setCaption(text);
+        }
         tgClient.execute(message);
     }
 }

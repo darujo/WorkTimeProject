@@ -12,8 +12,11 @@ import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.model.MessageReceive;
 import ru.darujo.service.MessageReceiveService;
 
+import java.io.File;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Component
 public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer {
@@ -50,10 +53,8 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
         System.out.println(requestMessage.getChat().getUserName());
         System.out.println(requestMessage.getChatId());
         String chatId = Long.toString(requestMessage.getChatId());
-        if (request.hasMessage() && requestMessage.hasText()) {
-            System.out.println("Working onUpdateReceived, request text[{}]");
-            System.out.println(request.getMessage().getText());
-        }
+
+
         messageReceiveService.saveMessageReceive(
                 new MessageReceive(
                         requestMessage.getChatId(),
@@ -68,14 +69,26 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
                         requestMessage.getChat().isGroupChat(),
                         requestMessage.getChat().isSuperGroupChat()));
         try {
-7777777yyyy6            //todo null and document
+            if (request.hasMessage() && requestMessage.hasText()) {
+                System.out.println("Working onUpdateReceived, request text[{}]");
+                System.out.println(request.getMessage().getText());
+
+            } else{
+                defaultMsg(chatId, "Извините я пока не умею с этим работать.");
+                return;
+            }
+            // ToDo document
             if (requestMessage.getText().equals("/start")) {
-                defaultMsg(chatId, """
+                try {
+                telegramBotSend.sendPhoto(chatId, new File(Objects.requireNonNull(this.getClass().getResource("/hi.jpg")).toURI()),"""
                         Напишите команду для показа списка мыслей:\s
                          /link - подписаться на уведомления от сервиса учета трудо затрат\s
                          /stop - отвязать акаунт от уведомлений""");
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
+
             } else if (requestMessage.getText().equals("/link")) {
-                telegramBotSend.sendPhoto(chatId);
                 defaultMsg(chatId, "Ведите однаразовый код:");
 
             } else if (requestMessage.getText().equals("/stop")) {

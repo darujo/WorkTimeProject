@@ -7,9 +7,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.darujo.dto.information.MessageInfoDto;
+import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.ratestage.WorkStageDto;
 import ru.darujo.dto.work.WorkPlanTime;
 import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.integration.InfoServiceIntegration;
 import ru.darujo.integration.RateServiceIntegration;
 import ru.darujo.model.Release;
 import ru.darujo.model.Work;
@@ -51,6 +54,13 @@ public class WorkService {
     @Autowired
     public void setReleaseService(ReleaseService releaseService) {
         this.releaseService = releaseService;
+    }
+
+    InfoServiceIntegration infoServiceIntegration;
+
+    @Autowired
+    public void setInfoServiceIntegration(InfoServiceIntegration infoServiceIntegration) {
+        this.infoServiceIntegration = infoServiceIntegration;
     }
 
     public Work findById(long id) {
@@ -127,9 +137,25 @@ public class WorkService {
         }
     }
 
-    public Work saveWork(Work work) {
+    @Transactional
+    public Work saveWork(String login, Work work) {
         checkWork(work);
-        return workRepository.save(work);
+        Work workSave = null;
+        if (work.getId() != null) {
+            workSave = workRepository.findById(work.getId()).orElse(null);
+        }
+        work = workRepository.save(work);
+        if (workSave != null && !workSave.getStageZI().equals(work.getStageZI())) {
+            infoServiceIntegration.addMessage(
+                    new MessageInfoDto(
+                            new Timestamp(
+                                    System.currentTimeMillis()),
+                            login,
+                            MessageType.CHANGE_STAGE_WORK,
+                            String.format("%s сменил этап ЗИ %s -> %s", login, workSave.getStageZI(), work.getStageZI())));
+        }
+
+        return work;
     }
 
     public void deleteWork(Long id) {
