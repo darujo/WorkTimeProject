@@ -7,7 +7,6 @@ import ru.darujo.model.Release;
 import ru.darujo.model.Work;
 
 
-import javax.persistence.Column;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
@@ -80,6 +79,12 @@ public class WorkBuilder {
     private Timestamp developEndFact;
     //начало разработки план
     private Timestamp developEndPlan;
+    private Boolean rated;
+
+    public WorkBuilder setRated(Boolean rated) {
+        this.rated = rated;
+        return this;
+    }
 
     public WorkBuilder setTask(String task) {
         this.task = task;
@@ -275,7 +280,8 @@ public class WorkBuilder {
                 stageZI,
                 release,
                 issuingReleasePlan,
-                issuingReleaseFact);
+                issuingReleaseFact,
+                rated);
     }
 
     public WorkEditDto getWorkEditDto() {
@@ -314,7 +320,8 @@ public class WorkBuilder {
                 developStartPlan,
                 debugStartPlan,
                 releaseStartPlan,
-                opeStartPlan);
+                opeStartPlan,
+                rated);
     }
 
     public Work getWork() {
@@ -362,7 +369,8 @@ public class WorkBuilder {
                 developStartPlan,
                 debugStartPlan,
                 releaseStartPlan,
-                opeStartPlan);
+                opeStartPlan,
+                rated);
     }
 
     public WorkLittleDto getWorkLittleDto() {

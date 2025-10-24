@@ -163,6 +163,15 @@ public class WorkService {
                             MessageType.CHANGE_STAGE_WORK,
                             String.format("%s сменил этап ЗИ %s -> %s", login, workSave.getStageZI(), work.getStageZI())));
         }
+        if (workSave != null && !workSave.getRated().equals(work.getRated())) {
+            infoServiceIntegration.addMessage(
+                    new MessageInfoDto(
+                            new Timestamp(
+                                    System.currentTimeMillis()),
+                            login,
+                            MessageType.CHANGE_STAGE_WORK,
+                            String.format("%s Сменил значение выполнена оценка %s -> %s", login, workSave.getRated(), work.getRated())));
+        }
 
         return work;
     }

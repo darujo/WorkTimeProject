@@ -111,6 +111,8 @@ public class Work {
     // ОПЭ релиза Факт
     @Column(name = "ope_start_plan")
     private Timestamp opeStartPlan;
+    @Column(name = "rated")
+    private Boolean rated;
 
     public Work(Long id,
                 Long codeSap,
@@ -143,7 +145,8 @@ public class Work {
                 Timestamp developStartPlan,
                 Timestamp debugStartPlan,
                 Timestamp releaseStartPlan,
-                Timestamp opeStartPlan) {
+                Timestamp opeStartPlan,
+                Boolean rated) {
         this.id = id;
         this.codeSap = codeSap;
         this.codeZI = codeZI;
@@ -176,5 +179,6 @@ public class Work {
         this.debugStartPlan = debugStartPlan;
         this.releaseStartPlan = releaseStartPlan;
         this.opeStartPlan = opeStartPlan;
+        this.rated = rated;
     }
 }
