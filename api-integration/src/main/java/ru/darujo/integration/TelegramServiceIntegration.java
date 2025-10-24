@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
 
 @Component
@@ -30,7 +31,7 @@ public class TelegramServiceIntegration extends ServiceIntegration {
                     .bodyToMono(Void.class)
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 }

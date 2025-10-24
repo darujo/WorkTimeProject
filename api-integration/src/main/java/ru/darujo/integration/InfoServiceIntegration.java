@@ -5,12 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import ru.darujo.dto.ListString;
 import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
-
-import java.util.Date;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
 
 @Component
@@ -34,7 +32,7 @@ public class InfoServiceIntegration extends ServiceIntegration {
                     .bodyToMono(Void.class)
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
     public void addMessage(MessageInfoDto messageInfoDto) {
@@ -47,7 +45,7 @@ public class InfoServiceIntegration extends ServiceIntegration {
                     .bodyToMono(Void.class)
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 

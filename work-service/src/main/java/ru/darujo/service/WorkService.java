@@ -12,6 +12,7 @@ import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.ratestage.WorkStageDto;
 import ru.darujo.dto.work.WorkPlanTime;
 import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.InfoServiceIntegration;
 import ru.darujo.integration.RateServiceIntegration;
 import ru.darujo.integration.TaskServiceIntegration;
@@ -71,7 +72,7 @@ public class WorkService {
         this.taskServiceIntegration = taskServiceIntegration;
     }
     public Work findById(long id) {
-        return workRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Задача не найден"));
+        return workRepository.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Задача не найден"));
     }
 
     public Optional<WorkLittle> findLittleById(long id) {
@@ -81,17 +82,17 @@ public class WorkService {
     public void checkWork(Work work) {
         Release release;
         if (work.getId() != null) {
-            release = workRepository.findById(work.getId()).orElseThrow(() -> new ResourceNotFoundException("ЗИ пропало(((")).getRelease();
+            release = workRepository.findById(work.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("ЗИ пропало(((")).getRelease();
             if (release != null) {
                 if (release.getIssuingReleaseFact() != null) {
                     if (work.getRelease() == null || !work.getRelease().getId().equals(release.getId())) {
-                        throw new ResourceNotFoundException("Нельзя исключать ЗИ из релиза. Релиз выпущен.");
+                        throw new ResourceNotFoundRunTime("Нельзя исключать ЗИ из релиза. Релиз выпущен.");
                     }
                 } else {
                     if (work.getRelease() != null && !work.getRelease().getId().equals(release.getId())) {
                         release = releaseService.findById(work.getRelease().getId());
                         if (release.getIssuingReleaseFact() != null) {
-                            throw new ResourceNotFoundException("Нельзя включать ЗИ в выпущеный релиз");
+                            throw new ResourceNotFoundRunTime("Нельзя включать ЗИ в выпущеный релиз");
                         }
                     }
                 }
@@ -99,7 +100,7 @@ public class WorkService {
                 if (work.getRelease() != null && work.getRelease().getId() != null) {
                     release = releaseService.findById(work.getRelease().getId());
                     if (release.getIssuingReleaseFact() != null) {
-                        throw new ResourceNotFoundException("Нельзя включать ЗИ в выпущеный релиз");
+                        throw new ResourceNotFoundRunTime("Нельзя включать ЗИ в выпущеный релиз");
                     }
                 }
             }
@@ -107,7 +108,7 @@ public class WorkService {
             if (work.getRelease() != null && work.getRelease().getId() != null) {
                 release = releaseService.findById(work.getRelease().getId());
                 if (release.getIssuingReleaseFact() != null) {
-                    throw new ResourceNotFoundException("Нельзя включать ЗИ в выпущеный релиз");
+                    throw new ResourceNotFoundRunTime("Нельзя включать ЗИ в выпущеный релиз");
                 }
             }
         }
@@ -140,7 +141,7 @@ public class WorkService {
         if (dateStart != null
                 && dateEnd != null
                 && dateStart.compareTo(dateEnd) > 0) {
-            throw new ResourceNotFoundException("Дата " + dateEndMes + " не может быть раньше " + dateStartMes);
+            throw new ResourceNotFoundRunTime("Дата " + dateEndMes + " не может быть раньше " + dateStartMes);
         }
     }
 
@@ -352,14 +353,14 @@ public class WorkService {
             case "stageedit":
             case "criteriaedit":
                 if (!rightEdit) {
-                    throw new ResourceNotFoundException("У вас нет права на редактирование ZI_EDIT");
+                    throw new ResourceNotFoundRunTime("У вас нет права на редактирование ZI_EDIT");
                 }
                 break;
             case "create":
             case "stagecreate":
             case "criteriacreate":
                 if (!rightCreate) {
-                    throw new ResourceNotFoundException("У вас нет права на редактирование ZI_CREATE");
+                    throw new ResourceNotFoundRunTime("У вас нет права на редактирование ZI_CREATE");
                 }
                 break;
         }

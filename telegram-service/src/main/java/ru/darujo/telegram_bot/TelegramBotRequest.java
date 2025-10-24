@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.darujo.dto.information.ResultMes;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.model.MessageReceive;
 import ru.darujo.service.MessageReceiveService;
@@ -98,7 +98,7 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
                     } else {
                         defaultMsg(chatId, "Что-то пошло не так как хотелось бы.");
                     }
-                }catch (ResourceNotFoundException ex){
+                }catch (ResourceNotFoundRunTime ex){
                     defaultMsg(chatId, "Сервис авторизации времено не доступен попробуйте позже");
                 }
 
@@ -115,7 +115,7 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
                         }
                     } catch (NumberFormatException ex) {
                         defaultMsg(chatId, "Код должен быть числом");
-                    } catch (ResourceNotFoundException ex){
+                    } catch (ResourceNotFoundRunTime ex){
                         defaultMsg(chatId, ex.getMessage());
                     }
 

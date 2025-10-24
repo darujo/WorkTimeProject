@@ -8,7 +8,7 @@ import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.user.UserInfoDto;
-import ru.darujo.exceptions.ResourceNotFoundException;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.TelegramServiceIntegration;
 import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.model.MessageInformation;
@@ -58,7 +58,7 @@ public class MessageInformationService {
             messageTypeListMap = userServiceIntegration.getUserMessageDTOs().getMessageTypeListMap();
 
             loadOk = true;
-        } catch (ResourceNotFoundException exception) {
+        } catch (ResourceNotFoundRunTime exception) {
             System.out.println(exception.getMessage());
 
         }
@@ -120,7 +120,7 @@ public class MessageInformationService {
                         telegramServiceIntegration.sendMessage(userSend.getChatId(), userSend.getMessageInformation().getText());
                         userSend.setSend(true);
                         userSendRepository.save(userSend);
-                    } catch (ResourceNotFoundException exception){
+                    } catch (ResourceNotFoundRunTime exception){
                         System.out.println(exception.getMessage());
                     }
 
