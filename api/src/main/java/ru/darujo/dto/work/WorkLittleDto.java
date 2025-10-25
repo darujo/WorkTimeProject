@@ -14,13 +14,20 @@ public class WorkLittleDto implements Serializable {
     // Наименование Зи
     private String name;
     private Integer stageZI;
+    private Boolean rated;
 
-    public WorkLittleDto(Long id, Long codeSap, String codeZI, String name, Integer stageZI) {
+    public WorkLittleDto(Long id, Long codeSap, String codeZI, String name, Integer stageZI, Boolean rated) {
         this.id = id;
         this.codeSap = codeSap;
         this.codeZI = codeZI;
         this.name = name;
         this.stageZI = stageZI;
+        this.rated = rated;
+    }
+
+    @SuppressWarnings("unused")
+    public Boolean getRated() {
+        return rated;
     }
 
     @SuppressWarnings("unused")

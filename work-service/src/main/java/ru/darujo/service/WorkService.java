@@ -65,12 +65,14 @@ public class WorkService {
     public void setInfoServiceIntegration(InfoServiceIntegration infoServiceIntegration) {
         this.infoServiceIntegration = infoServiceIntegration;
     }
+
     TaskServiceIntegration taskServiceIntegration;
 
     @Autowired
     public void setTaskServiceIntegration(TaskServiceIntegration taskServiceIntegration) {
         this.taskServiceIntegration = taskServiceIntegration;
     }
+
     public Work findById(long id) {
         return workRepository.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Задача не найден"));
     }
@@ -148,33 +150,42 @@ public class WorkService {
     @Transactional
     public Work saveWork(String login, Work work) {
         checkWork(work);
-        Work workSave = null;
+        Boolean ratedOld = null;
+        Integer stageOld = null;
         if (work.getId() != null) {
-            workSave = workRepository.findById(work.getId()).orElse(null);
+            Work workSave = workRepository.findById(work.getId()).orElse(null);
+            if (workSave != null) {
+                ratedOld = workSave.getRated();
+                stageOld = work.getStageZI();
+            }
         }
         updateWorkLastDevelop(work);
         work = workRepository.save(work);
-        if (workSave != null && !workSave.getStageZI().equals(work.getStageZI())) {
+        if (stageOld != null && !stageOld.equals(work.getStageZI())) {
             infoServiceIntegration.addMessage(
                     new MessageInfoDto(
                             new Timestamp(
                                     System.currentTimeMillis()),
                             login,
                             MessageType.CHANGE_STAGE_WORK,
-                            String.format("%s сменил этап ЗИ %s -> %s", login, workSave.getStageZI(), work.getStageZI())));
+                            String.format("%s сменил этап ЗИ %s -> %s по ЗИ %s + %s", login, stageOld, work.getStageZI(), work.getCodeSap(), work.getName())));
         }
-        if (workSave != null && !workSave.getRated().equals(work.getRated())) {
+        if (ratedOld != null && !ratedOld.equals(work.getRated())) {
             infoServiceIntegration.addMessage(
                     new MessageInfoDto(
                             new Timestamp(
                                     System.currentTimeMillis()),
                             login,
                             MessageType.CHANGE_STAGE_WORK,
-                            String.format("%s Сменил значение выполнена оценка %s -> %s", login, workSave.getRated(), work.getRated())));
+                            work.getRated() ?
+                            String.format("%s проставил оценка выполнена по ЗИ %s %s", login, work.getCodeSap(), work.getName())
+                            : String.format("%s отменил оценку по ЗИ %s %s", login, work.getCodeSap(), work.getName())
+                    ));
         }
 
         return work;
     }
+
     public void updateWorkLastDevelop(Work work) {
         if (work.getId() == null) {
             return;
@@ -203,6 +214,7 @@ public class WorkService {
         }
 
     }
+
     public void deleteWork(Long id) {
         workLittleRepository.deleteById(id);
     }

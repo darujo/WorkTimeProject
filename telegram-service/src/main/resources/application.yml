@@ -2,13 +2,7 @@ server:
   port: 8187
   servlet:
     context-path: /app
-
-app:
-  http:
-    bot: bot
-telegram-bot:
-  token: "7540883202:AAHRreIZun_QKWWsZJKaJVfl5wLeXm013uM"
-Spring:
+spring:
   main:
     banner-mode: off
   datasource:
@@ -20,9 +14,14 @@ Spring:
     database: postgresql
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
 
   jackson:
     default-property-inclusion: non_absent
 
 
+app:
+  http:
+    bot: bot
+telegram-bot:
+  token: "7540883202:DDHRreIZun_QKWWsZJKaJVfl5wLeXm013uM"

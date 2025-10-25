@@ -23,14 +23,17 @@ public class WorkTimeDto implements Serializable, UserFio {
     private String authorLastName;
     private String authorPatronymic;
 
+    @SuppressWarnings("unused")
     public String getAuthorFirstName() {
         return authorFirstName;
     }
 
+    @SuppressWarnings("unused")
     public String getAuthorLastName() {
         return authorLastName;
     }
 
+    @SuppressWarnings("unused")
     public String getAuthorPatronymic() {
         return authorPatronymic;
     }
@@ -48,12 +51,14 @@ public class WorkTimeDto implements Serializable, UserFio {
     }
 
     private Timestamp workDate;
+    @SuppressWarnings("unused")
     private String workDateStr;
     private String comment;
 
     private Float workTime;
     private Long taskId;
     private Integer type;
+    @SuppressWarnings("unused")
     private String typeStr;
     private String taskDescription;
     private String taskCodeBTS;
@@ -77,14 +82,17 @@ public class WorkTimeDto implements Serializable, UserFio {
         this.taskType = taskType;
     }
 
+    @SuppressWarnings("unused")
     public String getTaskDescription() {
         return taskDescription;
     }
 
+    @SuppressWarnings("unused")
     public String getTaskCodeBTS() {
         return taskCodeBTS;
     }
 
+    @SuppressWarnings("unused")
     public String getTaskCodeDEVBO() {
         return taskCodeDEVBO;
     }
@@ -114,6 +122,7 @@ public class WorkTimeDto implements Serializable, UserFio {
         return nikName;
     }
 
+    @SuppressWarnings("unused")
     public String getTypeStr() {
         if (type == null) {
             return null;
@@ -152,6 +161,7 @@ public class WorkTimeDto implements Serializable, UserFio {
         return comment;
     }
 
+    @SuppressWarnings("unused")
     public String getWorkDateStr() {
         return dateToText(workDate);
     }

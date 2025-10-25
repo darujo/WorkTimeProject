@@ -16,6 +16,7 @@ public class UserSend {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "chat_id")
     private String chatId;
     @Column(name = "send")
@@ -27,5 +28,6 @@ public class UserSend {
     public UserSend(String chatId, MessageInformation messageInformation) {
         this.chatId = chatId;
         this.messageInformation = messageInformation;
+        this.send = false;
     }
 }

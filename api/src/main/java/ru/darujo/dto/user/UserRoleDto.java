@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class UserRoleDto extends UserDto implements Serializable {
+    @SuppressWarnings("unused")
     public UserRoleDto() {
         roles= new ArrayList<>();
     }

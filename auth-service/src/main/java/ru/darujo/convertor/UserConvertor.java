@@ -12,7 +12,8 @@ public class UserConvertor {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getPatronymic(),
-                user.getPasswordChange()
+                user.getPasswordChange(),
+                user.getTelegramId() != null
         );
     }
 

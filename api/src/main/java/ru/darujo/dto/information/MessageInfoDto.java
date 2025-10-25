@@ -4,6 +4,10 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 public class MessageInfoDto implements Serializable {
+    @SuppressWarnings("unused")
+    public MessageInfoDto() {
+    }
+
     Timestamp dataTime;
     String author;
     MessageType type;
@@ -16,6 +20,7 @@ public class MessageInfoDto implements Serializable {
         this.text = text;
     }
 
+    @SuppressWarnings("unused")
     public String getAuthor() {
         return author;
     }
@@ -28,6 +33,7 @@ public class MessageInfoDto implements Serializable {
         return text;
     }
 
+    @SuppressWarnings("unused")
     public Timestamp getDataTime() {
         return dataTime;
     }

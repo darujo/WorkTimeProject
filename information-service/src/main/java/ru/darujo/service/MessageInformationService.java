@@ -77,9 +77,9 @@ public class MessageInformationService {
 
         }
         if (messageTypeListMap == null){
-            saveMessageInformation(new MessageInformation(null,messageInfoDto.getType().toString(), messageInfoDto.getText(), false,null));
+            saveMessageInformation(new MessageInformation(null,messageInfoDto.getAuthor(),messageInfoDto.getType(), messageInfoDto.getText(), false,null));
         } else {
-            MessageInformation messageInformation =saveMessageInformation(new MessageInformation(null,messageInfoDto.getType().toString(), messageInfoDto.getText(), true,null));
+            MessageInformation messageInformation =saveMessageInformation(new MessageInformation(null,messageInfoDto.getAuthor(),messageInfoDto.getType(), messageInfoDto.getText(), true,null));
             messageTypeListMap.get(messageInfoDto.getType()).forEach(userTelegramDto -> saveUserSend(new UserSend(Long.toString(userTelegramDto.getTelegramId()),messageInformation)));
         }
         //ToDo пока отправляем сразу надо сделать отложеную отправку
@@ -93,7 +93,7 @@ public class MessageInformationService {
         messageInformationRepository
                 .findAll(specification)
                 .forEach(messageInformation -> {
-                    messageTypeListMap.get(MessageType.valueOf(messageInformation.getType())).forEach(userTelegramDto -> saveUserSend(new UserSend(Long.toString(userTelegramDto.getTelegramId()),messageInformation)));
+                    messageTypeListMap.get(messageInformation.getType()).forEach(userTelegramDto -> saveUserSend(new UserSend(Long.toString(userTelegramDto.getTelegramId()),messageInformation)));
                 messageInformation.setSend(true);
                 saveMessageInformation(messageInformation);});
 
@@ -113,11 +113,11 @@ public class MessageInformationService {
     }
 
     public  void sendAllNotSendMessage(){
-        Specification<UserSend> specification = Specifications.ne(null,"send",false);
+        Specification<UserSend> specification = Specifications.ne(null,"send",true);
         userSendRepository.findAll(specification).forEach(
                 userSend -> {
                     try {
-                        telegramServiceIntegration.sendMessage(userSend.getChatId(), userSend.getMessageInformation().getText());
+                        telegramServiceIntegration.sendMessage(userSend.getMessageInformation().getAuthor(),userSend.getChatId(), userSend.getMessageInformation().getText());
                         userSend.setSend(true);
                         userSendRepository.save(userSend);
                     } catch (ResourceNotFoundRunTime exception){

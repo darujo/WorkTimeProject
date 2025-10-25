@@ -61,21 +61,39 @@
                         <div class="horiz">
                             <label for="SaveFilter" class="p-form">Сохранять</label>
                             <input class="vvod20" type="checkbox"
-                                                                   id="SaveFilter"
-                                                                   ng-model="SettingUser.saveFilter"
-                                                                   ng-change="saveSetting()"/>
+                                   id="SaveFilter"
+                                   ng-model="SettingUser.saveFilter"
+                                   ng-change="saveSetting()"/>
                         </div>
                         <div class="horiz">
                             <label for="LoadFilter" class="p-form">Загружать</label>
                             <input class="vvod20" type="checkbox"
-                                                                   id="LoadFilter"
-                                                                   ng-model="SettingUser.loadFilter"
-                                                                   ng-change="saveSetting()"/>
+                                   id="LoadFilter"
+                                   ng-model="SettingUser.loadFilter"
+                                   ng-change="saveSetting()"/>
                         </div>
                         <button ng-click="delFilter()">Удалить сохраненные фильтры</button>
                         <br>
                         <a class="nav-link" href="#!/userpassword">Сменить пароль</a>
+                        <br>
+                        <div ng-if="!UserLogin.telegramAdd">
+                            <button ng-click="addTelegram()" id="ButtonTelegramAdd">
+                                {{CodeTelegram.ok ? "Запросить код повторно" : "Привязать telegram" }}
+                            </button>
+                            <br>
+                            <div ng-if="CodeTelegram.ok">
+                                <p>Для получения уведомлений перейдите <a href="http://{{CodeTelegram.link}}" target="_blank" >Бот</a>.
+                                    И отправте команду /link. На запрос кода введите:<b>{{CodeTelegram.code}}</b>.
+                                    Внимание Код действует <b>{{CodeTelegram.time}}</b> минут. После авторизации в боте
+                                    нажмите кнопку: </p>
+                                <br>
+                                <button ng-click="getUser()" id="ButtonTelegramRef">Проверить</button>
 
+                            </div>
+                        </div>
+                        <div ng-if="UserLogin.telegramAdd">
+                            <button ng-click="deleteTelegram()" id="ButtonTelegramDel">Отвязать Telegram</button>
+                        </div>
                     </details>
                 </div>
                 <div class="nav-item" ng-show="!isUserLoggedIn()">
@@ -83,12 +101,12 @@
                         <div class="input-group input-group-sm" style="padding: 4px;">
                             <label for="navLoginField">Логин:</label>
                             <input id="navLoginField" class="vvod" ng-model="user.username" type="text"
-                                                                             aria-describedby="inputGroup-sizing-sm" style="margin-left: 10px;">
+                                   aria-describedby="inputGroup-sizing-sm" style="margin-left: 10px;">
 
                             <label for="navPasswordField">Пароль:</label>
                             <input id="navPasswordField" class="vvod" ng-model="user.password"
-                                                                                 type="password"
-                                                                                 aria-describedby="inputGroup-sizing-sm" style="margin-left: 10px;">
+                                   type="password"
+                                   aria-describedby="inputGroup-sizing-sm" style="margin-left: 10px;">
 
                             <button id="navLoginSubmit" class="head_button"
                                     style="margin-left: 10px;" type="submit">Войти
@@ -111,7 +129,8 @@
     </div>
     <div class="nav-item" ng-show="isUserLoggedIn()" style="padding: 4px;">
         <div class="user_view">
-            <p class="p-form">{{UserLogin.lastName}} {{UserLogin.firstName}} {{UserLogin.patronymic}}</p>
+            <p class="p-form">
+                {{UserLogin.lastName}} {{UserLogin.firstName}} {{UserLogin.patronymic}}</p>
         </div>
 
         <!--    <input id="UserName" class="user_view""-->

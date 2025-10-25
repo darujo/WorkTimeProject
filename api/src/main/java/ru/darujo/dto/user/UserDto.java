@@ -15,14 +15,16 @@ public class UserDto implements Serializable {
 
     private String patronymic;
     private Boolean passwordChange;
+    private Boolean telegramAdd;
 
-    public UserDto(Long id, String nikName, String firstName, String lastName, String patronymic,Boolean passwordChange) {
+    public UserDto(Long id, String nikName, String firstName, String lastName, String patronymic,Boolean passwordChange, Boolean telegramAdd) {
         this.id = id;
         this.nikName = nikName;
         this.firstName = firstName;
         this.lastName = lastName;
         this.patronymic = patronymic;
         this.passwordChange = passwordChange;
+        this.telegramAdd = telegramAdd;
     }
     public UserDto(Long id, String nikName, String firstName, String lastName, String patronymic) {
         this.id = id;
@@ -55,7 +57,14 @@ public class UserDto implements Serializable {
         return patronymic;
     }
 
+
+    @SuppressWarnings("unused")
     public Boolean getPasswordChange() {
         return passwordChange;
+    }
+
+    @SuppressWarnings("unused")
+    public Boolean getTelegramAdd() {
+        return telegramAdd;
     }
 }

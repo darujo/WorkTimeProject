@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.darujo.convertor.RoleConvertor;
 import ru.darujo.convertor.UserConvertor;
+import ru.darujo.dto.information.CodeTelegramMes;
 import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.information.ResultMes;
@@ -114,7 +115,8 @@ public class UserService {
                                   String lastName,
                                   String firstName,
                                   String patronymic,
-                                  Long telegramId) {
+                                  Long telegramId,
+                                  Boolean telegramIsNotNull) {
         Specification<User> specification = Specification.where(null);
         if (role != null && !role.isEmpty()) {
             specification = Specifications.in(specification, "nikName", roleService.findByName(role).orElseThrow(() -> new UsernameNotFoundException("Роль не найдена " + role))
@@ -126,6 +128,7 @@ public class UserService {
         specification = Specifications.like(specification, "firstName", firstName);
         specification = Specifications.like(specification, "patronymic", patronymic);
         specification = Specifications.eq(specification, "telegramId", telegramId);
+        specification = Specifications.isNotNull(specification, "telegramId", telegramIsNotNull);
         Sort sort = Sort.by("lastName")
                 .and(Sort.by("firstName"));
         Page<User> userPage;
@@ -192,7 +195,7 @@ public class UserService {
     public MapUserInfoDto getUserMessageDTOs() {
         Map<MessageType, List<UserInfoDto>> messageTypeListMap = new HashMap<>();
         for (MessageType type : MessageType.values()) {
-            List<UserInfoDto> userDTOs = getUserList(null, null, null, null, null, null, null, null).getContent().stream().map(UserConvertor::getUserInfoDto).toList();
+            List<UserInfoDto> userDTOs = getUserList(null, null, null, null, null, null, null, null,true).getContent().stream().map(UserConvertor::getUserInfoDto).toList();
             messageTypeListMap.put(type, userDTOs);
         }
         return new MapUserInfoDto(messageTypeListMap);
@@ -212,30 +215,18 @@ public class UserService {
     private final Map<Integer, SingleCode> mapCode = new HashMap<>();
     private final Integer TIME_CODE = 10;
 
-    public String getGenSingleCode(String login) {
+    public CodeTelegramMes getGenSingleCode(String login) {
         if (login == null) {
-            return "пройдите авторизацию";
+            throw new ResourceNotFoundRunTime("пройдите авторизацию");
         }
-        try {
-            findByNikName(login).orElseThrow(() -> new ru.darujo.exceptions.UsernameNotFoundException("Нет пользователя с логином"));
-        } catch (UsernameNotFoundException exception){
-            return exception.getMessage();
-        }
+        findByNikName(login).orElseThrow(() -> new ResourceNotFoundRunTime("Нет пользователя с логином"));
         clearMapCode(login);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis() + TIME_CODE * 60 * 1000);
         int code = (int) ((99999999 * Math.random()));
         SingleCode singleCode = new SingleCode(login, timestamp);
         mapCode.put(code, singleCode);
+        return new CodeTelegramMes(true,"t.me/DaruWorkBot", code, TIME_CODE);
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("Для получения уведомлений перейдите t.me/DaruWorkBot. ");
-        sb.append("И отправте команду /link.");
-        sb.append("На запрос кода введите: ");
-        sb.append(code);
-        sb.append(". Внимание Код действует ");
-        sb.append(TIME_CODE);
-        sb.append(" минут.");
-        return sb.toString();
     }
 
     public void clearMapCode(String login) {
@@ -271,7 +262,7 @@ public class UserService {
 
     @Transactional
     public void linkDeleteTelegram(Long telegramId) {
-        getUserList(null, null, null, null, null, null, null, telegramId)
+        getUserList(null, null, null, null, null, null, null, telegramId, null)
                 .forEach(user -> {
                     user.setTelegramId(null);
                     saveUser(user);

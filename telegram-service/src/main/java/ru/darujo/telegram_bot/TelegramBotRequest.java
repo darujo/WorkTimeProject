@@ -58,6 +58,7 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
         messageReceiveService.saveMessageReceive(
                 new MessageReceive(
                         requestMessage.getChatId(),
+                        requestMessage.getText(),
                         requestMessage.getChat().getUserName(),
                         requestMessage.getChat().getFirstName(),
                         requestMessage.getChat().getLastName(),

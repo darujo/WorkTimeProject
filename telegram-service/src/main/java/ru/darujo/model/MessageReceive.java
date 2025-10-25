@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,7 +20,7 @@ public class MessageReceive {
     @Column(name = "chat_id")
     private Long chatId;
     @Column(name = "text")
-    private Long text;
+    private String text;
 
     @Column(name = "user_name")
     private String userName;
@@ -46,8 +45,9 @@ public class MessageReceive {
     @Column(name = "is_super_group_chat")
     private Boolean isSuperGroupChat;
 
-    public MessageReceive(Long chatId, String userName, String firstName, String lastName, String title, String type, Boolean isForum, Boolean isChannelChat, Boolean isUserChar, Boolean isGroupChat, Boolean isSuperGroupChat) {
+    public MessageReceive(Long chatId, String text, String userName, String firstName, String lastName, String title, String type, Boolean isForum, Boolean isChannelChat, Boolean isUserChar, Boolean isGroupChat, Boolean isSuperGroupChat) {
         this.chatId = chatId;
+        this.text = text;
         this.userName = userName;
         this.firstName = firstName;
         this.lastName = lastName;

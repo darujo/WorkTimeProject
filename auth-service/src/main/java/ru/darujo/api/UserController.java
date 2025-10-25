@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.UserConvertor;
 
+import ru.darujo.dto.information.CodeTelegramMes;
 import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.ResultMes;
 import ru.darujo.dto.user.UserDto;
@@ -52,7 +53,7 @@ public class UserController {
                 nikName = null;
             }
         }
-        return userService.getUserList(role, page, size, nikName, lastName, firstName, patronymic, null).map(UserConvertor::getUserDto);
+        return userService.getUserList(role, page, size, nikName, lastName, firstName, patronymic, null, null).map(UserConvertor::getUserDto);
 
 
     }
@@ -65,7 +66,7 @@ public class UserController {
     }
 
     @GetMapping("/user/telegram/get")
-    public String getGenSingleCode(@RequestHeader String username) {
+    public CodeTelegramMes getGenSingleCode(@RequestHeader String username) {
         return userService.getGenSingleCode(username);
     }
 

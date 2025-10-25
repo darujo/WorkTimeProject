@@ -19,15 +19,16 @@ public class TelegramServiceIntegration extends ServiceIntegration {
     }
 
     public void sendMessage(
-//            String author,
+            String author,
             String chatId,
             String text) {
-
         try {
-            webClientTelegram.post().uri("/" + chatId + "notifications").bodyValue(text)
+            webClientTelegram.post().uri("/" + chatId + "/notifications")
+                    .header("username",author)
+                    .bodyValue(text)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить ответ от сервиса telegram")))
                     .bodyToMono(Void.class)
                     .block();
         } catch (RuntimeException ex) {

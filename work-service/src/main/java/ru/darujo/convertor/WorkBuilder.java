@@ -327,13 +327,13 @@ public class WorkBuilder {
     public Work getWork() {
         analiseEndFact = getDate(analiseEndFact, developStartFact);
 //        issuePrototypeFact = getDate(issuePrototypeFact, debugStartFact);
-        debugStartFact = getDateAddDay(debugStartFact,issuePrototypeFact);
+        debugStartFact = getDateAddDay(debugStartFact, issuePrototypeFact);
         debugEndFact = getDate(debugEndFact, releaseStartFact);
         releaseEndFact = getDate(releaseEndFact, opeStartFact);
 
         analiseEndPlan = getDate(analiseEndPlan, developStartPlan);
 //        issuePrototypePlan = getDate(issuePrototypePlan, debugStartPlan);
-        debugStartPlan = getDateAddDay(debugStartPlan,issuePrototypePlan);
+        debugStartPlan = getDateAddDay(debugStartPlan, issuePrototypePlan);
         debugEndPlan = getDate(debugEndPlan, releaseStartPlan);
         releaseEndPlan = getDate(releaseEndPlan, opeStartPlan);
 
@@ -374,7 +374,7 @@ public class WorkBuilder {
     }
 
     public WorkLittleDto getWorkLittleDto() {
-        return new WorkLittleDto(id, codeSap, codeZI, name, stageZI);
+        return new WorkLittleDto(id, codeSap, codeZI, name, stageZI, rated);
     }
 
     public Timestamp dateToStartTime(Timestamp timestamp) {

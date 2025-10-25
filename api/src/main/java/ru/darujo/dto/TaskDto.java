@@ -23,6 +23,7 @@ public class TaskDto implements Serializable, UserFio {
     // Тип задачи
     private Integer type;
 
+    @SuppressWarnings("unused")
     public String getTypeStr() {
         return CodeService.getTaskType(type);
     }
@@ -74,6 +75,7 @@ public class TaskDto implements Serializable, UserFio {
         return workId;
     }
 
+    @SuppressWarnings("unused")
     public String getCodeZi() {
         return codeZi;
     }
@@ -82,17 +84,21 @@ public class TaskDto implements Serializable, UserFio {
         return nameZi;
     }
 
+    @SuppressWarnings("unused")
     public TaskDto() {
     }
 
+    @SuppressWarnings("unused")
     public String getAuthorFirstName() {
         return authorFirstName;
     }
 
+    @SuppressWarnings("unused")
     public String getAuthorLastName() {
         return authorLastName;
     }
 
+    @SuppressWarnings("unused")
     public String getAuthorPatronymic() {
         return authorPatronymic;
     }

@@ -89,7 +89,16 @@ public class Specifications {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(field), value));
 
     }
+    public static <T> Specification<T> isNotNull(Specification<T> specification, String field, Boolean value) {
+        if (value != null && value) {
+            specification = specification.and(isNotNull(field));
+        }
+        return specification;
+    }
+    private static <T> Specification<T> isNotNull(String field) {
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.isNotNull(root.get(field)));
 
+    }
     public static <T> Specification<T> eq(Specification<T> specification, String field, Long value) {
         if (value != null) {
             if (specification == null) {
