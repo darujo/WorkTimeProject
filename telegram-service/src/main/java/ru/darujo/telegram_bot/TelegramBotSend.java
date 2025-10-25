@@ -7,10 +7,12 @@ import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.darujo.model.MessageSend;
 import ru.darujo.service.MessageSendService;
 
+import javax.transaction.Transactional;
 import java.io.File;
 
 @Component
@@ -28,10 +30,12 @@ public class TelegramBotSend {
         tgClient = new OkHttpTelegramClient(botToken);
     }
 
+
     public void sendMessage (String author, String chatId,  String text) throws TelegramApiException {
-        messageSendService.saveMessageSend(new MessageSend(null,author,chatId,text));
         SendMessage message =  new SendMessage(chatId, text);
         tgClient.execute(message);
+        messageSendService.saveMessageSend(new MessageSend(null,author,chatId,text));
+
     }
     public void sendPhoto (String chatId, File file, String text) throws TelegramApiException {
 //        messageSendService.saveMessageSend(new MessageSend(null,author,chatId,text));
@@ -39,6 +43,6 @@ public class TelegramBotSend {
         if (!text.isEmpty()){
             message.setCaption(text);
         }
-        tgClient.execute(message);
+        Message message1 =tgClient.execute(message);
     }
 }
