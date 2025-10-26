@@ -1,12 +1,16 @@
 <div id="WorkStageList" class="head_text_elem">
     <h1>{{ZI.codeSap}} </h1>
     <h1>{{ZI.codeZI}} {{ZI.name}} </h1>
+
+    <h1 ng-style="getStyle(ZI.rated ? 0 : 1)">{{ZI.rated ? "Оценка выполнена" : "Оценка не выполнена" }}</h1>
+
     <h1 ng-style="getStyle(RateStatusSC.code)">{{RateStatusSC.value}}</h1>
     <h1 ng-style="getStyle(RateStatusST.code)">{{RateStatusST.value}}</h1>
     <h1 ng-style="getStyle(RateStatusCT.code)">{{RateStatusCT.value}}</h1>
     <div class="horiz">
         <h1>Плановая оценка</h1>
         <button type="button" class="head_button mar5" id="WorkPage" ng-click="workPage()">Назад</button>
+        <button type="button" class="head_button mar5" id="Rated" ng-click="changeRated(!ZI.rated)">{{ZI.rated ? "Отменить оценку" : "Завершить оценку"}}</button>
     </div>
     <table>
         <tr>
@@ -20,8 +24,8 @@
             <td class="table_head1">III этап</td>
             <td class="table_head2">IV этап</td>
             <td class="table_head1">Итого, ч/часов</td>
-            <td class="table_head2" ng-if="stageEdit"></td>
-            <td class="table_head1" ng-if="stageEdit"></td>
+            <td class="table_head2" ng-if="stageEdit && !ZI.rated"></td>
+            <td class="table_head1" ng-if="stageEdit && !ZI.rated"></td>
             
         </tr>
         <tbody>
@@ -40,10 +44,10 @@
             <td>{{work.stage3}}</td>
             <td>{{work.stage4}}</td>
             <td>{{work.stageAll}}</td>
-            <td ng-if="stageEdit">
+            <td ng-if="stageEdit && !ZI.rated">
                 <button ng-click="editWorkStage(work.id)">Изменить</button>
             </td>
-            <td ng-if="stageEdit">
+            <td ng-if="stageEdit  && !ZI.rated">
                 <button ng-click="deleteWorkStage(work.id)">Удалить</button>
             </td>
         </tr>
@@ -53,7 +57,7 @@
         <img ng-if="load1" src="../gif/wait1.gif" alt="wait1" width="900" height="506"/>
     </div>
     <div id="WorkStageAdd" >
-        <button ng-if="stageCreate" type="button" class="head_button" id="AddWorkStage" ng-click="createWorkStage()">Добавить</button>
+        <button ng-if="stageCreate && !ZI.rated" type="button" class="head_button" id="AddWorkStage" ng-click="createWorkStage()">Добавить</button>
 
     </div>
     <form id="FormWorkStage" ng-submit="saveWorkStage()">
@@ -120,8 +124,8 @@
             <td class="table_head1">Минимальная доработка (10% кода) ед.</td>
             <td class="table_head2">Общая переработка (50% кода) ед.</td>
             <td class="table_head1">Новая доработка или реинженеринг кода ед.</td>
-            <td class="table_head2" ng-if="criteriaEdit"></td>
-            <td class="table_head1" ng-if="criteriaEdit"></td>
+            <td class="table_head2" ng-if="criteriaEdit && !ZI.rated"></td>
+            <td class="table_head1" ng-if="criteriaEdit && !ZI.rated"></td>
 
         </tr>
         <tbody>
@@ -130,10 +134,10 @@
             <td>{{work.develop10}}</td>
             <td>{{work.develop50}}</td>
             <td>{{work.develop100}}</td>
-            <td ng-if="criteriaEdit">
+            <td ng-if="criteriaEdit && !ZI.rated">
                 <button ng-click="editWorkCriteria(work.id)">Изменить</button>
             </td>
-            <td ng-if="criteriaEdit">
+            <td ng-if="criteriaEdit && !ZI.rated">
                 <button ng-click="deleteWorkCriteria(work.id)">Удалить</button>
             </td>
         </tr>
@@ -143,7 +147,7 @@
         <img ng-if="load2" src="../gif/wait1_2.gif" alt="Лучше ждите" width="300" height="300"/>
     </div>
     <div id="WorkCriteriaAdd" >
-        <button ng-if="criteriaCreate" type="button" class="head_button" id="AddWorkCriteria" ng-click="createWorkCriteria()">Добавить</button>
+        <button ng-if="criteriaCreate && !ZI.rated" type="button" class="head_button" id="AddWorkCriteria" ng-click="createWorkCriteria()">Добавить</button>
 
     </div>
     <form id="FormWorkCriteria" ng-submit="saveWorkCriteria()">
@@ -196,8 +200,8 @@
             <td class="table_head2">Планируемые ТрЗ</td>
             <td class="table_head1">Часы</td>
             <td class="table_head2">Р/дн</td>
-            <td class="table_head2" ng-if="typeEdit"></td>
-            <td class="table_head1" ng-if="typeEdit"></td>
+            <td class="table_head2" ng-if="typeEdit && !ZI.rated"></td>
+            <td class="table_head1" ng-if="typeEdit && !ZI.rated"></td>
 
         </tr>
         <tbody>
@@ -205,10 +209,10 @@
             <td>{{work.type}}</td>
             <td>{{work.time}}</td>
             <td>{{work.time / 8}}</td>
-            <td ng-if="typeEdit">
+            <td ng-if="typeEdit && !ZI.rated">
                 <button ng-click="editWorkType(work.id)">Изменить</button>
             </td>
-            <td ng-if="typeEdit">
+            <td ng-if="typeEdit && !ZI.rated">
                 <button ng-click="deleteWorkType(work.id)">Удалить</button>
             </td>
         </tr>
@@ -218,7 +222,7 @@
         <img ng-if="load3" src="../gif/wait1_2.gif" alt="Лучше ждите" width="300" height="300"/>
     </div>
     <div id="WorkTypeAdd" >
-        <button ng-if="typeCreate" type="button" class="head_button" id="AddWorkType" ng-click="createWorkType()">Добавить</button>
+        <button ng-if="typeCreate && !ZI.rated" type="button" class="head_button" id="AddWorkType" ng-click="createWorkType()">Добавить</button>
 
     </div>
     <form id="FormWorkType" ng-submit="saveWorkType()">

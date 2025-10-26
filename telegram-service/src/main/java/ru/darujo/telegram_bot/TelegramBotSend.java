@@ -33,6 +33,7 @@ public class TelegramBotSend {
 
     public void sendMessage (String author, String chatId,  String text) throws TelegramApiException {
         SendMessage message =  new SendMessage(chatId, text);
+        message.enableHtml(true);
         tgClient.execute(message);
         messageSendService.saveMessageSend(new MessageSend(null,author,chatId,text));
 

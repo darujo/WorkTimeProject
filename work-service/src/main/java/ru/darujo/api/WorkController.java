@@ -11,6 +11,7 @@ import ru.darujo.dto.work.WorkEditDto;
 import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.Work;
+import ru.darujo.model.WorkLittle;
 import ru.darujo.service.WorkService;
 
 import java.sql.Timestamp;
@@ -132,6 +133,14 @@ public class WorkController {
     ) {
         Timestamp date = DataHelper.DTZToDate(dateStr, "date", false);
         return workService.setWorkDate(id, date);
+
+    }
+    @GetMapping("/change/{id}/rated")
+    public WorkLittle ChangeRated(@RequestHeader String username,
+                                  @PathVariable long id,
+                                  @RequestParam(required = false, name = "rated") Boolean rated
+    ) {
+        return workService.setRated(username,id, rated);
 
     }
 }

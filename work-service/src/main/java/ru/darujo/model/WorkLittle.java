@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "work")
-public class WorkLittle {
+public class WorkLittle implements WorkLittleInterface {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,5 +34,7 @@ public class WorkLittle {
     @ManyToOne
     @JoinColumn(name="release_id")
     private Release release;
+    @Column(name = "rated")
+    private Boolean rated;
 
 }

@@ -118,6 +118,7 @@ public class WorkConvertor {
                 .setCodeZI(work.getCodeZI())
                 .setStageZI(work.getStageZI())
                 .setName(work.getName())
+                .setRated(work.getRated())
                 .getWorkLittleDto();
 
 

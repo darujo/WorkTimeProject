@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS information.massage_information
     author character varying(255) COLLATE pg_catalog."default",
     is_send boolean NOT NULL,
     text character varying(255) COLLATE pg_catalog."default",
-    type integer,
+    type character varying(255) COLLATE pg_catalog."default",
     CONSTRAINT massage_information_pkey PRIMARY KEY (id)
 )
 
@@ -84,28 +84,4 @@ ALTER TABLE IF EXISTS information.user_send
 ALTER SEQUENCE information.user_send_id_seq
     OWNED BY information.user_send.id;
 
-
--- Table: information.massage_information_users
-
--- DROP TABLE IF EXISTS information.massage_information_users;
-
-CREATE TABLE IF NOT EXISTS information.massage_information_users
-(
-    message_information_id bigint NOT NULL,
-    users_id bigint NOT NULL,
-    CONSTRAINT uk_bp6j8vcdmt3jm62s0qungqrmo UNIQUE (users_id),
-    CONSTRAINT fkbfgcjetr3ga2mncrr4yv9ft33 FOREIGN KEY (message_information_id)
-        REFERENCES information.massage_information (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT fkkkk8mmwky81nr79vm4hgdkydj FOREIGN KEY (users_id)
-        REFERENCES information.user_send (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-)
-
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS information.massage_information_users
-    OWNER to postgres;
 

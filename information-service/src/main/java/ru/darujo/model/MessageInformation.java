@@ -22,14 +22,14 @@ public class MessageInformation {
     private String author;
 
     @Column(name = "type")
-    private MessageType type;
+    private String type;
     @Column(name = "text")
     private String text;
     @Column(name = "is_send")
     private boolean isSend;
 
 
-    @OneToMany
-    private List<UserSend> users;
+//    @OneToMany
+//    private List<UserSend> users;
 
 }

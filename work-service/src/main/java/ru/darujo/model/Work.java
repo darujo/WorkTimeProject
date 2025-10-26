@@ -1,6 +1,5 @@
 package ru.darujo.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,7 +10,7 @@ import java.sql.Timestamp;
 @Data
 @Entity
 @Table(name = "work")
-public class Work {
+public class Work implements WorkLittleInterface{
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -181,4 +180,5 @@ public class Work {
         this.opeStartPlan = opeStartPlan;
         this.rated = rated;
     }
+
 }

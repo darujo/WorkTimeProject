@@ -32,16 +32,19 @@ public class MessageInformationService {
     }
 
     private MessageInformationRepository messageInformationRepository;
+
     @Autowired
     public void setMessageInformationRepository(MessageInformationRepository workTypeRepository) {
         this.messageInformationRepository = workTypeRepository;
     }
+
     private UserSendRepository userSendRepository;
 
     @Autowired
     public void setUserSendRepository(UserSendRepository userSendRepository) {
         this.userSendRepository = userSendRepository;
     }
+
     private TelegramServiceIntegration telegramServiceIntegration;
 
     @Autowired
@@ -58,29 +61,33 @@ public class MessageInformationService {
             messageTypeListMap = userServiceIntegration.getUserMessageDTOs().getMessageTypeListMap();
 
             loadOk = true;
+            updateAllNoAddUser();
+            sendAllNotSendMessage();
         } catch (ResourceNotFoundRunTime exception) {
             System.out.println(exception.getMessage());
 
         }
-       return loadOk;
+
+        return loadOk;
     }
+
     public void setMessageTypeListMap(MapUserInfoDto messageTypeListMap) {
         this.messageTypeListMap = messageTypeListMap.getMessageTypeListMap();
     }
 
     public Boolean addMessage(MessageInfoDto messageInfoDto) {
-        if (messageTypeListMap == null){
-            if(init()){
+        if (messageTypeListMap == null) {
+            if (init()) {
                 updateAllNoAddUser();
             }
 
 
         }
-        if (messageTypeListMap == null){
-            saveMessageInformation(new MessageInformation(null,messageInfoDto.getAuthor(),messageInfoDto.getType(), messageInfoDto.getText(), false,null));
+        if (messageTypeListMap == null) {
+            saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), false));
         } else {
-            MessageInformation messageInformation =saveMessageInformation(new MessageInformation(null,messageInfoDto.getAuthor(),messageInfoDto.getType(), messageInfoDto.getText(), true,null));
-            messageTypeListMap.get(messageInfoDto.getType()).forEach(userTelegramDto -> saveUserSend(new UserSend(Long.toString(userTelegramDto.getTelegramId()),messageInformation)));
+            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true));
+            messageTypeListMap.get(messageInfoDto.getType()).forEach(userTelegramDto -> saveUserSend(new UserSend(Long.toString(userTelegramDto.getTelegramId()), messageInformation)));
         }
         //ToDo пока отправляем сразу надо сделать отложеную отправку
         sendAllNotSendMessage();
@@ -89,13 +96,14 @@ public class MessageInformationService {
     }
 
     private void updateAllNoAddUser() {
-        Specification<MessageInformation> specification = Specifications.ne(null,"isSend",false);
+        Specification<MessageInformation> specification = Specifications.ne(null, "isSend", false);
         messageInformationRepository
                 .findAll(specification)
                 .forEach(messageInformation -> {
-                    messageTypeListMap.get(messageInformation.getType()).forEach(userTelegramDto -> saveUserSend(new UserSend(Long.toString(userTelegramDto.getTelegramId()),messageInformation)));
-                messageInformation.setSend(true);
-                saveMessageInformation(messageInformation);});
+                    messageTypeListMap.get(MessageType.valueOf(messageInformation.getType())).forEach(userTelegramDto -> saveUserSend(new UserSend(Long.toString(userTelegramDto.getTelegramId()), messageInformation)));
+                    messageInformation.setSend(true);
+                    saveMessageInformation(messageInformation);
+                });
 
     }
 
@@ -108,23 +116,19 @@ public class MessageInformationService {
         return messageInformationRepository.save(messageInformation);
     }
 
-    public void deleteMessageInformation(Long id) {
-        messageInformationRepository.deleteById(id);
-    }
-
-    public  void sendAllNotSendMessage(){
-        Specification<UserSend> specification = Specifications.ne(null,"send",true);
+    public void sendAllNotSendMessage() {
+        Specification<UserSend> specification = Specifications.ne(null, "send", true);
         userSendRepository.findAll(specification).forEach(
                 userSend -> {
                     try {
-                        telegramServiceIntegration.sendMessage(userSend.getMessageInformation().getAuthor(),userSend.getChatId(), userSend.getMessageInformation().getText());
+                        telegramServiceIntegration.sendMessage(userSend.getMessageInformation().getAuthor(), userSend.getChatId(), userSend.getMessageInformation().getText());
                         userSend.setSend(true);
                         userSendRepository.save(userSend);
-                    } catch (ResourceNotFoundRunTime exception){
+                    } catch (ResourceNotFoundRunTime exception) {
                         System.out.println(exception.getMessage());
                     }
 
-        });
+                });
     }
 
 
