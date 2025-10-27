@@ -93,7 +93,9 @@
                         </div>
                         <div ng-if="UserLogin.telegramAdd">
                             <button ng-click="deleteTelegram()" id="ButtonTelegramDel">Отвязать Telegram</button>
+                            <div><a class="nav-link" href="#!/user_info_type?userId={{UserLogin.id}}">Типы уведомлений</a></div>
                         </div>
+
                     </details>
                 </div>
                 <div class="nav-item" ng-show="!isUserLoggedIn()">
@@ -157,6 +159,7 @@
 
     <script src="admin/user/user.js?ver=1.2"></script>
     <script src="admin/user/user_role.js?ver=1.2"></script>
+    <script src="admin/user/user_info_type.js?ver=1.2"></script>
     <script src="admin/role/role.js?ver=1.2"></script>
     <script src="admin/role/role_right.js?ver=1.2"></script>
     <script src="calendar/vacation/vacation.js?ver=1.2"></script>

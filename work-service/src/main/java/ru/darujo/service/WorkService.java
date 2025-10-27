@@ -164,10 +164,10 @@ public class WorkService {
         updateWorkLastDevelop(work);
         work = workRepository.save(work);
         if (stageOld != null && !stageOld.equals(work.getStageZI())) {
-            sendInform(login, String.format("%s сменил <b>этап ЗИ</b> %s -> %s по ЗИ %s %s", login, stageOld, work.getStageZI(), work.getCodeSap(), UrlWorkTime.getUrlWorkSap(work.getCodeSap(),work.getName())));
+            sendInform(login,MessageType.CHANGE_STAGE_WORK, String.format("%s сменил <b>этап ЗИ</b> %s -> %s по ЗИ %s %s", login, stageOld, work.getStageZI(), work.getCodeSap(), UrlWorkTime.getUrlWorkSap(work.getCodeSap(),work.getName())));
         }
         if (ratedOld != null && !ratedOld.equals(work.getRated())) {
-            sendInform(login, getMesChangRated(login, work));
+            sendInform(login,MessageType.ESTIMATION_WORK, getMesChangRated(login, work));
         }
 
         return work;
@@ -179,13 +179,13 @@ public class WorkService {
                 : String.format("%s <u><b>отменил оценку</b></u> по ЗИ %s %s ", login, work.getCodeSap(), UrlWorkTime.getUrlRate(work.getId(),work.getName()));
     }
 
-    private void sendInform(String login, String text) {
+    private void sendInform(String login,MessageType type, String text) {
         infoServiceIntegration.addMessage(
                 new MessageInfoDto(
                         new Timestamp(
                                 System.currentTimeMillis()),
                         login,
-                        MessageType.CHANGE_STAGE_WORK,
+                        type,
                         text
                 ));
     }
@@ -397,7 +397,7 @@ public class WorkService {
         if (workLittle.getRated() == null || !workLittle.getRated().equals(rated)) {
             workLittle.setRated(rated);
             workLittle = workLittleRepository.save(workLittle);
-            sendInform(login, getMesChangRated(login, workLittle));
+            sendInform(login,MessageType.ESTIMATION_WORK, getMesChangRated(login, workLittle));
         }
         return workLittle;
 

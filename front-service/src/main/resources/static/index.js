@@ -83,6 +83,10 @@
                 templateUrl: 'admin/user/user_password.html?ver=' + ver,
                 controller: 'userChangeController'
             })
+            .when('/user_info_type'.toLowerCase(), {
+                templateUrl: 'admin/user/user_info_type.html?ver=' + ver,
+                controller: 'userInfoTypeController'
+            })
             .when('/work_graph', {
                 templateUrl: 'workGraph/workGraph.html?ver='.toLowerCase() + ver,
                 controller: 'workGraphController'

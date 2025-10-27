@@ -12,6 +12,7 @@ import ru.darujo.dto.information.CodeTelegramMes;
 import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.ResultMes;
 import ru.darujo.dto.user.UserDto;
+import ru.darujo.dto.user.UserInfoTypeDto;
 import ru.darujo.dto.user.UserPasswordChangeDto;
 import ru.darujo.service.UserService;
 
@@ -87,4 +88,15 @@ public class UserController {
     public MapUserInfoDto getUserMessageDTOs(    ) {
         return userService.getUserMessageDTOs();
     }
+    @GetMapping("/user/info/type/{userId}")
+    public UserInfoTypeDto getUserInfoTypes(@PathVariable Long userId) {
+        return userService.getUserInfoTypes(userId);
+
+    }
+    @PostMapping("/user/info/type")
+    public UserInfoTypeDto getUserInfoTypes(@RequestBody UserInfoTypeDto userInfoTypeDto) {
+        return userService.setUserInfoTypes(userInfoTypeDto);
+
+    }
+
 }

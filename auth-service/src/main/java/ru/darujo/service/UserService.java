@@ -10,14 +10,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.darujo.convertor.RoleConvertor;
-import ru.darujo.convertor.UserConvertor;
 import ru.darujo.dto.information.CodeTelegramMes;
 import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.information.ResultMes;
-import ru.darujo.dto.user.UserRoleActiveDto;
-import ru.darujo.dto.user.UserRoleDto;
-import ru.darujo.dto.user.UserInfoDto;
+import ru.darujo.dto.user.*;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.InfoServiceIntegration;
 
@@ -52,6 +49,13 @@ public class UserService {
     @Autowired
     public void setInfoServiceIntegration(InfoServiceIntegration infoServiceIntegration) {
         this.infoServiceIntegration = infoServiceIntegration;
+    }
+
+    private UserInfoTypeService userInfoTypeService;
+
+    @Autowired
+    public void setUserInfoTypeService(UserInfoTypeService userInfoTypeService) {
+        this.userInfoTypeService = userInfoTypeService;
     }
 
     public User findById(Long id) {
@@ -196,10 +200,36 @@ public class UserService {
     public MapUserInfoDto getUserMessageDTOs() {
         Map<MessageType, List<UserInfoDto>> messageTypeListMap = new HashMap<>();
         for (MessageType type : MessageType.values()) {
-            List<UserInfoDto> userDTOs = getUserList(null, null, null, null, null, null, null, null,true).getContent().stream().map(UserConvertor::getUserInfoDto).toList();
+//            List<UserInfoDto> userDTOs = getUserList(null, null, null, null, null, null, null, null, true).getContent().stream().map(UserConvertor::getUserInfoDto).toList();
+            List<UserInfoDto> userDTOs = userInfoTypeService.getInfoTypes(type).stream().map(
+                    userInfoType -> new UserInfoDto(
+                            userInfoType.getUser().getId(),
+                            userInfoType.getUser().getNikName(),
+                            userInfoType.getUser().getTelegramId())).toList();
             messageTypeListMap.put(type, userDTOs);
         }
         return new MapUserInfoDto(messageTypeListMap);
+    }
+
+    public UserInfoTypeDto getUserInfoTypes(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + userId + " не найден"));
+        Map<String, UserInfoTypeActiveDto> userInfoActiveDtoMap = new HashMap<>();
+        for (MessageType type : MessageType.values()) {
+            userInfoActiveDtoMap.put(type.toString(), new UserInfoTypeActiveDto(type.toString(), type.getName(), false));
+        }
+        userInfoTypeService.getInfoTypes(userId).forEach(userInfoType -> userInfoActiveDtoMap.get(userInfoType.getCode()).setActive(Boolean.TRUE));
+        return new UserInfoTypeDto(user.getId(), user.getNikName(), user.getFirstName(), user.getLastName(), user.getPatronymic(), userInfoActiveDtoMap.values());
+    }
+
+    public UserInfoTypeDto setUserInfoTypes(UserInfoTypeDto userInfoTypeDto) {
+        User user = userRepository.findById(userInfoTypeDto.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Пользовательне найден"));
+        userInfoTypeService.setUserInfoTypes(user, userInfoTypeDto.getInfoTypes());
+        try {
+            infoServiceIntegration.setMessageTypeListMap(getUserMessageDTOs());
+        } catch (ResourceNotFoundRunTime ex) {
+            System.out.println(ex.getMessage());
+        }
+        return getUserInfoTypes(user.getId());
     }
 
     private class SingleCode {
@@ -225,7 +255,7 @@ public class UserService {
         int code = (int) ((99999999 * Math.random()));
         SingleCode singleCode = new SingleCode(login, timestamp);
         mapCode.put(code, singleCode);
-        return new CodeTelegramMes(true,"t.me/DaruWorkBot", code, TIME_CODE);
+        return new CodeTelegramMes(true, "t.me/DaruWorkBot", code, TIME_CODE);
 
     }
 

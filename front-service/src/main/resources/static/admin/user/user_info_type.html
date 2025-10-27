@@ -1,0 +1,35 @@
+<div id="UserList" class="head_text_elem">
+    <p class="p-head">{{User.lastName}} {{User.firstName}} {{User.patronymic}}</p>
+    <div class="horiz">
+        <button ng-if="User" type="button" class="head_button" ng-click="saveUserinfoType()">Сохранить</button>
+<!--        <button type="button" class="head_button" ng-click="backUser()">Назад</button>-->
+    </div>
+    <h1>Список типов уведомлений пользователя</h1>
+
+
+    <table>
+        <tr>
+            <td class="table_head2">Код</td>
+            <td class="table_head2">Название</td>
+            <td class="table_head2"></td>
+            <!--            <td class="table_head2"></td>-->
+
+        </tr>
+        <tbody>
+        <tr ng-repeat="infoType in User.infoTypes">
+
+            <td>{{infoType.code}}</td>
+            <td>{{infoType.name}}</td>
+            <td>
+                <label for="RoleActive"></label>
+                <input id="RoleActive" class="vvod check_box_td" type="checkbox" ng-model="infoType.active"/>
+
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+    <div class="wait_1_2">
+        <img ng-if="load" src="../../gif/wait1_2.gif" alt="Лучше ждите" width="300" height="300"/>
+    </div>
+</div>
