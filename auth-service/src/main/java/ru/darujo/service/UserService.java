@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {
+    private final Integer TIME_CODE = 5;
     private UserRepository userRepository;
 
     @Autowired
@@ -213,7 +214,6 @@ public class UserService {
     }
 
     private final Map<Integer, SingleCode> mapCode = new HashMap<>();
-    private final Integer TIME_CODE = 10;
 
     public CodeTelegramMes getGenSingleCode(String login) {
         if (login == null) {
@@ -267,6 +267,12 @@ public class UserService {
                     user.setTelegramId(null);
                     saveUser(user);
                 });
+        try {
+            infoServiceIntegration.setMessageTypeListMap(getUserMessageDTOs());
+        } catch (ResourceNotFoundRunTime ex) {
+            System.out.println(ex.getMessage());
+        }
+
     }
 
 }

@@ -13,7 +13,9 @@ import ru.darujo.model.MessageReceive;
 import ru.darujo.service.MessageReceiveService;
 
 import java.io.File;
-import java.net.URISyntaxException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -26,6 +28,7 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
     public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
+
     private MessageReceiveService messageReceiveService;
 
     @Autowired
@@ -74,20 +77,18 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
                 System.out.println("Working onUpdateReceived, request text[{}]");
                 System.out.println(request.getMessage().getText());
 
-            } else{
+            } else {
                 defaultMsg(chatId, "Извините я пока не умею с этим работать.");
                 return;
             }
             // ToDo document
             if (requestMessage.getText().equals("/start")) {
-                try {
-                telegramBotSend.sendPhoto(chatId, new File(Objects.requireNonNull(this.getClass().getResource("/hi.jpg")).toURI()),"""
-                        Напишите команду для показа списка мыслей:\s
-                         /link - подписаться на уведомления от сервиса учета трудо затрат\s
-                         /stop - отвязать акаунт от уведомлений""");
-                } catch (URISyntaxException e) {
-                    throw new RuntimeException(e);
-                }
+                telegramBotSend.sendPhoto("DaruBot", chatId,
+                        streamToFile("hi.jpg")
+                        , """
+                                Напишите команду для показа списка мыслей:\s
+                                 /link - подписаться на уведомления от сервиса учета трудо затрат\s
+                                 /stop - отвязать акаунт от уведомлений""");
 
             } else if (requestMessage.getText().equals("/link")) {
                 defaultMsg(chatId, "Ведите однаразовый код:");
@@ -99,7 +100,7 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
                     } else {
                         defaultMsg(chatId, "Что-то пошло не так как хотелось бы.");
                     }
-                }catch (ResourceNotFoundRunTime ex){
+                } catch (ResourceNotFoundRunTime ex) {
                     defaultMsg(chatId, "Сервис авторизации времено не доступен попробуйте позже");
                 }
 
@@ -108,7 +109,7 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
                 if (lastCommand != null && lastCommand.equals("/link")) {
                     try {
                         Integer code = Integer.parseInt(requestMessage.getText());
-                        ResultMes resultMes =userServiceIntegration.linkCodeTelegram(code, requestMessage.getChatId());
+                        ResultMes resultMes = userServiceIntegration.linkCodeTelegram(code, requestMessage.getChatId());
                         if (resultMes.isOk()) {
                             defaultMsg(chatId, "Вы успешно подключены к оповещениям");
                         } else {
@@ -116,7 +117,7 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
                         }
                     } catch (NumberFormatException ex) {
                         defaultMsg(chatId, "Код должен быть числом");
-                    } catch (ResourceNotFoundRunTime ex){
+                    } catch (ResourceNotFoundRunTime ex) {
                         defaultMsg(chatId, ex.getMessage());
                     }
 
@@ -149,4 +150,24 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
         telegramBotSend.sendMessage("DaruWorkBot", chatId, msg);
     }
 
+    public File streamToFile(String fileName) {
+
+        try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName)) {
+            File f = File.createTempFile(String.valueOf(Objects.requireNonNull(in).hashCode()), ".tmp");
+            f.deleteOnExit();
+
+            try (FileOutputStream out = new FileOutputStream(f)) {
+                byte[] buffer = new byte[1024];
+
+                int bytesRead;
+                while ((bytesRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                }
+            }
+            return f;
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
 }

@@ -96,7 +96,7 @@ public class MessageInformationService {
     }
 
     private void updateAllNoAddUser() {
-        Specification<MessageInformation> specification = Specifications.ne(null, "isSend", false);
+        Specification<MessageInformation> specification = Specifications.eq(null, "isSend", false);
         messageInformationRepository
                 .findAll(specification)
                 .forEach(messageInformation -> {

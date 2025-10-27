@@ -168,7 +168,6 @@ public class WorkService {
         }
         if (ratedOld != null && !ratedOld.equals(work.getRated())) {
             sendInform(login, getMesChangRated(login, work));
-            sendInform(login, UrlWorkTime.getUrlRate(work.getId(), work.getName()));
         }
 
         return work;
