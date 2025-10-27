@@ -10,7 +10,7 @@
     <div class="horiz">
         <h1>Плановая оценка</h1>
         <button type="button" class="head_button mar5" id="WorkPage" ng-click="workPage()">Назад</button>
-        <button type="button" class="head_button mar5" id="Rated" ng-click="changeRated(!ZI.rated)">{{ZI.rated ? "Отменить оценку" : "Завершить оценку"}}</button>
+        <button ng-if = "ziEdit" type="button" class="head_button mar5" id="Rated" ng-click="changeRated(!ZI.rated)">{{ZI.rated ? "Отменить оценку" : "Завершить оценку"}}</button>
     </div>
     <table>
         <tr>

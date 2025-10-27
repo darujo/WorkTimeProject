@@ -402,12 +402,16 @@ angular.module('workTimeService').controller('workRateController', function ($sc
     let callBackTypeEdit = function () {
         $scope.typeEdit = true;
     }
+    let callBackZiEdit = function () {
+        $scope.ziEdit = true;
+    }
     checkRight("stageCreate", false, callBackStageCreate);
     checkRight("stageEdit", false, callBackStageEdit);
     checkRight("criteriaCreate", false, callBackCriteriaCreate);
     checkRight("criteriaEdit", false, callBackCriteriaEdit);
     checkRight("typeCreate", false, callBackTypeCreate);
     checkRight("typeEdit", false, callBackTypeEdit);
+    checkRight("ziEdit", false, callBackZiEdit);
     let loadRateStatus = function (){
         loadRateStatusST();
         loadRateStatusCT();

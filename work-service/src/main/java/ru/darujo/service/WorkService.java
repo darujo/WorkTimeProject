@@ -377,6 +377,8 @@ public class WorkService {
             case "edit":
             case "stageedit":
             case "criteriaedit":
+            case "typeedit":
+            case "ziedit":
                 if (!rightEdit) {
                     throw new ResourceNotFoundRunTime("У вас нет права на редактирование ZI_EDIT");
                 }
@@ -384,6 +386,8 @@ public class WorkService {
             case "create":
             case "stagecreate":
             case "criteriacreate":
+            case "typecreate":
+            case "zicreate": 
                 if (!rightCreate) {
                     throw new ResourceNotFoundRunTime("У вас нет права на редактирование ZI_CREATE");
                 }
