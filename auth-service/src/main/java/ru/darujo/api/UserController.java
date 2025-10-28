@@ -88,6 +88,11 @@ public class UserController {
     public MapUserInfoDto getUserMessageDTOs(    ) {
         return userService.getUserMessageDTOs();
     }
+    @GetMapping("/user/info/types")
+    public UserInfoTypeDto getUserInfoTypes() {
+        return userService.getUserInfoTypes(null);
+
+    }
     @GetMapping("/user/info/type/{userId}")
     public UserInfoTypeDto getUserInfoTypes(@PathVariable Long userId) {
         return userService.getUserInfoTypes(userId);

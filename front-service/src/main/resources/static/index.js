@@ -87,6 +87,10 @@
                 templateUrl: 'admin/user/user_info_type.html?ver=' + ver,
                 controller: 'userInfoTypeController'
             })
+            .when('/message'.toLowerCase(), {
+                templateUrl: 'admin/user/message.html?ver=' + ver,
+                controller: 'messageController'
+            })
             .when('/work_graph', {
                 templateUrl: 'workGraph/workGraph.html?ver='.toLowerCase() + ver,
                 controller: 'workGraphController'

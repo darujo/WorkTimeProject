@@ -37,4 +37,12 @@ public class MessageInfoDto implements Serializable {
     public Timestamp getDataTime() {
         return dataTime;
     }
+
+    public void setDataTime(Timestamp dataTime) {
+        this.dataTime = dataTime;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
 }

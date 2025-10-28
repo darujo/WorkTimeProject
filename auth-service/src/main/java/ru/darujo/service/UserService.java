@@ -201,24 +201,34 @@ public class UserService {
         Map<MessageType, List<UserInfoDto>> messageTypeListMap = new HashMap<>();
         for (MessageType type : MessageType.values()) {
 //            List<UserInfoDto> userDTOs = getUserList(null, null, null, null, null, null, null, null, true).getContent().stream().map(UserConvertor::getUserInfoDto).toList();
-            List<UserInfoDto> userDTOs = userInfoTypeService.getInfoTypes(type).stream().map(
-                    userInfoType -> new UserInfoDto(
-                            userInfoType.getUser().getId(),
-                            userInfoType.getUser().getNikName(),
-                            userInfoType.getUser().getTelegramId())).toList();
+            List<UserInfoDto> userDTOs = userInfoTypeService
+                    .getInfoTypes(type)
+                    .stream()
+                    .filter(userInfoType -> userInfoType.getUser().getTelegramId() != null)
+                    .map(
+                            userInfoType -> new UserInfoDto(
+                                    userInfoType.getUser().getId(),
+                                    userInfoType.getUser().getNikName(),
+                                    userInfoType.getUser().getTelegramId())).toList();
             messageTypeListMap.put(type, userDTOs);
         }
         return new MapUserInfoDto(messageTypeListMap);
     }
 
     public UserInfoTypeDto getUserInfoTypes(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + userId + " не найден"));
         Map<String, UserInfoTypeActiveDto> userInfoActiveDtoMap = new HashMap<>();
         for (MessageType type : MessageType.values()) {
             userInfoActiveDtoMap.put(type.toString(), new UserInfoTypeActiveDto(type.toString(), type.getName(), false));
         }
-        userInfoTypeService.getInfoTypes(userId).forEach(userInfoType -> userInfoActiveDtoMap.get(userInfoType.getCode()).setActive(Boolean.TRUE));
-        return new UserInfoTypeDto(user.getId(), user.getNikName(), user.getFirstName(), user.getLastName(), user.getPatronymic(), userInfoActiveDtoMap.values());
+        if(userId != null) {
+            User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + userId + " не найден"));
+            userInfoTypeService.getInfoTypes(userId).forEach(userInfoType -> userInfoActiveDtoMap.get(userInfoType.getCode()).setActive(Boolean.TRUE));
+            return new UserInfoTypeDto(user.getId(), user.getNikName(), user.getFirstName(), user.getLastName(), user.getPatronymic(), userInfoActiveDtoMap.values());
+        }
+        else {
+            return new UserInfoTypeDto(null, null, null, null, null, userInfoActiveDtoMap.values());
+        }
+
     }
 
     public UserInfoTypeDto setUserInfoTypes(UserInfoTypeDto userInfoTypeDto) {
