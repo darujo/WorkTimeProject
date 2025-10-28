@@ -41,7 +41,7 @@ angular.module('workTimeService').controller('messageController', function ($sco
                     console.log("Save response")
                     console.log(response);
                     sendMessageForAll = false;
-                    alert("Список уведомлений сохранен");
+                    alert("Сообщения отправлены");
                 }, function errorCallback(response) {
                     sendMessageForAll = false;
                     console.log(response.data);
