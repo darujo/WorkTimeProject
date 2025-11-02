@@ -1,5 +1,7 @@
 package ru.darujo.dto.information;
 
+import ru.darujo.dto.user.UserInfoDto;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -8,10 +10,19 @@ public class MessageInfoDto implements Serializable {
     public MessageInfoDto() {
     }
 
-    Timestamp dataTime;
-    String author;
-    MessageType type;
-    String text;
+    private Timestamp dataTime;
+    private String author;
+    private MessageType type;
+    private String text;
+    private UserInfoDto userInfoDto;
+
+    public MessageInfoDto(UserInfoDto userInfoDto, MessageType type, String text) {
+        this.dataTime = new Timestamp(System.currentTimeMillis());
+        this.author = "AutoBotWorkTime";
+        this.type = type;
+        this.text = this.author + ": " + text;
+        this.userInfoDto = userInfoDto;
+    }
 
     public MessageInfoDto(Timestamp dataTime, String author, MessageType type, String text) {
         this.dataTime = dataTime;
@@ -44,5 +55,9 @@ public class MessageInfoDto implements Serializable {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    public UserInfoDto getUserInfoDto() {
+        return userInfoDto;
     }
 }

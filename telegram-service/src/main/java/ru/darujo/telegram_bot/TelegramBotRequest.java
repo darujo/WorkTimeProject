@@ -91,7 +91,7 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
                                  /stop - отвязать акаунт от уведомлений""");
 
             } else if (requestMessage.getText().equals("/link")) {
-                defaultMsg(chatId, "Ведите однаразовый код:");
+                defaultMsg(chatId, "Введите однаразовый код:");
 
             } else if (requestMessage.getText().equals("/stop")) {
                 try {

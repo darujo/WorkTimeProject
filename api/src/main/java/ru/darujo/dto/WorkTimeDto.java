@@ -1,5 +1,6 @@
 package ru.darujo.dto;
 
+import ru.darujo.assistant.helper.DataHelper;
 import ru.darujo.dto.user.UserFio;
 
 import java.io.Serializable;
@@ -7,15 +8,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class WorkTimeDto implements Serializable, UserFio {
-    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-
-    private String dateToText(Date date) {
-        if (date == null) {
-            return null;
-        }
-        return sdf.format(date);
-    }
+public class WorkTimeDto extends DataHelper implements Serializable, UserFio {
 
     private Long id;
     private String nikName;
@@ -163,7 +156,7 @@ public class WorkTimeDto implements Serializable, UserFio {
 
     @SuppressWarnings("unused")
     public String getWorkDateStr() {
-        return dateToText(workDate);
+        return dateToDDMMYYYY(workDate);
     }
 
     public Integer getType() {

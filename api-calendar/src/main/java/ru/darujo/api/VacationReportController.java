@@ -33,4 +33,33 @@ public class VacationReportController {
 
         return vacationReportService.getUserVacations(nikName, dateStart, dateEnd, periodSplit);
     }
+
+    @GetMapping("/user/work/day/last")
+    public Timestamp getLastWorkDay(@RequestParam(required = false) String username,
+                                    @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
+                                    @RequestParam(required = false) Integer dayMinus,
+                                    @RequestParam(required = false) Boolean lastWeek) {
+        Timestamp dateStart;
+        if(dateStartStr == null){
+            dateStart = new Timestamp(System.currentTimeMillis());
+        } else {
+            dateStart = DataHelper.DTZToDate(dateStartStr, "dateStart = ", true);
+        }
+        if (dateStart == null){
+            return null;
+        }
+        return vacationReportService.getLastWorkDay(username, dateStart, dayMinus, lastWeek);
+    }
+
+    @GetMapping("/work/day/after/week")
+    public Boolean isDayAfterWeek(@RequestParam(required = false, name = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStr,
+                                    @RequestParam(required = false) Integer dayMinus) {
+        Timestamp date;
+        if(dateStr == null){
+            date = new Timestamp(System.currentTimeMillis());
+        } else {
+            date = DataHelper.DTZToDate(dateStr, "date = ", false);
+        }
+        return vacationReportService.isDayAfterWeek(date, dayMinus);
+    }
 }

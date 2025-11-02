@@ -31,7 +31,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
         return getPeriodTime(dateStart,dateEnd, null);
     }
     public List<WeekWorkDto> getPeriodTime(Timestamp dateStart, Timestamp dateEnd,String period) {
-        StringBuilder stringBuilder = getStringBuilder(dateStart, dateEnd);
+        StringBuilder stringBuilder = getDateTeg(dateStart, dateEnd);
         addTeg(stringBuilder,"period",period);
         try {
             return webClientCalendar.get().uri("/calendar/period/time" + stringBuilder)
@@ -46,7 +46,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
     }
 
     public Float getWorkTime(Timestamp dateStart, Timestamp dateEnd) {
-        StringBuilder stringBuilder = getStringBuilder(dateStart, dateEnd);
+        StringBuilder stringBuilder = getDateTeg(dateStart, dateEnd);
 
         try {
             return webClientCalendar.get().uri("/calendar/work/time" + stringBuilder)
@@ -61,7 +61,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
     }
 
     public List<VacationDto> getVacation(String nikName, Timestamp dateStart, Timestamp dateEnd) {
-        StringBuilder stringBuilder = getStringBuilder(dateStart, dateEnd);
+        StringBuilder stringBuilder = getDateTeg(dateStart, dateEnd);
         addTeg(stringBuilder,"nikName",nikName);
 
         try {
@@ -76,8 +76,44 @@ public class CalendarServiceIntegration extends ServiceIntegration {
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
+    public Timestamp getLastWorkDay(String username, Timestamp dateStart, Integer dayMinus, Boolean lastWeek) {
 
-    private StringBuilder getStringBuilder(Timestamp dateStart, Timestamp dateEnd) {
+        StringBuilder stringBuilder = new StringBuilder();
+        addTeg(stringBuilder,"username",username);
+        addTeg(stringBuilder,"dateStart",dateStart);
+        addTeg(stringBuilder,"dayMinus",dayMinus);
+        addTeg(stringBuilder,"lastWeek",lastWeek);
+
+        try {
+            return webClientCalendar.get().uri("/vacation/report/user/work/day/last" + stringBuilder)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить отпуск за период httpStatus " + clientResponse.statusCode())))
+                    .bodyToMono(Timestamp.class)
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
+    }
+    public Boolean isDayAfterWeek(Timestamp date, Integer dayMinus) {
+
+        StringBuilder stringBuilder = new StringBuilder();
+        addTeg(stringBuilder,"date",date);
+        addTeg(stringBuilder,"dayMinus",dayMinus);
+
+        try {
+            return webClientCalendar.get().uri("/vacation/report/work/day/after/week" + stringBuilder)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить отпуск за период httpStatus " + clientResponse.statusCode())))
+                    .bodyToMono(Boolean.class)
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
+    }
+
+    private StringBuilder getDateTeg(Timestamp dateStart, Timestamp dateEnd) {
         if(dateStart == null || dateEnd ==null){
             throw new ResourceNotFoundRunTime("Что-то пошло не так для получения календаря должны быть заданы даты начала и конца"  );
         }

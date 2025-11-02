@@ -18,6 +18,7 @@ import ru.darujo.repository.UserSendRepository;
 import ru.darujo.specifications.Specifications;
 
 import javax.annotation.PostConstruct;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 
@@ -55,35 +56,39 @@ public class MessageInformationService {
     Map<MessageType, List<UserInfoDto>> messageTypeListMap = null;
 
     @PostConstruct
-    public boolean init() {
-        boolean loadOk = false;
-        try {
-            messageTypeListMap = userServiceIntegration.getUserMessageDTOs().getMessageTypeListMap();
-
-            loadOk = true;
+    public void init() {
+        System.out.println("init mess");
+        if (messageTypeListMap == null) {
+            try {
+                messageTypeListMap = userServiceIntegration.getUserMessageDTOs().getMessageTypeListMap();
+            } catch (ResourceNotFoundRunTime exception) {
+                System.out.println(exception.getMessage());
+            }
+        }
+        if (messageTypeListMap != null && availInformNoAddUser()) {
             updateAllNoAddUser();
+        }
+        if (availNotSendMessage()) {
             sendAllNotSendMessage();
-        } catch (ResourceNotFoundRunTime exception) {
-            System.out.println(exception.getMessage());
-
         }
 
-        return loadOk;
+
     }
 
     public void setMessageTypeListMap(MapUserInfoDto messageTypeListMap) {
         this.messageTypeListMap = messageTypeListMap.getMessageTypeListMap();
     }
 
+    @Transactional
     public Boolean addMessage(MessageInfoDto messageInfoDto) {
         if (messageTypeListMap == null) {
-            if (init()) {
-                updateAllNoAddUser();
-            }
-
-
+            init();
         }
-        if (messageTypeListMap == null) {
+        if (messageInfoDto.getUserInfoDto()!=null){
+            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true));
+            saveUserSend(new UserSend(Long.toString(messageInfoDto.getUserInfoDto().getTelegramId()), messageInformation));
+        }
+        else if (messageTypeListMap == null) {
             saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), false));
         } else {
             MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true));
@@ -95,7 +100,14 @@ public class MessageInformationService {
 
     }
 
-    private void updateAllNoAddUser() {
+    public boolean availInformNoAddUser() {
+        Specification<MessageInformation> specification = Specifications.eq(null, "isSend", false);
+        return messageInformationRepository.exists(specification);
+
+    }
+
+    @Transactional
+    public void updateAllNoAddUser() {
         Specification<MessageInformation> specification = Specifications.eq(null, "isSend", false);
         messageInformationRepository
                 .findAll(specification)
@@ -116,6 +128,12 @@ public class MessageInformationService {
         return messageInformationRepository.save(messageInformation);
     }
 
+    public boolean availNotSendMessage() {
+        Specification<UserSend> specification = Specifications.ne(null, "send", true);
+        return userSendRepository.exists(specification);
+    }
+
+    @Transactional
     public void sendAllNotSendMessage() {
         Specification<UserSend> specification = Specifications.ne(null, "send", true);
         userSendRepository.findAll(specification).forEach(
@@ -132,4 +150,11 @@ public class MessageInformationService {
     }
 
 
+    public List<UserInfoDto> getUsersForMesType(MessageType type) {
+        if (messageTypeListMap != null) {
+            return messageTypeListMap.get(type);
+        }
+        return null;
+
+    }
 }

@@ -98,4 +98,39 @@ public class VacationReportService {
         return userVacations;
     }
 
+    public Timestamp getLastWorkDay(String username,
+                                    Timestamp dateStart,
+                                    Integer dayMinus,
+                                    Boolean lastWeek) {
+        LocalDate localDate = dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        if (lastWeek) {
+            localDate = localDate.minusDays(localDate.getDayOfWeek().getValue() - 1);
+        }
+        int day = 0;
+        while (day < dayMinus) {
+            localDate = localDate.minusDays(1);
+            if (calendarService.isWorkDay(localDate) &&
+                    vacationService.findOneDateInVacation(username, localDate) == null) {
+                day++;
+            }
+
+        }
+        return Timestamp.valueOf(localDate.atStartOfDay());
+
+    }
+
+    public Boolean isDayAfterWeek(Timestamp date, Integer dayMinus) {
+        if (dayMinus < 1) {
+            return false;
+        }
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        while (0 < dayMinus) {
+            if (!calendarService.isWorkDay(localDate)) {
+                return false;
+            }
+            localDate = localDate.minusDays(1);
+            dayMinus--;
+        }
+        return !calendarService.isWorkDay(localDate);
+    }
 }

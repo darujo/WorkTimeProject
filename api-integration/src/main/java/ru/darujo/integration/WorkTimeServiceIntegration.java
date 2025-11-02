@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.workperiod.UserWorkDto;
 import ru.darujo.dto.workperiod.UserWorkFormDto;
+import ru.darujo.dto.workperiod.WorkUserFactPlan;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
 import java.sql.Timestamp;
@@ -138,8 +139,8 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
     }
 
     public Timestamp getLastTime(List<Long> taskIds, Timestamp dateLe, Timestamp dateGe) {
+        StringBuilder stringBuilder = new StringBuilder();
         try {
-            StringBuilder stringBuilder = new StringBuilder();
             taskIds.forEach(taskId -> addTeg(stringBuilder, "taskId", taskId));
             addTeg(stringBuilder, "dateLe", dateLe);
             addTeg(stringBuilder, "dateGe", dateGe);
@@ -147,10 +148,34 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
             return webClientWorkTime.get().uri("/rep/fact/lastTime" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по затраченому времени. Статус " + clientResponse.statusCode()  )))
                     .bodyToMono(Timestamp.class)
                     .block();
         } catch (RuntimeException ex) {
+            System.out.println("/rep/fact/lastTime" + stringBuilder);
+            System.out.println(ex.getMessage());
+            return null;
+        }
+
+    }
+
+    public WorkUserFactPlan getUserWork(Timestamp dateStart, Timestamp dateEnd, String nikName, String period) {
+        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            addTeg(stringBuilder, "dateStart", dateStart);
+            addTeg(stringBuilder, "dateEnd", dateEnd);
+            addTeg(stringBuilder, "nikName", nikName);
+            addTeg(stringBuilder, "periodSplit", period);
+
+            return webClientWorkTime.get().uri("/rep/fact/user/work/only" + stringBuilder)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по затраченому времени. Статус " + clientResponse.statusCode())))
+                    .bodyToMono(WorkUserFactPlan.class)
+                    .block();
+        } catch (RuntimeException ex) {
+            System.out.println("rep/fact/user/work/only" + stringBuilder);
+            System.out.println(ex.getMessage());
             return null;
         }
 
