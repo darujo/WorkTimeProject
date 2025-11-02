@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
@@ -41,6 +42,18 @@ public class TelegramBotSend {
     public void sendPhoto (String author, String chatId, File file, String text) throws TelegramApiException {
 //        messageSendService.saveMessageSend(new MessageSend(null,author,chatId,text));
         SendPhoto message =  new SendPhoto(chatId, new InputFile(file));
+        if (!text.isEmpty()){
+            message.setCaption(text);
+        }
+        try {
+            Message message1 =tgClient.execute(message);
+        } catch (TelegramApiException e) {
+            sendMessage(author,chatId,text);
+        }
+    }
+    public void sendDocument (String author, String chatId, String file, String text) throws TelegramApiException {
+//        messageSendService.saveMessageSend(new MessageSend(null,author,chatId,text));
+        SendDocument message =  new SendDocument(chatId, new InputFile(file));
         if (!text.isEmpty()){
             message.setCaption(text);
         }

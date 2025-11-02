@@ -10,15 +10,11 @@ import ru.darujo.dto.information.ResultMes;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.model.MessageReceive;
+import ru.darujo.service.FileService;
 import ru.darujo.service.MessageReceiveService;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Component
 public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer {
@@ -27,6 +23,12 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
     @Autowired
     public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
+    }
+    private FileService fileService;
+
+    @Autowired
+    public void setFileService(FileService fileService) {
+        this.fileService = fileService;
     }
 
     private MessageReceiveService messageReceiveService;
@@ -84,7 +86,7 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
             // ToDo document
             if (requestMessage.getText().equals("/start")) {
                 telegramBotSend.sendPhoto("DaruBot", chatId,
-                        streamToFile("hi.jpg")
+                        fileService.getFile("hi")
                         , """
                                 Напишите команду для показа списка мыслей:\s
                                  /link - подписаться на уведомления от сервиса учета трудо затрат\s
@@ -150,24 +152,5 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
         telegramBotSend.sendMessage("DaruWorkBot", chatId, msg);
     }
 
-    public File streamToFile(String fileName) {
 
-        try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName)) {
-            File f = File.createTempFile(String.valueOf(Objects.requireNonNull(in).hashCode()), ".tmp");
-            f.deleteOnExit();
-
-            try (FileOutputStream out = new FileOutputStream(f)) {
-                byte[] buffer = new byte[1024];
-
-                int bytesRead;
-                while ((bytesRead = in.read(buffer)) != -1) {
-                    out.write(buffer, 0, bytesRead);
-                }
-            }
-            return f;
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            return null;
-        }
-    }
 }

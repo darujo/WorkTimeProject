@@ -101,7 +101,9 @@ public class WorkRepService {
                                         getFactWork(work, 2),
                                         getFactWork(work, 3),
                                         getFactWork(work, 4),
-                                        getFactWork(work, 5)
+                                        getFactWork(work, 5),
+                                        work.getIssuePrototypePlan(),
+                                        work.getIssuePrototypeFact()
 
                                 )
                         );
