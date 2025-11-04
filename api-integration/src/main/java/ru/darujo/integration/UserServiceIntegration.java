@@ -30,7 +30,7 @@ public class UserServiceIntegration extends ServiceIntegration {
         if (userId != null) {
             stringBuilder.append("/").append(userId);
         } else {
-            addTeg(stringBuilder,"nikName",nikName);
+            addTeg(stringBuilder, "nikName", nikName);
         }
         try {
             return webClientUser.get().uri("/user" + stringBuilder)
@@ -40,18 +40,17 @@ public class UserServiceIntegration extends ServiceIntegration {
                     .bodyToMono(UserDto.class)
                     .block();
         } catch (RuntimeException ex) {
-            if (ex instanceof ResourceNotFoundRunTime)
-            {
-              throw ex;
-            }
-            else {
+            if (ex instanceof ResourceNotFoundRunTime) {
+                throw ex;
+            } else {
                 throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить пользователя (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
             }
         }
     }
+
     public List<UserDto> getUserDTOs(String nikNameOrRole) {
         StringBuilder stringBuilder = new StringBuilder();
-        addTeg(stringBuilder,"nikName",nikNameOrRole);
+        addTeg(stringBuilder, "nikName", nikNameOrRole);
         try {
             return Objects.requireNonNull(webClientUser.get().uri(stringBuilder.toString())
                     .retrieve()
@@ -60,22 +59,20 @@ public class UserServiceIntegration extends ServiceIntegration {
                     .bodyToMono(new ParameterizedTypeReference<CustomPageImpl<UserDto>>() {
                     })
                     .block()).getContent();
-        }
-        catch (RuntimeException ex) {
-            if (ex instanceof ResourceNotFoundRunTime)
-            {
+        } catch (RuntimeException ex) {
+            if (ex instanceof ResourceNotFoundRunTime) {
                 throw ex;
-            }
-            else {
+            } else {
                 throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить пользователя (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
             }
         }
 
     }
+
     public ResultMes linkCodeTelegram(Integer code, Long telegramId) {
         StringBuilder stringBuilder = new StringBuilder();
-        addTeg(stringBuilder,"code",code);
-        addTeg(stringBuilder,"telegramId",telegramId);
+        addTeg(stringBuilder, "code", code);
+        addTeg(stringBuilder, "telegramId", telegramId);
         try {
             return webClientUser.get().uri("/user/telegram/link" + stringBuilder)
                     .retrieve()
@@ -83,21 +80,19 @@ public class UserServiceIntegration extends ServiceIntegration {
                             clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные пользователю")))
                     .bodyToMono(ResultMes.class)
                     .block();
-        }
-        catch (RuntimeException ex) {
-            if (ex instanceof ResourceNotFoundRunTime)
-            {
+        } catch (RuntimeException ex) {
+            if (ex instanceof ResourceNotFoundRunTime) {
                 throw ex;
-            }
-            else {
+            } else {
                 throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить пользователя (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
             }
         }
 
     }
+
     public Boolean linkDeleteTelegram(Long telegramId) {
         StringBuilder stringBuilder = new StringBuilder();
-        addTeg(stringBuilder,"telegramId",telegramId);
+        addTeg(stringBuilder, "telegramId", telegramId);
         try {
             return webClientUser.get().uri("/user/telegram/delete" + stringBuilder)
                     .retrieve()
@@ -105,13 +100,10 @@ public class UserServiceIntegration extends ServiceIntegration {
                             clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные пользователю")))
                     .bodyToMono(Boolean.class)
                     .block();
-        }
-        catch (RuntimeException ex) {
-            if (ex instanceof ResourceNotFoundRunTime)
-            {
+        } catch (RuntimeException ex) {
+            if (ex instanceof ResourceNotFoundRunTime) {
                 throw ex;
-            }
-            else {
+            } else {
                 throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить пользователя (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
             }
         }
@@ -120,19 +112,16 @@ public class UserServiceIntegration extends ServiceIntegration {
 
     public MapUserInfoDto getUserMessageDTOs() {
         try {
-            return webClientUser.get().uri("/information" )
+            return webClientUser.get().uri("/information")
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные пользователю")))
                     .bodyToMono(MapUserInfoDto.class)
                     .block();
-        }
-        catch (RuntimeException ex) {
-            if (ex instanceof ResourceNotFoundRunTime)
-            {
+        } catch (RuntimeException ex) {
+            if (ex instanceof ResourceNotFoundRunTime) {
                 throw ex;
-            }
-            else {
+            } else {
                 throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить пользователя (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
             }
         }

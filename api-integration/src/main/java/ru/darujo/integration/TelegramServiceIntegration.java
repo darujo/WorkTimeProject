@@ -24,7 +24,7 @@ public class TelegramServiceIntegration extends ServiceIntegration {
             String text) {
         try {
             webClientTelegram.post().uri("/" + chatId + "/notifications")
-                    .header("username",author)
+                    .header("username", author)
                     .bodyValue(text)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
@@ -35,4 +35,60 @@ public class TelegramServiceIntegration extends ServiceIntegration {
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
+
+    public void addFile(
+            String fileName,
+            String textFile) {
+        try {
+            StringBuilder sb = new StringBuilder();
+            addTeg(sb, "fileName", fileName);
+            webClientTelegram.post().uri("/file" + sb)
+                    .bodyValue(textFile)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить ответ от сервиса telegram")))
+                    .bodyToMono(Void.class)
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
+    }
+
+    public void sendFile(
+            String author,
+            String chatId,
+            String fileName,
+            String text) {
+        try {
+            StringBuilder sb = new StringBuilder();
+            addTeg(sb, "fileName", fileName);
+            webClientTelegram.post().uri("/" + chatId + "/file" + sb)
+                    .header("username", author)
+                    .bodyValue(text)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить ответ от сервиса telegram")))
+                    .bodyToMono(Void.class)
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
+    }
+
+    public void deleteFile(
+            String fileName) {
+        try {
+            StringBuilder sb = new StringBuilder();
+            addTeg(sb, "fileName", fileName);
+            webClientTelegram.delete().uri( "/file" + sb)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить ответ от сервиса telegram")))
+                    .bodyToMono(Void.class)
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
+    }
+
 }

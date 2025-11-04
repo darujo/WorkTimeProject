@@ -1,5 +1,6 @@
 package ru.darujo.api;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -17,6 +18,7 @@ import ru.darujo.service.WorkService;
 import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 
+@Log4j2
 @RestController()
 @RequestMapping("/v1/works")
 public class WorkController {
@@ -36,7 +38,7 @@ public class WorkController {
 
         Iterable<Work> works = workService.findWorks(1, 100000000, name, null, null, null, null, null, task, null);
         float time_last = (System.nanoTime() - curTime) * 0.000000001f;
-        System.out.println("Время выполнения " + time_last);
+        log.info("Время выполнения " + time_last);
         return works;
 
     }
@@ -98,7 +100,7 @@ public class WorkController {
                 .map(WorkConvertor::getWorkDto);
         workDTOs.forEach(workService::updWorkPlanTime);
         float time_last = (curTime - System.nanoTime()) * 0.000000001f;
-        System.out.println("Время выполнения " + time_last);
+        log.info("Время выполнения " + time_last);
         return workDTOs;
     }
 

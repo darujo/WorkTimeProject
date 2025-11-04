@@ -1,5 +1,6 @@
 package ru.darujo.api;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -20,6 +21,7 @@ import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 import java.util.*;
 
+@Log4j2
 @RestController()
 @RequestMapping("/v1/task")
 public class TaskController {
@@ -52,30 +54,30 @@ public class TaskController {
     @GetMapping("/refresh/{id}")
     public boolean TaskRefresh(@PathVariable long id,
                                @RequestParam(required = false, name = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStr
-                               ) {
-        Timestamp date = DataHelper.DTZToDate(dateStr,"date");
-        return taskService.refreshTime(id,date);
+    ) {
+        Timestamp date = DataHelper.DTZToDate(dateStr, "date");
+        return taskService.refreshTime(id, date);
 
     }
 
     @GetMapping("/right/{right}")
-    public boolean checkRight (@PathVariable String right,
-                               @RequestHeader(defaultValue = "false", name = "TASK_EDIT") boolean rightEdit,
-                               @RequestHeader(defaultValue = "false", name = "TASK_CREATE") boolean rightCreate){
+    public boolean checkRight(@PathVariable String right,
+                              @RequestHeader(defaultValue = "false", name = "TASK_EDIT") boolean rightEdit,
+                              @RequestHeader(defaultValue = "false", name = "TASK_CREATE") boolean rightCreate) {
         right = right.toLowerCase();
-        if( right.equals("edit")){
-            if(!rightEdit) {
+        if (right.equals("edit")) {
+            if (!rightEdit) {
                 throw new ResourceNotFoundRunTime("У вас нет права на редактирование TASK_EDIT");
             }
-        }
-        else if( right.equals("create")){
-            if(!rightCreate) {
+        } else if (right.equals("create")) {
+            if (!rightCreate) {
                 throw new ResourceNotFoundRunTime("У вас нет права на редактирование TASK_CREATE");
             }
         }
         return true;
 
     }
+
     @PostMapping("")
     public TaskDto TaskSave(@RequestHeader(required = false) String username,
                             @RequestBody TaskDto taskDto,
@@ -88,14 +90,16 @@ public class TaskController {
         }
         return TaskConvertor.getTaskDto(taskService.saveWorkTime(TaskConvertor.getTask(taskDto)));
     }
+
     @PostMapping("/checkAvail")
     public AttrDto<Integer> TaskCheckAvail(@RequestBody TaskDto taskDto) {
-       String test = taskService.taskCheck(taskDto);
-       if(test!= null){
-           return new AttrDto<>(-1,test);
-       }
-       return new AttrDto<>(0,"");
+        String test = taskService.taskCheck(taskDto);
+        if (test != null) {
+            return new AttrDto<>(-1, test);
+        }
+        return new AttrDto<>(0, "");
     }
+
     @DeleteMapping("/{id}")
     public void deleteTask(@PathVariable long id) {
         taskService.deleteWorkTime(id);
@@ -113,12 +117,12 @@ public class TaskController {
                                        @RequestParam(defaultValue = "10") Integer size,
                                        @RequestParam(required = false) Long[] arrTaskId) {
         List<Long> listTaskId = null;
-        if(arrTaskId != null && arrTaskId.length != 0){
+        if (arrTaskId != null && arrTaskId.length != 0) {
             listTaskId = Arrays.asList(arrTaskId);
 
         }
         if (workId == null && ziName != null) {
-            return findTasks(nikName, codeBTS, codeDEVBO, description, ziName,workId, type, listTaskId);
+            return findTasks(nikName, codeBTS, codeDEVBO, description, ziName, workId, type, listTaskId);
         }
 
         return findTasks(nikName, codeBTS, codeDEVBO, description, workId, type, page, size, listTaskId);
@@ -148,10 +152,10 @@ public class TaskController {
 
     @GetMapping("/list/id")
     public Iterable<Long> findTasks(@RequestParam(required = false) String nikName,
-                                       @RequestParam(required = false) String codeBTS,
-                                       @RequestParam(required = false) String codeDEVBO,
-                                       @RequestParam(required = false) String description,
-                                       @RequestParam(required = false) Long workId){
+                                    @RequestParam(required = false) String codeBTS,
+                                    @RequestParam(required = false) String codeDEVBO,
+                                    @RequestParam(required = false) String description,
+                                    @RequestParam(required = false) Long workId) {
         Set<Long> listId = new HashSet<>();
         taskService.findTask(nikName,
                 codeBTS,
@@ -160,7 +164,7 @@ public class TaskController {
                 workId,
                 null,
                 null,
-                null).forEach(task ->  listId.add(task.getId()));
+                null).forEach(task -> listId.add(task.getId()));
         return listId;
     }
 
@@ -183,7 +187,7 @@ public class TaskController {
             taskDto.setCodeZi(workLittleDto.getCodeZI());
             taskDto.setNameZi(workLittleDto.getName());
         } catch (ResourceNotFoundRunTime e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
             if (task.getType() == 1) {
                 taskDto.setCodeZi("Нет ЗИ с ID = " + taskDto.getWorkId());
                 taskDto.setNameZi("Нет ЗИ с ID = " + taskDto.getWorkId());
@@ -201,7 +205,7 @@ public class TaskController {
         } catch (ResourceNotFoundRunTime e) {
             taskDto.setFirstName("Нет пользователя с ником " + task.getNikName());
 
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
         }
 
         return taskDto;
@@ -228,7 +232,7 @@ public class TaskController {
                 null).forEach(task ->
         {
             TaskDto taskDto = taskAddValue(task);
-            if (ziName== null || ziName.equals("") || (taskDto.getNameZi() != null && taskDto.getNameZi().matches(".*" + ziName + "*"))) {
+            if (ziName == null || ziName.equals("") || (taskDto.getNameZi() != null && taskDto.getNameZi().matches(".*" + ziName + "*"))) {
                 taskDtoList.add(taskDto);
             }
 

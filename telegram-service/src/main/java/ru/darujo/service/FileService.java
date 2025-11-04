@@ -1,5 +1,6 @@
 package ru.darujo.service;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+@Log4j2
 @Service
 public class FileService {
     private final Map<String, File> files = new HashMap<>();
@@ -17,7 +19,7 @@ public class FileService {
     public String addFile(String name, String body) {
         try {
             File file = File.createTempFile(String.valueOf(Objects.requireNonNull(body).hashCode()), ".tmp");
-
+            log.info(file.getAbsolutePath());
             file.deleteOnExit();
 
             try (PrintWriter out = new PrintWriter(file, StandardCharsets.UTF_8)) {
@@ -25,7 +27,7 @@ public class FileService {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            files.put(name,file);
+            files.put(name, file);
             return name;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -37,19 +39,29 @@ public class FileService {
         return files.get(name);
     }
 
-    public File delFile(String name) {
-        return files.remove(name);
+    public void delFile(String name) {
+        File file = files.get(name);
+        if (file == null) {
+            return;
+        }
+        boolean flag = file.delete();
+        log.info("файл удален " + name + "? " + flag);
+        files.remove(name);
+
     }
 
     @PostConstruct
     private void init() {
+
         files.put("hi", resourceToFile("hi.jpg"));
+        files.put("menu", resourceToFile("menu.jpg"));
     }
 
     public File resourceToFile(String fileName) {
 
         try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName)) {
             File f = File.createTempFile(String.valueOf(Objects.requireNonNull(in).hashCode()), ".tmp");
+            log.info(f.getAbsolutePath());
             f.deleteOnExit();
 
             try (FileOutputStream out = new FileOutputStream(f)) {
@@ -62,7 +74,7 @@ public class FileService {
             }
             return f;
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
             return null;
         }
     }

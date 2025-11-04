@@ -34,7 +34,6 @@ public class AdminUserController {
 
     @PostMapping("/edit/user")
     public UserEditDto setUserEditDto(@RequestBody UserEditDto user) {
-        System.out.println(user);
         return UserConvertor.getUserEditDto(
                 userService.saveUser(UserConvertor.getUser(user),user.getTextPassword()));
     }

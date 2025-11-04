@@ -1,5 +1,6 @@
 package ru.darujo.service;
 
+import lombok.extern.log4j.Log4j2;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,6 +28,7 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Log4j2
 @Service
 public class UserService {
     private final Integer TIME_CODE = 5;
@@ -220,12 +222,11 @@ public class UserService {
         for (MessageType type : MessageType.values()) {
             userInfoActiveDtoMap.put(type.toString(), new UserInfoTypeActiveDto(type.toString(), type.getName(), false));
         }
-        if(userId != null) {
+        if (userId != null) {
             User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + userId + " не найден"));
             userInfoTypeService.getInfoTypes(userId).forEach(userInfoType -> userInfoActiveDtoMap.get(userInfoType.getCode()).setActive(Boolean.TRUE));
             return new UserInfoTypeDto(user.getId(), user.getNikName(), user.getFirstName(), user.getLastName(), user.getPatronymic(), userInfoActiveDtoMap.values());
-        }
-        else {
+        } else {
             return new UserInfoTypeDto(null, null, null, null, null, userInfoActiveDtoMap.values());
         }
 
@@ -237,7 +238,7 @@ public class UserService {
         try {
             infoServiceIntegration.setMessageTypeListMap(getUserMessageDTOs());
         } catch (ResourceNotFoundRunTime ex) {
-            System.out.println(ex.getMessage());
+            log.error(ex.getMessage());
         }
         return getUserInfoTypes(user.getId());
     }
@@ -310,7 +311,7 @@ public class UserService {
         try {
             infoServiceIntegration.setMessageTypeListMap(getUserMessageDTOs());
         } catch (ResourceNotFoundRunTime ex) {
-            System.out.println(ex.getMessage());
+            log.error(ex.getMessage());
         }
 
     }

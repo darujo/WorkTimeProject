@@ -1,5 +1,6 @@
 package ru.darujo.service;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.*;
 
+@Log4j2
 @Service
 @Primary
 public class TaskService {
@@ -128,7 +130,7 @@ public class TaskService {
         task.setRefresh(new Timestamp(System.currentTimeMillis()));
         taskRepository.save(task);
         boolean ok = workServiceIntegration.setWorkDate(task.getWorkId(), date);
-        System.out.println("Обновили даты в ЗИ? " + ok);
+        log.info("Обновили даты в ЗИ? " + ok);
         return true;
     }
 

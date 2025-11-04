@@ -1,5 +1,6 @@
 package ru.darujo.integration;
 
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -39,6 +40,22 @@ public class InfoServiceIntegration extends ServiceIntegration {
         try {
             webClientInfo.post().uri("/add/message")
                     .bodyValue(messageInfoDto)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                    .bodyToMono(Void.class)
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
+    }
+
+    public void sendWorkStatus(@NonNull String author, Long chatId) {
+        try {
+            StringBuilder sb = new StringBuilder();
+            addTeg(sb, "author", author);
+            addTeg(sb,"chatId", chatId);
+            webClientInfo.get().uri("/work/status" + sb)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))

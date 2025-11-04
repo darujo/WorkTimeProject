@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.service.MessageInformationService;
+import ru.darujo.service.ScheduleService;
 
 import java.sql.Timestamp;
 
@@ -16,6 +17,13 @@ public class MessageInformationController {
     public void setMessageInformation(MessageInformationService messageInformationService) {
         this.messageInformationService = messageInformationService;
     }
+    private ScheduleService scheduleService;
+
+    @Autowired
+    public void setScheduleService(ScheduleService scheduleService) {
+        this.scheduleService = scheduleService;
+    }
+
     @PostMapping("/add/message")
     public Boolean addMessageInformation(@RequestHeader(required = false) String username,
                                          @RequestBody MessageInfoDto messageInfoDto) {
@@ -32,5 +40,10 @@ public class MessageInformationController {
         messageInformationService.setMessageTypeListMap(messageTypeListMap);
     }
 
+    @GetMapping("/work/status")
+    public void sendWorkStatus(@RequestParam String author,
+                               @RequestParam (required = false) Long chatId ){
+        scheduleService.sendWorkStatus(author,chatId);
+    }
 
 }

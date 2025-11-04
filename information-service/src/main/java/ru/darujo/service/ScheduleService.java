@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.time.DayOfWeek;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -24,11 +25,14 @@ public class ScheduleService {
         executor.scheduleAtFixedRate(tasks.getAddWorkAvail(), tasks.getStartTime(11), 86400, TimeUnit.SECONDS);
         executor.scheduleAtFixedRate(tasks.getAddWorkAvailLastWeek(), tasks.getStartTime(12), 86400, TimeUnit.SECONDS);
         executor.scheduleAtFixedRate(tasks.sendMessage(), 0, 60, TimeUnit.SECONDS);
-
-//        executor.scheduleAtFixedRate(tasks.getAddWorkAvail(), 0, 70, TimeUnit.SECONDS);
-//        executor.scheduleAtFixedRate(tasks.getAddWorkAvailLastWeek(), 0, 80, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(tasks.sendReportWorkFull(null, null), tasks.getStartTime(DayOfWeek.TUESDAY, 10), 86400 * 7, TimeUnit.SECONDS);
 
     }
+
+    public void sendWorkStatus(String author, Long chatId) {
+        executor.schedule(tasks.sendReportWorkFull(author, chatId), 2, TimeUnit.SECONDS);
+    }
+
 
     private void close() {
         // Корректное завершение

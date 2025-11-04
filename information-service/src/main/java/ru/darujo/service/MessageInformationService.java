@@ -1,5 +1,6 @@
 package ru.darujo.service;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.domain.Specification;
@@ -21,7 +22,8 @@ import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
-
+import java.util.concurrent.atomic.AtomicReference;
+@Log4j2
 @Service
 @Primary
 public class MessageInformationService {
@@ -57,12 +59,12 @@ public class MessageInformationService {
 
     @PostConstruct
     public void init() {
-        System.out.println("init mess");
+        log.info("init mess");
         if (messageTypeListMap == null) {
             try {
                 messageTypeListMap = userServiceIntegration.getUserMessageDTOs().getMessageTypeListMap();
             } catch (ResourceNotFoundRunTime exception) {
-                System.out.println(exception.getMessage());
+                log.error(exception.getMessage());
             }
         }
         if (messageTypeListMap != null && availInformNoAddUser()) {
@@ -84,17 +86,15 @@ public class MessageInformationService {
         if (messageTypeListMap == null) {
             init();
         }
-        if (messageInfoDto.getUserInfoDto()!=null){
-            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true));
+        if (messageInfoDto.getUserInfoDto() != null) {
+            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true, messageInfoDto.getDataTime()));
             saveUserSend(new UserSend(Long.toString(messageInfoDto.getUserInfoDto().getTelegramId()), messageInformation));
-        }
-        else if (messageTypeListMap == null) {
-            saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), false));
+        } else if (messageTypeListMap == null) {
+            saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), false, messageInfoDto.getDataTime()));
         } else {
-            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true));
+            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true, messageInfoDto.getDataTime()));
             messageTypeListMap.get(messageInfoDto.getType()).forEach(userTelegramDto -> saveUserSend(new UserSend(Long.toString(userTelegramDto.getTelegramId()), messageInformation)));
         }
-        //ToDo пока отправляем сразу надо сделать отложеную отправку
         sendAllNotSendMessage();
         return true;
 
@@ -143,7 +143,7 @@ public class MessageInformationService {
                         userSend.setSend(true);
                         userSendRepository.save(userSend);
                     } catch (ResourceNotFoundRunTime exception) {
-                        System.out.println(exception.getMessage());
+                        log.error(exception.getMessage());
                     }
 
                 });
@@ -155,6 +155,61 @@ public class MessageInformationService {
             return messageTypeListMap.get(type);
         }
         return null;
+
+    }
+
+    @Transactional
+    public Boolean sendFile(MessageInfoDto messageInfoDto, String fileName, String fileBody) {
+        if (messageTypeListMap == null) {
+            init();
+        }
+        if (messageInfoDto.getUserInfoDto() != null && messageTypeListMap == null) {
+            log.error("Нет списка получателей");
+            return false;
+        } else {
+            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true, messageInfoDto.getDataTime()));
+            if(messageInfoDto.getUserInfoDto() != null) {
+                saveUserSend(new UserSend(Long.toString(messageInfoDto.getUserInfoDto().getTelegramId()), messageInformation));
+            } else {
+                messageTypeListMap.get(messageInfoDto.getType()).forEach(userTelegramDto -> saveUserSend(new UserSend(Long.toString(userTelegramDto.getTelegramId()), messageInformation)));
+            }
+            try {
+                telegramServiceIntegration.addFile(fileName, fileBody);
+                AtomicReference<Boolean> flagError = new AtomicReference<>(false);
+                userSendRepository.findAll(
+                        Specifications.eq(null,"messageInformation",messageInformation.getId())
+                        )
+                        .forEach(userSend -> {
+                            try {
+                                telegramServiceIntegration.sendFile(userSend.getMessageInformation().getAuthor(), userSend.getChatId(), fileName, userSend.getMessageInformation().getText());
+                                userSend.setSend(true);
+                                userSendRepository.save(userSend);
+                            } catch (ResourceNotFoundRunTime ex){
+                                log.error("Сбой отправки файла пользователю с chatId " + userSend.getChatId() );
+                                flagError.set(true);
+                            }
+                        });
+                if (flagError.get()){
+                    messageInformation.setText("Не удалось доставить до вас файл ранее. " + messageInformation.getText());
+                    messageInformationRepository.save(messageInformation);
+                }
+            }
+            catch (ResourceNotFoundRunTime ex){
+                messageInformation.setText("Не удалось доставить до вас файл ранее. " + messageInformation.getText());
+                log.error("Сбой при отправке файла " + fileName + " " + ex.getMessage());
+                return false;
+            }
+            finally {
+                try {
+                    telegramServiceIntegration.deleteFile(fileName);
+                }catch (ResourceNotFoundRunTime ex) {
+                    log.error("Сбой при удаление файл из сервиса " + fileName + " " + ex.getMessage());
+                }
+            }
+
+        }
+        sendAllNotSendMessage();
+        return true;
 
     }
 }

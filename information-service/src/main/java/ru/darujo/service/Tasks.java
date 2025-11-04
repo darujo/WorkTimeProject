@@ -1,18 +1,25 @@
 package ru.darujo.service;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ru.darujo.assistant.helper.DataHelper;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.user.UserInfoDto;
 import ru.darujo.dto.workperiod.WorkUserFactPlan;
 import ru.darujo.integration.CalendarServiceIntegration;
+import ru.darujo.integration.WorkServiceIntegration;
 import ru.darujo.integration.WorkTimeServiceIntegration;
 
 import java.sql.Timestamp;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 
+@Log4j2
 @Component
 public class Tasks {
     MessageInformationService messageInformationService;
@@ -36,6 +43,20 @@ public class Tasks {
         this.workTimeServiceIntegration = workTimeServiceIntegration;
     }
 
+    private WorkServiceIntegration workServiceIntegration;
+
+    @Autowired
+    public void setWorkServiceIntegration(WorkServiceIntegration workServiceIntegration) {
+        this.workServiceIntegration = workServiceIntegration;
+    }
+
+    private HtmlService htmlService;
+
+    @Autowired
+    public void setHtmlService(HtmlService htmlService) {
+        this.htmlService = htmlService;
+    }
+
     public Long getStartTime(Integer hour) {
         return getStartTime(hour, 0);
     }
@@ -51,11 +72,15 @@ public class Tasks {
         milliSecondStartDay = (System.currentTimeMillis() - c.getTimeInMillis());
     }
 
+    public Long getStartTime(DayOfWeek dayOfWeek, Integer hour) {
+        return getStartTime(dayOfWeek, hour, 0);
+    }
+
     public Long getStartTime(Integer hour, Integer minute) {
-        if (hour < 0 || hour > 23) {
+        if (minute < 0 || minute > 59) {
             throw new RuntimeException("Не верно заданы часы");
         }
-        if (minute < 0 || minute > 59) {
+        if (hour < 0 || hour > 23) {
             throw new RuntimeException("Не верно заданы часы");
         }
         int millisecond = ((hour * 60) + minute) * 60 * 1000;
@@ -67,11 +92,36 @@ public class Tasks {
         return startTime;
     }
 
+    public Long getStartTime(DayOfWeek dayOfWeek, Integer hour, Integer minute) {
+        if (hour < 0 || hour > 23) {
+            throw new RuntimeException("Не верно заданы часы");
+        }
+        if (minute < 0 || minute > 59) {
+            throw new RuntimeException("Не верно заданы часы");
+        }
+        int millisecond = ((hour * 60) + minute) * 60 * 1000;
+        long startTime = millisecond - milliSecondStartDay;
+        int days = dayOfWeek.getValue() - LocalDate.now().getDayOfWeek().getValue();
+        if (days < 0) {
+            days = days + 7;
+        }
+        startTime = startTime / 1000;
+        startTime = startTime + days * 86400L;
+        if (startTime < 0) {
+            startTime = startTime + 7 * 24 * 60 * 60;
+        }
+        log.info(dayOfWeek);
+        log.info(hour);
+        log.info(minute);
+        log.info(startTime);
+        return startTime;
+    }
+
     private final Float PERCENT_WORK_TIME = 0.9f;
 
     public Runnable getAddWorkAvail() {
         return () -> {
-            System.out.println("getAddWorkAvail");
+            log.info("getAddWorkAvail");
             MessageType type = MessageType.AVAIL_WORK_LAST_DAY;
 
             List<UserInfoDto> users = messageInformationService.getUsersForMesType(type);
@@ -98,8 +148,8 @@ public class Tasks {
 
     public Runnable getAddWorkAvailLastWeek() {
         return () -> {
-            System.out.println("getAddWorkAvailLastWeek");
-            MessageType type = MessageType.AVAIL_WORK_LAST_DAY;
+            log.info("getAddWorkAvailLastWeek");
+            MessageType type = MessageType.AVAIL_WORK_LAST_WEEK;
             List<UserInfoDto> users = messageInformationService.getUsersForMesType(type);
             if (users == null) {
                 return;
@@ -124,6 +174,20 @@ public class Tasks {
 
     public Runnable sendMessage() {
         return () -> messageInformationService.init();
+    }
+
+    public Runnable sendReportWorkFull(String author, Long chatId) {
+        return () -> {
+            log.info("sendReportWorkFull");
+            LinkedList<String> sort = new LinkedList<>();
+            sort.add("release");
+            String report = htmlService.printRep(workServiceIntegration.getTimeWork(null, true, null, null, sort));
+            messageInformationService.sendFile(new MessageInfoDto(author,
+                    (chatId == null ? null : new UserInfoDto(null, author, chatId)),
+                    MessageType.AVAIL_WORK_FULL_REPORT, "Рассылка отчете статус ЗИ"
+            ), "Zi_Report_" + DataHelper.dateToYYYYMMDD(new Timestamp(System.currentTimeMillis())) + ".html", report);
+
+        };
     }
 
 

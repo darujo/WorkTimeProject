@@ -1,5 +1,6 @@
 package ru.darujo.integration;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
-
+@Log4j2
 @Component
 public class WorkTimeServiceIntegration extends ServiceIntegration {
     private WebClient webClientWorkTime;
@@ -43,7 +44,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .bodyToMono(Float.class)
                     .block();
         } catch (RuntimeException ex) {
-            System.out.println("/rep/fact/time" + stringBuilder);
+            log.error("/rep/fact/time" + stringBuilder);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -62,7 +63,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .bodyToMono(ListString.class)
                     .block();
         } catch (RuntimeException ex) {
-            System.out.println("/rep/fact/user" + stringBuilder);
+            log.error("/rep/fact/user" + stringBuilder);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -104,7 +105,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .collectList()
                     .block();
         } catch (RuntimeException ex) {
-            System.out.println("/rep/fact/week" + stringBuilder);
+            log.error("/rep/fact/week" + stringBuilder);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -133,7 +134,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .collectList()
                     .block();
         } catch (RuntimeException ex) {
-            System.out.println("/rep/fact/week" + stringBuilder);
+            log.error("/rep/fact/week" + stringBuilder);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -152,8 +153,8 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .bodyToMono(Timestamp.class)
                     .block();
         } catch (RuntimeException ex) {
-            System.out.println("/rep/fact/lastTime" + stringBuilder);
-            System.out.println(ex.getMessage());
+            log.error("/rep/fact/lastTime" + stringBuilder);
+            log.error(ex.getMessage());
             return null;
         }
 
@@ -174,8 +175,8 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .bodyToMono(WorkUserFactPlan.class)
                     .block();
         } catch (RuntimeException ex) {
-            System.out.println("rep/fact/user/work/only" + stringBuilder);
-            System.out.println(ex.getMessage());
+            log.error("rep/fact/user/work/only" + stringBuilder);
+            log.error(ex.getMessage());
             return null;
         }
 

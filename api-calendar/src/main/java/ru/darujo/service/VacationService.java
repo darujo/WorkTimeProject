@@ -1,5 +1,6 @@
 package ru.darujo.service;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Log4j2
 @Service
 @Primary
 public class VacationService {
@@ -83,24 +85,26 @@ public class VacationService {
         }
         // вторую дату проверять не надо  так как этот  случай покрывается предыдущими случаями
     }
-    private Timestamp addDay(Timestamp date, int day){
+
+    private Timestamp addDay(Timestamp date, int day) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.add(Calendar.DAY_OF_WEEK, day);
         return new Timestamp(cal.getTime().getTime());
     }
+
     @Transactional
     public Vacation saveVacation(Vacation vacation) {
         checkVacation(vacation);
-        Timestamp date = addDay(vacation.getDateStart(), -1 );
+        Timestamp date = addDay(vacation.getDateStart(), -1);
         Vacation vacationSave = findOneDateBetween(vacation.getNikName(), "dateEnd", date, date);
-        if (vacationSave != null){
+        if (vacationSave != null) {
             vacation.setDateStart(vacationSave.getDateStart());
             vacationRepository.delete(vacationSave);
         }
-        date = addDay(vacation.getDateEnd(), 1 );
+        date = addDay(vacation.getDateEnd(), 1);
         vacationSave = findOneDateBetween(vacation.getNikName(), "dateStart", date, date);
-        if (vacationSave != null){
+        if (vacationSave != null) {
             vacation.setDateEnd(vacationSave.getDateEnd());
             vacationRepository.delete(vacationSave);
         }
@@ -165,7 +169,7 @@ public class VacationService {
                 userFio.setPatronymic(userDto.getPatronymic());
             }
         } catch (ResourceNotFoundRunTime e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
             userFio.setFirstName("Не найден пользователь с ником " + userFio.getNikName());
         }
     }

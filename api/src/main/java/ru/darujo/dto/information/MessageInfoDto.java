@@ -16,11 +16,18 @@ public class MessageInfoDto implements Serializable {
     private String text;
     private UserInfoDto userInfoDto;
 
+    public MessageInfoDto(String author,UserInfoDto userInfoDto, MessageType type, String text) {
+        this(userInfoDto,type,text);
+        if (author != null) {
+            this.author = author;
+            this.text = this.author + ": " + text;
+        }
+    }
     public MessageInfoDto(UserInfoDto userInfoDto, MessageType type, String text) {
         this.dataTime = new Timestamp(System.currentTimeMillis());
-        this.author = "AutoBotWorkTime";
+        this.author = "Scheduler";
         this.type = type;
-        this.text = this.author + ": " + text;
+        this.text = text;
         this.userInfoDto = userInfoDto;
     }
 

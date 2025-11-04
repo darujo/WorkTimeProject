@@ -11,12 +11,15 @@ public class TelegramBot {
     public TelegramBot(@Value("${telegram-bot.token}") String botToken,
                        TelegramBotRequest telegramBotRequest) {
 
-        try {
-            TelegramBotsLongPollingApplication botsApplication = new TelegramBotsLongPollingApplication();
+        try(TelegramBotsLongPollingApplication botsApplication = new TelegramBotsLongPollingApplication()) {
+
             botsApplication.registerBot(botToken, telegramBotRequest);
         } catch (TelegramApiException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+
     }
 
 

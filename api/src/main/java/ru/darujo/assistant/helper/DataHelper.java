@@ -3,6 +3,7 @@ package ru.darujo.assistant.helper;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
@@ -47,4 +48,13 @@ public class DataHelper {
         }
         return null;
     }
+
+    private static final SimpleDateFormat sdfIso = new SimpleDateFormat("yyyy_MM_dd_HH_mm");
+    public static String dateToYYYYMMDD(Date date){
+        if (date == null){
+            return null;
+        }
+        return sdfIso.format(date);
+    }
+
 }

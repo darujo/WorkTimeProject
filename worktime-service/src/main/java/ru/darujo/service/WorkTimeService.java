@@ -1,5 +1,6 @@
 package ru.darujo.service;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
@@ -25,6 +26,7 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Log4j2
 @Service
 @Primary
 public class WorkTimeService {
@@ -77,7 +79,7 @@ public class WorkTimeService {
             ok = taskServiceIntegration.setTaskRefreshTime(workTime.getTaskId());
 
         }
-        System.out.println("обновили время у задачи " + ok);
+        log.info("обновили время у задачи " + ok);
 
         return workTimeRepository.save(workTime);
     }
@@ -192,7 +194,7 @@ public class WorkTimeService {
                 workTimeDto.setTaskType(taskDto.getType());
             }
         } catch (ResourceNotFoundRunTime e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
             workTimeDto.setFirstName("Не найдена задача с id " + workTimeDto.getTaskId());
         }
     }
@@ -212,7 +214,7 @@ public class WorkTimeService {
                 userFio.setPatronymic(userDto.getPatronymic());
             }
         } catch (ResourceNotFoundRunTime e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
             userFio.setFirstName("Не найден пользователь с ником " + userFio.getNikName());
         }
     }
@@ -221,13 +223,13 @@ public class WorkTimeService {
         try {
             return userServiceIntegration.getUserDTOs(role);
         } catch (ResourceNotFoundRunTime e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
             return null;
         }
     }
 
     public Boolean getAvailTime(long taskId) {
-        Specification<WorkTime> specification = Specification.where(Specifications.eq(null,"taskId",taskId));
+        Specification<WorkTime> specification = Specification.where(Specifications.eq(null, "taskId", taskId));
         return workTimeRepository.findAll(specification).size() > 0;
     }
 
@@ -253,9 +255,9 @@ public class WorkTimeService {
         return true;
     }
 
-    public Timestamp getLastTime(Long [] taskId,Timestamp dateGe, Timestamp dateLe) {
-        Page<WorkTime> workTimes = findWorkTime(taskId,null,null,dateLe,null,dateGe,null,null,1,1);
+    public Timestamp getLastTime(Long[] taskId, Timestamp dateGe, Timestamp dateLe) {
+        Page<WorkTime> workTimes = findWorkTime(taskId, null, null, dateLe, null, dateGe, null, null, 1, 1);
 
-        return workTimes.getSize() == 1 ? workTimes.getContent().get(0).getWorkDate() : null ;
+        return workTimes.getSize() == 1 ? workTimes.getContent().get(0).getWorkDate() : null;
     }
 }
