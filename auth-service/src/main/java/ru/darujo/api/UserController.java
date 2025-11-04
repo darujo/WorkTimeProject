@@ -71,6 +71,11 @@ public class UserController {
         return userService.getGenSingleCode(username);
     }
 
+    @GetMapping("/user/telegram/get/{chatId}")
+    public ResultMes checkUserTelegram(@PathVariable(required = false) Long chatId) {
+        return userService.checkUserTelegram(chatId);
+    }
+
     @GetMapping("/user/telegram/link")
     public ResultMes linkSingleCode(@RequestParam(required = false) Integer code,
                                     @RequestParam(required = false) Long telegramId

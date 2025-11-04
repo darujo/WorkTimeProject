@@ -1,0 +1,2 @@
+ALTER TABLE telegram_message.message_receive ALTER COLUMN "text" TYPE varchar(4000) USING "text"::varchar;
+ALTER TABLE telegram_message.message_send ALTER COLUMN "text" TYPE varchar(4000) USING "text"::varchar;

@@ -124,18 +124,7 @@ public class UserService {
                                   String patronymic,
                                   Long telegramId,
                                   Boolean telegramIsNotNull) {
-        Specification<User> specification = Specification.where(null);
-        if (role != null && !role.isEmpty()) {
-            specification = Specifications.in(specification, "nikName", roleService.findByName(role).orElseThrow(() -> new UsernameNotFoundException("Роль не найдена " + role))
-                    .getUsers()
-                    .stream().map(User::getNikName).collect(Collectors.toList()));
-        }
-        specification = Specifications.like(specification, "nikName", nikName);
-        specification = Specifications.like(specification, "lastName", lastName);
-        specification = Specifications.like(specification, "firstName", firstName);
-        specification = Specifications.like(specification, "patronymic", patronymic);
-        specification = Specifications.eq(specification, "telegramId", telegramId);
-        specification = Specifications.isNotNull(specification, "telegramId", telegramIsNotNull);
+        Specification<User> specification = getUserSpecification(role, nikName, lastName, firstName, patronymic, telegramId, telegramIsNotNull);
         Sort sort = Sort.by("lastName")
                 .and(Sort.by("firstName"));
         Page<User> userPage;
@@ -148,6 +137,22 @@ public class UserService {
             userPage = userRepository.findAll(specification, PageRequest.of(page - 1, size, sort));
         }
         return userPage;
+    }
+
+    private Specification<User> getUserSpecification(String role, String nikName, String lastName, String firstName, String patronymic, Long telegramId, Boolean telegramIsNotNull) {
+        Specification<User> specification = Specification.where(null);
+        if (role != null && !role.isEmpty()) {
+            specification = Specifications.in(specification, "nikName", roleService.findByName(role).orElseThrow(() -> new UsernameNotFoundException("Роль не найдена " + role))
+                    .getUsers()
+                    .stream().map(User::getNikName).collect(Collectors.toList()));
+        }
+        specification = Specifications.like(specification, "nikName", nikName);
+        specification = Specifications.like(specification, "lastName", lastName);
+        specification = Specifications.like(specification, "firstName", firstName);
+        specification = Specifications.like(specification, "patronymic", patronymic);
+        specification = Specifications.eq(specification, "telegramId", telegramId);
+        specification = Specifications.isNotNull(specification, "telegramId", telegramIsNotNull);
+        return specification;
     }
 
     @Transactional
@@ -243,6 +248,7 @@ public class UserService {
         return getUserInfoTypes(user.getId());
     }
 
+
     private class SingleCode {
         private final String login;
         private final Timestamp timestamp;
@@ -313,6 +319,17 @@ public class UserService {
         } catch (ResourceNotFoundRunTime ex) {
             log.error(ex.getMessage());
         }
+
+    }
+
+    public ResultMes checkUserTelegram(Long chatId) {
+        if (chatId == null){
+            return new ResultMes(false,"Нет ни одного пользователя с таким телеграмм");
+        }
+        boolean flag = userRepository.exists(getUserSpecification(null, null, null,  null, null, chatId, null));
+
+
+        return new ResultMes(flag,flag ? "" :"Нет ни одного пользователя с таким телеграмм");
 
     }
 

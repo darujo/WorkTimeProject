@@ -1,5 +1,6 @@
 package ru.darujo.integration;
 
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
@@ -117,6 +118,23 @@ public class UserServiceIntegration extends ServiceIntegration {
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные пользователю")))
                     .bodyToMono(MapUserInfoDto.class)
+                    .block();
+        } catch (RuntimeException ex) {
+            if (ex instanceof ResourceNotFoundRunTime) {
+                throw ex;
+            } else {
+                throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить пользователя (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            }
+        }
+    }
+
+    public ResultMes checkUserTelegram(@NonNull Long chatId) {
+        try {
+            return webClientUser.get().uri("/user/telegram/get/" + chatId)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные пользователю")))
+                    .bodyToMono(ResultMes.class)
                     .block();
         } catch (RuntimeException ex) {
             if (ex instanceof ResourceNotFoundRunTime) {

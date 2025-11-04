@@ -20,7 +20,7 @@ public class MessageInformation {
 
     @Column(name = "type")
     private String type;
-    @Column(name = "text")
+    @Column(name = "text", length = 4000)
     private String text;
     @Column(name = "is_send")
     private boolean isSend;

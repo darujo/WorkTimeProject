@@ -22,7 +22,7 @@ public class MessageSend {
 
     @Column(name = "chat_id")
     private String chatId;
-    @Column(name = "text")
+    @Column(name = "text", length = 4000)
     private String text;
 
 

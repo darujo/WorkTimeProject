@@ -19,7 +19,7 @@ public class MessageReceive {
 
     @Column(name = "chat_id")
     private Long chatId;
-    @Column(name = "text")
+    @Column(name = "text", length = 4000)
     private String text;
 
     @Column(name = "user_name")
