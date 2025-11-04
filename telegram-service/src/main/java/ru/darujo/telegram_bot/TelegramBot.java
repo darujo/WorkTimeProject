@@ -5,24 +5,22 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
 @Component
 public class TelegramBot {
     @Autowired
     public TelegramBot(@Value("${telegram-bot.token}") String botToken,
                        TelegramBotRequest telegramBotRequest) {
-
-        try(TelegramBotsLongPollingApplication botsApplication = new TelegramBotsLongPollingApplication()) {
+        try {
+            // нельзя оборачивать в try так как отвалится процесс Приема сообщений
+            TelegramBotsLongPollingApplication botsApplication = new TelegramBotsLongPollingApplication();
 
             botsApplication.registerBot(botToken, telegramBotRequest);
         } catch (TelegramApiException e) {
             e.printStackTrace();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
 
     }
-
-
 
 
 }
