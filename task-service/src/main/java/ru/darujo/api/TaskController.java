@@ -101,7 +101,11 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTask(@PathVariable long id) {
+    public void deleteTask(@PathVariable long id,
+                           @RequestHeader(defaultValue = "false", name = "TASK_EDIT") boolean right) {
+        if (!right) {
+            throw new ResourceNotFoundRunTime("У вас нет права TASK_EDIT");
+        }
         taskService.deleteWorkTime(id);
     }
 

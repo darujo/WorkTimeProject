@@ -71,7 +71,12 @@ public class WorkController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteWork(@PathVariable long id) {
+    public void deleteWork(@PathVariable long id,
+                           @RequestHeader(defaultValue = "false", name = "ZI_EDIT") boolean rightEdit
+    ) {
+        if (!rightEdit) {
+            throw new ResourceNotFoundRunTime("У вас нет права ZI_EDIT");
+        }
         workService.deleteWork(id);
     }
 
