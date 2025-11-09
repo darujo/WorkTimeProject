@@ -59,7 +59,11 @@ public class WorkTimeController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteWorkTime(@PathVariable long id) {
+    public void deleteWorkTime(@PathVariable long id,
+                               @RequestHeader(defaultValue = "false", name = "WORK_TIME_EDIT") boolean right) {
+        if (!right) {
+            throw new ResourceNotFoundRunTime("У вас нет права WORK_TIME_EDIT");
+        }
         workTimeService.deleteWorkTime(id);
     }
 
