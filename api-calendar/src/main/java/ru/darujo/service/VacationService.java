@@ -8,17 +8,19 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.darujo.assistant.helper.DataHelper;
+import ru.darujo.converter.VacationConvertor;
+import ru.darujo.dto.calendar.VacationDto;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.user.UserFio;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.model.Vacation;
 import ru.darujo.repository.VacationRepository;
-import ru.darujo.repository.specification.VacationSpecifications;
+import ru.darujo.specifications.Specifications;
 
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -52,13 +54,8 @@ public class VacationService {
         return vacationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Не найдена запись с ID" + id));
     }
 
-    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-
     private String dateToText(Date date) {
-        if (date == null) {
-            return null;
-        }
-        return sdf.format(date);
+        return DataHelper.dateToDDMMYYYY(date);
     }
 
     public void checkVacation(Vacation vacation) {
@@ -120,10 +117,11 @@ public class VacationService {
 
     public Page<Vacation> findAll(String nikName, Timestamp dateStart, Timestamp dateEnd, Integer page, Integer size) {
         List<String> users = Objects.requireNonNull(userServiceIntegration.getUserDTOs(nikName)).stream().map(UserDto::getNikName).collect(Collectors.toList());
-        Specification<Vacation> specification = Specification.where(null);
-        specification = VacationSpecifications.in(specification, "nikName", users);
-        specification = VacationSpecifications.dateGe(specification, "dateEnd", dateStart);
-        specification = VacationSpecifications.dateLe(specification, "dateStart", dateEnd);
+        Specification<Vacation> specification;
+        specification = Specification.where(null);
+        specification = Specifications.in(specification, "nikName", users);
+        specification = Specifications.ge(specification, "dateEnd", dateStart);
+        specification = Specifications.le(specification, "dateStart", dateEnd);
 
         if (page != null && size != null) {
             return vacationRepository.findAll(specification
@@ -134,10 +132,13 @@ public class VacationService {
     }
 
     public Vacation findOneDateBetween(String nikName, String field, Date dateGe, Date dateLe) {
-        Specification<Vacation> specification = Specification.where(null);
-        specification = VacationSpecifications.eq(specification, "nikName", nikName);
-        specification = VacationSpecifications.dateGe(specification, field, dateGe);
-        specification = VacationSpecifications.dateLe(specification, field, dateLe);
+        Specification<Vacation> specification = Specifications.eq(null, "nikName", nikName);
+        if (dateGe.equals(dateLe)) {
+            specification = Specifications.eq(specification, field, dateGe);
+        } else {
+            specification = Specifications.ge(specification, field, dateGe);
+            specification = Specifications.le(specification, field, dateLe);
+        }
         return vacationRepository.findOne(specification).orElse(null);
     }
 
@@ -147,10 +148,10 @@ public class VacationService {
     }
 
     public Vacation findOneDateInVacation(String nikName, Date date) {
-        Specification<Vacation> specification = Specification.where(null);
-        specification = VacationSpecifications.eq(specification, "nikName", nikName);
-        specification = VacationSpecifications.dateLe(specification, "dateStart", date);
-        specification = VacationSpecifications.dateGe(specification, "dateEnd", date);
+        Specification<Vacation> specification;
+        specification = Specifications.eq(null, "nikName", nikName);
+        specification = Specifications.le(specification, "dateStart", date);
+        specification = Specifications.ge(specification, "dateEnd", date);
         return vacationRepository.findOne(specification).orElse(null);
     }
 
@@ -184,5 +185,53 @@ public class VacationService {
         }
         return calendarService.getDateEndNotHoliday(dateStart, days);
     }
+
+    public List<VacationDto> userVacationStart(String nikName, int day) {
+        Date date = addDay(DataHelper.dateNoTime(new Timestamp(System.currentTimeMillis())), day);
+        return userVacationStart(nikName, date);
+    }
+
+    public List<VacationDto> userVacationStart(String nikName, Date dateStart) {
+        Specification<Vacation> specification;
+        specification = Specifications.eq(null, "nikName", nikName);
+        specification = Specifications.eq(specification, "dateStart", dateStart);
+        return vacationRepository.findAll(specification).stream().map(this::getVacationDtoAndAddFio).toList();
+    }
+
+    public boolean isVacationStart(String nikName, int day) {
+        Date date = addDay(DataHelper.dateNoTime(new Timestamp(System.currentTimeMillis())), day);
+        return findVacationStart(nikName, date) != null;
+    }
+
+    public Vacation findVacationStart(String nikName, Date date) {
+        return findOneDateBetween(nikName, "dateStart", date, date);
+    }
+
+    public Boolean isVacationEnd(String nikName) {
+        Date date = DataHelper.dateNoTime(new Timestamp(System.currentTimeMillis()));
+        return findVacationEnd(nikName, date) != null;
+    }
+
+    public Vacation findVacationEnd(String nikName, Date date) {
+        return findOneDateBetween(nikName, "dateEnd", date, date);
+    }
+
+    public VacationDto getVacationDtoAndAddDay(Vacation vacation) {
+        VacationDto vacationDto = VacationConvertor.getVacationDto(vacation);
+        vacationDto.setDays(getDayNotHoliday(vacationDto.getDateStart(), vacationDto.getDateEnd()));
+        return vacationDto;
+    }
+
+    public VacationDto getVacationDtoAndAddFio(Vacation vacation) {
+        VacationDto vacationDto = getVacationDtoAndAddDay(vacation);
+        updFio(vacationDto);
+        return vacationDto;
+    }
+
+    public Vacation getVacationUpdateAndConvert(VacationDto vacationDto) {
+        vacationDto.setDateEnd(getNewDate(vacationDto.getDateStart(), vacationDto.getDateEnd(), vacationDto.getDays()));
+        return VacationConvertor.getVacation(vacationDto);
+    }
+
 
 }

@@ -5,9 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.assistant.helper.DataHelper;
-import ru.darujo.converter.VacationConvertor;
 import ru.darujo.dto.calendar.VacationDto;
-import ru.darujo.model.Vacation;
 import ru.darujo.service.VacationService;
 
 import java.sql.Timestamp;
@@ -25,7 +23,7 @@ public class VacationController {
 
     @GetMapping("/{id}")
     public VacationDto VacationEdit(@PathVariable long id) {
-        return getVacationDtoAndAddDay(vacationService.findById(id));
+        return vacationService.getVacationDtoAndAddDay(vacationService.findById(id));
     }
 
     @PostMapping("")
@@ -34,7 +32,7 @@ public class VacationController {
         if (vacationDto.getNikName() == null) {
             vacationDto.setNikName(username);
         }
-        return getVacationDtoAndAddDay(vacationService.saveVacation(getVacationUpdateAndConvert(vacationDto)));
+        return vacationService.getVacationDtoAndAddDay(vacationService.saveVacation(vacationService.getVacationUpdateAndConvert(vacationDto)));
     }
 
     @DeleteMapping("/{id}")
@@ -54,24 +52,8 @@ public class VacationController {
         if (nikName != null && nikName.equals("current")){
             nikName = username;
         }
-        return vacationService.findAll(nikName,dateStart,dateEnd,page,size).map(this::getVacationDtoAndAddFio);
+        return vacationService.findAll(nikName,dateStart,dateEnd,page,size).map(vacationService::getVacationDtoAndAddFio);
     }
 
-    private VacationDto getVacationDtoAndAddDay(Vacation vacation) {
-        VacationDto vacationDto = VacationConvertor.getVacationDto(vacation);
-        vacationDto.setDays(vacationService.getDayNotHoliday(vacationDto.getDateStart(), vacationDto.getDateEnd()));
-        return vacationDto;
-    }
-
-    private VacationDto getVacationDtoAndAddFio(Vacation vacation) {
-        VacationDto vacationDto = getVacationDtoAndAddDay(vacation);
-        vacationService.updFio(vacationDto);
-        return vacationDto;
-    }
-
-    private Vacation getVacationUpdateAndConvert(VacationDto vacationDto) {
-        vacationDto.setDateEnd(vacationService.getNewDate(vacationDto.getDateStart(), vacationDto.getDateEnd(), vacationDto.getDays()));
-        return VacationConvertor.getVacation(vacationDto);
-    }
 
 }

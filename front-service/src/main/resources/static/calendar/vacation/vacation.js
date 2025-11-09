@@ -13,6 +13,7 @@ angular.module('workTimeService').controller('vacationController', function ($sc
 
     $scope.loadVacation = function () {
         showList();
+        $location.parserFilter($scope.Filt);
         $scope.findPage(0);
     };
     $scope.vacation = {
@@ -193,6 +194,9 @@ angular.module('workTimeService').controller('vacationController', function ($sc
     $scope.backUser = function (){
         $location.path('/user' );
 
+    }
+    $scope.sendFilter = function () {
+        $location.sendFilter(location.hash, $scope.Filt);
     }
 
     console.log("Start");

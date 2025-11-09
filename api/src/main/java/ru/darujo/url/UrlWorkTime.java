@@ -13,4 +13,7 @@ public class UrlWorkTime {
     public static String getUrlWorkSap(Long codeSap, String name) {
         return getUrl(URL + "/work?stageZi=50&codeSap=" + codeSap, name);
     }
+    public static String getUrlVacation(String nikName,String text) {
+        return getUrl(URL + "/vacation?nikName=" +  nikName,text);
+    }
 }

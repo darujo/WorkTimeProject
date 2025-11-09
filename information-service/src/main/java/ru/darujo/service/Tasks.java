@@ -4,13 +4,16 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.darujo.assistant.helper.DataHelper;
+import ru.darujo.dto.calendar.VacationDto;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.user.UserInfoDto;
 import ru.darujo.dto.workperiod.WorkUserFactPlan;
+import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.integration.CalendarServiceIntegration;
 import ru.darujo.integration.WorkServiceIntegration;
 import ru.darujo.integration.WorkTimeServiceIntegration;
+import ru.darujo.url.UrlWorkTime;
 
 import java.sql.Timestamp;
 import java.time.DayOfWeek;
@@ -129,17 +132,28 @@ public class Tasks {
                 return;
             }
             users.forEach(userInfoDto -> {
-                Timestamp date = calendarServiceIntegration.getLastWorkDay(userInfoDto.getNikName(), null, 2, false);
-                WorkUserFactPlan workUserFactPlan = workTimeServiceIntegration.getUserWork(date, date, userInfoDto.getNikName(), "day");
-                if (workUserFactPlan == null) {
-                    return;
-                }
-                if (workUserFactPlan.getTimeFact() < workUserFactPlan.getTimePlan() * PERCENT_WORK_TIME) {
-                    messageInformationService.addMessage(
-                            new MessageInfoDto(
-                                    userInfoDto,
-                                    type,
-                                    String.format("Вы не отметели работы за %S отмечено %S ч. по плану %S ч.", workUserFactPlan.getPeriodStr(), workUserFactPlan.getTimeFact(), workUserFactPlan.getTimePlan())));
+                try {
+                    if (calendarServiceIntegration.isWorkDayUser(userInfoDto.getNikName(), null)) {
+
+
+                        Timestamp date = calendarServiceIntegration.getLastWorkDay(userInfoDto.getNikName(),
+                                null,
+                                2,
+                                false);
+                        WorkUserFactPlan workUserFactPlan = workTimeServiceIntegration.getUserWork(date, date, userInfoDto.getNikName(), "day");
+                        if (workUserFactPlan == null) {
+                            return;
+                        }
+                        if (workUserFactPlan.getTimeFact() < workUserFactPlan.getTimePlan() * PERCENT_WORK_TIME) {
+                            messageInformationService.addMessage(
+                                    new MessageInfoDto(
+                                            userInfoDto,
+                                            type,
+                                            String.format("Вы не отметили работы за %S отмечено %S ч. по плану %S ч.", workUserFactPlan.getPeriodStr(), workUserFactPlan.getTimeFact(), workUserFactPlan.getTimePlan())));
+                        }
+                    }
+                } catch (ResourceNotFoundException e) {
+                    log.error(e);
                 }
             });
 
@@ -154,21 +168,32 @@ public class Tasks {
             if (users == null) {
                 return;
             }
-            if (!calendarServiceIntegration.isDayAfterWeek(null, 2)) {
-                return;
-            }
-            users.forEach(userInfoDto -> {
-                Timestamp date = calendarServiceIntegration.getLastWorkDay(userInfoDto.getNikName(), null, 1, true);
-                WorkUserFactPlan workUserFactPlan = workTimeServiceIntegration.getUserWork(date, date, userInfoDto.getNikName(), "week");
-                if (workUserFactPlan.getTimeFact() < workUserFactPlan.getTimePlan() * PERCENT_WORK_TIME) {
-                    messageInformationService.addMessage(
-                            new MessageInfoDto(
-                                    userInfoDto,
-                                    type,
-                                    String.format("Вы не отметели работы за %S отмечено %S ч. по плану %S ч.", workUserFactPlan.getPeriodStr(), workUserFactPlan.getTimeFact(), workUserFactPlan.getTimePlan())));
+            try {
+                if (!calendarServiceIntegration.isDayAfterWeek(null, 2)) {
+                    return;
                 }
-            });
 
+                users.forEach(userInfoDto -> {
+                    Timestamp date;
+                    try {
+                        date = calendarServiceIntegration.getLastWorkDay(userInfoDto.getNikName(), null, 1, true);
+
+                        WorkUserFactPlan workUserFactPlan = workTimeServiceIntegration.getUserWork(date, date, userInfoDto.getNikName(), "week");
+                        if (workUserFactPlan.getTimeFact() < workUserFactPlan.getTimePlan() * PERCENT_WORK_TIME) {
+                            messageInformationService.addMessage(
+                                    new MessageInfoDto(
+                                            userInfoDto,
+                                            type,
+                                            String.format("Вы не отметили работы за %S отмечено %S ч. по плану %S ч.", workUserFactPlan.getPeriodStr(), workUserFactPlan.getTimeFact(), workUserFactPlan.getTimePlan())));
+                        }
+                    } catch (ResourceNotFoundException e) {
+                        log.error(e);
+                    }
+                });
+            } catch (ResourceNotFoundException e) {
+                log.error(e);
+
+            }
         };
     }
 
@@ -190,5 +215,90 @@ public class Tasks {
         };
     }
 
+    public Runnable getMyVacationStart() {
+        return () -> {
+            log.info("getMyVacationStart");
+            MessageType type = MessageType.VACATION_MY_START;
+            List<UserInfoDto> users = messageInformationService.getUsersForMesType(type);
+            if (users == null) {
+                return;
+            }
+            users.forEach(userInfoDto -> {
+                try {
+                    if (calendarServiceIntegration.isVacationStart(userInfoDto.getNikName(), 1)) {
+                        messageInformationService.addMessage(
+                                new MessageInfoDto(
+                                        userInfoDto,
+                                        type,
+                                        "Ура с завтрашнего дня вы находитесь в отпуске. Не забудьте отключить телефон и насладиться тишеной."));
+                    }
+                } catch (ResourceNotFoundException e) {
+                    log.error(e);
+                }
+            });
 
+        };
+    }
+
+    public Runnable getMyVacationEnd() {
+        return () -> {
+            log.info("getMyVacationEnd");
+            MessageType type = MessageType.VACATION_MY_END;
+            List<UserInfoDto> users = messageInformationService.getUsersForMesType(type);
+            if (users == null) {
+                return;
+            }
+            users.forEach(userInfoDto -> {
+                try {
+                    if (calendarServiceIntegration.isVacationEnd(userInfoDto.getNikName())) {
+                        messageInformationService.addMessage(
+                                new MessageInfoDto(
+                                        userInfoDto,
+                                        type,
+                                        "К сожалению ваш отпуск подошел к концу и вам опять пора на работу. Не забудьте начать отмечать время прихода и ухода на работу"));
+                    }
+                } catch (ResourceNotFoundException e) {
+                    log.error(e);
+                }
+            });
+        };
+    }
+
+    public Runnable getVacationEnd() {
+        return () -> {
+            log.info("getVacationEnd");
+            StringBuffer users = new StringBuffer();
+            List<VacationDto> vacationDTOs;
+            try {
+                vacationDTOs = calendarServiceIntegration.userVacationStart(null, 7);
+            } catch (ResourceNotFoundException e) {
+                log.error(e);
+                return;
+            }
+            if (vacationDTOs == null) {
+                log.error("vacationDTOs == null");
+                return;
+            }
+            vacationDTOs.stream()
+                    .map(vacationDto ->
+                            UrlWorkTime.getUrlVacation( vacationDto.getNikName(),vacationDto.getFirstName() + " " +
+                                    vacationDto.getLastName() ) + " ( " +
+                                    vacationDto.getDays() + " дней последний день отпуска " +
+                                    vacationDto.getDateEndStr() + " )")
+                    .forEach(s -> {
+                        if (users.isEmpty()) {
+                            users.append(s);
+                        } else {
+                            users.append("\n").append(s);
+                        }
+                    });
+            if (!vacationDTOs.isEmpty()) {
+                messageInformationService.addMessage(
+                        new MessageInfoDto(
+                                null,
+                                MessageType.VACATION_USER_START,
+                                vacationDTOs.get(0).getDateStartStr() + " начинается отпуск у сотрудников :\n" + users));
+            }
+        };
+    }
 }

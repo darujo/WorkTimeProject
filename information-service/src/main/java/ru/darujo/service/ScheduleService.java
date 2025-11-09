@@ -26,6 +26,9 @@ public class ScheduleService {
         executor.scheduleAtFixedRate(tasks.getAddWorkAvailLastWeek(), tasks.getStartTime(12), 86400, TimeUnit.SECONDS);
         executor.scheduleAtFixedRate(tasks.sendMessage(), 0, 60, TimeUnit.SECONDS);
         executor.scheduleAtFixedRate(tasks.sendReportWorkFull(null, null), tasks.getStartTime(DayOfWeek.TUESDAY, 10), 86400 * 7, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(tasks.getMyVacationStart(), tasks.getStartTime( 20), 86400, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(tasks.getMyVacationEnd(), tasks.getStartTime( 14), 86400, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(tasks.getVacationEnd(), tasks.getStartTime( 12), 86400, TimeUnit.SECONDS);
 
     }
 

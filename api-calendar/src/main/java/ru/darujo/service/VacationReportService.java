@@ -66,18 +66,18 @@ public class VacationReportService {
             Vacation vacation = null;
             LocalDate dayEndVacation = null;
             for (WeekWorkDto weekWorkDto : weekWorkUserList) {
-                LocalDate day = weekWorkDto.getDayStart().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().minusDays(1);
-                LocalDate dayEnd = weekWorkDto.getDayEnd().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate day = getLocalDate(weekWorkDto.getDayStart()).minusDays(1);
+                LocalDate dayEnd = getLocalDate(weekWorkDto.getDayEnd());
                 float timeAll;
                 boolean flagDay = weekWorkDto.getDayStart().equals(weekWorkDto.getDayEnd());
                 timeAll = weekWorkDto.getTime();
                 weekWorkDto.deleteDayType(DayTypeDto.HOLIDAY);
-                while (day.compareTo(dayEnd) < 0) {
+                while (day.isBefore(dayEnd)) {
                     day = day.plusDays(1);
-                    if (vacation == null || dayEndVacation == null || day.compareTo(dayEndVacation) > 0) {
+                    if (vacation == null || dayEndVacation == null || day.isAfter(dayEndVacation)) {
                         vacation = vacationService.findOneDateInVacation(userDto.getNikName(), day);
                         if (vacation != null) {
-                            dayEndVacation = vacation.getDateEnd().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                            dayEndVacation = getLocalDate(vacation.getDateEnd());
                         }
                     }
                     if (vacation != null) {
@@ -102,15 +102,14 @@ public class VacationReportService {
                                     Timestamp dateStart,
                                     Integer dayMinus,
                                     Boolean lastWeek) {
-        LocalDate localDate = dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localDate = getLocalDate(dateStart);
         if (lastWeek) {
             localDate = localDate.minusDays(localDate.getDayOfWeek().getValue() - 1);
         }
         int day = 0;
         while (day < dayMinus) {
             localDate = localDate.minusDays(1);
-            if (calendarService.isWorkDay(localDate) &&
-                    vacationService.findOneDateInVacation(username, localDate) == null) {
+            if (isWorkDayUser(localDate, username)) {
                 day++;
             }
 
@@ -119,11 +118,26 @@ public class VacationReportService {
 
     }
 
+    private LocalDate getLocalDate(Timestamp dateStart) {
+        return dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    public boolean isWorkDayUser(Timestamp date, String username) {
+        LocalDate localDate = getLocalDate(date);
+        return calendarService.isWorkDay(localDate) &&
+                vacationService.findOneDateInVacation(username, localDate) == null;
+    }
+
+    private boolean isWorkDayUser(LocalDate localDate, String username) {
+        return calendarService.isWorkDay(localDate) &&
+                vacationService.findOneDateInVacation(username, localDate) == null;
+    }
+
     public Boolean isDayAfterWeek(Timestamp date, Integer dayMinus) {
         if (dayMinus < 1) {
             return false;
         }
-        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localDate = getLocalDate(date);
         while (0 < dayMinus) {
             if (!calendarService.isWorkDay(localDate)) {
                 return false;

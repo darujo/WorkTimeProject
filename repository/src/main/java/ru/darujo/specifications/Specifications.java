@@ -132,6 +132,21 @@ public class Specifications {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(field), value));
 
     }
+    public static <T> Specification<T> eq(Specification<T> specification, String field, Date value) {
+        if (value != null) {
+            if (specification == null) {
+                specification = eq(field, value);
+            } else {
+                specification = specification.and(eq(field, value));
+            }
+        }
+        return specification;
+    }
+
+    private static <T> Specification<T> eq(String field, Date value) {
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(field), value));
+
+    }
     public static <T> Specification<T> isNotNull(Specification<T> specification, String field, Boolean value) {
         if (value != null && value) {
             if (specification == null) {
@@ -205,7 +220,7 @@ public class Specifications {
     }
 
     public static <T> Specification<T> inLong(Specification<T> specification, String field, List<Long> value) {
-        if (value != null && value.size() > 0) {
+        if (value != null && !value.isEmpty()) {
             if (value.size() == 1) {
                 specification = eq(specification, field, value.get(0));
             } else {
@@ -225,7 +240,7 @@ public class Specifications {
     }
 
     public static <T> Specification<T> in(Specification<T> specification, String field, List<String> value) {
-        if (value != null && value.size() > 0) {
+        if (value != null && !value.isEmpty()) {
             if (value.size() == 1) {
                 specification = eq(specification,field, value.get(0));
             } else {
@@ -245,7 +260,7 @@ public class Specifications {
     }
 
     public static <T> Specification<T> eq(Specification<T> specification, String field, String value) {
-        if (value != null && !value.equals("")) {
+        if (value != null && !value.isEmpty()) {
             if (specification == null) {
                 specification = eq(field, value);
             } else {
