@@ -2,12 +2,14 @@ package ru.darujo.integration;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.TaskDto;
+import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.dto.workperiod.UserWorkFormDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
@@ -157,6 +159,20 @@ public class TaskServiceIntegration extends ServiceIntegration {
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundException("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
+    }
+
+    public List<AttrDto<Integer>> getTaskTypes() {
+        try {
+            return webClientTask.get().uri("/code/type")
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Не удалось получить справочник TaskType")))
+                    .bodyToFlux(new ParameterizedTypeReference<AttrDto<Integer>>() {
+                    }).collectList()
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 }

@@ -8,9 +8,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.darujo.dto.MapStringFloat;
 import ru.darujo.dto.work.WorkLittleDto;
+import ru.darujo.dto.workperiod.WorkUserTime;
 import ru.darujo.dto.workrep.WorkRepDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -103,5 +105,66 @@ public class WorkServiceIntegration extends ServiceIntegration {
         }
     }
 
+    public List<WorkUserTime> getWorkUserTime(boolean ziSplit){
+        return getWorkUserTime(ziSplit,
+                null,
+                true,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+    }
+    public List<WorkUserTime> getWorkUserTime(boolean ziSplit,
+    String nikName,
+    Boolean addTotal,
+    Boolean weekSplit,
 
+    Timestamp dateStart,
+    Timestamp dateEnd,
+
+    String name,
+    Integer stageZi,
+    Long codeSap,
+    String codeZi,
+    String task,
+    Long releaseId,
+
+                                              String sort) {
+        StringBuilder stringBuilder = new StringBuilder();
+        addTeg(stringBuilder, "ziSplit", ziSplit);
+        addTeg(stringBuilder, "nikName", nikName);
+        addTeg(stringBuilder, "addTotal", addTotal);
+        addTeg(stringBuilder, "weekSplit", weekSplit);
+        addTeg(stringBuilder, "dateStart", dateStart);
+        addTeg(stringBuilder, "dateEnd", dateEnd);
+        addTeg(stringBuilder, "weekSplit", weekSplit);
+
+        addTeg(stringBuilder, "name", name);
+        addTeg(stringBuilder, "stageZi", stageZi);
+        addTeg(stringBuilder, "codeSap", codeSap);
+        addTeg(stringBuilder, "codeZi", codeZi);
+        addTeg(stringBuilder, "task", task);
+        addTeg(stringBuilder, "releaseId", releaseId);
+        addTeg(stringBuilder, "sort", sort);
+
+        try {
+            return webClientWork.get().uri("/rep/fact/week" + stringBuilder)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
+                            ,
+                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по ЗИ")))
+                    .bodyToFlux(WorkUserTime.class)
+                    .collectList()
+                    .block();
+        } catch (RuntimeException ex) {
+            log.error(ex.getMessage());
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
+    }
 }

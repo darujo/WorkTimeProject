@@ -7,10 +7,13 @@ import ru.darujo.assistant.helper.DataHelper;
 import ru.darujo.dto.calendar.VacationDto;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.dto.information.MessageType;
+import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.dto.user.UserInfoDto;
 import ru.darujo.dto.workperiod.WorkUserFactPlan;
+import ru.darujo.dto.workperiod.WorkUserTime;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.integration.CalendarServiceIntegration;
+import ru.darujo.integration.TaskServiceIntegration;
 import ru.darujo.integration.WorkServiceIntegration;
 import ru.darujo.integration.WorkTimeServiceIntegration;
 import ru.darujo.url.UrlWorkTime;
@@ -44,6 +47,12 @@ public class Tasks {
     @Autowired
     public void setWorkTimeServiceIntegration(WorkTimeServiceIntegration workTimeServiceIntegration) {
         this.workTimeServiceIntegration = workTimeServiceIntegration;
+    }
+    private TaskServiceIntegration taskServiceIntegration;
+
+    @Autowired
+    public void setTaskServiceIntegration(TaskServiceIntegration taskServiceIntegration) {
+        this.taskServiceIntegration = taskServiceIntegration;
     }
 
     private WorkServiceIntegration workServiceIntegration;
@@ -122,46 +131,48 @@ public class Tasks {
 
     private final Float PERCENT_WORK_TIME = 0.9f;
 
-    public Runnable getAddWorkAvail() {
-        return () -> {
-            log.info("getAddWorkAvail");
-            MessageType type = MessageType.AVAIL_WORK_LAST_DAY;
+    public RunnableNotException getAddWorkAvail() {
+        return new RunnableNotException(
+                () -> {
+                    log.info("getAddWorkAvail");
+                    MessageType type = MessageType.AVAIL_WORK_LAST_DAY;
 
-            List<UserInfoDto> users = messageInformationService.getUsersForMesType(type);
-            if (users == null) {
-                return;
-            }
-            users.forEach(userInfoDto -> {
-                try {
-                    if (calendarServiceIntegration.isWorkDayUser(userInfoDto.getNikName(), null)) {
-
-
-                        Timestamp date = calendarServiceIntegration.getLastWorkDay(userInfoDto.getNikName(),
-                                null,
-                                2,
-                                false);
-                        WorkUserFactPlan workUserFactPlan = workTimeServiceIntegration.getUserWork(date, date, userInfoDto.getNikName(), "day");
-                        if (workUserFactPlan == null) {
-                            return;
-                        }
-                        if (workUserFactPlan.getTimeFact() < workUserFactPlan.getTimePlan() * PERCENT_WORK_TIME) {
-                            messageInformationService.addMessage(
-                                    new MessageInfoDto(
-                                            userInfoDto,
-                                            type,
-                                            String.format("Вы не отметили работы за %S отмечено %S ч. по плану %S ч.", workUserFactPlan.getPeriodStr(), workUserFactPlan.getTimeFact(), workUserFactPlan.getTimePlan())));
-                        }
+                    List<UserInfoDto> users = messageInformationService.getUsersForMesType(type);
+                    if (users == null) {
+                        return;
                     }
-                } catch (ResourceNotFoundException e) {
-                    log.error(e);
-                }
-            });
+                    users.forEach(userInfoDto -> {
+                        try {
+                            if (calendarServiceIntegration.isWorkDayUser(userInfoDto.getNikName(), null)) {
 
-        };
+
+                                Timestamp date = calendarServiceIntegration.getLastWorkDay(userInfoDto.getNikName(),
+                                        null,
+                                        2,
+                                        false);
+                                WorkUserFactPlan workUserFactPlan = workTimeServiceIntegration.getUserWork(date, date, userInfoDto.getNikName(), "day");
+                                if (workUserFactPlan == null) {
+                                    return;
+                                }
+                                if (workUserFactPlan.getTimeFact() < workUserFactPlan.getTimePlan() * PERCENT_WORK_TIME) {
+                                    messageInformationService.addMessage(
+                                            new MessageInfoDto(
+                                                    userInfoDto,
+                                                    type,
+                                                    String.format("Вы не отметили работы за %S отмечено %S ч. по плану %S ч.", workUserFactPlan.getPeriodStr(), workUserFactPlan.getTimeFact(), workUserFactPlan.getTimePlan())));
+                                }
+                            }
+                        } catch (ResourceNotFoundException e) {
+                            log.error(e);
+                        }
+                    });
+
+                }
+        );
     }
 
-    public Runnable getAddWorkAvailLastWeek() {
-        return () -> {
+    public RunnableNotException getAddWorkAvailLastWeek() {
+        return new RunnableNotException(() -> {
             log.info("getAddWorkAvailLastWeek");
             MessageType type = MessageType.AVAIL_WORK_LAST_WEEK;
             List<UserInfoDto> users = messageInformationService.getUsersForMesType(type);
@@ -194,15 +205,17 @@ public class Tasks {
                 log.error(e);
 
             }
+        }) ;
+    }
+
+    public RunnableNotException sendMessage() {
+        return new RunnableNotException(() -> messageInformationService.init()) {
         };
     }
 
-    public Runnable sendMessage() {
-        return () -> messageInformationService.init();
-    }
 
-    public Runnable sendReportWorkFull(String author, Long chatId) {
-        return () -> {
+    public RunnableNotException sendReportWorkFull(String author, Long chatId) {
+        return new RunnableNotException(() ->{
             log.info("sendReportWorkFull");
             LinkedList<String> sort = new LinkedList<>();
             sort.add("release");
@@ -212,11 +225,11 @@ public class Tasks {
                     MessageType.AVAIL_WORK_FULL_REPORT, "Рассылка отчете статус ЗИ"
             ), "Zi_Report_" + DataHelper.dateToYYYYMMDD(new Timestamp(System.currentTimeMillis())) + ".html", report);
 
-        };
+        } );
     }
 
-    public Runnable getMyVacationStart() {
-        return () -> {
+    public RunnableNotException getMyVacationStart() {
+        return new RunnableNotException(() -> {
             log.info("getMyVacationStart");
             MessageType type = MessageType.VACATION_MY_START;
             List<UserInfoDto> users = messageInformationService.getUsersForMesType(type);
@@ -237,11 +250,12 @@ public class Tasks {
                 }
             });
 
-        };
+        }
+        );
     }
 
-    public Runnable getMyVacationEnd() {
-        return () -> {
+    public RunnableNotException getMyVacationEnd() {
+        return new RunnableNotException(() -> {
             log.info("getMyVacationEnd");
             MessageType type = MessageType.VACATION_MY_END;
             List<UserInfoDto> users = messageInformationService.getUsersForMesType(type);
@@ -261,11 +275,11 @@ public class Tasks {
                     log.error(e);
                 }
             });
-        };
+        });
     }
 
-    public Runnable getVacationEnd() {
-        return () -> {
+    public RunnableNotException getVacationEnd() {
+        return new RunnableNotException(() -> {
             log.info("getVacationEnd");
             StringBuffer users = new StringBuffer();
             List<VacationDto> vacationDTOs;
@@ -281,8 +295,8 @@ public class Tasks {
             }
             vacationDTOs.stream()
                     .map(vacationDto ->
-                            UrlWorkTime.getUrlVacation( vacationDto.getNikName(),vacationDto.getFirstName() + " " +
-                                    vacationDto.getLastName() ) + " ( " +
+                            UrlWorkTime.getUrlVacation(vacationDto.getNikName(), vacationDto.getFirstName() + " " +
+                                    vacationDto.getLastName()) + " ( " +
                                     vacationDto.getDays() + " дней последний день отпуска " +
                                     vacationDto.getDateEndStr() + " )")
                     .forEach(s -> {
@@ -299,6 +313,16 @@ public class Tasks {
                                 MessageType.VACATION_USER_START,
                                 vacationDTOs.get(0).getDateStartStr() + " начинается отпуск у сотрудников :\n" + users));
             }
-        };
+        });
     }
-}
+
+    public RunnableNotException getWorkWeek() {
+        return new RunnableNotException(() -> {
+            List<AttrDto<Integer>> taskListType = taskServiceIntegration.getTaskTypes();
+            List<WorkUserTime> weekWorkList = workServiceIntegration.getWorkUserTime(true);
+            htmlService.getWeekWork(true,true,true,true,taskListType,weekWorkList);
+        });
+    }
+
+
+    }
