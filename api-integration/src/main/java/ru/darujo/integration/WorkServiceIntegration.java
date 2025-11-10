@@ -105,13 +105,13 @@ public class WorkServiceIntegration extends ServiceIntegration {
         }
     }
 
-    public List<WorkUserTime> getWorkUserTime(boolean ziSplit){
+    public List<WorkUserTime> getWorkUserTime(boolean ziSplit,Timestamp date){
         return getWorkUserTime(ziSplit,
                 null,
                 true,
                 null,
-                null,
-                null,
+                date,
+                date,
                 null,
                 null,
                 null,
@@ -158,12 +158,12 @@ public class WorkServiceIntegration extends ServiceIntegration {
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по ЗИ")))
+                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по ЗИ" + clientResponse.statusCode() )))
                     .bodyToFlux(WorkUserTime.class)
                     .collectList()
                     .block();
         } catch (RuntimeException ex) {
-            log.error(ex.getMessage());
+            log.error("/rep/fact/week{}", stringBuilder);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }

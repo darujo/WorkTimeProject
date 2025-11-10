@@ -1,9 +1,13 @@
 package ru.darujo.dto.ratestage;
 
 public class AttrDto<T> {
-    private final T codeInt;
-    private final String code;
-    private final String value;
+    @SuppressWarnings("unused")
+    public AttrDto() {
+    }
+
+    private  T codeInt;
+    private  String code;
+    private  String value;
 
     public AttrDto(T codeInt, String value) {
         this.codeInt = codeInt;

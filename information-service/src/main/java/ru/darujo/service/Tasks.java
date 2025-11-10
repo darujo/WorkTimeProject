@@ -48,6 +48,7 @@ public class Tasks {
     public void setWorkTimeServiceIntegration(WorkTimeServiceIntegration workTimeServiceIntegration) {
         this.workTimeServiceIntegration = workTimeServiceIntegration;
     }
+
     private TaskServiceIntegration taskServiceIntegration;
 
     @Autowired
@@ -186,26 +187,23 @@ public class Tasks {
 
                 users.forEach(userInfoDto -> {
                     Timestamp date;
-                    try {
-                        date = calendarServiceIntegration.getLastWorkDay(userInfoDto.getNikName(), null, 1, true);
+                    date = calendarServiceIntegration.getLastWorkDay(userInfoDto.getNikName(), null, 1, true);
 
-                        WorkUserFactPlan workUserFactPlan = workTimeServiceIntegration.getUserWork(date, date, userInfoDto.getNikName(), "week");
-                        if (workUserFactPlan.getTimeFact() < workUserFactPlan.getTimePlan() * PERCENT_WORK_TIME) {
-                            messageInformationService.addMessage(
-                                    new MessageInfoDto(
-                                            userInfoDto,
-                                            type,
-                                            String.format("Вы не отметили работы за %S отмечено %S ч. по плану %S ч.", workUserFactPlan.getPeriodStr(), workUserFactPlan.getTimeFact(), workUserFactPlan.getTimePlan())));
-                        }
-                    } catch (ResourceNotFoundException e) {
-                        log.error(e);
+                    WorkUserFactPlan workUserFactPlan = workTimeServiceIntegration.getUserWork(date, date, userInfoDto.getNikName(), "week");
+                    if (workUserFactPlan.getTimeFact() < workUserFactPlan.getTimePlan() * PERCENT_WORK_TIME) {
+                        messageInformationService.addMessage(
+                                new MessageInfoDto(
+                                        userInfoDto,
+                                        type,
+                                        String.format("Вы не отметили работы за %S отмечено %S ч. по плану %S ч.", workUserFactPlan.getPeriodStr(), workUserFactPlan.getTimeFact(), workUserFactPlan.getTimePlan())));
                     }
+
                 });
             } catch (ResourceNotFoundException e) {
                 log.error(e);
 
             }
-        }) ;
+        });
     }
 
     public RunnableNotException sendMessage() {
@@ -215,7 +213,7 @@ public class Tasks {
 
 
     public RunnableNotException sendReportWorkFull(String author, Long chatId) {
-        return new RunnableNotException(() ->{
+        return new RunnableNotException(() -> {
             log.info("sendReportWorkFull");
             LinkedList<String> sort = new LinkedList<>();
             sort.add("release");
@@ -225,7 +223,7 @@ public class Tasks {
                     MessageType.AVAIL_WORK_FULL_REPORT, "Рассылка отчете статус ЗИ"
             ), "Zi_Report_" + DataHelper.dateToYYYYMMDD(new Timestamp(System.currentTimeMillis())) + ".html", report);
 
-        } );
+        });
     }
 
     public RunnableNotException getMyVacationStart() {
@@ -316,13 +314,31 @@ public class Tasks {
         });
     }
 
-    public RunnableNotException getWorkWeek() {
+    public RunnableNotException getZiWork(String author, Long chatId) {
         return new RunnableNotException(() -> {
+            log.info("getZiWork");
             List<AttrDto<Integer>> taskListType = taskServiceIntegration.getTaskTypes();
-            List<WorkUserTime> weekWorkList = workServiceIntegration.getWorkUserTime(true);
-            htmlService.getWeekWork(true,true,true,true,taskListType,weekWorkList);
+            Timestamp date = calendarServiceIntegration.getLastWorkDay(null, null, 1, true);
+            List<WorkUserTime> weekWorkList = workServiceIntegration.getWorkUserTime(true, date);
+            String report = htmlService.getWeekWork(true, true, true, true, taskListType, weekWorkList);
+            messageInformationService.sendFile(new MessageInfoDto(author,
+                    (chatId == null ? null : new UserInfoDto(null, author, chatId)),
+                    MessageType.ZI_WORK_REPORT, "Факт загрузки по ЗИ"
+            ), "ZI_Work_" + DataHelper.dateToYYYYMMDD(new Timestamp(System.currentTimeMillis())) + ".html", report);
+        });
+    }
+    public RunnableNotException getWeekWork(String author, Long chatId) {
+        return new RunnableNotException(() -> {
+            log.info("getWeekWork");
+            List<AttrDto<Integer>> taskListType = taskServiceIntegration.getTaskTypes();
+            Timestamp date = calendarServiceIntegration.getLastWorkDay(null, null, 1, true);
+            List<WorkUserTime> weekWorkList = workServiceIntegration.getWorkUserTime(false, date);
+            String report = htmlService.getWeekWork(false, true, true, true, taskListType, weekWorkList);
+            messageInformationService.sendFile(new MessageInfoDto(author,
+                    (chatId == null ? null : new UserInfoDto(null, author, chatId)),
+                    MessageType.WEEK_WORK_REPORT, "Факт загрузки за предыдущую неделю"
+            ), "Week_Work_" + DataHelper.dateToYYYYMMDD(new Timestamp(System.currentTimeMillis())) + ".html", report);
         });
     }
 
-
-    }
+}

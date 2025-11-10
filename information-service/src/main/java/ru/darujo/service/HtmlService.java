@@ -262,14 +262,8 @@ public class HtmlService {
             sb.append("<td class=\"table_head2 two_date \" rowspan=\" 2 \">Период</td>");
         }
         sb.append("<td class=\"table_head1 field_fio\" rowspan=\"2\">Исполнитель</td>");
-        sb.append("<td class=\"table_head2\" colspan=\" " +
-//                "{
-//            {
-//                TaskListType.length
-//            }
-//        }
-                "\">Факт трудозатрат, чел/час</td>");
-        if (ziSplit) {
+        sb.append("<td class=\"table_head2\" colspan=\"").append(taskListType.size()).append("\">Факт трудозатрат, чел/час</td>");
+        if (!ziSplit) {
             sb.append("<td class=\"table_head1 week_work_plan_time \" rowspan=\"2\">Плановые трудозатраты за период,");
             sb.append("чел/час");
             sb.append("</td>");
@@ -292,7 +286,7 @@ public class HtmlService {
             AtomicReference<Integer> j = new AtomicReference<>(0);
             work_zi.getUserWorkFormDTOs().forEach(work -> {
                 j.getAndSet(j.get() + 1);
-                sb.append("<tr");
+                sb.append("<tr>");
                 sb.append("<td>");
                 sb.append("<div class=\"horiz\">");
                 if (ziSplit) {
@@ -314,7 +308,7 @@ public class HtmlService {
                     sb.append("</td>");
                 }
                 if (work.getAuthorFirstName() != null) {
-                    sb.append("<td >").append(work.getNikName()).append("</td>");
+                    sb.append("<td >").append(work.getNikName() == null ? "" : work.getNikName()).append("</td>");
                 } else
                     sb.append("<td >")
                             .append(work.getAuthorLastName())

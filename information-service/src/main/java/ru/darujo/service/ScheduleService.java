@@ -29,7 +29,9 @@ public class ScheduleService {
         executor.scheduleAtFixedRate(tasks.getMyVacationStart(), tasks.getStartTime( 20), 86400, TimeUnit.SECONDS);
         executor.scheduleAtFixedRate(tasks.getMyVacationEnd(), tasks.getStartTime( 14), 86400, TimeUnit.SECONDS);
         executor.scheduleAtFixedRate(tasks.getVacationEnd(), tasks.getStartTime( 12), 86400, TimeUnit.SECONDS);
-        executor.scheduleAtFixedRate(tasks.getWorkWeek(), tasks.getStartTime( 12), 86400, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(tasks.getZiWork(null, null), tasks.getStartTime( 10), 86400, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(tasks.getWeekWork(null, null), tasks.getStartTime( 10), 86400, TimeUnit.SECONDS);
+
 
     }
 

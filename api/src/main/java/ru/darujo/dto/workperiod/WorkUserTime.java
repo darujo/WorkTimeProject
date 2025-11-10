@@ -3,15 +3,19 @@ package ru.darujo.dto.workperiod;
 import java.util.List;
 
 public class WorkUserTime {
-    private final Long id;
+    @SuppressWarnings("unused")
+    public WorkUserTime() {
+    }
+
+    private Long id;
     // Код SAP
-    private final Long codeSap;
+    private Long codeSap;
     // Код Зи
-    private final String codeZI;
+    private String codeZI;
     // Наименование Зи
-    private final String name;
-    private final Integer stageZI;
-    private final List<UserWorkFormDto> userWorkFormDTOs;
+    private String name;
+    private Integer stageZI;
+    private List<UserWorkFormDto> userWorkFormDTOs;
 
     public WorkUserTime(Long id, Long codeSap, String codeZI, String name, Integer stageZI, List<UserWorkFormDto> userWorkFormDTOs) {
         this.id = id;
@@ -30,6 +34,7 @@ public class WorkUserTime {
         return codeSap;
     }
 
+    @SuppressWarnings("unused")
     public String getCodeZI() {
         return codeZI;
     }
@@ -38,6 +43,7 @@ public class WorkUserTime {
         return name;
     }
 
+    @SuppressWarnings("unused")
     public Integer getStageZI() {
         return stageZI;
     }

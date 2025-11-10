@@ -172,7 +172,8 @@ public class TaskServiceIntegration extends ServiceIntegration {
                     }).collectList()
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            log.info("getTaskTypes error");
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-Task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 }

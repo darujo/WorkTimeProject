@@ -77,7 +77,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
-    public Timestamp getLastWorkDay(String username, Timestamp dateStart, Integer dayMinus, Boolean lastWeek) throws ResourceNotFoundException {
+    public Timestamp getLastWorkDay(String username, Timestamp dateStart, Integer dayMinus, Boolean lastWeek) {
 
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder,"username",username);
@@ -93,7 +93,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
                     .bodyToMono(Timestamp.class)
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
     public Boolean isWorkDayUser(String username, Timestamp date) throws ResourceNotFoundException {
