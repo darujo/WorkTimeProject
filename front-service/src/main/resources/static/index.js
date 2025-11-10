@@ -83,6 +83,14 @@
                 templateUrl: 'admin/user/user_password.html?ver=' + ver,
                 controller: 'userChangeController'
             })
+            .when('/user_info_type'.toLowerCase(), {
+                templateUrl: 'admin/user/user_info_type.html?ver=' + ver,
+                controller: 'userInfoTypeController'
+            })
+            .when('/message'.toLowerCase(), {
+                templateUrl: 'admin/user/message.html?ver=' + ver,
+                controller: 'messageController'
+            })
             .when('/work_graph', {
                 templateUrl: 'workGraph/workGraph.html?ver='.toLowerCase() + ver,
                 controller: 'workGraphController'
@@ -241,6 +249,39 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         } else {
             return !$scope.UserLogin.passwordChange && $scope.isUserLoggedIn();
         }
+    };
+
+    $scope.addTelegram = function () {
+            console.log("getUser")
+            // document.getElementById("UserName").value = nikName;
+
+            $http.get(constPatchAuth + '/users/user/telegram/get')
+                .then(function successCallback(response) {
+                    console.log(response)
+                    $scope.CodeTelegram = response.data;
+
+
+                    // document.getElementById("UserName").value = response.data.lastName + " " + response.data.firstName + " " + response.data.patronymic;
+                }, function errorCallback(response) {
+                    console.log(response);
+                });
+    };
+
+    $scope.deleteTelegram = function () {
+        console.log("getUser")
+        // document.getElementById("UserName").value = nikName;
+
+        $http.get(constPatchAuth + '/users/user/telegram/delete')
+            .then(function successCallback(response) {
+                console.log(response)
+                $scope.getUser();
+                $scope.CodeTelegram = null;
+
+
+                // document.getElementById("UserName").value = response.data.lastName + " " + response.data.firstName + " " + response.data.patronymic;
+            }, function errorCallback(response) {
+                console.log(response);
+            });
     };
 
     $location.checkAuthorized = function (response) {

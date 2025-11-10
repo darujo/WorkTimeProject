@@ -1,5 +1,6 @@
 package ru.darujo.integration;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 
+@Log4j2
 @Component
 public class TaskServiceIntegration extends ServiceIntegration {
     private WebClient webClientTask;
@@ -81,7 +83,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "codeDEVBO", taskDEVBO);
         addTeg(stringBuilder, "codeBTS", taskBts);
-        System.out.println("/list/id" + stringBuilder);
+        log.info("/list/id" + stringBuilder);
 
         return webClientTask.get().uri("/list/id" + stringBuilder)
                 .retrieve()

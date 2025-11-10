@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.darujo.assistant.helper.DataHelper;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.workperiod.UserWorkDto;
+import ru.darujo.dto.workperiod.WorkUserFactPlan;
 import ru.darujo.dto.workrep.UserWorkPeriodDto;
 import ru.darujo.service.WorkTimeRepService;
 
@@ -56,6 +57,24 @@ public class WorkTimeRepController {
         if (nikName == null || nikName.equals("")) {
             nikName = username;
         }
+        periodSplit = periodConvert(periodSplit);
+        Timestamp dateStart = DataHelper.DTZToDate(dateStartStr, "dateStart = ", true);
+        Timestamp dateEnd = DataHelper.DTZToDate(dateEndStr, "dateEnd = ", true);
+        return workTimeRepService.getUserWork(nikName, periodSplit, dateStart, dateEnd);
+    }
+
+    @GetMapping("/user/work/only")
+    public WorkUserFactPlan getUserWorkOnly(@RequestParam(required = false) String nikName,
+                                            @RequestParam(defaultValue = "week") String periodSplit,
+                                            @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
+                                            @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr) {
+        periodSplit = periodConvert(periodSplit);
+        Timestamp dateStart = DataHelper.DTZToDate(dateStartStr, "dateStart = ", true);
+        Timestamp dateEnd = DataHelper.DTZToDate(dateEndStr, "dateEnd = ", true);
+        return workTimeRepService.getUserWorkOnly(nikName, periodSplit, dateStart, dateEnd);
+    }
+
+    private String periodConvert(String periodSplit) {
         switch (periodSplit) {
             case "1":
                 periodSplit = "day";
@@ -67,9 +86,7 @@ public class WorkTimeRepController {
                 periodSplit = "week";
                 break;
         }
-        Timestamp dateStart = DataHelper.DTZToDate(dateStartStr, "dateStart = ", true);
-        Timestamp dateEnd = DataHelper.DTZToDate(dateEndStr, "dateEnd = ", true);
-        return workTimeRepService.getUserWork(nikName, periodSplit, dateStart, dateEnd);
+        return periodSplit;
     }
 
     @GetMapping("/week")

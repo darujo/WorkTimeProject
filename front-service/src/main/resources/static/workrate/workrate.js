@@ -24,7 +24,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
     $scope.loadWork = function () {
         console.log("loadWork");
         $http({
-            url: constPatchWork + "/works//obj/little/" + WorkId,
+            url: constPatchWork + "/works/obj/little/" + WorkId,
             method: "get"
         }).then(function (response) {
             console.log(response.data);
@@ -35,6 +35,25 @@ angular.module('workTimeService').controller('workRateController', function ($sc
             }
         });
     };
+    $scope.changeRated = function (rated) {
+        console.log("changeRated");
+        $scope.ZI[rated] = false;
+        console.log(rated)
+        $http({
+            url: constPatchWork + "/works/change/" + WorkId + "/rated",
+            method: "get",
+            params: {
+                rated: rated
+            }
+        }).then(function (response) {
+            console.log(response.data);
+            $scope.ZI = response.data;
+        }, function errorCallback(response) {
+            console.log(response)
+            if ($location.checkAuthorized(response)) {
+            }
+        });
+    }
 
     $scope.loadWorkStage = function () {
         console.log("loadWorkStage");
@@ -383,12 +402,16 @@ angular.module('workTimeService').controller('workRateController', function ($sc
     let callBackTypeEdit = function () {
         $scope.typeEdit = true;
     }
+    let callBackZiEdit = function () {
+        $scope.ziEdit = true;
+    }
     checkRight("stageCreate", false, callBackStageCreate);
     checkRight("stageEdit", false, callBackStageEdit);
     checkRight("criteriaCreate", false, callBackCriteriaCreate);
     checkRight("criteriaEdit", false, callBackCriteriaEdit);
     checkRight("typeCreate", false, callBackTypeCreate);
     checkRight("typeEdit", false, callBackTypeEdit);
+    checkRight("ziEdit", false, callBackZiEdit);
     let loadRateStatus = function (){
         loadRateStatusST();
         loadRateStatusCT();

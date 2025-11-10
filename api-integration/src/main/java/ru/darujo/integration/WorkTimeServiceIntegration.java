@@ -1,5 +1,6 @@
 package ru.darujo.integration;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -8,13 +9,14 @@ import reactor.core.publisher.Mono;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.workperiod.UserWorkDto;
 import ru.darujo.dto.workperiod.UserWorkFormDto;
+import ru.darujo.dto.workperiod.WorkUserFactPlan;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
-
+@Log4j2
 @Component
 public class WorkTimeServiceIntegration extends ServiceIntegration {
     private WebClient webClientWorkTime;
@@ -42,7 +44,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .bodyToMono(Float.class)
                     .block();
         } catch (RuntimeException ex) {
-            System.out.println("/rep/fact/time" + stringBuilder);
+            log.error("/rep/fact/time" + stringBuilder);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -61,7 +63,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .bodyToMono(ListString.class)
                     .block();
         } catch (RuntimeException ex) {
-            System.out.println("/rep/fact/user" + stringBuilder);
+            log.error("/rep/fact/user" + stringBuilder);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -103,7 +105,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .collectList()
                     .block();
         } catch (RuntimeException ex) {
-            System.out.println("/rep/fact/week" + stringBuilder);
+            log.error("/rep/fact/week" + stringBuilder);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -132,14 +134,14 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .collectList()
                     .block();
         } catch (RuntimeException ex) {
-            System.out.println("/rep/fact/week" + stringBuilder);
+            log.error("/rep/fact/week" + stringBuilder);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 
     public Timestamp getLastTime(List<Long> taskIds, Timestamp dateLe, Timestamp dateGe) {
+        StringBuilder stringBuilder = new StringBuilder();
         try {
-            StringBuilder stringBuilder = new StringBuilder();
             taskIds.forEach(taskId -> addTeg(stringBuilder, "taskId", taskId));
             addTeg(stringBuilder, "dateLe", dateLe);
             addTeg(stringBuilder, "dateGe", dateGe);
@@ -147,10 +149,34 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
             return webClientWorkTime.get().uri("/rep/fact/lastTime" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по затраченому времени. Статус " + clientResponse.statusCode()  )))
                     .bodyToMono(Timestamp.class)
                     .block();
         } catch (RuntimeException ex) {
+            log.error("/rep/fact/lastTime" + stringBuilder);
+            log.error(ex.getMessage());
+            return null;
+        }
+
+    }
+
+    public WorkUserFactPlan getUserWork(Timestamp dateStart, Timestamp dateEnd, String nikName, String period) {
+        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            addTeg(stringBuilder, "dateStart", dateStart);
+            addTeg(stringBuilder, "dateEnd", dateEnd);
+            addTeg(stringBuilder, "nikName", nikName);
+            addTeg(stringBuilder, "periodSplit", period);
+
+            return webClientWorkTime.get().uri("/rep/fact/user/work/only" + stringBuilder)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по затраченому времени. Статус " + clientResponse.statusCode())))
+                    .bodyToMono(WorkUserFactPlan.class)
+                    .block();
+        } catch (RuntimeException ex) {
+            log.error("rep/fact/user/work/only" + stringBuilder);
+            log.error(ex.getMessage());
             return null;
         }
 

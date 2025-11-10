@@ -33,18 +33,34 @@ public class DataHelper {
 
     public static Timestamp DTZToDate(ZonedDateTime dateStr, String text, boolean checkNull) {
         if (dateStr != null) {
+            return dateNoTime(Timestamp.from(dateStr.toInstant()));
+        } else if (checkNull) {
+            throw new ResourceNotFoundRunTime("Не передан обязательный параметр " + text + " null ");
+        }
+        return null;
+    }
+    public static Timestamp dateNoTime(Timestamp dateStr) {
+        if (dateStr != null) {
 
             Calendar c = Calendar.getInstance();
-            c.setTime(Timestamp.from(dateStr.toInstant()));
+            c.setTime(dateStr);
             c.set(Calendar.HOUR_OF_DAY, 0);
             c.set(Calendar.MINUTE, 0);
             c.set(Calendar.SECOND, 0);
             c.set(Calendar.MILLISECOND, 0);
             return new Timestamp(c.getTimeInMillis());
 
-        } else if (checkNull) {
-            throw new ResourceNotFoundRunTime("Не передан обязательный параметр " + text + " null ");
+        } else {
+            throw new ResourceNotFoundRunTime("Не задана дата");
         }
-        return null;
     }
+
+    private static final SimpleDateFormat sdfIso = new SimpleDateFormat("yyyy_MM_dd_HH_mm");
+    public static String dateToYYYYMMDD(Date date){
+        if (date == null){
+            return null;
+        }
+        return sdfIso.format(date);
+    }
+
 }

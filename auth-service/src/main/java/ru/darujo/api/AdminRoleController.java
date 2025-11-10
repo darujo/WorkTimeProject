@@ -26,7 +26,6 @@ public class AdminRoleController {
 
     @PostMapping("/edit/role")
     public RoleDto setRoleEditDto(@RequestBody RoleDto roleDto) {
-        System.out.println(roleDto);
         return RoleConvertor.getRoleDto(
                 roleService.saveRole(RoleConvertor.getRole(roleDto)));
     }

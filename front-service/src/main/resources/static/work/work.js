@@ -171,7 +171,8 @@ angular.module('workTimeService').controller('workController', function ($scope,
             stageZI: 0,
             release: 0,
             issuingReleasePlan: null,
-            issuingReleaseFact: null
+            issuingReleaseFact: null,
+            rated: null
 
         };
         checkRight("create", true);

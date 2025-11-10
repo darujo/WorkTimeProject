@@ -49,6 +49,7 @@ public class WorkDto implements Serializable, WorkPlanTime {
     private Date issuingReleasePlan;
     // Выдача релиза дата факт
     private Date issuingReleaseFact;
+    private Boolean rated;
 
     @SuppressWarnings("unused")
     public String getAnaliseEndPlan() {
@@ -72,7 +73,8 @@ public class WorkDto implements Serializable, WorkPlanTime {
                    Integer stageZI,
                    String release,
                    Date issuingReleasePlan,
-                   Date issuingReleaseFact) {
+                   Date issuingReleaseFact,
+                   Boolean rated) {
         this.id = id;
         this.codeSap = codeSap;
         this.codeZI = codeZI;
@@ -91,6 +93,7 @@ public class WorkDto implements Serializable, WorkPlanTime {
         this.release = release;
         this.issuingReleasePlan = issuingReleasePlan;
         this.issuingReleaseFact = issuingReleaseFact;
+        this.rated              = rated;
     }
 
     public Long getId() {
@@ -179,6 +182,7 @@ public class WorkDto implements Serializable, WorkPlanTime {
     public String getIssuingReleaseFact() {
         return dateToText(issuingReleaseFact);
     }
+    @SuppressWarnings("unused")
     public WorkDto() {
     }
 
@@ -194,6 +198,11 @@ public class WorkDto implements Serializable, WorkPlanTime {
     @SuppressWarnings("unused")
     public Float getLaborAnalise() {
         return laborAnalise;
+    }
+
+    @SuppressWarnings("unused")
+    public Boolean getRated() {
+        return rated;
     }
 
     SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
@@ -224,4 +233,5 @@ public class WorkDto implements Serializable, WorkPlanTime {
     public void setLaborOPE(Float laborOPE) {
         this.laborOPE = laborOPE;
     }
+
 }

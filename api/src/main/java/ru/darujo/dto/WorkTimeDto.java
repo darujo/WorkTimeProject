@@ -1,5 +1,6 @@
 package ru.darujo.dto;
 
+import ru.darujo.assistant.helper.DataHelper;
 import ru.darujo.dto.user.UserFio;
 
 import java.io.Serializable;
@@ -7,15 +8,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class WorkTimeDto implements Serializable, UserFio {
-    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-
-    private String dateToText(Date date) {
-        if (date == null) {
-            return null;
-        }
-        return sdf.format(date);
-    }
+public class WorkTimeDto extends DataHelper implements Serializable, UserFio {
 
     private Long id;
     private String nikName;
@@ -23,14 +16,17 @@ public class WorkTimeDto implements Serializable, UserFio {
     private String authorLastName;
     private String authorPatronymic;
 
+    @SuppressWarnings("unused")
     public String getAuthorFirstName() {
         return authorFirstName;
     }
 
+    @SuppressWarnings("unused")
     public String getAuthorLastName() {
         return authorLastName;
     }
 
+    @SuppressWarnings("unused")
     public String getAuthorPatronymic() {
         return authorPatronymic;
     }
@@ -48,12 +44,14 @@ public class WorkTimeDto implements Serializable, UserFio {
     }
 
     private Timestamp workDate;
+    @SuppressWarnings("unused")
     private String workDateStr;
     private String comment;
 
     private Float workTime;
     private Long taskId;
     private Integer type;
+    @SuppressWarnings("unused")
     private String typeStr;
     private String taskDescription;
     private String taskCodeBTS;
@@ -77,14 +75,17 @@ public class WorkTimeDto implements Serializable, UserFio {
         this.taskType = taskType;
     }
 
+    @SuppressWarnings("unused")
     public String getTaskDescription() {
         return taskDescription;
     }
 
+    @SuppressWarnings("unused")
     public String getTaskCodeBTS() {
         return taskCodeBTS;
     }
 
+    @SuppressWarnings("unused")
     public String getTaskCodeDEVBO() {
         return taskCodeDEVBO;
     }
@@ -114,6 +115,7 @@ public class WorkTimeDto implements Serializable, UserFio {
         return nikName;
     }
 
+    @SuppressWarnings("unused")
     public String getTypeStr() {
         if (type == null) {
             return null;
@@ -129,6 +131,8 @@ public class WorkTimeDto implements Serializable, UserFio {
             return "Тестирование";
         } else if (type == 5) {
             return "Анализ ошибки";
+        } else if (type == 6) {
+            return "Акс";
         } else {
             return type.toString();
         }
@@ -150,8 +154,9 @@ public class WorkTimeDto implements Serializable, UserFio {
         return comment;
     }
 
+    @SuppressWarnings("unused")
     public String getWorkDateStr() {
-        return dateToText(workDate);
+        return dateToDDMMYYYY(workDate);
     }
 
     public Integer getType() {

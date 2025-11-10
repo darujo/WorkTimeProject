@@ -111,5 +111,5 @@ angular.module('workTimeService').controller('workFactRepController', function (
         console.log(result);
     });
 
-    $scope.loadWork();
+    // $scope.loadWork();
 })

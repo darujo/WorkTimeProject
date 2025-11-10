@@ -1,7 +1,6 @@
 package ru.darujo.dto.user;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 public class RoleDto implements Serializable {
     private Long id;

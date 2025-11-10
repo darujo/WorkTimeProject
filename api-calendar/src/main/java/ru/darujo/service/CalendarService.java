@@ -24,6 +24,13 @@ public class CalendarService {
     ProductionCalendar productionCalendar = new ProductionCalendar();
 
     public List<WeekDto> getWeekList(Integer month, Integer year) {
+        if (month != null && (month < 1 || month > 12)) {
+            throw new ResourceNotFoundRunTime("Месяц должен быть от 1 до 12");
+        }
+        if (year == null) {
+            throw new ResourceNotFoundRunTime("Не задан год (year)");
+        }
+
         List<WeekDto> weekDTOs = new ArrayList<>();
         LocalDate dayStart;
         int day = 31;
@@ -333,6 +340,13 @@ public class CalendarService {
 
     public boolean isHoliday(LocalDate date) {
         return productionCalendar.isHoliday(date);
+    }
+    public boolean isWorkDay(Timestamp date) {
+        return  isWorkDay(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+    }
+
+    public boolean isWorkDay(LocalDate date) {
+        return productionCalendar.isWorkDay(date);
     }
 
     public boolean existWorkDay(Timestamp dateStart, Timestamp dateEnd) {

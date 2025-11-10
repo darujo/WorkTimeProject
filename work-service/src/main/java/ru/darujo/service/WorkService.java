@@ -1,5 +1,6 @@
 package ru.darujo.service;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -7,23 +8,30 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.darujo.dto.information.MessageInfoDto;
+import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.ratestage.WorkStageDto;
 import ru.darujo.dto.work.WorkPlanTime;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
+import ru.darujo.integration.InfoServiceIntegration;
 import ru.darujo.integration.RateServiceIntegration;
 import ru.darujo.integration.TaskServiceIntegration;
+
 import ru.darujo.model.Release;
 import ru.darujo.model.Work;
 import ru.darujo.model.WorkLittle;
+import ru.darujo.model.WorkLittleInterface;
 import ru.darujo.repository.WorkLittleRepository;
 import ru.darujo.repository.WorkRepository;
 import ru.darujo.specifications.Specifications;
+import ru.darujo.url.UrlWorkTime;
 
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.*;
 
+@Log4j2
 @Service
 public class WorkService {
 
@@ -53,6 +61,13 @@ public class WorkService {
     @Autowired
     public void setReleaseService(ReleaseService releaseService) {
         this.releaseService = releaseService;
+    }
+
+    InfoServiceIntegration infoServiceIntegration;
+
+    @Autowired
+    public void setInfoServiceIntegration(InfoServiceIntegration infoServiceIntegration) {
+        this.infoServiceIntegration = infoServiceIntegration;
     }
 
     TaskServiceIntegration taskServiceIntegration;
@@ -134,11 +149,36 @@ public class WorkService {
         }
     }
 
-    public Work saveWork(Work work) {
+    @Transactional
+    public Work saveWork(String login, Work work) {
         checkWork(work);
+        Boolean ratedOld = null;
+        Integer stageOld = null;
+        if (work.getId() != null) {
+            Work workSave = workRepository.findById(work.getId()).orElse(null);
+            if (workSave != null) {
+                ratedOld = workSave.getRated();
+                stageOld = workSave.getStageZI();
+            }
+        }
         updateWorkLastDevelop(work);
-        return workRepository.save(work);
+        work = workRepository.save(work);
+        if (stageOld != null && !stageOld.equals(work.getStageZI())) {
+            sendInform(login, MessageType.CHANGE_STAGE_WORK, String.format("%s сменил <b>этап ЗИ</b> %s -> %s по ЗИ %s %s", login, stageOld, work.getStageZI(), work.getCodeSap(), UrlWorkTime.getUrlWorkSap(work.getCodeSap(), work.getName())));
+        }
+        if (ratedOld != null && !ratedOld.equals(work.getRated())) {
+            sendInform(login, MessageType.ESTIMATION_WORK, getMesChangRated(login, work));
+        }
 
+        return work;
+    }
+
+    private String getMesChangRated(String login, WorkLittleInterface work) {
+        return work.getRated() ? String.format("%s проставил <u><b>оценка выполнена</b></u> по ЗИ %s %s ", login, work.getCodeSap(), UrlWorkTime.getUrlRate(work.getId(), work.getName())) : String.format("%s <u><b>отменил оценку</b></u> по ЗИ %s %s ", login, work.getCodeSap(), UrlWorkTime.getUrlRate(work.getId(), work.getName()));
+    }
+
+    private void sendInform(String login, MessageType type, String text) {
+        infoServiceIntegration.addMessage(new MessageInfoDto(new Timestamp(System.currentTimeMillis()), login, type, text));
     }
 
     public void updateWorkLastDevelop(Work work) {
@@ -152,12 +192,7 @@ public class WorkService {
         if (workSave == null) {
             return;
         }
-        if (((work.getAnaliseEndFact() != null
-                && !work.getAnaliseEndFact().equals(workSave.getAnaliseEndFact()))
-                || (work.getIssuePrototypeFact() == null
-                || !work.getIssuePrototypeFact().equals(workSave.getIssuePrototypeFact())))
-                || (work.getDevelopEndFact() == null
-                || work.getDevelopEndFact().after(work.getIssuePrototypeFact()))) {
+        if (((work.getAnaliseEndFact() != null && !work.getAnaliseEndFact().equals(workSave.getAnaliseEndFact())) || (work.getIssuePrototypeFact() == null || !work.getIssuePrototypeFact().equals(workSave.getIssuePrototypeFact()))) || (work.getDevelopEndFact() == null || work.getDevelopEndFact().after(work.getIssuePrototypeFact()))) {
             SaveDateDevelopEndFact saveDateDevelopEndFact = checkSetDevelopEndDate(work, null);
             if (saveDateDevelopEndFact.isSave()) {
                 if (work.getDevelopEndFact().before(saveDateDevelopEndFact.getDate())) {
@@ -206,7 +241,6 @@ public class WorkService {
         }
 
 
-        System.out.println("Page = " + page);
         Iterable<Work> workPage;
         if (sort == null) {
             if (page != null && size != null) {
@@ -244,7 +278,6 @@ public class WorkService {
         if (stageZiGe != null) {
             specification = Specifications.ge(specification, "stageZI", stageZiGe);
         }
-        System.out.println("Page = " + page);
         Page<WorkLittle> workPage;
         if (page == null) {
             if (sort == null) {
@@ -299,6 +332,8 @@ public class WorkService {
             case "edit":
             case "stageedit":
             case "criteriaedit":
+            case "typeedit":
+            case "ziedit":
                 if (!rightEdit) {
                     throw new ResourceNotFoundRunTime("У вас нет права на редактирование ZI_EDIT");
                 }
@@ -306,12 +341,25 @@ public class WorkService {
             case "create":
             case "stagecreate":
             case "criteriacreate":
+            case "typecreate":
+            case "zicreate":
                 if (!rightCreate) {
                     throw new ResourceNotFoundRunTime("У вас нет права на редактирование ZI_CREATE");
                 }
                 break;
         }
         return true;
+    }
+
+    public WorkLittle setRated(String login, long id, Boolean rated) {
+        WorkLittle workLittle = workLittleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Не найдена работа с таким Id"));
+        if (workLittle.getRated() == null || !workLittle.getRated().equals(rated)) {
+            workLittle.setRated(rated);
+            workLittle = workLittleRepository.save(workLittle);
+            sendInform(login, MessageType.ESTIMATION_WORK, getMesChangRated(login, workLittle));
+        }
+        return workLittle;
+
     }
 
     public class SaveDateDevelopEndFact {
@@ -341,24 +389,18 @@ public class WorkService {
     public SaveDateDevelopEndFact checkSetDevelopEndDate(Work work, Timestamp date) {
         SaveDateDevelopEndFact save = new SaveDateDevelopEndFact();
         if (date != null) {
-            if ((work.getIssuePrototypeFact() == null
-                    || (work.getIssuePrototypeFact().after(date)
-                    || work.getIssuePrototypeFact().equals(date)))
-                    && work.getAnaliseEndFact() != null
-                    && (work.getAnaliseEndFact().equals(date) || work.getAnaliseEndFact().before(date))
-                    && (work.getDevelopEndFact() == null || work.getDevelopEndFact().before(date))) {
-                save.setSave(true).setDate(date);
+            if ((work.getIssuePrototypeFact() == null || (work.getIssuePrototypeFact().after(date) || work.getIssuePrototypeFact().equals(date))) && work.getAnaliseEndFact() != null && (work.getAnaliseEndFact().equals(date) || work.getAnaliseEndFact().before(date)) && (work.getDevelopEndFact() == null || work.getDevelopEndFact().before(date))) {
+                save.setDate(date).setSave(true);
             }
         } else {
-            if (work.getIssuePrototypeFact() != null
-                    && work.getAnaliseEndFact() != null) {
+            if (work.getIssuePrototypeFact() != null && work.getAnaliseEndFact() != null) {
                 try {
                     date = getLastDateWorkBefore(work.getId(), work.getIssuePrototypeFact());
                     if (work.getAnaliseEndFact().equals(date) || work.getAnaliseEndFact().before(date)) {
                         save.setSave(true).setDate(date);
                     }
                 } catch (ResourceNotFoundException ex) {
-                    System.out.println(ex.getMessage());
+                    log.error(ex.getMessage());
                 }
             }
         }

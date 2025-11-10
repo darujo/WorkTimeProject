@@ -13,6 +13,7 @@ angular.module('workTimeService').controller('vacationController', function ($sc
 
     $scope.loadVacation = function () {
         showList();
+        $location.parserFilter($scope.Filt);
         $scope.findPage(0);
     };
     $scope.vacation = {
@@ -36,7 +37,7 @@ angular.module('workTimeService').controller('vacationController', function ($sc
         }
         else {
             $scope.load = true;
-            $scope.UserList = null;
+            $scope.VacationList = null;
             console.log("запрос данных");
 
             if (typeof $scope.Filt === "undefined") {
@@ -162,7 +163,8 @@ angular.module('workTimeService').controller('vacationController', function ($sc
     $scope.clearFilter = function (load) {
         console.log("clearFilter");
         $scope.Filt = {
-            size: 10
+            size: 10,
+            nikName : "current"
         };
         console.log($scope.Filt);
         if (load) {
@@ -178,13 +180,23 @@ angular.module('workTimeService').controller('vacationController', function ($sc
 
     $location.getUsers().then(function (result) {
         $scope.UserList = result;
+        $scope.UserList.push({firstName: "Мои", nikName: "current"});
+
         console.log("result UserList");
         console.log(result);
     });
+    $location.getRoles().then(function (result) {
+        $scope.RoleList = result;
 
+        console.log("result RoleList");
+        console.log(result);
+    });
     $scope.backUser = function (){
         $location.path('/user' );
 
+    }
+    $scope.sendFilter = function () {
+        $location.sendFilter(location.hash, $scope.Filt);
     }
 
     console.log("Start");

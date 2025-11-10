@@ -52,6 +52,7 @@
         </details>
     </div>
     <h1>Статус задач</h1>
+<div  class="wrapper">
     <table>
 
         <tr> <!--row 1-->
@@ -144,32 +145,32 @@
             <!--        // Наименование-->
             <td class="sticky-col first-col">{{work.name}}</td>
             <!--        // ВЕНДЕРКА План-->
-            <td>{{work.analiseEndPlan}}</td>
+            <td>{{work.analiseEndPlanStr}}</td>
             <!--        // ВЕНДЕРКА-->
-            <td>{{work.analiseEndFact}}</td>
+            <td>{{work.analiseEndFactStr}}</td>
             <td>{{work.laborAnalise}}</td>
             <td>{{work.timeAnalise}}</td>
             <!--        // Дата начала доработки План-->
-            <td>{{work.startTaskPlan}}</td>
+            <td>{{work.startTaskPlanStr}}</td>
             <!--        // Дата начала доработки Факт-->
-            <td>{{work.startTaskFact}}</td>
+            <td>{{work.startTaskFactStr}}</td>
 
             <!--        // Плановые трудозатраты, чел/час разработки-->
             <td>{{work.laborDevelop}}</td>
             <!--        // Разработка прототипа-->
             <td>{{work.timeDevelop}}</td>
             <!--        //начало разработки план-->
-            <td class="table_col2">{{work.developEndPlan}}</td>
+            <td class="table_col2">{{work.developEndPlanStr}}</td>
             <!--        //начало разработки факт-->
-            <td class="table_col2">{{work.developEndFact}}</td>
-            <td class="table_col2">{{work.issuePrototypePlan}}</td>
+            <td class="table_col2">{{work.developEndFactStr}}</td>
+            <td class="table_col2">{{work.issuePrototypePlanStr}}</td>
             <!--        //начало разработки факт-->
-            <td class="table_col2">{{work.issuePrototypeFact}}</td>
+            <td class="table_col2">{{work.issuePrototypeFactStr}}</td>
                         
 <!--        // Стабилизация прототипа план-->
-            <td>{{work.debugEndPlan}}</td>
+            <td>{{work.debugEndPlanStr}}</td>
             <!--        // Стабилизация прототипа факт-->
-            <td>{{work.debugEndFact}}</td>
+            <td>{{work.debugEndFactStr}}</td>
 
             <!--        // Плановые трудозатраты, чел/час Стабилизация прототипа-->
             <td>{{work.laborDebug}}</td>
@@ -178,22 +179,22 @@
             <!--        // Порядковый номер релиза-->
             <td>{{work.release}}</td>
             <!--        // Выдача релиза даты План-->
-            <td class="table_col1">{{work.issuingReleasePlan}}</td>
+            <td class="table_col1">{{work.issuingReleasePlanStr}}</td>
             <!--        // Выдача релиза дата факт-->
-            <td class="table_col1">{{work.issuingReleaseFact}}</td>
+            <td class="table_col1">{{work.issuingReleaseFactStr}}</td>
             <!--        // Стабилизация релиза-->
-            <td>{{work.releaseEndPlan}}</td>
+            <td>{{work.releaseEndPlanStr}}</td>
             <!--        // Стабилизация релиза-->
-            <td>{{work.releaseEndFact}}</td>
+            <td>{{work.releaseEndFactStr}}</td>
 
             <!--        // Плановые трудозатраты, чел/час Стабилизация релиза-->
             <td>{{work.laborRelease}}</td>
             <!--        // Стабилизация релиза-->
             <td>{{work.timeRelease}}</td>
             <!--        // ОПЭ релиза-->
-            <td>{{work.opeEndPlan}}</td>
+            <td>{{work.opeEndPlanStr}}</td>
             <!--        // ОПЭ релиза-->
-            <td>{{work.opeEndFact}}</td>
+            <td>{{work.opeEndFactStr}}</td>
             <!--        // Плановые трудозатраты, чел/час ОПЭ-->
             <td>{{work.laborOPE}}</td>
             <!--        // ОПЭ релиза-->
@@ -210,6 +211,7 @@
         </tr>
         </tbody>
     </table>
+</div>
     <div class="wait_1_2">
         <img ng-if="load" src="../gif/wait1_2.gif" alt="Лучше ждите" width="300" height="300"/>
     </div>

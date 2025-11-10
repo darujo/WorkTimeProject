@@ -41,7 +41,7 @@ public class RateService {
         List<WorkStage> workStageList = workStageService.findWorkStage(workId, null);
         workStageList.forEach(
                 workStage -> timeStage.set(timeStage.get()
-//                        + getTime(workStage.getStage0())
+                        + getTime(workStage.getStage0())
                         + getTime(workStage.getStage1())
                         + getTime(workStage.getStage2())
                         + getTime(workStage.getStage3())

@@ -26,13 +26,6 @@ public class CalendarController {
     public List<WeekDto> WeekList(@RequestParam(required = false) Integer month,
                                   @RequestParam(required = false) Integer year
     ) {
-        if (month != null && (month < 1 || month > 12)) {
-            throw new ResourceNotFoundRunTime("Месяц должен быть от 1 до 12");
-        }
-        if (year == null) {
-            throw new ResourceNotFoundRunTime("Не задан год (year)");
-        }
-
         return calendarService.getWeekList(month, year);
     }
 

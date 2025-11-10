@@ -86,6 +86,8 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
     // ОПЭ релиза Факт
     private Timestamp opeStartPlan;
 
+    private Boolean rated;
+
 
     public WorkEditDto(Long id,
                        Long codeSap,
@@ -121,7 +123,8 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
                        Timestamp developStartPlan,
                        Timestamp debugStartPlan,
                        Timestamp releaseStartPlan,
-                       Timestamp opeStartPlan) {
+                       Timestamp opeStartPlan,
+                       Boolean rated) {
         this.id = id;
         this.codeSap = codeSap;
         this.codeZI = codeZI;
@@ -157,6 +160,7 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
         this.debugStartPlan = debugStartPlan;
         this.releaseStartPlan = releaseStartPlan;
         this.opeStartPlan = opeStartPlan;
+        this.rated = rated;
     }
 
     @Override
@@ -250,6 +254,10 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
     public WorkEditDto() {
     }
 
+    @SuppressWarnings("unused")
+    public Boolean getRated() {
+        return rated;
+    }
 
     public Long getCodeSap() {
         return codeSap;

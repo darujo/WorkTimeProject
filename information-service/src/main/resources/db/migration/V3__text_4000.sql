@@ -1,0 +1,1 @@
+ALTER TABLE information.message_information ALTER COLUMN "text" TYPE varchar(4000) USING "text"::varchar;

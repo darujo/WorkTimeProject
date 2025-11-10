@@ -1,0 +1,23 @@
+server:
+  port: 8188
+  servlet:
+    context-path: /app
+spring:
+  main:
+    banner-mode: off
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres?options=--search_path%3Dinformation
+    username: postgres
+    password: 5397
+
+
+  jpa:
+    database: postgresql
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+
+  jackson:
+    default-property-inclusion: non_absent
+

@@ -1,0 +1,21 @@
+<div id="UserList" class="head_text_elem">
+    <h1>Отправка уведомлений</h1>
+    <form ng-submit="sendMessage()">
+    <div class="horiz">
+        <button ng-if="InfoTypes" type="submit" class="head_button">Отправить</button>
+        <button type="button" class="head_button" ng-click="backUser()">Назад</button>
+    </div>
+
+    <label for="MesType"></label>
+    <select required class="vvod40 mar5" name="mesType" id="MesType" ng-model="Message.type" >
+        <option value="">--Выберите тип сообщения--</option>
+        <option ng-repeat="type in InfoTypes" ng-value="type.code" value="type.code">
+            {{type.name}}
+        </option>
+    </select>
+    <label for="MesText">
+        Сообщение:
+    </label>
+    <p><textarea id="MesText" class="vvod check_box_td"  ng-model="Message.text" required placeholder="Введите сообщение"></textarea></p>
+    </form>
+</div>

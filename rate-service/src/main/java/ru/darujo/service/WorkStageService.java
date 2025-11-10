@@ -1,5 +1,6 @@
 package ru.darujo.service;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.domain.Specification;
@@ -18,6 +19,7 @@ import ru.darujo.specifications.Specifications;
 import javax.transaction.Transactional;
 import java.util.*;
 
+@Log4j2
 @Service
 @Primary
 public class WorkStageService {
@@ -84,7 +86,7 @@ public class WorkStageService {
 
 
     public List<WorkStage> findWorkStage(Long workId, Integer role) {
-        Specification<WorkStage> specification = Specification.where(Specifications.eq(null,"workId",workId));
+        Specification<WorkStage> specification = Specification.where(Specifications.eq(null, "workId", workId));
         specification = Specifications.eq(specification, "role", role);
         return workStageRepository.findAll(specification);
     }
@@ -104,7 +106,7 @@ public class WorkStageService {
                 userFio.setPatronymic(userDto.getPatronymic());
             }
         } catch (ResourceNotFoundRunTime e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
             userFio.setFirstName("Не найден пользователь с ником " + userFio.getNikName());
         }
     }

@@ -1,21 +1,16 @@
 package ru.darujo.dto.workrep;
 
+import ru.darujo.assistant.helper.DataHelper;
 import ru.darujo.dto.work.WorkPlanTime;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class WorkRepDto implements Serializable, WorkPlanTime {
+public class WorkRepDto extends DataHelper implements Serializable, WorkPlanTime {
+    @SuppressWarnings("unused")
     public WorkRepDto() {
     }
-    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-    private String dateToText(Date date){
-        if (date == null){
-            return null;
-        }
-        return sdf.format(date);
-    }
+
     private Long id;
     // Код Зи
     private String codeZI;
@@ -23,42 +18,70 @@ public class WorkRepDto implements Serializable, WorkPlanTime {
     private String name;
     // Дата начала доработки План
     private Date startTaskPlan;
+    @SuppressWarnings("unused")
+    private String startTaskPlanStr;
     // Дата начала доработки Факт
     private Date startTaskFact;
+    @SuppressWarnings("unused")
+    private String startTaskFactStr;
     // ВЕНДЕРКА План
     private Date analiseEndPlan;
+    @SuppressWarnings("unused")
+    private String analiseEndPlanStr;
     // ВЕНДЕРКА
     private Date analiseEndFact;
+    @SuppressWarnings("unused")
+    private String analiseEndFactStr;
     // Плановые трудозатраты, чел/час анализ
     private Float laborAnalise;
     // Плановые трудозатраты, чел/час разработки
     private Float laborDevelop;
     //начало разработки план
     private Date developEndPlan;
+    @SuppressWarnings("unused")
+    private String developEndPlanStr;
     //начало разработки факт
     private Date developEndFact;
+    @SuppressWarnings("unused")
+    private String developEndFactStr;
     // Стабилизация прототипа план
     private Date debugEndPlan;
+    @SuppressWarnings("unused")
+    private String debugEndPlanStr;
     // Стабилизация прототипа факт
     private Date debugEndFact;
+    @SuppressWarnings("unused")
+    private String debugEndFactStr;
     // Плановые трудозатраты, чел/час Стабилизация прототипа
     private Float laborDebug;
     // Порядковый номер релиза
     private String release;
     // Выдача релиза даты План
     private Date issuingReleasePlan;
+    @SuppressWarnings("unused")
+    private String issuingReleasePlanStr;
     // Выдача релиза дата факт
     private Date issuingReleaseFact;
+    @SuppressWarnings("unused")
+    private String issuingReleaseFactStr;
     // Стабилизация релиза
     private Date releaseEndPlan;
+    @SuppressWarnings("unused")
+    private String releaseEndPlanStr;
     // Стабилизация релиза
     private Date releaseEndFact;
+    @SuppressWarnings("unused")
+    private String releaseEndFactStr;
     // Плановые трудозатраты, чел/час Стабилизация релиза
     private Float laborRelease;
     // ОПЭ релиза
     private Date opeEndPlan;
+    @SuppressWarnings("unused")
+    private String opeEndPlanStr;
     // ОПЭ релиза
     private Date opeEndFact;
+    @SuppressWarnings("unused")
+    private String opeEndFactStr;
     // Плановые трудозатраты, чел/час ОПЭ
     private Float laborOPE;
     // фактическое время
@@ -77,6 +100,12 @@ public class WorkRepDto implements Serializable, WorkPlanTime {
     private Float timeOPE;
     // ВЕНДЕРКА
     private Float timeWender;
+    private Date issuePrototypePlan;
+    @SuppressWarnings("unused")
+    private String issuePrototypePlanStr;
+    private Date issuePrototypeFact;
+    @SuppressWarnings("unused")
+    private String issuePrototypeFactStr;
 
     public WorkRepDto(Long id,
                       String codeZI,
@@ -101,7 +130,9 @@ public class WorkRepDto implements Serializable, WorkPlanTime {
                       Float timeDebug,
                       Float timeRelease,
                       Float timeOPE,
-                      Float timeWender) {
+                      Float timeWender,
+                      Date issuePrototypePlan,
+                      Date issuePrototypeFact) {
         this.id = id;
         this.codeZI = codeZI;
         this.name = name;
@@ -127,6 +158,8 @@ public class WorkRepDto implements Serializable, WorkPlanTime {
         this.timeOPE = timeOPE;
         this.timeWender = timeWender;
         this.timeFact = 0f;
+        this.issuePrototypePlan = issuePrototypePlan;
+        this.issuePrototypeFact = issuePrototypeFact;
         addTimeFact(timeAnalise);
         addTimeFact(timeDevelop);
         addTimeFact(timeDebug);
@@ -136,15 +169,17 @@ public class WorkRepDto implements Serializable, WorkPlanTime {
 
 
     }
-    public Float addTimePlan(Float time ){
-        if (time != null){
+
+    public Float addTimePlan(Float time) {
+        if (time != null) {
             return time;
         }
         return 0f;
     }
-    public void addTimeFact(Float time ){
-        if (time != null){
-            timeFact = timeFact +time;
+
+    public void addTimeFact(Float time) {
+        if (time != null) {
+            timeFact = timeFact + time;
         }
     }
 
@@ -160,20 +195,20 @@ public class WorkRepDto implements Serializable, WorkPlanTime {
         return name;
     }
 
-    public String getStartTaskPlan() {
-        return dateToText(startTaskPlan);
+    public String getStartTaskPlanStr() {
+        return dateToDDMMYYYY(startTaskPlan);
     }
 
-    public String getStartTaskFact() {
-        return dateToText(startTaskFact);
+    public String getStartTaskFactStr() {
+        return dateToDDMMYYYY(startTaskFact);
     }
 
-    public String getDevelopEndPlan() {
-        return dateToText(developEndPlan);
+    public String getDevelopEndPlanStr() {
+        return dateToDDMMYYYY(developEndPlan);
     }
 
-    public String getDevelopEndFact() {
-        return dateToText(developEndFact);
+    public String getDevelopEndFactStr() {
+        return dateToDDMMYYYY(developEndFact);
     }
 
     public Float getLaborAnalise() {
@@ -184,20 +219,20 @@ public class WorkRepDto implements Serializable, WorkPlanTime {
         return laborDevelop;
     }
 
-    public String getDebugEndPlan() {
-        return dateToText(debugEndPlan);
+    public String getDebugEndPlanStr() {
+        return dateToDDMMYYYY(debugEndPlan);
     }
 
-    public String getDebugEndFact() {
-        return dateToText(debugEndFact);
+    public String getDebugEndFactStr() {
+        return dateToDDMMYYYY(debugEndFact);
     }
 
-    public String getReleaseEndPlan() {
-        return dateToText(releaseEndPlan);
+    public String getReleaseEndPlanStr() {
+        return dateToDDMMYYYY(releaseEndPlan);
     }
 
-    public String getReleaseEndFact() {
-        return dateToText(releaseEndFact);
+    public String getReleaseEndFactStr() {
+        return dateToDDMMYYYY(releaseEndFact);
     }
 
     public Float getLaborDebug() {
@@ -208,32 +243,32 @@ public class WorkRepDto implements Serializable, WorkPlanTime {
         return release;
     }
 
-    public String getIssuingReleasePlan() {
-        return dateToText(issuingReleasePlan);
+    public String getIssuingReleasePlanStr() {
+        return dateToDDMMYYYY(issuingReleasePlan);
     }
 
-    public String getIssuingReleaseFact() {
-        return dateToText(issuingReleaseFact);
+    public String getIssuingReleaseFactStr() {
+        return dateToDDMMYYYY(issuingReleaseFact);
     }
 
-    public String getOpeEndPlan() {
-        return dateToText(opeEndPlan);
+    public String getOpeEndPlanStr() {
+        return dateToDDMMYYYY(opeEndPlan);
     }
 
-    public String getOpeEndFact() {
-        return dateToText(opeEndFact);
+    public String getOpeEndFactStr() {
+        return dateToDDMMYYYY(opeEndFact);
     }
 
     public Float getLaborRelease() {
         return laborRelease;
     }
 
-    public String getAnaliseEndPlan() {
-        return dateToText(analiseEndPlan);
+    public String getAnaliseEndPlanStr() {
+        return dateToDDMMYYYY(analiseEndPlan);
     }
 
-    public String getAnaliseEndFact() {
-        return dateToText(analiseEndFact);
+    public String getAnaliseEndFactStr() {
+        return dateToDDMMYYYY(analiseEndFact);
     }
 
     public Float getLaborOPE() {
@@ -295,5 +330,95 @@ public class WorkRepDto implements Serializable, WorkPlanTime {
     @Override
     public void setLaborOPE(Float laborOPE) {
         this.laborOPE = laborOPE;
+    }
+
+    @SuppressWarnings("unused")
+    public String getIssuePrototypePlanStr() {
+        return dateToDDMMYYYY(issuePrototypePlan);
+    }
+
+    @SuppressWarnings("unused")
+    public String getIssuePrototypeFactStr() {
+        return dateToDDMMYYYY(issuePrototypeFact);
+    }
+
+    @SuppressWarnings("unused")
+    public Date getStartTaskPlan() {
+        return startTaskPlan;
+    }
+
+    @SuppressWarnings("unused")
+    public Date getStartTaskFact() {
+        return startTaskFact;
+    }
+
+    @SuppressWarnings("unused")
+    public Date getAnaliseEndPlan() {
+        return analiseEndPlan;
+    }
+
+    @SuppressWarnings("unused")
+    public Date getAnaliseEndFact() {
+        return analiseEndFact;
+    }
+
+    @SuppressWarnings("unused")
+    public Date getDevelopEndPlan() {
+        return developEndPlan;
+    }
+
+    @SuppressWarnings("unused")
+    public Date getDevelopEndFact() {
+        return developEndFact;
+    }
+
+    @SuppressWarnings("unused")
+    public Date getDebugEndPlan() {
+        return debugEndPlan;
+    }
+
+    @SuppressWarnings("unused")
+    public Date getDebugEndFact() {
+        return debugEndFact;
+    }
+
+    @SuppressWarnings("unused")
+    public Date getIssuingReleasePlan() {
+        return issuingReleasePlan;
+    }
+
+    @SuppressWarnings("unused")
+    public Date getIssuingReleaseFact() {
+        return issuingReleaseFact;
+    }
+
+    @SuppressWarnings("unused")
+    public Date getReleaseEndPlan() {
+        return releaseEndPlan;
+    }
+
+    @SuppressWarnings("unused")
+    public Date getReleaseEndFact() {
+        return releaseEndFact;
+    }
+
+    @SuppressWarnings("unused")
+    public Date getOpeEndPlan() {
+        return opeEndPlan;
+    }
+
+    @SuppressWarnings("unused")
+    public Date getOpeEndFact() {
+        return opeEndFact;
+    }
+
+    @SuppressWarnings("unused")
+    public Date getIssuePrototypePlan() {
+        return issuePrototypePlan;
+    }
+
+    @SuppressWarnings("unused")
+    public Date getIssuePrototypeFact() {
+        return issuePrototypeFact;
     }
 }

@@ -8,7 +8,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.UserConvertor;
 
+import ru.darujo.dto.information.CodeTelegramMes;
+import ru.darujo.dto.information.MapUserInfoDto;
+import ru.darujo.dto.information.ResultMes;
 import ru.darujo.dto.user.UserDto;
+import ru.darujo.dto.user.UserInfoTypeDto;
 import ru.darujo.dto.user.UserPasswordChangeDto;
 import ru.darujo.service.UserService;
 
@@ -50,7 +54,7 @@ public class UserController {
                 nikName = null;
             }
         }
-        return userService.getUserList(role, page, size, nikName, lastName, firstName, patronymic).map(UserConvertor::getUserDto);
+        return userService.getUserList(role, page, size, nikName, lastName, firstName, patronymic, null, null).map(UserConvertor::getUserDto);
 
 
     }
@@ -61,4 +65,48 @@ public class UserController {
         return userService.changePassword(username, userPasswordChangeDto.getPasswordOld(), userPasswordChangeDto.getPasswordNew());
 
     }
+
+    @GetMapping("/user/telegram/get")
+    public CodeTelegramMes getGenSingleCode(@RequestHeader String username) {
+        return userService.getGenSingleCode(username);
+    }
+
+    @GetMapping("/user/telegram/get/{chatId}")
+    public ResultMes checkUserTelegram(@PathVariable(required = false) Long chatId) {
+        return userService.checkUserTelegram(chatId);
+    }
+
+    @GetMapping("/user/telegram/link")
+    public ResultMes linkSingleCode(@RequestParam(required = false) Integer code,
+                                    @RequestParam(required = false) Long telegramId
+    ) {
+        return userService.linkCodeTelegram(code, telegramId);
+    }
+
+    @GetMapping("/user/telegram/delete")
+    public void linkDeleteTelegram(@RequestParam(required = false) Long telegramId
+    ) {
+        userService.linkDeleteTelegram(telegramId);
+    }
+
+    @GetMapping("/information")
+    public MapUserInfoDto getUserMessageDTOs(    ) {
+        return userService.getUserMessageDTOs();
+    }
+    @GetMapping("/user/info/types")
+    public UserInfoTypeDto getUserInfoTypes() {
+        return userService.getUserInfoTypes(null);
+
+    }
+    @GetMapping("/user/info/type/{userId}")
+    public UserInfoTypeDto getUserInfoTypes(@PathVariable Long userId) {
+        return userService.getUserInfoTypes(userId);
+
+    }
+    @PostMapping("/user/info/type")
+    public UserInfoTypeDto getUserInfoTypes(@RequestBody UserInfoTypeDto userInfoTypeDto) {
+        return userService.setUserInfoTypes(userInfoTypeDto);
+
+    }
+
 }

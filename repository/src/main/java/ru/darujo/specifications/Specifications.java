@@ -11,7 +11,11 @@ public class Specifications {
 
     public static <T> Specification<T> ge(Specification<T> specification, String field, Integer value) {
         if (value != null) {
-            specification = specification.and(ge(field, value));
+            if (specification == null) {
+                specification = ge(field, value);
+            } else {
+                specification = specification.and(ge(field, value));
+            }
         }
         return specification;
     }
@@ -23,7 +27,11 @@ public class Specifications {
 
     public static <T> Specification<T> le(Specification<T> specification, String field, Integer value) {
         if (value != null) {
-            specification = specification.and(le(field, value));
+            if (specification == null) {
+                specification = le(field, value);
+            } else {
+                specification = specification.and(le(field, value));
+            }
         }
         return specification;
     }
@@ -34,7 +42,11 @@ public class Specifications {
 
     public static <T> Specification<T> ge(Specification<T> specification, String field, Date value) {
         if (value != null) {
-            specification = specification.and(ge(field, value));
+            if (specification == null) {
+                specification = ge(field, value);
+            } else {
+                specification = specification.and(ge(field, value));
+            }
         }
         return specification;
     }
@@ -46,7 +58,11 @@ public class Specifications {
 
     public static <T> Specification<T> le(Specification<T> specification, String field, Date value) {
         if (value != null) {
-            specification = specification.and(le(field, value));
+            if (specification == null) {
+                specification = le(field, value);
+            } else {
+                specification = specification.and(le(field, value));
+            }
         }
         return specification;
     }
@@ -57,7 +73,11 @@ public class Specifications {
 
     public static <T> Specification<T> gt(Specification<T> specification, String field, Date value) {
         if (value != null) {
-            specification = specification.and(gt(field, value));
+            if (specification == null) {
+                specification = gt(field, value);
+            } else {
+                specification = specification.and(gt(field, value));
+            }
         }
         return specification;
     }
@@ -69,7 +89,11 @@ public class Specifications {
 
     public static <T> Specification<T> lt(Specification<T> specification, String field, Date value) {
         if (value != null) {
-            specification = specification.and(lt(field, value));
+            if (specification == null) {
+                specification = lt(field, value);
+            } else {
+                specification = specification.and(lt(field, value));
+            }
         }
         return specification;
     }
@@ -80,7 +104,11 @@ public class Specifications {
 
     public static <T> Specification<T> eq(Specification<T> specification, String field, Integer value) {
         if (value != null) {
-            specification = specification.and(eq(field, value));
+            if (specification == null) {
+                specification = eq(field, value);
+            } else {
+                specification = specification.and(eq(field, value));
+            }
         }
         return specification;
     }
@@ -89,7 +117,50 @@ public class Specifications {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(field), value));
 
     }
+    public static <T> Specification<T> eq(Specification<T> specification, String field, Boolean value) {
+        if (value != null) {
+            if (specification == null) {
+                specification = eq(field, value);
+            } else {
+                specification = specification.and(eq(field, value));
+            }
+        }
+        return specification;
+    }
 
+    private static <T> Specification<T> eq(String field, boolean value) {
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(field), value));
+
+    }
+    public static <T> Specification<T> eq(Specification<T> specification, String field, Date value) {
+        if (value != null) {
+            if (specification == null) {
+                specification = eq(field, value);
+            } else {
+                specification = specification.and(eq(field, value));
+            }
+        }
+        return specification;
+    }
+
+    private static <T> Specification<T> eq(String field, Date value) {
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(field), value));
+
+    }
+    public static <T> Specification<T> isNotNull(Specification<T> specification, String field, Boolean value) {
+        if (value != null && value) {
+            if (specification == null) {
+                specification = isNotNull(field);
+            } else {
+                specification = specification.and(isNotNull(field));
+            }
+        }
+        return specification;
+    }
+    private static <T> Specification<T> isNotNull(String field) {
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.isNotNull(root.get(field)));
+
+    }
     public static <T> Specification<T> eq(Specification<T> specification, String field, Long value) {
         if (value != null) {
             if (specification == null) {
@@ -116,7 +187,11 @@ public class Specifications {
 
     public static <T> Specification<T> like(Specification<T> specification, String field, String value) {
         if (value != null) {
-            specification = specification.and(like(field, value));
+            if (specification == null) {
+                specification = like(field, value);
+            } else {
+                specification = specification.and(like(field, value));
+            }
         }
         return specification;
     }
@@ -128,20 +203,32 @@ public class Specifications {
     public static <T> Specification<T> in(Specification<T> specification, String field, Long[] value) {
         if (value != null && value.length > 0) {
             if (value.length == 1) {
-                specification = eq(specification, field, value[0]);
+                if (specification == null) {
+                    specification = eq(field, value[0]);
+                } else {
+                    specification = eq(specification, field, value[0]);
+                }
             } else {
-                specification = specification.and(in(field, Arrays.asList(value)));
+                if (specification == null) {
+                    specification = in(field, Arrays.asList(value));
+                } else {
+                    specification = specification.and(in(field, Arrays.asList(value)));
+                }
             }
         }
         return specification;
     }
 
     public static <T> Specification<T> inLong(Specification<T> specification, String field, List<Long> value) {
-        if (value != null && value.size() > 0) {
+        if (value != null && !value.isEmpty()) {
             if (value.size() == 1) {
                 specification = eq(specification, field, value.get(0));
             } else {
-                specification = specification.and(in(field, value));
+                if (specification == null) {
+                    specification = in(field, value);
+                } else {
+                    specification = specification.and(in(field, value));
+                }
             }
         }
         return specification;
@@ -153,11 +240,15 @@ public class Specifications {
     }
 
     public static <T> Specification<T> in(Specification<T> specification, String field, List<String> value) {
-        if (value != null && value.size() > 0) {
+        if (value != null && !value.isEmpty()) {
             if (value.size() == 1) {
-                specification = specification.and(eq(field, value.get(0)));
+                specification = eq(specification,field, value.get(0));
             } else {
-                specification = specification.and(inString(field, value));
+                if (specification == null) {
+                    specification = inString(field, value);
+                } else {
+                    specification = specification.and(inString(field, value));
+                }
             }
         }
         return specification;
@@ -169,8 +260,12 @@ public class Specifications {
     }
 
     public static <T> Specification<T> eq(Specification<T> specification, String field, String value) {
-        if (value != null && !value.equals("")) {
-            specification = specification.and(eq(field, value));
+        if (value != null && !value.isEmpty()) {
+            if (specification == null) {
+                specification = eq(field, value);
+            } else {
+                specification = specification.and(eq(field, value));
+            }
         }
         return specification;
     }
@@ -210,7 +305,19 @@ public class Specifications {
     public static <T> Specification<T> ne(String field, Long value) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.notEqual(root.get(field), value));
     }
-
+    public static <T> Specification<T> ne(Specification<T> specification, String field, Boolean value) {
+        if (value != null) {
+            if (specification == null) {
+                specification = ne(field, value);
+            } else {
+                specification = specification.and(ne(field, value));
+            }
+        }
+        return specification;
+    }
+    public static <T> Specification<T> ne(String field, Boolean value) {
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.notEqual(root.get(field), value));
+    }
     public static <T> Specification<T> eqIgnoreCase(Specification<T> specification, String field, String value) {
         if (value != null) {
             if (specification == null) {

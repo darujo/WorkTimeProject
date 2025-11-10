@@ -1,5 +1,6 @@
 package ru.darujo.service;
 
+import lombok.extern.log4j.Log4j2;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,19 +11,27 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.darujo.convertor.RoleConvertor;
-import ru.darujo.dto.user.UserRoleActiveDto;
-import ru.darujo.dto.user.UserRoleDto;
+import ru.darujo.dto.information.CodeTelegramMes;
+import ru.darujo.dto.information.MapUserInfoDto;
+import ru.darujo.dto.information.MessageType;
+import ru.darujo.dto.information.ResultMes;
+import ru.darujo.dto.user.*;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
+import ru.darujo.integration.InfoServiceIntegration;
+
 import ru.darujo.model.User;
 import ru.darujo.repository.UserRepository;
 import ru.darujo.specifications.Specifications;
 
 import javax.transaction.Transactional;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Log4j2
 @Service
 public class UserService {
+    private final Integer TIME_CODE = 5;
     private UserRepository userRepository;
 
     @Autowired
@@ -35,6 +44,20 @@ public class UserService {
     @Autowired
     public void setRoleService(RoleService roleService) {
         this.roleService = roleService;
+    }
+
+    private InfoServiceIntegration infoServiceIntegration;
+
+    @Autowired
+    public void setInfoServiceIntegration(InfoServiceIntegration infoServiceIntegration) {
+        this.infoServiceIntegration = infoServiceIntegration;
+    }
+
+    private UserInfoTypeService userInfoTypeService;
+
+    @Autowired
+    public void setUserInfoTypeService(UserInfoTypeService userInfoTypeService) {
+        this.userInfoTypeService = userInfoTypeService;
     }
 
     public User findById(Long id) {
@@ -68,6 +91,7 @@ public class UserService {
             User saveUser = userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + user.getId() + " не найден"));
             user.setRights(saveUser.getRights());
             user.setRoles(saveUser.getRoles());
+            user.setTelegramId(saveUser.getTelegramId());
         } else {
             if (userRepository.findByNikNameIgnoreCase(user.getNikName()).isPresent()) {
                 throw new ResourceNotFoundRunTime("Уже есть пользователь с таким ником");
@@ -97,17 +121,10 @@ public class UserService {
                                   String nikName,
                                   String lastName,
                                   String firstName,
-                                  String patronymic) {
-        Specification<User> specification = Specification.where(null);
-        if (role != null && !role.isEmpty()) {
-            specification = Specifications.in(specification, "nikName", roleService.findByName(role).orElseThrow(() -> new UsernameNotFoundException("Роль не найдена " + role))
-                    .getUsers()
-                    .stream().map(User::getNikName).collect(Collectors.toList()));
-        }
-        specification = Specifications.like(specification, "nikName", nikName);
-        specification = Specifications.like(specification, "lastName", lastName);
-        specification = Specifications.like(specification, "firstName", firstName);
-        specification = Specifications.like(specification, "patronymic", patronymic);
+                                  String patronymic,
+                                  Long telegramId,
+                                  Boolean telegramIsNotNull) {
+        Specification<User> specification = getUserSpecification(role, nikName, lastName, firstName, patronymic, telegramId, telegramIsNotNull);
         Sort sort = Sort.by("lastName")
                 .and(Sort.by("firstName"));
         Page<User> userPage;
@@ -120,6 +137,22 @@ public class UserService {
             userPage = userRepository.findAll(specification, PageRequest.of(page - 1, size, sort));
         }
         return userPage;
+    }
+
+    private Specification<User> getUserSpecification(String role, String nikName, String lastName, String firstName, String patronymic, Long telegramId, Boolean telegramIsNotNull) {
+        Specification<User> specification = Specification.where(null);
+        if (role != null && !role.isEmpty()) {
+            specification = Specifications.in(specification, "nikName", roleService.findByName(role).orElseThrow(() -> new UsernameNotFoundException("Роль не найдена " + role))
+                    .getUsers()
+                    .stream().map(User::getNikName).collect(Collectors.toList()));
+        }
+        specification = Specifications.like(specification, "nikName", nikName);
+        specification = Specifications.like(specification, "lastName", lastName);
+        specification = Specifications.like(specification, "firstName", firstName);
+        specification = Specifications.like(specification, "patronymic", patronymic);
+        specification = Specifications.eq(specification, "telegramId", telegramId);
+        specification = Specifications.isNotNull(specification, "telegramId", telegramIsNotNull);
+        return specification;
     }
 
     @Transactional
@@ -169,6 +202,135 @@ public class UserService {
         user.setPasswordChange(false);
         user = saveUser(user);
         return user != null;
+    }
+
+    public MapUserInfoDto getUserMessageDTOs() {
+        Map<MessageType, List<UserInfoDto>> messageTypeListMap = new HashMap<>();
+        for (MessageType type : MessageType.values()) {
+//            List<UserInfoDto> userDTOs = getUserList(null, null, null, null, null, null, null, null, true).getContent().stream().map(UserConvertor::getUserInfoDto).toList();
+            List<UserInfoDto> userDTOs = userInfoTypeService
+                    .getInfoTypes(type)
+                    .stream()
+                    .filter(userInfoType -> userInfoType.getUser().getTelegramId() != null)
+                    .map(
+                            userInfoType -> new UserInfoDto(
+                                    userInfoType.getUser().getId(),
+                                    userInfoType.getUser().getNikName(),
+                                    userInfoType.getUser().getTelegramId())).toList();
+            messageTypeListMap.put(type, userDTOs);
+        }
+        return new MapUserInfoDto(messageTypeListMap);
+    }
+
+    public UserInfoTypeDto getUserInfoTypes(Long userId) {
+        Map<String, UserInfoTypeActiveDto> userInfoActiveDtoMap = new HashMap<>();
+        for (MessageType type : MessageType.values()) {
+            userInfoActiveDtoMap.put(type.toString(), new UserInfoTypeActiveDto(type.toString(), type.getName(), false));
+        }
+        if (userId != null) {
+            User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + userId + " не найден"));
+            userInfoTypeService.getInfoTypes(userId).forEach(userInfoType -> userInfoActiveDtoMap.get(userInfoType.getCode()).setActive(Boolean.TRUE));
+            return new UserInfoTypeDto(user.getId(), user.getNikName(), user.getFirstName(), user.getLastName(), user.getPatronymic(), userInfoActiveDtoMap.values());
+        } else {
+            return new UserInfoTypeDto(null, null, null, null, null, userInfoActiveDtoMap.values());
+        }
+
+    }
+
+    public UserInfoTypeDto setUserInfoTypes(UserInfoTypeDto userInfoTypeDto) {
+        User user = userRepository.findById(userInfoTypeDto.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Пользовательне найден"));
+        userInfoTypeService.setUserInfoTypes(user, userInfoTypeDto.getInfoTypes());
+        try {
+            infoServiceIntegration.setMessageTypeListMap(getUserMessageDTOs());
+        } catch (ResourceNotFoundRunTime ex) {
+            log.error(ex.getMessage());
+        }
+        return getUserInfoTypes(user.getId());
+    }
+
+
+    private class SingleCode {
+        private final String login;
+        private final Timestamp timestamp;
+
+        public SingleCode(String login, Timestamp timestamp) {
+            this.login = login;
+            this.timestamp = timestamp;
+        }
+
+    }
+
+    private final Map<Integer, SingleCode> mapCode = new HashMap<>();
+
+    public CodeTelegramMes getGenSingleCode(String login) {
+        if (login == null) {
+            throw new ResourceNotFoundRunTime("пройдите авторизацию");
+        }
+        findByNikName(login).orElseThrow(() -> new ResourceNotFoundRunTime("Нет пользователя с логином"));
+        clearMapCode(login);
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis() + TIME_CODE * 60 * 1000);
+        int code = (int) ((99999999 * Math.random()));
+        SingleCode singleCode = new SingleCode(login, timestamp);
+        mapCode.put(code, singleCode);
+        return new CodeTelegramMes(true, "t.me/DaruWorkBot", code, TIME_CODE);
+
+    }
+
+    public void clearMapCode(String login) {
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis() + TIME_CODE * 60 * 1000);
+        for (Map.Entry<Integer, SingleCode> entry : mapCode.entrySet()) {
+            if (entry.getValue().timestamp.after(timestamp) || (entry.getValue().login.equals(login))) {
+                mapCode.remove(entry.getKey());
+            }
+        }
+    }
+
+    public ResultMes linkCodeTelegram(Integer code, Long idTelegram) {
+        clearMapCode(null);
+        SingleCode singleCode = mapCode.get(code);
+        if (singleCode == null) {
+            return new ResultMes(false, "Не такого кода авторизации или он просрочен ");
+        }
+
+        User user = findByNikName(singleCode.login).orElse(null);
+        if (user == null) {
+            return new ResultMes(false, "Пользовательне найден.");
+        }
+        user.setTelegramId(idTelegram);
+        saveUser(user);
+        mapCode.remove(code);
+        try {
+            infoServiceIntegration.setMessageTypeListMap(getUserMessageDTOs());
+            return new ResultMes(true, "");
+        } catch (ResourceNotFoundRunTime ex) {
+            return new ResultMes(false, "Пользователь добавлен, но что-то не так и уведомления будут приходить, после перезапуска сервиса уведомлений, Обратитесь к администратору или ждите");
+        }
+    }
+
+    @Transactional
+    public void linkDeleteTelegram(Long telegramId) {
+        getUserList(null, null, null, null, null, null, null, telegramId, null)
+                .forEach(user -> {
+                    user.setTelegramId(null);
+                    saveUser(user);
+                });
+        try {
+            infoServiceIntegration.setMessageTypeListMap(getUserMessageDTOs());
+        } catch (ResourceNotFoundRunTime ex) {
+            log.error(ex.getMessage());
+        }
+
+    }
+
+    public ResultMes checkUserTelegram(Long chatId) {
+        if (chatId == null){
+            return new ResultMes(false,"Нет ни одного пользователя с таким телеграмм");
+        }
+        boolean flag = userRepository.exists(getUserSpecification(null, null, null,  null, null, chatId, null));
+
+
+        return new ResultMes(flag,flag ? "" :"Нет ни одного пользователя с таким телеграмм");
+
     }
 
 }

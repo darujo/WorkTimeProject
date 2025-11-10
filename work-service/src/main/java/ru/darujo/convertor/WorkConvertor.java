@@ -23,6 +23,7 @@ public class WorkConvertor {
                 .setAnaliseEndPlan(work.getAnaliseEndPlan())
                 .setName(work.getName())
                 .setTask(work.getTask())
+                .setRated(work.getRated())
                 .setDescription(work.getDescription())
                 .setStartTaskPlan(work.getStartTaskPlan())
                 .setStartTaskFact(work.getStartTaskFact())
@@ -79,6 +80,7 @@ public class WorkConvertor {
                 .setDebugEndFact(workDto.getDebugEndFact())
                 .setName(workDto.getName())
                 .setTask(workDto.getTask())
+                .setRated(workDto.getRated())
                 .setDescription(workDto.getDescription())
                 .setStartTaskPlan(workDto.getStartTaskPlan())
                 .setStartTaskFact(workDto.getStartTaskFact())
@@ -116,6 +118,7 @@ public class WorkConvertor {
                 .setCodeZI(work.getCodeZI())
                 .setStageZI(work.getStageZI())
                 .setName(work.getName())
+                .setRated(work.getRated())
                 .getWorkLittleDto();
 
 

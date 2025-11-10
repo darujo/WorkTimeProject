@@ -1,5 +1,6 @@
 package ru.darujo.api;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -11,12 +12,13 @@ import ru.darujo.dto.work.WorkEditDto;
 import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.Work;
+import ru.darujo.model.WorkLittle;
 import ru.darujo.service.WorkService;
 
 import java.sql.Timestamp;
 import java.time.ZonedDateTime;
-import java.util.Random;
 
+@Log4j2
 @RestController()
 @RequestMapping("/v1/works")
 public class WorkController {
@@ -27,7 +29,6 @@ public class WorkController {
         this.workService = workService;
     }
 
-    Random random = new Random();
 
     @GetMapping("/find")
     public Iterable<Work> workList(@RequestParam(required = false) String name,
@@ -37,68 +38,11 @@ public class WorkController {
 
         Iterable<Work> works = workService.findWorks(1, 100000000, name, null, null, null, null, null, task, null);
         float time_last = (System.nanoTime() - curTime) * 0.000000001f;
-        System.out.println("Время выполнения " + time_last);
+        log.info("Время выполнения " + time_last);
         return works;
 
     }
 
-    public static String generateString(Random rng, String characters, int length) {
-        char[] text = new char[length];
-        for (int i = 0; i < length; i++) {
-            text[i] = characters.charAt(rng.nextInt(characters.length()));
-        }
-        return new String(text);
-    }
-
-    @GetMapping("/convAddWork")
-    public WorkDto workAddConv() {
-
-        for (int i = 0; i < 40000; i++) {
-            String str = "Зи с номером" + i + "или другим";
-            if (i % 1000 == 0) {
-                str = str + "тест";
-            }
-            str = str + "как-то так";
-
-
-            Work work = new Work(null,
-                    null,
-                    null,
-                    generateString(random, str, 15),
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    generateString(random, str, 15),
-                    null,
-                    null,
-                    null,
-                    8,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null);
-            workService.saveWork(work);
-            System.out.println("создана задача " + i);
-        }
-
-        return new WorkDto();
-    }
 
     @GetMapping("/{id}")
     public WorkEditDto WorkEdit(@PathVariable long id) {
@@ -116,17 +60,23 @@ public class WorkController {
     }
 
     @PostMapping("")
-    public WorkDto WorkSave(@RequestBody WorkEditDto workDto,
+    public WorkDto WorkSave( @RequestHeader String userName,
+                            @RequestBody WorkEditDto workDto,
                             @RequestHeader(defaultValue = "false", name = "ZI_EDIT") boolean right) {
         if (!right) {
             throw new ResourceNotFoundRunTime("У вас нет права ZI_EDIT");
         }
-        Work work = workService.saveWork(WorkConvertor.getWork(workDto));
+        Work work = workService.saveWork(userName, WorkConvertor.getWork(workDto));
         return WorkConvertor.getWorkDto(work);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteWork(@PathVariable long id) {
+    public void deleteWork(@PathVariable long id,
+                           @RequestHeader(defaultValue = "false", name = "ZI_EDIT") boolean rightEdit
+    ) {
+        if (!rightEdit) {
+            throw new ResourceNotFoundRunTime("У вас нет права ZI_EDIT");
+        }
         workService.deleteWork(id);
     }
 
@@ -155,7 +105,7 @@ public class WorkController {
                 .map(WorkConvertor::getWorkDto);
         workDTOs.forEach(workService::updWorkPlanTime);
         float time_last = (curTime - System.nanoTime()) * 0.000000001f;
-        System.out.println("Время выполнения " + time_last);
+        log.info("Время выполнения " + time_last);
         return workDTOs;
     }
 
@@ -190,6 +140,14 @@ public class WorkController {
     ) {
         Timestamp date = DataHelper.DTZToDate(dateStr, "date", false);
         return workService.setWorkDate(id, date);
+
+    }
+    @GetMapping("/change/{id}/rated")
+    public WorkLittle ChangeRated(@RequestHeader String username,
+                                  @PathVariable long id,
+                                  @RequestParam(required = false, name = "rated") Boolean rated
+    ) {
+        return workService.setRated(username,id, rated);
 
     }
 }

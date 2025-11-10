@@ -12,10 +12,12 @@ public class UserVacationsDto implements Serializable {
         this.userVacations = userVacations;
     }
 
+    @SuppressWarnings("unused")
     public List<WeekWorkDto> getWeekWorkDtos() {
         return weekWorkDtos;
     }
 
+    @SuppressWarnings("unused")
     public List<UserVacation> getUserVacations() {
         return userVacations;
     }
