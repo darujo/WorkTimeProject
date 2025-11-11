@@ -110,108 +110,108 @@ public class HtmlService {
         works.forEach(work -> {
             sb.append("<tr>");
             sb.append("<td>");
-            sb.append(work.getId());
+            sb.append(printNotNull(work.getId()));
             sb.append("</td>");
             sb.append("<td class=\"text_not_wrap\" >");
-            sb.append(work.getCodeZI());
+            sb.append(printNotNull(work.getCodeZI()));
             sb.append("</td>");
             sb.append("<td class=\"sticky-col first-col\" >");
-            sb.append(work.getName());
+            sb.append(printNotNull(work.getName()));
             sb.append("</td>");
             sb.append("<td>");
-            sb.append(work.getAnaliseEndPlanStr());
+            sb.append(printNotNull(work.getAnaliseEndPlanStr()));
             sb.append("</td>");
             sb.append("<td>");
-            sb.append(work.getAnaliseEndFactStr());
+            sb.append(printNotNull(work.getAnaliseEndFactStr()));
             sb.append("</td>");
             sb.append("<td>");
-            sb.append(work.getLaborAnalise());
+            sb.append(printNotNull(work.getLaborAnalise()));
             sb.append("</td>");
             sb.append("<td>");
-            sb.append(work.getTimeAnalise());
+            sb.append(printNotNull(work.getTimeAnalise()));
             sb.append("</td>");
             sb.append("<td>");
-            sb.append(work.getStartTaskPlanStr());
+            sb.append(printNotNull(work.getStartTaskPlanStr()));
             sb.append("</td>");
             sb.append("<td>");
-            sb.append(work.getStartTaskFactStr());
+            sb.append(printNotNull(work.getStartTaskFactStr()));
             sb.append("</td>");
 
             sb.append("<td>");
-            sb.append(work.getLaborDevelop());
+            sb.append(printNotNull(work.getLaborDevelop()));
             sb.append("</td>");
             sb.append("<td>");
-            sb.append(work.getTimeDevelop());
+            sb.append(printNotNull(work.getTimeDevelop()));
             sb.append("</td>");
             sb.append("<td class=\"table_col2\" >");
-            sb.append(work.getDevelopEndPlanStr());
+            sb.append(printNotNull(work.getDevelopEndPlanStr()));
             sb.append("</td>");
             sb.append("<td class=\"table_col2\"> ");
-            sb.append(work.getDevelopEndFactStr());
+            sb.append(printNotNull(work.getDevelopEndFactStr()));
             sb.append("</td>");
             sb.append("<td class=\"table_col2\" >");
-            sb.append(work.getIssuePrototypePlanStr());
+            sb.append(printNotNull(work.getIssuePrototypePlanStr()));
             sb.append("</td>");
             sb.append("<td class=\"table_col2\" > ");
-            sb.append(work.getIssuePrototypeFactStr());
+            sb.append(printNotNull(work.getIssuePrototypeFactStr()));
             sb.append("</td>");
 
             sb.append("<td> ");
-            sb.append(work.getDebugEndPlanStr());
+            sb.append(printNotNull(work.getDebugEndPlanStr()));
             sb.append("</td>");
             sb.append("<td> ");
-            sb.append(work.getDebugEndFactStr());
+            sb.append(printNotNull(work.getDebugEndFactStr()));
             sb.append("</td>");
 
             sb.append("<td> ");
-            sb.append(work.getLaborDebug());
+            sb.append(printNotNull(work.getLaborDebug()));
             sb.append("</td>");
             sb.append("<td> ");
-            sb.append(work.getTimeDebug());
+            sb.append(printNotNull(work.getTimeDebug()));
             sb.append("</td>");
             sb.append("<td>");
-            sb.append(work.getRelease());
+            sb.append(printNotNull(work.getRelease()));
             sb.append("</td>");
             sb.append("<td class=\"table_col1\" >");
-            sb.append(work.getIssuingReleasePlanStr());
+            sb.append(printNotNull(work.getIssuingReleasePlanStr()));
             sb.append("</td>");
             sb.append("<td class=\"table_col1\" >");
-            sb.append(work.getIssuingReleaseFactStr());
+            sb.append(printNotNull(work.getIssuingReleaseFactStr()));
             sb.append("</td>");
             sb.append("<td> ");
-            sb.append(work.getReleaseEndPlanStr());
+            sb.append(printNotNull(work.getReleaseEndPlanStr()));
             sb.append("</td>");
             sb.append("<td>");
-            sb.append(work.getReleaseEndFactStr());
-            sb.append("</td>");
-
-            sb.append("<td>");
-            sb.append(work.getLaborRelease());
-            sb.append("</td>");
-            sb.append("<td>");
-            sb.append(work.getTimeRelease());
-            sb.append("</td>");
-            sb.append("<td>");
-            sb.append(work.getOpeEndPlanStr());
-            sb.append("</td>");
-            sb.append("<td>");
-            sb.append(work.getOpeEndFactStr());
-            sb.append("</td>");
-            sb.append("<td>");
-            sb.append(work.getLaborOPE());
-            sb.append("</td>");
-            sb.append("<td>");
-            sb.append(work.getTimeOPE());
-            sb.append("</td>");
-            sb.append("<td>");
-            sb.append(work.getTimePlan());
-            sb.append("</td>");
-            sb.append("<td>");
-            sb.append(work.getTimeFact());
+            sb.append(printNotNull(work.getReleaseEndFactStr()));
             sb.append("</td>");
 
             sb.append("<td>");
-            sb.append(work.getTimeWender());
+            sb.append(printNotNull(work.getLaborRelease()));
+            sb.append("</td>");
+            sb.append("<td>");
+            sb.append(printNotNull(work.getTimeRelease()));
+            sb.append("</td>");
+            sb.append("<td>");
+            sb.append(printNotNull(work.getOpeEndPlanStr()));
+            sb.append("</td>");
+            sb.append("<td>");
+            sb.append(printNotNull(work.getOpeEndFactStr()));
+            sb.append("</td>");
+            sb.append("<td>");
+            sb.append(printNotNull(work.getLaborOPE()));
+            sb.append("</td>");
+            sb.append("<td>");
+            sb.append(printNotNull(work.getTimeOPE()));
+            sb.append("</td>");
+            sb.append("<td>");
+            sb.append(printNotNull(work.getTimePlan()));
+            sb.append("</td>");
+            sb.append("<td>");
+            sb.append(printNotNull(work.getTimeFact()));
+            sb.append("</td>");
+
+            sb.append("<td>");
+            sb.append(printNotNull(work.getTimeWender()));
             sb.append("</td>");
 
 
@@ -273,7 +273,7 @@ public class HtmlService {
         sb.append("<tr>");
         taskListType.forEach(taskType -> {
             sb.append("<td class=\" table_head2 week_work_plan_time\" >");
-            sb.append(taskType.getValue());
+            sb.append(printNotNull(taskType.getValue()));
             sb.append("</td>");
         });
 
@@ -297,25 +297,25 @@ public class HtmlService {
                 sb.append("</td>");
                 if (ziSplit && work.getUserCol() != null) {
                     sb.append("<td rowspan=\"").append(work.getUserCol()).append("\">");
-                    sb.append(work_zi.getName());
+                    sb.append(printNotNull(work_zi.getName()));
                     sb.append("</td>");
                 }
                 if (!ziSplit && work.getUserCol() != null) {
                     sb.append("<td rowspan=\"").append(work.getUserCol()).append("\">");
-                    sb.append(work.getDateStartStr());
+                    sb.append(printNotNull(work.getDateStartStr()));
                     sb.append("-");
-                    sb.append(work.getDateEndStr());
+                    sb.append(printNotNull(work.getDateEndStr()));
                     sb.append("</td>");
                 }
                 if (work.getAuthorFirstName() == null) {
-                    sb.append("<td >").append(work.getNikName() == null ? "Итого" : work.getNikName()).append("</td>");
+                    sb.append("<td >").append(work.getNikName() == null ? "" : printNotNull(work.getNikName())).append("</td>");
                 } else
                     sb.append("<td >")
-                            .append(work.getAuthorLastName())
+                            .append(printNotNull(work.getAuthorLastName()))
                             .append(" ")
-                            .append(work.getAuthorFirstName())
+                            .append(printNotNull(work.getAuthorFirstName()))
                             .append(" ")
-                            .append(work.getAuthorPatronymic())
+                            .append(printNotNull(work.getAuthorPatronymic()))
                             .append("</td>");
 
                 taskListType.forEach(taskType -> {
@@ -324,21 +324,21 @@ public class HtmlService {
                     if (workTask) {
                         sb.append("<div class=\"div-type\" >");
                         sb.append("<button class=\"p-td\" ng-click=\" openTask(work.workTask, taskType.codeInt)\">");
-                        sb.append(searchJson(work.getWorkTaskColAttr(), taskType.getCodeInt()));
+                        sb.append(printNotNull(searchJson(work.getWorkTaskColAttr(), taskType.getCodeInt())));
                         sb.append("</button>");
                         sb.append("</div>");
                     }
                     if (workTime) {
                         sb.append("<div class=\"div-type\">");
                         sb.append("<button class=\"p-td\" ng-click=\" openWorkTime(work.nikName, work.workTask, taskType.codeInt, work.dateStart, work.dateEnd)\">");
-                        sb.append(searchJson(work.getWorkTimeAttr(), taskType.getCodeInt()));
+                        sb.append(printNotNull(searchJson(work.getWorkTimeAttr(), taskType.getCodeInt())));
                         sb.append("</button>");
                         sb.append("</div>");
                     }
                     if (workPercent) {
                         sb.append("<div class=\"div-type\" >");
                         sb.append("<p class=\"p-td\">");
-                        sb.append(searchJson(work.getWorkPercent(), taskType.getCodeInt()));
+                        sb.append(printNotNull(searchJson(work.getWorkPercent(), taskType.getCodeInt())));
                         sb.append("</p>");
                         sb.append("</div>");
                     }
@@ -348,13 +348,13 @@ public class HtmlService {
 
                 if (!ziSplit && work.getUserCol() != null) {
                     sb.append("<td rowspan=\"")
-                            .append(work.getUserCol())
+                            .append(printNotNull(work.getUserCol()))
                             .append("\">")
-                            .append(work.getWorkPlan())
+                            .append(printNotNull(work.getWorkPlan()))
                             .append("</td>");
                 }
                 sb.append("<td>")
-                        .append(work.getWorkAllFact())
+                        .append(printNotNull(work.getWorkAllFact()))
                         .append("</td>");
                 sb.append("</tr>");
             });
@@ -365,6 +365,15 @@ public class HtmlService {
         sb.append("</body>");
         sb.append("</head>");
         return sb.toString();
+
+    }
+
+    private String printNotNull(Object objects){
+        if(objects == null){
+            return "";
+        } else {
+            return objects.toString();
+        }
 
     }
 

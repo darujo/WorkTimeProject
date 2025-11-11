@@ -55,7 +55,7 @@ public class ScheduleService {
         executor.schedule(tasks.getZiWork(author, chatId), 2, TimeUnit.SECONDS);
     }
     public void sendWeekWork(String author, Long chatId) {
-        executor.schedule(tasks.getZiWork(author, chatId), 2, TimeUnit.SECONDS);
+        executor.schedule(tasks.getWeekWork(author, chatId), 2, TimeUnit.SECONDS);
     }
 
 

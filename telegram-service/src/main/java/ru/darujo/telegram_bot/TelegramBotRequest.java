@@ -172,20 +172,24 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
                             requestMessage.getChat().isUserChat(),
                             requestMessage.getChat().isGroupChat(),
                             requestMessage.getChat().isSuperGroupChat()));
-            if (CommandType.STOP.equals(CommandType.valueOf(callbackQuery.getData()))) {
-                try {
-                    telegramBotSend.deleteMessage(requestMessage.getChatId().toString(), requestMessage.getMessageId());
-                    getStop(requestMessage.getChatId().toString(),null);
-                } catch (TelegramApiException e) {
-                    throw new RuntimeException(e);
+            try {
+                if (CommandType.STOP.equals(CommandType.valueOf(callbackQuery.getData()))) {
+                    try {
+                        telegramBotSend.deleteMessage(requestMessage.getChatId().toString(), requestMessage.getMessageId());
+                        getStop(requestMessage.getChatId().toString(), null);
+                    } catch (TelegramApiException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else if (CommandType.LINK.equals(CommandType.valueOf(callbackQuery.getData()))) {
+                    try {
+                        telegramBotSend.deleteMessage(requestMessage.getChatId().toString(), requestMessage.getMessageId());
+                        getLink(requestMessage.getChatId().toString());
+                    } catch (TelegramApiException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
-            } else if (CommandType.LINK.equals(CommandType.valueOf(callbackQuery.getData()))) {
-                try {
-                    telegramBotSend.deleteMessage(requestMessage.getChatId().toString(), requestMessage.getMessageId());
-                    getLink(requestMessage.getChatId().toString());
-                } catch (TelegramApiException e) {
-                    throw new RuntimeException(e);
-                }
+            }catch (IllegalArgumentException ex){
+                log.info(ex);
             }
 
             try {
