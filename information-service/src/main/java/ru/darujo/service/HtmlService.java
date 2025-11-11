@@ -307,8 +307,8 @@ public class HtmlService {
                     sb.append(work.getDateEndStr());
                     sb.append("</td>");
                 }
-                if (work.getAuthorFirstName() != null) {
-                    sb.append("<td >").append(work.getNikName() == null ? "" : work.getNikName()).append("</td>");
+                if (work.getAuthorFirstName() == null) {
+                    sb.append("<td >").append(work.getNikName() == null ? "Итого" : work.getNikName()).append("</td>");
                 } else
                     sb.append("<td >")
                             .append(work.getAuthorLastName())

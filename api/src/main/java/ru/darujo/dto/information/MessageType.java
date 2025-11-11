@@ -1,6 +1,8 @@
 package ru.darujo.dto.information;
 
-public enum MessageType {
+import ru.darujo.type.TypeEnum;
+
+public enum MessageType implements TypeEnum {
     SYSTEM_INFO("Системные информационые сообщения"),
     ESTIMATION_WORK("Проведена оценка"),
     CHANGE_STAGE_WORK("Смена статуса ЗИ"),
@@ -20,6 +22,7 @@ public enum MessageType {
         this.name = name;
     }
 
+    @Override
     public String getName() {
         return name;
     }

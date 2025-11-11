@@ -4,6 +4,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public abstract  class ServiceIntegration {
+    protected void addTeg(StringBuilder stringBuilder, String str, Enum<?> value) {
+        addTeg(stringBuilder,str,value.toString());
+    }
     protected void addTeg(StringBuilder stringBuilder, String str, Date value) {
         addTeg(stringBuilder,str,dateToText(value));
     }

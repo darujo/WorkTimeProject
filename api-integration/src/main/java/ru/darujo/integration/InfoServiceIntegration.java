@@ -10,6 +10,7 @@ import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
+import ru.darujo.type.ReportTypeDto;
 
 
 @Component
@@ -50,12 +51,13 @@ public class InfoServiceIntegration extends ServiceIntegration {
         }
     }
 
-    public void sendWorkStatus(@NonNull String author, Long chatId) {
+    public void sendReport(@NonNull ReportTypeDto reportType, @NonNull String author, Long chatId) {
         try {
             StringBuilder sb = new StringBuilder();
+            addTeg(sb, "reportType", reportType);
             addTeg(sb, "author", author);
             addTeg(sb,"chatId", chatId);
-            webClientInfo.get().uri("/work/status" + sb)
+            webClientInfo.get().uri("/report" + sb)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить данные по затраченому времени")))

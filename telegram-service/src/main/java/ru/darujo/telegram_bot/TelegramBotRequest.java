@@ -112,7 +112,7 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
                     getLink(chatId);
                 } else if (requestMessage.getText().equals("/menu")) {
                     telegramBotSend.deleteMessage(chatId, requestMessage.getMessageId());
-                    menuService.openMainMenu("Autoresponder",chatId,fileService.getFile("menu"));
+                    menuService.openMainMenu("Autoresponder",chatId);
                 } else if (requestMessage.getText().equals("/stop")) {
                     getStop(chatId,requestMessage.getMessageId());
                 } else {
@@ -190,7 +190,7 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
 
             try {
                 menuService.getMenu(messageReceive.getUserName(),
-                        messageReceive.getChatId().toString(), requestMessage.getMessageId(), CommandType.valueOf(callbackQuery.getData()),fileService.getFile("menu"));
+                        messageReceive.getChatId().toString(), requestMessage.getMessageId(), callbackQuery.getData(),fileService.getFile("menu"));
             } catch (TelegramApiException e) {
                 throw new RuntimeException(e);
             }

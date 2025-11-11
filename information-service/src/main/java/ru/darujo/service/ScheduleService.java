@@ -2,6 +2,8 @@ package ru.darujo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
+import ru.darujo.type.ReportTypeDto;
 
 import javax.annotation.PostConstruct;
 import java.time.DayOfWeek;
@@ -34,9 +36,26 @@ public class ScheduleService {
 
 
     }
+    public void sendReport(String reportTypeDto, String author, Long chatId){
+        if(reportTypeDto.equals(ReportTypeDto.USER_WORK.toString())){
+            sendWeekWork(author, chatId);
 
+        } else if(reportTypeDto.equals(ReportTypeDto.ZI_STATUS.toString())){
+            sendWorkStatus(author,chatId);
+        } else if(reportTypeDto.equals(ReportTypeDto.ZI_WORK.toString())){
+            sendZiWork(author,chatId);
+        } else {
+           throw new ResourceNotFoundRunTime("Нет такокго типа отчета");
+        }
+    }
     public void sendWorkStatus(String author, Long chatId) {
         executor.schedule(tasks.sendReportWorkFull(author, chatId), 2, TimeUnit.SECONDS);
+    }
+    public void sendZiWork(String author, Long chatId) {
+        executor.schedule(tasks.getZiWork(author, chatId), 2, TimeUnit.SECONDS);
+    }
+    public void sendWeekWork(String author, Long chatId) {
+        executor.schedule(tasks.getZiWork(author, chatId), 2, TimeUnit.SECONDS);
     }
 
 

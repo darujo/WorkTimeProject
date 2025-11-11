@@ -317,23 +317,26 @@ public class Tasks {
     public RunnableNotException getZiWork(String author, Long chatId) {
         return new RunnableNotException(() -> {
             log.info("getZiWork");
-            List<AttrDto<Integer>> taskListType = taskServiceIntegration.getTaskTypes();
-            Timestamp date = calendarServiceIntegration.getLastWorkDay(null, null, 1, true);
-            List<WorkUserTime> weekWorkList = workServiceIntegration.getWorkUserTime(true, date);
-            String report = htmlService.getWeekWork(true, true, true, true, taskListType, weekWorkList);
+            String report = getReportWork(true);
             messageInformationService.sendFile(new MessageInfoDto(author,
                     (chatId == null ? null : new UserInfoDto(null, author, chatId)),
                     MessageType.ZI_WORK_REPORT, "Факт загрузки по ЗИ"
             ), "ZI_Work_" + DataHelper.dateToYYYYMMDD(new Timestamp(System.currentTimeMillis())) + ".html", report);
         });
     }
+
+    private String getReportWork(boolean ziSplit) {
+        List<AttrDto<Integer>> taskListType = taskServiceIntegration.getTaskTypes();
+        Timestamp date = calendarServiceIntegration.getLastWorkDay(null, null, 1, true);
+        List<WorkUserTime> weekWorkList = workServiceIntegration.getWorkUserTime(ziSplit, date);
+        String report = htmlService.getWeekWork(ziSplit, true, true, true, taskListType, weekWorkList);
+        return report;
+    }
+
     public RunnableNotException getWeekWork(String author, Long chatId) {
         return new RunnableNotException(() -> {
             log.info("getWeekWork");
-            List<AttrDto<Integer>> taskListType = taskServiceIntegration.getTaskTypes();
-            Timestamp date = calendarServiceIntegration.getLastWorkDay(null, null, 1, true);
-            List<WorkUserTime> weekWorkList = workServiceIntegration.getWorkUserTime(false, date);
-            String report = htmlService.getWeekWork(false, true, true, true, taskListType, weekWorkList);
+            String report = getReportWork(false);
             messageInformationService.sendFile(new MessageInfoDto(author,
                     (chatId == null ? null : new UserInfoDto(null, author, chatId)),
                     MessageType.WEEK_WORK_REPORT, "Факт загрузки за предыдущую неделю"
