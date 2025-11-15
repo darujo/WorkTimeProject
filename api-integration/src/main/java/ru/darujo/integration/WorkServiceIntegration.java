@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 import ru.darujo.dto.MapStringFloat;
 import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.dto.workperiod.WorkUserTime;
@@ -37,8 +36,9 @@ public class WorkServiceIntegration extends ServiceIntegration {
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по ЗИ с ID = " + workId)))
+                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ с ID = " + workId))
                     .bodyToMono(WorkLittleDto.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
@@ -54,8 +54,9 @@ public class WorkServiceIntegration extends ServiceIntegration {
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по ЗИ с ID = " + workId)))
+                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ с ID = " + workId))
                     .bodyToMono(MapStringFloat.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             log.error(ex.getMessage());
@@ -70,8 +71,9 @@ public class WorkServiceIntegration extends ServiceIntegration {
             return webClientWork.get().uri("/refresh/" + workId + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("ЗИ c id = " + workId + " не найдена")))
+                            cR -> UserServiceIntegration.getMessage(cR, "ЗИ c id = " + workId + " не найдена"))
                     .bodyToMono(Boolean.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         }
         return false;
@@ -95,9 +97,10 @@ public class WorkServiceIntegration extends ServiceIntegration {
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по ЗИ")))
+                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ"))
                     .bodyToFlux(WorkRepDto.class)
                     .collectList()
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             log.error(ex.getMessage());
@@ -105,7 +108,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
         }
     }
 
-    public List<WorkUserTime> getWorkUserTime(boolean ziSplit,Timestamp date){
+    public List<WorkUserTime> getWorkUserTime(boolean ziSplit, Timestamp date) {
         return getWorkUserTime(ziSplit,
                 null,
                 true,
@@ -120,20 +123,21 @@ public class WorkServiceIntegration extends ServiceIntegration {
                 null,
                 null);
     }
+
     public List<WorkUserTime> getWorkUserTime(boolean ziSplit,
-    String nikName,
-    Boolean addTotal,
-    Boolean weekSplit,
+                                              String nikName,
+                                              Boolean addTotal,
+                                              Boolean weekSplit,
 
-    Timestamp dateStart,
-    Timestamp dateEnd,
+                                              Timestamp dateStart,
+                                              Timestamp dateEnd,
 
-    String name,
-    Integer stageZi,
-    Long codeSap,
-    String codeZi,
-    String task,
-    Long releaseId,
+                                              String name,
+                                              Integer stageZi,
+                                              Long codeSap,
+                                              String codeZi,
+                                              String task,
+                                              Long releaseId,
 
                                               String sort) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -158,9 +162,10 @@ public class WorkServiceIntegration extends ServiceIntegration {
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по ЗИ" + clientResponse.statusCode() )))
+                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ"))
                     .bodyToFlux(WorkUserTime.class)
                     .collectList()
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             log.error("/rep/fact/week{}", stringBuilder);

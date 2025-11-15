@@ -2,11 +2,11 @@ package ru.darujo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.darujo.dto.information.MessageType;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.type.ReportTypeDto;
 
 import javax.annotation.PostConstruct;
-import java.time.DayOfWeek;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -24,40 +24,35 @@ public class ScheduleService {
 
     @PostConstruct
     private void init() {
-        executor.scheduleAtFixedRate(tasks.getAddWorkAvail(), tasks.getStartTime(11), 86400, TimeUnit.SECONDS);
-        executor.scheduleAtFixedRate(tasks.getAddWorkAvailLastWeek(), tasks.getStartTime(12), 86400, TimeUnit.SECONDS);
         executor.scheduleAtFixedRate(tasks.sendMessage(), 0, 60, TimeUnit.SECONDS);
-        executor.scheduleAtFixedRate(tasks.sendReportWorkFull(null, null), tasks.getStartTime(DayOfWeek.TUESDAY, 10), 86400 * 7, TimeUnit.SECONDS);
-        executor.scheduleAtFixedRate(tasks.getMyVacationStart(), tasks.getStartTime( 20), 86400, TimeUnit.SECONDS);
-        executor.scheduleAtFixedRate(tasks.getMyVacationEnd(), tasks.getStartTime( 14), 86400, TimeUnit.SECONDS);
-        executor.scheduleAtFixedRate(tasks.getVacationEnd(), tasks.getStartTime( 12), 86400, TimeUnit.SECONDS);
-        executor.scheduleAtFixedRate(tasks.getZiWork(null, null), tasks.getStartTime( 10), 86400, TimeUnit.SECONDS);
-        executor.scheduleAtFixedRate(tasks.getWeekWork(null, null), tasks.getStartTime( 10), 86400, TimeUnit.SECONDS);
-
-
-    }
-    public void sendReport(String reportTypeDto, String author, Long chatId){
-        if(reportTypeDto.equals(ReportTypeDto.USER_WORK.toString())){
-            sendWeekWork(author, chatId);
-
-        } else if(reportTypeDto.equals(ReportTypeDto.ZI_STATUS.toString())){
-            sendWorkStatus(author,chatId);
-        } else if(reportTypeDto.equals(ReportTypeDto.ZI_WORK.toString())){
-            sendZiWork(author,chatId);
-        } else {
-           throw new ResourceNotFoundRunTime("Нет такокго типа отчета");
+        for (MessageType messageType : MessageType.values()) {
+            if (messageType.getPeriod() != null) {
+                scheduleAtFixedRate(messageType);
+            }
         }
     }
-    public void sendWorkStatus(String author, Long chatId) {
-        executor.schedule(tasks.sendReportWorkFull(author, chatId), 2, TimeUnit.SECONDS);
-    }
-    public void sendZiWork(String author, Long chatId) {
-        executor.schedule(tasks.getZiWork(author, chatId), 2, TimeUnit.SECONDS);
-    }
-    public void sendWeekWork(String author, Long chatId) {
-        executor.schedule(tasks.getWeekWork(author, chatId), 2, TimeUnit.SECONDS);
+
+    private void scheduleAtFixedRate(MessageType messageType) {
+        executor.scheduleAtFixedRate(
+                getTask(messageType),
+                messageType.getStartTime(),
+                messageType.getPeriod(), TimeUnit.SECONDS);
     }
 
+    public void sendReport(String reportTypeDto, String author, Long chatId) {
+        MessageType messageType;
+        if (reportTypeDto.equals(ReportTypeDto.USER_WORK.toString())) {
+            messageType = MessageType.WEEK_WORK_REPORT;
+        } else if (reportTypeDto.equals(ReportTypeDto.ZI_STATUS.toString())) {
+            messageType = MessageType.AVAIL_WORK_FULL_REPORT;
+        } else if (reportTypeDto.equals(ReportTypeDto.ZI_WORK.toString())) {
+            messageType = MessageType.ZI_WORK_REPORT;
+        } else {
+            throw new ResourceNotFoundRunTime("Нет такокго типа отчета");
+
+        }
+        executor.schedule(getTask(messageType, author, chatId), 2, TimeUnit.SECONDS);
+    }
 
     private void close() {
         // Корректное завершение
@@ -73,6 +68,32 @@ public class ScheduleService {
         }));
 
 
+    }
+
+    private RunnableNotException getTask(MessageType messageType) {
+        return getTask(messageType, null, null);
+    }
+
+    private RunnableNotException getTask(MessageType messageType, String author, Long chatId) {
+        if (messageType.equals(MessageType.AVAIL_WORK_LAST_DAY)) {
+            return tasks.getAddWorkAvail(messageType);
+        } else if (messageType.equals(MessageType.AVAIL_WORK_LAST_WEEK)) {
+            return tasks.getAddWorkAvailLastWeek(messageType);
+        } else if (messageType.equals(MessageType.AVAIL_WORK_FULL_REPORT)) {
+            return tasks.sendReportWorkFull(messageType, author, chatId);
+        } else if (messageType.equals(MessageType.VACATION_MY_START)) {
+            return tasks.getMyVacationStart(messageType);
+        } else if (messageType.equals(MessageType.VACATION_MY_END)) {
+            return tasks.getMyVacationEnd(messageType);
+        } else if (messageType.equals(MessageType.VACATION_USER_START)) {
+            return tasks.getVacationStart(messageType);
+        } else if (messageType.equals(MessageType.ZI_WORK_REPORT)) {
+            return tasks.getZiWork(messageType, author, chatId);
+        } else if (messageType.equals(MessageType.WEEK_WORK_REPORT)) {
+            return tasks.getWeekWork(messageType, author, chatId);
+        } else {
+            throw new ResourceNotFoundRunTime("Нет такокго типа отчета");
+        }
     }
 
 }

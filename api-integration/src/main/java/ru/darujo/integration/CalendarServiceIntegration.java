@@ -1,12 +1,12 @@
 package ru.darujo.integration;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 import ru.darujo.dto.CustomPageImpl;
 import ru.darujo.dto.calendar.VacationDto;
 import ru.darujo.dto.calendar.WeekWorkDto;
@@ -17,7 +17,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 
-
+@Log4j2
 @Component
 @ConditionalOnMissingClass
 public class CalendarServiceIntegration extends ServiceIntegration {
@@ -38,8 +38,9 @@ public class CalendarServiceIntegration extends ServiceIntegration {
             return webClientCalendar.get().uri("/calendar/period/time" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы за период")))
+                            cR -> UserServiceIntegration.getMessage(cR,"Что-то пошло не так не удалось получить работы за период"))
                     .bodyToFlux(WeekWorkDto.class).collectList()
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
@@ -53,8 +54,9 @@ public class CalendarServiceIntegration extends ServiceIntegration {
             return webClientCalendar.get().uri("/calendar/work/time" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить отпуск за период")))
+                            cR -> UserServiceIntegration.getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период"))
                     .bodyToMono(Float.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
@@ -69,9 +71,10 @@ public class CalendarServiceIntegration extends ServiceIntegration {
             return Objects.requireNonNull(webClientCalendar.get().uri("/vacation" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить отпуск за период")))
+                            cR -> UserServiceIntegration.getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период"))
                     .bodyToMono(new ParameterizedTypeReference<CustomPageImpl<VacationDto>>() {
                     })
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block()).getContent();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
@@ -89,8 +92,9 @@ public class CalendarServiceIntegration extends ServiceIntegration {
             return webClientCalendar.get().uri("/vacation/report/user/work/day/last" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить отпуск за период httpStatus " + clientResponse.statusCode())))
+                            cR -> UserServiceIntegration.getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
                     .bodyToMono(Timestamp.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
@@ -106,8 +110,9 @@ public class CalendarServiceIntegration extends ServiceIntegration {
             return webClientCalendar.get().uri("/vacation/report/user/work/day" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить отпуск за период httpStatus " + clientResponse.statusCode())))
+                            cR -> UserServiceIntegration.getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
                     .bodyToMono(Boolean.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
@@ -123,8 +128,9 @@ public class CalendarServiceIntegration extends ServiceIntegration {
             return webClientCalendar.get().uri("/vacation/report/work/day/after/week" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить отпуск за период httpStatus " + clientResponse.statusCode())))
+                            cR -> UserServiceIntegration.getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
                     .bodyToMono(Boolean.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
@@ -152,8 +158,9 @@ public class CalendarServiceIntegration extends ServiceIntegration {
             return webClientCalendar.get().uri("/vacation/inform/day/begin" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить отпуск за период httpStatus " + clientResponse.statusCode())))
+                            cR -> UserServiceIntegration.getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
                     .bodyToMono(Boolean.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
@@ -168,8 +175,9 @@ public class CalendarServiceIntegration extends ServiceIntegration {
             return webClientCalendar.get().uri("/vacation/inform/day/end" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить отпуск за период httpStatus " + clientResponse.statusCode())))
+                            cR -> UserServiceIntegration.getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
                     .bodyToMono(Boolean.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
@@ -187,9 +195,10 @@ public class CalendarServiceIntegration extends ServiceIntegration {
             return webClientCalendar.get().uri("/vacation/inform/user/day/begin" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить отпуск за период httpStatus " + clientResponse.statusCode())))
+                            cR -> UserServiceIntegration.getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
                     .bodyToFlux(VacationDto.class)
                     .collectList()
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());

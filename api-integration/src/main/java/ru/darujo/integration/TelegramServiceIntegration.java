@@ -1,14 +1,13 @@
 package ru.darujo.integration;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
-import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
-
+@Log4j2
 @Component
 public class TelegramServiceIntegration extends ServiceIntegration {
     private WebClient webClientTelegram;
@@ -28,8 +27,9 @@ public class TelegramServiceIntegration extends ServiceIntegration {
                     .bodyValue(text)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить ответ от сервиса telegram")))
+                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса telegram"))
                     .bodyToMono(Void.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
@@ -46,8 +46,9 @@ public class TelegramServiceIntegration extends ServiceIntegration {
                     .bodyValue(textFile)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить ответ от сервиса telegram")))
+                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса telegram"))
                     .bodyToMono(Void.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
@@ -67,8 +68,9 @@ public class TelegramServiceIntegration extends ServiceIntegration {
                     .bodyValue(text)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить ответ от сервиса telegram")))
+                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса telegram"))
                     .bodyToMono(Void.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
@@ -80,11 +82,12 @@ public class TelegramServiceIntegration extends ServiceIntegration {
         try {
             StringBuilder sb = new StringBuilder();
             addTeg(sb, "fileName", fileName);
-            webClientTelegram.delete().uri( "/file" + sb)
+            webClientTelegram.delete().uri("/file" + sb)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundException("Что-то пошло не так не удалось получить ответ от сервиса telegram")))
+                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса telegram"))
                     .bodyToMono(Void.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());

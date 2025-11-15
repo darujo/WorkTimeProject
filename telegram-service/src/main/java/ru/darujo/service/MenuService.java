@@ -165,11 +165,13 @@ public class MenuService {
             if (resultMes.isOk()) {
                 infoServiceIntegration.sendReport(reportType, author, sendMe ? Long.parseLong(charId) : null);
             }
-            deleteMessage(charId, messageId);
+
             telegramBotSend.sendMessage(null, charId, resultMes.isOk() ? "Отчет будет доставлен в ближайшее время" : resultMes.getMessage());
 
         } catch (ResourceNotFoundRunTime ex) {
             telegramBotSend.sendMessage(null, charId, "Что-то пошло не так отчет не будет сформирован. Попробуйте позже или обратитесь к администратуру");
+        }finally {
+            deleteMessage(charId, messageId);
         }
     }
 

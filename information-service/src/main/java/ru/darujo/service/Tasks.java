@@ -19,9 +19,6 @@ import ru.darujo.integration.WorkTimeServiceIntegration;
 import ru.darujo.url.UrlWorkTime;
 
 import java.sql.Timestamp;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -70,73 +67,14 @@ public class Tasks {
         this.htmlService = htmlService;
     }
 
-    public Long getStartTime(Integer hour) {
-        return getStartTime(hour, 0);
-    }
 
-    private final Long milliSecondStartDay;
-
-    public Tasks() {
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.HOUR_OF_DAY, 0);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND, 0);
-        milliSecondStartDay = (System.currentTimeMillis() - c.getTimeInMillis());
-    }
-
-    public Long getStartTime(DayOfWeek dayOfWeek, Integer hour) {
-        return getStartTime(dayOfWeek, hour, 0);
-    }
-
-    public Long getStartTime(Integer hour, Integer minute) {
-        if (minute < 0 || minute > 59) {
-            throw new RuntimeException("Не верно заданы часы");
-        }
-        if (hour < 0 || hour > 23) {
-            throw new RuntimeException("Не верно заданы часы");
-        }
-        int millisecond = ((hour * 60) + minute) * 60 * 1000;
-        long startTime = millisecond - milliSecondStartDay;
-        startTime = startTime / 1000;
-        if (startTime < 0) {
-            startTime = startTime + 24 * 60 * 60;
-        }
-        return startTime;
-    }
-
-    public Long getStartTime(DayOfWeek dayOfWeek, Integer hour, Integer minute) {
-        if (hour < 0 || hour > 23) {
-            throw new RuntimeException("Не верно заданы часы");
-        }
-        if (minute < 0 || minute > 59) {
-            throw new RuntimeException("Не верно заданы часы");
-        }
-        int millisecond = ((hour * 60) + minute) * 60 * 1000;
-        long startTime = millisecond - milliSecondStartDay;
-        int days = dayOfWeek.getValue() - LocalDate.now().getDayOfWeek().getValue();
-        if (days < 0) {
-            days = days + 7;
-        }
-        startTime = startTime / 1000;
-        startTime = startTime + days * 86400L;
-        if (startTime < 0) {
-            startTime = startTime + 7 * 24 * 60 * 60;
-        }
-        log.info(dayOfWeek);
-        log.info(hour);
-        log.info(minute);
-        log.info(startTime);
-        return startTime;
-    }
 
     private final Float PERCENT_WORK_TIME = 0.9f;
 
-    public RunnableNotException getAddWorkAvail() {
+    public RunnableNotException getAddWorkAvail(MessageType type) {
         return new RunnableNotException(
                 () -> {
                     log.info("getAddWorkAvail");
-                    MessageType type = MessageType.AVAIL_WORK_LAST_DAY;
 
                     List<UserInfoDto> users = messageInformationService.getUsersForMesType(type);
                     if (users == null) {
@@ -172,10 +110,9 @@ public class Tasks {
         );
     }
 
-    public RunnableNotException getAddWorkAvailLastWeek() {
+    public RunnableNotException getAddWorkAvailLastWeek(MessageType type) {
         return new RunnableNotException(() -> {
             log.info("getAddWorkAvailLastWeek");
-            MessageType type = MessageType.AVAIL_WORK_LAST_WEEK;
             List<UserInfoDto> users = messageInformationService.getUsersForMesType(type);
             if (users == null) {
                 return;
@@ -211,8 +148,7 @@ public class Tasks {
         };
     }
 
-
-    public RunnableNotException sendReportWorkFull(String author, Long chatId) {
+    public RunnableNotException sendReportWorkFull(MessageType messageType, String author, Long chatId) {
         return new RunnableNotException(() -> {
             log.info("sendReportWorkFull");
             LinkedList<String> sort = new LinkedList<>();
@@ -220,16 +156,15 @@ public class Tasks {
             String report = htmlService.printRep(workServiceIntegration.getTimeWork(null, true, null, null, sort));
             messageInformationService.sendFile(new MessageInfoDto(author,
                     (chatId == null ? null : new UserInfoDto(null, author, chatId)),
-                    MessageType.AVAIL_WORK_FULL_REPORT, "Рассылка отчете статус ЗИ"
+                    messageType, "Рассылка отчете статус ЗИ"
             ), "Zi_Report_" + DataHelper.dateToYYYYMMDD(new Timestamp(System.currentTimeMillis())) + ".html", report);
 
         });
     }
 
-    public RunnableNotException getMyVacationStart() {
+    public RunnableNotException getMyVacationStart(MessageType type) {
         return new RunnableNotException(() -> {
             log.info("getMyVacationStart");
-            MessageType type = MessageType.VACATION_MY_START;
             List<UserInfoDto> users = messageInformationService.getUsersForMesType(type);
             if (users == null) {
                 return;
@@ -252,10 +187,9 @@ public class Tasks {
         );
     }
 
-    public RunnableNotException getMyVacationEnd() {
+    public RunnableNotException getMyVacationEnd(MessageType type) {
         return new RunnableNotException(() -> {
             log.info("getMyVacationEnd");
-            MessageType type = MessageType.VACATION_MY_END;
             List<UserInfoDto> users = messageInformationService.getUsersForMesType(type);
             if (users == null) {
                 return;
@@ -276,7 +210,7 @@ public class Tasks {
         });
     }
 
-    public RunnableNotException getVacationEnd() {
+    public RunnableNotException getVacationStart(MessageType messageType) {
         return new RunnableNotException(() -> {
             log.info("getVacationEnd");
             StringBuffer users = new StringBuffer();
@@ -308,19 +242,19 @@ public class Tasks {
                 messageInformationService.addMessage(
                         new MessageInfoDto(
                                 null,
-                                MessageType.VACATION_USER_START,
+                                messageType,
                                 vacationDTOs.get(0).getDateStartStr() + " начинается отпуск у сотрудников :\n" + users));
             }
         });
     }
 
-    public RunnableNotException getZiWork(String author, Long chatId) {
+    public RunnableNotException getZiWork(MessageType messageType, String author, Long chatId) {
         return new RunnableNotException(() -> {
             log.info("getZiWork");
             String report = getReportWork(true);
             messageInformationService.sendFile(new MessageInfoDto(author,
                     (chatId == null ? null : new UserInfoDto(null, author, chatId)),
-                    MessageType.ZI_WORK_REPORT, "Факт загрузки по ЗИ"
+                    messageType, "Факт загрузки по ЗИ"
             ), "ZI_Work_" + DataHelper.dateToYYYYMMDD(new Timestamp(System.currentTimeMillis())) + ".html", report);
         });
     }
@@ -329,17 +263,16 @@ public class Tasks {
         List<AttrDto<Integer>> taskListType = taskServiceIntegration.getTaskTypes();
         Timestamp date = calendarServiceIntegration.getLastWorkDay(null, null, 1, true);
         List<WorkUserTime> weekWorkList = workServiceIntegration.getWorkUserTime(ziSplit, date);
-        String report = htmlService.getWeekWork(ziSplit, true, true, true, taskListType, weekWorkList);
-        return report;
+        return htmlService.getWeekWork(ziSplit, true, true, true, taskListType, weekWorkList);
     }
 
-    public RunnableNotException getWeekWork(String author, Long chatId) {
+    public RunnableNotException getWeekWork(MessageType messageType, String author, Long chatId) {
         return new RunnableNotException(() -> {
             log.info("getWeekWork");
             String report = getReportWork(false);
             messageInformationService.sendFile(new MessageInfoDto(author,
                     (chatId == null ? null : new UserInfoDto(null, author, chatId)),
-                    MessageType.WEEK_WORK_REPORT, "Факт загрузки за предыдущую неделю"
+                    messageType, "Факт загрузки за предыдущую неделю"
             ), "Week_Work_" + DataHelper.dateToYYYYMMDD(new Timestamp(System.currentTimeMillis())) + ".html", report);
         });
     }

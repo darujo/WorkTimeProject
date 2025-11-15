@@ -6,7 +6,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.TaskDto;
 import ru.darujo.dto.ratestage.AttrDto;
@@ -45,8 +44,9 @@ public class TaskServiceIntegration extends ServiceIntegration {
             return webClientTask.get().uri("/rep/fact/time" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
                     .bodyToMono(Float.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календатрь (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
@@ -64,8 +64,9 @@ public class TaskServiceIntegration extends ServiceIntegration {
             return webClientTask.get().uri("/rep/fact/user" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
                     .bodyToMono(ListString.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
@@ -76,8 +77,9 @@ public class TaskServiceIntegration extends ServiceIntegration {
         return webClientTask.get().uri("/" + id)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                        clientResponse -> Mono.error(new ResourceNotFoundRunTime("Задача c id = " + id + " не найдена")))
+                        cR -> UserServiceIntegration.getMessage(cR, "Задача c id = " + id + " не найдена"))
                 .bodyToMono(TaskDto.class)
+                .doOnError(throwable -> log.error(throwable.getMessage()))
                 .block();
     }
 
@@ -85,13 +87,14 @@ public class TaskServiceIntegration extends ServiceIntegration {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "codeDEVBO", taskDEVBO);
         addTeg(stringBuilder, "codeBTS", taskBts);
-        log.info("/list/id" + stringBuilder);
+        log.info("/list/id{}", stringBuilder);
 
         return webClientTask.get().uri("/list/id" + stringBuilder)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                        clientResponse -> Mono.error(new ResourceNotFoundRunTime("Задачи не найдены")))
+                        cR -> UserServiceIntegration.getMessage(cR, "Задачи не найдены"))
                 .bodyToFlux(Long.class).collectList()
+                .doOnError(throwable -> log.error(throwable.getMessage()))
                 .block();
     }
 
@@ -100,8 +103,9 @@ public class TaskServiceIntegration extends ServiceIntegration {
             return webClientTask.get().uri("/rep/fact/avail/" + id)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Задача c id = " + id + " не найдена")))
+                            cR -> UserServiceIntegration.getMessage(cR, "Задача c id = " + id + " не найдена"))
                     .bodyToMono(Boolean.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             return false;
@@ -118,8 +122,9 @@ public class TaskServiceIntegration extends ServiceIntegration {
         return webClientTask.get().uri("/refresh/" + taskId + stringBuilder)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                        clientResponse -> Mono.error(new ResourceNotFoundRunTime("Задача c id = " + taskId + " не найдена")))
+                        cR -> UserServiceIntegration.getMessage(cR, "Задача c id = " + taskId + " не найдена"))
                 .bodyToMono(Boolean.class)
+                .doOnError(throwable -> log.error(throwable.getMessage()))
                 .block();
     }
 
@@ -136,9 +141,10 @@ public class TaskServiceIntegration extends ServiceIntegration {
             return webClientTask.get().uri("/rep/fact/week" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
                     .bodyToFlux(UserWorkFormDto.class)
                     .collectList()
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
@@ -154,8 +160,9 @@ public class TaskServiceIntegration extends ServiceIntegration {
             return webClientTask.get().uri("/rep/fact/lastTime" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Задача c id = " + workId + " не найдена")))
+                            cR -> UserServiceIntegration.getMessage(cR, "Задача c id = " + workId + " не найдена"))
                     .bodyToMono(Timestamp.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundException("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
@@ -167,9 +174,10 @@ public class TaskServiceIntegration extends ServiceIntegration {
             return webClientTask.get().uri("/code/type")
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Не удалось получить справочник TaskType")))
+                            cR -> UserServiceIntegration.getMessage(cR, "Не удалось получить справочник TaskType"))
                     .bodyToFlux(new ParameterizedTypeReference<AttrDto<Integer>>() {
                     }).collectList()
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             log.info("getTaskTypes error");

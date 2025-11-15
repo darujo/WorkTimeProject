@@ -1,12 +1,12 @@
 package ru.darujo.integration;
 
 import lombok.NonNull;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 import ru.darujo.dto.CustomPageImpl;
 import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.ResultMes;
@@ -16,7 +16,7 @@ import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import java.util.List;
 import java.util.Objects;
 
-
+@Log4j2
 @Component
 public class UserServiceIntegration extends ServiceIntegration {
     private WebClient webClientUser;
@@ -37,8 +37,9 @@ public class UserServiceIntegration extends ServiceIntegration {
             return webClientUser.get().uri("/user" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные пользователю")))
+                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные пользователю"))
                     .bodyToMono(UserDto.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             if (ex instanceof ResourceNotFoundRunTime) {
@@ -56,9 +57,10 @@ public class UserServiceIntegration extends ServiceIntegration {
             return Objects.requireNonNull(webClientUser.get().uri(stringBuilder.toString())
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные пользователю")))
+                            clientResponse -> UserServiceIntegration.getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
                     .bodyToMono(new ParameterizedTypeReference<CustomPageImpl<UserDto>>() {
                     })
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block()).getContent();
         } catch (RuntimeException ex) {
             if (ex instanceof ResourceNotFoundRunTime) {
@@ -78,8 +80,9 @@ public class UserServiceIntegration extends ServiceIntegration {
             return webClientUser.get().uri("/user/telegram/link" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные пользователю")))
+                            clientResponse -> UserServiceIntegration.getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
                     .bodyToMono(ResultMes.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             if (ex instanceof ResourceNotFoundRunTime) {
@@ -98,8 +101,9 @@ public class UserServiceIntegration extends ServiceIntegration {
             return webClientUser.get().uri("/user/telegram/delete" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные пользователю")))
+                            clientResponse -> UserServiceIntegration.getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
                     .bodyToMono(Boolean.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             if (ex instanceof ResourceNotFoundRunTime) {
@@ -116,8 +120,9 @@ public class UserServiceIntegration extends ServiceIntegration {
             return webClientUser.get().uri("/information")
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные пользователю")))
+                            clientResponse -> UserServiceIntegration.getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
                     .bodyToMono(MapUserInfoDto.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             if (ex instanceof ResourceNotFoundRunTime) {
@@ -132,9 +137,14 @@ public class UserServiceIntegration extends ServiceIntegration {
         try {
             return webClientUser.get().uri("/user/telegram/get/" + chatId)
                     .retrieve()
+//                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+//                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные пользователю" + clientResponse.bodyToMono(String.class).flatMap(s -> {log.error(s);
+//                                return Mono.just(s);}))))
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные пользователю")))
+                            clientResponse -> UserServiceIntegration.getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю :")
+                    )
                     .bodyToMono(ResultMes.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
             if (ex instanceof ResourceNotFoundRunTime) {
