@@ -22,5 +22,7 @@ public class WorkType {
     private Float time;
     @Column(name = "work_id")
     private Long workId;
+    @Column(name = "number")
+    private Integer number;
 
 }

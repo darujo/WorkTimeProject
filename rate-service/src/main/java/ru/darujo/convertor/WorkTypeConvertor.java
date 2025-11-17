@@ -11,6 +11,7 @@ public class WorkTypeConvertor {
                 .setType(workType.getType())
                 .setTime(workType.getTime())
                 .setWorkId(workType.getWorkId())
+                .setNumber(workType.getNumber())
                 .getWorkTypeDto();
     }
 
@@ -20,6 +21,7 @@ public class WorkTypeConvertor {
                 .setType(workTypeDto.getType())
                 .setTime(workTypeDto.getTime())
                 .setWorkId(workTypeDto.getWorkId())
+                .setNumber(workTypeDto.getNumber())
                 .getWorkType();
     }
 }

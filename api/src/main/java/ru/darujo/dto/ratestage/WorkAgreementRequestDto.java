@@ -1,0 +1,89 @@
+package ru.darujo.dto.ratestage;
+
+import java.sql.Timestamp;
+import java.util.List;
+
+public class WorkAgreementRequestDto {
+    @SuppressWarnings("unused")
+    public WorkAgreementRequestDto() {
+    }
+
+    private Long id;
+    private String nikName;
+    private Timestamp timestamp;
+    private String version;
+    private String comment;
+    private Timestamp term;
+    private StatusRequest status;
+    private Long workId;
+    private List<WorkAgreementResponseDto> listResponse;
+
+    public WorkAgreementRequestDto(
+            Long id,
+            String nikName,
+            Timestamp timestamp,
+            String version,
+            String comment,
+            Timestamp term,
+            StatusRequest status,
+            Long workId,
+            List<WorkAgreementResponseDto> listResponse) {
+        this.id = id;
+        this.nikName = nikName;
+        this.timestamp = timestamp;
+        this.version = version;
+        this.comment = comment;
+        this.term = term;
+        this.status = status;
+        this.workId = workId;
+        this.listResponse = listResponse;
+    }
+
+    @SuppressWarnings("unused")
+    public Long getId() {
+        return id;
+    }
+
+    @SuppressWarnings("unused")
+    public String getNikName() {
+        return nikName;
+    }
+
+    @SuppressWarnings("unused")
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    @SuppressWarnings("unused")
+    public String getVersion() {
+        return version;
+    }
+
+    @SuppressWarnings("unused")
+    public String getComment() {
+        return comment;
+    }
+
+    @SuppressWarnings("unused")
+    public Timestamp getTerm() {
+        return term;
+    }
+
+    @SuppressWarnings("unused")
+    public StatusRequest getStatus() {
+        return status;
+    }
+    @SuppressWarnings("unused")
+    public String getStatusName() {
+        return status.getName();
+    }
+    @SuppressWarnings("unused")
+    public Long getWorkId() {
+        return workId;
+    }
+
+    @SuppressWarnings("unused")
+    public List<WorkAgreementResponseDto> getListResponse() {
+        return listResponse;
+    }
+}

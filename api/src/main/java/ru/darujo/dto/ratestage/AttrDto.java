@@ -5,18 +5,21 @@ public class AttrDto<T> {
     public AttrDto() {
     }
 
-    private  T codeInt;
+    private  T codeT;
     private  String code;
     private  String value;
 
-    public AttrDto(T codeInt, String value) {
-        this.codeInt = codeInt;
-        this.code = codeInt.toString();
+    public AttrDto(T codeT, String value) {
+        this.codeT = codeT;
+        this.code = codeT.toString();
         this.value = value;
     }
 
+    public T getCodeT() {
+        return codeT;
+    }
     public T getCodeInt() {
-        return codeInt;
+        return codeT;
     }
 
     public String getCode() {

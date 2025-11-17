@@ -324,21 +324,21 @@ public class HtmlService {
                     if (workTask) {
                         sb.append("<div class=\"div-type\" >");
                         sb.append("<button class=\"p-td\" ng-click=\" openTask(work.workTask, taskType.codeInt)\">");
-                        sb.append(printNotNull(searchJson(work.getWorkTaskColAttr(), taskType.getCodeInt())));
+                        sb.append(printNotNull(searchJson(work.getWorkTaskColAttr(), taskType.getCodeT())));
                         sb.append("</button>");
                         sb.append("</div>");
                     }
                     if (workTime) {
                         sb.append("<div class=\"div-type\">");
                         sb.append("<button class=\"p-td\" ng-click=\" openWorkTime(work.nikName, work.workTask, taskType.codeInt, work.dateStart, work.dateEnd)\">");
-                        sb.append(printNotNull(searchJson(work.getWorkTimeAttr(), taskType.getCodeInt())));
+                        sb.append(printNotNull(searchJson(work.getWorkTimeAttr(), taskType.getCodeT())));
                         sb.append("</button>");
                         sb.append("</div>");
                     }
                     if (workPercent) {
                         sb.append("<div class=\"div-type\" >");
                         sb.append("<p class=\"p-td\">");
-                        sb.append(printNotNull(searchJson(work.getWorkPercent(), taskType.getCodeInt())));
+                        sb.append(printNotNull(searchJson(work.getWorkPercent(), taskType.getCodeT())));
                         sb.append("</p>");
                         sb.append("</div>");
                     }
@@ -378,7 +378,7 @@ public class HtmlService {
     }
 
     private String searchJson(List<AttrDto<Integer>> workTaskColAttr, Integer codeInt) {
-        AttrDto<Integer> attrDto = workTaskColAttr.stream().filter(attrDtoInt -> attrDtoInt.getCodeInt().equals(codeInt)).findFirst().orElse(null);
+        AttrDto<Integer> attrDto = workTaskColAttr.stream().filter(attrDtoInt -> attrDtoInt.getCodeT().equals(codeInt)).findFirst().orElse(null);
         return attrDto != null ? attrDto.getValue() : "";
     }
 

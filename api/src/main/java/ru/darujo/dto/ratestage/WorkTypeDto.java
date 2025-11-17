@@ -11,12 +11,14 @@ public class WorkTypeDto implements Serializable {
     private String type;
     private Float time;
     private Long workId;
+    private Integer number;
 
-    public WorkTypeDto(Long id, String type, Float time, Long workId) {
+    public WorkTypeDto(Long id, String type, Float time, Long workId, Integer number) {
         this.id = id;
         this.type = type;
         this.time = time;
         this.workId = workId;
+        this.number = number;
     }
 
     public Long getId() {
@@ -33,5 +35,10 @@ public class WorkTypeDto implements Serializable {
 
     public Long getWorkId() {
         return workId;
+    }
+
+    @SuppressWarnings("unused")
+    public Integer getNumber() {
+        return number;
     }
 }

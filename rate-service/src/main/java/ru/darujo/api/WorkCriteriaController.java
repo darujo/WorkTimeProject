@@ -26,17 +26,17 @@ public class WorkCriteriaController {
     }
 
     @PostMapping("")
-    public WorkCriteriaDto WorkStageSave(@RequestBody WorkCriteriaDto workCriteriaDto) {
+    public WorkCriteriaDto WorkCriteriaSave(@RequestBody WorkCriteriaDto workCriteriaDto) {
         return WorkCriteriaConvertor.getWorkCriteriaDto(workCriteriaService.saveWorkCriteria(WorkCriteriaConvertor.getWorkCriteria(workCriteriaDto)));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteWorkStage(@PathVariable long id) {
+    public void deleteWorkCriteria(@PathVariable long id) {
         workCriteriaService.deleteWorkCriteria(id);
     }
 
     @GetMapping("")
-    public List<WorkCriteriaDto> WorkStageList(@RequestParam Long workId) {
+    public List<WorkCriteriaDto> WorkCriteriaList(@RequestParam Long workId) {
         return workCriteriaService.findWorkCriteria(workId).stream().map(WorkCriteriaConvertor::getWorkCriteriaDto).collect(Collectors.toList());
     }
 

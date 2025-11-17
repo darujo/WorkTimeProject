@@ -50,7 +50,7 @@ public class WorkTypeService {
 
     public List<WorkType> findWorkCriteria(Long workId) {
         Specification<WorkType> specification = Specification.where(Specifications.eq(null, "workId", workId));
-        return workTypeRepository.findAll(specification, Sort.by("workId").and(Sort.by("type")));
+        return workTypeRepository.findAll(specification, Sort.by("workId").and(Sort.by("number").and(Sort.by("type"))));
     }
 
 }
