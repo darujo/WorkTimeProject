@@ -28,7 +28,7 @@ public class InfoServiceIntegration extends ServiceIntegration {
                     .bodyValue(mapUserInfoDto)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
                     .bodyToMono(Void.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -43,7 +43,7 @@ public class InfoServiceIntegration extends ServiceIntegration {
                     .bodyValue(messageInfoDto)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
                     .bodyToMono(Void.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -61,7 +61,7 @@ public class InfoServiceIntegration extends ServiceIntegration {
             webClientInfo.get().uri("/report" + sb)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
                     .bodyToMono(Void.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();

@@ -44,7 +44,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
             return webClientTask.get().uri("/rep/fact/time" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
                     .bodyToMono(Float.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -64,7 +64,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
             return webClientTask.get().uri("/rep/fact/user" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
                     .bodyToMono(ListString.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -77,7 +77,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
         return webClientTask.get().uri("/" + id)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                        cR -> UserServiceIntegration.getMessage(cR, "Задача c id = " + id + " не найдена"))
+                        cR -> getMessage(cR, "Задача c id = " + id + " не найдена"))
                 .bodyToMono(TaskDto.class)
                 .doOnError(throwable -> log.error(throwable.getMessage()))
                 .block();
@@ -92,7 +92,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
         return webClientTask.get().uri("/list/id" + stringBuilder)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                        cR -> UserServiceIntegration.getMessage(cR, "Задачи не найдены"))
+                        cR -> getMessage(cR, "Задачи не найдены"))
                 .bodyToFlux(Long.class).collectList()
                 .doOnError(throwable -> log.error(throwable.getMessage()))
                 .block();
@@ -103,7 +103,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
             return webClientTask.get().uri("/rep/fact/avail/" + id)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR, "Задача c id = " + id + " не найдена"))
+                            cR -> getMessage(cR, "Задача c id = " + id + " не найдена"))
                     .bodyToMono(Boolean.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -122,7 +122,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
         return webClientTask.get().uri("/refresh/" + taskId + stringBuilder)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                        cR -> UserServiceIntegration.getMessage(cR, "Задача c id = " + taskId + " не найдена"))
+                        cR -> getMessage(cR, "Задача c id = " + taskId + " не найдена"))
                 .bodyToMono(Boolean.class)
                 .doOnError(throwable -> log.error(throwable.getMessage()))
                 .block();
@@ -141,7 +141,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
             return webClientTask.get().uri("/rep/fact/week" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
                     .bodyToFlux(UserWorkFormDto.class)
                     .collectList()
                     .doOnError(throwable -> log.error(throwable.getMessage()))
@@ -160,7 +160,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
             return webClientTask.get().uri("/rep/fact/lastTime" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR, "Задача c id = " + workId + " не найдена"))
+                            cR -> getMessage(cR, "Задача c id = " + workId + " не найдена"))
                     .bodyToMono(Timestamp.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -174,7 +174,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
             return webClientTask.get().uri("/code/type")
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR, "Не удалось получить справочник TaskType"))
+                            cR -> getMessage(cR, "Не удалось получить справочник TaskType"))
                     .bodyToFlux(new ParameterizedTypeReference<AttrDto<Integer>>() {
                     }).collectList()
                     .doOnError(throwable -> log.error(throwable.getMessage()))

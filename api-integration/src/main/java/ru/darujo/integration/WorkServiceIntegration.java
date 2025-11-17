@@ -36,7 +36,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
-                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ с ID = " + workId))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ с ID = " + workId))
                     .bodyToMono(WorkLittleDto.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -54,7 +54,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
-                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ с ID = " + workId))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ с ID = " + workId))
                     .bodyToMono(MapStringFloat.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -71,7 +71,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
             return webClientWork.get().uri("/refresh/" + workId + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR, "ЗИ c id = " + workId + " не найдена"))
+                            cR -> getMessage(cR, "ЗИ c id = " + workId + " не найдена"))
                     .bodyToMono(Boolean.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -97,7 +97,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
-                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ"))
                     .bodyToFlux(WorkRepDto.class)
                     .collectList()
                     .doOnError(throwable -> log.error(throwable.getMessage()))
@@ -162,7 +162,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
-                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ"))
                     .bodyToFlux(WorkUserTime.class)
                     .collectList()
                     .doOnError(throwable -> log.error(throwable.getMessage()))

@@ -39,7 +39,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
             return webClientWorkTime.get().uri("/rep/fact/time" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
                     .bodyToMono(Float.class)
                     .block();
         } catch (RuntimeException ex) {
@@ -58,7 +58,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
             return webClientWorkTime.get().uri("/rep/fact/user" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
                     .bodyToMono(ListString.class)
                     .block();
         } catch (RuntimeException ex) {
@@ -72,7 +72,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
             return webClientWorkTime.get().uri("/rep/fact/availTime/" + taskId)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
                     .bodyToMono(Boolean.class)
                     .block();
         } catch (RuntimeException ex) {
@@ -99,7 +99,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
             return webClientWorkTime.get().uri("/rep/fact/week" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
                     .bodyToFlux(UserWorkDto.class)
                     .collectList()
                     .block();
@@ -128,7 +128,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
             return webClientWorkTime.get().uri("/rep/fact/week" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
                     .bodyToFlux(UserWorkFormDto.class)
                     .collectList()
                     .block();
@@ -148,7 +148,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
             return webClientWorkTime.get().uri("/rep/fact/lastTime" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени. Статус "))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени. Статус "))
                     .bodyToMono(Timestamp.class)
                     .block();
         } catch (RuntimeException ex) {
@@ -170,7 +170,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
             return webClientWorkTime.get().uri("/rep/fact/user/work/only" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени. Статус"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени. Статус"))
                     .bodyToMono(WorkUserFactPlan.class)
                     .block();
         } catch (RuntimeException ex) {

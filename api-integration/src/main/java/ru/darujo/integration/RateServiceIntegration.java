@@ -31,7 +31,7 @@ public class RateServiceIntegration extends ServiceIntegration {
             return webClientRate.get().uri("/time/all" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить плановые трудозатраты"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить плановые трудозатраты"))
                     .bodyToMono(WorkStageDto.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();

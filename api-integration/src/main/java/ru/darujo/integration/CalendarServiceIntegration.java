@@ -38,7 +38,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
             return webClientCalendar.get().uri("/calendar/period/time" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR,"Что-то пошло не так не удалось получить работы за период"))
+                            cR -> getMessage(cR,"Что-то пошло не так не удалось получить работы за период"))
                     .bodyToFlux(WeekWorkDto.class).collectList()
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -54,7 +54,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
             return webClientCalendar.get().uri("/calendar/work/time" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период"))
+                            cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период"))
                     .bodyToMono(Float.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -71,7 +71,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
             return Objects.requireNonNull(webClientCalendar.get().uri("/vacation" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период"))
+                            cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период"))
                     .bodyToMono(new ParameterizedTypeReference<CustomPageImpl<VacationDto>>() {
                     })
                     .doOnError(throwable -> log.error(throwable.getMessage()))
@@ -92,7 +92,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
             return webClientCalendar.get().uri("/vacation/report/user/work/day/last" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
+                            cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
                     .bodyToMono(Timestamp.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -110,7 +110,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
             return webClientCalendar.get().uri("/vacation/report/user/work/day" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
+                            cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
                     .bodyToMono(Boolean.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -128,7 +128,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
             return webClientCalendar.get().uri("/vacation/report/work/day/after/week" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
+                            cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
                     .bodyToMono(Boolean.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -158,7 +158,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
             return webClientCalendar.get().uri("/vacation/inform/day/begin" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
+                            cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
                     .bodyToMono(Boolean.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -175,7 +175,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
             return webClientCalendar.get().uri("/vacation/inform/day/end" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
+                            cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
                     .bodyToMono(Boolean.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -195,7 +195,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
             return webClientCalendar.get().uri("/vacation/inform/user/day/begin" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
+                            cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
                     .bodyToFlux(VacationDto.class)
                     .collectList()
                     .doOnError(throwable -> log.error(throwable.getMessage()))

@@ -27,7 +27,7 @@ public class TelegramServiceIntegration extends ServiceIntegration {
                     .bodyValue(text)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса telegram"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса telegram"))
                     .bodyToMono(Void.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -46,7 +46,7 @@ public class TelegramServiceIntegration extends ServiceIntegration {
                     .bodyValue(textFile)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса telegram"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса telegram"))
                     .bodyToMono(Void.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -68,7 +68,7 @@ public class TelegramServiceIntegration extends ServiceIntegration {
                     .bodyValue(text)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса telegram"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса telegram"))
                     .bodyToMono(Void.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -85,7 +85,7 @@ public class TelegramServiceIntegration extends ServiceIntegration {
             webClientTelegram.delete().uri("/file" + sb)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса telegram"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса telegram"))
                     .bodyToMono(Void.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();

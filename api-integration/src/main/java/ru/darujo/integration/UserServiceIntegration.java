@@ -37,7 +37,7 @@ public class UserServiceIntegration extends ServiceIntegration {
             return webClientUser.get().uri("/user" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> UserServiceIntegration.getMessage(cR, "Что-то пошло не так не удалось получить данные пользователю"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные пользователю"))
                     .bodyToMono(UserDto.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -57,7 +57,7 @@ public class UserServiceIntegration extends ServiceIntegration {
             return Objects.requireNonNull(webClientUser.get().uri(stringBuilder.toString())
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> UserServiceIntegration.getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
+                            clientResponse -> getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
                     .bodyToMono(new ParameterizedTypeReference<CustomPageImpl<UserDto>>() {
                     })
                     .doOnError(throwable -> log.error(throwable.getMessage()))
@@ -80,7 +80,7 @@ public class UserServiceIntegration extends ServiceIntegration {
             return webClientUser.get().uri("/user/telegram/link" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> UserServiceIntegration.getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
+                            clientResponse -> getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
                     .bodyToMono(ResultMes.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -101,7 +101,7 @@ public class UserServiceIntegration extends ServiceIntegration {
             return webClientUser.get().uri("/user/telegram/delete" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> UserServiceIntegration.getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
+                            clientResponse -> getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
                     .bodyToMono(Boolean.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -120,7 +120,7 @@ public class UserServiceIntegration extends ServiceIntegration {
             return webClientUser.get().uri("/information")
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> UserServiceIntegration.getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
+                            clientResponse -> getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
                     .bodyToMono(MapUserInfoDto.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -141,7 +141,7 @@ public class UserServiceIntegration extends ServiceIntegration {
 //                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные пользователю" + clientResponse.bodyToMono(String.class).flatMap(s -> {log.error(s);
 //                                return Mono.just(s);}))))
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> UserServiceIntegration.getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю :")
+                            clientResponse -> getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю :")
                     )
                     .bodyToMono(ResultMes.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
