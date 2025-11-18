@@ -65,7 +65,7 @@ public class WorkAgreementResponseService {
 
     public List<WorkAgreementResponse> findWorkAgreementResponse(Long workId,Long requestId) {
         Specification<WorkAgreementResponse> specification = Specification.where(Specifications.eq(null, "workId", workId));
-        specification = Specifications.eq(specification, "requestId", requestId);
+        specification = Specifications.eq(specification, "request", requestId);
         return workAgreementResponseRepository.findAll(specification, Sort.by("workId").and(Sort.by("requestId").and(Sort.by("timestamp"))));
     }
 

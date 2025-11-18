@@ -46,7 +46,8 @@
                 <button ng-click="deleteWorkStage(request.id)">Удалить</button>
             </td>
         </tr>
-        <tr ng-repeat="response in request">
+        <tr ng-repeat="response in request.listResponce">
+            <td></td>
             <td ng-if="!work.firstName">{{response.nikName}}</td>
             <td ng-if="work.firstName">{{response.lastName}} {{response.firstName}}
                 {{response.patronymic}}

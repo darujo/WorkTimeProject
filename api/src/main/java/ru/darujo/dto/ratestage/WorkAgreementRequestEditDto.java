@@ -69,4 +69,12 @@ public class WorkAgreementRequestEditDto {
     public Long getWorkId() {
         return workId;
     }
+
+    public void setNikName(String nikName) {
+        this.nikName = nikName;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
+    }
 }

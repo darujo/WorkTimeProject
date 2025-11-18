@@ -562,7 +562,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             console.log(reject);
             setTimeout(() => {
                 resolve('Timeout resolved');
-            }, 100);
+            }, 10);
         });
     }
 

@@ -11,6 +11,7 @@ import ru.darujo.dto.ratestage.WorkAgreementRequestEditDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.service.WorkAgreementRequestService;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,7 +31,13 @@ public class WorkAgreementRequestController {
     }
 
     @PostMapping("")
-    public WorkAgreementRequestEditDto WorkAgreementRequestSave(@RequestBody WorkAgreementRequestEditDto workAgreementRequestEditDto) {
+    public WorkAgreementRequestEditDto WorkAgreementRequestSave(@RequestHeader String username, @RequestBody WorkAgreementRequestEditDto workAgreementRequestEditDto) {
+        if(workAgreementRequestEditDto.getNikName() == null || workAgreementRequestEditDto.getNikName().isEmpty()){
+            workAgreementRequestEditDto.setNikName(username);
+        }
+        if (workAgreementRequestEditDto.getTimestamp() == null){
+            workAgreementRequestEditDto.setTimestamp(new Timestamp(System.currentTimeMillis()));
+        }
         return WorkAgreementRequestConvertor.getWorkAgreementRequestEditDto(workAgreementRequestService.saveWorkCriteria(WorkAgreementRequestConvertor.getWorkAgreementRequest(workAgreementRequestEditDto)));
     }
 
@@ -48,7 +55,7 @@ public class WorkAgreementRequestController {
         return workAgreementRequestService.findWorkAgreementRequest(workId).stream().map(WorkAgreementRequestConvertor::getWorkAgreementRequestDto).collect(Collectors.toList());
     }
     @GetMapping("/status")
-    public List<AttrDto<Enum<?>>> STatusList() {
+    public List<AttrDto<Enum<?>>> StatusList() {
         return EnumHelper.getList(StatusRequest.values());
     }
 }

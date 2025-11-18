@@ -83,7 +83,7 @@ angular.module('workTimeService').controller('requestController', function ($sco
     // };
 
     let create = function () {
-        $scope.Response = {
+        $scope.Request = {
             id: null,
             workId: WorkId,
             timestamp: null,
@@ -97,10 +97,24 @@ angular.module('workTimeService').controller('requestController', function ($sco
         $http.get(constPatchWorkRate + "/agreement/request" + requestId)
             .then(function (response) {
                 // WorkTimeIdEdit = response.data.id;
-                $scope.Response = response.data;
-                console.log($scope.Response);
+                $scope.Request = response.data;
+                console.log($scope.Request);
 
                 showRequestEdit();
+
+            }, function errorCallback(response) {
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                }
+            });
+    };
+    let loadStatus = function () {
+        $http.get(constPatchWorkRate + "/agreement/request/status")
+            .then(function (response) {
+                // WorkTimeIdEdit = response.data.id;
+                $scope.StatusList = response.data;
+                console.log($scope.StatusList);
+
 
             }, function errorCallback(response) {
                 console.log(response)
@@ -127,10 +141,10 @@ angular.module('workTimeService').controller('requestController', function ($sco
     let sendSave = false;
     $scope.save = function () {
         console.log()
-        console.log($scope.WorkStage);
+        console.log($scope.Request);
         if (!sendSave) {
             sendSave = true;
-            $http.post(constPatchWorkRate + "/agreement/request", $scope.Response)
+            $http.post(constPatchWorkRate + "/agreement/request", $scope.Request)
                 .then(function (response) {
                     sendSave = false;
                     console.log(response);
@@ -146,7 +160,7 @@ angular.module('workTimeService').controller('requestController', function ($sco
     };
     $scope.Cancel = function () {
         console.log("workPage")
-        $location.path('/work').search({});
+        $location.path('/agreement').search({workId: WorkId});
     }
     // $scope.showWorkCriteriaAdd = function () {
     //     document.getElementById("WorkCriteriaAdd").style.display = "block";
@@ -346,6 +360,13 @@ angular.module('workTimeService').controller('requestController', function ($sco
     //     }
     // };
 // ---------------------------------------------------------------------------------
+    console.log("Start workRate");
+    $location.getUsers().then(function (result) {
+        $scope.UserList = result;
+        console.log("result UserList");
+        console.log(result);
+    });
+    loadStatus();
     $scope.Filt = {}
     $location.parserFilter($scope.Filt);
     // let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
@@ -512,12 +533,7 @@ angular.module('workTimeService').controller('requestController', function ($sco
     //     }
     //
     // };
-    console.log("Start workRate");
-    $location.getUsers().then(function (result) {
-        $scope.UserList = result;
-        console.log("result UserList");
-        console.log(result);
-    });
+
     // $scope.showWorkStageAdd();
     // $scope.showWorkCriteriaAdd();
     // $scope.showWorkTypeAdd();
