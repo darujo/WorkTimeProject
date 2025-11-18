@@ -39,11 +39,14 @@
             <td>{{request.comment}}</td>
             <td>{{request.term}}</td>
             <td>{{request.status}}</td>
-            <td ng-if="stageEdit && !ZI.rated">
-                <button ng-click="editWorkStage(request.id)">Изменить</button>
+            <td>
+                <button ng-click="addResponse(request.id)">Изменить</button>
             </td>
-            <td ng-if="stageEdit  && !ZI.rated">
-                <button ng-click="deleteWorkStage(request.id)">Удалить</button>
+            <td>
+                <button ng-click="editRequest(request.id)">Изменить</button>
+            </td>
+            <td>
+                <button ng-click="deleteRequest(request.id)">Удалить</button>
             </td>
         </tr>
         <tr ng-repeat="response in request.listResponce">
@@ -58,6 +61,12 @@
             <td>{{response.comment}}</td>
             <td>{{response.term}}</td>
             <td>{{response.status}}</td>
+            <td>
+                <button ng-click="editResponse(request.id)">Изменить</button>
+            </td>
+            <td>
+                <button ng-click="deleteResponse(request.id)">Удалить</button>
+            </td>
         </tr>
         </tbody>
     </table>
