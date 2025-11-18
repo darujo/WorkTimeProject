@@ -89,8 +89,13 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
             Date dateEnd) {
         StringBuilder stringBuilder = new StringBuilder();
         taskIds.forEach(taskId -> addTeg(stringBuilder, "taskId", taskId));
+
         addTeg(stringBuilder, "nikName", nikName);
-        addTeg(stringBuilder, "addTotal", addTotal);
+        if(stringBuilder.isEmpty()){
+            log.error("нет тасков");
+            return null;
+
+        }addTeg(stringBuilder, "addTotal", addTotal);
         addTeg(stringBuilder, "weekSplit", weekSplit);
         addTeg(stringBuilder, "dateStart", dateStart);
         addTeg(stringBuilder, "dateEnd", dateEnd);
