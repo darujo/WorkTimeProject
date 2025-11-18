@@ -1,6 +1,6 @@
 angular.module('workTimeService').controller('agreementController', function ($scope, $http, $location) {
 
-    const constPatchWorkRate = window.location.origin + '/argement/v1';
+    const constPatchWorkRate = window.location.origin + '/rate-service/v1';
     const constPatchRight = window.location.origin + '/work-service/v1';
     const constPatchWork = window.location.origin + '/work-service/v1';
     $scope.work = {
@@ -63,7 +63,7 @@ angular.module('workTimeService').controller('agreementController', function ($s
             $scope.load1 = true;
             $scope.WorkStageList = null;
             $http({
-                url: constPatchWorkRate + "/stage",
+                url: constPatchWorkRate + "/agreement/request/full",
                 method: "get",
                 params: {
                     workId: WorkId,
