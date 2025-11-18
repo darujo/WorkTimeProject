@@ -1,14 +1,14 @@
-angular.module('workTimeService').controller('agreementController', function ($scope, $http, $location) {
+angular.module('workTimeService').controller('requestController', function ($scope, $http, $location) {
 
     const constPatchWorkRate = window.location.origin + '/rate-service/v1';
     // const constPatchRight = window.location.origin + '/work-service/v1';
-    const constPatchWork = window.location.origin + '/work-service/v1';
-    $scope.work = {
-        roleStr: null,
-        stage0Fact: null,
-        stageAll: null,
-        criteriaStr: null
-    }
+    // const constPatchWork = window.location.origin + '/work-service/v1';
+    // $scope.work = {
+    //     roleStr: null,
+    //     stage0Fact: null,
+    //     stageAll: null,
+    //     criteriaStr: null
+    // }
     // $scope.showWorkStageAdd = function () {
     //     document.getElementById("WorkStageAdd").style.display = "block";
     //     document.getElementById("FormWorkStage").style.display = "none";
@@ -16,25 +16,25 @@ angular.module('workTimeService').controller('agreementController', function ($s
     //     console.log($scope.stageCreate);
     //
     // };
-    // let showWorkStageEdit = function () {
-    //     document.getElementById("WorkStageAdd").style.display = "none";
-    //     document.getElementById("FormWorkStage").style.display = "block";
-    // };
-    let WorkId;
-    $scope.loadWork = function () {
-        console.log("loadWork");
-        $http({
-            url: constPatchWork + "/works/obj/little/" + WorkId,
-            method: "get"
-        }).then(function (response) {
-            console.log(response.data);
-            $scope.ZI = response.data;
-        }, function errorCallback(response) {
-            console.log(response)
-            if ($location.checkAuthorized(response)) {
-            }
-        });
+    document.getElementById("FormRequest").style.display = "none";
+    let showRequestEdit = function () {
+        document.getElementById("FormRequest").style.display = "block";
     };
+    let WorkId;
+    // $scope.loadWork = function () {
+    //     console.log("loadWork");
+    //     $http({
+    //         url: constPatchWork + "/works/obj/little/" + WorkId,
+    //         method: "get"
+    //     }).then(function (response) {
+    //         console.log(response.data);
+    //         $scope.ZI = response.data;
+    //     }, function errorCallback(response) {
+    //         console.log(response)
+    //         if ($location.checkAuthorized(response)) {
+    //         }
+    //     });
+    // };
     // $scope.changeRated = function (rated) {
     //     console.log("changeRated");
     //     $scope.ZI[rated] = false;
@@ -55,62 +55,59 @@ angular.module('workTimeService').controller('agreementController', function ($s
     //     });
     // }
 
-    $scope.loadAgreement = function () {
-        console.log("loadAgreement");
-        if ($scope.load1) {
-            alert("Подождите обрабатывается предыдущий запрос")
-        } else {
-            $scope.load1 = true;
-            $scope.RequestList = null;
-            $http({
-                url: constPatchWorkRate + "/agreement/request/full",
-                method: "get",
-                params: {
-                    workId: WorkId
-
-                }
-            }).then(function (response) {
-                $scope.load1 = false;
-                console.log(response.data);
-                $scope.RequestList = response.data;
-            }, function errorCallback(response) {
-                $scope.load1 = false;
-                console.log(response)
-                if ($location.checkAuthorized(response)) {
-                }
-            });
-        }
-    };
-
-    // $scope.createWorkStage = function () {
-    //     $scope.WorkStage = {
-    //         id: null,
-    //         workId: WorkId,
-    //         nikName: "",
-    //         role: "",
-    //         stage0: "",
-    //         stage1: "",
-    //         stage2: "",
-    //         stage3: "",
-    //         stage4: ""
-    //     }
-    //     showWorkStageEdit();
-    // }
-    // $scope.editWorkStage = function (workStageId) {
-    //     $http.get(constPatchWorkRate + "/stage/" + workStageId)
-    //         .then(function (response) {
-    //             // WorkTimeIdEdit = response.data.id;
-    //             $scope.WorkStage = response.data;
-    //             console.log($scope.WorkStage);
+    // $scope.loadWorkStage = function () {
+    //     console.log("loadWorkStage");
+    //     if ($scope.load1) {
+    //         alert("Подождите обрабатывается предыдущий запрос")
+    //     } else {
+    //         $scope.load1 = true;
+    //         $scope.RequestList = null;
+    //         $http({
+    //             url: constPatchWorkRate + "/agreement/request/full",
+    //             method: "get",
+    //             params: {
+    //                 workId: WorkId
     //
-    //             showWorkStageEdit();
-    //
+    //             }
+    //         }).then(function (response) {
+    //             $scope.load1 = false;
+    //             console.log(response.data);
+    //             $scope.RequestList = response.data;
     //         }, function errorCallback(response) {
+    //             $scope.load1 = false;
     //             console.log(response)
     //             if ($location.checkAuthorized(response)) {
     //             }
     //         });
-    // }
+    //     }
+    // };
+
+    let create = function () {
+        $scope.Response = {
+            id: null,
+            workId: WorkId,
+            timestamp: null,
+            comment: "",
+            term: null,
+            status: ""
+        }
+        showRequestEdit();
+    }
+    let edit = function (requestId) {
+        $http.get(constPatchWorkRate + "/agreement/request" + requestId)
+            .then(function (response) {
+                // WorkTimeIdEdit = response.data.id;
+                $scope.Response = response.data;
+                console.log($scope.Response);
+
+                showRequestEdit();
+
+            }, function errorCallback(response) {
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                }
+            });
+    };
     // $scope.deleteWorkStage = function (workStageId) {
     //     $http.delete(constPatchWorkRate + "/stage/" + workStageId)
     //         .then(function (response) {
@@ -127,29 +124,27 @@ angular.module('workTimeService').controller('agreementController', function ($s
     //             }
     //         });
     // }
-    // let sendSave = false;
-    // $scope.saveWorkStage = function () {
-    //     console.log()
-    //     console.log($scope.WorkStage);
-    //     if (!sendSave) {
-    //         sendSave = true;
-    //         $http.post(constPatchWorkRate + "/stage", $scope.WorkStage)
-    //             .then(function (response) {
-    //                 sendSave = false;
-    //                 console.log(response);
-    //                 $scope.showWorkStageAdd();
-    //                 $scope.loadWorkStage();
-    //                 loadRateStatusS();
-    //             }, function errorCallback(response) {
-    //                 sendSave = false;
-    //                 console.log(response)
-    //                 if ($location.checkAuthorized(response)) {
-    //                     alert(response.data.message);
-    //                 }
-    //             });
-    //     }
-    // };
-    $scope.workPage = function () {
+    let sendSave = false;
+    $scope.save = function () {
+        console.log()
+        console.log($scope.WorkStage);
+        if (!sendSave) {
+            sendSave = true;
+            $http.post(constPatchWorkRate + "/agreement/request", $scope.Response)
+                .then(function (response) {
+                    sendSave = false;
+                    console.log(response);
+                    $scope.Cancel();
+                }, function errorCallback(response) {
+                    sendSave = false;
+                    console.log(response)
+                    if ($location.checkAuthorized(response)) {
+                        alert(response.data.message);
+                    }
+                });
+        }
+    };
+    $scope.Cancel = function () {
         console.log("workPage")
         $location.path('/work').search({});
     }
@@ -355,22 +350,28 @@ angular.module('workTimeService').controller('agreementController', function ($s
     $location.parserFilter($scope.Filt);
     // let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
     WorkId = $scope.Filt.workId;
+    console.log("request_load")
     console.log($scope.Filt);
 
     console.log(WorkId === undefined);
     console.log($scope.Filt.workId === null);
     if (WorkId === undefined)
     {
-        $scope.workPage();
+        $scope.Cancel();
         return;
     }
+    if($scope.Filt.id === undefined){
+        create();
+    } else {
+        edit($scope.Filt.id);
+    }
 
-    $scope.stageCreate = false;
-    $scope.stageEdit = false;
-    $scope.criteriaCreate = false;
-    $scope.criteriaEdit = false;
-    $scope.typeCreate = false;
-    $scope.typeEdit = false;
+    // $scope.stageCreate = false;
+    // $scope.stageEdit = false;
+    // $scope.criteriaCreate = false;
+    // $scope.criteriaEdit = false;
+    // $scope.typeCreate = false;
+    // $scope.typeEdit = false;
     // let checkRight = function (right, message, callBack) {
     //     // document.getElementById("ButtonSaveUp").style.display = "none";
     //     $scope.Resp = {message: null}
@@ -494,23 +495,23 @@ angular.module('workTimeService').controller('agreementController', function ($s
     //         }
     //     });
     // };
-    $scope.addRequest = function () {
-        console.log("addRequest");
-        $location.path('/agreement/request').search({workId: WorkId});
-
-    }
-    $scope.getStyle = function (code) {
-        let codeInt = parseInt(code);
-        if (codeInt !== 0) {
-            return {
-                'background-color': 'red',
-                'color': 'white'
-            };
-        } else {
-            return {};
-        }
-
-    };
+    // $scope.addRequest = function (workId) {
+    //     console.log("addRequest");
+    //     $location.path('/agreement/request').search({workId: workId});
+    //
+    // }
+    // $scope.getStyle = function (code) {
+    //     let codeInt = parseInt(code);
+    //     if (codeInt !== 0) {
+    //         return {
+    //             'background-color': 'red',
+    //             'color': 'white'
+    //         };
+    //     } else {
+    //         return {};
+    //     }
+    //
+    // };
     console.log("Start workRate");
     $location.getUsers().then(function (result) {
         $scope.UserList = result;
@@ -520,9 +521,9 @@ angular.module('workTimeService').controller('agreementController', function ($s
     // $scope.showWorkStageAdd();
     // $scope.showWorkCriteriaAdd();
     // $scope.showWorkTypeAdd();
-    $scope.loadWork();
+    // $scope.loadWork();
     // $scope.loadWorkCriteria();
     // $scope.loadWorkType();
-    $scope.loadAgreement();
+    // $scope.loadWorkStage();
     // loadRateStatus();
 })

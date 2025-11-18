@@ -43,6 +43,14 @@
                 templateUrl: 'workRate/workRate.html?ver='.toLowerCase() + ver,
                 controller: 'workRateController'
             })
+            .when('/agreement/request', {
+                templateUrl: 'workRate/request.html?ver='.toLowerCase() + ver,
+                controller: 'requestController'
+            })
+            .when('/agreement', {
+                templateUrl: 'workRate/agreement.html?ver='.toLowerCase() + ver,
+                controller: 'agreementController'
+            })
             .when('/calendar', {
                 templateUrl: 'calendar/calendar.html?ver=' + ver,
                 controller: 'calendarController'

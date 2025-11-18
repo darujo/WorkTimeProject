@@ -282,6 +282,10 @@ angular.module('workTimeService').controller('workController', function ($scope,
         console.log("Другая");
         $location.path('/rate').search({workId: workId});
     }
+    $scope.addAgreement = function (workId) {
+        console.log("Другая");
+        $location.path('/agreement').search({workId: workId});
+    }
     $scope.clearFilter = function (load) {
         console.log("clearFilter");
         $scope.Filt = {

@@ -352,8 +352,14 @@ angular.module('workTimeService').controller('workRateController', function ($sc
     };
 // ---------------------------------------------------------------------------------
 
-    let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
-    WorkId = paramsStr.get('workId');
+    $scope.Filt = {}
+    $location.parserFilter($scope.Filt);
+    WorkId = $scope.Filt.workId;
+    if (WorkId === undefined)
+    {
+        $scope.workPage();
+        return;
+    }
     $scope.stageCreate = false;
     $scope.stageEdit = false;
     $scope.criteriaCreate = false;

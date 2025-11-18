@@ -1,9 +1,9 @@
 <div>
-    <form id="FormWorkStage" ng-submit="saveWorkStage()">
-        <div class="horiz">
+    <form id="FormRequest" ng-submit="save()">
+        <div >
             <div class="filter_block min_block300 mar5">
                 <label for="User" class="p-form">ФИО</label>
-                <select class="vvod" name="UserFilterWorkStageSelect" id="User" ng-model="WorkStage.nikName">
+                <select class="vvod" name="UserFilterWorkStageSelect" id="User" ng-model="Response.nikName">
                     <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">{{user.lastName}}
                         {{user.firstName}} {{user.patronymic}}
                     </option>
@@ -16,7 +16,8 @@
             <label for="MesText">
                 Сообщение:
             </label>
-            <p><textarea id="MesText" class="vvod"  ng-model="Response.comment" placeholder="Введите комментарий"></textarea></p>
+            <p><textarea id="MesText" class="vvod" ng-model="Response.comment"
+                         placeholder="Введите комментарий"></textarea></p>
 
             <label for="ResponseTerm" class="p-form">
                 <input class="vvod" type="date" id="ResponseTerm" step="any"
@@ -32,43 +33,6 @@
                 </select>
             </div>
 
-            <div class="filter_block min_block200 mar5">
-                <label for="Role" class="p-form">Вид Работ</label>
-                <select class="vvod" name="RoleWorkStageSelect" id="Role" ng-model="WorkStage.role">
-                    <option ng-value="1" value="1">Разработка и отладка</option>
-                    <option ng-value="2" value="2">Внутренее тестирование</option>
-                </select>
-            </div>
-            <div class="filter_block mar5">
-                <label for="Stage0" class="p-form">Этап 0</label>
-                <input class="vvod" type="number" inputmode="numeric" id="Stage0" step="any"
-                                                   ng-model="WorkStage.stage0"/>
-
-            </div>
-            <div class="filter_block mar5">
-                <label for="Stage1" class="p-form">Этап 1</label>
-                <input class="vvod" type="number" inputmode="numeric" id="Stage1" step="any"
-                                                   ng-model="WorkStage.stage1"/>
-
-            </div>
-            <div class="filter_block mar5">
-                <label for="Stage2" class="p-form">Этап 2</label>
-                <input class="vvod" type="number" inputmode="numeric" id="Stage2" step="any"
-                                                   ng-model="WorkStage.stage2"/>
-
-            </div>
-            <div class="filter_block mar5">
-                <label for="Stage3" class="p-form">Этап 3</label>
-                <input class="vvod" type="number" inputmode="numeric" id="Stage3" step="any"
-                                                   ng-model="WorkStage.stage3"/>
-
-            </div>
-            <div class="filter_block mar5">
-                <label for="Stage4" class="p-form">Этап 4</label>
-                <input class="vvod" type="number" inputmode="numeric" id="Stage4" step="any"
-                                                   ng-model="WorkStage.stage4"/>
-
-            </div>
         </div>
         <button type="submit" class="button" id="ButtonSaveDown">Сохранить</button>
         <button type="button" ng-click="showWorkStageAdd()" class="button">Вернуться к списку</button>
