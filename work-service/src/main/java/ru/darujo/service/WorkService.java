@@ -98,7 +98,7 @@ public class WorkService {
                     if (work.getRelease() != null && !work.getRelease().getId().equals(release.getId())) {
                         release = releaseService.findById(work.getRelease().getId());
                         if (release.getIssuingReleaseFact() != null) {
-                            throw new ResourceNotFoundRunTime("Нельзя включать ЗИ в выпущеный релиз");
+                            throw new ResourceNotFoundRunTime("Нельзя включать ЗИ в выпущенный релиз");
                         }
                     }
                 }
@@ -106,7 +106,7 @@ public class WorkService {
                 if (work.getRelease() != null && work.getRelease().getId() != null) {
                     release = releaseService.findById(work.getRelease().getId());
                     if (release.getIssuingReleaseFact() != null) {
-                        throw new ResourceNotFoundRunTime("Нельзя включать ЗИ в выпущеный релиз");
+                        throw new ResourceNotFoundRunTime("Нельзя включать ЗИ в выпущенный релиз");
                     }
                 }
             }
@@ -114,7 +114,7 @@ public class WorkService {
             if (work.getRelease() != null && work.getRelease().getId() != null) {
                 release = releaseService.findById(work.getRelease().getId());
                 if (release.getIssuingReleaseFact() != null) {
-                    throw new ResourceNotFoundRunTime("Нельзя включать ЗИ в выпущеный релиз");
+                    throw new ResourceNotFoundRunTime("Нельзя включать ЗИ в выпущенный релиз");
                 }
             }
         }
