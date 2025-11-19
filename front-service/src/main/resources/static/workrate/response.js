@@ -5,22 +5,24 @@ angular.module('workTimeService').controller('responseController', function ($sc
     let showResponseEdit = function () {
         document.getElementById("FormResponse").style.display = "block";
     };
+    $scope.Response = {status: null}
     let WorkId;
     let RequestId;
     let create = function () {
+        console.log("create response");
         $scope.Response = {
             id: null,
             workId: WorkId,
             requestId : RequestId,
             timestamp: null,
             comment: "",
-            term: null,
-            status: ""
+            status: null
         }
+        console.log($scope.Response);
         showResponseEdit();
     }
     let edit = function (responseId) {
-        $http.get(constPatchWorkRate + "/agreement/response" + responseId)
+        $http.get(constPatchWorkRate + "/agreement/response/" + responseId)
             .then(function (response) {
                 // WorkTimeIdEdit = response.data.id;
                 $scope.Response = response.data;

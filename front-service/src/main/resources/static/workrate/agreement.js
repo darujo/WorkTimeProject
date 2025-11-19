@@ -2,11 +2,11 @@ angular.module('workTimeService').controller('agreementController', function ($s
 
     const constPatchWorkRate = window.location.origin + '/rate-service/v1';
     const constPatchWork = window.location.origin + '/work-service/v1';
-    $scope.work = {
-        roleStr: null,
-        stage0Fact: null,
-        stageAll: null,
-        criteriaStr: null
+    $scope.request = {
+        listResponse: null,
+        statusName: null,
+        timestampStr:null,
+        termStr:null
     }
 
     let WorkId;
@@ -63,8 +63,7 @@ angular.module('workTimeService').controller('agreementController', function ($s
 
     console.log(WorkId === undefined);
     console.log($scope.Filt.workId === null);
-    if (WorkId === undefined)
-    {
+    if (WorkId === undefined) {
         $scope.workPage();
         return;
     }
@@ -93,6 +92,54 @@ angular.module('workTimeService').controller('agreementController', function ($s
         }
 
     };
+    $scope.addResponse = function (requestId) {
+        console.log("addResponse");
+        console.log({workId: WorkId, requestId: requestId});
+        $location.path('/agreement/response').search({workId: WorkId, requestId: requestId});
+
+    }
+    $scope.editResponse = function (requestId, id) {
+        console.log("addResponse");
+        $location.path('/agreement/response').search({workId: WorkId, requestId: requestId, id: id});
+
+    }
+    $scope.deleteResponse = function (responseId) {
+        console.log("deleteResponse");
+        $http.get(constPatchWorkRate + "/agreement/response" + responseId)
+            .then(function (response) {
+                // WorkTimeIdEdit = response.data.id;
+                console.log(response.data);
+
+
+            }, function errorCallback(response) {
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                }
+            });
+
+    }
+    $scope.editRequest = function (id) {
+        console.log("addResponse");
+        $location.path('/agreement/request').search({workId: WorkId, id: id});
+
+    }
+
+    $scope.deleteRequest = function (requestId) {
+        console.log("deleteResponse");
+        $http.get(constPatchWorkRate + "/agreement/request" + requestId)
+            .then(function (response) {
+                // WorkTimeIdEdit = response.data.id;
+                console.log(response.data);
+
+
+            }, function errorCallback(response) {
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                }
+            });
+
+    }
+
     console.log("Start workRate");
     $location.getUsers().then(function (result) {
         $scope.UserList = result;

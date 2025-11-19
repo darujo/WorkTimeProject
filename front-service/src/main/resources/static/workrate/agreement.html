@@ -3,7 +3,7 @@
     <h1>{{ZI.codeSap}} </h1>
     <h1>{{ZI.codeZI}} {{ZI.name}} </h1>
 
-    <h1 ng-style="getStyle(ZI.rated ? 0 : 1)">{{ZI.rated ? "Оценка выполнена" : "Оценка не выполнена" }}</h1>
+<!--    <h1 ng-style="getStyle(ZI.rated ? 0 : 1)">{{ZI.rated ? "Оценка выполнена" : "Оценка не выполнена" }}</h1>-->
 
 <!--    <h1 ng-style="getStyle(RateStatusSC.code)">{{RateStatusSC.value}}</h1>-->
 <!--    <h1 ng-style="getStyle(RateStatusST.code)">{{RateStatusST.value}}</h1>-->
@@ -15,13 +15,16 @@
     </div>
     <table>
         <tr>
-            <td class="table_head1">№ п/п</td>
+            <td class="table_head2">№ п/п</td>
             <td class="table_head2">ФИО</td>
-            <td class="table_head1">версия</td>
+            <td class="table_head2">версия</td>
             <td class="table_head2">Дата и время</td>
             <td class="table_head2">Комментарий</td>
-            <td class="table_head1">Срок</td>
+            <td class="table_head2">Срок</td>
             <td class="table_head2">Статус</td>
+            <td class="table_head2"></td>
+            <td class="table_head2"></td>
+            <td class="table_head2"></td>
 <!--            <td class="table_head2" ng-if="stageEdit && !ZI.rated"></td>-->
 <!--            <td class="table_head1" ng-if="stageEdit && !ZI.rated"></td>-->
             
@@ -35,12 +38,12 @@
             </td>
 
             <td>{{request.version}}</td>
-            <td>{{request.timestamp}}</td>
+            <td>{{request.timestampStr}}</td>
             <td>{{request.comment}}</td>
-            <td>{{request.term}}</td>
-            <td>{{request.status}}</td>
+            <td>{{request.termStr}}</td>
+            <td>{{request.statusName}}</td>
             <td>
-                <button ng-click="addResponse(request.id)">Изменить</button>
+                <button ng-click="addResponse(request.id)">Соглсовать</button>
             </td>
             <td>
                 <button ng-click="editRequest(request.id)">Изменить</button>
@@ -49,7 +52,7 @@
                 <button ng-click="deleteRequest(request.id)">Удалить</button>
             </td>
         </tr>
-        <tr ng-repeat="response in request.listResponce">
+        <tr ng-repeat="response in request.listResponse">
             <td></td>
             <td ng-if="!work.firstName">{{response.nikName}}</td>
             <td ng-if="work.firstName">{{response.lastName}} {{response.firstName}}
@@ -57,15 +60,14 @@
             </td>
 
             <td>ответил</td>
-            <td>{{response.timestamp}}</td>
-            <td>{{response.comment}}</td>
-            <td>{{response.term}}</td>
-            <td>{{response.status}}</td>
+            <td>{{response.timestampStr}}</td>
+            <td class="text_left" colspan="3">{{response.comment}}</td>
+            <td>{{response.statusName}}</td>
             <td>
-                <button ng-click="editResponse(request.id)">Изменить</button>
+                <button ng-click="editResponse(request.id,response.id)">Изменить</button>
             </td>
             <td>
-                <button ng-click="deleteResponse(request.id)">Удалить</button>
+                <button ng-click="deleteResponse(response.id)">Удалить</button>
             </td>
         </tr>
         </tbody>
@@ -77,57 +79,5 @@
         <button type="button" class="head_button" id="AddRequest" ng-click="addRequest()">Добавить</button>
 
     </div>
-<!--    <form id="FormWorkStage" ng-submit="saveWorkStage()">-->
-<!--        <div class="horiz">-->
-
-<!--            <div class="filter_block min_block300 mar5">-->
-<!--                <label for="User" class="p-form">ФИО</label>-->
-<!--                <select class="vvod" name="UserFilterWorkStageSelect" id="User" ng-model="WorkStage.nikName">-->
-<!--                    <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">{{user.lastName}}-->
-<!--                        {{user.firstName}} {{user.patronymic}}-->
-<!--                    </option>-->
-<!--                </select>-->
-<!--            </div>-->
-<!--            <div class="filter_block min_block200 mar5">-->
-<!--                <label for="Role" class="p-form">Вид Работ</label>-->
-<!--                <select class="vvod" name="RoleWorkStageSelect" id="Role" ng-model="WorkStage.role">-->
-<!--                    <option ng-value="1" value="1">Разработка и отладка</option>-->
-<!--                    <option ng-value="2" value="2">Внутренее тестирование</option>-->
-<!--                </select>-->
-<!--            </div>-->
-<!--            <div class="filter_block mar5">-->
-<!--                <label for="Stage0" class="p-form">Этап 0</label>-->
-<!--                <input class="vvod" type="number" inputmode="numeric" id="Stage0" step="any"-->
-<!--                                                   ng-model="WorkStage.stage0"/>-->
-
-<!--            </div>-->
-<!--            <div class="filter_block mar5">-->
-<!--                <label for="Stage1" class="p-form">Этап 1</label>-->
-<!--                <input class="vvod" type="number" inputmode="numeric" id="Stage1" step="any"-->
-<!--                                                   ng-model="WorkStage.stage1"/>-->
-
-<!--            </div>-->
-<!--            <div class="filter_block mar5">-->
-<!--                <label for="Stage2" class="p-form">Этап 2</label>-->
-<!--                <input class="vvod" type="number" inputmode="numeric" id="Stage2" step="any"-->
-<!--                                                   ng-model="WorkStage.stage2"/>-->
-
-<!--            </div>-->
-<!--            <div class="filter_block mar5">-->
-<!--                <label for="Stage3" class="p-form">Этап 3</label>-->
-<!--                <input class="vvod" type="number" inputmode="numeric" id="Stage3" step="any"-->
-<!--                                                   ng-model="WorkStage.stage3"/>-->
-
-<!--            </div>-->
-<!--            <div class="filter_block mar5">-->
-<!--                <label for="Stage4" class="p-form">Этап 4</label>-->
-<!--                <input class="vvod" type="number" inputmode="numeric" id="Stage4" step="any"-->
-<!--                                                   ng-model="WorkStage.stage4"/>-->
-
-<!--            </div>-->
-<!--        </div>-->
-<!--        <button type="submit" class="button" id="ButtonSaveDown">Сохранить</button>-->
-<!--        <button type="button" ng-click="showWorkStageAdd()" class="button">Вернуться к списку</button>-->
-<!--    </form>-->
 </div>
 

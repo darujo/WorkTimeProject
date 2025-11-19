@@ -19,12 +19,13 @@ angular.module('workTimeService').controller('requestController', function ($sco
         showRequestEdit();
     }
     let edit = function (requestId) {
-        $http.get(constPatchWorkRate + "/agreement/request" + requestId)
+        $http.get(constPatchWorkRate + "/agreement/request/" + requestId)
             .then(function (response) {
                 // WorkTimeIdEdit = response.data.id;
                 $scope.Request = response.data;
                 console.log($scope.Request);
-
+                $scope.Request.timestamp = typeof response.data.timestamp === "undefined" ? null : new Date(response.data.timestamp);
+                $scope.Request.term = typeof response.data.term === "undefined" ? null : new Date(response.data.term);
                 showRequestEdit();
 
             }, function errorCallback(response) {
@@ -69,7 +70,7 @@ angular.module('workTimeService').controller('requestController', function ($sco
         }
     };
     $scope.Cancel = function () {
-        console.log("workPage")
+        console.log("Cancel Request")
         $location.path('/agreement').search({workId: WorkId});
     }
 

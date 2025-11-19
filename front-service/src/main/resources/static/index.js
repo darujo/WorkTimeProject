@@ -47,6 +47,10 @@
                 templateUrl: 'workRate/request.html?ver='.toLowerCase() + ver,
                 controller: 'requestController'
             })
+            .when('/agreement/response', {
+                templateUrl: 'workRate/response.html?ver='.toLowerCase() + ver,
+                controller: 'responseController'
+            })
             .when('/agreement', {
                 templateUrl: 'workRate/agreement.html?ver='.toLowerCase() + ver,
                 controller: 'agreementController'

@@ -10,6 +10,7 @@ import ru.darujo.dto.ratestage.WorkAgreementResponseDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.service.WorkAgreementResponseService;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +30,14 @@ public class WorkAgreementResponseController {
     }
 
     @PostMapping("")
-    public WorkAgreementResponseDto WorkAgreementResponseSave(@RequestBody WorkAgreementResponseDto workAgreementResponseDto) {
+    public WorkAgreementResponseDto WorkAgreementResponseSave(@RequestHeader String username,
+                                                              @RequestBody WorkAgreementResponseDto workAgreementResponseDto) {
+        if(workAgreementResponseDto.getNikName() == null || workAgreementResponseDto.getNikName().isEmpty()){
+            workAgreementResponseDto.setNikName(username);
+        }
+        if (workAgreementResponseDto.getTimestamp() == null){
+            workAgreementResponseDto.setTimestamp(new Timestamp(System.currentTimeMillis()));
+        }
         return WorkAgreementResponseConvertor.getWorkAgreementResponseDTO(workAgreementResponseService.saveWorkAgreementResponse(WorkAgreementResponseConvertor.getWorkAgreementResponse(workAgreementResponseDto)));
     }
 

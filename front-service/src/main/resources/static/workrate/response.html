@@ -12,22 +12,15 @@
             <label for="ResponseTimestamp" class="p-form">Дата и время заведения</label>
             <input class="vvod" type="datetime-local" id="ResponseTimestamp" step="any"
                    ng-model="Response.timestamp"/>
-            <label for="ResponseVersion" class="p-form">Версия ТЗ</label>
-            <input class="vvod" type="text" id="ResponseVersion" step="any"
-                   ng-model="Response.version"/>
             <label for="MesText">
                 Сообщение:
             </label>
             <p><textarea id="MesText" class="vvod" ng-model="Response.comment"
                          placeholder="Введите комментарий"></textarea></p>
 
-            <label for="ResponseTerm" class="p-form">Срок</label>
-            <input class="vvod" type="date" id="ResponseTerm" step="any"
-                   ng-model="Response.term"/>
-
 
             <div class="filter_block min_block300 mar5">
-                <label for="Status" class="p-form">статус</label>
+                <label for="Status" class="p-form">Статус</label>
                 <select required class="vvod" name="ResponseStatus" id="Status" ng-model="Response.status">
                     <option value="">--Выберите тип сообщения--</option>
                     <option ng-repeat="status in StatusList" ng-value="status.code" value="status.code">{{status.value}}

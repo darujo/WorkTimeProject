@@ -157,7 +157,7 @@ public class Tasks {
             messageInformationService.sendFile(new MessageInfoDto(author,
                     (chatId == null ? null : new UserInfoDto(null, author, chatId)),
                     messageType, "Рассылка отчете статус ЗИ"
-            ), "Zi_Report_" + DataHelper.dateToYYYYMMDD(new Timestamp(System.currentTimeMillis())) + ".html", report);
+            ), "Zi_Report_" + DataHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
 
         });
     }
@@ -255,7 +255,7 @@ public class Tasks {
             messageInformationService.sendFile(new MessageInfoDto(author,
                     (chatId == null ? null : new UserInfoDto(null, author, chatId)),
                     messageType, "Факт загрузки по ЗИ"
-            ), "ZI_Work_" + DataHelper.dateToYYYYMMDD(new Timestamp(System.currentTimeMillis())) + ".html", report);
+            ), "ZI_Work_" + DataHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
         });
     }
 
@@ -273,7 +273,7 @@ public class Tasks {
             messageInformationService.sendFile(new MessageInfoDto(author,
                     (chatId == null ? null : new UserInfoDto(null, author, chatId)),
                     messageType, "Факт загрузки за предыдущую неделю"
-            ), "Week_Work_" + DataHelper.dateToYYYYMMDD(new Timestamp(System.currentTimeMillis())) + ".html", report);
+            ), "Week_Work_" + DataHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
         });
     }
 

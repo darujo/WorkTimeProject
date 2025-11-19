@@ -1,15 +1,18 @@
 package ru.darujo.dto.ratestage;
 
+import ru.darujo.assistant.helper.DataHelper;
+
 import java.sql.Timestamp;
 
 public class WorkAgreementResponseDto {
-    @SuppressWarnings("unused")
     public WorkAgreementResponseDto() {
     }
 
     private Long id;
     private String nikName;
     private Timestamp timestamp;
+    @SuppressWarnings("unused")
+    private String timestampStr;
     private String comment;
     private StatusResponse status;
     private Long workId;
@@ -62,5 +65,17 @@ public class WorkAgreementResponseDto {
     @SuppressWarnings("unused")
     public Long getRequestId() {
         return requestId;
+    }
+
+    public void setNikName(String nikName) {
+        this.nikName = nikName;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
+    }
+    @SuppressWarnings("unused")
+    public String getTimestampStr() {
+        return DataHelper.dateTimeToStr(timestamp);
     }
 }

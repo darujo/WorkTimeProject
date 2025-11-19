@@ -71,6 +71,6 @@ public class WorkAgreementResponseBuilder {
     }
 
     public WorkAgreementResponse getWorkAgreementResponse() {
-        return new WorkAgreementResponse(id, nikName, timestamp, comment, status, workId, WorkAgreementRequestService.getInstance().findRequest(id));
+        return new WorkAgreementResponse(id, nikName, timestamp, comment, status, workId, WorkAgreementRequestService.getInstance().findRequest(requestId));
     }
 }

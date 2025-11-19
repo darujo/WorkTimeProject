@@ -35,7 +35,10 @@ public class WorkAgreementRequestService {
     public Optional<WorkAgreementRequest> findById(long id) {
         return workAgreementRequestRepository.findById(id);
     }
-    public WorkAgreementRequest findRequest(long id) {
+    public WorkAgreementRequest findRequest(Long id) {
+        if (id == null){
+            return null;
+        }
         return findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Не найден запрос с ID = " + id));
     }
 

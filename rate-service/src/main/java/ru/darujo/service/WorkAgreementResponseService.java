@@ -44,7 +44,7 @@ public class WorkAgreementResponseService {
         }
         Specification<WorkAgreementResponse> specification = Specification.where(Specifications.eq(null, "workId", workAgreementResponse.getWorkId()));
         specification = Specifications.eq(specification, "request", workAgreementResponse.getRequest().getId());
-        specification = Specifications.eq(specification, "niKName", workAgreementResponse.getNikName());
+        specification = Specifications.eq(specification, "nikName", workAgreementResponse.getNikName());
         specification = Specifications.ne(specification, "id", workAgreementResponse.getId());
         WorkAgreementResponse workAgreementResponseSave = workAgreementResponseRepository.findOne(specification).orElse(null);
         if (workAgreementResponseSave != null) {
