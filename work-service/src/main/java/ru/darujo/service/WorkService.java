@@ -185,10 +185,8 @@ public class WorkService {
         if (work.getId() == null) {
             return;
         }
-        Work workSave = null;
-        if (work.getId() != null) {
-            workSave = workRepository.findById(work.getId()).orElse(null);
-        }
+        Work workSave;
+        workSave = workRepository.findById(work.getId()).orElse(null);
         if (workSave == null) {
             return;
         }
@@ -396,6 +394,9 @@ public class WorkService {
             if (work.getIssuePrototypeFact() != null && work.getAnaliseEndFact() != null) {
                 try {
                     date = getLastDateWorkBefore(work.getId(), work.getIssuePrototypeFact());
+                    if (date == null) {
+                        return save;
+                    }
                     if (work.getAnaliseEndFact().equals(date) || work.getAnaliseEndFact().before(date)) {
                         save.setSave(true).setDate(date);
                     }

@@ -62,6 +62,7 @@ public class WorkTimeService {
         return workTimeRepository.findById(id);
     }
 
+    @Transactional
     public WorkTime saveWorkTime(WorkTime workTime) {
         return saveWorkTime(workTime, true);
     }
@@ -135,7 +136,7 @@ public class WorkTimeService {
     public Page<WorkTime> findWorkTimeTask(String taskDEVBO, String taskBts, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, String comment, Integer page, Integer size) {
         Page<WorkTime> workTimes;
         List<Long> taskIdList = taskServiceIntegration.getTaskList(taskDEVBO, taskBts);
-        if (taskIdList == null || taskIdList.size() == 0) {
+        if (taskIdList == null || taskIdList.isEmpty()) {
             return new PageImpl<>(new ArrayList<>());
         }
 
@@ -230,7 +231,7 @@ public class WorkTimeService {
 
     public Boolean getAvailTime(long taskId) {
         Specification<WorkTime> specification = Specification.where(Specifications.eq(null, "taskId", taskId));
-        return workTimeRepository.findAll(specification).size() > 0;
+        return !workTimeRepository.findAll(specification).isEmpty();
     }
 
     public boolean checkRight(String right, boolean rightEdit, boolean rightCreate, boolean rightChangeUser) {
@@ -258,6 +259,6 @@ public class WorkTimeService {
     public Timestamp getLastTime(Long[] taskId, Timestamp dateGe, Timestamp dateLe) {
         Page<WorkTime> workTimes = findWorkTime(taskId, null, null, dateLe, null, dateGe, null, null, 1, 1);
 
-        return workTimes.getSize() == 1 ? workTimes.getContent().get(0).getWorkDate() : null;
+        return workTimes.getContent().size() == 1 ? workTimes.getContent().get(0).getWorkDate() : null;
     }
 }
