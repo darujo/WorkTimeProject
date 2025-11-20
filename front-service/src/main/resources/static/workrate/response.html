@@ -9,9 +9,9 @@
                     </option>
                 </select>
             </div>
-            <label for="ResponseTimestamp" class="p-form">Дата и время заведения</label>
+            <label for="ResponseTimestamp" class="p-form">Дата и время Согласования</label>
             <input class="vvod" type="datetime-local" id="ResponseTimestamp" step="any"
-                   ng-model="Response.timestamp"/>
+                   ng-model="Response.timestamp" readonly />
             <label for="MesText">
                 Сообщение:
             </label>
@@ -30,6 +30,6 @@
 
         </div>
         <button type="submit" class="button" id="ButtonSaveDown">Сохранить</button>
-        <button type="button" ng-click="showWorkStageAdd()" class="button">Вернуться к списку</button>
+        <button type="button" ng-click="Cancel()" class="button">Вернуться к списку</button>
     </form>
 </div>

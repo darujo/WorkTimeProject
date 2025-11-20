@@ -105,15 +105,20 @@ angular.module('workTimeService').controller('agreementController', function ($s
     }
     $scope.deleteResponse = function (responseId) {
         console.log("deleteResponse");
-        $http.get(constPatchWorkRate + "/agreement/response" + responseId)
+        $http.delete(constPatchWorkRate + "/agreement/response/" + responseId)
             .then(function (response) {
                 // WorkTimeIdEdit = response.data.id;
                 console.log(response.data);
-
+                $scope.loadAgreement();
 
             }, function errorCallback(response) {
                 console.log(response)
                 if ($location.checkAuthorized(response)) {
+                    if(response.data.message === undefined){
+                        alert("Произошла ошибка при удаление...");
+                    } else {
+                        alert(response.data.message);
+                    }
                 }
             });
 
@@ -125,16 +130,22 @@ angular.module('workTimeService').controller('agreementController', function ($s
     }
 
     $scope.deleteRequest = function (requestId) {
-        console.log("deleteResponse");
-        $http.get(constPatchWorkRate + "/agreement/request" + requestId)
+        console.log("deleteRequest");
+        $http.delete(constPatchWorkRate + "/agreement/request/" + requestId)
             .then(function (response) {
                 // WorkTimeIdEdit = response.data.id;
                 console.log(response.data);
-
+                console.log(response.data.message)
+                $scope.loadAgreement();
 
             }, function errorCallback(response) {
                 console.log(response)
                 if ($location.checkAuthorized(response)) {
+                    if(response.data.message === undefined){
+                        alert("Произошла ошибка при удаление...");
+                    } else {
+                        alert(response.data.message);
+                    }
                 }
             });
 

@@ -26,6 +26,8 @@ angular.module('workTimeService').controller('responseController', function ($sc
             .then(function (response) {
                 // WorkTimeIdEdit = response.data.id;
                 $scope.Response = response.data;
+                $scope.Response.timestamp = typeof response.data.timestamp === "undefined" ? null : new Date(response.data.timestamp);
+
                 console.log($scope.Response);
 
                 showResponseEdit();
@@ -41,6 +43,7 @@ angular.module('workTimeService').controller('responseController', function ($sc
             .then(function (response) {
                 // WorkTimeIdEdit = response.data.id;
                 $scope.StatusList = response.data;
+
                 console.log($scope.StatusList);
 
 

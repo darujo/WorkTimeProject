@@ -43,7 +43,7 @@ public class WorkAgreementRequestController {
 
     @DeleteMapping("/{id}")
     public void deleteWorkAgreementRequest(@PathVariable long id) {
-        workAgreementRequestService.deleteWorkCriteria(id);
+        workAgreementRequestService.deleteWorkRequest(id);
     }
 
     @GetMapping("")

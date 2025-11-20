@@ -24,19 +24,27 @@ public class WorkAgreementRequestService {
     public void setWorkAgreementRequestRepository(WorkAgreementRequestRepository workAgreementRequestRepository) {
         this.workAgreementRequestRepository = workAgreementRequestRepository;
     }
+
     @Getter
     private static WorkAgreementRequestService instance;
+    WorkAgreementResponseService workAgreementResponseService;
+
+    @Autowired
+    public void setWorkAgreementResponseService(WorkAgreementResponseService workAgreementResponseService) {
+        this.workAgreementResponseService = workAgreementResponseService;
+    }
 
     @PostConstruct
-    public void init(){
+    public void init() {
         instance = this;
     }
 
     public Optional<WorkAgreementRequest> findById(long id) {
         return workAgreementRequestRepository.findById(id);
     }
+
     public WorkAgreementRequest findRequest(Long id) {
-        if (id == null){
+        if (id == null) {
             return null;
         }
         return findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Не найден запрос с ID = " + id));
@@ -64,7 +72,10 @@ public class WorkAgreementRequestService {
         return workAgreementRequestRepository.save(workAgreementRequest);
     }
 
-    public void deleteWorkCriteria(Long id) {
+    public void deleteWorkRequest(Long id) {
+        if (workAgreementResponseService.findWorkAgreementResponse(null, id).size() > 0) {
+            throw new ResourceNotFoundRunTime("Нельзя удалить запрос у него уже есть согласование");
+        }
         workAgreementRequestRepository.deleteById(id);
     }
 
