@@ -5,24 +5,28 @@ import ru.darujo.type.TypeEnum;
 
 @Getter
 public enum CommandType implements TypeEnum {
-    LINK("Привязать акаунт"),
+    LINK("Привязать аккаунт"),
     STOP ("Убрать оповещения"),
-    REPORT ("Отчеты",true),
-    SEND_ME("Мне"),
-    SEND_ALL("Подписаным на уведомления"),
+    REPORT ("Отчеты",false,true),
+    SEND_ME("Мне", true),
+    SEND_ALL("Подписанным на уведомления",true),
     CANCEL("Отменить");
 
 
     private final String name;
     private final Boolean newParam;
+    private final Boolean availParam;
     CommandType(String name) {
-        this.name = name;
-        this.newParam = false;
+        this(name , false);
     }
+
 
     CommandType(String name, Boolean newParam) {
+        this(name , false,newParam);
+    }
+    CommandType(String name,  Boolean availParam, Boolean newParam) {
         this.name = name;
         this.newParam = newParam;
+        this.availParam = availParam;
     }
-
 }

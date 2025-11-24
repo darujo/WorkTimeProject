@@ -140,7 +140,7 @@ public class WorkRepService {
                             users = null;
                         }
                     }
-                    if (users != null && users.size() != 0) {
+                    if (users != null && !users.isEmpty()) {
                         List<String> userList = new ArrayList<>(users);
                         for (int i = 0; i < users.size(); i++) {
                             String user = userList.get(i);
@@ -214,7 +214,7 @@ public class WorkRepService {
         mapStringFloat.setList(usersTime);
         Work work = workService.findById(workId);
         Set<String> users;
-        if (nikName != null && !nikName.equals("")) {
+        if (nikName != null && !nikName.isEmpty()) {
             users = new HashSet<>();
             users.add(nikName);
         } else {
@@ -446,23 +446,19 @@ public class WorkRepService {
     }
 
     private ColorRGB getColor(String type) {
-        if (type.equals("analise")) {
-            return ColorHelper.ANALISE;
-        }
-        if (type.equals("develop")) {
-            return ColorHelper.DEVELOP;
-        }
-        if (type.equals("debug")) {
-            return ColorHelper.DEBUG;
-        }
-        if (type.equals("release")) {
-            return ColorHelper.RELEASE;
-        }
-        if (type.equals("ope")) {
-            return ColorHelper.OPE;
-        }
-        if (type.equals("public")) {
-            return ColorHelper.PUBLIC;
+        switch (type) {
+            case "analise":
+                return ColorHelper.ANALISE;
+            case "develop":
+                return ColorHelper.DEVELOP;
+            case "debug":
+                return ColorHelper.DEBUG;
+            case "release":
+                return ColorHelper.RELEASE;
+            case "ope":
+                return ColorHelper.OPE;
+            case "public":
+                return ColorHelper.PUBLIC;
         }
         return ColorHelper.WHITE;
     }

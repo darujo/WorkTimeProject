@@ -38,12 +38,12 @@ public class WorkAgreementResponseController {
         if (workAgreementResponseDto.getTimestamp() == null){
             workAgreementResponseDto.setTimestamp(new Timestamp(System.currentTimeMillis()));
         }
-        return WorkAgreementResponseConvertor.getWorkAgreementResponseDTO(workAgreementResponseService.saveWorkAgreementResponse(WorkAgreementResponseConvertor.getWorkAgreementResponse(workAgreementResponseDto)));
+        return WorkAgreementResponseConvertor.getWorkAgreementResponseDTO(workAgreementResponseService.saveWorkAgreementResponse(username, WorkAgreementResponseConvertor.getWorkAgreementResponse(workAgreementResponseDto)));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteWorkAgreementResponse(@PathVariable long id) {
-        workAgreementResponseService.deleteWorkAgreementResponse(id);
+    public void deleteWorkAgreementResponse(@RequestHeader String username, @PathVariable long id) {
+        workAgreementResponseService.deleteWorkAgreementResponse(username,id);
     }
 
     @GetMapping("")

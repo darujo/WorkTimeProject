@@ -82,7 +82,7 @@ public class MenuService {
 
     public void openMainMenu(String author, String chatId) throws TelegramApiException {
 
-        telegramBotSend.sendPhoto(author, chatId, fileService.getFile("menu"), "Менюшечка. Чего желаете?", getMainMenu());
+        telegramBotSend.sendPhoto(author, chatId, fileService.getFile("menu"), "Чего желаете?", getMainMenu());
     }
 
     Map<Integer, MenuParam> paramMap = new HashMap<>();
@@ -116,12 +116,16 @@ public class MenuService {
     }
 
     public void getMenu(String author, String charId, Integer messageId, CommandType command, File file) throws TelegramApiException {
-        MenuParam menuParam;
+        MenuParam menuParam = null;
+
         if (command.getNewParam()) {
             menuParam = new MenuParam();
             paramMap.put(messageId, menuParam);
         } else {
-            menuParam = getMenuParam(author, charId, messageId);
+            if(command.getAvailParam()) {
+                menuParam = getMenuParam(author, charId, messageId);
+            }
+
         }
 
         if (command.equals(CommandType.REPORT)) {
@@ -129,10 +133,10 @@ public class MenuService {
 
         }
         if (command.equals(CommandType.SEND_ME)) {
-            sendReport(menuParam.getReportTypeDto(), author, charId, messageId, true);
+            sendReport(Objects.requireNonNull(menuParam).getReportTypeDto(), author, charId, messageId, true);
         }
         if (command.equals(CommandType.SEND_ALL)) {
-            sendReport(menuParam.getReportTypeDto(), author, charId, messageId, false);
+            sendReport(Objects.requireNonNull(menuParam).getReportTypeDto(), author, charId, messageId, false);
         }
         if (command.equals(CommandType.CANCEL)) {
             deleteMessage(charId, messageId);
@@ -169,7 +173,7 @@ public class MenuService {
             telegramBotSend.sendMessage(null, charId, resultMes.isOk() ? "Отчет будет доставлен в ближайшее время" : resultMes.getMessage());
 
         } catch (ResourceNotFoundRunTime ex) {
-            telegramBotSend.sendMessage(null, charId, "Что-то пошло не так отчет не будет сформирован. Попробуйте позже или обратитесь к администратуру");
+            telegramBotSend.sendMessage(null, charId, "Что-то пошло не так отчет не будет сформирован. Попробуйте позже или обратитесь к администратору");
         }finally {
             deleteMessage(charId, messageId);
         }

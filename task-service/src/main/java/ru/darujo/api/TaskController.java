@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.darujo.assistant.helper.DataHelper;
 import ru.darujo.convertor.TaskConvertor;
 import ru.darujo.dto.TaskDto;
-import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
@@ -48,7 +47,7 @@ public class TaskController {
 
     @GetMapping("/{id}")
     public TaskDto TaskEdit(@PathVariable long id) {
-        return TaskConvertor.getTaskDto(taskService.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Отмеченая работа не найден")));
+        return TaskConvertor.getTaskDto(taskService.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Отмеченная работа не найден")));
     }
 
     @GetMapping("/refresh/{id}")
@@ -85,7 +84,7 @@ public class TaskController {
         if (!right) {
             throw new ResourceNotFoundRunTime("У вас нет права TASK_EDIT");
         }
-        if (taskDto.getNikName() == null || !taskDto.getNikName().equals("")) {
+        if (taskDto.getNikName() == null || !taskDto.getNikName().isEmpty()) {
             taskDto.setNikName(username);
         }
         return TaskConvertor.getTaskDto(taskService.saveWorkTime(TaskConvertor.getTask(taskDto)));
@@ -172,7 +171,6 @@ public class TaskController {
         return listId;
     }
 
-    private final Map<String, UserDto> userDtoMap = new HashMap<>();
     private final Map<Long, WorkLittleDto> workLittleDtoMap = new HashMap<>();
 
     private void clearCash() {
@@ -197,21 +195,7 @@ public class TaskController {
                 taskDto.setNameZi("Нет ЗИ с ID = " + taskDto.getWorkId());
             }
         }
-        try {
-            UserDto userDto = userDtoMap.get(task.getNikName());
-            if (userDto == null) {
-                userDto = userServiceIntegration.getUserDto(null, task.getNikName());
-                userDtoMap.put(task.getNikName(), userDto);
-            }
-            taskDto.setFirstName(userDto.getFirstName());
-            taskDto.setLastName(userDto.getLastName());
-            taskDto.setPatronymic(userDto.getPatronymic());
-        } catch (ResourceNotFoundRunTime e) {
-            taskDto.setFirstName("Нет пользователя с ником " + task.getNikName());
-
-            log.error(e.getMessage());
-        }
-
+        userServiceIntegration.updFio(taskDto);
         return taskDto;
     }
 
@@ -236,7 +220,7 @@ public class TaskController {
                 null).forEach(task ->
         {
             TaskDto taskDto = taskAddValue(task);
-            if (ziName == null || ziName.equals("") || (taskDto.getNameZi() != null && taskDto.getNameZi().matches(".*" + ziName + "*"))) {
+            if (ziName == null || ziName.isEmpty() || (taskDto.getNameZi() != null && taskDto.getNameZi().matches(".*" + ziName + "*"))) {
                 taskDtoList.add(taskDto);
             }
 

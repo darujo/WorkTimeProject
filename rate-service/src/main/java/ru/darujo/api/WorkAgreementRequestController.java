@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/v1/agreement/request")
 public class WorkAgreementRequestController {
     private WorkAgreementRequestService workAgreementRequestService;
+
     @Autowired
     public void setWorkCriteria(WorkAgreementRequestService workAgreementRequestService) {
         this.workAgreementRequestService = workAgreementRequestService;
@@ -32,28 +33,30 @@ public class WorkAgreementRequestController {
 
     @PostMapping("")
     public WorkAgreementRequestEditDto WorkAgreementRequestSave(@RequestHeader String username, @RequestBody WorkAgreementRequestEditDto workAgreementRequestEditDto) {
-        if(workAgreementRequestEditDto.getNikName() == null || workAgreementRequestEditDto.getNikName().isEmpty()){
+        if (workAgreementRequestEditDto.getNikName() == null || workAgreementRequestEditDto.getNikName().isEmpty()) {
             workAgreementRequestEditDto.setNikName(username);
         }
-        if (workAgreementRequestEditDto.getTimestamp() == null){
+        if (workAgreementRequestEditDto.getTimestamp() == null) {
             workAgreementRequestEditDto.setTimestamp(new Timestamp(System.currentTimeMillis()));
         }
-        return WorkAgreementRequestConvertor.getWorkAgreementRequestEditDto(workAgreementRequestService.saveWorkCriteria(WorkAgreementRequestConvertor.getWorkAgreementRequest(workAgreementRequestEditDto)));
+        return WorkAgreementRequestConvertor.getWorkAgreementRequestEditDto(workAgreementRequestService.saveWorkCriteria(username, WorkAgreementRequestConvertor.getWorkAgreementRequest(workAgreementRequestEditDto)));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteWorkAgreementRequest(@PathVariable long id) {
-        workAgreementRequestService.deleteWorkRequest(id);
+    public void deleteWorkAgreementRequest(@RequestHeader String username, @PathVariable long id) {
+        workAgreementRequestService.deleteWorkRequest(username, id);
     }
 
     @GetMapping("")
     public List<WorkAgreementRequestEditDto> WorkAgreementRequestEditList(@RequestParam Long workId) {
         return workAgreementRequestService.findWorkAgreementRequest(workId).stream().map(WorkAgreementRequestConvertor::getWorkAgreementRequestEditDto).collect(Collectors.toList());
     }
+
     @GetMapping("/full")
     public List<WorkAgreementRequestDto> WorkAgreementRequestList(@RequestParam Long workId) {
         return workAgreementRequestService.findWorkAgreementRequest(workId).stream().map(WorkAgreementRequestConvertor::getWorkAgreementRequestDto).collect(Collectors.toList());
     }
+
     @GetMapping("/status")
     public List<AttrDto<Enum<?>>> StatusList() {
         return EnumHelper.getList(StatusRequest.values());

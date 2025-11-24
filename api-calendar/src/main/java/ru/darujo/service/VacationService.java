@@ -80,7 +80,7 @@ public class VacationService {
         if (vacationSave != null && !vacationSave.getId().equals(vacation.getId())) {
             throw new ResourceNotFoundRunTime("Отпуск пересекаются с отпуском " + dateToText(vacationSave.getDateStart()) + " - " + dateToText(vacationSave.getDateEnd()));
         }
-        // вторую дату проверять не надо  так как этот  случай покрывается предыдущими случаями
+        // вторую дату проверять не надо так как этот случай покрывается предыдущими случаями
     }
 
     private Timestamp addDay(Timestamp date, int day) {
@@ -155,24 +155,8 @@ public class VacationService {
         return vacationRepository.findOne(specification).orElse(null);
     }
 
-    private final Map<String, UserDto> userDtoMap = new HashMap<>();
-
     public void updFio(UserFio userFio) {
-        try {
-            if (userFio.getNikName() != null) {
-                UserDto userDto = userDtoMap.get(userFio.getNikName());
-                if (userDto == null) {
-                    userDto = userServiceIntegration.getUserDto(null, userFio.getNikName());
-                    userDtoMap.put(userFio.getNikName(), userDto);
-                }
-                userFio.setFirstName(userDto.getFirstName());
-                userFio.setLastName(userDto.getLastName());
-                userFio.setPatronymic(userDto.getPatronymic());
-            }
-        } catch (ResourceNotFoundRunTime e) {
-            log.error(e.getMessage());
-            userFio.setFirstName("Не найден пользователь с ником " + userFio.getNikName());
-        }
+        userServiceIntegration.updFio(userFio);
     }
 
     public int getDayNotHoliday(Date dateStart, Date dateEnd) {

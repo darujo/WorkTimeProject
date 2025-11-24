@@ -11,9 +11,13 @@ import ru.darujo.dto.CustomPageImpl;
 import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.ResultMes;
 import ru.darujo.dto.user.UserDto;
+import ru.darujo.dto.user.UserFio;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
+import javax.annotation.PostConstruct;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Log4j2
@@ -25,7 +29,14 @@ public class UserServiceIntegration extends ServiceIntegration {
     public void setWebClientUser(WebClient webClientUser) {
         this.webClientUser = webClientUser;
     }
-
+    private static UserServiceIntegration INSTANCE;
+    public static UserServiceIntegration getInstance(){
+        return INSTANCE;
+    }
+    @PostConstruct
+    public void init(){
+        INSTANCE = this;
+    }
     public UserDto getUserDto(Long userId, String nikName) {
         StringBuilder stringBuilder = new StringBuilder();
         if (userId != null) {
@@ -152,6 +163,24 @@ public class UserServiceIntegration extends ServiceIntegration {
             } else {
                 throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить пользователя (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
             }
+        }
+    }
+    private final Map<String, UserDto> userDtoMap = new HashMap<>();
+    public void updFio(UserFio userFio) {
+        try {
+            if (userFio.getNikName() != null) {
+                UserDto userDto = userDtoMap.get(userFio.getNikName());
+                if (userDto == null) {
+                    userDto = getUserDto(null, userFio.getNikName());
+                    userDtoMap.put(userFio.getNikName(), userDto);
+                }
+                userFio.setFirstName(userDto.getFirstName());
+                userFio.setLastName(userDto.getLastName());
+                userFio.setPatronymic(userDto.getPatronymic());
+            }
+        } catch (ResourceNotFoundRunTime e) {
+            log.error(e.getMessage());
+            userFio.setFirstName("Не найден пользователь с ником " + userFio.getNikName());
         }
     }
 }

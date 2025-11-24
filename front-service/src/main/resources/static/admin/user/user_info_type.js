@@ -15,7 +15,9 @@ angular.module('workTimeService').controller('userInfoTypeController', function 
             let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
             let userIdInfo = paramsStr.get('userId');
             console.log(userIdInfo)
-
+            if(userIdInfo === undefined){
+                $scope.Cancel();
+            }
             $http({
                 url: constPatchUser + "/" + userIdInfo,
                 method: "get"
@@ -57,8 +59,8 @@ angular.module('workTimeService').controller('userInfoTypeController', function 
                 });
         }
     }
-    $scope.backUser = function (){
-        $location.path('/user' );
+    $scope.Cancel = function (){
+        $location.path('');
 
     }
     console.log("Start");

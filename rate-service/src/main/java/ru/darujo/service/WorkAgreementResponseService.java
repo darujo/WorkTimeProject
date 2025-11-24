@@ -1,33 +1,57 @@
 package ru.darujo.service;
 
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.darujo.dto.information.MessageInfoDto;
+import ru.darujo.dto.information.MessageType;
+import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
+import ru.darujo.integration.InfoServiceIntegration;
+import ru.darujo.integration.WorkServiceIntegration;
 import ru.darujo.model.WorkAgreementResponse;
 import ru.darujo.repository.WorkAgreementResponseRepository;
 import ru.darujo.specifications.Specifications;
+import ru.darujo.url.UrlWorkTime;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+@Log4j2
 @Service
 @Primary
 public class WorkAgreementResponseService {
     private WorkAgreementResponseRepository workAgreementResponseRepository;
+    private InfoServiceIntegration infoServiceIntegration;
+
+    @Autowired
+    public void setWorkServiceIntegration(WorkServiceIntegration workServiceIntegration) {
+        this.workServiceIntegration = workServiceIntegration;
+    }
+
+    private WorkServiceIntegration workServiceIntegration;
+
+    @Autowired
+    public void setInfoServiceIntegration(InfoServiceIntegration infoServiceIntegration) {
+        this.infoServiceIntegration = infoServiceIntegration;
+    }
 
     @Autowired
     public void setWorkAgreementResponseRepository(WorkAgreementResponseRepository workAgreementResponseRepository) {
         this.workAgreementResponseRepository = workAgreementResponseRepository;
     }
+
     @Getter
     private static WorkAgreementResponseService INSTANCE;
+
     @PostConstruct
-    public void init(){
+    public void init() {
         INSTANCE = this;
     }
 
@@ -53,17 +77,53 @@ public class WorkAgreementResponseService {
 
     }
 
-    public WorkAgreementResponse saveWorkAgreementResponse(WorkAgreementResponse workAgreementResponse) {
+    public WorkAgreementResponse saveWorkAgreementResponse(String author, WorkAgreementResponse workAgreementResponse) {
+        WorkAgreementResponse workAgreementResponseSave = null;
+        if (workAgreementResponse.getId() != null) {
+            workAgreementResponseSave = findById(workAgreementResponse.getId()).orElse(null);
+        }
         validWorkAgreementResponse(workAgreementResponse);
-        return workAgreementResponseRepository.save(workAgreementResponse);
+        workAgreementResponse = workAgreementResponseRepository.save(workAgreementResponse);
+        WorkLittleDto workLittleDto = workServiceIntegration.getWorEditDto(workAgreementResponse.getWorkId());
+        try {
+
+
+            infoServiceIntegration.addMessage(
+                    new MessageInfoDto(
+                            author,
+                            MessageType.EDIT_WORK_REQUEST,
+                            workAgreementResponseSave == null
+                                    ?
+                                    ("Добавлен согласование по ЗИ " + UrlWorkTime.getUrlAgreement(workLittleDto) + " по версии ТЗ " + workAgreementResponse.getRequest().getVersion() + "\n" + workAgreementResponse)
+                                    : ("Изменен согласование по ЗИ " + UrlWorkTime.getUrlAgreement(workLittleDto) + " по версии ТЗ " + workAgreementResponse.getRequest().getVersion() + "\n" + workAgreementResponse.compareObj(workAgreementResponseSave))
+                    )
+            );
+        } catch (RuntimeException ex) {
+            log.error(ex.getMessage(), Arrays.stream(ex.getStackTrace()).toArray());
+        }
+        return workAgreementResponse;
     }
 
-    public void deleteWorkAgreementResponse(Long id) {
+    public void deleteWorkAgreementResponse(String author, Long id) {
+        WorkAgreementResponse workAgreementResponseSave = findById(id).orElse(null);
+        if (workAgreementResponseSave == null) {
+            return;
+        }
         workAgreementResponseRepository.deleteById(id);
+        WorkLittleDto workLittleDto = workServiceIntegration.getWorEditDto(workAgreementResponseSave.getWorkId());
+
+        infoServiceIntegration.addMessage(
+                new MessageInfoDto(
+                        author,
+                        MessageType.EDIT_WORK_REQUEST,
+                        ("Удалено согласование по ЗИ " + UrlWorkTime.getUrlAgreement(workAgreementResponseSave.getWorkId(), workLittleDto.getName()) + " по версии " + workAgreementResponseSave.getRequest().getVersion() + "\n" + workAgreementResponseSave)
+                )
+        );
+
     }
 
 
-    public List<WorkAgreementResponse> findWorkAgreementResponse(Long workId,Long requestId) {
+    public List<WorkAgreementResponse> findWorkAgreementResponse(Long workId, Long requestId) {
         Specification<WorkAgreementResponse> specification = Specification.where(Specifications.eq(null, "workId", workId));
         specification = Specifications.eq(specification, "request", requestId);
         return workAgreementResponseRepository.findAll(specification, Sort.by("workId").and(Sort.by("requestId").and(Sort.by("timestamp"))));

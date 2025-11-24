@@ -48,7 +48,7 @@ public class InfoServiceIntegration extends ServiceIntegration {
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Задачи (api-Information) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 

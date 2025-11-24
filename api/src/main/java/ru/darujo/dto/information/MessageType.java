@@ -18,7 +18,12 @@ public enum MessageType implements TypeEnum {
     ZI_WORK_REPORT("Факт загрузки по ЗИ.", DayOfWeek.WEDNESDAY, 10),
     VACATION_MY_START("Начало вашего отпуска в день перед отпуском", 20),
     VACATION_MY_END("Конец Вашего отпуска в последний день отпуска", 14),
-    VACATION_USER_START("Список отпуской ежедневно", 12);
+    VACATION_USER_START("Список отпусков ежедневно", 12),
+    EDIT_WORK_REQUEST("Добавлен/изменен запрос на согласование ТЗ"),
+    EDIT_WORK_RESPONSE("Добавлено/изменено согласование ТЗ")
+
+
+    ;
 
     private final String name;
     private final DayOfWeek dayOfWeek;

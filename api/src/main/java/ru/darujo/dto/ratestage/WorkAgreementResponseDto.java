@@ -1,10 +1,16 @@
 package ru.darujo.dto.ratestage;
 
 import ru.darujo.assistant.helper.DataHelper;
+import ru.darujo.dto.user.UserFio;
 
 import java.sql.Timestamp;
 
-public class WorkAgreementResponseDto {
+public class WorkAgreementResponseDto implements UserFio {
+    private String firstName;
+    private String lastName;
+    private String patronymic;
+
+    @SuppressWarnings("unused")
     public WorkAgreementResponseDto() {
     }
 
@@ -52,6 +58,7 @@ public class WorkAgreementResponseDto {
     public StatusResponse getStatus() {
         return status;
     }
+
     @SuppressWarnings("unused")
     public String getStatusName() {
         return status.getName();
@@ -74,8 +81,33 @@ public class WorkAgreementResponseDto {
     public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
+
     @SuppressWarnings("unused")
     public String getTimestampStr() {
         return DataHelper.dateTimeToStr(timestamp);
+    }
+
+    public void setFirstName(String authorFirstName) {
+        this.firstName = authorFirstName;
+    }
+
+    public void setLastName(String authorLastName) {
+        this.lastName = authorLastName;
+    }
+
+    public void setPatronymic(String authorPatronymic) {
+        this.patronymic = authorPatronymic;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getPatronymic() {
+        return patronymic;
     }
 }

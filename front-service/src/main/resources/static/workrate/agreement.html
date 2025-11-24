@@ -32,8 +32,8 @@
         <tbody ng-repeat="request in RequestList" ng-init="parentIndex = $index">
         <tr>
         <td>{{$index + 1}}</td>
-            <td ng-if="!work.firstName">{{request.nikName}}</td>
-            <td ng-if="work.firstName">{{request.lastName}} {{request.firstName}}
+            <td ng-if="!request.firstName">{{request.nikName}}</td>
+            <td ng-if="request.firstName">{{request.lastName}} {{request.firstName}}
                 {{request.patronymic}}
             </td>
 
@@ -43,7 +43,7 @@
             <td>{{request.termStr}}</td>
             <td>{{request.statusName}}</td>
             <td>
-                <button ng-click="addResponse(request.id)">Соглсовать</button>
+                <button ng-click="addResponse(request.id)">Согласовать</button>
             </td>
             <td>
                 <button ng-click="editRequest(request.id)">Изменить</button>
@@ -54,8 +54,8 @@
         </tr>
         <tr ng-repeat="response in request.listResponse">
             <td></td>
-            <td ng-if="!work.firstName">{{response.nikName}}</td>
-            <td ng-if="work.firstName">{{response.lastName}} {{response.firstName}}
+            <td ng-if="!response.firstName">{{response.nikName}}</td>
+            <td ng-if="response.firstName">{{response.lastName}} {{response.firstName}}
                 {{response.patronymic}}
             </td>
 

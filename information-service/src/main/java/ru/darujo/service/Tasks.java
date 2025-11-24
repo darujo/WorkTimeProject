@@ -241,7 +241,7 @@ public class Tasks {
             if (!vacationDTOs.isEmpty()) {
                 messageInformationService.addMessage(
                         new MessageInfoDto(
-                                null,
+
                                 messageType,
                                 vacationDTOs.get(0).getDateStartStr() + " начинается отпуск у сотрудников :\n" + users));
             }
