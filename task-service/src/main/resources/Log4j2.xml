@@ -5,8 +5,8 @@
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
         <RollingFile name="fileLogger"
-                     fileName="app-calendar.log"
-                     filePattern="${basePath}/app-calendar-%d{yyyy-MM-dd}.log">
+                     fileName="app-task.log"
+                     filePattern="${basePath}/app-task-%d{yyyy-MM-dd}.log">
             <PatternLayout>
                 <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n
                 </pattern>
