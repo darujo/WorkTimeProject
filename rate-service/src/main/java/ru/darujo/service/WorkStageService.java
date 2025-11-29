@@ -1,10 +1,12 @@
 package ru.darujo.service;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.darujo.dto.MapStringFloat;
 import ru.darujo.dto.ratestage.WorkStageDto;
 import ru.darujo.dto.user.UserFio;
@@ -15,10 +17,9 @@ import ru.darujo.model.WorkStage;
 import ru.darujo.repository.WorkStageRepository;
 import ru.darujo.specifications.Specifications;
 
-import javax.transaction.Transactional;
 import java.util.*;
 
-@Log4j2
+@Slf4j
 @Service
 @Primary
 public class WorkStageService {
@@ -63,7 +64,7 @@ public class WorkStageService {
     }
 
     private void checkAvailUser(WorkStage workStage) {
-        Specification<WorkStage> specification = Specifications.eq(null, "workId", workStage.getWorkId());
+        Specification<@NonNull WorkStage> specification = Specifications.eq(null, "workId", workStage.getWorkId());
         specification = Specifications.eq(specification, "nikName", workStage.getNikName());
         specification = Specifications.eq(specification, "role", workStage.getRole());
         specification = Specifications.ne(specification, "id", workStage.getId());
@@ -85,7 +86,7 @@ public class WorkStageService {
 
 
     public List<WorkStage> findWorkStage(Long workId, Integer role) {
-        Specification<WorkStage> specification = Specification.where(Specifications.eq(null, "workId", workId));
+        Specification<@NonNull WorkStage> specification = Specification.where(Specifications.eq(null, "workId", workId));
         specification = Specifications.eq(specification, "role", role);
         return workStageRepository.findAll(specification);
     }

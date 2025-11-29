@@ -1,6 +1,6 @@
 package ru.darujo.service;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.darujo.assistant.helper.DataHelper;
@@ -22,7 +22,7 @@ import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
 
-@Log4j2
+@Slf4j
 @Component
 public class Tasks {
     MessageInformationService messageInformationService;
@@ -102,7 +102,7 @@ public class Tasks {
                                 }
                             }
                         } catch (ResourceNotFoundException e) {
-                            log.error(e);
+                            log.error(e.getMessage());
                         }
                     });
 
@@ -137,7 +137,7 @@ public class Tasks {
 
                 });
             } catch (ResourceNotFoundException e) {
-                log.error(e);
+                log.error(e.getMessage());
 
             }
         });
@@ -176,10 +176,10 @@ public class Tasks {
                                 new MessageInfoDto(
                                         userInfoDto,
                                         type,
-                                        "Ура с завтрашнего дня вы находитесь в отпуске. Не забудьте отключить телефон и насладиться тишеной."));
+                                        "Ура с завтрашнего дня вы находитесь в отпуске. Не забудьте отключить телефон и насладиться тишиной."));
                     }
                 } catch (ResourceNotFoundException e) {
-                    log.error(e);
+                    log.error(e.getMessage());
                 }
             });
 
@@ -204,7 +204,7 @@ public class Tasks {
                                         "К сожалению ваш отпуск подошел к концу и вам опять пора на работу. Не забудьте начать отмечать время прихода и ухода на работу"));
                     }
                 } catch (ResourceNotFoundException e) {
-                    log.error(e);
+                    log.error(e.getMessage());
                 }
             });
         });
@@ -218,7 +218,7 @@ public class Tasks {
             try {
                 vacationDTOs = calendarServiceIntegration.userVacationStart(null, 7);
             } catch (ResourceNotFoundException e) {
-                log.error(e);
+                log.error(e.getMessage());
                 return;
             }
             if (vacationDTOs == null) {

@@ -1,6 +1,6 @@
 package ru.darujo.service;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-@Log4j2
+@Slf4j
 @Service
 @Primary
 public class WorkTimeRepService {
@@ -288,9 +288,9 @@ public class WorkTimeRepService {
                     }
                 });
 
-        // установим потраченое время
+        // установим потраченное время
         workTimeDto.setWorkTime(timeFactOne.get());
-        // добавим период и работы также устновим был ли отпуск
+        // добавим период и работы также установим, был ли отпуск
 
         return workTimeDtoList;
     }

@@ -9,7 +9,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.darujo.dto.information.ResultMes;
-import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.InfoServiceIntegration;
 import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.telegram_bot.TelegramBotSend;
@@ -172,7 +171,7 @@ public class MenuService {
 
             telegramBotSend.sendMessage(null, charId, resultMes.isOk() ? "Отчет будет доставлен в ближайшее время" : resultMes.getMessage());
 
-        } catch (ResourceNotFoundRunTime ex) {
+        } catch (RuntimeException ex) {
             telegramBotSend.sendMessage(null, charId, "Что-то пошло не так отчет не будет сформирован. Попробуйте позже или обратитесь к администратору");
         }finally {
             deleteMessage(charId, messageId);

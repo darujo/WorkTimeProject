@@ -1,6 +1,8 @@
 package ru.darujo.service;
 
-import lombok.extern.log4j.Log4j2;
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,12 +25,12 @@ import ru.darujo.model.User;
 import ru.darujo.repository.UserRepository;
 import ru.darujo.specifications.Specifications;
 
-import javax.transaction.Transactional;
+
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Log4j2
+@Slf4j
 @Service
 public class UserService {
     private final Integer TIME_CODE = 5;
@@ -61,7 +63,7 @@ public class UserService {
     }
 
     public User findById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("Не наден пользователь c id " + id));
+        return userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("Не найден пользователь c id " + id));
     }
 
     public Optional<User> findByNikName(String name) {
@@ -74,6 +76,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public User saveUser(User user) {
         return saveUser(user, null);
     }
@@ -97,7 +100,7 @@ public class UserService {
                 throw new ResourceNotFoundRunTime("Уже есть пользователь с таким ником");
             }
         }
-        if (textPassword != null && !textPassword.equals("")) {
+        if (textPassword != null && !textPassword.isEmpty()) {
             if (user.getPassword() == null || user.getPassword().isEmpty()) {
                 user.setPassword(hashPassword(textPassword));
             } else {
@@ -111,23 +114,23 @@ public class UserService {
 
     @Transactional
     public User loadUserByNikName(String nikName) throws UsernameNotFoundException {
-        return findByNikName(nikName).orElseThrow(() -> new UsernameNotFoundException("Не наден пользователь по логину " + nikName));
+        return findByNikName(nikName).orElseThrow(() -> new UsernameNotFoundException("Не найден пользователь по логину " + nikName));
     }
 
     @Transactional
-    public Page<User> getUserList(String role,
-                                  Integer page,
-                                  Integer size,
-                                  String nikName,
-                                  String lastName,
-                                  String firstName,
-                                  String patronymic,
-                                  Long telegramId,
-                                  Boolean telegramIsNotNull) {
-        Specification<User> specification = getUserSpecification(role, nikName, lastName, firstName, patronymic, telegramId, telegramIsNotNull);
+    public Page<@NonNull User> getUserList(String role,
+                                           Integer page,
+                                           Integer size,
+                                           String nikName,
+                                           String lastName,
+                                           String firstName,
+                                           String patronymic,
+                                           Long telegramId,
+                                           Boolean telegramIsNotNull) {
+        Specification<@NonNull User> specification = getUserSpecification(role, nikName, lastName, firstName, patronymic, telegramId, telegramIsNotNull);
         Sort sort = Sort.by("lastName")
                 .and(Sort.by("firstName"));
-        Page<User> userPage;
+        Page<@NonNull User> userPage;
         if (page == null) {
             userPage = new PageImpl<>(userRepository.findAll(specification, sort));
         } else {
@@ -139,8 +142,8 @@ public class UserService {
         return userPage;
     }
 
-    private Specification<User> getUserSpecification(String role, String nikName, String lastName, String firstName, String patronymic, Long telegramId, Boolean telegramIsNotNull) {
-        Specification<User> specification = Specification.where(null);
+    private Specification<@NonNull User> getUserSpecification(String role, String nikName, String lastName, String firstName, String patronymic, Long telegramId, Boolean telegramIsNotNull) {
+        Specification<@NonNull User> specification = Specification.unrestricted();
         if (role != null && !role.isEmpty()) {
             specification = Specifications.in(specification, "nikName", roleService.findByName(role).orElseThrow(() -> new UsernameNotFoundException("Роль не найдена " + role))
                     .getUsers()
@@ -186,13 +189,14 @@ public class UserService {
         return BCrypt.checkpw(plainTextPassword, hashPassword);
     }
 
+    @Transactional
     public boolean changePassword(String username, String passwordOld, String passwordNew) {
         User user = userRepository.findByNikNameIgnoreCase(username).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь не найден"));
         if (!checkPassword(passwordOld, user.getPassword())) {
             throw new ResourceNotFoundRunTime("Старый пароль не действителен");
         }
 
-        if (passwordNew == null || passwordNew.equals("")) {
+        if (passwordNew == null || passwordNew.isEmpty()) {
             throw new ResourceNotFoundRunTime("Новый пароль не должен быть пустым");
         }
         if (checkPassword(passwordNew, user.getPassword())) {
@@ -238,7 +242,7 @@ public class UserService {
     }
 
     public UserInfoTypeDto setUserInfoTypes(UserInfoTypeDto userInfoTypeDto) {
-        User user = userRepository.findById(userInfoTypeDto.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Пользовательне найден"));
+        User user = userRepository.findById(userInfoTypeDto.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь не найден"));
         userInfoTypeService.setUserInfoTypes(user, userInfoTypeDto.getInfoTypes());
         try {
             infoServiceIntegration.setMessageTypeListMap(getUserMessageDTOs());
@@ -285,6 +289,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public ResultMes linkCodeTelegram(Integer code, Long idTelegram) {
         clearMapCode(null);
         SingleCode singleCode = mapCode.get(code);
@@ -294,7 +299,7 @@ public class UserService {
 
         User user = findByNikName(singleCode.login).orElse(null);
         if (user == null) {
-            return new ResultMes(false, "Пользовательне найден.");
+            return new ResultMes(false, "Пользователь не найден.");
         }
         user.setTelegramId(idTelegram);
         saveUser(user);

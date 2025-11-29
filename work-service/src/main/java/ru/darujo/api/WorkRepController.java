@@ -121,7 +121,7 @@ public class WorkRepController {
             }
         }
         return workRepService.getWeekWork(ziSplit, addTotal, nikName, weekSplit, dateStart, dateEnd,
-                page, size, name, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId, sort);
+               page, size, name, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId, sort);
     }
 
     @GetMapping("/graph")

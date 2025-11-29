@@ -1,6 +1,8 @@
 package ru.darujo.service;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -8,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.ratestage.WorkStageDto;
@@ -27,11 +30,10 @@ import ru.darujo.repository.WorkRepository;
 import ru.darujo.specifications.Specifications;
 import ru.darujo.url.UrlWorkTime;
 
-import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.*;
 
-@Log4j2
+@Slf4j
 @Service
 public class WorkService {
 
@@ -208,15 +210,15 @@ public class WorkService {
     }
 
     @Transactional
-    public Page<Work> findWorks(int page, int size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId) {
-        return (Page<Work>) findAll(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId);
+    public Page<@NonNull Work> findWorks(int page, int size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId) {
+        return (Page<@NonNull Work>) findAll(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId);
     }
 
 
     public Iterable<Work> findAll(Integer page, Integer size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId) {
-        Specification<Work> specification;
+        Specification<@NonNull Work> specification;
         if (sort != null && sort.length() > 8 && sort.startsWith("release.")) {
-            specification = Specification.where(null);
+            specification = Specification.unrestricted();
         } else {
             specification = Specification.where(Specifications.queryDistinctTrue());
         }
@@ -257,10 +259,10 @@ public class WorkService {
         return workPage;
     }
 
-    public Page<WorkLittle> findWorkLittle(Integer page, Integer size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId) {
-        Specification<WorkLittle> specification;
+    public Page<@NonNull WorkLittle> findWorkLittle(Integer page, Integer size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId) {
+        Specification<@NonNull WorkLittle> specification;
         if (sort != null && sort.length() > 8 && sort.startsWith("release.")) {
-            specification = Specification.where(null);
+            specification = Specification.unrestricted();
         } else {
             specification = Specification.where(Specifications.queryDistinctTrue());
         }
@@ -276,7 +278,7 @@ public class WorkService {
         if (stageZiGe != null) {
             specification = Specifications.ge(specification, "stageZI", stageZiGe);
         }
-        Page<WorkLittle> workPage;
+        Page<@NonNull WorkLittle> workPage;
         if (page == null) {
             if (sort == null) {
                 workPage = new PageImpl<>(workLittleRepository.findAll(specification));
@@ -293,7 +295,7 @@ public class WorkService {
 
     public List<Work> getWorkList(String name, Integer stageZiGe, Integer stageZiLe, Long release, String[] sort) {
         List<Work> works;
-        Specification<Work> specification = Specification.where(null);
+        Specification<@NonNull Work> specification = Specification.unrestricted();
         Sort sortWork = null;
         if (sort != null && sort.length > 0) {
             sortWork = Sort.by(sort[0]);
@@ -360,18 +362,11 @@ public class WorkService {
 
     }
 
+    @Getter
     public class SaveDateDevelopEndFact {
         private boolean save;
         private Timestamp date;
 
-
-        public boolean isSave() {
-            return save;
-        }
-
-        public Timestamp getDate() {
-            return date;
-        }
 
         public SaveDateDevelopEndFact setSave(boolean save) {
             this.save = save;

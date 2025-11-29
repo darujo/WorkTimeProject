@@ -1,6 +1,6 @@
 package ru.darujo.telegram_bot;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
@@ -20,7 +20,7 @@ import ru.darujo.service.MessageReceiveService;
 
 import java.util.HashMap;
 import java.util.Map;
-@Log4j2
+@Slf4j
 @Component
 public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer {
     private UserServiceIntegration userServiceIntegration;
@@ -72,7 +72,7 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
             Message requestMessage = request.getMessage();
 
             log.info(requestMessage.getChat().getUserName());
-            log.info(requestMessage.getChatId());
+            log.info(String.valueOf(requestMessage.getChatId()));
             String chatId = Long.toString(requestMessage.getChatId());
 
 
@@ -100,44 +100,43 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
                     return;
                 }
 
-                if (requestMessage.getText().equals("/start")) {
-                    telegramBotSend.sendPhoto("AutoHi", chatId,
+                switch (requestMessage.getText()) {
+                    case "/start" -> telegramBotSend.sendPhoto("AutoHi", chatId,
                             fileService.getFile("hi")
                             , """
                                     Напишите команду для показа списка мыслей:\s
-                                     /link - подписаться на уведомления от сервиса учета трудо затрат\s
-                                     /stop - отвязать акаунт от уведомлений""");
+                                     /link - подписаться на уведомления от сервиса учета трудозатрат\s
+                                     /stop - отвязать аккаунт от уведомлений""");
+                    case "/link" -> getLink(chatId);
+                    case "/menu" -> {
+                        telegramBotSend.deleteMessage(chatId, requestMessage.getMessageId());
+                        menuService.openMainMenu("Autoresponder", chatId);
+                    }
+                    case "/stop" -> getStop(chatId, requestMessage.getMessageId());
+                    default -> {
+                        String lastCommand = userLastCommand.get(requestMessage.getChatId());
+                        if (lastCommand != null
+                                && !requestMessage.getText().startsWith("/")
+                                && (lastCommand.equals("/link") || lastCommand.equals(CommandType.LINK.toString()))) {
+                            try {
 
-                } else if (requestMessage.getText().equals("/link")) {
-                    getLink(chatId);
-                } else if (requestMessage.getText().equals("/menu")) {
-                    telegramBotSend.deleteMessage(chatId, requestMessage.getMessageId());
-                    menuService.openMainMenu("Autoresponder",chatId);
-                } else if (requestMessage.getText().equals("/stop")) {
-                    getStop(chatId,requestMessage.getMessageId());
-                } else {
-                    String lastCommand = userLastCommand.get(requestMessage.getChatId());
-                    if (lastCommand != null
-                            && !requestMessage.getText().startsWith("/")
-                            && (lastCommand.equals("/link") || lastCommand.equals(CommandType.LINK.toString()))) {
-                        try {
-
-                            Integer code = Integer.parseInt(requestMessage.getText());
-                            ResultMes resultMes = userServiceIntegration.linkCodeTelegram(code, requestMessage.getChatId());
-                            if (resultMes.isOk()) {
-                                telegramBotSend.deleteMessage(chatId,requestMessage.getMessageId());
-                                defaultMsg(chatId, "Вы успешно подключены к оповещениям");
-                            } else {
-                                defaultMsg(chatId, resultMes.getMessage());
+                                Integer code = Integer.parseInt(requestMessage.getText());
+                                ResultMes resultMes = userServiceIntegration.linkCodeTelegram(code, requestMessage.getChatId());
+                                if (resultMes.isOk()) {
+                                    telegramBotSend.deleteMessage(chatId, requestMessage.getMessageId());
+                                    defaultMsg(chatId, "Вы успешно подключены к оповещениям");
+                                } else {
+                                    defaultMsg(chatId, resultMes.getMessage());
+                                }
+                            } catch (NumberFormatException ex) {
+                                defaultMsg(chatId, "Код должен быть числом");
+                            } catch (ResourceNotFoundRunTime ex) {
+                                defaultMsg(chatId, ex.getMessage());
                             }
-                        } catch (NumberFormatException ex) {
-                            defaultMsg(chatId, "Код должен быть числом");
-                        } catch (ResourceNotFoundRunTime ex) {
-                            defaultMsg(chatId, ex.getMessage());
-                        }
 
-                    } else
-                        defaultMsg(chatId, "Я записал вашу мысль, не знаю что с ней делать.) \n ");
+                        } else
+                            defaultMsg(chatId, "Я записал вашу мысль, не знаю что с ней делать.) \n ");
+                    }
                 }
             } catch (TelegramApiException e) {
                 throw new RuntimeException(e);
@@ -156,7 +155,7 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
             CallbackQuery callbackQuery = request.getCallbackQuery();
             MaybeInaccessibleMessage requestMessage = callbackQuery.getMessage();
             log.info(callbackQuery.getMessage().getChat().getUserName());
-            log.info(requestMessage.getChatId());
+            log.info(String.valueOf(requestMessage.getChatId()));
 
             MessageReceive messageReceive = messageReceiveService.saveMessageReceive(
                     new MessageReceive(
@@ -189,7 +188,7 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
                     }
                 }
             }catch (IllegalArgumentException ex){
-                log.info(ex);
+                log.info(String.valueOf(ex));
             }
 
             try {
@@ -202,7 +201,7 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
     }
 
     private void getLink(String chatId) throws TelegramApiException {
-        menuService.openCancel(chatId, "Введите однаразовый код:");
+        menuService.openCancel(chatId, "Введите одноразовый код:");
     }
 
     private void getStop(String chatId,Integer messageId) throws TelegramApiException {
@@ -217,12 +216,12 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
                 defaultMsg(chatId, "Что-то пошло не так как хотелось бы.");
             }
         } catch (ResourceNotFoundRunTime ex) {
-            defaultMsg(chatId, "Сервис авторизации времено не доступен попробуйте позже");
+            defaultMsg(chatId, "Сервис авторизации временно не доступен попробуйте позже");
         }
     }
 
     /**
-     * Шабонный метод отправки сообщения пользователю
+     * Шаблонный метод отправки сообщения пользователю
      *
      * @param chatId - индификатор чата
      * @param msg    - сообщение

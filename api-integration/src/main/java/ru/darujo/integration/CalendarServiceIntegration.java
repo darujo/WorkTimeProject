@@ -1,6 +1,7 @@
 package ru.darujo.integration;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.core.ParameterizedTypeReference;
@@ -17,7 +18,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 
-@Log4j2
+@Slf4j
 @Component
 @ConditionalOnMissingClass
 public class CalendarServiceIntegration extends ServiceIntegration {
@@ -43,7 +44,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календарь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 
@@ -59,7 +60,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календарь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 
@@ -72,12 +73,12 @@ public class CalendarServiceIntegration extends ServiceIntegration {
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период"))
-                    .bodyToMono(new ParameterizedTypeReference<CustomPageImpl<VacationDto>>() {
+                    .bodyToMono(new ParameterizedTypeReference<@NonNull CustomPageImpl<VacationDto>>() {
                     })
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block()).getContent();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календарь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
     public Timestamp getLastWorkDay(String username, Timestamp dateStart, Integer dayMinus, Boolean lastWeek) {
@@ -97,7 +98,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календарь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
     public Boolean isWorkDayUser(String username, Timestamp date) throws ResourceNotFoundException {
@@ -115,7 +116,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календарь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
     public Boolean isDayAfterWeek(Timestamp date, Integer dayMinus) throws ResourceNotFoundException {
@@ -133,7 +134,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календарь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 
@@ -163,7 +164,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календарь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
     public Boolean isVacationEnd(String nikName) throws ResourceNotFoundException {
@@ -180,7 +181,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календарь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 
@@ -201,7 +202,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календатрь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календарь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 

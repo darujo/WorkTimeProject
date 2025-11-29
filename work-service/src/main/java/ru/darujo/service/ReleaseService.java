@@ -1,5 +1,6 @@
 package ru.darujo.service;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -22,7 +23,7 @@ public class ReleaseService {
 
 
     public Release findById(long id) {
-        return releaseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Релиз с id " + id  + " не найден."));
+        return releaseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Релиз с id " + id + " не найден."));
     }
 
     public Release saveRelease(Release release) {
@@ -35,7 +36,7 @@ public class ReleaseService {
 
     public List<Release> findAll(
     ) {
-        Specification<Release> specification = Specification.where(null);
+        Specification<@NonNull Release> specification = (root, query, criteriaBuilder) -> null;
         return releaseRepository.findAll(specification, Sort.by("name"));
     }
 }

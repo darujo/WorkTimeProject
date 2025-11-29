@@ -1,5 +1,6 @@
 package ru.darujo.model;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,7 +8,6 @@ import ru.darujo.assistant.helper.CompareHelper;
 import ru.darujo.assistant.helper.DataHelper;
 import ru.darujo.dto.ratestage.StatusResponse;
 
-import javax.persistence.*;
 import java.sql.Timestamp;
 
 @NoArgsConstructor

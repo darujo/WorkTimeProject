@@ -9,7 +9,7 @@ public enum CommandType implements TypeEnum {
     STOP ("Убрать оповещения"),
     REPORT ("Отчеты",false,true),
     SEND_ME("Мне", true),
-    SEND_ALL("Подписанным на уведомления",true),
+    SEND_ALL("Подписанным на уведомления", true),
     CANCEL("Отменить");
 
 
@@ -21,8 +21,8 @@ public enum CommandType implements TypeEnum {
     }
 
 
-    CommandType(String name, Boolean newParam) {
-        this(name , false,newParam);
+    CommandType(String name, Boolean availParam) {
+        this(name , availParam,false);
     }
     CommandType(String name,  Boolean availParam, Boolean newParam) {
         this.name = name;

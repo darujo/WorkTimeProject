@@ -1,12 +1,12 @@
 package ru.darujo.service;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.information.MessageType;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.type.ReportTypeDto;
 
-import javax.annotation.PostConstruct;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -48,7 +48,7 @@ public class ScheduleService {
         } else if (reportTypeDto.equals(ReportTypeDto.ZI_WORK.toString())) {
             messageType = MessageType.ZI_WORK_REPORT;
         } else {
-            throw new ResourceNotFoundRunTime("Нет такокго типа отчета");
+            throw new ResourceNotFoundRunTime("Нет такого типа отчета");
 
         }
         executor.schedule(getTask(messageType, author, chatId), 2, TimeUnit.SECONDS);
@@ -92,7 +92,7 @@ public class ScheduleService {
         } else if (messageType.equals(MessageType.WEEK_WORK_REPORT)) {
             return tasks.getWeekWork(messageType, author, chatId);
         } else {
-            throw new ResourceNotFoundRunTime("Нет такокго типа отчета");
+            throw new ResourceNotFoundRunTime("Нет такого типа отчета");
         }
     }
 

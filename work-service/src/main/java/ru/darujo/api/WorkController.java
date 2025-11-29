@@ -1,6 +1,7 @@
 package ru.darujo.api;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,7 +19,7 @@ import ru.darujo.service.WorkService;
 import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 
-@Log4j2
+@Slf4j
 @RestController()
 @RequestMapping("/v1/works")
 public class WorkController {
@@ -38,7 +39,7 @@ public class WorkController {
 
         Iterable<Work> works = workService.findWorks(1, 100000000, name, null, null, null, null, null, task, null);
         float time_last = (System.nanoTime() - curTime) * 0.000000001f;
-        log.info("Время выполнения " + time_last);
+        log.info("Время выполнения workList {}", time_last);
         return works;
 
     }
@@ -60,7 +61,7 @@ public class WorkController {
     }
 
     @PostMapping("")
-    public WorkDto WorkSave( @RequestHeader String userName,
+    public WorkDto WorkSave(@RequestHeader String userName,
                             @RequestBody WorkEditDto workDto,
                             @RequestHeader(defaultValue = "false", name = "ZI_EDIT") boolean right) {
         if (!right) {
@@ -81,15 +82,15 @@ public class WorkController {
     }
 
     @GetMapping("")
-    public Page<WorkDto> WorkPage(@RequestParam(defaultValue = "1") int page,
-                                  @RequestParam(defaultValue = "10") int size,
-                                  @RequestParam(required = false) String name,
-                                  @RequestParam(defaultValue = "15") Integer stageZi,
-                                  @RequestParam(required = false) Long codeSap,
-                                  @RequestParam(required = false) String codeZi,
-                                  @RequestParam(required = false) String task,
-                                  @RequestParam(required = false) Long releaseId,
-                                  @RequestParam(defaultValue = "release.name") String sort) {
+    public Page<@NonNull WorkDto> WorkPage(@RequestParam(defaultValue = "1") int page,
+                                           @RequestParam(defaultValue = "10") int size,
+                                           @RequestParam(required = false) String name,
+                                           @RequestParam(defaultValue = "15") Integer stageZi,
+                                           @RequestParam(required = false) Long codeSap,
+                                           @RequestParam(required = false) String codeZi,
+                                           @RequestParam(required = false) String task,
+                                           @RequestParam(required = false) Long releaseId,
+                                           @RequestParam(defaultValue = "release.name") String sort) {
         Integer stageZiLe = null;
         Integer stageZiGe = null;
         if (stageZi != null) {
@@ -101,21 +102,21 @@ public class WorkController {
             }
         }
         long curTime = System.nanoTime();
-        Page<WorkDto> workDTOs = workService.findWorks(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId)
+        Page<@NonNull WorkDto> workDTOs = workService.findWorks(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId)
                 .map(WorkConvertor::getWorkDto);
         workDTOs.forEach(workService::updWorkPlanTime);
         float time_last = (curTime - System.nanoTime()) * 0.000000001f;
-        log.info("Время выполнения " + time_last);
+        log.info("Время выполнения WorkPage {}", time_last);
         return workDTOs;
     }
 
 
     @GetMapping("/obj/little")
-    public Page<WorkLittleDto> WorkLittlePage(@RequestParam(defaultValue = "1") int page,
-                                              @RequestParam(defaultValue = "10") int size,
-                                              @RequestParam(required = false) String name,
-                                              @RequestParam(defaultValue = "15") Integer stageZi,
-                                              @RequestParam(required = false) String sort) {
+    public Page<@NonNull WorkLittleDto> WorkLittlePage(@RequestParam(defaultValue = "1") int page,
+                                                       @RequestParam(defaultValue = "10") int size,
+                                                       @RequestParam(required = false) String name,
+                                                       @RequestParam(defaultValue = "15") Integer stageZi,
+                                                       @RequestParam(required = false) String sort) {
         Integer stageZiLe = null;
         Integer stageZiGe = null;
         if (stageZi != null) {
@@ -142,12 +143,13 @@ public class WorkController {
         return workService.setWorkDate(id, date);
 
     }
+
     @GetMapping("/change/{id}/rated")
     public WorkLittle ChangeRated(@RequestHeader String username,
                                   @PathVariable long id,
                                   @RequestParam(required = false, name = "rated") Boolean rated
     ) {
-        return workService.setRated(username,id, rated);
+        return workService.setRated(username, id, rated);
 
     }
 }

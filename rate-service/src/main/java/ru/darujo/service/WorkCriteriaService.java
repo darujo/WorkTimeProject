@@ -1,5 +1,6 @@
 package ru.darujo.service;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Sort;
@@ -31,10 +32,10 @@ public class WorkCriteriaService {
         if (workCriteria.getWorkId() == null) {
             throw new ResourceNotFoundRunTime("Не могу найти привязку к ЗИ");
         }
-        if (workCriteria.getCriteria() == null && workCriteria.getCriteria() < 1) {
+        if (workCriteria.getCriteria() == null || workCriteria.getCriteria() < 1) {
             throw new ResourceNotFoundRunTime("Не заполнено критерий");
         }
-        Specification<WorkCriteria> specification = Specification.where(Specifications.eq(null, "workId", workCriteria.getWorkId()));
+        Specification<@NonNull WorkCriteria> specification = Specification.where(Specifications.eq(null, "workId", workCriteria.getWorkId()));
         specification = Specifications.eq(specification, "criteria", workCriteria.getCriteria());
         specification = Specifications.ne(specification, "id", workCriteria.getId());
         WorkCriteria workCriteriaFind = workCriteriaRepository.findOne(specification).orElse(null);
@@ -55,7 +56,7 @@ public class WorkCriteriaService {
 
 
     public List<WorkCriteria> findWorkCriteria(Long workId) {
-        Specification<WorkCriteria> specification = Specification.where(Specifications.eq(null, "workId", workId));
+        Specification<@NonNull WorkCriteria> specification = Specification.where(Specifications.eq(null, "workId", workId));
         return workCriteriaRepository.findAll(specification, Sort.by("workId").and(Sort.by("criteria")));
     }
 

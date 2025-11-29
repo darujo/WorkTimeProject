@@ -1,6 +1,10 @@
 package ru.darujo.service;
 
-import lombok.extern.log4j.Log4j2;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.domain.Specification;
@@ -18,12 +22,10 @@ import ru.darujo.repository.MessageInformationRepository;
 import ru.darujo.repository.UserSendRepository;
 import ru.darujo.specifications.Specifications;
 
-import javax.annotation.PostConstruct;
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
-@Log4j2
+@Slf4j
 @Service
 @Primary
 public class MessageInformationService {
@@ -58,6 +60,7 @@ public class MessageInformationService {
     Map<MessageType, List<UserInfoDto>> messageTypeListMap = null;
 
     @PostConstruct
+    @Transactional
     public void init() {
         log.info("init mess");
         if (messageTypeListMap == null) {
@@ -101,14 +104,14 @@ public class MessageInformationService {
     }
 
     public boolean availInformNoAddUser() {
-        Specification<MessageInformation> specification = Specifications.eq(null, "isSend", false);
+        Specification<@NonNull MessageInformation> specification = Specifications.eq(null, "isSend", false);
         return messageInformationRepository.exists(specification);
 
     }
 
     @Transactional
     public void updateAllNoAddUser() {
-        Specification<MessageInformation> specification = Specifications.eq(null, "isSend", false);
+        Specification<@NonNull MessageInformation> specification = Specifications.eq(null, "isSend", false);
         messageInformationRepository
                 .findAll(specification)
                 .forEach(messageInformation -> {
@@ -129,13 +132,13 @@ public class MessageInformationService {
     }
 
     public boolean availNotSendMessage() {
-        Specification<UserSend> specification = Specifications.ne(null, "send", true);
+        Specification<@NonNull UserSend> specification = Specifications.ne(null, "send", true);
         return userSendRepository.exists(specification);
     }
 
     @Transactional
     public void sendAllNotSendMessage() {
-        Specification<UserSend> specification = Specifications.ne(null, "send", true);
+        Specification<@NonNull UserSend> specification = Specifications.ne(null, "send", true);
         userSendRepository.findAll(specification).forEach(
                 userSend -> {
                     try {
@@ -185,7 +188,7 @@ public class MessageInformationService {
                                 userSend.setSend(true);
                                 userSendRepository.save(userSend);
                             } catch (ResourceNotFoundRunTime ex){
-                                log.error("Сбой отправки файла пользователю с chatId " + userSend.getChatId() );
+                                log.error("Сбой отправки файла пользователю с chatId {}", userSend.getChatId());
                                 flagError.set(true);
                             }
                         });
@@ -196,14 +199,14 @@ public class MessageInformationService {
             }
             catch (ResourceNotFoundRunTime ex){
                 messageInformation.setText("Не удалось доставить до вас файл ранее. " + messageInformation.getText());
-                log.error("Сбой при отправке файла " + fileName + " " + ex.getMessage());
+                log.error("Сбой при отправке файла {} {}", fileName, ex.getMessage());
                 return false;
             }
             finally {
                 try {
                     telegramServiceIntegration.deleteFile(fileName);
                 }catch (ResourceNotFoundRunTime ex) {
-                    log.error("Сбой при удаление файл из сервиса " + fileName + " " + ex.getMessage());
+                    log.error("Сбой при удаление файл из сервиса {} {}", fileName, ex.getMessage());
                 }
             }
 

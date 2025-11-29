@@ -1,5 +1,6 @@
 package ru.darujo.service;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -129,7 +130,7 @@ public class WorkRepService {
                                                boolean hideNotTime) {
         AtomicInteger num = new AtomicInteger();
         List<WorkFactDto> workFactDTOs = new ArrayList<>();
-        Page<Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, releaseId);
+        Page<@NonNull Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, releaseId);
         workPage.forEach(work -> {
                     Set<String> users = taskServiceIntegration.getListUser(work.getId(), null).getList();
                     if (userName != null) {
@@ -341,7 +342,7 @@ public class WorkRepService {
                                                      Timestamp dateEnd,
                                                      String period) {
         List<WeekWorkDto> weekWorkDTOs = calendarServiceIntegration.getPeriodTime(dateStart, dateEnd, period);
-        Page<Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, releaseId);
+        Page<@NonNull Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, releaseId);
         List<WorkGraphDto> workGraphDTOs =
                 workPage.map(work -> new WorkGraphDto(WorkConvertor.getWorkLittleDto(work),
                         weekWorkDTOs.stream().map(weekWorkDto -> new WorkPeriodColorDto(weekWorkDto, getColor(weekWorkDto, work, true))).collect(Collectors.toList()),
@@ -351,7 +352,6 @@ public class WorkRepService {
 
         return new PageObjDto<>(workPage.getTotalPages(), workPage.getNumber(), workPage.getSize(), workFactDTOs);
     }
-
 
 
     Map<Integer, ColorDto> colorDtoMap = new HashMap<>();
@@ -429,7 +429,9 @@ public class WorkRepService {
                 || (analiseStartFact.compareTo(dayEnd) <= 0 && dayEnd.compareTo(analiseEndFact) <= 0)
                 || (dayStart.compareTo(analiseEndFact) <= 0 && analiseEndFact.compareTo(dayEnd) <= 0);
     }
+
     ColorRGB color;
+
     private ColorDto getColor(List<String> types) {
         ColorDto colorDto = colorDtoMap.get(types.hashCode());
         if (colorDto != null) {
@@ -446,21 +448,15 @@ public class WorkRepService {
     }
 
     private ColorRGB getColor(String type) {
-        switch (type) {
-            case "analise":
-                return ColorHelper.ANALISE;
-            case "develop":
-                return ColorHelper.DEVELOP;
-            case "debug":
-                return ColorHelper.DEBUG;
-            case "release":
-                return ColorHelper.RELEASE;
-            case "ope":
-                return ColorHelper.OPE;
-            case "public":
-                return ColorHelper.PUBLIC;
-        }
-        return ColorHelper.WHITE;
+        return switch (type) {
+            case "analise" -> ColorHelper.ANALISE;
+            case "develop" -> ColorHelper.DEVELOP;
+            case "debug" -> ColorHelper.DEBUG;
+            case "release" -> ColorHelper.RELEASE;
+            case "ope" -> ColorHelper.OPE;
+            case "public" -> ColorHelper.PUBLIC;
+            default -> ColorHelper.WHITE;
+        };
     }
 
     private void addColor(ColorRGB colorRGB) {

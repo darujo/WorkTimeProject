@@ -1,6 +1,7 @@
 package ru.darujo.api;
 
 import lombok.extern.log4j.Log4j2;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -125,24 +126,24 @@ public class TaskController {
 
         }
         if (workId == null && ziName != null) {
-            return findTasks(nikName, codeBTS, codeDEVBO, description, ziName, workId, type, listTaskId);
+            return findTasks(nikName, codeBTS, codeDEVBO, description, ziName, null, type, listTaskId);
         }
 
         return findTasks(nikName, codeBTS, codeDEVBO, description, workId, type, page, size, listTaskId);
     }
 
 
-    public Page<TaskDto> findTasks(String userName,
-                                   String codeBTS,
-                                   String codeDEVBO,
-                                   String description,
-                                   Long workId,
-                                   Integer type,
-                                   Integer page,
-                                   Integer size,
-                                   List<Long> listTaskId) {
+    public Page<@NonNull TaskDto> findTasks(String userName,
+                                                 String codeBTS,
+                                                 String codeDEVBO,
+                                                 String description,
+                                                 Long workId,
+                                                 Integer type,
+                                                 Integer page,
+                                                 Integer size,
+                                                 List<Long> listTaskId) {
         clearCash();
-        return ((Page<Task>) taskService.findTask(userName,
+        return ((Page<@NonNull Task>) taskService.findTask(userName,
                 codeBTS,
                 codeDEVBO,
                 description,

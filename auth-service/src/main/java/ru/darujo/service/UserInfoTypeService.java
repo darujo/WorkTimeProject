@@ -1,5 +1,6 @@
 package ru.darujo.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.information.MessageType;
@@ -9,7 +10,7 @@ import ru.darujo.model.UserInfoType;
 import ru.darujo.repository.UserInfoTypeRepository;
 import ru.darujo.specifications.Specifications;
 
-import javax.transaction.Transactional;
+
 import java.util.Collection;
 import java.util.List;
 

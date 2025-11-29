@@ -1,7 +1,9 @@
 package ru.darujo.service;
 
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Sort;
@@ -18,12 +20,11 @@ import ru.darujo.repository.WorkAgreementResponseRepository;
 import ru.darujo.specifications.Specifications;
 import ru.darujo.url.UrlWorkTime;
 
-import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-@Log4j2
+@Slf4j
 @Service
 @Primary
 public class WorkAgreementResponseService {
@@ -66,7 +67,7 @@ public class WorkAgreementResponseService {
         if (workAgreementResponse.getRequest() == null) {
             throw new ResourceNotFoundRunTime("Не могу найти привязку к запросу");
         }
-        Specification<WorkAgreementResponse> specification = Specification.where(Specifications.eq(null, "workId", workAgreementResponse.getWorkId()));
+        Specification<@NonNull WorkAgreementResponse> specification = Specification.where(Specifications.eq(null, "workId", workAgreementResponse.getWorkId()));
         specification = Specifications.eq(specification, "request", workAgreementResponse.getRequest().getId());
         specification = Specifications.eq(specification, "nikName", workAgreementResponse.getNikName());
         specification = Specifications.ne(specification, "id", workAgreementResponse.getId());
@@ -124,7 +125,7 @@ public class WorkAgreementResponseService {
 
 
     public List<WorkAgreementResponse> findWorkAgreementResponse(Long workId, Long requestId) {
-        Specification<WorkAgreementResponse> specification = Specification.where(Specifications.eq(null, "workId", workId));
+        Specification<@NonNull WorkAgreementResponse> specification = Specification.where(Specifications.eq(null, "workId", workId));
         specification = Specifications.eq(specification, "request", requestId);
         return workAgreementResponseRepository.findAll(specification, Sort.by("workId").and(Sort.by("requestId").and(Sort.by("timestamp"))));
     }

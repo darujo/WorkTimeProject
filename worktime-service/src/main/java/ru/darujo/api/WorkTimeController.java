@@ -1,5 +1,6 @@
 package ru.darujo.api;
 
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -32,7 +33,7 @@ public class WorkTimeController {
 
     @GetMapping("/{id}")
     public WorkTimeDto WorkTimeEdit(@PathVariable long id) {
-        return WorkTimeConvertor.getWorkTimeDto(workTimeService.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Отмеченая работа не найден")));
+        return WorkTimeConvertor.getWorkTimeDto(workTimeService.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Отмеченная работа не найден")));
     }
 
     @GetMapping("/right/{right}")
@@ -52,7 +53,7 @@ public class WorkTimeController {
         if (!right) {
             throw new ResourceNotFoundRunTime("У вас нет права WORK_TIME_EDIT");
         }
-        if (workTimeDto.getNikName() == null || workTimeDto.getNikName().equals("")) {
+        if (workTimeDto.getNikName() == null || workTimeDto.getNikName().isEmpty()) {
             workTimeDto.setNikName(username);
         }
         return WorkTimeConvertor.getWorkTimeDto(workTimeService.saveWorkTime(WorkTimeConvertor.getWorkTime(workTimeDto)));
@@ -68,25 +69,25 @@ public class WorkTimeController {
     }
 
     @GetMapping("")
-    public Page<WorkTimeDto> findWorkTime(@RequestHeader String username,
-                                          @RequestParam(required = false, name = "dateLt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLtStr,
-                                          @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
-                                          @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
-                                          @RequestParam(required = false, name = "dateGe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGeStr,
-                                          @RequestParam(required = false) Long[] taskId,
-                                          @RequestParam(required = false) String taskDEVBO,
-                                          @RequestParam(required = false) String taskBTS,
-                                          @RequestParam(required = false) String nikName,
-                                          @RequestParam(required = false) Integer type,
-                                          @RequestParam(required = false) String comment,
-                                          @RequestParam(defaultValue = "false") boolean currentUser,
-                                          @RequestParam(defaultValue = "1") Integer page,
-                                          @RequestParam(defaultValue = "10") Integer size) {
+    public Page<@NonNull WorkTimeDto> findWorkTime(@RequestHeader String username,
+                                                   @RequestParam(required = false, name = "dateLt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLtStr,
+                                                   @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
+                                                   @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
+                                                   @RequestParam(required = false, name = "dateGe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGeStr,
+                                                   @RequestParam(required = false) Long[] taskId,
+                                                   @RequestParam(required = false) String taskDEVBO,
+                                                   @RequestParam(required = false) String taskBTS,
+                                                   @RequestParam(required = false) String nikName,
+                                                   @RequestParam(required = false) Integer type,
+                                                   @RequestParam(required = false) String comment,
+                                                   @RequestParam(defaultValue = "false") boolean currentUser,
+                                                   @RequestParam(defaultValue = "1") Integer page,
+                                                   @RequestParam(defaultValue = "10") Integer size) {
         Date dateLt = DataHelper.DTZToDate(dateLtStr, "dateLt = ");
         Date dateLe = DataHelper.DTZToDate(dateLeStr, "dateLe = ", false);
         Date dateGt = DataHelper.DTZToDate(dateGtStr, "dateGt = ", false);
         Date dateGe = DataHelper.DTZToDate(dateGeStr, "dateGe = ");
-        if ((nikName == null || nikName.equals("")) && currentUser) {
+        if ((nikName == null || nikName.isEmpty()) && currentUser) {
             nikName = username;
         }
 
@@ -103,7 +104,7 @@ public class WorkTimeController {
                     page,
                     size).map(workTimeService::getWorkTimeDtoAndUpd);
         } else {
-            Page<WorkTime> workTimeDTOs = workTimeService.findWorkTimeTask(
+            Page<@NonNull WorkTime> workTimeDTOs = workTimeService.findWorkTimeTask(
                     taskDEVBO,
                     taskBTS,
                     nikName,

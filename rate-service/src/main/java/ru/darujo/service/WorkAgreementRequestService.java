@@ -1,11 +1,14 @@
 package ru.darujo.service;
 
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.work.WorkLittleDto;
@@ -17,8 +20,6 @@ import ru.darujo.repository.WorkAgreementRequestRepository;
 import ru.darujo.specifications.Specifications;
 import ru.darujo.url.UrlWorkTime;
 
-import javax.annotation.PostConstruct;
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -79,7 +80,7 @@ public class WorkAgreementRequestService {
         if (workAgreementRequest.getVersion() == null || workAgreementRequest.getVersion().isEmpty()) {
             throw new ResourceNotFoundRunTime("Не заполнена версия");
         }
-        Specification<WorkAgreementRequest> specification = Specification.where(Specifications.eq(null, "workId", workAgreementRequest.getWorkId()));
+        Specification<@NonNull WorkAgreementRequest> specification = Specification.where(Specifications.eq(null, "workId", workAgreementRequest.getWorkId()));
         specification = Specifications.eq(specification, "version", workAgreementRequest.getVersion());
         specification = Specifications.ne(specification, "id", workAgreementRequest.getId());
         WorkAgreementRequest agreementRequest = workAgreementRequestRepository.findOne(specification).orElse(null);
@@ -135,7 +136,7 @@ public class WorkAgreementRequestService {
 
 
     public List<WorkAgreementRequest> findWorkAgreementRequest(Long workId) {
-        Specification<WorkAgreementRequest> specification = Specification.where(Specifications.eq(null, "workId", workId));
+        Specification<@NonNull WorkAgreementRequest> specification = Specification.where(Specifications.eq(null, "workId", workId));
         return workAgreementRequestRepository.findAll(specification, Sort.by("workId").and(Sort.by("version")));
     }
 

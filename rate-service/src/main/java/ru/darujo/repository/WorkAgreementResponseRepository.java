@@ -1,5 +1,6 @@
 package ru.darujo.repository;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
@@ -8,5 +9,5 @@ import ru.darujo.model.WorkAgreementResponse;
 
 @Repository
 @Primary
-public interface WorkAgreementResponseRepository extends CrudRepository<WorkAgreementResponse,Long>, JpaSpecificationExecutor<WorkAgreementResponse> {
+public interface WorkAgreementResponseRepository extends CrudRepository<@NonNull WorkAgreementResponse, @NonNull Long>, JpaSpecificationExecutor<@NonNull WorkAgreementResponse> {
 }

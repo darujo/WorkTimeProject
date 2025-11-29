@@ -1,6 +1,7 @@
 package ru.darujo.integration;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 
-@Log4j2
+@Slf4j
 @Component
 public class TaskServiceIntegration extends ServiceIntegration {
     private WebClient webClientTask;
@@ -44,12 +45,12 @@ public class TaskServiceIntegration extends ServiceIntegration {
             return webClientTask.get().uri("/rep/fact/time" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
                     .bodyToMono(Float.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календатрь (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календарь (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 
@@ -64,7 +65,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
             return webClientTask.get().uri("/rep/fact/user" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
                     .bodyToMono(ListString.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -141,7 +142,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
             return webClientTask.get().uri("/rep/fact/week" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
                     .bodyToFlux(UserWorkFormDto.class)
                     .collectList()
                     .doOnError(throwable -> log.error(throwable.getMessage()))
@@ -175,7 +176,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Не удалось получить справочник TaskType"))
-                    .bodyToFlux(new ParameterizedTypeReference<AttrDto<Integer>>() {
+                    .bodyToFlux(new ParameterizedTypeReference<@NonNull AttrDto<Integer>>() {
                     }).collectList()
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();

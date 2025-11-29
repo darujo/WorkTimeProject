@@ -1,8 +1,10 @@
 package ru.darujo.service;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+import java.util.Arrays;
+
+@Slf4j
 public class RunnableNotException implements Runnable{
     private final Runnable runnable;
     public RunnableNotException(Runnable runnable) {
@@ -14,7 +16,8 @@ public class RunnableNotException implements Runnable{
         try {
             runnable.run();
         }catch (Exception ex){
-            log.error(ex);
+            log.error(ex.getMessage());
+            log.error(Arrays.toString(ex.getStackTrace()));
         }
     }
 }

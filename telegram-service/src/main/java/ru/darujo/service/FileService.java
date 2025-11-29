@@ -1,17 +1,18 @@
 package ru.darujo.service;
 
-import lombok.extern.log4j.Log4j2;
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 
-import javax.annotation.PostConstruct;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-@Log4j2
+@Slf4j
 @Service
 public class FileService {
     private final Map<String, File> files = new HashMap<>();
@@ -45,7 +46,7 @@ public class FileService {
             return;
         }
         boolean flag = file.delete();
-        log.info("файл удален " + name + "? " + flag);
+        log.info("файл удален {}? {}", name, flag);
         files.remove(name);
 
     }

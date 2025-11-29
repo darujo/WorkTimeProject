@@ -3,6 +3,7 @@ package ru.darujo.jwt;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -33,7 +34,7 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
 
 
     @Override
-    public GatewayFilter apply(Config config) {
+    public @NonNull GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
             if (!isAuthMissing(request)) {
@@ -47,7 +48,7 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
                     return this.onError(exchange, ex.getMessage(), HttpStatus.FORBIDDEN);
                 }
             } else {
-                return this.onError(exchange, "Токен отсутсвует", HttpStatus.UNAUTHORIZED);
+                return this.onError(exchange, "Токен отсутствует", HttpStatus.UNAUTHORIZED);
             }
             return chain.filter(exchange);
         };
@@ -69,7 +70,7 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
         builder.build();
     }
 
-    private Mono<Void> onError(ServerWebExchange exchange, String text, HttpStatus status) {
+    private Mono<@NonNull Void> onError(ServerWebExchange exchange, String text, HttpStatus status) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(status);
         DataBufferFactory bufferFactory = response.bufferFactory();
@@ -89,7 +90,7 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
     }
 
     private boolean isAuthMissing(ServerHttpRequest request) {
-        if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
+        if (!request.getHeaders().containsHeader(HttpHeaders.AUTHORIZATION)) {
             return true;
         }
         return !request.getHeaders().getOrEmpty(HttpHeaders.AUTHORIZATION).get(0).startsWith("Bearer");

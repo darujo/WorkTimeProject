@@ -1,7 +1,7 @@
 package ru.darujo.integration;
 
 import lombok.NonNull;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -11,7 +11,7 @@ import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.type.ReportTypeDto;
 
-@Log4j2
+@Slf4j
 @Component
 public class InfoServiceIntegration extends ServiceIntegration {
     private WebClient webClientInfo;
@@ -28,7 +28,7 @@ public class InfoServiceIntegration extends ServiceIntegration {
                     .bodyValue(mapUserInfoDto)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
                     .bodyToMono(Void.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -43,7 +43,7 @@ public class InfoServiceIntegration extends ServiceIntegration {
                     .bodyValue(messageInfoDto)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
                     .bodyToMono(Void.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -61,7 +61,7 @@ public class InfoServiceIntegration extends ServiceIntegration {
             webClientInfo.get().uri("/report" + sb)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченому времени"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
                     .bodyToMono(Void.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();

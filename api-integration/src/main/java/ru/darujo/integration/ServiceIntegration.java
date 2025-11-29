@@ -1,7 +1,8 @@
 package ru.darujo.integration;
 
 import lombok.Data;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import reactor.core.publisher.Mono;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
@@ -9,7 +10,7 @@ import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-@Log4j2
+@Slf4j
 public abstract class ServiceIntegration {
     @Data
     protected static class ErrorResponse {
@@ -17,11 +18,11 @@ public abstract class ServiceIntegration {
         private int errorCode;
     }
 
-    protected Mono<? extends Throwable> getMessage(ClientResponse clientResponse, String message) {
+    protected Mono<? extends @NonNull Throwable> getMessage(ClientResponse clientResponse, String message) {
         return clientResponse
                 .bodyToMono(ErrorResponse.class)
                 .flatMap(error ->{
-                        log.error(message + " " + error.getMessage());
+                            log.error("{} {}", message, error.getMessage());
                         return Mono.error(new ResourceNotFoundRunTime(message + " " + error.getMessage()));
                 }
 

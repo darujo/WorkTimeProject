@@ -1,7 +1,8 @@
 package ru.darujo.integration;
 
+import jakarta.annotation.PostConstruct;
 import lombok.NonNull;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
@@ -14,13 +15,12 @@ import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.user.UserFio;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-@Log4j2
+@Slf4j
 @Component
 public class UserServiceIntegration extends ServiceIntegration {
     private WebClient webClientUser;
@@ -69,7 +69,7 @@ public class UserServiceIntegration extends ServiceIntegration {
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
-                    .bodyToMono(new ParameterizedTypeReference<CustomPageImpl<UserDto>>() {
+                    .bodyToMono(new ParameterizedTypeReference<@org.jspecify.annotations.NonNull CustomPageImpl<UserDto>>() {
                     })
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block()).getContent();

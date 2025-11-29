@@ -1,5 +1,7 @@
 package ru.darujo.service;
 
+import jakarta.transaction.Transactional;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -12,7 +14,6 @@ import ru.darujo.model.Role;
 import ru.darujo.repository.RoleRepository;
 import ru.darujo.specifications.Specifications;
 
-import javax.transaction.Transactional;
 import java.util.*;
 
 @Service
@@ -90,7 +91,7 @@ public class RoleService {
     }
 
     public Collection<Role> getRoleList(String code, String name) {
-        Specification<Role> specification = Specification.where(null);
+        Specification<@NonNull Role> specification = Specification.unrestricted();
         specification = Specifications.like(specification,"code",code);
         specification = Specifications.like(specification,"name",name);
         return new ArrayList<>(roleRepository.findAll(specification, Sort.by("name")));

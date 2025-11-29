@@ -1,5 +1,6 @@
 package ru.darujo.service;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Sort;
@@ -29,7 +30,7 @@ public class WorkTypeService {
         if (workType.getWorkId() == null) {
             throw new ResourceNotFoundRunTime("Не могу найти привязку к ЗИ");
         }
-        Specification<WorkType> specification = Specification.where(Specifications.eq(null,"workId",workType.getWorkId()));
+        Specification<@NonNull WorkType> specification = Specification.where(Specifications.eq(null,"workId",workType.getWorkId()));
         specification = Specifications.eqIgnoreCase(specification,"type",workType.getType());
         specification = Specifications.ne(specification,"id", workType.getId());
         WorkType workTypeFind = workTypeRepository.findOne(specification).orElse(null);
@@ -49,7 +50,7 @@ public class WorkTypeService {
 
 
     public List<WorkType> findWorkCriteria(Long workId) {
-        Specification<WorkType> specification = Specification.where(Specifications.eq(null, "workId", workId));
+        Specification<@NonNull WorkType> specification = Specification.where(Specifications.eq(null, "workId", workId));
         return workTypeRepository.findAll(specification, Sort.by("workId").and(Sort.by("number").and(Sort.by("type"))));
     }
 

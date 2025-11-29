@@ -1,6 +1,6 @@
 package ru.darujo.integration;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-@Log4j2
+@Slf4j
 @Component
 public class WorkServiceIntegration extends ServiceIntegration {
     private WebClient webClientWork;
@@ -41,6 +41,8 @@ public class WorkServiceIntegration extends ServiceIntegration {
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
+            log.error("/obj/little/{}", workId);
+            log.error(ex.getMessage());
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -59,6 +61,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
+            log.error("/rep/time/fact/stage0{}", stringBuilder);
             log.error(ex.getMessage());
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
@@ -103,6 +106,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
+            log.error("/rep{}", stringBuilder);
             log.error(ex.getMessage());
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }

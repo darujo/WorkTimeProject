@@ -398,7 +398,6 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             strPars = location.href;
         }
         if (strPars.indexOf("?") !== -1) {
-
             console.log(strPars)
             let paramsStr = new URLSearchParams(strPars.substring(strPars.lastIndexOf("?")));
             for (let [key, value] of paramsStr.entries()) {
