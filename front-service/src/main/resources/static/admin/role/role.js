@@ -1,4 +1,4 @@
- angular.module('workTimeService').controller('roleController', function ($scope, $http, $location) {
+angular.module('workTimeService').controller('roleController', function ($scope, $http, $location) {
 
     const constPatchUser = window.location.origin + '/roles';
     const constPatchAdmin = window.location.origin + '/admin/roles';
@@ -23,8 +23,7 @@
         console.log("запрос данных");
         if ($scope.load) {
             alert("Подождите обрабатывается предыдущий запрос")
-        }
-        else {
+        } else {
             $scope.load = true;
             $scope.RoleList = null;
             let Filter;
@@ -134,22 +133,22 @@
 
     $scope.clearFilter = function (load) {
         console.log("clearFilter");
-        $scope.Filt = {
-        };
+        if (!load) {
+            $scope.Filt = {};
+        }
         console.log($scope.Filt);
         if (load) {
             $scope.filterRole();
         }
     }
-    $scope.editRight = function (roleId){
-        $location.path('/role_right' ).search({roleId: roleId});
+    $scope.editRight = function (roleId) {
+        $location.path('/role_right').search({roleId: roleId});
 
     }
 
     $scope.Filt = $location.getFilter("roleFilter");
-    if ($scope.Filt === null) {
-        $scope.clearFilter(false);
-    }
+
+    $scope.clearFilter(false);
     console.log("Start");
     showRoles();
     console.log("Show ok");

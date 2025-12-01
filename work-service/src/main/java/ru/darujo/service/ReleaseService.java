@@ -10,6 +10,7 @@ import ru.darujo.model.Release;
 import ru.darujo.repository.ReleaseRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ReleaseService {
@@ -21,9 +22,15 @@ public class ReleaseService {
         this.releaseRepository = releaseRepository;
     }
 
+    public Optional<Release> findOptionalById(Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
+        return releaseRepository.findById(id);
+    }
 
     public Release findById(long id) {
-        return releaseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Релиз с id " + id + " не найден."));
+        return findOptionalById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Релиз с id " + id + " не найден."));
     }
 
     public Release saveRelease(Release release) {

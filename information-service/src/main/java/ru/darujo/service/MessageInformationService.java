@@ -180,7 +180,7 @@ public class MessageInformationService {
                 telegramServiceIntegration.addFile(fileName, fileBody);
                 AtomicReference<Boolean> flagError = new AtomicReference<>(false);
                 userSendRepository.findAll(
-                        Specifications.eq(null,"messageInformation",messageInformation.getId())
+                                Specifications.eq(null, "messageInformation", messageInformation)
                         )
                         .forEach(userSend -> {
                             try {

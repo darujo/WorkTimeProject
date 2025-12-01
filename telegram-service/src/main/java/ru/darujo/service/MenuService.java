@@ -121,15 +121,20 @@ public class MenuService {
             menuParam = new MenuParam();
             paramMap.put(messageId, menuParam);
         } else {
-            if(command.getAvailParam()) {
+            if (command.getAvailParam()) {
                 menuParam = getMenuParam(author, charId, messageId);
             }
 
         }
 
         if (command.equals(CommandType.REPORT)) {
-            telegramBotSend.EditPhoto(charId, messageId, "Какой отчет вы хотите построить?", getMenuReport(), file);
-
+            ResultMes resultMes = userServiceIntegration.checkUserTelegram(Long.parseLong(charId));
+            if (resultMes.isOk()) {
+                telegramBotSend.EditPhoto(charId, messageId, "Какой отчет вы хотите построить?", getMenuReport(), file);
+            } else {
+                telegramBotSend.deleteMessage(charId, messageId);
+                telegramBotSend.sendMessage(null, charId, resultMes.getMessage());
+            }
         }
         if (command.equals(CommandType.SEND_ME)) {
             sendReport(Objects.requireNonNull(menuParam).getReportTypeDto(), author, charId, messageId, true);
@@ -173,7 +178,7 @@ public class MenuService {
 
         } catch (RuntimeException ex) {
             telegramBotSend.sendMessage(null, charId, "Что-то пошло не так отчет не будет сформирован. Попробуйте позже или обратитесь к администратору");
-        }finally {
+        } finally {
             deleteMessage(charId, messageId);
         }
     }

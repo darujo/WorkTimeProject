@@ -378,7 +378,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                 return $localStorage.filterWorkTime[name];
             }
         }
-        return null;
+        return {};
 
     }
     let myHash;

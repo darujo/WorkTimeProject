@@ -84,10 +84,16 @@ angular.module('workTimeService').controller('workFactRepController', function (
 
     $scope.clearFilter = function (load) {
         console.log("clearFilter");
-        $scope.Filt = {
-            stageZi: 15,
-            size: 10,
-            hideNotTime: true
+        if ($scope.Filt === null || !load) {
+            $scope.Filt = {
+                stageZi: 15,
+                size: 10,
+                hideNotTime: true
+            }
+        } else {
+            $scope.Filt["stageZi"] = $scope.Filt.stageZi ? $scope.Filt.stageZi : 15;
+            $scope.Filt["size"] = $scope.Filt.size ? $scope.Filt.size : 10;
+            $scope.Filt["hideNotTime"] = $scope.Filt.hideNotTime ? $scope.Filt.hideNotTime : true;
         }
         console.log($scope.Filt);
         if (load) {
@@ -96,9 +102,9 @@ angular.module('workTimeService').controller('workFactRepController', function (
     }
     document.getElementById("Page").value = "1";
     $scope.Filt = $location.getFilter("factWorkFilter");
-    if ($scope.Filt === null) {
-        $scope.clearFilter(false);
-    }
+
+    $scope.clearFilter(false);
+
     $location.getUsers().then(function (result) {
         $scope.UserList = result;
         console.log("result UserList");

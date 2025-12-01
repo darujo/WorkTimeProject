@@ -3,9 +3,10 @@ package ru.darujo.dto.workperiod;
 import ru.darujo.dto.user.UserFio;
 import ru.darujo.service.CodeService;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class UserWorkDto implements UserFio {
+public class UserWorkDto implements UserFio, Serializable {
     public UserWorkDto() { }
     private Integer userCol;
     private String nikName;
@@ -16,7 +17,8 @@ public class UserWorkDto implements UserFio {
     protected Date dateEnd;
     private Float workPlan;
     private Float workAllFact;
-    protected final Map<Integer,Float>  workTime = new LinkedHashMap <>();
+    protected Map<Integer, Float> workTime = new LinkedHashMap<>();
+    protected Map<Integer, Set<Long>> workTask = new LinkedHashMap<>();
 
     public UserWorkDto(String nikName, String authorFirstName, String authorLastName, String authorPatronymic, Date dateStart, Date dateEnd, Float workPlan) {
         this.nikName = nikName;
@@ -98,8 +100,6 @@ public class UserWorkDto implements UserFio {
         return workAllFact;
     }
 
-
-    protected final Map<Integer,Set<Long>>  workTask = new LinkedHashMap <>();
     public void addTask(Integer type, Long taskId) {
         Set<Long> tasks = workTask.computeIfAbsent(type, k -> new HashSet<>());
         tasks.add(taskId);

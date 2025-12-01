@@ -20,14 +20,15 @@ import ru.darujo.dto.information.ResultMes;
 import ru.darujo.dto.user.*;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.InfoServiceIntegration;
-
 import ru.darujo.model.User;
 import ru.darujo.repository.UserRepository;
 import ru.darujo.specifications.Specifications;
 
-
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -233,7 +234,7 @@ public class UserService {
         }
         if (userId != null) {
             User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + userId + " не найден"));
-            userInfoTypeService.getInfoTypes(userId).forEach(userInfoType -> userInfoActiveDtoMap.get(userInfoType.getCode()).setActive(Boolean.TRUE));
+            userInfoTypeService.getInfoTypes(user).forEach(userInfoType -> userInfoActiveDtoMap.get(userInfoType.getCode()).setActive(Boolean.TRUE));
             return new UserInfoTypeDto(user.getId(), user.getNikName(), user.getFirstName(), user.getLastName(), user.getPatronymic(), userInfoActiveDtoMap.values());
         } else {
             return new UserInfoTypeDto(null, null, null, null, null, userInfoActiveDtoMap.values());

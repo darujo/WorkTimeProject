@@ -20,7 +20,6 @@ import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.InfoServiceIntegration;
 import ru.darujo.integration.RateServiceIntegration;
 import ru.darujo.integration.TaskServiceIntegration;
-
 import ru.darujo.model.Release;
 import ru.darujo.model.Work;
 import ru.darujo.model.WorkLittle;
@@ -31,7 +30,8 @@ import ru.darujo.specifications.Specifications;
 import ru.darujo.url.UrlWorkTime;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -222,10 +222,11 @@ public class WorkService {
         } else {
             specification = Specification.where(Specifications.queryDistinctTrue());
         }
+        Release release = releaseService.findOptionalById(releaseId).orElse(null);
         specification = Specifications.like(specification, "name", name);
         specification = Specifications.like(specification, "codeZI", codeZi);
         specification = Specifications.like(specification, "task", task);
-        specification = Specifications.eq(specification, "release", releaseId);
+        specification = Specifications.eq(specification, "release", release);
         specification = Specifications.eq(specification, "codeSap", codeSap);
 
         if (stageZiLe != null && stageZiLe.equals(stageZiGe)) {
@@ -269,7 +270,8 @@ public class WorkService {
         specification = Specifications.like(specification, "codeZI", codeZi);
         specification = Specifications.like(specification, "name", name);
         specification = Specifications.like(specification, "task", task);
-        specification = Specifications.eq(specification, "release", releaseId);
+        Release release = releaseService.findOptionalById(releaseId).orElse(null);
+        specification = Specifications.eq(specification, "release", release);
         specification = Specifications.eq(specification, "codeSap", codeSap);
 
         if (stageZiLe != null) {

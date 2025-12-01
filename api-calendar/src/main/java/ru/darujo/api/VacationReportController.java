@@ -45,9 +45,7 @@ public class VacationReportController {
         } else {
             dateStart = DataHelper.DTZToDate(dateStartStr, "dateStart = ", true);
         }
-        if (dateStart == null) {
-            return null;
-        }
+
         return vacationReportService.getLastWorkDay(username, dateStart, dayMinus, lastWeek);
     }
 
@@ -60,9 +58,6 @@ public class VacationReportController {
             date = new Timestamp(System.currentTimeMillis());
         } else {
             date = DataHelper.DTZToDate(dateStr, "dateStart = ", true);
-        }
-        if (date == null) {
-            return null;
         }
         return vacationReportService.isWorkDayUser(date, username);
     }

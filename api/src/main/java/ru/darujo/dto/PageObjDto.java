@@ -1,13 +1,11 @@
 package ru.darujo.dto;
 
 
-import java.awt.print.Pageable;
-
 public class PageObjDto<T>{
     int totalPages;
     int number;
     int size;
-    T Content;
+    T content;
 
     @SuppressWarnings("unused")
     public int getTotalPages() {
@@ -26,13 +24,13 @@ public class PageObjDto<T>{
 
     @SuppressWarnings("unused")
     public T getContent() {
-        return Content;
+        return content;
     }
 
     public PageObjDto(int totalPages, int number, int size, T content) {
         this.totalPages = totalPages;
         this.number = number;
         this.size = size;
-        Content = content;
+        this.content = content;
     }
 }

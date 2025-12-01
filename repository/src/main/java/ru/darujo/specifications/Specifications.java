@@ -187,7 +187,7 @@ public class Specifications {
     }
 
     public static <T> Specification<@NonNull T> like(Specification<@NonNull T> specification, String field, String value) {
-        if (value != null) {
+        if (value != null && !value.isBlank()) {
             if (specification == null) {
                 specification = like(field, value);
             } else {
@@ -332,6 +332,22 @@ public class Specifications {
 
     private static <T> Specification<@NonNull T> eqIgnoreCase(String field, String value) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(criteriaBuilder.lower(root.get(field)), value.toLowerCase()));
+    }
+
+    public static <T> Specification<@NonNull T> eq(Specification<@NonNull T> specification, String field, Object value) {
+        if (value != null) {
+            if (specification == null) {
+                specification = eq(field, value);
+            } else {
+                specification = specification.and(eq(field, value));
+            }
+        }
+        return specification;
+    }
+
+    private static <T> Specification<@NonNull T> eq(String field, Object value) {
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(field), value));
+
     }
 
 }

@@ -3,9 +3,9 @@ package ru.darujo.service;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.calendar.DayDto;
+import ru.darujo.dto.calendar.DayTypeDto;
 import ru.darujo.dto.calendar.WeekDto;
 import ru.darujo.dto.calendar.WeekWorkDto;
-import ru.darujo.dto.calendar.DayTypeDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.utils.calendar.ProductionCalendar;
 import ru.darujo.utils.calendar.structure.DateInfo;
@@ -16,7 +16,10 @@ import java.time.DateTimeException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 @Service
 @Primary
@@ -77,13 +80,13 @@ public class CalendarService {
                 days[5],
                 days[6], month);
         weekDTOs.add(weekDto);
-        while (date.compareTo(dayEnd) <= 0) {
+        while (!date.isAfter(dayEnd)) {
             for (int i = 0; i < 7; i++) {
                 DayDto dayDto;
                 DateInfo dateInfo;
 
                 dateInfo = productionCalendar.getDateInfo(date);
-                if (date.compareTo(dayEnd) > 0) {
+                if (date.isAfter(dayEnd)) {
                     dayDto = null;
                 } else {
                     dayDto = new DayDto(
@@ -240,7 +243,7 @@ public class CalendarService {
 
         LocalDate date = dayStart.minusDays(1);
 
-        while (date.compareTo(dayEnd) < 0) {
+        while (date.isBefore(dayEnd)) {
             Timestamp periodStart = null;
             Timestamp periodEnd = null;
             float time = 0f;
@@ -300,7 +303,7 @@ public class CalendarService {
         LocalDate dayStart = dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate dayEnd = dateEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         float time = 0f;
-        for (LocalDate date = dayStart; date.compareTo(dayEnd) <= 0; date = date.plusDays(1)) {
+        for (LocalDate date = dayStart; !date.isAfter(dayEnd); date = date.plusDays(1)) {
             DateInfo dateInfo = productionCalendar.getDateInfo(date);
             if (dateInfo.getType() == DayType.SHORTDAY) {
                 time = time + getDayTime(date) - 1;

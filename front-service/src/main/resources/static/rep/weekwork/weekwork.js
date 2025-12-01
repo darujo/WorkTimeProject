@@ -12,17 +12,29 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
     }
     $scope.clearFilter = function (load) {
         console.log("clearFilter");
-        $scope.Filt = {
-            dateStart: new Date(),
-            dateEnd: new Date(),
-            weekSplit: true,
-            workTask: true,
-            workTime: true,
-            workPercent: true,
-            stageZi: 15,
-            page: 1,
-            size: 10
-        };
+        if ($scope.Filt === null || !load) {
+            $scope.Filt = {
+                dateStart: new Date(),
+                dateEnd: new Date(),
+                weekSplit: true,
+                workTask: true,
+                workTime: true,
+                workPercent: true,
+                stageZi: 15,
+                page: 1,
+                size: 10
+            };
+        } else {
+            $scope.Filt ["dateStart"] = $scope.Filt.dateStart ? $scope.Filt.dateStart : new Date();
+            $scope.Filt ["dateEnd"] = $scope.Filt.dateEnd ? $scope.Filt.dateEnd : new Date();
+            $scope.Filt ["weekSplit"] = $scope.Filt.weekSplit ? $scope.Filt.weekSplit : true;
+            $scope.Filt ["workTask"] = $scope.Filt.workTask ? $scope.Filt.workTask : true;
+            $scope.Filt ["workTime"] = $scope.Filt.workTime ? $scope.Filt.workTime : true;
+            $scope.Filt ["workPercent"] = $scope.Filt.workPercent ? $scope.Filt.workPercent : true;
+            $scope.Filt ["stageZi"] = $scope.Filt.stageZi ? $scope.Filt.stageZi : 15;
+            $scope.Filt ["page"] = $scope.Filt.page ? $scope.Filt.page : 1;
+            $scope.Filt ["size"] = $scope.Filt.size ? $scope.Filt.size : 10;
+        }
         console.log($scope.Filt);
         if (load) {
             $scope.filterWorkTime();
@@ -63,8 +75,7 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
         $scope.Filt.page = page;
         if ($scope.load) {
             alert("Подождите обрабатывается предыдущий запрос")
-        }
-        else {
+        } else {
             $scope.load = true;
             $scope.WeekWorkList = null;
             let Filter = $scope.Filt;
@@ -147,9 +158,8 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
 
     $location.getCode("task/code/type", callBackType);
     $scope.Filt = $location.getFilter("week_work");
-    if ($scope.Filt === null) {
-        $scope.clearFilter(false);
-    }
+    $scope.clearFilter(false);
+
 
     $location.getUsers().then(function (result) {
         $scope.UserList = result;
