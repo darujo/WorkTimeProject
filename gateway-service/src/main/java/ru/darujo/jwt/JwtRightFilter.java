@@ -71,8 +71,9 @@ public abstract class JwtRightFilter extends AbstractGatewayFilterFactory<JwtRig
         ServerHttpRequest.Builder builder =
                 exchange.getRequest().mutate()
                         .header("username", claims.getSubject());
-        listString.forEach(s -> builder.header(s, "true"));
-
+        if (listString != null) {
+            listString.forEach(s -> builder.header(s, "true"));
+        }
         return exchange.mutate().request(builder.build()).build();
     }
 
