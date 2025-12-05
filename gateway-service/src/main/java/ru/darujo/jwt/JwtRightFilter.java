@@ -42,7 +42,7 @@ public abstract class JwtRightFilter extends AbstractGatewayFilterFactory<JwtRig
             if (!isAuthMissing(request)) {
                 final String token = getAuthHeaders(request);
                 if (jwtUtil.isInvalid(token)) {
-                    return this.onError(exchange, "Не правильный заголовок авторизации", HttpStatus.UNAUTHORIZED);
+                    return this.onError(exchange, "Токен просрочен.", HttpStatus.UNAUTHORIZED);
                 }
                 try {
                     exchange = populateRequestHeader(exchange, token);
