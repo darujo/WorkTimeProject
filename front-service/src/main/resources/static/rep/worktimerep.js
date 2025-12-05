@@ -62,23 +62,26 @@ angular.module('workTimeService').controller('workTimeRepController', function (
     $scope.clearFilter = function (load) {
         console.log("clearFilter");
         console.log(load);
-        $scope.Filt = {
-            stageZi: 15,
-            availWork: true
-        };
-        console.log($scope.Filt);
+
 
         if (load) {
+            $scope.Filt = {
+                stageZi: 15,
+                availWork: true
+            };
+            console.log($scope.Filt);
             console.log("load ?");
             console.log(load);
             $scope.filterWork();
+        } else {
+            $scope.Filt ["stageZi"] = $scope.Filt.stageZi ? $scope.Filt.stageZi : 15;
+            $scope.Filt ["availWork"] = $scope.Filt.availWork ? $scope.Filt.availWork : true;
         }
     }
     let init = function () {
         $scope.Filt = $location.getFilter("workTimeRepFilter");
-        if ($scope.Filt === null) {
-            $scope.clearFilter(false);
-        }
+        $scope.clearFilter(false);
+
         $location.getReleases().then(function (result) {
             $scope.ReleaseList = result;
             console.log("result releaseList");

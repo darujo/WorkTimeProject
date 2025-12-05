@@ -78,12 +78,12 @@
                         <br>
                         <div ng-if="!UserLogin.telegramAdd">
                             <button ng-click="addTelegram()" id="ButtonTelegramAdd">
-                                {{CodeTelegram.ok ? "Запросить код повторно" : "Привязать telegram" }}
+                                {{CodeTelegram.ok ? "Запросить код повторно" : "Привязать telegram"}}
                             </button>
                             <br>
                             <div ng-if="CodeTelegram.ok">
                                 <p>Для получения уведомлений перейдите <a href="http://{{CodeTelegram.link}}" target="_blank" >Бот</a>.
-                                    И отправте команду /link. На запрос кода введите:<b>{{CodeTelegram.code}}</b>.
+                                    И отправьте команду /link. На запрос кода введите:<b>{{CodeTelegram.code}}</b>.
                                     Внимание Код действует <b>{{CodeTelegram.time}}</b> минут. После авторизации в боте
                                     нажмите кнопку: </p>
                                 <br>
@@ -166,7 +166,9 @@
     <script src="calendar/vacation/vacation.js?ver=1.2"></script>
     <script src="rep/uservacation/uservacation.js?ver=1.2"></script>
     <script src="admin/user/user_password.js?ver=1.2"></script>
-
+    <script src="workrate/agreement.js?ver=1.2"></script>
+    <script src="workrate/request.js?ver=1.2"></script>
+    <script src="workrate/response.js?ver=1.2"></script>
 
 </div>
 </body>

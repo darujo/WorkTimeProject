@@ -1,0 +1,83 @@
+
+<div id="WorkStageList" class="head_text_elem">
+    <h1>{{ZI.codeSap}} </h1>
+    <h1>{{ZI.codeZI}} {{ZI.name}} </h1>
+
+<!--    <h1 ng-style="getStyle(ZI.rated ? 0 : 1)">{{ZI.rated ? "Оценка выполнена" : "Оценка не выполнена" }}</h1>-->
+
+<!--    <h1 ng-style="getStyle(RateStatusSC.code)">{{RateStatusSC.value}}</h1>-->
+<!--    <h1 ng-style="getStyle(RateStatusST.code)">{{RateStatusST.value}}</h1>-->
+<!--    <h1 ng-style="getStyle(RateStatusCT.code)">{{RateStatusCT.value}}</h1>-->
+    <div class="horiz">
+        <h1>Плановая оценка</h1>
+        <button type="button" class="head_button mar5" id="WorkPage" ng-click="workPage()">Назад</button>
+        <button type="button" class="head_button mar5" id="RequestAdd" ng-click="addRequest(!ZI.id)">{{"Добавить запрос"}}</button>
+    </div>
+    <table>
+        <tr>
+            <td class="table_head2">№ п/п</td>
+            <td class="table_head2">ФИО</td>
+            <td class="table_head2">версия</td>
+            <td class="table_head2">Дата и время</td>
+            <td class="table_head2">Комментарий</td>
+            <td class="table_head2">Срок</td>
+            <td class="table_head2">Статус</td>
+            <td class="table_head2"></td>
+            <td class="table_head2"></td>
+            <td class="table_head2"></td>
+<!--            <td class="table_head2" ng-if="stageEdit && !ZI.rated"></td>-->
+<!--            <td class="table_head1" ng-if="stageEdit && !ZI.rated"></td>-->
+            
+        </tr>
+        <tbody ng-repeat="request in RequestList" ng-init="parentIndex = $index">
+        <tr>
+        <td>{{$index + 1}}</td>
+            <td ng-if="!request.firstName">{{request.nikName}}</td>
+            <td ng-if="request.firstName">{{request.lastName}} {{request.firstName}}
+                {{request.patronymic}}
+            </td>
+
+            <td>{{request.version}}</td>
+            <td>{{request.timestampStr}}</td>
+            <td>{{request.comment}}</td>
+            <td>{{request.termStr}}</td>
+            <td>{{request.statusName}}</td>
+            <td>
+                <button ng-click="addResponse(request.id)">Согласовать</button>
+            </td>
+            <td>
+                <button ng-click="editRequest(request.id)">Изменить</button>
+            </td>
+            <td>
+                <button ng-click="deleteRequest(request.id)">Удалить</button>
+            </td>
+        </tr>
+        <tr ng-repeat="response in request.listResponse">
+            <td></td>
+            <td ng-if="!response.firstName">{{response.nikName}}</td>
+            <td ng-if="response.firstName">{{response.lastName}} {{response.firstName}}
+                {{response.patronymic}}
+            </td>
+
+            <td>ответил</td>
+            <td>{{response.timestampStr}}</td>
+            <td class="text_left" colspan="3">{{response.comment}}</td>
+            <td>{{response.statusName}}</td>
+            <td>
+                <button ng-click="editResponse(request.id,response.id)">Изменить</button>
+            </td>
+            <td>
+                <button ng-click="deleteResponse(response.id)">Удалить</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div>
+        <img ng-if="load1" src="../gif/wait1.gif" alt="wait1" width="900" height="506"/>
+    </div>
+    <div id="WorkRequestAdd" >
+        <button type="button" class="head_button" id="AddRequest" ng-click="addRequest()">Добавить</button>
+
+    </div>
+</div>
+

@@ -2,15 +2,18 @@ package ru.darujo.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import ru.darujo.assistant.helper.DataHelper;
 import ru.darujo.dto.calendar.WeekDto;
 import ru.darujo.dto.calendar.WeekWorkDto;
-import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.service.CalendarService;
 
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 @RestController()
 @RequestMapping("/v1/calendar")

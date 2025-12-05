@@ -162,10 +162,15 @@ angular.module('workTimeService').controller('vacationController', function ($sc
 
     $scope.clearFilter = function (load) {
         console.log("clearFilter");
-        $scope.Filt = {
-            size: 10,
-            nikName : "current"
-        };
+        if ($scope.Filt === null || !load) {
+            $scope.Filt = {
+                size: 10,
+                nikName: "current"
+            };
+        } else {
+            $scope.Filt ["size"] = $scope.Filt.size ? $scope.Filt.size : 10;
+            $scope.Filt ["nikName"] = $scope.Filt.nikName ? $scope.Filt.nikName : "current";
+        }
         console.log($scope.Filt);
         if (load) {
             $scope.filterVacation();
@@ -174,9 +179,9 @@ angular.module('workTimeService').controller('vacationController', function ($sc
 
     // $scope.UserList = $location.UserList;
     $scope.Filt = $location.getFilter("vacationFilter");
-    if ($scope.Filt === null) {
-        $scope.clearFilter(false);
-    }
+
+    $scope.clearFilter(false);
+
 
     $location.getUsers().then(function (result) {
         $scope.UserList = result;

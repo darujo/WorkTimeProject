@@ -10,8 +10,9 @@ import java.util.Date;
 
 public class DataHelper {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-    public static String dateToDDMMYYYY(Date date){
-        if (date == null){
+
+    public static String dateToDDMMYYYY(Date date) {
+        if (date == null) {
             return null;
         }
         return sdf.format(date);
@@ -39,6 +40,7 @@ public class DataHelper {
         }
         return null;
     }
+
     public static Timestamp dateNoTime(Timestamp dateStr) {
         if (dateStr != null) {
 
@@ -56,11 +58,21 @@ public class DataHelper {
     }
 
     private static final SimpleDateFormat sdfIso = new SimpleDateFormat("yyyy_MM_dd_HH_mm");
-    public static String dateToYYYYMMDD(Date date){
-        if (date == null){
+
+    public static String dateToISOStr(Date date) {
+        if (date == null) {
             return null;
         }
         return sdfIso.format(date);
+    }
+
+    private static final SimpleDateFormat sdfDT = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+
+    public static String dateTimeToStr(Date date) {
+        if (date == null) {
+            return null;
+        }
+        return sdfDT.format(date);
     }
 
 }

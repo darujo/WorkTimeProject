@@ -51,11 +51,18 @@ angular.module('workTimeService').controller('taskController', function ($scope,
     $scope.Filt = {favouriteTask: null}
     let TaskIdEdit = null;
     let arrTaskId = [];
+
     $scope.loadTask = function () {
         console.log("loadTask");
-
-        $location.parserFilter($scope.Filt);
-
+        if (location.href.indexOf("?") !== -1) {
+            $scope.Filt = $location.parserFilter($scope.Filt);
+        } else {
+            $scope.Filt = $location.getFilter("taskFilter");
+            $scope.Filt["favouriteTask"] = $scope.Filt ? $scope.Filt.favouriteTask : null;
+            $scope.Filt["size"] = $scope.Filt.size ? $scope.Filt.size : 10;
+        }
+        console.log("loadUrl");
+        console.log($scope.Filt);
         $scope.findPage(0);
     };
 
@@ -114,6 +121,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
                         $scope.TaskList = response.data.content;
                         maxPage = response.data["totalPages"];
                     }
+
                     showTask();
                 }, function errorCallback(response) {
                     $scope.load = false;
@@ -424,15 +432,12 @@ angular.module('workTimeService').controller('taskController', function ($scope,
     };
 
     $location.getCode("task/code/type", callBackType);
-    $scope.Filt = $location.getFilter("taskFilter");
     $scope.FiltWork = $location.getFilter("taskEditFilter");
     if ($scope.FiltWork == null) {
         $scope.FiltWork = {size: 10};
     }
     console.log($scope.Filt);
-    if ($scope.Filt === null) {
-        $scope.clearFilter(false);
-    }
+    $scope.clearFilter(false);
     console.log("start");
     showTask();
     $scope.loadTask();

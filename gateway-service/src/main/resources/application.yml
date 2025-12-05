@@ -9,108 +9,115 @@ server:
 
 spring:
   main:
-    banner-mode: off
+    banner-mode: console
   application:
     name: gateway-service
   cloud:
     gateway:
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowedOrigins: "https://178.20.40.174:8185,https://localhost:8185"
-            allowedMethods:
-              - GET
-              - POST
-              - DELETE
-            allowedHeaders: "*"
-#            allow-credentials: true
-      routes:
-        - id: user-admin-service
-          uri: "http://localhost:8183"
-          predicates:
-            - Path=/admin/users/**,/admin/roles/**
-          filters:
-            - StripPrefix=0
-            - PrefixPath=/app-auth/
-            - JwtAdminFilter
-        - id: worktime-service
-          uri: "http://localhost:8180"
-          predicates:
-            - Path=/worktime-service/**
-          filters:
-            - StripPrefix=1
-            - PrefixPath=/app
-            - JwtAuthFilter
-        - id: task-service
-          uri: "http://localhost:8181"
-          predicates:
-            - Path=/task-service/**
-          filters:
-            - StripPrefix=1
-            - PrefixPath=/app
-            - JwtAuthFilter
-        - id: work-service
-          uri: "http://localhost:8182"
-          predicates:
-            - Path=/work-service/**
-          filters:
-            - StripPrefix=1
-            - PrefixPath=/app
-            - JwtAuthFilter
-        - id: calendar-service
-          uri: "http://localhost:8184"
-          predicates:
-            - Path=/calendar-service/**
-          filters:
-            - StripPrefix=1
-            - PrefixPath=/app
-            - JwtAuthFilter
-        - id: front-service
-          uri: "http://localhost:8185"
-          predicates:
-            - Path=/app/**
-          filters:
-            - StripPrefix=1
-            - PrefixPath=/app-front/
+      server:
+        webflux:
+
+          enabled: true
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOrigins: "https://178.20.40.174:8185,https://localhost:8185"
+                allowedMethods:
+                  - GET
+                  - POST
+                  - DELETE
+                allowedHeaders: "*"
+                allow-credentials: true
+          httpclient:
+            connect-timeout: 10000
+            response-timeout: 30s
+          routes:
+            - id: user-admin-service
+              uri: "http://localhost:8183"
+              predicates:
+                - Path=/admin/users/**,/admin/roles/**
+              filters:
+                - StripPrefix=0
+                - PrefixPath=/app-auth/
+                - JwtAdminFilter
+            - id: worktime-service
+              uri: "http://localhost:8180"
+              predicates:
+                - Path=/worktime-service/**
+              filters:
+                - StripPrefix=1
+                - PrefixPath=/app
+                - JwtAuthFilter
+            - id: task-service
+              uri: "http://localhost:8181"
+              predicates:
+                - Path=/task-service/**
+              filters:
+                - StripPrefix=1
+                - PrefixPath=/app
+                - JwtAuthFilter
+            - id: work-service
+              uri: "http://localhost:8182"
+              predicates:
+                - Path=/work-service/**
+              filters:
+                - StripPrefix=1
+                - PrefixPath=/app
+                - JwtAuthFilter
+            - id: calendar-service
+              uri: "http://localhost:8184"
+              predicates:
+                - Path=/calendar-service/**
+              filters:
+                - StripPrefix=1
+                - PrefixPath=/app
+                - JwtAuthFilter
+            - id: front-service
+              uri: "http://localhost:8185"
+              predicates:
+                - Path=/app/**
+              filters:
+                - StripPrefix=1
+                - PrefixPath=/app-front/
 #            - JwtAuthFilter
-        - id: auth-service
-          uri: "http://localhost:8183"
-          predicates:
-            - Path=/auth
-          filters:
-            - StripPrefix=1
-            - PrefixPath=/app-auth/auth
-        - id: user-service
-          uri: "http://localhost:8183"
-          predicates:
-            - Path=/users/**,/roles/**
-          filters:
-            - StripPrefix=0
-            - PrefixPath=/app-auth
-            - JwtAuthFilter
-        - id: info-service
-          uri: "http://localhost:8188"
-          predicates:
-            - Path=/info-service/**
-          filters:
-            - StripPrefix=1
-            - PrefixPath=/app/
-            - JwtAuthFilter
-        - id: rate-service
-          uri: "http://localhost:8186"
-          predicates:
-            - Path=/rate-service/**
-          filters:
-          - StripPrefix=1
-          - PrefixPath=/app/
-          - JwtAuthFilter
-        - id: front-add
-          uri: "http://localhost:8185"
-          predicates:
-            - Path=/**
-          filters:
-            - StripPrefix=0
-            - PrefixPath=/app-front
+            - id: auth-service
+              uri: "http://localhost:8183"
+              predicates:
+                - Path=/auth
+              filters:
+                - StripPrefix=1
+                - PrefixPath=/app-auth/auth
+            - id: user-service
+              uri: "http://localhost:8183"
+              predicates:
+                - Path=/users/**,/roles/**
+              filters:
+                - StripPrefix=0
+                - PrefixPath=/app-auth
+                - JwtAuthFilter
+            - id: info-service
+              uri: "http://localhost:8188"
+              predicates:
+                - Path=/info-service/**
+              filters:
+                - StripPrefix=1
+                - PrefixPath=/app/
+                - JwtAuthFilter
+            - id: rate-service
+              uri: "http://localhost:8186"
+              predicates:
+                - Path=/rate-service/**
+              filters:
+                - StripPrefix=1
+                - PrefixPath=/app/
+         # - JwtAuthFilter
+            - id: front-add
+              uri: "http://localhost:8185"
+              predicates:
+                - Path=/**
+              filters:
+                - StripPrefix=0
+                - PrefixPath=/app-front
             #            - JwtAuthFilter
 
 

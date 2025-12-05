@@ -1,22 +1,32 @@
 package ru.darujo.service;
 
 import lombok.Getter;
+import ru.darujo.type.TypeEnum;
 
 @Getter
-public enum CommandType {
-    LINK("Привязать акаунт"),
+public enum CommandType implements TypeEnum {
+    LINK("Привязать аккаунт"),
     STOP ("Убрать оповещения"),
-    REPORT ("Отчеты"),
-    WORK_STATUS ("Статус задач"),
-    WORK_STATUS_ME("Мне"),
-    WORK_STATUS_ALL("Подписаным на уведомления"),
+    REPORT ("Отчеты",false,true),
+    SEND_ME("Мне", true),
+    SEND_ALL("Подписанным на уведомления", true),
     CANCEL("Отменить");
 
 
     private final String name;
-
+    private final Boolean newParam;
+    private final Boolean availParam;
     CommandType(String name) {
-        this.name = name;
+        this(name , false);
     }
 
+
+    CommandType(String name, Boolean availParam) {
+        this(name , availParam,false);
+    }
+    CommandType(String name,  Boolean availParam, Boolean newParam) {
+        this.name = name;
+        this.newParam = newParam;
+        this.availParam = availParam;
+    }
 }

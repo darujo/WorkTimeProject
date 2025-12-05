@@ -1,0 +1,163 @@
+angular.module('workTimeService').controller('agreementController', function ($scope, $http, $location) {
+
+    const constPatchWorkRate = window.location.origin + '/rate-service/v1';
+    const constPatchWork = window.location.origin + '/work-service/v1';
+    $scope.request = {
+        listResponse: null,
+        statusName: null,
+        timestampStr:null,
+        termStr:null
+    }
+
+    let WorkId;
+    $scope.loadWork = function () {
+        console.log("loadWork");
+        $http({
+            url: constPatchWork + "/works/obj/little/" + WorkId,
+            method: "get"
+        }).then(function (response) {
+            console.log(response.data);
+            $scope.ZI = response.data;
+        }, function errorCallback(response) {
+            console.log(response)
+            if ($location.checkAuthorized(response)) {
+            }
+        });
+    };
+
+    $scope.loadAgreement = function () {
+        console.log("loadAgreement");
+        if ($scope.load1) {
+            alert("Подождите обрабатывается предыдущий запрос")
+        } else {
+            $scope.load1 = true;
+            $scope.RequestList = null;
+            $http({
+                url: constPatchWorkRate + "/agreement/request/full",
+                method: "get",
+                params: {
+                    workId: WorkId
+
+                }
+            }).then(function (response) {
+                $scope.load1 = false;
+                console.log(response.data);
+                $scope.RequestList = response.data;
+            }, function errorCallback(response) {
+                $scope.load1 = false;
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                }
+            });
+        }
+    };
+
+    $scope.workPage = function () {
+        console.log("workPage")
+        $location.path('/work').search({});
+    }
+    $scope.Filt = {}
+    $location.parserFilter($scope.Filt);
+    WorkId = $scope.Filt.workId;
+    console.log($scope.Filt);
+
+    console.log(WorkId === undefined);
+    console.log($scope.Filt.workId === null);
+    if (WorkId === undefined) {
+        $scope.workPage();
+        return;
+    }
+
+    $scope.stageCreate = false;
+    $scope.stageEdit = false;
+    $scope.criteriaCreate = false;
+    $scope.criteriaEdit = false;
+    $scope.typeCreate = false;
+    $scope.typeEdit = false;
+
+    $scope.addRequest = function () {
+        console.log("addRequest");
+        $location.path('/agreement/request').search({workId: WorkId});
+
+    }
+    $scope.getStyle = function (code) {
+        let codeInt = parseInt(code);
+        if (codeInt !== 0) {
+            return {
+                'background-color': 'red',
+                'color': 'white'
+            };
+        } else {
+            return {};
+        }
+
+    };
+    $scope.addResponse = function (requestId) {
+        console.log("addResponse");
+        console.log({workId: WorkId, requestId: requestId});
+        $location.path('/agreement/response').search({workId: WorkId, requestId: requestId});
+
+    }
+    $scope.editResponse = function (requestId, id) {
+        console.log("addResponse");
+        $location.path('/agreement/response').search({workId: WorkId, requestId: requestId, id: id});
+
+    }
+    $scope.deleteResponse = function (responseId) {
+        console.log("deleteResponse");
+        $http.delete(constPatchWorkRate + "/agreement/response/" + responseId)
+            .then(function (response) {
+                // WorkTimeIdEdit = response.data.id;
+                console.log(response.data);
+                $scope.loadAgreement();
+
+            }, function errorCallback(response) {
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                    if(response.data.message === undefined){
+                        alert("Произошла ошибка при удаление...");
+                    } else {
+                        alert(response.data.message);
+                    }
+                }
+            });
+
+    }
+    $scope.editRequest = function (id) {
+        console.log("addResponse");
+        $location.path('/agreement/request').search({workId: WorkId, id: id});
+
+    }
+
+    $scope.deleteRequest = function (requestId) {
+        console.log("deleteRequest");
+        $http.delete(constPatchWorkRate + "/agreement/request/" + requestId)
+            .then(function (response) {
+                // WorkTimeIdEdit = response.data.id;
+                console.log(response.data);
+                console.log(response.data.message)
+                $scope.loadAgreement();
+
+            }, function errorCallback(response) {
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                    if(response.data.message === undefined){
+                        alert("Произошла ошибка при удаление...");
+                    } else {
+                        alert(response.data.message);
+                    }
+                }
+            });
+
+    }
+
+    console.log("Start workRate");
+    $location.getUsers().then(function (result) {
+        $scope.UserList = result;
+        console.log("result UserList");
+        console.log(result);
+    });
+    $scope.loadWork();
+    $scope.loadAgreement();
+
+})

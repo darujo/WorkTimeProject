@@ -1,6 +1,6 @@
 package ru.darujo.service;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-@Log4j2
+@Slf4j
 @Service
 @Primary
 public class WorkTimeRepService {
@@ -66,6 +66,7 @@ public class WorkTimeRepService {
         if (typeStr != null && typeStr.equals("analise")) {
             types.add(2);
             types.add(3);
+            types.add(5);
 
         } else if (typeStr != null && typeStr.equals("develop")) {
             types.add(1);
@@ -193,7 +194,7 @@ public class WorkTimeRepService {
                 weekWorkDTO.getDayStart(),
                 weekWorkDTO.getDayEnd(),
                 weekWorkDTO.getTime(),
-                workTimeDtoList.size() > 0 ? workTimeDtoList.get(0).getWorkTime() : null);
+                !workTimeDtoList.isEmpty() ? workTimeDtoList.get(0).getWorkTime() : null);
     }
 
     public List<UserWorkPeriodDto> getUserWork(
@@ -216,7 +217,7 @@ public class WorkTimeRepService {
         } else {
             userDTOs = workTimeService.getUsers(nikName);
         }
-        if (userDTOs == null || userDTOs.size() == 0) {
+        if (userDTOs == null || userDTOs.isEmpty()) {
 
             List<WorkPeriodDto> weekWorkPeriodDTOs = weekWorkDTOs.stream().map(weekWorkDto -> new WorkPeriodDto(weekWorkDto, null)).collect(Collectors.toList());
             userWeekWorkPeriodDTOs.add(new UserWorkPeriodDto("", weekWorkPeriodDTOs));
@@ -230,7 +231,7 @@ public class WorkTimeRepService {
             weekWorkDTOs
                     .forEach(weekWorkDto -> {
                         List<WorkTimeDto> workTimeDtoList = getWorkTimeDTOs(user.getNikName(), weekWorkDto.getDayStart(), weekWorkDto.getDayEnd(), true);
-                        if (workTimeDtoList.size() > 0) {
+                        if (!workTimeDtoList.isEmpty()) {
                             timeFact.set(timeFact.get() + workTimeDtoList.get(0).getWorkTime());
                         }
                         WorkPeriodDto workPeriodDto = new WorkPeriodDto(weekWorkDto, workTimeDtoList);
@@ -287,9 +288,9 @@ public class WorkTimeRepService {
                     }
                 });
 
-        // установим потраченое время
+        // установим потраченное время
         workTimeDto.setWorkTime(timeFactOne.get());
-        // добавим период и работы также устновим был ли отпуск
+        // добавим период и работы также установим, был ли отпуск
 
         return workTimeDtoList;
     }
@@ -297,7 +298,7 @@ public class WorkTimeRepService {
     private void addVacation(String nikName, WorkPeriodDto workPeriodDto) {
         try {
             List<VacationDto> vacationDTOs = calendarServiceIntegration.getVacation(nikName, workPeriodDto.getDayStart(), workPeriodDto.getDayEnd());
-            if (vacationDTOs.size() == 0) {
+            if (vacationDTOs.isEmpty()) {
                 return;
             }
             if (vacationDTOs.size() == 1 && vacationDTOs.get(0).getDateStart().compareTo(workPeriodDto.getDayStart()) <= 0 && vacationDTOs.get(0).getDateEnd().compareTo(workPeriodDto.getDayEnd()) >= 0) {

@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.workperiod.UserWorkDto;
 import ru.darujo.dto.workperiod.UserWorkFormDto;
@@ -40,11 +39,11 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
             return webClientWorkTime.get().uri("/rep/fact/time" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
                     .bodyToMono(Float.class)
                     .block();
         } catch (RuntimeException ex) {
-            log.error("/rep/fact/time" + stringBuilder);
+            log.error("/rep/fact/time{}", stringBuilder);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -59,11 +58,11 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
             return webClientWorkTime.get().uri("/rep/fact/user" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
                     .bodyToMono(ListString.class)
                     .block();
         } catch (RuntimeException ex) {
-            log.error("/rep/fact/user" + stringBuilder);
+            log.error("/rep/fact/user{}", stringBuilder);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -73,7 +72,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
             return webClientWorkTime.get().uri("/rep/fact/availTime/" + taskId)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
                     .bodyToMono(Boolean.class)
                     .block();
         } catch (RuntimeException ex) {
@@ -90,22 +89,28 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
             Date dateEnd) {
         StringBuilder stringBuilder = new StringBuilder();
         taskIds.forEach(taskId -> addTeg(stringBuilder, "taskId", taskId));
+
         addTeg(stringBuilder, "nikName", nikName);
-        addTeg(stringBuilder, "addTotal", addTotal);
+        if(stringBuilder.isEmpty()){
+            log.error("нет тасков");
+            return null;
+
+        }addTeg(stringBuilder, "addTotal", addTotal);
         addTeg(stringBuilder, "weekSplit", weekSplit);
         addTeg(stringBuilder, "dateStart", dateStart);
         addTeg(stringBuilder, "dateEnd", dateEnd);
 
         try {
+            log.info("/rep/fact/week{}", stringBuilder);
             return webClientWorkTime.get().uri("/rep/fact/week" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
                     .bodyToFlux(UserWorkDto.class)
                     .collectList()
                     .block();
         } catch (RuntimeException ex) {
-            log.error("/rep/fact/week" + stringBuilder);
+            log.error("/rep/fact/week{}", stringBuilder);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -129,12 +134,12 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
             return webClientWorkTime.get().uri("/rep/fact/week" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по затраченому времени")))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
                     .bodyToFlux(UserWorkFormDto.class)
                     .collectList()
                     .block();
         } catch (RuntimeException ex) {
-            log.error("/rep/fact/week" + stringBuilder);
+            log.error("getWorkUserOrZiBig /rep/fact/week{}", stringBuilder);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -149,11 +154,11 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
             return webClientWorkTime.get().uri("/rep/fact/lastTime" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по затраченому времени. Статус " + clientResponse.statusCode()  )))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени. Статус "))
                     .bodyToMono(Timestamp.class)
                     .block();
         } catch (RuntimeException ex) {
-            log.error("/rep/fact/lastTime" + stringBuilder);
+            log.error("/rep/fact/lastTime{}", stringBuilder);
             log.error(ex.getMessage());
             return null;
         }
@@ -171,11 +176,11 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
             return webClientWorkTime.get().uri("/rep/fact/user/work/only" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по затраченому времени. Статус " + clientResponse.statusCode())))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени. Статус"))
                     .bodyToMono(WorkUserFactPlan.class)
                     .block();
         } catch (RuntimeException ex) {
-            log.error("rep/fact/user/work/only" + stringBuilder);
+            log.error("rep/fact/user/work/only{}", stringBuilder);
             log.error(ex.getMessage());
             return null;
         }

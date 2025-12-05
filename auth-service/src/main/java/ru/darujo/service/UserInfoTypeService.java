@@ -1,5 +1,6 @@
 package ru.darujo.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.information.MessageType;
@@ -9,7 +10,6 @@ import ru.darujo.model.UserInfoType;
 import ru.darujo.repository.UserInfoTypeRepository;
 import ru.darujo.specifications.Specifications;
 
-import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class UserInfoTypeService {
     @Transactional
     public void setUserInfoTypes(User user, Collection<UserInfoTypeActiveDto> userInfoTypeDto) {
 
-        getInfoTypes(user.getId()).forEach(userInfoType ->
+        getInfoTypes(user).forEach(userInfoType ->
         {
             if (userInfoTypeDto
                     .stream()
@@ -49,8 +49,9 @@ public class UserInfoTypeService {
 
     }
 
-    public List<UserInfoType> getInfoTypes(Long userId) {
-        return userInfoTypeRepository.findAll(Specifications.eq(null,"user",userId));
+    public List<UserInfoType> getInfoTypes(User user) {
+
+        return userInfoTypeRepository.findAll(Specifications.eq(null, "user", user));
     }
     public List<UserInfoType> getInfoTypes(MessageType messageType) {
         return userInfoTypeRepository.findAll(Specifications.eq(null,"code",messageType.toString()));

@@ -2,15 +2,16 @@ package ru.darujo.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import tools.jackson.databind.JsonNode;
 
 import java.util.ArrayList;
 import java.util.List;
-
-public class CustomPageImpl<T> extends PageImpl<T> {
+// TODO разобраться что здесь для чего
+public class CustomPageImpl<T> extends PageImpl<@NonNull T> {
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public CustomPageImpl(@JsonProperty("content") List<T> content, @JsonProperty("number") int number,
                           @JsonProperty("size") int size, @JsonProperty("totalElements") Long totalElements,

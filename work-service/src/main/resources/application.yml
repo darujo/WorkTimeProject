@@ -11,7 +11,6 @@ spring:
     username: postgres
     password: 5397
 
-
   jpa:
     database: postgresql
     show-sql: true

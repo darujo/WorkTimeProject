@@ -1,5 +1,6 @@
 package ru.darujo.repository;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
@@ -8,6 +9,6 @@ import ru.darujo.model.MessageSend;
 
 @Repository
 @Primary
-public interface MessageSendRepository extends CrudRepository<MessageSend,Long>, JpaSpecificationExecutor<MessageSend> {
+public interface MessageSendRepository extends CrudRepository<@NonNull MessageSend, @NonNull Long>, JpaSpecificationExecutor<@NonNull MessageSend> {
 
 }

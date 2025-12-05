@@ -17,12 +17,14 @@ angular.module('workTimeService').controller('workGraphController', function ($s
         $location.path('/work').search({});
     }
 
-    $scope.work = {workLittleDto : null,
+    $scope.work = {
+        workLittleDto: null,
         workPeriodColorPlanDTOs: null,
-        weekWorkDTOs:null,
-        workGraphDTOs:null,
-        workPeriodColorFactDTOs:null,
-        colorDto:null};
+        weekWorkDTOs: null,
+        workGraphDTOs: null,
+        workPeriodColorFactDTOs: null,
+        colorDto: null
+    };
 
     let maxPage = 1;
     $scope.load = false;
@@ -39,8 +41,7 @@ angular.module('workTimeService').controller('workGraphController', function ($s
         }
         if ($scope.load) {
             alert("Подождите обрабатывается предыдущий запрос")
-        }
-        else {
+        } else {
             document.getElementById("Page").value = page;
             let Filter;
             Filter = $scope.Filt;
@@ -82,7 +83,7 @@ angular.module('workTimeService').controller('workGraphController', function ($s
         }
     };
 
-    $scope.getStyleColorBack= function (color){
+    $scope.getStyleColorBack = function (color) {
         return {
             'background-color': color
         };
@@ -94,21 +95,26 @@ angular.module('workTimeService').controller('workGraphController', function ($s
     $scope.clearFilter = function (load) {
         console.log("clearFilter");
         document.getElementById("Page").value = "1";
-        $scope.Filt = {
-            stageZi: 15,
-            size: 10
-        }
-        console.log($scope.Filt);
+
+
         if (load) {
+            $scope.Filt = {
+                stageZi: 15,
+                size: 10
+            }
+            console.log($scope.Filt);
             $scope.filterWork();
+        } else {
+            $scope.Filt["stageZi"] = $scope.Filt.stageZi ? $scope.Filt.stageZi : 15;
+            $scope.Filt["size"] = $scope.Filt.size ? $scope.Filt.size : 10;
         }
     }
     let init = function () {
         document.getElementById("Page").value = "1";
         $scope.Filt = $location.getFilter("workGraph");
-        if ($scope.Filt === null) {
-            $scope.clearFilter(false);
-        }
+
+        $scope.clearFilter(false);
+
         $location.getReleases().then(function (result) {
             $scope.ReleaseList = result;
             console.log("result releaseList");

@@ -1,10 +1,10 @@
 package ru.darujo.model;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -47,5 +47,12 @@ public class Role {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Role role = (Role) o;
+        return Objects.equals(id, role.id) && Objects.equals(name, role.name) && Objects.equals(label, role.label) && Objects.equals(rights, role.rights) && Objects.equals(users, role.users);
     }
 }

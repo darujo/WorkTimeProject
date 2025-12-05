@@ -23,7 +23,7 @@ public class JwtTokenUtils {
         userDetails.getAuthorities()
                 .forEach(grantedAuthority -> listString.add(
                         grantedAuthority.getAuthority()));
-        if (listString.size() != 0) {
+        if (!listString.isEmpty()) {
             claims.put("authorities", listString);
         }
         Date issuedDate = new Date();

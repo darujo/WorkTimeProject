@@ -1,5 +1,6 @@
 package ru.darujo.api;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -41,12 +42,12 @@ public class VacationController {
     }
 
     @GetMapping("")
-    public Page<VacationDto> VacationPage(@RequestHeader String username,
-                                          @RequestParam(required = false) String nikName,
-                                          @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
-                                          @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr,
-                                          @RequestParam(required = false) Integer page,
-                                          @RequestParam(defaultValue = "10") Integer size) {
+    public Page<@NonNull VacationDto> VacationPage(@RequestHeader String username,
+                                                   @RequestParam(required = false) String nikName,
+                                                   @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
+                                                   @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr,
+                                                   @RequestParam(required = false) Integer page,
+                                                   @RequestParam(defaultValue = "10") Integer size) {
         Timestamp dateStart = DataHelper.DTZToDate(dateStartStr, "dateStart = ");
         Timestamp dateEnd = DataHelper.DTZToDate(dateEndStr, "dateEnd = ");
         if (nikName != null && nikName.equals("current")){

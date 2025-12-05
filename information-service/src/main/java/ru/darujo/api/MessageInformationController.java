@@ -40,10 +40,11 @@ public class MessageInformationController {
         messageInformationService.setMessageTypeListMap(messageTypeListMap);
     }
 
-    @GetMapping("/work/status")
-    public void sendWorkStatus(@RequestParam String author,
+    @GetMapping("/report")
+    public void sendWorkStatus(@RequestParam String reportType,
+                               @RequestParam String author,
                                @RequestParam (required = false) Long chatId ){
-        scheduleService.sendWorkStatus(author,chatId);
+        scheduleService.sendReport(reportType,author,chatId);
     }
 
 }

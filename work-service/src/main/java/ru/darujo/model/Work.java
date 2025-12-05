@@ -1,9 +1,9 @@
 package ru.darujo.model;
 
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.sql.Timestamp;
 
 @NoArgsConstructor
@@ -60,7 +60,7 @@ public class Work implements WorkLittleInterface{
     // ОПЭ релиза Факт
     @Column(name = "ope_end_plan")
     private Timestamp opeEndPlan;
-    // № внутренней задачи (DEVBO)
+    // № внутренней задачи (D E V B O)
     @Column(name = "task")
     private String task;
     // Краткое описание внутренней задачи

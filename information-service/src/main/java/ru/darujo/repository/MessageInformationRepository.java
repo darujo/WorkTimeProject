@@ -1,5 +1,6 @@
 package ru.darujo.repository;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
@@ -8,5 +9,5 @@ import ru.darujo.model.MessageInformation;
 
 @Repository
 @Primary
-public interface MessageInformationRepository extends CrudRepository<MessageInformation,Long>, JpaSpecificationExecutor<MessageInformation> {
+public interface MessageInformationRepository extends CrudRepository<@NonNull MessageInformation, @NonNull Long>, JpaSpecificationExecutor<@NonNull MessageInformation> {
 }

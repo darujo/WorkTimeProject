@@ -1,5 +1,6 @@
 package ru.darujo.service;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.domain.Specification;
@@ -68,10 +69,10 @@ public class TaskRepService {
     }
 
     public Boolean getAvailTime(long workId) {
-        Specification<Task> specification = Specification.where(null);
+        Specification<@NonNull Task> specification = Specification.unrestricted();
         specification = Specifications.eq(specification, "workId", workId);
         List<Task> tasks = taskRepository.findAll(specification);
-        if (tasks.size() == 0) {
+        if (tasks.isEmpty()) {
             return false;
         }
         return tasks.stream().anyMatch(task -> workTimeServiceIntegration.availTime(task.getId()));

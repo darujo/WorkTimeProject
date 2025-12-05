@@ -1,5 +1,6 @@
 package ru.darujo.api;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -39,12 +40,12 @@ public class UserController {
     }
 
     @GetMapping("")
-    public Page<UserDto> getUserList(@RequestParam(required = false) Integer page,
-                                     @RequestParam(required = false) Integer size,
-                                     @RequestParam(required = false) String nikName,
-                                     @RequestParam(required = false) String lastName,
-                                     @RequestParam(required = false) String firstName,
-                                     @RequestParam(required = false) String patronymic) {
+    public Page<@NonNull UserDto> getUserList(@RequestParam(required = false) Integer page,
+                                              @RequestParam(required = false) Integer size,
+                                              @RequestParam(required = false) String nikName,
+                                              @RequestParam(required = false) String lastName,
+                                              @RequestParam(required = false) String firstName,
+                                              @RequestParam(required = false) String patronymic) {
         String role = null;
         if (nikName != null) {
             if (nikName.equals("All")) {

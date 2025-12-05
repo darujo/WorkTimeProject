@@ -74,8 +74,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
         document.getElementById("Page").value = page;
         if ($scope.load) {
             alert("Подождите обрабатывается предыдущий запрос")
-        }
-        else {
+        } else {
             $scope.load = true;
             $scope.WorkList = null;
             console.log("отправляем запрос /works");
@@ -207,7 +206,6 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 $scope.Work.analiseStartPlan = typeof response.data.analiseStartPlan === "undefined" ? null : new Date(response.data.analiseStartPlan);
 
 
-
                 $scope.Work.developEndFact = typeof response.data.developEndFact === "undefined" ? null : new Date(response.data.developEndFact);
                 $scope.Work.issuePrototypeFact = typeof response.data.issuePrototypeFact === "undefined" ? null : new Date(response.data.issuePrototypeFact);
                 $scope.Work.debugEndFact = typeof response.data.debugEndFact === "undefined" ? null : new Date(response.data.debugEndFact);
@@ -282,12 +280,22 @@ angular.module('workTimeService').controller('workController', function ($scope,
         console.log("Другая");
         $location.path('/rate').search({workId: workId});
     }
+    $scope.addAgreement = function (workId) {
+        console.log("Другая");
+        $location.path('/agreement').search({workId: workId});
+    }
     $scope.clearFilter = function (load) {
         console.log("clearFilter");
-        $scope.Filt = {
-            stageZi: 15,
-            size: 10
+        if ($scope.Filt === null || !load) {
+            $scope.Filt = {
+                stageZi: 15,
+                size: 10
+            }
+        } else {
+            $scope.Filt["stageZi"] = $scope.Filt.stageZi ? $scope.Filt.stageZi : 15;
+            $scope.Filt["size"] = $scope.Filt.size ? $scope.Filt.size : 10;
         }
+
         console.log($scope.Filt);
         if (load) {
             $scope.filterWork();
@@ -305,9 +313,9 @@ angular.module('workTimeService').controller('workController', function ($scope,
     console.log("---workFilter---");
     $scope.Filt = $location.getFilter("workFilter");
     console.log($scope.Filt);
-    if ($scope.Filt === null) {
-        $scope.clearFilter(false);
-    }
+
+    $scope.clearFilter(false);
+
     $location.getReleases().then(function (result) {
         $scope.ReleaseList = result;
         console.log("result releaseList");

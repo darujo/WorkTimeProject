@@ -1,5 +1,6 @@
 package ru.darujo.service;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -129,7 +130,7 @@ public class WorkRepService {
                                                boolean hideNotTime) {
         AtomicInteger num = new AtomicInteger();
         List<WorkFactDto> workFactDTOs = new ArrayList<>();
-        Page<Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, releaseId);
+        Page<@NonNull Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, releaseId);
         workPage.forEach(work -> {
                     Set<String> users = taskServiceIntegration.getListUser(work.getId(), null).getList();
                     if (userName != null) {
@@ -140,7 +141,7 @@ public class WorkRepService {
                             users = null;
                         }
                     }
-                    if (users != null && users.size() != 0) {
+                    if (users != null && !users.isEmpty()) {
                         List<String> userList = new ArrayList<>(users);
                         for (int i = 0; i < users.size(); i++) {
                             String user = userList.get(i);
@@ -214,7 +215,7 @@ public class WorkRepService {
         mapStringFloat.setList(usersTime);
         Work work = workService.findById(workId);
         Set<String> users;
-        if (nikName != null && !nikName.equals("")) {
+        if (nikName != null && !nikName.isEmpty()) {
             users = new HashSet<>();
             users.add(nikName);
         } else {
@@ -341,7 +342,7 @@ public class WorkRepService {
                                                      Timestamp dateEnd,
                                                      String period) {
         List<WeekWorkDto> weekWorkDTOs = calendarServiceIntegration.getPeriodTime(dateStart, dateEnd, period);
-        Page<Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, releaseId);
+        Page<@NonNull Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, releaseId);
         List<WorkGraphDto> workGraphDTOs =
                 workPage.map(work -> new WorkGraphDto(WorkConvertor.getWorkLittleDto(work),
                         weekWorkDTOs.stream().map(weekWorkDto -> new WorkPeriodColorDto(weekWorkDto, getColor(weekWorkDto, work, true))).collect(Collectors.toList()),
@@ -351,7 +352,6 @@ public class WorkRepService {
 
         return new PageObjDto<>(workPage.getTotalPages(), workPage.getNumber(), workPage.getSize(), workFactDTOs);
     }
-
 
 
     Map<Integer, ColorDto> colorDtoMap = new HashMap<>();
@@ -429,7 +429,9 @@ public class WorkRepService {
                 || (analiseStartFact.compareTo(dayEnd) <= 0 && dayEnd.compareTo(analiseEndFact) <= 0)
                 || (dayStart.compareTo(analiseEndFact) <= 0 && analiseEndFact.compareTo(dayEnd) <= 0);
     }
+
     ColorRGB color;
+
     private ColorDto getColor(List<String> types) {
         ColorDto colorDto = colorDtoMap.get(types.hashCode());
         if (colorDto != null) {
@@ -446,25 +448,15 @@ public class WorkRepService {
     }
 
     private ColorRGB getColor(String type) {
-        if (type.equals("analise")) {
-            return ColorHelper.ANALISE;
-        }
-        if (type.equals("develop")) {
-            return ColorHelper.DEVELOP;
-        }
-        if (type.equals("debug")) {
-            return ColorHelper.DEBUG;
-        }
-        if (type.equals("release")) {
-            return ColorHelper.RELEASE;
-        }
-        if (type.equals("ope")) {
-            return ColorHelper.OPE;
-        }
-        if (type.equals("public")) {
-            return ColorHelper.PUBLIC;
-        }
-        return ColorHelper.WHITE;
+        return switch (type) {
+            case "analise" -> ColorHelper.ANALISE;
+            case "develop" -> ColorHelper.DEVELOP;
+            case "debug" -> ColorHelper.DEBUG;
+            case "release" -> ColorHelper.RELEASE;
+            case "ope" -> ColorHelper.OPE;
+            case "public" -> ColorHelper.PUBLIC;
+            default -> ColorHelper.WHITE;
+        };
     }
 
     private void addColor(ColorRGB colorRGB) {

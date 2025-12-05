@@ -1,6 +1,8 @@
 package ru.darujo.service;
 
-import lombok.extern.log4j.Log4j2;
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
@@ -15,11 +17,11 @@ import ru.darujo.model.Task;
 import ru.darujo.repository.TaskRepository;
 import ru.darujo.specifications.Specifications;
 
-import javax.transaction.Transactional;
+
 import java.sql.Timestamp;
 import java.util.*;
 
-@Log4j2
+@Slf4j
 @Service
 @Primary
 public class TaskService {
@@ -48,8 +50,8 @@ public class TaskService {
         if(task.getCodeDEVBO() != null && task.getCodeDEVBO().equalsIgnoreCase("DevBO-000")){
             task.setCodeDEVBO(null);
         }
-        if (task.getCodeDEVBO() == null || task.getCodeDEVBO().equals("") || task.getCodeDEVBO().equalsIgnoreCase("DeVbo-000")) {
-            if (task.getCodeBTS() == null || task.getCodeBTS().equals("")) {
+        if (task.getCodeDEVBO() == null || task.getCodeDEVBO().isEmpty() || task.getCodeDEVBO().equalsIgnoreCase("DeVbo-000")) {
+            if (task.getCodeBTS() == null || task.getCodeBTS().isEmpty()) {
                 throw new ResourceNotFoundRunTime("Не задан номер DEVBO и BTS");
             }
         }
@@ -59,12 +61,12 @@ public class TaskService {
             }
             workServiceIntegration.getWorEditDto(task.getWorkId());
         }
-        if (task.getType() == 1 && (task.getCodeBTS() != null && !task.getCodeBTS().equals(""))) {
+        if (task.getType() == 1 && (task.getCodeBTS() != null && !task.getCodeBTS().isEmpty())) {
             task.setType(5);
         }
         task.setRefresh(new Timestamp(System.currentTimeMillis()));
         if (task.getId() != null) {
-            Task taskSave = findById(task.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Отмеченая работа не найден"));
+            Task taskSave = findById(task.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Отмеченная работа не найден"));
             if (task.getTimeCreate() == null && taskSave.getTimeCreate() != null) {
                 task.setTimeCreate(taskSave.getTimeCreate());
             }
@@ -106,7 +108,7 @@ public class TaskService {
                                    List<Long> listTaskId,
                                    Integer page,
                                    Integer size) {
-        Specification<Task> specification = Specification.where(Specifications.queryDistinctTrue());
+        Specification<@NonNull Task> specification = Specification.where(Specifications.queryDistinctTrue());
         specification = Specifications.inLong(specification, "id", listTaskId);
         specification = Specifications.like(specification,"nikName", nikName );
         specification = Specifications.like(specification,"codeBTS", codeBTS);
@@ -126,17 +128,17 @@ public class TaskService {
     @Transactional
     public boolean refreshTime(long id, Date date) {
 
-        Task task = findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Отмеченая работа не найден"));
+        Task task = findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Отмеченная работа не найден"));
         task.setRefresh(new Timestamp(System.currentTimeMillis()));
         taskRepository.save(task);
         boolean ok = workServiceIntegration.setWorkDate(task.getWorkId(), date);
-        log.info("Обновили даты в ЗИ? " + ok);
+        log.info("Обновили даты в ЗИ? {}", ok);
         return true;
     }
 
     public String taskCheck(TaskDto taskDto) {
         String text = null;
-        if (taskDto.getWorkId() != null && taskDto.getType() == 1 && (taskDto.getCodeBTS() != null && !taskDto.getCodeBTS().equals(""))) {
+        if (taskDto.getWorkId() != null && taskDto.getType() == 1 && (taskDto.getCodeBTS() != null && !taskDto.getCodeBTS().isEmpty())) {
             text = "Тип задачи будет изменен на \"Запросы по ЗИ\" так как тип задачи \"ЗИ\" и по ней введен номер запроса";
         }
         String testAvail = taskCheckAvail(taskDto.getId(), taskDto.getWorkId(), taskDto.getCodeDEVBO(), taskDto.getCodeBTS());
@@ -161,14 +163,14 @@ public class TaskService {
 
     private String checkAvail(Long id, Long workId, String dbField, String value) {
 
-        Specification<Task> specification = Specification.where(null);
+        Specification<@NonNull Task> specification = Specification.unrestricted();
 
-        if (value != null && !value.equals("")) {
+        if (value != null && !value.isEmpty()) {
             specification = Specifications.like(specification, dbField, value);
             specification = Specifications.notEqual(specification,"id", id);
-            Page<Task> page;
+            Page<@NonNull Task> page;
             if (workId != null) {
-                Specification<Task> specificationNotWork = Specifications.notEqual(specification,"workId", workId);
+                Specification<@NonNull Task> specificationNotWork = Specifications.notEqual(specification,"workId", workId);
                 page = taskRepository.findAll(specificationNotWork, PageRequest.of(0, 5));
                 if (page.getTotalElements() > 0) {
                     return "Уже есть с " + dbField + ": " + value + "  по другим ЗИ " + page.getTotalElements() + " записей";

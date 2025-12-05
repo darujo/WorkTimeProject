@@ -1,10 +1,9 @@
 package ru.darujo.model;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,5 +21,7 @@ public class WorkType {
     private Float time;
     @Column(name = "work_id")
     private Long workId;
+    @Column(name = "number")
+    private Integer number;
 
 }

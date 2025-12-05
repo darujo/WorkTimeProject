@@ -1,8 +1,6 @@
 package ru.darujo.convertor;
 
-import ru.darujo.dto.ratestage.WorkCriteriaDto;
 import ru.darujo.dto.ratestage.WorkTypeDto;
-import ru.darujo.model.WorkCriteria;
 import ru.darujo.model.WorkType;
 
 public class WorkTypeBuilder {
@@ -14,6 +12,7 @@ public class WorkTypeBuilder {
     private String type;
     private Float time;
     private Long workId;
+    private Integer number;
 
     public WorkTypeBuilder setId(Long id) {
         this.id = id;
@@ -35,11 +34,16 @@ public class WorkTypeBuilder {
         return this;
     }
 
+    public WorkTypeBuilder setNumber(Integer number) {
+        this.number = number;
+        return this;
+    }
+
     public WorkTypeDto getWorkTypeDto() {
-        return new WorkTypeDto(id, type, time, workId);
+        return new WorkTypeDto(id, type, time, workId, number);
     }
 
     public WorkType getWorkType() {
-        return new WorkType(id, type, time, workId);
+        return new WorkType(id, type, time, workId, number);
     }
 }

@@ -60,7 +60,7 @@ public class WorkRepController {
                                             @RequestParam(required = false) Long releaseId,
                                             @RequestParam(defaultValue = "release") String sort,
                                             @RequestParam(defaultValue = "true") boolean hideNotTime) {
-        if (nikName != null && nikName.equals("")) {
+        if (nikName != null && nikName.isEmpty()) {
             nikName = null;
         }
         Integer stageZiLe = null;
@@ -99,8 +99,8 @@ public class WorkRepController {
                                           @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
                                           @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr,
 
-                                          @RequestParam(defaultValue = "1") int page,
-                                          @RequestParam(defaultValue = "10") int size,
+                                          @RequestParam(required = false) Integer page,
+                                          @RequestParam(required = false) Integer size,
                                           @RequestParam(required = false) String name,
                                           @RequestParam(defaultValue = "15") Integer stageZi,
                                           @RequestParam(required = false) Long codeSap,
@@ -121,7 +121,7 @@ public class WorkRepController {
             }
         }
         return workRepService.getWeekWork(ziSplit, addTotal, nikName, weekSplit, dateStart, dateEnd,
-                page, size, name, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId, sort);
+               page, size, name, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId, sort);
     }
 
     @GetMapping("/graph")

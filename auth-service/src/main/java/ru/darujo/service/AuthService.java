@@ -1,5 +1,6 @@
 package ru.darujo.service;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,7 +25,7 @@ public class AuthService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public @NonNull UserDetails  loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
         User user = userService.loadUserByNikName(username);
         return new org.springframework.security.core.userdetails.User(user.getNikName(), user.getPassword(), mapGrandAuthority(user.getRoles(), user.getRights()));// нужно для спринга
     }

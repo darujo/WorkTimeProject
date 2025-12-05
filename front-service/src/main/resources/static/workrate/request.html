@@ -1,0 +1,42 @@
+<div>
+    <form id="FormRequest" ng-submit="save()">
+        <div>
+            <div class="filter_block min_block300 mar5">
+                <label for="User" class="p-form">ФИО</label>
+                <select class="vvod" name="UserFilterWorkStageSelect" id="User" ng-model="Request.nikName">
+                    <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">{{user.lastName}}
+                        {{user.firstName}} {{user.patronymic}}
+                    </option>
+                </select>
+            </div>
+            <label for="RequestTimestamp" class="p-form">Дата и время заведения</label>
+            <input class="vvod" type="datetime-local" id="RequestTimestamp" step="any"
+                   ng-model="Request.timestamp" readonly/>
+            <label for="RequestVersion" class="p-form">Версия ТЗ</label>
+            <input class="vvod" type="text" id="RequestVersion" step="any"
+                   ng-model="Request.version"/>
+            <label for="MesText">
+                Сообщение:
+            </label>
+            <p><textarea id="MesText" class="vvod" ng-model="Request.comment"
+                         placeholder="Введите комментарий"></textarea></p>
+
+            <label for="RequestTerm" class="p-form">Срок</label>
+            <input class="vvod" type="date" id="RequestTerm" step="any"
+                   ng-model="Request.term"/>
+
+
+            <div class="filter_block min_block300 mar5">
+                <label for="Status" class="p-form">статус</label>
+                <select required class="vvod" name="RequestStatus" id="Status" ng-model="Request.status">
+                    <option value="">--Выберите тип сообщения--</option>
+                    <option ng-repeat="status in StatusList" ng-value="status.code" value="status.code">{{status.value}}
+                    </option>
+                </select>
+            </div>
+
+        </div>
+        <button type="submit" class="button" id="ButtonSaveDown">Сохранить</button>
+        <button type="button" ng-click="Cancel()" class="button">Вернуться к списку</button>
+    </form>
+</div>

@@ -1,6 +1,8 @@
 package ru.darujo.service;
 
-import lombok.extern.log4j.Log4j2;
+
+import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
@@ -9,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.darujo.convertor.WorkTimeConvertor;
 import ru.darujo.dto.*;
 import ru.darujo.dto.user.UserFio;
@@ -21,12 +24,11 @@ import ru.darujo.model.WorkTime;
 import ru.darujo.repository.WorkTimeRepository;
 import ru.darujo.specifications.Specifications;
 
-import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Log4j2
+@Slf4j
 @Service
 @Primary
 public class WorkTimeService {
@@ -62,6 +64,7 @@ public class WorkTimeService {
         return workTimeRepository.findById(id);
     }
 
+    @Transactional
     public WorkTime saveWorkTime(WorkTime workTime) {
         return saveWorkTime(workTime, true);
     }
@@ -79,7 +82,7 @@ public class WorkTimeService {
             ok = taskServiceIntegration.setTaskRefreshTime(workTime.getTaskId());
 
         }
-        log.info("обновили время у задачи " + ok);
+        log.info("обновили время у задачи {}", ok);
 
         return workTimeRepository.save(workTime);
     }
@@ -88,8 +91,8 @@ public class WorkTimeService {
         workTimeRepository.deleteById(id);
     }
 
-    public Page<WorkTime> findWorkTime(Long[] taskId, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, String comment, Integer page, Integer size) {
-        Specification<WorkTime> specification = Specification.where(null);
+    public Page<@NonNull WorkTime> findWorkTime(Long[] taskId, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, String comment, Integer page, Integer size) {
+        Specification<@NonNull WorkTime> specification = (root, query, criteriaBuilder) -> null;
         Sort sort = null;
         if (taskId != null) {
             specification = Specifications.in(specification, "taskId", taskId);
@@ -105,7 +108,7 @@ public class WorkTimeService {
                     if (sort == null)
                         sort = Sort.by("nikName");
                     else {
-                        sort.and(Sort.by("nikName"));
+                        sort = sort.and(Sort.by("nikName"));
                     }
                 }
 
@@ -132,10 +135,10 @@ public class WorkTimeService {
         }
     }
 
-    public Page<WorkTime> findWorkTimeTask(String taskDEVBO, String taskBts, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, String comment, Integer page, Integer size) {
-        Page<WorkTime> workTimes;
+    public Page<@NonNull WorkTime> findWorkTimeTask(String taskDEVBO, String taskBts, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, String comment, Integer page, Integer size) {
+        Page<@NonNull WorkTime> workTimes;
         List<Long> taskIdList = taskServiceIntegration.getTaskList(taskDEVBO, taskBts);
-        if (taskIdList == null || taskIdList.size() == 0) {
+        if (taskIdList == null || taskIdList.isEmpty()) {
             return new PageImpl<>(new ArrayList<>());
         }
 
@@ -159,7 +162,7 @@ public class WorkTimeService {
             throw new ResourceNotFoundRunTime("Время должно быть больше нуля");
         }
         if (workTime.getNikName() == null) {
-            throw new ResourceNotFoundRunTime("Не удалось вас опознать пожалуста авторизуйтесь");
+            throw new ResourceNotFoundRunTime("Не удалось вас опознать пожалуйста авторизуйтесь");
         }
         if (workTime.getComment() == null || workTime.getComment().isEmpty()) {
             throw new ResourceNotFoundRunTime("Не задан комментарий");
@@ -199,24 +202,8 @@ public class WorkTimeService {
         }
     }
 
-    private final Map<String, UserDto> userDtoMap = new HashMap<>();
-
     public void updFio(UserFio userFio) {
-        try {
-            if (userFio.getNikName() != null) {
-                UserDto userDto = userDtoMap.get(userFio.getNikName());
-                if (userDto == null) {
-                    userDto = userServiceIntegration.getUserDto(null, userFio.getNikName());
-                    userDtoMap.put(userFio.getNikName(), userDto);
-                }
-                userFio.setFirstName(userDto.getFirstName());
-                userFio.setLastName(userDto.getLastName());
-                userFio.setPatronymic(userDto.getPatronymic());
-            }
-        } catch (ResourceNotFoundRunTime e) {
-            log.error(e.getMessage());
-            userFio.setFirstName("Не найден пользователь с ником " + userFio.getNikName());
-        }
+        userServiceIntegration.updFio(userFio);
     }
 
     public List<UserDto> getUsers(String role) {
@@ -229,8 +216,8 @@ public class WorkTimeService {
     }
 
     public Boolean getAvailTime(long taskId) {
-        Specification<WorkTime> specification = Specification.where(Specifications.eq(null, "taskId", taskId));
-        return workTimeRepository.findAll(specification).size() > 0;
+        Specification<@NonNull WorkTime> specification = Specification.where(Specifications.eq(null, "taskId", taskId));
+        return !workTimeRepository.findAll(specification).isEmpty();
     }
 
     public boolean checkRight(String right, boolean rightEdit, boolean rightCreate, boolean rightChangeUser) {
@@ -256,8 +243,8 @@ public class WorkTimeService {
     }
 
     public Timestamp getLastTime(Long[] taskId, Timestamp dateGe, Timestamp dateLe) {
-        Page<WorkTime> workTimes = findWorkTime(taskId, null, null, dateLe, null, dateGe, null, null, 1, 1);
+        Page<@NonNull WorkTime> workTimes = findWorkTime(taskId, null, null, dateLe, null, dateGe, null, null, 1, 1);
 
-        return workTimes.getSize() == 1 ? workTimes.getContent().get(0).getWorkDate() : null;
+        return workTimes.getContent().size() == 1 ? workTimes.getContent().get(0).getWorkDate() : null;
     }
 }

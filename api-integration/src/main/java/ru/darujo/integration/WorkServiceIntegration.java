@@ -1,22 +1,23 @@
 package ru.darujo.integration;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 import ru.darujo.dto.MapStringFloat;
 import ru.darujo.dto.work.WorkLittleDto;
+import ru.darujo.dto.workperiod.WorkUserTime;
 import ru.darujo.dto.workrep.WorkRepDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 
-@Log4j2
+@Slf4j
 @Component
 public class WorkServiceIntegration extends ServiceIntegration {
     private WebClient webClientWork;
@@ -35,10 +36,13 @@ public class WorkServiceIntegration extends ServiceIntegration {
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по ЗИ с ID = " + workId)))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ с ID = " + workId))
                     .bodyToMono(WorkLittleDto.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
+            log.error("/obj/little/{}", workId);
+            log.error(ex.getMessage());
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -52,10 +56,12 @@ public class WorkServiceIntegration extends ServiceIntegration {
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по ЗИ с ID = " + workId)))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ с ID = " + workId))
                     .bodyToMono(MapStringFloat.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
+            log.error("/rep/time/fact/stage0{}", stringBuilder);
             log.error(ex.getMessage());
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
@@ -68,8 +74,9 @@ public class WorkServiceIntegration extends ServiceIntegration {
             return webClientWork.get().uri("/refresh/" + workId + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("ЗИ c id = " + workId + " не найдена")))
+                            cR -> getMessage(cR, "ЗИ c id = " + workId + " не найдена"))
                     .bodyToMono(Boolean.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         }
         return false;
@@ -93,15 +100,80 @@ public class WorkServiceIntegration extends ServiceIntegration {
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
-                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные по ЗИ")))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ"))
                     .bodyToFlux(WorkRepDto.class)
                     .collectList()
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
+            log.error("/rep{}", stringBuilder);
             log.error(ex.getMessage());
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 
+    public List<WorkUserTime> getWorkUserTime(boolean ziSplit, Timestamp date) {
+        return getWorkUserTime(ziSplit,
+                null,
+                true,
+                null,
+                date,
+                date,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+    }
 
+    public List<WorkUserTime> getWorkUserTime(boolean ziSplit,
+                                              String nikName,
+                                              Boolean addTotal,
+                                              Boolean weekSplit,
+
+                                              Timestamp dateStart,
+                                              Timestamp dateEnd,
+
+                                              String name,
+                                              Integer stageZi,
+                                              Long codeSap,
+                                              String codeZi,
+                                              String task,
+                                              Long releaseId,
+
+                                              String sort) {
+        StringBuilder stringBuilder = new StringBuilder();
+        addTeg(stringBuilder, "ziSplit", ziSplit);
+        addTeg(stringBuilder, "nikName", nikName);
+        addTeg(stringBuilder, "addTotal", addTotal);
+        addTeg(stringBuilder, "weekSplit", weekSplit);
+        addTeg(stringBuilder, "dateStart", dateStart);
+        addTeg(stringBuilder, "dateEnd", dateEnd);
+        addTeg(stringBuilder, "weekSplit", weekSplit);
+
+        addTeg(stringBuilder, "name", name);
+        addTeg(stringBuilder, "stageZi", stageZi);
+        addTeg(stringBuilder, "codeSap", codeSap);
+        addTeg(stringBuilder, "codeZi", codeZi);
+        addTeg(stringBuilder, "task", task);
+        addTeg(stringBuilder, "releaseId", releaseId);
+        addTeg(stringBuilder, "sort", sort);
+
+        try {
+            return webClientWork.get().uri("/rep/fact/week" + stringBuilder)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
+                            ,
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ"))
+                    .bodyToFlux(WorkUserTime.class)
+                    .collectList()
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .block();
+        } catch (RuntimeException ex) {
+            log.error("/rep/fact/week{}", stringBuilder);
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
+    }
 }

@@ -165,9 +165,13 @@
 
     $scope.clearFilter = function (load) {
         console.log("clearFilter");
-        $scope.Filt = {
-            size: 10
-        };
+        if ($scope.Filt === null || !load) {
+            $scope.Filt = {
+                size: 10
+            };
+        } else {
+            $scope.Filt["size"] = $scope.Filt.size ? $scope.Filt.size : 10;
+        }
         console.log($scope.Filt);
         if (load) {
             $scope.filterUser();
@@ -206,9 +210,9 @@
 
     // $scope.UserList = $location.UserList;
     $scope.Filt = $location.getFilter("userFilter");
-    if ($scope.Filt === null) {
-        $scope.clearFilter(false);
-    }
+
+     $scope.clearFilter(false);
+
     console.log("Start");
     showUsers();
     console.log("Show ok");

@@ -16,12 +16,19 @@ public class MessageInfoDto implements Serializable {
     private String text;
     private UserInfoDto userInfoDto;
 
-    public MessageInfoDto(String author,UserInfoDto userInfoDto, MessageType type, String text) {
-        this(userInfoDto,type,text);
-        if (author != null) {
+    public MessageInfoDto(String author, MessageType type, String text) {
+        this(author, null, type, text);
+    }
+
+    public MessageInfoDto(String author, UserInfoDto userInfoDto, MessageType type, String text) {
+        this(userInfoDto, type, text);
+        if (author != null && !author.isBlank()) {
             this.author = author;
             this.text = this.author + ": " + text;
         }
+    }
+    public MessageInfoDto(MessageType type, String text) {
+        this("",null ,type,text);
     }
     public MessageInfoDto(UserInfoDto userInfoDto, MessageType type, String text) {
         this.dataTime = new Timestamp(System.currentTimeMillis());

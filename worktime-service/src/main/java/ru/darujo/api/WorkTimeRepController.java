@@ -54,7 +54,7 @@ public class WorkTimeRepController {
                                                @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
                                                @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr,
                                                @RequestHeader String username) {
-        if (nikName == null || nikName.equals("")) {
+        if (nikName == null || nikName.isEmpty()) {
             nikName = username;
         }
         periodSplit = periodConvert(periodSplit);

@@ -2,7 +2,7 @@
     <h1>{{ZI.codeSap}} </h1>
     <h1>{{ZI.codeZI}} {{ZI.name}} </h1>
 
-    <h1 ng-style="getStyle(ZI.rated ? 0 : 1)">{{ZI.rated ? "Оценка выполнена" : "Оценка не выполнена" }}</h1>
+    <h1 ng-style="getStyle(ZI.rated ? 0 : 1)">{{ZI.rated ? "Оценка выполнена" : "Оценка не выполнена"}}</h1>
 
     <h1 ng-style="getStyle(RateStatusSC.code)">{{RateStatusSC.value}}</h1>
     <h1 ng-style="getStyle(RateStatusST.code)">{{RateStatusST.value}}</h1>
@@ -75,7 +75,7 @@
                 <label for="Role" class="p-form">Вид Работ</label>
                 <select class="vvod" name="RoleWorkStageSelect" id="Role" ng-model="WorkStage.role">
                     <option ng-value="1" value="1">Разработка и отладка</option>
-                    <option ng-value="2" value="2">Внутренее тестирование</option>
+                    <option ng-value="2" value="2">Внутреннее тестирование</option>
                 </select>
             </div>
             <div class="filter_block mar5">
@@ -123,7 +123,7 @@
             <td class="table_head2">База</td>
             <td class="table_head1">Минимальная доработка (10% кода) ед.</td>
             <td class="table_head2">Общая переработка (50% кода) ед.</td>
-            <td class="table_head1">Новая доработка или реинженеринг кода ед.</td>
+            <td class="table_head1">Новая доработка или ре инженеринг кода ед.</td>
             <td class="table_head2" ng-if="criteriaEdit && !ZI.rated"></td>
             <td class="table_head1" ng-if="criteriaEdit && !ZI.rated"></td>
 
@@ -161,7 +161,7 @@
                     <option ng-value="3" value="3">Реализация обработки и сравнения данных</option>
                     <option ng-value="4" value="4">Реализация экспорта</option>
                     <option ng-value="8" value="8">Разработка экранной формы</option>
-                    <option ng-value="5" value="5">Поддержака(реализация) протокола интеграции</option>
+                    <option ng-value="5" value="5">Поддержака (реализация) протокола интеграции</option>
                     <option ng-value="6" value="6">Реализация внешнего сервиса (ОС Windows)</option>
                     <option ng-value="7" value="7">Реализация внешнего сервиса (ОС Linux)</option>
                 </select>
@@ -197,6 +197,8 @@
     </div>
     <table>
         <tr>
+            <td class="table_head1">П.Н.</td>
+            <td ng-if="typeEdit && !ZI.rated" class="table_head1">Номер ВН</td>
             <td class="table_head2">Планируемые ТрЗ</td>
             <td class="table_head1">Часы</td>
             <td class="table_head2">Р/дн</td>
@@ -206,6 +208,8 @@
         </tr>
         <tbody>
         <tr ng-repeat="work in WorkTypeList">
+            <td>{{$index + 1}}</td>
+            <td ng-if="typeEdit && !ZI.rated">{{work.number}}</td>
             <td>{{work.type}}</td>
             <td>{{work.time}}</td>
             <td>{{work.time / 8}}</td>
@@ -227,7 +231,12 @@
     </div>
     <form id="FormWorkType" ng-submit="saveWorkType()">
         <div class="horiz">
+            <div class="filter_block min_block200 mar5">
+                <label for="TypeNumber" class="p-form">П.Н</label>
+                <input class="vvod" type="number" id="TypeNumber"
+                       ng-model="WorkType.number"/>
 
+            </div>
             <div class="filter_block min_block200 mar5">
                 <label for="TypeType" class="p-form">Работа</label>
                 <input class="vvod" type="text" id="TypeType"

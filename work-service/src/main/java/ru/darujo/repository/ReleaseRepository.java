@@ -1,5 +1,6 @@
 package ru.darujo.repository;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
@@ -10,6 +11,6 @@ import java.util.Optional;
 
 @Repository
 @Primary
-public interface ReleaseRepository extends CrudRepository<Release,Long>, JpaSpecificationExecutor<Release> {
+public interface ReleaseRepository extends CrudRepository<@NonNull Release,@NonNull Long>, JpaSpecificationExecutor<@NonNull Release> {
     Optional<Release> findByNameIgnoreCase(String name);
 }

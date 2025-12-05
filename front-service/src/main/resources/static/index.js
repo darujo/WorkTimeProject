@@ -43,6 +43,18 @@
                 templateUrl: 'workRate/workRate.html?ver='.toLowerCase() + ver,
                 controller: 'workRateController'
             })
+            .when('/agreement/request', {
+                templateUrl: 'workRate/request.html?ver='.toLowerCase() + ver,
+                controller: 'requestController'
+            })
+            .when('/agreement/response', {
+                templateUrl: 'workRate/response.html?ver='.toLowerCase() + ver,
+                controller: 'responseController'
+            })
+            .when('/agreement', {
+                templateUrl: 'workRate/agreement.html?ver='.toLowerCase() + ver,
+                controller: 'agreementController'
+            })
             .when('/calendar', {
                 templateUrl: 'calendar/calendar.html?ver=' + ver,
                 controller: 'calendarController'
@@ -366,7 +378,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                 return $localStorage.filterWorkTime[name];
             }
         }
-        return null;
+        return {};
 
     }
     let myHash;
@@ -386,7 +398,6 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             strPars = location.href;
         }
         if (strPars.indexOf("?") !== -1) {
-
             console.log(strPars)
             let paramsStr = new URLSearchParams(strPars.substring(strPars.lastIndexOf("?")));
             for (let [key, value] of paramsStr.entries()) {
@@ -554,7 +565,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             console.log(reject);
             setTimeout(() => {
                 resolve('Timeout resolved');
-            }, 100);
+            }, 10);
         });
     }
 

@@ -38,7 +38,7 @@ public class WorkBuilder {
     private Timestamp opeEndPlan;
     // ВЕНДЕРКА
     private Timestamp analiseEndPlan;
-    // № внутренней задачи (DEVBO)
+    // № внутренней задачи (D E V B O)
     private String task;
     // Краткое описание внутренней задачи
     private String description;

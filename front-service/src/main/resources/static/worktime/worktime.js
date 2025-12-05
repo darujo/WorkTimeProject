@@ -52,15 +52,15 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
         nikName: null
     }
     $scope.workTime = {
-        authorFirstName:null,
-        authorLastName:null,
-        authorPatronymic:null,
+        authorFirstName: null,
+        authorLastName: null,
+        authorPatronymic: null,
         workDateStr: null,
         taskCodeDEVBO: null,
-        taskCodeBTS:null,
-        taskDescription:null,
-        typeStr:null,
-        nameZi:null
+        taskCodeBTS: null,
+        taskDescription: null,
+        typeStr: null,
+        nameZi: null
     }
     let checkRight = function (right, message, callBack) {
         document.getElementById("ButtonSaveDown").style.display = "none";
@@ -195,6 +195,7 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
 
 
             }).then(function (response) {
+                loadPage = false;
                 $scope.load = false;
                 $scope.setFormWorkTime();
                 console.log("response,data :");
@@ -208,6 +209,7 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
                 showWorkTime();
 
             }, function errorCallback(response) {
+                loadPage = false;
                 $scope.load = false;
                 console.log(response)
                 if ($location.checkAuthorized(response)) {
@@ -218,7 +220,12 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
             });
         }
     };
+    let loadPage = true;
     $scope.filterWorkTime = function () {
+
+        if (loadPage) {
+            return;
+        }
         console.log("filterWorkTime")
         // Filter = $scope.Filter;
         // console.log(Filter)
@@ -438,6 +445,7 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
             });
         }
     }
+
     $scope.filterTask = function () {
         console.log("filterTask");
         document.getElementById("PageTask").value = "1";
@@ -484,14 +492,19 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
     }
     $scope.clearFilter = function (load) {
         console.log("clearFilter");
-        $scope.Filter = {
-            taskId: null,
-            currentUser: true,
-            size: 10
-        };
-        console.log($scope.Filter);
+
         if (load) {
+            $scope.Filter = {
+                taskId: null,
+                currentUser: true,
+                size: 10
+            };
+            console.log($scope.Filter);
             $scope.filterWorkTime();
+        } else {
+            console.log($scope.Filter);
+            $scope.Filter["size"] = $scope.Filter.size ? $scope.Filter.size : 10;
+            console.log($scope.Filter);
         }
     }
     $scope.clearFilterTask = function (load) {
@@ -499,16 +512,16 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
         if ($scope.FiltTask === null) {
             $scope.FiltTask = {size: 10}
         }
-        console.log($scope.FiltTask);
+        console.log($scope.FiltTask)
         if (load) {
             $scope.filterTask();
         }
     }
     $scope.Filter = $location.getFilter("wortTimeFilter");
     $scope.FiltTask = $location.getFilter("wortTimeEditFilter");
-    if ($scope.Filter === null) {
-        $scope.clearFilter(false);
-    }
+
+    $scope.clearFilter(false);
+
     $scope.clearFilterTask(false);
     checkRight("changeUser".toLowerCase(), false, callBackUserChange);
     console.log("Start");

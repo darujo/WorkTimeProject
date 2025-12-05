@@ -6,7 +6,7 @@ public class PageDto<T> {
     int totalPages;
     int number;
     int size;
-    List<T> Content;
+    List<T> content;
 
     @SuppressWarnings("unused")
     public int getTotalPages() {
@@ -25,13 +25,13 @@ public class PageDto<T> {
 
     @SuppressWarnings("unused")
     public List<T> getContent() {
-        return Content;
+        return content;
     }
 
     public PageDto(int totalPages, int number, int size, List<T> content) {
         this.totalPages = totalPages;
         this.number = number;
         this.size = size;
-        Content = content;
+        this.content = content;
     }
 }

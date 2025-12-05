@@ -1,6 +1,8 @@
 package ru.darujo.service;
 
-import lombok.extern.log4j.Log4j2;
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
@@ -19,13 +21,15 @@ import ru.darujo.model.Vacation;
 import ru.darujo.repository.VacationRepository;
 import ru.darujo.specifications.Specifications;
 
-import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Log4j2
+@Slf4j
 @Service
 @Primary
 public class VacationService {
@@ -80,7 +84,7 @@ public class VacationService {
         if (vacationSave != null && !vacationSave.getId().equals(vacation.getId())) {
             throw new ResourceNotFoundRunTime("Отпуск пересекаются с отпуском " + dateToText(vacationSave.getDateStart()) + " - " + dateToText(vacationSave.getDateEnd()));
         }
-        // вторую дату проверять не надо  так как этот  случай покрывается предыдущими случаями
+        // вторую дату проверять не надо так как этот случай покрывается предыдущими случаями
     }
 
     private Timestamp addDay(Timestamp date, int day) {
@@ -115,10 +119,10 @@ public class VacationService {
         vacationRepository.deleteById(id);
     }
 
-    public Page<Vacation> findAll(String nikName, Timestamp dateStart, Timestamp dateEnd, Integer page, Integer size) {
+    public Page<@NonNull Vacation> findAll(String nikName, Timestamp dateStart, Timestamp dateEnd, Integer page, Integer size) {
         List<String> users = Objects.requireNonNull(userServiceIntegration.getUserDTOs(nikName)).stream().map(UserDto::getNikName).collect(Collectors.toList());
-        Specification<Vacation> specification;
-        specification = Specification.where(null);
+        Specification<@NonNull Vacation> specification;
+        specification = Specification.unrestricted();
         specification = Specifications.in(specification, "nikName", users);
         specification = Specifications.ge(specification, "dateEnd", dateStart);
         specification = Specifications.le(specification, "dateStart", dateEnd);
@@ -132,7 +136,7 @@ public class VacationService {
     }
 
     public Vacation findOneDateBetween(String nikName, String field, Date dateGe, Date dateLe) {
-        Specification<Vacation> specification = Specifications.eq(null, "nikName", nikName);
+        Specification<@NonNull Vacation> specification = Specifications.eq(null, "nikName", nikName);
         if (dateGe.equals(dateLe)) {
             specification = Specifications.eq(specification, field, dateGe);
         } else {
@@ -148,31 +152,15 @@ public class VacationService {
     }
 
     public Vacation findOneDateInVacation(String nikName, Date date) {
-        Specification<Vacation> specification;
+        Specification<@NonNull Vacation> specification;
         specification = Specifications.eq(null, "nikName", nikName);
         specification = Specifications.le(specification, "dateStart", date);
         specification = Specifications.ge(specification, "dateEnd", date);
         return vacationRepository.findOne(specification).orElse(null);
     }
 
-    private final Map<String, UserDto> userDtoMap = new HashMap<>();
-
     public void updFio(UserFio userFio) {
-        try {
-            if (userFio.getNikName() != null) {
-                UserDto userDto = userDtoMap.get(userFio.getNikName());
-                if (userDto == null) {
-                    userDto = userServiceIntegration.getUserDto(null, userFio.getNikName());
-                    userDtoMap.put(userFio.getNikName(), userDto);
-                }
-                userFio.setFirstName(userDto.getFirstName());
-                userFio.setLastName(userDto.getLastName());
-                userFio.setPatronymic(userDto.getPatronymic());
-            }
-        } catch (ResourceNotFoundRunTime e) {
-            log.error(e.getMessage());
-            userFio.setFirstName("Не найден пользователь с ником " + userFio.getNikName());
-        }
+        userServiceIntegration.updFio(userFio);
     }
 
     public int getDayNotHoliday(Date dateStart, Date dateEnd) {
@@ -192,7 +180,7 @@ public class VacationService {
     }
 
     public List<VacationDto> userVacationStart(String nikName, Date dateStart) {
-        Specification<Vacation> specification;
+        Specification<@NonNull Vacation> specification;
         specification = Specifications.eq(null, "nikName", nikName);
         specification = Specifications.eq(specification, "dateStart", dateStart);
         return vacationRepository.findAll(specification).stream().map(this::getVacationDtoAndAddFio).toList();
