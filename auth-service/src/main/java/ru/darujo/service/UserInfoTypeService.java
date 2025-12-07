@@ -1,7 +1,9 @@
 package ru.darujo.service;
 
 import jakarta.transaction.Transactional;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.user.UserInfoTypeActiveDto;
@@ -12,6 +14,7 @@ import ru.darujo.specifications.Specifications;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserInfoTypeService {
@@ -31,15 +34,16 @@ public class UserInfoTypeService {
                     .stream()
                     .anyMatch(userInfoTypeActiveDto ->
                             !userInfoTypeActiveDto.getActive()
-                                    && userInfoType.getCode().equals(userInfoTypeActiveDto.getCode()))){
-                userInfoTypeRepository.delete(userInfoType);
+                                    && userInfoType.getCode().equals(userInfoTypeActiveDto.getCode()))) {
+                userInfoType.setIsActive(false);
+                userInfoTypeRepository.save(userInfoType);
             }
         });
 
         userInfoTypeDto.forEach(userInfoTypeActiveDto -> {
-            if (userInfoTypeActiveDto.getActive()){
-                UserInfoType userInfoType = userInfoTypeRepository.findFirstByCodeAndUser(userInfoTypeActiveDto.getCode(),user).orElse(null);
-                if (userInfoType == null){
+            if (userInfoTypeActiveDto.getActive()) {
+                UserInfoType userInfoType = userInfoTypeRepository.findFirstByCodeAndUser(userInfoTypeActiveDto.getCode(), user).orElse(null);
+                if (userInfoType == null) {
                     userInfoTypeRepository.save(new UserInfoType(userInfoTypeActiveDto.getCode(),
                             user));
                 }
@@ -51,9 +55,47 @@ public class UserInfoTypeService {
 
     public List<UserInfoType> getInfoTypes(User user) {
 
-        return userInfoTypeRepository.findAll(Specifications.eq(null, "user", user));
+        return getInfoTypes(user, null, null, null);
     }
+
     public List<UserInfoType> getInfoTypes(MessageType messageType) {
-        return userInfoTypeRepository.findAll(Specifications.eq(null,"code",messageType.toString()));
+        return getInfoTypes(null, null, null, messageType.toString());
+    }
+
+    public List<UserInfoType> getInfoTypes(User user, Long telegramId, Integer threadId, String messageType) {
+        Specification<@NonNull UserInfoType> specification = getUserInfoTypeSpecification(user, telegramId, threadId, messageType);
+        return userInfoTypeRepository.findAll(specification);
+    }
+
+    public Optional<UserInfoType> getInfoTypeForUser(User user, Long telegramId, Integer threadId, String messageType) {
+        Specification<@NonNull UserInfoType> specification = getUserInfoTypeSpecification(user, telegramId, threadId, messageType);
+        return userInfoTypeRepository.findOne(specification);
+    }
+
+    private static Specification<@NonNull UserInfoType> getUserInfoTypeSpecification(User user, Long telegramId, Integer threadId, String messageType) {
+        Specification<@NonNull UserInfoType> specification = Specification.unrestricted();
+        specification = Specifications.eq(specification, "user", user);
+        specification = Specifications.eq(specification, "telegramId", telegramId);
+        specification = Specifications.eq(specification, "threadId", threadId);
+        specification = Specifications.eq(specification, "code", messageType);
+        return specification;
+    }
+
+    public void save(UserInfoType userInfoType) {
+        if ((userInfoType.getIsActive() != null && userInfoType.getIsActive())
+                || userInfoType.getTelegramId() != null
+                || userInfoType.getThreadId() != null) {
+            userInfoTypeRepository.save(userInfoType);
+        } else {
+            if (userInfoType.getId() != null) {
+                userInfoTypeRepository.delete(userInfoType);
+            }
+        }
+    }
+
+    public boolean exists(Long telegramId) {
+        Specification<@NonNull UserInfoType> specification = getUserInfoTypeSpecification(null, telegramId, null, null);
+        return userInfoTypeRepository.exists(specification);
+
     }
 }

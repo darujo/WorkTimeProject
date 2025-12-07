@@ -3,6 +3,8 @@ server:
   servlet:
     context-path: /app-auth
 spring:
+  flyway:
+    enabled: true
   main:
     banner-mode: off
   datasource:

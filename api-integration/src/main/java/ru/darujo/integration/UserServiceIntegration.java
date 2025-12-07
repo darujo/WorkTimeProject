@@ -83,10 +83,11 @@ public class UserServiceIntegration extends ServiceIntegration {
 
     }
 
-    public ResultMes linkCodeTelegram(Integer code, Long telegramId) {
+    public ResultMes linkCodeTelegram(Integer code, Long telegramId, Integer threadId) {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "code", code);
         addTeg(stringBuilder, "telegramId", telegramId);
+        addTeg(stringBuilder, "threadId", threadId);
         try {
             return webClientUser.get().uri("/user/telegram/link" + stringBuilder)
                     .retrieve()
@@ -105,9 +106,10 @@ public class UserServiceIntegration extends ServiceIntegration {
 
     }
 
-    public Boolean linkDeleteTelegram(Long telegramId) {
+    public Boolean linkDeleteTelegram(Long telegramId, Integer threadId) {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "telegramId", telegramId);
+        // todo добавит и проверить что на другой стороне
         try {
             return webClientUser.get().uri("/user/telegram/delete" + stringBuilder)
                     .retrieve()

@@ -14,6 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.darujo.model.ChatInfo;
 import ru.darujo.model.MessageSend;
 import ru.darujo.service.MessageSendService;
 
@@ -35,18 +36,23 @@ public class TelegramBotSend {
     }
 
 
-    public void sendMessage(String author, String chatId, String text) throws TelegramApiException {
-        SendMessage message = new SendMessage(chatId, text);
+    public void sendMessage(ChatInfo chatInfo, String text) throws TelegramApiException {
+        SendMessage message = new SendMessage(chatInfo.getChatId(), text);
+        message.setMessageThreadId(chatInfo.getThreadId());
         message.enableHtml(true);
         tgClient.execute(message);
-        messageSendService.saveMessageSend(new MessageSend(null, author, chatId, text));
+        messageSendService.saveMessageSend(new MessageSend(chatInfo, text));
 
     }
-    public void sendPhoto(String author, String chatId, File file, String text) throws TelegramApiException {
-        sendPhoto(author,chatId,file,text,null);
+
+    public void sendPhoto(ChatInfo chatInfo, File file, String text) throws TelegramApiException {
+        sendPhoto(chatInfo, file, text, null);
     }
-    public void sendPhoto(String author, String chatId, File file, String text, InlineKeyboardMarkup menu) throws TelegramApiException {
-        SendPhoto message = new SendPhoto(chatId, new InputFile(file));
+
+    public void sendPhoto(ChatInfo chatInfo, File file, String text, InlineKeyboardMarkup menu) throws TelegramApiException {
+        SendPhoto message = new SendPhoto(chatInfo.getChatId(), new InputFile(file));
+
+        message.setMessageThreadId(chatInfo.getThreadId());
         if (!text.isEmpty()) {
             message.setCaption(text);
             message.setReplyMarkup(menu);
@@ -54,25 +60,27 @@ public class TelegramBotSend {
         try {
             tgClient.execute(message);
         } catch (TelegramApiException e) {
-            sendMessage(author, chatId, text);
+            sendMessage(chatInfo, text);
         }
     }
 
-    public void sendDocument(String author, String chatId, String fileName, File file, String text) throws TelegramApiException {
-        SendDocument message = new SendDocument(chatId, new InputFile(file, fileName));
+    public void sendDocument(ChatInfo chatInfo, String fileName, File file, String text) throws TelegramApiException {
+        SendDocument message = new SendDocument(chatInfo.getChatId(), new InputFile(file, fileName));
+        message.setMessageThreadId(chatInfo.getThreadId());
         if (!text.isEmpty()) {
             message.setCaption(text);
         }
         try {
             tgClient.execute(message);
         } catch (TelegramApiException e) {
-            sendMessage(author, chatId, text);
+            sendMessage(chatInfo, text);
         }
     }
 
     // Клавиатура раздела с ключевыми словами для поиска
-    public void sendMessage(String chatId, String text, InlineKeyboardMarkup menu) throws TelegramApiException {
+    public void sendMessage(String chatId, Integer threadId, String text, InlineKeyboardMarkup menu) throws TelegramApiException {
         SendMessage message = new SendMessage(chatId, text);
+        message.setMessageThreadId(threadId);
         message.setReplyMarkup(menu);
         tgClient.execute(message);
 
@@ -83,7 +91,7 @@ public class TelegramBotSend {
         tgClient.execute(delete);
     }
 
-    public void editMessage (String chatId,int messageId,String newText, InlineKeyboardMarkup menu) throws TelegramApiException {
+    public void editMessage(String chatId, int messageId, String newText, InlineKeyboardMarkup menu) throws TelegramApiException {
         EditMessageText edit = new EditMessageText(newText);
         edit.setChatId(chatId);
         edit.setMessageId(messageId);
@@ -91,8 +99,9 @@ public class TelegramBotSend {
         edit.setReplyMarkup(menu);
         tgClient.execute(edit);
     }
-    public void EditPhoto (String chatId,int messageId,String newText, InlineKeyboardMarkup menu,File file) throws TelegramApiException {
-        EditMessageMedia edit = new EditMessageMedia(new InputMediaPhoto(file,"menu.jpg") );
+
+    public void EditPhoto(String chatId, int messageId, String newText, InlineKeyboardMarkup menu, File file) throws TelegramApiException {
+        EditMessageMedia edit = new EditMessageMedia(new InputMediaPhoto(file, "menu.jpg"));
         edit.setChatId(chatId);
         edit.setMessageId(messageId);
         edit.getMedia().setCaption(newText);

@@ -43,8 +43,9 @@ public class MessageInformationController {
     @GetMapping("/report")
     public void sendWorkStatus(@RequestParam String reportType,
                                @RequestParam String author,
-                               @RequestParam (required = false) Long chatId ){
-        scheduleService.sendReport(reportType,author,chatId);
+                               @RequestParam(required = false) Long chatId,
+                               @RequestParam(required = false) Integer threadId) {
+        scheduleService.sendReport(reportType, author, chatId, threadId);
     }
 
 }

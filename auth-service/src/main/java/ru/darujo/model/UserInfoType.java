@@ -19,7 +19,12 @@ public class UserInfoType {
     private Long id;
     @Column(name = "code")
     private String code;
-
+    @Column(name = "telegram_id")
+    private Long telegramId;
+    @Column(name = "thread_id")
+    private Integer threadId;
+    @Column(name = "is_active")
+    private Boolean isActive;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
