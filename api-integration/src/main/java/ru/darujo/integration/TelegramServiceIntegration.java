@@ -23,8 +23,10 @@ public class TelegramServiceIntegration extends ServiceIntegration {
             Integer threadId,
             String text) {
         try {
-            // todo добавить threadId
-            webClientTelegram.post().uri("/" + chatId + "/notifications")
+            StringBuilder sb = new StringBuilder();
+            addTeg(sb, "threadId", threadId);
+
+            webClientTelegram.post().uri("/" + chatId + "/notifications" + sb)
                     .header("username", author)
                     .bodyValue(text)
                     .retrieve()

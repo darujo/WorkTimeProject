@@ -172,9 +172,6 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
         } else if (request.hasCallbackQuery()) {
             CallbackQuery callbackQuery = request.getCallbackQuery();
             MaybeInaccessibleMessage requestMessage = callbackQuery.getMessage();
-            log.info(callbackQuery.getFrom().getUserName());
-            log.info(String.valueOf(requestMessage.getChatId()));
-            // todo заменить на тему
             Integer threadId = callbackQuery.getMessage() instanceof Message ? ((Message) callbackQuery.getMessage()).getMessageThreadId() : null;
             MessageReceive messageReceive = messageReceiveService.saveMessageReceive(
                     new MessageReceive(

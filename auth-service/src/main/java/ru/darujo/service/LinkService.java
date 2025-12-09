@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Controller
 public class LinkService {
-    private final Integer TIME_CODE = 1;
+    private final Integer TIME_CODE = 5;
 
     private final Map<Integer, SingleCode> mapCode = new ConcurrentHashMap<>();
     private UserService userService;
@@ -63,21 +63,10 @@ public class LinkService {
     @Transactional
     public void clearMapCode(String login, String messageType) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        log.info("clearMapCode");
-        log.info(login);
-        log.info(messageType);
         for (Map.Entry<Integer, SingleCode> entry : mapCode.entrySet()) {
             if (entry.getValue().getTimestamp().before(timestamp)
                     || (entry.getValue().getMessageType().equals(messageType)
                     && entry.getValue().getLogin().equals(login))) {
-                log.info(Boolean.toString(entry.getValue().getTimestamp().after(timestamp)));
-                log.info(Boolean.toString(entry.getValue().getMessageType().equals(messageType)));
-                log.info(Boolean.toString(entry.getValue().getLogin().equals(login)));
-                log.info(Boolean.toString((entry.getValue().getMessageType().equals(messageType)
-                        && entry.getValue().getLogin().equals(login))));
-                log.info(Boolean.toString(entry.getValue().getTimestamp().after(timestamp)
-                        || (entry.getValue().getMessageType().equals(messageType)
-                        && entry.getValue().getLogin().equals(login))));
                 mapCode.remove(entry.getKey());
             }
         }
@@ -130,17 +119,26 @@ public class LinkService {
     }
 
     @Transactional
-    public void linkDeleteTelegram(Long telegramId) {
-        userService.getUserList(null, null, null, null, null, null, null, telegramId, null)
-                .forEach(user -> {
-                    user.setTelegramId(null);
-                    userInfoTypeService.getInfoTypes(user, null, null, null)
-                            .forEach(userInfoType -> {
-                                userInfoType.setTelegramId(null);
-                                userInfoType.setThreadId(null);
-                                userInfoTypeService.save(userInfoType);
-                            });
-                    userService.saveUser(user);
+    public void linkDeleteTelegram(Long telegramId, Integer threadId) {
+        if (threadId == null) {
+            userService.getUserList(null, null, null, null, null, null, null, telegramId, null)
+                    .forEach(user -> {
+                        user.setTelegramId(null);
+                        userInfoTypeService.getInfoTypes(user, null, null, null)
+                                .forEach(userInfoType -> {
+                                    userInfoType.setTelegramId(null);
+                                    userInfoType.setThreadId(null);
+                                    userInfoTypeService.save(userInfoType);
+                                });
+                        userService.saveUser(user);
+                    });
+
+        }
+        userInfoTypeService.getInfoTypes(null, telegramId, threadId, null)
+                .forEach(userInfoType -> {
+                    userInfoType.setTelegramId(null);
+                    userInfoType.setThreadId(null);
+                    userInfoTypeService.save(userInfoType);
                 });
         userService.setMessageTypeListMap();
 

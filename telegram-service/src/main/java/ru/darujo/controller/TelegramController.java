@@ -34,7 +34,7 @@ public class TelegramController {
                                       @PathVariable String chatId,
                                       @RequestParam(required = false) Integer threadId,
                                       @RequestBody String text) throws TelegramApiException {
-        telegramBotSend.sendMessage(new ChatInfo(username, chatId, null), text);
+        telegramBotSend.sendMessage(new ChatInfo(username, chatId, threadId), text);
     }
 
     @PostMapping(value = "/file", consumes = MediaType.TEXT_PLAIN_VALUE)

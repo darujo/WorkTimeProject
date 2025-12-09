@@ -38,9 +38,10 @@ public class LinkController {
     }
 
     @GetMapping("/delete")
-    public void linkDeleteTelegram(@RequestParam Long telegramId
+    public void linkDeleteTelegram(@RequestParam Long telegramId,
+                                   @RequestParam(required = false) Integer threadId
     ) {
-        linkService.linkDeleteTelegram(telegramId);
+        linkService.linkDeleteTelegram(telegramId,threadId);
     }
 
     @GetMapping("/delete/type")
