@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Controller
 public class LinkService {
+    @SuppressWarnings("FieldCanBeLocal")
     private final Integer TIME_CODE = 5;
 
     private final Map<Integer, SingleCode> mapCode = new ConcurrentHashMap<>();
