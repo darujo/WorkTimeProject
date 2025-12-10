@@ -262,7 +262,7 @@ public class UserService {
                     .getInfoTypes(user)
                     .forEach(userInfoType -> {
                         var userInfo = userInfoActiveDtoMap.get(userInfoType.getCode());
-                        userInfo.setActive(userInfo.getActive());
+                        userInfo.setActive(userInfoType.getIsActive());
                         userInfo.setTelegramId(userInfoType.getTelegramId());
                         userInfo.setThreadId(userInfoType.getThreadId());
 

@@ -1,6 +1,7 @@
 package ru.darujo.service;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class UserInfoTypeService {
     private UserInfoTypeRepository userInfoTypeRepository;
@@ -36,7 +38,7 @@ public class UserInfoTypeService {
                             !userInfoTypeActiveDto.getActive()
                                     && userInfoType.getCode().equals(userInfoTypeActiveDto.getCode()))) {
                 userInfoType.setIsActive(false);
-                userInfoTypeRepository.save(userInfoType);
+                save(userInfoType);
             }
         });
 
@@ -44,9 +46,12 @@ public class UserInfoTypeService {
             if (userInfoTypeActiveDto.getActive()) {
                 UserInfoType userInfoType = userInfoTypeRepository.findFirstByCodeAndUser(userInfoTypeActiveDto.getCode(), user).orElse(null);
                 if (userInfoType == null) {
-                    userInfoTypeRepository.save(new UserInfoType(userInfoTypeActiveDto.getCode(),
-                            user));
+                    userInfoType = new UserInfoType(userInfoTypeActiveDto.getCode(),
+                            user);
+
                 }
+                userInfoType.setIsActive(true);
+                save(userInfoType);
             }
 
         });
@@ -91,6 +96,7 @@ public class UserInfoTypeService {
                 userInfoTypeRepository.delete(userInfoType);
             }
         }
+        log.info(userInfoType.toString());
     }
 
     public boolean exists(Long telegramId) {
