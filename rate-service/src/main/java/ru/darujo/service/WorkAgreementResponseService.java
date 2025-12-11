@@ -15,6 +15,7 @@ import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.InfoServiceIntegration;
 import ru.darujo.integration.WorkServiceIntegration;
+import ru.darujo.model.WorkAgreementRequest;
 import ru.darujo.model.WorkAgreementResponse;
 import ru.darujo.repository.WorkAgreementResponseRepository;
 import ru.darujo.specifications.Specifications;
@@ -28,6 +29,8 @@ import java.util.Optional;
 @Service
 @Primary
 public class WorkAgreementResponseService {
+    private WorkAgreementRequestService workAgreementRequestService;
+
     private WorkAgreementResponseRepository workAgreementResponseRepository;
     private InfoServiceIntegration infoServiceIntegration;
 
@@ -51,9 +54,13 @@ public class WorkAgreementResponseService {
     @Getter
     private static WorkAgreementResponseService INSTANCE;
 
+    public WorkAgreementResponseService() {
+        INSTANCE = this;
+    }
+
     @PostConstruct
     public void init() {
-        INSTANCE = this;
+        workAgreementRequestService = WorkAgreementRequestService.getInstance();
     }
 
     public Optional<WorkAgreementResponse> findById(long id) {
@@ -68,7 +75,7 @@ public class WorkAgreementResponseService {
             throw new ResourceNotFoundRunTime("Не могу найти привязку к запросу");
         }
         Specification<@NonNull WorkAgreementResponse> specification = Specification.where(Specifications.eq(null, "workId", workAgreementResponse.getWorkId()));
-        specification = Specifications.eq(specification, "request", workAgreementResponse.getRequest().getId());
+        specification = Specifications.eq(specification, "request", workAgreementResponse.getRequest());
         specification = Specifications.eq(specification, "nikName", workAgreementResponse.getNikName());
         specification = Specifications.ne(specification, "id", workAgreementResponse.getId());
         WorkAgreementResponse workAgreementResponseSave = workAgreementResponseRepository.findOne(specification).orElse(null);
@@ -123,10 +130,15 @@ public class WorkAgreementResponseService {
 
     }
 
-
     public List<WorkAgreementResponse> findWorkAgreementResponse(Long workId, Long requestId) {
-        Specification<@NonNull WorkAgreementResponse> specification = Specification.where(Specifications.eq(null, "workId", workId));
-        specification = Specifications.eq(specification, "request", requestId);
+        return findWorkAgreementResponse(workId, workAgreementRequestService.findRequest(requestId));
+
+    }
+
+    public List<WorkAgreementResponse> findWorkAgreementResponse(Long workId, WorkAgreementRequest request) {
+        Specification<@NonNull WorkAgreementResponse> specification = Specification.unrestricted();
+        specification = Specification.where(Specifications.eq(specification, "workId", workId));
+        specification = Specifications.eq(specification, "request", request);
         return workAgreementResponseRepository.findAll(specification, Sort.by("workId").and(Sort.by("requestId").and(Sort.by("timestamp"))));
     }
 

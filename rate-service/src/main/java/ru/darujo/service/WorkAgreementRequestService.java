@@ -1,6 +1,5 @@
 package ru.darujo.service;
 
-import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,8 +56,7 @@ public class WorkAgreementRequestService {
         this.workServiceIntegration = workServiceIntegration;
     }
 
-    @PostConstruct
-    public void init() {
+    public WorkAgreementRequestService() {
         instance = this;
     }
 
