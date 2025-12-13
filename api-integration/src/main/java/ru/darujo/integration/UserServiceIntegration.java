@@ -168,14 +168,23 @@ public class UserServiceIntegration extends ServiceIntegration {
         }
     }
     private final Map<String, UserDto> userDtoMap = new HashMap<>();
+
+    public String getFio(String nikName) {
+        try {
+            if (nikName != null) {
+                UserDto userDto = getUserDto(nikName);
+                return userDto.getLastName() + " " + userDto.getFirstName() + " " + userDto.getPatronymic();
+            }
+        } catch (ResourceNotFoundRunTime e) {
+            log.error(e.getMessage());
+            return "Не найден пользователь с ником " + nikName;
+        }
+        return "";
+    }
     public void updFio(UserFio userFio) {
         try {
             if (userFio.getNikName() != null) {
-                UserDto userDto = userDtoMap.get(userFio.getNikName());
-                if (userDto == null) {
-                    userDto = getUserDto(null, userFio.getNikName());
-                    userDtoMap.put(userFio.getNikName(), userDto);
-                }
+                UserDto userDto = getUserDto(userFio.getNikName());
                 userFio.setFirstName(userDto.getFirstName());
                 userFio.setLastName(userDto.getLastName());
                 userFio.setPatronymic(userDto.getPatronymic());
@@ -184,5 +193,14 @@ public class UserServiceIntegration extends ServiceIntegration {
             log.error(e.getMessage());
             userFio.setFirstName("Не найден пользователь с ником " + userFio.getNikName());
         }
+    }
+
+    private UserDto getUserDto(String nikName) {
+        UserDto userDto = userDtoMap.get(nikName);
+        if (userDto == null) {
+            userDto = getUserDto(null, nikName);
+            userDtoMap.put(nikName, userDto);
+        }
+        return userDto;
     }
 }

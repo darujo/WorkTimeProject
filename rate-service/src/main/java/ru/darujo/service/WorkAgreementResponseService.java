@@ -9,11 +9,15 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.darujo.assistant.helper.CompareHelper;
+import ru.darujo.assistant.helper.DataHelper;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.dto.information.MessageType;
+import ru.darujo.dto.ratestage.StatusResponse;
 import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.InfoServiceIntegration;
+import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.integration.WorkServiceIntegration;
 import ru.darujo.model.WorkAgreementRequest;
 import ru.darujo.model.WorkAgreementResponse;
@@ -67,7 +71,7 @@ public class WorkAgreementResponseService {
         return workAgreementResponseRepository.findById(id);
     }
 
-    private void validWorkAgreementResponse(WorkAgreementResponse workAgreementResponse) {
+    private void validWorkAgreementResponse(@NonNull WorkAgreementResponse workAgreementResponse) {
         if (workAgreementResponse.getWorkId() == null) {
             throw new ResourceNotFoundRunTime("Не могу найти привязку к ЗИ");
         }
@@ -85,7 +89,7 @@ public class WorkAgreementResponseService {
 
     }
 
-    public WorkAgreementResponse saveWorkAgreementResponse(String author, WorkAgreementResponse workAgreementResponse) {
+    public WorkAgreementResponse saveWorkAgreementResponse(String author, @NonNull WorkAgreementResponse workAgreementResponse) {
         WorkAgreementResponse workAgreementResponseSave = null;
         if (workAgreementResponse.getId() != null) {
             workAgreementResponseSave = findById(workAgreementResponse.getId()).orElse(null);
@@ -103,7 +107,7 @@ public class WorkAgreementResponseService {
                             workAgreementResponseSave == null
                                     ?
                                     ("Добавлен согласование по ЗИ " + UrlWorkTime.getUrlAgreement(workLittleDto) + " по версии ТЗ " + workAgreementResponse.getRequest().getVersion() + "\n" + workAgreementResponse)
-                                    : ("Изменен согласование по ЗИ " + UrlWorkTime.getUrlAgreement(workLittleDto) + " по версии ТЗ " + workAgreementResponse.getRequest().getVersion() + "\n" + workAgreementResponse.compareObj(workAgreementResponseSave))
+                                    : ("Изменен согласование по ЗИ " + UrlWorkTime.getUrlAgreement(workLittleDto) + " по версии ТЗ " + workAgreementResponse.getRequest().getVersion() + "\n" + compareObj(workAgreementResponseSave, workAgreementResponse))
                     )
             );
         } catch (RuntimeException ex) {
@@ -140,6 +144,30 @@ public class WorkAgreementResponseService {
         specification = Specification.where(Specifications.eq(specification, "workId", workId));
         specification = Specifications.eq(specification, "request", request);
         return workAgreementResponseRepository.findAll(specification, Sort.by("workId").and(Sort.by("requestId").and(Sort.by("timestamp"))));
+    }
+
+    public String toString(@NonNull WorkAgreementResponse newObj) {
+        return
+                "Пользователь: " + UserServiceIntegration.getInstance().getFio(newObj.getNikName()) + "\n" +
+                        "Время: " + DataHelper.dateTimeToStr(newObj.getTimestamp()) + "\n" +
+                        (newObj.getComment() != null && !newObj.getComment().isBlank() ? ("Комментарий: " + newObj.getComment() + "\n") : "") +
+                        "Статус: " + StatusResponse.valueOf(newObj.getStatus()).getName() + "\n";
+
+    }
+
+    public String compareObj(WorkAgreementResponse old, WorkAgreementResponse newObj) {
+        if (old == null) {
+            return toString(newObj);
+        }
+        return
+                compareField("Пользователь", UserServiceIntegration.getInstance().getFio(old.getNikName()), UserServiceIntegration.getInstance().getFio(newObj.getNikName())) +
+                        compareField("Время", DataHelper.dateTimeToStr(old.getTimestamp()), DataHelper.dateTimeToStr(newObj.getTimestamp())) +
+                        compareField("Комментарий", old.getComment(), newObj.getComment()) +
+                        compareField("Статус", StatusResponse.valueOf(old.getStatus()).getName(), StatusResponse.valueOf(newObj.getStatus()).getName());
+    }
+
+    private String compareField(String name, String oldStr, String newStr) {
+        return CompareHelper.compareField(name, oldStr, newStr);
     }
 
 }
