@@ -2,7 +2,6 @@ package ru.darujo.convertor;
 
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.user.UserEditDto;
-import ru.darujo.dto.user.UserInfoDto;
 import ru.darujo.model.User;
 
 public class UserConvertor {
@@ -38,7 +37,4 @@ public class UserConvertor {
                 user.getPasswordChange());
     }
 
-    public static UserInfoDto getUserInfoDto(User user) {
-        return new UserInfoDto(user.getId(), user.getNikName(), user.getTelegramId());
-    }
 }

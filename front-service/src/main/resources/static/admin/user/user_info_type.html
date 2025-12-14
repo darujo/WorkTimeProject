@@ -2,7 +2,7 @@
     <h1>Список типов уведомлений пользователя {{User.lastName}} {{User.firstName}} {{User.patronymic}}</h1>
     <div class="horiz">
         <button ng-if="User" type="button" class="head_button" ng-click="saveUserinfoType()">Сохранить</button>
-        <!--        <button type="button" class="head_button" ng-click="backUser()">Назад</button>-->
+        <button type="button" class="head_button" ng-click="loadInfoType()">Обновить</button>
     </div>
 
     <table>
@@ -10,6 +10,12 @@
             <td class="table_head2">Код</td>
             <td class="table_head2">Название</td>
             <td class="table_head2"></td>
+            <td class="table_head2">id чата</td>
+            <td class="table_head2">Номер канала в чате</td>
+            <td class="table_head2"></td>
+            <td class="table_head2"></td>
+            <td class="table_head2"></td>
+
             <!--            <td class="table_head2"></td>-->
 
         </tr>
@@ -21,7 +27,20 @@
             <td>
                 <label for="RoleActive"></label>
                 <input id="RoleActive" class="vvod check_box_td" type="checkbox" ng-model="infoType.active"/>
-
+            </td>
+            <td>{{infoType.telegramId}}</td>
+            <td>{{infoType.threadId}}</td>
+            <td><p ng-if="infoType.message.ok">Для получения уведомлений перейдите <a
+                    href="http://{{infoType.message.link}}" target="_blank">Бот</a>.
+                И отправьте команду /link. На запрос кода введите:<b>{{infoType.message.code}}</b>.
+                Внимание Код действует <b>{{infoType.message.time}}</b> минут. После авторизации в боте
+                нажмите кнопку: </p>
+                <br></td>
+            <td>
+                <button type="button" class="head_button" ng-click="link(User.nikName,infoType)">Связать</button>
+            </td>
+            <td>
+                <button type="button" class="head_button" ng-click="delLink(User.nikName,infoType)">Отвязать</button>
             </td>
 
         </tr>

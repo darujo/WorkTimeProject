@@ -1,6 +1,5 @@
 package ru.darujo.service;
 
-import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,11 +8,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.darujo.assistant.helper.CompareHelper;
+import ru.darujo.assistant.helper.DataHelper;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.dto.information.MessageType;
+import ru.darujo.dto.ratestage.StatusRequest;
 import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.InfoServiceIntegration;
+import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.integration.WorkServiceIntegration;
 import ru.darujo.model.WorkAgreementRequest;
 import ru.darujo.repository.WorkAgreementRequestRepository;
@@ -57,8 +60,7 @@ public class WorkAgreementRequestService {
         this.workServiceIntegration = workServiceIntegration;
     }
 
-    @PostConstruct
-    public void init() {
+    public WorkAgreementRequestService() {
         instance = this;
     }
 
@@ -73,7 +75,7 @@ public class WorkAgreementRequestService {
         return findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Не найден запрос с ID = " + id));
     }
 
-    private void validWorkAgreementRequest(WorkAgreementRequest workAgreementRequest) {
+    private void validWorkAgreementRequest(@NonNull WorkAgreementRequest workAgreementRequest) {
         if (workAgreementRequest.getWorkId() == null) {
             throw new ResourceNotFoundRunTime("Не могу найти привязку к ЗИ");
         }
@@ -99,7 +101,7 @@ public class WorkAgreementRequestService {
         String message = workAgreementRequestSave == null
                 ?
                 ("Добавлен запрос на согласование по ЗИ " + UrlWorkTime.getUrlAgreement(workLittleDto) + "\n" + workAgreementRequest)
-                : ("Изменен запрос на согласование по ЗИ " + UrlWorkTime.getUrlAgreement(workLittleDto) + "\n" + workAgreementRequest.compareObj(workAgreementRequestSave));
+                : ("Изменен запрос на согласование по ЗИ " + UrlWorkTime.getUrlAgreement(workLittleDto) + "\n" + compareObj(workAgreementRequestSave, workAgreementRequest));
         workAgreementRequest = workAgreementRequestRepository.save(workAgreementRequest);
 
         infoServiceIntegration.addMessage(
@@ -138,6 +140,34 @@ public class WorkAgreementRequestService {
     public List<WorkAgreementRequest> findWorkAgreementRequest(Long workId) {
         Specification<@NonNull WorkAgreementRequest> specification = Specification.where(Specifications.eq(null, "workId", workId));
         return workAgreementRequestRepository.findAll(specification, Sort.by("workId").and(Sort.by("version")));
+    }
+
+    public String compareObj(WorkAgreementRequest oldObj, @NonNull WorkAgreementRequest newObj) {
+        if (oldObj == null) {
+            return toString(newObj);
+        }
+        return
+                compareField("Пользователь", UserServiceIntegration.getInstance().getFio(oldObj.getNikName()), UserServiceIntegration.getInstance().getFio(newObj.getNikName())) +
+                        compareField("Время", DataHelper.dateTimeToStr(oldObj.getTimestamp()), DataHelper.dateTimeToStr(newObj.getTimestamp())) +
+                        compareField("Версия ТЗ", oldObj.getVersion(), newObj.getVersion()) +
+                        compareField("Комментарий", oldObj.getComment(), newObj.getComment()) +
+                        compareField("Срок", DataHelper.dateToDDMMYYYY(oldObj.getTerm()), DataHelper.dateToDDMMYYYY(newObj.getTerm())) +
+                        compareField("Статус", StatusRequest.valueOf(oldObj.getStatus()).getName(), StatusRequest.valueOf(newObj.getStatus()).getName());
+    }
+
+    private String compareField(String name, String oldStr, String newStr) {
+        return CompareHelper.compareField(name, oldStr, newStr);
+    }
+
+    public String toString(@NonNull WorkAgreementRequest newObj) {
+        return
+                "Пользователь: " + UserServiceIntegration.getInstance().getFio(newObj.getNikName()) + "\n" +
+                        "Время: " + DataHelper.dateTimeToStr(newObj.getTimestamp()) + "\n" +
+                        (newObj.getVersion() != null ? ("Версия ТЗ: " + newObj.getVersion() + "\n") : "") +
+                        (newObj.getComment() != null && !newObj.getComment().isBlank() ? ("Комментарий: " + newObj.getVersion() + "\n") : "") +
+                        (newObj.getTerm() != null ? ("Срок: " + DataHelper.dateToDDMMYYYY(newObj.getTerm()) + "\n") : "") +
+                        "Статус: " + StatusRequest.valueOf(newObj.getStatus()).getName() + "\n";
+
     }
 
 }

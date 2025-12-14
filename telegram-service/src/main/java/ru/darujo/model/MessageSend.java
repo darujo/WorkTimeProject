@@ -1,7 +1,6 @@
 package ru.darujo.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 
 @NoArgsConstructor
-@AllArgsConstructor
+
 @Data
 @Entity
 @Table(name = "message_send")
@@ -23,8 +22,15 @@ public class MessageSend {
 
     @Column(name = "chat_id")
     private String chatId;
+    @Column(name = "thread_id")
+    private Integer threadId;
     @Column(name = "text", length = 4000)
     private String text;
 
-
+    public MessageSend(ChatInfo chatInfo, String text) {
+        this.author = chatInfo.getAuthor();
+        this.chatId = chatInfo.getChatId();
+        this.threadId = chatInfo.getThreadId();
+        this.text = text;
+    }
 }

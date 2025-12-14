@@ -18,15 +18,18 @@ public class UserSend {
 
     @Column(name = "chat_id")
     private String chatId;
+    @Column(name = "thread_id")
+    private Integer threadId;
     @Column(name = "send")
     private Boolean send;
     @ManyToOne
     @JoinColumn(name = "mes_info_id")
     private MessageInformation messageInformation;
 
-    public UserSend(String chatId, MessageInformation messageInformation) {
+    public UserSend(String chatId, Integer threadId, MessageInformation messageInformation) {
         this.chatId = chatId;
         this.messageInformation = messageInformation;
         this.send = false;
+        this.threadId = threadId;
     }
 }

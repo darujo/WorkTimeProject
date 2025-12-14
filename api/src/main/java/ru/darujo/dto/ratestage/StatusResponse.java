@@ -16,4 +16,5 @@ public enum StatusResponse implements TypeEnum {
     public String getName() {
         return name;
     }
+
 }

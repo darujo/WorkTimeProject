@@ -1,10 +1,9 @@
 package ru.darujo.model;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import jakarta.persistence.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,6 +18,9 @@ public class MessageReceive {
 
     @Column(name = "chat_id")
     private Long chatId;
+    @Column(name = "thread_id")
+    private Integer threadId;
+
     @Column(name = "text", length = 4000)
     private String text;
 
@@ -45,8 +47,9 @@ public class MessageReceive {
     @Column(name = "is_super_group_chat")
     private Boolean isSuperGroupChat;
 
-    public MessageReceive(Long chatId, String text, String userName, String firstName, String lastName, String title, String type, Boolean isForum, Boolean isChannelChat, Boolean isUserChar, Boolean isGroupChat, Boolean isSuperGroupChat) {
+    public MessageReceive(Long chatId, Integer threadId, String text, String userName, String firstName, String lastName, String title, String type, Boolean isForum, Boolean isChannelChat, Boolean isUserChar, Boolean isGroupChat, Boolean isSuperGroupChat) {
         this.chatId = chatId;
+        this.threadId = threadId;
         this.text = text;
         this.userName = userName;
         this.firstName = firstName;

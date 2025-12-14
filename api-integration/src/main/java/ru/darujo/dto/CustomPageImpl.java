@@ -10,15 +10,25 @@ import tools.jackson.databind.JsonNode;
 
 import java.util.ArrayList;
 import java.util.List;
-// TODO разобраться что здесь для чего
+
 public class CustomPageImpl<T> extends PageImpl<@NonNull T> {
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-    public CustomPageImpl(@JsonProperty("content") List<T> content, @JsonProperty("number") int number,
-                          @JsonProperty("size") int size, @JsonProperty("totalElements") Long totalElements,
-                          @JsonProperty("pageable") JsonNode pageable, @JsonProperty("last") boolean last,
-                          @JsonProperty("totalPages") int totalPages, @JsonProperty("sort") JsonNode sort,
+    public CustomPageImpl(@JsonProperty("content") List<T> content,
+                          @JsonProperty("number") int number,
+                          @JsonProperty("size") int size,
+                          @JsonProperty("totalElements") Long totalElements,
+                          @SuppressWarnings("unused")
+                          @JsonProperty("pageable") JsonNode pageable,
+                          @SuppressWarnings("unused")
+                          @JsonProperty("last") boolean last,
+                          @SuppressWarnings("unused")
+                          @JsonProperty("totalPages") int totalPages,
+                          @SuppressWarnings("unused")
+                          @JsonProperty("sort") JsonNode sort,
+                          @SuppressWarnings("unused")
                           @JsonProperty("numberOfElements") int numberOfElements) {
-        super(content, PageRequest.of(number, 1), 10);
+        this(content == null ? new ArrayList<>() : content, PageRequest.of(number, size >= 1 ? size : 1),
+                totalElements != null ? totalElements : 0L);
     }
 
     public CustomPageImpl(List<T> content, Pageable pageable, long total) {
@@ -29,7 +39,8 @@ public class CustomPageImpl<T> extends PageImpl<@NonNull T> {
         super(content);
     }
 
+    @SuppressWarnings("unused")
     public CustomPageImpl() {
-        super(new ArrayList<>());
+        this(new ArrayList<>());
     }
 }

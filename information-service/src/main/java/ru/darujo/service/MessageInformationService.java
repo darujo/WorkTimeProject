@@ -91,12 +91,12 @@ public class MessageInformationService {
         }
         if (messageInfoDto.getUserInfoDto() != null) {
             MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true, messageInfoDto.getDataTime()));
-            saveUserSend(new UserSend(Long.toString(messageInfoDto.getUserInfoDto().getTelegramId()), messageInformation));
+            saveUserSend(new UserSend(Long.toString(messageInfoDto.getUserInfoDto().getTelegramId()), messageInfoDto.getUserInfoDto().getThreadId(), messageInformation));
         } else if (messageTypeListMap == null) {
             saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), false, messageInfoDto.getDataTime()));
         } else {
             MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true, messageInfoDto.getDataTime()));
-            messageTypeListMap.get(messageInfoDto.getType()).forEach(userTelegramDto -> saveUserSend(new UserSend(Long.toString(userTelegramDto.getTelegramId()), messageInformation)));
+            messageTypeListMap.get(messageInfoDto.getType()).forEach(userTelegramDto -> saveUserSend(new UserSend(Long.toString(userTelegramDto.getTelegramId()), userTelegramDto.getThreadId(), messageInformation)));
         }
         sendAllNotSendMessage();
         return true;
@@ -115,7 +115,7 @@ public class MessageInformationService {
         messageInformationRepository
                 .findAll(specification)
                 .forEach(messageInformation -> {
-                    messageTypeListMap.get(MessageType.valueOf(messageInformation.getType())).forEach(userTelegramDto -> saveUserSend(new UserSend(Long.toString(userTelegramDto.getTelegramId()), messageInformation)));
+                    messageTypeListMap.get(MessageType.valueOf(messageInformation.getType())).forEach(userTelegramDto -> saveUserSend(new UserSend(Long.toString(userTelegramDto.getTelegramId()), userTelegramDto.getThreadId(), messageInformation)));
                     messageInformation.setSend(true);
                     saveMessageInformation(messageInformation);
                 });
@@ -142,7 +142,7 @@ public class MessageInformationService {
         userSendRepository.findAll(specification).forEach(
                 userSend -> {
                     try {
-                        telegramServiceIntegration.sendMessage(userSend.getMessageInformation().getAuthor(), userSend.getChatId(), userSend.getMessageInformation().getText());
+                        telegramServiceIntegration.sendMessage(userSend.getMessageInformation().getAuthor(), userSend.getChatId(), userSend.getThreadId(), userSend.getMessageInformation().getText());
                         userSend.setSend(true);
                         userSendRepository.save(userSend);
                     } catch (ResourceNotFoundRunTime exception) {
@@ -172,9 +172,9 @@ public class MessageInformationService {
         } else {
             MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true, messageInfoDto.getDataTime()));
             if(messageInfoDto.getUserInfoDto() != null) {
-                saveUserSend(new UserSend(Long.toString(messageInfoDto.getUserInfoDto().getTelegramId()), messageInformation));
+                saveUserSend(new UserSend(Long.toString(messageInfoDto.getUserInfoDto().getTelegramId()), messageInfoDto.getUserInfoDto().getThreadId(), messageInformation));
             } else {
-                messageTypeListMap.get(messageInfoDto.getType()).forEach(userTelegramDto -> saveUserSend(new UserSend(Long.toString(userTelegramDto.getTelegramId()), messageInformation)));
+                messageTypeListMap.get(messageInfoDto.getType()).forEach(userTelegramDto -> saveUserSend(new UserSend(Long.toString(userTelegramDto.getTelegramId()), userTelegramDto.getThreadId(), messageInformation)));
             }
             try {
                 telegramServiceIntegration.addFile(fileName, fileBody);
@@ -184,7 +184,7 @@ public class MessageInformationService {
                         )
                         .forEach(userSend -> {
                             try {
-                                telegramServiceIntegration.sendFile(userSend.getMessageInformation().getAuthor(), userSend.getChatId(), fileName, userSend.getMessageInformation().getText());
+                                telegramServiceIntegration.sendFile(userSend.getMessageInformation().getAuthor(), userSend.getChatId(), userSend.getThreadId(), fileName, userSend.getMessageInformation().getText());
                                 userSend.setSend(true);
                                 userSendRepository.save(userSend);
                             } catch (ResourceNotFoundRunTime ex){

@@ -110,7 +110,7 @@ spring:
               filters:
                 - StripPrefix=1
                 - PrefixPath=/app/
-         # - JwtAuthFilter
+                - JwtAuthFilter
             - id: front-add
               uri: "http://localhost:8185"
               predicates:

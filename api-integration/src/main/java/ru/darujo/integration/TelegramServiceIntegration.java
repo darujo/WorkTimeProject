@@ -20,9 +20,13 @@ public class TelegramServiceIntegration extends ServiceIntegration {
     public void sendMessage(
             String author,
             String chatId,
+            Integer threadId,
             String text) {
         try {
-            webClientTelegram.post().uri("/" + chatId + "/notifications")
+            StringBuilder sb = new StringBuilder();
+            addTeg(sb, "threadId", threadId);
+
+            webClientTelegram.post().uri("/" + chatId + "/notifications" + sb)
                     .header("username", author)
                     .bodyValue(text)
                     .retrieve()
@@ -58,11 +62,13 @@ public class TelegramServiceIntegration extends ServiceIntegration {
     public void sendFile(
             String author,
             String chatId,
+            Integer threadId,
             String fileName,
             String text) {
         try {
             StringBuilder sb = new StringBuilder();
             addTeg(sb, "fileName", fileName);
+            addTeg(sb, "threadId", threadId);
             webClientTelegram.post().uri("/" + chatId + "/file" + sb)
                     .header("username", author)
                     .bodyValue(text)

@@ -83,10 +83,11 @@ public class UserServiceIntegration extends ServiceIntegration {
 
     }
 
-    public ResultMes linkCodeTelegram(Integer code, Long telegramId) {
+    public ResultMes linkCodeTelegram(Integer code, Long telegramId, Integer threadId) {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "code", code);
         addTeg(stringBuilder, "telegramId", telegramId);
+        addTeg(stringBuilder, "threadId", threadId);
         try {
             return webClientUser.get().uri("/user/telegram/link" + stringBuilder)
                     .retrieve()
@@ -105,9 +106,10 @@ public class UserServiceIntegration extends ServiceIntegration {
 
     }
 
-    public Boolean linkDeleteTelegram(Long telegramId) {
+    public Boolean linkDeleteTelegram(Long telegramId, Integer threadId) {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "telegramId", telegramId);
+        addTeg(stringBuilder, "threadId", threadId);
         try {
             return webClientUser.get().uri("/user/telegram/delete" + stringBuilder)
                     .retrieve()
@@ -166,14 +168,23 @@ public class UserServiceIntegration extends ServiceIntegration {
         }
     }
     private final Map<String, UserDto> userDtoMap = new HashMap<>();
+
+    public String getFio(String nikName) {
+        try {
+            if (nikName != null) {
+                UserDto userDto = getUserDto(nikName);
+                return userDto.getLastName() + " " + userDto.getFirstName() + " " + userDto.getPatronymic();
+            }
+        } catch (ResourceNotFoundRunTime e) {
+            log.error(e.getMessage());
+            return "Не найден пользователь с ником " + nikName;
+        }
+        return "";
+    }
     public void updFio(UserFio userFio) {
         try {
             if (userFio.getNikName() != null) {
-                UserDto userDto = userDtoMap.get(userFio.getNikName());
-                if (userDto == null) {
-                    userDto = getUserDto(null, userFio.getNikName());
-                    userDtoMap.put(userFio.getNikName(), userDto);
-                }
+                UserDto userDto = getUserDto(userFio.getNikName());
                 userFio.setFirstName(userDto.getFirstName());
                 userFio.setLastName(userDto.getLastName());
                 userFio.setPatronymic(userDto.getPatronymic());
@@ -182,5 +193,14 @@ public class UserServiceIntegration extends ServiceIntegration {
             log.error(e.getMessage());
             userFio.setFirstName("Не найден пользователь с ником " + userFio.getNikName());
         }
+    }
+
+    private UserDto getUserDto(String nikName) {
+        UserDto userDto = userDtoMap.get(nikName);
+        if (userDto == null) {
+            userDto = getUserDto(null, nikName);
+            userDtoMap.put(nikName, userDto);
+        }
+        return userDto;
     }
 }

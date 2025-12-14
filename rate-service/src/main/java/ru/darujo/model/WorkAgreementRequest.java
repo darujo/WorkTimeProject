@@ -4,9 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.darujo.assistant.helper.CompareHelper;
-import ru.darujo.assistant.helper.DataHelper;
-import ru.darujo.dto.ratestage.StatusRequest;
 
 import java.sql.Timestamp;
 
@@ -35,33 +32,5 @@ public class WorkAgreementRequest {
     @Column(name = "work_id")
     private Long workId;
 
-    @Override
-    public String toString() {
-        return
-                "Пользователь: " + nikName + "\n" +
-                        "Время: " + DataHelper.dateTimeToStr(timestamp) + "\n" +
-                        (version != null ? ("Версия ТЗ: " + version + "\n") : "") +
-                        (comment != null && !comment.isBlank() ? ("Комментарий: " + comment + "\n") : "") +
-                        (term != null ? ("Срок: " + DataHelper.dateToDDMMYYYY(term) + "\n") : "") +
-                        "Статус: " + StatusRequest.valueOf(status).getName() + "\n";
-
-    }
-
-    public String compareObj(WorkAgreementRequest old) {
-        if (old == null) {
-            return toString();
-        }
-        return
-                compareField("Пользователь", old.getNikName(), nikName) +
-                        compareField("Время", DataHelper.dateTimeToStr(old.getTimestamp()), DataHelper.dateTimeToStr(timestamp)) +
-                        compareField("Версия ТЗ", old.getVersion(), version) +
-                        compareField("Комментарий", old.getComment(), comment) +
-                        compareField("Срок", DataHelper.dateToDDMMYYYY(old.getTerm()), DataHelper.dateToDDMMYYYY(term)) +
-                        compareField("Статус", StatusRequest.valueOf(old.getStatus()).getName(), StatusRequest.valueOf(status).getName());
-    }
-
-    private String compareField(String name, String oldStr, String newStr) {
-        return CompareHelper.compareField(name,oldStr,newStr);
-    }
 
 }

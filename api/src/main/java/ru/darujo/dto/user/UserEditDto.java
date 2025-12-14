@@ -3,6 +3,7 @@ package ru.darujo.dto.user;
 import java.io.Serializable;
 
 public class UserEditDto implements Serializable {
+    @SuppressWarnings("unused")
     public UserEditDto() {
     }
 
@@ -16,6 +17,7 @@ public class UserEditDto implements Serializable {
     private String patronymic;
     private String userPassword;
     private Boolean passwordChange;
+    @SuppressWarnings("unused")
     private String textPassword;
 
     public UserEditDto(Long id, String nikName, String firstName, String lastName, String patronymic,String userPassword,String textPassword, Boolean passwordChange) {
@@ -26,10 +28,6 @@ public class UserEditDto implements Serializable {
         this.patronymic = patronymic;
         this.userPassword = userPassword;
         this.passwordChange = passwordChange;
-    }
-
-    public UserEditDto(String nikName) {
-        this.nikName = nikName;
     }
 
     public Long getId() {
