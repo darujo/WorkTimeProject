@@ -117,7 +117,7 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
                                     Напишите команду для показа списка мыслей:\s
                                      /link - подписаться на уведомления от сервиса учета трудозатрат\s
                                      /stop - отвязать аккаунт от уведомлений""");
-                    case "/link" -> getLink(chatInfo);
+                    case "/link" -> getLink(chatInfo, requestMessage.getMessageId());
                     case "/menu" -> {
                         telegramBotSend.deleteMessage(chatId, requestMessage.getMessageId());
                         menuService.openMainMenu(new ChatInfo("Autoresponder", chatId, threadId));
@@ -125,7 +125,7 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
                     case "/stop" -> getStop(chatId, threadId, requestMessage.getMessageId());
                     default -> {
                         if (requestMessage.getText().equals("/link@" + botName)) {
-                            getLink(chatInfo);
+                            getLink(chatInfo, requestMessage.getMessageId());
                         } else if (requestMessage.getText().equals("/menu@" + botName)) {
                             telegramBotSend.deleteMessage(chatId, requestMessage.getMessageId());
                             menuService.openMainMenu(new ChatInfo("Autoresponder", chatId, threadId));
@@ -202,8 +202,7 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
                     }
                 } else if (CommandType.LINK.equals(CommandType.valueOf(callbackQuery.getData()))) {
                     try {
-                        telegramBotSend.deleteMessage(requestMessage.getChatId().toString(), requestMessage.getMessageId());
-                        getLink(chatInfo);
+                        getLink(chatInfo, requestMessage.getMessageId());
                     } catch (TelegramApiException e) {
                         throw new RuntimeException(e);
                     }
@@ -220,7 +219,8 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
         }
     }
 
-    private void getLink(ChatInfo chatInfo) throws TelegramApiException {
+    private void getLink(ChatInfo chatInfo, Integer messageId) throws TelegramApiException {
+        telegramBotSend.deleteMessage(chatInfo.getChatId(), messageId);
         menuService.openCancel(chatInfo, "Введите одноразовый код:");
     }
 

@@ -1,7 +1,5 @@
 package ru.darujo.service;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -87,13 +85,6 @@ public class MenuService {
 
     Map<Integer, MenuParam> paramMap = new HashMap<>();
 
-    @Getter
-    @Setter
-    private class MenuParam {
-        ReportTypeDto reportTypeDto;
-
-    }
-
     public void getMenu(ChatInfo chatInfo, Integer messageId, String command, File file) throws TelegramApiException {
         try {
             CommandType commandType = CommandType.valueOf(command);
@@ -169,6 +160,7 @@ public class MenuService {
     }
 
     private void sendReport(ReportTypeDto reportType, ChatInfo chatInfo, Integer messageId, boolean sendMe) throws TelegramApiException {
+        telegramBotSend.deleteMessage(chatInfo.getChatId(), messageId);
         try {
             ResultMes resultMes = userServiceIntegration.checkUserTelegram(Long.parseLong(chatInfo.getChatId()));
             if (resultMes.isOk()) {
