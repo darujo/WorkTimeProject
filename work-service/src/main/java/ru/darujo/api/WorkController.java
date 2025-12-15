@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import ru.darujo.assistant.helper.DataHelper;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.convertor.WorkConvertor;
 import ru.darujo.dto.work.WorkDto;
 import ru.darujo.dto.work.WorkEditDto;
@@ -139,7 +139,7 @@ public class WorkController {
     public boolean TaskRefresh(@PathVariable long id,
                                @RequestParam(required = false, name = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStr
     ) {
-        Timestamp date = DataHelper.DTZToDate(dateStr, "date", false);
+        Timestamp date = DateHelper.DTZToDate(dateStr, "date", false);
         return workService.setWorkDate(id, date);
 
     }

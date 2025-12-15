@@ -3,8 +3,10 @@ package ru.darujo.dto.work;
 import ru.darujo.assistant.helper.DateHelper;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ReleaseDto {
+public class ReleaseStageDto {
     private Long id;
     // Порядковый номер релиза
     private String name;
@@ -14,16 +16,27 @@ public class ReleaseDto {
     private Timestamp issuingReleaseFact;
     private Float sort;
 
-    public ReleaseDto(Long id, String name, Timestamp issuingReleasePlan, Timestamp issuingReleaseFact, Float sort) {
+    @SuppressWarnings("unchecked")
+    private final List<WorkLittleDto>[] works = new ArrayList[7];
+
+    public ReleaseStageDto(Long id, String name, Timestamp issuingReleasePlan, Timestamp issuingReleaseFact, Float sort) {
         this.id = id;
         this.name = name;
         this.issuingReleasePlan = issuingReleasePlan;
         this.issuingReleaseFact = issuingReleaseFact;
         this.sort = sort;
+        for (int i = 0; i < works.length; i++) {
+            works[i] = new ArrayList<>();
+        }
+
+    }
+
+    public List<WorkLittleDto>[] getWorks() {
+        return works;
     }
 
     @SuppressWarnings("unused")
-    public ReleaseDto() {
+    public ReleaseStageDto() {
     }
 
     public Long getId() {
@@ -34,6 +47,7 @@ public class ReleaseDto {
         return name;
     }
 
+    @SuppressWarnings("unused")
     public Timestamp getIssuingReleasePlan() {
         return issuingReleasePlan;
     }
@@ -43,6 +57,7 @@ public class ReleaseDto {
         return DateHelper.dateToDDMMYYYY(issuingReleasePlan);
     }
 
+    @SuppressWarnings("unused")
     public Timestamp getIssuingReleaseFact() {
         return issuingReleaseFact;
     }

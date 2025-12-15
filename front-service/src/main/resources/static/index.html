@@ -8,7 +8,7 @@
     <script src="angular/ngStorage.min.js"></script>
     <script src="angular/angular-route.min.js"></script>
     <script src="angular/ocLazyLoad.min.js"></script>
-
+    <script src="angular/angular-dnd.js"></script>
     <script src="app_index/app.module.js"></script>
     <script src="app_index/app.config.js"></script>
     <script src="app_index/app.routes.js"></script>
@@ -89,7 +89,8 @@
                             </button>
                             <br>
                             <div ng-if="CodeTelegram.ok">
-                                <p>Для получения уведомлений перейдите <a href="http://{{CodeTelegram.link}}" target="_blank" >Бот</a>.
+                                <p>Для получения уведомлений перейдите <a href="http://{{CodeTelegram.link}}"
+                                                                          target="_blank">Бот</a>.
                                     И отправьте команду /link. На запрос кода введите:<b>{{CodeTelegram.code}}</b>.
                                     Внимание Код действует <b>{{CodeTelegram.time}}</b> минут. После авторизации в боте
                                     нажмите кнопку: </p>
@@ -100,7 +101,8 @@
                         </div>
                         <div ng-if="UserLogin.telegramAdd">
                             <button ng-click="deleteTelegram()" id="ButtonTelegramDel">Отвязать Telegram</button>
-                            <div><a class="nav-link" href="#!/user_info_type?userId={{UserLogin.id}}">Типы уведомлений</a></div>
+                            <div><a class="nav-link" href="#!/user_info_type?userId={{UserLogin.id}}">Типы
+                                уведомлений</a></div>
                         </div>
 
                     </details>

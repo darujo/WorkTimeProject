@@ -1,12 +1,12 @@
 package ru.darujo.dto.workrep;
 
-import ru.darujo.assistant.helper.DataHelper;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.work.WorkPlanTime;
 
 import java.io.Serializable;
 import java.util.Date;
 
-public class WorkRepDto extends DataHelper implements Serializable, WorkPlanTime {
+public class WorkRepDto extends DateHelper implements Serializable, WorkPlanTime {
     @SuppressWarnings("unused")
     public WorkRepDto() {
     }

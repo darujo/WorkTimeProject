@@ -3,7 +3,7 @@ package ru.darujo.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import ru.darujo.assistant.helper.DataHelper;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.workperiod.UserWorkDto;
 import ru.darujo.dto.workperiod.WorkUserFactPlan;
@@ -32,8 +32,8 @@ public class WorkTimeRepController {
                              @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
                              @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
                              @RequestParam(required = false) String type) {
-        Date dateLe = DataHelper.DTZToDate(dateLeStr, "dateLe = ", false);
-        Date dateGt = DataHelper.DTZToDate(dateGtStr, "dateGt = ", false);
+        Date dateLe = DateHelper.DTZToDate(dateLeStr, "dateLe = ", false);
+        Date dateGt = DateHelper.DTZToDate(dateGtStr, "dateGt = ", false);
         if (dateLe == null && dateGt == null) {
             return 0f;
         }
@@ -44,7 +44,7 @@ public class WorkTimeRepController {
     public ListString getFactUser(@RequestParam(required = false) Long[] taskId,
                                   @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr
     ) {
-        Date dateLe = DataHelper.DTZToDate(dateLeStr, "dateLe = ", false);
+        Date dateLe = DateHelper.DTZToDate(dateLeStr, "dateLe = ", false);
         return workTimeRepService.getFactUser(taskId, dateLe);
     }
 
@@ -58,8 +58,8 @@ public class WorkTimeRepController {
             nikName = username;
         }
         periodSplit = periodConvert(periodSplit);
-        Timestamp dateStart = DataHelper.DTZToDate(dateStartStr, "dateStart = ", true);
-        Timestamp dateEnd = DataHelper.DTZToDate(dateEndStr, "dateEnd = ", true);
+        Timestamp dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ", true);
+        Timestamp dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ", true);
         return workTimeRepService.getUserWork(nikName, periodSplit, dateStart, dateEnd);
     }
 
@@ -69,8 +69,8 @@ public class WorkTimeRepController {
                                             @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
                                             @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr) {
         periodSplit = periodConvert(periodSplit);
-        Timestamp dateStart = DataHelper.DTZToDate(dateStartStr, "dateStart = ", true);
-        Timestamp dateEnd = DataHelper.DTZToDate(dateEndStr, "dateEnd = ", true);
+        Timestamp dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ", true);
+        Timestamp dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ", true);
         return workTimeRepService.getUserWorkOnly(nikName, periodSplit, dateStart, dateEnd);
     }
 
@@ -96,8 +96,8 @@ public class WorkTimeRepController {
                                          @RequestParam(defaultValue = "true") Boolean weekSplit,
                                          @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
                                          @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr) {
-        Timestamp dateStart = DataHelper.DTZToDate(dateStartStr, "dateStart = ", false);
-        Timestamp dateEnd = DataHelper.DTZToDate(dateEndStr, "dateEnd = ", false);
+        Timestamp dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ", false);
+        Timestamp dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ", false);
         return workTimeRepService.getWeekWork(taskId, nikName, addTotal, weekSplit, dateStart, dateEnd);
     }
 
@@ -112,8 +112,8 @@ public class WorkTimeRepController {
     public Timestamp getLastTime(@RequestParam(required = false) Long[] taskId,
                                  @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
                                  @RequestParam(required = false, name = "dateGe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGeStr) {
-            Timestamp dateLe = DataHelper.DTZToDate(dateLeStr, "dateLe = ", false);
-            Timestamp dateGe = DataHelper.DTZToDate(dateGeStr, "dateGe = ", false);
+        Timestamp dateLe = DateHelper.DTZToDate(dateLeStr, "dateLe = ", false);
+        Timestamp dateGe = DateHelper.DTZToDate(dateGeStr, "dateGe = ", false);
             return workTimeRepService.getLastTime(taskId, dateGe, dateLe);
         }
     }

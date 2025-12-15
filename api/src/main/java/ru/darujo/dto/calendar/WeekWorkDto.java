@@ -2,7 +2,7 @@ package ru.darujo.dto.calendar;
 
 import ru.darujo.assistant.color.ColorRGB;
 import ru.darujo.assistant.helper.ColorHelper;
-import ru.darujo.assistant.helper.DataHelper;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.ColorDto;
 
 import java.io.Serializable;
@@ -109,9 +109,9 @@ public class WeekWorkDto implements Serializable, Cloneable {
         if (getDayStart() == null) {
             return "Итого";
         } else if (getDayEnd() == null || getDayStart().equals(getDayEnd())) {
-            return DataHelper.dateToDDMM(getDayStart());
+            return DateHelper.dateToDDMM(getDayStart());
         } else {
-            return DataHelper.dateToDDMM(getDayStart()) + " - " + DataHelper.dateToDDMM(getDayEnd());
+            return DateHelper.dateToDDMM(getDayStart()) + " - " + DateHelper.dateToDDMM(getDayEnd());
         }
 
     }

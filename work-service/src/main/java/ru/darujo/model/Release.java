@@ -27,4 +27,7 @@ public class Release {
     @Column(name = "issuing_release_fact")
     private Timestamp issuingReleaseFact;
 
+    @Column(name = "sort")
+    private Float sort;
+
 }
