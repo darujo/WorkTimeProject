@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import ru.darujo.assistant.helper.DataHelper;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.calendar.VacationDto;
 import ru.darujo.service.VacationService;
 
@@ -48,8 +48,8 @@ public class VacationController {
                                                    @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr,
                                                    @RequestParam(required = false) Integer page,
                                                    @RequestParam(defaultValue = "10") Integer size) {
-        Timestamp dateStart = DataHelper.DTZToDate(dateStartStr, "dateStart = ");
-        Timestamp dateEnd = DataHelper.DTZToDate(dateEndStr, "dateEnd = ");
+        Timestamp dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ");
+        Timestamp dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ");
         if (nikName != null && nikName.equals("current")){
             nikName = username;
         }

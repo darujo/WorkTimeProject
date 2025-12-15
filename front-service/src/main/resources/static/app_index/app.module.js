@@ -1,5 +1,5 @@
 (function () {
-    angular.module('workTimeService', ['ngRoute', 'ngStorage', 'oc.lazyLoad']).run(run);
+    angular.module('workTimeService', ['ngRoute', 'ngStorage', 'oc.lazyLoad', 'dnd']).run(run);
 
     function run($rootScope, $http, $localStorage, $location) {
         $rootScope.$on('$routeChangeStart', function (event, next, current) {

@@ -8,7 +8,7 @@ import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
-public class DataHelper {
+public class DateHelper {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 
     public static String dateToDDMMYYYY(Date date) {

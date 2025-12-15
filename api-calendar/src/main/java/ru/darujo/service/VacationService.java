@@ -10,7 +10,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import ru.darujo.assistant.helper.DataHelper;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.converter.VacationConvertor;
 import ru.darujo.dto.calendar.VacationDto;
 import ru.darujo.dto.user.UserDto;
@@ -59,7 +59,7 @@ public class VacationService {
     }
 
     private String dateToText(Date date) {
-        return DataHelper.dateToDDMMYYYY(date);
+        return DateHelper.dateToDDMMYYYY(date);
     }
 
     public void checkVacation(Vacation vacation) {
@@ -175,7 +175,7 @@ public class VacationService {
     }
 
     public List<VacationDto> userVacationStart(String nikName, int day) {
-        Date date = addDay(DataHelper.dateNoTime(new Timestamp(System.currentTimeMillis())), day);
+        Date date = addDay(DateHelper.dateNoTime(new Timestamp(System.currentTimeMillis())), day);
         return userVacationStart(nikName, date);
     }
 
@@ -187,7 +187,7 @@ public class VacationService {
     }
 
     public boolean isVacationStart(String nikName, int day) {
-        Date date = addDay(DataHelper.dateNoTime(new Timestamp(System.currentTimeMillis())), day);
+        Date date = addDay(DateHelper.dateNoTime(new Timestamp(System.currentTimeMillis())), day);
         return findVacationStart(nikName, date) != null;
     }
 
@@ -196,7 +196,7 @@ public class VacationService {
     }
 
     public Boolean isVacationEnd(String nikName) {
-        Date date = DataHelper.dateNoTime(new Timestamp(System.currentTimeMillis()));
+        Date date = DateHelper.dateNoTime(new Timestamp(System.currentTimeMillis()));
         return findVacationEnd(nikName, date) != null;
     }
 

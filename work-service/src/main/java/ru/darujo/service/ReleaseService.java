@@ -43,7 +43,7 @@ public class ReleaseService {
 
     public List<Release> findAll(
     ) {
-        Specification<@NonNull Release> specification = (root, query, criteriaBuilder) -> null;
-        return releaseRepository.findAll(specification, Sort.by("name"));
+        Specification<@NonNull Release> specification = Specification.unrestricted();
+        return releaseRepository.findAll(specification, Sort.by("sort").and(Sort.by("name")));
     }
 }

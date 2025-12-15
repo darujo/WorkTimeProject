@@ -1,10 +1,10 @@
 package ru.darujo.dto.workperiod;
 
-import ru.darujo.assistant.helper.DataHelper;
+import ru.darujo.assistant.helper.DateHelper;
 
 import java.sql.Timestamp;
 
-public class WorkUserFactPlan extends DataHelper {
+public class WorkUserFactPlan extends DateHelper {
     @SuppressWarnings("unused")
     public WorkUserFactPlan() {
     }

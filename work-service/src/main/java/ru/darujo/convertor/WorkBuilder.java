@@ -6,7 +6,6 @@ import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.model.Release;
 import ru.darujo.model.Work;
 
-
 import java.sql.Timestamp;
 import java.util.Calendar;
 
@@ -359,7 +358,7 @@ public class WorkBuilder {
                 startTaskPlan,
                 startTaskFact,
                 stageZI,
-                releaseId != null ? new Release(releaseId, release, issuingReleasePlan, issuingReleaseFact) : null,
+                releaseId != null ? new Release(releaseId, release, issuingReleasePlan, issuingReleaseFact, null) : null,
                 analiseStartFact,
                 developStartFact,
                 debugStartFact,

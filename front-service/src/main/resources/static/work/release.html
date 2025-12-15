@@ -8,6 +8,7 @@
             <td class="table_head2">Номер</td>
             <td class="table_head2">Дата выдачи план</td>
             <td class="table_head2">Дата выдачи факт</td>
+            <td class="table_head2">Сортировка</td>
 
             <td class="table_head2"></td>
             <td class="table_head2"></td>
@@ -19,6 +20,7 @@
             <td>{{release.name}}</td>
             <td>{{release.issuingReleasePlanStr}}</td>
             <td>{{release.issuingReleaseFactStr}}</td>
+            <td>{{release.sort}}</td>
             <td>
                 <button ng-click="editRelease(release.id)">Изменить</button>
             </td>
@@ -40,20 +42,25 @@
         <div class="horiz">
             <label for="Name" class="form_label">Номер:</label>
             <input class="vvod80mar10" type="text" id="Name" step="any"
-                                             ng-model="Release.name"/>
+                   ng-model="Release.name"/>
             <br>
         </div>
         <div class="horiz">
             <label for="IssuingReleasePlan" class="form_label">Дата выдачи план:</label>
             <input class="vvod40mar10" type="date" id="IssuingReleasePlan" step="any"
-                                                           ng-model="Release.issuingReleasePlan"/>
+                   ng-model="Release.issuingReleasePlan"/>
             <br>
         </div>
         <div class="horiz">
             <label for="IssuingReleaseFact" class="form_label">Дата выдачи факт:</label>
             <input class="vvod40mar10" type="date" id="IssuingReleaseFact" step="any"
-                                                           ng-model="Release.issuingReleaseFact"/>
+                   ng-model="Release.issuingReleaseFact"/>
             <br>
+        </div>
+        <div class="horiz">
+            <label for="Sort" class="form_label">Сортировка:</label>
+            <input class="vvod40mar10" type="number" inputmode="numeric" id="Sort" step="any"
+                   ng-model="Release.sort"/>
         </div>
         <button type="submit" class="button" id="ButtonSaveDown">Сохранить</button>
         <button type="button" ng-click="loadRelease()" class="button">Вернуться к списку</button>

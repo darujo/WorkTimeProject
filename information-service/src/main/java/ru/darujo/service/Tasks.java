@@ -3,7 +3,7 @@ package ru.darujo.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.darujo.assistant.helper.DataHelper;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.calendar.VacationDto;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.dto.information.MessageType;
@@ -156,7 +156,7 @@ public class Tasks {
             messageInformationService.sendFile(new MessageInfoDto(author,
                     (chatId == null ? null : new UserInfoDto(null, author, chatId, threadId)),
                     messageType, "Рассылка отчете статус ЗИ"
-            ), "Zi_Report_" + DataHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
+            ), "Zi_Report_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
 
         });
     }
@@ -254,7 +254,7 @@ public class Tasks {
             messageInformationService.sendFile(new MessageInfoDto(author,
                     (chatId == null ? null : new UserInfoDto(null, author, chatId, threadId)),
                     messageType, "Факт загрузки по ЗИ"
-            ), "ZI_Work_" + DataHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
+            ), "ZI_Work_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
         });
     }
 
@@ -272,7 +272,7 @@ public class Tasks {
             messageInformationService.sendFile(new MessageInfoDto(author,
                     (chatId == null ? null : new UserInfoDto(null, author, chatId, threadId)),
                     messageType, "Факт загрузки за предыдущую неделю"
-            ), "Week_Work_" + DataHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
+            ), "Week_Work_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
         });
     }
 

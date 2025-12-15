@@ -1,6 +1,6 @@
 package ru.darujo.dto.calendar;
 
-import ru.darujo.assistant.helper.DataHelper;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.user.UserFio;
 
 import java.io.Serializable;
@@ -46,12 +46,12 @@ public class VacationDto implements UserFio, Serializable {
 
     @SuppressWarnings("unused")
     public String getDateStartStr() {
-        return DataHelper.dateToDDMMYYYY(dateStart);
+        return DateHelper.dateToDDMMYYYY(dateStart);
     }
 
     @SuppressWarnings("unused")
     public String getDateEndStr() {
-        return DataHelper.dateToDDMMYYYY(dateEnd);
+        return DateHelper.dateToDDMMYYYY(dateEnd);
     }
 
     public Integer getDays() {

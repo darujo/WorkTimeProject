@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.darujo.assistant.helper.DataHelper;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.calendar.WeekDto;
 import ru.darujo.dto.calendar.WeekWorkDto;
 import ru.darujo.service.CalendarService;
@@ -37,8 +37,8 @@ public class CalendarController {
                                             @RequestParam(name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr,
                                             @RequestParam(required = false) String period
     ) {
-        Date dateStart = DataHelper.DTZToDate(dateStartStr, "dateStart = ");
-        Date dateEnd = DataHelper.DTZToDate(dateEndStr, "dateEnd = ");
+        Date dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ");
+        Date dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ");
 
 
         return calendarService.getPeriodTime(dateStart, dateEnd, period);
@@ -48,8 +48,8 @@ public class CalendarController {
     public Float WorkTime(@RequestParam(name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
                           @RequestParam(name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr
     ) {
-        Date dateStart = DataHelper.DTZToDate(dateStartStr, "dateStart = ");
-        Date dateEnd = DataHelper.DTZToDate(dateEndStr, "dateEnd = ");
+        Date dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ");
+        Date dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ");
 
 
         return calendarService.getWorkTime(dateStart, dateEnd);

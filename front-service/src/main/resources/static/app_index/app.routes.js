@@ -221,6 +221,15 @@ angular.module('workTimeService').config(function ($routeProvider) {
                 }]
             }
         })
+        .when('/work_stage', {
+            templateUrl: 'work/work_stage.html?ver='.toLowerCase() + ver,
+            controller: 'workStageController',
+            resolve: {
+                LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load('workStage'); // Resolve promise and load before view
+                }]
+            }
+        })
         .otherwise({
             redirectTo: '/'
         });

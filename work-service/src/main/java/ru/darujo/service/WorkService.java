@@ -211,11 +211,11 @@ public class WorkService {
 
     @Transactional
     public Page<@NonNull Work> findWorks(int page, int size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId) {
-        return (Page<@NonNull Work>) findAll(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId);
+        return findAll(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId);
     }
 
 
-    public Iterable<Work> findAll(Integer page, Integer size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId) {
+    public Page<@NonNull Work> findAll(Integer page, Integer size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId) {
         Specification<@NonNull Work> specification;
         if (sort != null && sort.length() > 8 && sort.startsWith("release.")) {
             specification = Specification.unrestricted();
@@ -242,19 +242,19 @@ public class WorkService {
         }
 
 
-        Iterable<Work> workPage;
+        Page<@NonNull Work> workPage;
         if (sort == null) {
             if (page != null && size != null) {
                 workPage = workRepository.findAll(specification, PageRequest.of(page - 1, size));
             } else {
-                workPage = workRepository.findAll(specification);
+                workPage = new PageImpl<>(workRepository.findAll(specification));
             }
 
         } else {
             if (page != null && size != null) {
                 workPage = workRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.Direction.ASC, sort));
             } else {
-                workPage = workRepository.findAll(specification, Sort.by(sort));
+                workPage = new PageImpl<>(workRepository.findAll(specification, Sort.by(sort)));
             }
         }
         return workPage;
@@ -362,6 +362,27 @@ public class WorkService {
         }
         return workLittle;
 
+    }
+
+    @Transactional
+    public WorkLittle setReleaseAndStageZi(String login, Long workId, Long releaseId, Integer stageZI) {
+        WorkLittle workLittle = workLittleRepository.findById(workId).orElseThrow(() -> new ResourceNotFoundRunTime("Не найдено ЗИ"));
+        Release release = releaseService.findOptionalById(releaseId).orElse(null);
+
+        Boolean ratedOld = workLittle.getRated();
+        Integer stageOld = workLittle.getStageZI();
+        workLittle.setStageZI(stageZI);
+        workLittle.setRelease(release);
+
+        workLittle = workLittleRepository.save(workLittle);
+        if (stageOld != null && !stageOld.equals(workLittle.getStageZI())) {
+            sendInform(login, MessageType.CHANGE_STAGE_WORK, String.format("%s сменил <b>этап ЗИ</b> %s -> %s по ЗИ %s %s", login, stageOld, workLittle.getStageZI(), workLittle.getCodeSap(), UrlWorkTime.getUrlWorkSap(workLittle.getCodeSap(), workLittle.getName())));
+        }
+        if (ratedOld != null && !ratedOld.equals(workLittle.getRated())) {
+            sendInform(login, MessageType.ESTIMATION_WORK, getMesChangRated(login, workLittle));
+        }
+
+        return workLittle;
     }
 
     @Getter
