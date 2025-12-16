@@ -295,7 +295,7 @@ public class WorkService {
         return workPage;
     }
 
-    public List<Work> getWorkList(String name, Integer stageZiGe, Integer stageZiLe, Long release, String[] sort) {
+    public List<Work> getWorkList(String name, Integer stageZiGe, Integer stageZiLe, Long releaseId, String[] sort) {
         List<Work> works;
         Specification<@NonNull Work> specification = Specification.unrestricted();
         Sort sortWork = null;
@@ -306,6 +306,7 @@ public class WorkService {
             }
         }
         specification = Specifications.like(specification, "name", name);
+        Release release = releaseService.findById(releaseId);
         specification = Specifications.eq(specification, "release", release);
 
         specification = Specifications.ge(specification, "stageZI", stageZiGe);
