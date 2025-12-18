@@ -505,3 +505,11 @@ TD {
     height: 100%;
     margin: 5px;
 }
+
+.dropzone.active {
+    background: #67AFAC;
+}
+
+.dropzone.dropped {
+    background: #ddffdd;
+}
