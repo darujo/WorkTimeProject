@@ -3,7 +3,7 @@
         <details class="details_block">
             <summary class="p-head">Фильтр</summary>
 
-            <form novalidate ng-submit="filterWork()" class="filter">
+            <form novalidate ng-submit="loadRelease()" class="filter">
                 <div class="filter_block">
                     <div class="horiz">
                         <label for="Name" class="p-head"> Наименование </label>
@@ -59,7 +59,7 @@
                 </div>
             </form>
         </details>
-        <button class="head_button" ng-click="createWork()">Создать ЗИ</button>
+
     </div>
     <div class="filter container_filter">
         <button class="head_button" ng-click="findPage(-1)">PrevPage</button>
