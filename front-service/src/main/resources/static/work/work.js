@@ -17,6 +17,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
         console.log($scope.Work)
 
     };
+    $scope.rightObj ={Edit:false,Create:false};
 
     let checkRight = function (right, message) {
         document.getElementById("ButtonSaveDown").style.display = "none";
@@ -30,12 +31,14 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 console.log(response)
                 document.getElementById("ButtonSaveDown").style.display = "inline-block";
                 document.getElementById("ButtonSaveUp").style.display = "inline-block";
+                $scope.rightObj[right] = true;
                 if (right === "create") {
                     $scope.createWorkRun();
                 }
             }, function errorCallback(response) {
                 console.log("Check");
                 console.log(response)
+                $scope.rightObj[right] = false;
                 flag = false;
                 if ($location.checkAuthorized(response)) {
                     if (message) {
@@ -321,6 +324,8 @@ angular.module('workTimeService').controller('workController', function ($scope,
         console.log("result releaseList");
         console.log(result);
     });
+    checkRight("Edit", false);
+
     console.log("workFilter");
     console.log($scope.Filt);
     $scope.loadWork();

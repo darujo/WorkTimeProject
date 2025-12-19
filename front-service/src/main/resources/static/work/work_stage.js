@@ -4,63 +4,13 @@
 angular.module('workTimeService').controller('workStageController', function ($scope, $http, $location) {
     // console.log(window.location)
     const constPatchReleaseStage = window.location.origin + '/work-service/v1/release/stage';
-    // let showWork = function () {
-    //     document.getElementById("WorkList").style.display = "block";
-    //     document.getElementById("FormEdit").style.display = "none";
-    // };
-    // let showFormEdit = function () {
-    //     console.log("showFormEdit");
-    //     console.log($scope.Work)
-    //
-    //     checkRight("Edit", false);
-    //     console.log($scope.Work)
-    //
-    //     document.getElementById("WorkList").style.display = "none";
-    //     document.getElementById("FormEdit").style.display = "block";
-    //     console.log($scope.Work)
-    //
-    // };
-    //
-    // let checkRight = function (right, message) {
-    //     document.getElementById("ButtonSaveDown").style.display = "none";
-    //     document.getElementById("ButtonSaveUp").style.display = "none";
-    //     let flag;
-    //     $scope.Resp = {message: null}
-    //     $http({
-    //         url: constPatchWork + "/works/right/" + right,
-    //         method: "get"
-    //     }).then(function (response) {
-    //             console.log(response)
-    //             document.getElementById("ButtonSaveDown").style.display = "inline-block";
-    //             document.getElementById("ButtonSaveUp").style.display = "inline-block";
-    //             if (right === "create") {
-    //                 $scope.createWorkRun();
-    //             }
-    //         }, function errorCallback(response) {
-    //             console.log("Check");
-    //             console.log(response)
-    //             flag = false;
-    //             if ($location.checkAuthorized(response)) {
-    //                 if (message) {
-    //                     alert(response.data.message);
-    //                 } else {
-    //                     $scope.Resp = {message: response.data.message};
-    //                 }
-    //
-    //             }
-    //         }
-    //     )
-    //     return false;
-    // }
-    //
-    //
+    let release ={works:null}
+    console.log(release);
     $scope.loadRelease = function () {
         $location.parserFilter($scope.Filt);
         $scope.findPage(0);
     };
-    // $scope.sendFilter = function () {
-    //     $location.sendFilter(location.hash, $scope.Filt);
-    // }
+
     let maxPage = 1;
     $scope.findPage = function (diffPage) {
         console.log(diffPage)
@@ -119,140 +69,13 @@ angular.module('workTimeService').controller('workStageController', function ($s
             });
         }
     };
-    //
-    // $scope.workSort = function (sort) {
-    //     $scope.Filt = {
-    //         sort: sort,
-    //         size: $scope.Filt ? $scope.Filt.size : null,
-    //         name: $scope.Filt ? $scope.Filt.name : null,
-    //         codeSap: $scope.Filt ? $scope.Filt.codeSap : null,
-    //         codeZi: $scope.Filt ? $scope.Filt.codeZi : null,
-    //         task: $scope.Filt ? $scope.Filt.task : null,
-    //         releaseId: $scope.Filt ? $scope.Filt.releaseId : null,
-    //         stageZi: $scope.Filt ? $scope.Filt.stageZi : null
-    //     };
-    //     console.log("sort");
-    //     console.log(sort);
-    //     $scope.filterWork();
-    // }
-    // $scope.filterWork = function () {
-    //     $location.saveFilter("workFilter", $scope.Filt);
-    //     document.getElementById("Page").value = "1";
-    //     $scope.findPage(0);
-    // };
-    //
-    // let WorkIdEdit = null;
-    //
-    // $scope.createWork = function () {
-    //     $scope.Work = {
-    //         id: null,
-    //         codeZI: "",
-    //         codeSap: "",
-    //         WorkName: "",
-    //         developEndFact: null,
-    //         issuePrototypeFact: null,
-    //         debugEndFact: null,
-    //         releaseEndFact: null,
-    //         opeEndFact: null,
-    //         analiseEndFact: null,
-    //         issuePrototypePlan: null,
-    //         developEndPlan: null,
-    //         debugEndPlan: null,
-    //         releaseEndPlan: null,
-    //         opeEndPlan: null,
-    //         analiseEndPlan: null,
-    //         task: "",
-    //         description: "",
-    //         startTaskPlan: null,
-    //         startTaskFact: null,
-    //         laborDevelop: null,
-    //         laborDebug: null,
-    //         laborRelease: null,
-    //         laborOPE: null,
-    //         stageZI: 0,
-    //         release: 0,
-    //         issuingReleasePlan: null,
-    //         issuingReleaseFact: null
-    //
-    //     };
-    //     checkRight("create", true);
-    // }
-    // $scope.createWorkRun = function () {
-    //     WorkIdEdit = null;
-    //     console.log("сбрасываем значения");
-    //
-    //     console.log("сбрасываем значения 4")
-    //     showFormEdit();
-    //
-    // };
-    //
-    // $scope.editWork = function (workId) {
-    //     $http.get(constPatchWork + "/works/" + workId)
-    //         .then(function (response) {
-    //             console.log("получили");
-    //             // showFormEdit();
-    //             WorkIdEdit = response.data.id;
-    //             $scope.Work = response.data;
-    //             console.log($scope.Work);
-    //
-    //             $scope.Work.developStartFact = typeof response.data.developStartFact === "undefined" ? null : new Date(response.data.developStartFact);
-    //             $scope.Work.debugStartFact = typeof response.data.debugStartFact === "undefined" ? null : new Date(response.data.debugStartFact);
-    //             $scope.Work.releaseStartFact = typeof response.data.releaseStartFact === "undefined" ? null : new Date(response.data.releaseStartFact);
-    //             $scope.Work.opeStartFact = typeof response.data.opeStartFact === "undefined" ? null : new Date(response.data.opeStartFact);
-    //             $scope.Work.analiseStartFact = typeof response.data.analiseStartFact === "undefined" ? null : new Date(response.data.analiseStartFact);
-    //             $scope.Work.developStartPlan = typeof response.data.developStartPlan === "undefined" ? null : new Date(response.data.developStartPlan);
-    //             $scope.Work.debugStartPlan = typeof response.data.debugStartPlan === "undefined" ? null : new Date(response.data.debugStartPlan);
-    //             $scope.Work.releaseStartPlan = typeof response.data.releaseStartPlan === "undefined" ? null : new Date(response.data.releaseStartPlan);
-    //             $scope.Work.opeStartPlan = typeof response.data.opeStartPlan === "undefined" ? null : new Date(response.data.opeStartPlan);
-    //             $scope.Work.analiseStartPlan = typeof response.data.analiseStartPlan === "undefined" ? null : new Date(response.data.analiseStartPlan);
-    //
-    //
-    //
-    //             $scope.Work.developEndFact = typeof response.data.developEndFact === "undefined" ? null : new Date(response.data.developEndFact);
-    //             $scope.Work.issuePrototypeFact = typeof response.data.issuePrototypeFact === "undefined" ? null : new Date(response.data.issuePrototypeFact);
-    //             $scope.Work.debugEndFact = typeof response.data.debugEndFact === "undefined" ? null : new Date(response.data.debugEndFact);
-    //             $scope.Work.releaseEndFact = typeof response.data.releaseEndFact === "undefined" ? null : new Date(response.data.releaseEndFact);
-    //             $scope.Work.opeEndFact = typeof response.data.opeEndFact === "undefined" ? null : new Date(response.data.opeEndFact);
-    //             $scope.Work.analiseEndFact = typeof response.data.analiseEndFact === "undefined" ? null : new Date(response.data.analiseEndFact);
-    //             $scope.Work.developEndPlan = typeof response.data.developEndPlan === "undefined" ? null : new Date(response.data.developEndPlan);
-    //             $scope.Work.issuePrototypePlan = typeof response.data.issuePrototypePlan === "undefined" ? null : new Date(response.data.issuePrototypePlan);
-    //             $scope.Work.debugEndPlan = typeof response.data.debugEndPlan === "undefined" ? null : new Date(response.data.debugEndPlan);
-    //             $scope.Work.releaseEndPlan = typeof response.data.releaseEndPlan === "undefined" ? null : new Date(response.data.releaseEndPlan);
-    //             $scope.Work.opeEndPlan = typeof response.data.opeEndPlan === "undefined" ? null : new Date(response.data.opeEndPlan);
-    //             $scope.Work.analiseEndPlan = typeof response.data.analiseEndPlan === "undefined" ? null : new Date(response.data.analiseEndPlan);
-    //
-    //             $scope.Work.startTaskPlan = typeof response.data.startTaskPlan === "undefined" ? null : new Date(response.data.startTaskPlan);
-    //             // Дата начала доработки Факт
-    //             $scope.Work.startTaskFact = typeof response.data.startTaskFact === "undefined" ? null : new Date(response.data.startTaskFact);
-    //             // Выдача релиза даты План
-    //             console.log(typeof response.data.issuingReleasePlan === "undefined")
-    //             $scope.Work.issuingReleasePlan = typeof response.data.issuingReleasePlan === "undefined" ? null : new Date(response.data.issuingReleasePlan);
-    //             // Выдача релиза дата факт
-    //             if (typeof response.data.issuingReleaseFact !== "undefined") {
-    //                 $scope.Work.issuingReleaseFact = new Date(response.data.issuingReleaseFact);
-    //             }
-    //             console.log($scope.Work)
-    //             showFormEdit();
-    //         });
-    // };
-    // $scope.deleteWork = function (workId) {
-    //     $http.delete(constPatchWork + "/works/" + workId)
-    //         .then(function (response) {
-    //             console.log(response);
-    //             $scope.loadWork();
-    //         }, function errorCallback(response) {
-    //             console.log(response)
-    //             if ($location.checkAuthorized(response)) {
-    //                 //     alert(response.data.message);
-    //             }
-    //
-    //             // showFindTask();
-    //         });
-    // };
+
     let sendSave = false;
     let saveWork = async function (workId, releaseId, stageZi) {
-        console.log()
-        console.log($scope.Work);
+        console.log("saveWork")
+        console.log(workId);
+        console.log(releaseId);
+        console.log(stageZi);
         let flag;
         if (!sendSave) {
             sendSave = true;
@@ -293,15 +116,6 @@ angular.module('workTimeService').controller('workStageController', function ($s
         });
     }
 
-    //
-    // $scope.addTime = function (workId) {
-    //     $location.path('/task').search({workId: workId});
-    //     // window.open('#!/task',"_parent");
-    // }
-    // $scope.addRate = function (workId) {
-    //     console.log("Другая");
-    //     $location.path('/rate').search({workId: workId});
-    // }
     $scope.clearFilter = function (load) {
         console.log("clearFilter");
         $scope.Filt = {
@@ -313,90 +127,121 @@ angular.module('workTimeService').controller('workStageController', function ($s
             $scope.filterWork();
         }
     }
-    // $scope.releaseOption = function (release) {
-    //     // console.log(release)
-    //     // console.log(typeof release !== "undefined" && release.issuingReleaseFact !== "undefined" && release.issuingReleaseFact !== null)
-    //     if (typeof release !== "undefined" && typeof release.issuingReleaseFact !== "undefined" && release.issuingReleaseFact !== null) {
-    //         return "disabled";
-    //     }
-    //     return false;
-    // }
-    // showWork();
-    // console.log("---workFilter---");
-    // $scope.Filt = $location.getFilter("workFilter");
-    // console.log($scope.Filt);
-    // if ($scope.Filt === null) {
-    //     $scope.clearFilter(false);
-    // }
 
     $location.getReleases().then(function (result) {
         $scope.ReleaseList = result;
         console.log("result releaseList");
         console.log(result);
     });
-    // console.log("workFilter");
-    // console.log($scope.Filt);
-    // $scope.loadWork();
-    // let zzz ={};
-    $scope.onSortStart = function (a) {
-        console.log('sort start');
+
+    $scope.drag = function (a) {
+        console.log('drag start');
         console.log(a)
+        this.active = undefined;
         // console.log('sort start');
     }
 
-    $scope.onSort = function (relId, stage) {
-        console.log('sort');
-        console.log(relId);
-        console.log(stage);
+    $scope.dragend = function (dropModel, dragModel) {
+        this.dropped = false;
+        console.log('dragend');
+        console.log(dragModel);
+        console.log(dropModel);
+        saveWork(dragModel.id, dropModel.release, dropModel.stage).then(function (result) {
+            console.log("onSortEnd result");
+            console.log(result)
+            $scope.findPage(0);
+        });
+
     }
     /*$scope.dragover = function () {
         console.log('dragover', arguments);
     };*/
-    $scope.onSortChange = function (relId, stage, a) {
-
+    $scope.drop = function (relId, model) {
+        this.dropped = model;
 
         // console.log(zzz)
         // a["id"] =relId;
         // a["stage"]= stage;
-        console.log('onSortChange');
+        console.log('drop');
+        console.log(relId);
+        console.log(model);
+    }
+
+    $scope.dragleave = function (relId, stage) {
+        this.active = undefined;
+        console.log("dragleave res")
         console.log(relId);
         console.log(stage);
+
+        // console.log(work);
+        // saveWork(work.id, relId, stage).then(function (result) {
+        //     console.log("onSortEnd result");
+        //     console.log(result)
+        // });
+
+
+        console.log('dragleave end');
+        return false;
+    }
+
+    $scope.dragover = function (dragModel) {
+        console.log("dragover res")
+        console.log(dragModel);
+
+
+        // console.log(work);
+
+
+        console.log('dragover end');
+        return false;
+    }
+    $scope.dragenter = function (dropModel, dragModel) {
+        this.active = dropModel;
+        console.log("dragenter res")
+        console.log(dragModel);
+        console.log(dropModel);
+
+        // console.log(work);
+        // saveWork(work.id, relId, stage).then(function (result) {
+        //     console.log("onSortEnd result");
+        //     console.log(result)
+        // });
+
+
+        console.log('dragenter end');
+        return false;
+    }
+    $scope.dragstart = function () {
+        console.log('dragstart');
+    }
+    $scope.isDropped = function (model) {
+        return this.dropped === model;
+    };
+
+    $scope.isActive = function (model) {
+        return this.active === model;
+    };
+    // ----------------------------------------------------------
+    $scope.onSortStart = function () {
+        console.log('sort start');
+    }
+
+    $scope.onSort = function () {
+        console.log('sort');
+    }
+    $scope.onSortChange = function () {
+         console.log('onSortChange');
     }
 
 
-    $scope.onSortEnd = function (relId, stage, work) {
+    $scope.onSortEnd = function () {
         console.log("onSortEnd res")
-        console.log(relId);
-        console.log(stage);
-
-        console.log(work);
-        saveWork(work.id, relId, stage).then(function (result) {
-            console.log("onSortEnd result");
-            console.log(result)
-        });
-
-
-        console.log('sort end');
-        return false;
     }
     $scope.onSortEnter = function () {
         console.log('onSortEnter');
     }
-    // $scope.list = [];
-    // $scope.releaseList = [];
 
-    // $scope.releaseList[1] ={list:[],list2:[]}
-    // for(let i = 0; i < 5; i++){
-    //     $scope.list[i] = {
-    //         id: i,
-    //         rel: 5,
-    //         stage: 1,
-    //         name: 'item1-'+(i),
-    //         sortable: true
-    //     };
-    // }
-    // $scope.releaseList[0] ={rel:6, list: $scope.list,list2:[]}
-    // console.log($scope.releaseList);
-    // console.log($scope.list);
+
     $scope.loadRelease();
+    console.log("___________________________________________stage3________________________________________")
 })
