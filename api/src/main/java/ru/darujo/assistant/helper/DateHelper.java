@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class DateHelper {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
@@ -74,5 +75,16 @@ public class DateHelper {
         }
         return sdfDT.format(date);
     }
+
+    public static List<Long> convertListToLong(List<String> list) {
+        if (list == null) {
+            return null;
+        }
+        return list
+                .stream()
+                .filter(s -> s != null && !s.equals("null") && !s.equals("undefined"))
+                .map(Long::parseLong).toList();
+    }
+
 
 }

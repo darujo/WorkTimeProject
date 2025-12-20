@@ -41,7 +41,7 @@
                         </select>
                         <label for="ReleaseFilter" class="p-head">№ Релиза</label>
                         <select class="vvod20mar10" name="ReleaseFilterWorkSelect" id="ReleaseFilter"
-                                ng-model="Filt.releaseId">
+                                ng-model="Filt.releaseId" multiple>
                             <option ng-repeat="release in ReleaseList" ng-value="release.id" value="release.id">
                                 {{release.name}}
                             </option>
@@ -95,7 +95,7 @@
         </tr>
         <tbody>
         <tr ng-repeat="release in releaseList">
-            <td class="sticky-col first-col-1">{{release.name}} {{release.id}}</td>
+            <td class="sticky-col first-col-1">{{release.name}}</td>
             <td dnd-container class="dropzone"
                 ng-class="{dropped: isDropped(dropmodel), active: isActive(dropmodel)}"
 

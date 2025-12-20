@@ -4,9 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.work.ReleaseStageDto;
 import ru.darujo.service.ReleaseStageService;
 
+import java.util.List;
 import java.util.PriorityQueue;
 
 @Slf4j
@@ -20,13 +22,23 @@ public class ReleaseStageController {
         this.releaseStageService = releaseStageService;
     }
 
+//    @GetMapping("")
+//    public PriorityQueue<@NonNull ReleaseStageDto> ReleaseListEmp(@RequestParam(required = false) String name,
+//                                                               @RequestParam(defaultValue = "15") Integer stageZi,
+//                                                               @RequestParam(required = false) Long codeSap,
+//                                                               @RequestParam(required = false) String codeZi,
+//                                                               @RequestParam(required = false) String task,
+//                                                               @RequestParam(defaultValue = "release.name") String sort) {
+//        return ReleaseList(name,stageZi,codeSap,codeZi,task,new Long[0],sort);
+//    }
+
     @GetMapping("")
     public PriorityQueue<@NonNull ReleaseStageDto> ReleaseList(@RequestParam(required = false) String name,
                                                                @RequestParam(defaultValue = "15") Integer stageZi,
                                                                @RequestParam(required = false) Long codeSap,
                                                                @RequestParam(required = false) String codeZi,
                                                                @RequestParam(required = false) String task,
-                                                               @RequestParam(required = false) Long releaseId,
+                                                               @RequestParam(required = false) List<String> releaseId,
                                                                @RequestParam(defaultValue = "release.name") String sort) {
         Integer stageZiGe = null;
         Integer stageZiLe = null;
@@ -39,7 +51,7 @@ public class ReleaseStageController {
             }
         }
         long curTime = System.nanoTime();
-        PriorityQueue<@NonNull ReleaseStageDto> workDTOs = releaseStageService.getReleaseStage(name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId);
+        PriorityQueue<@NonNull ReleaseStageDto> workDTOs = releaseStageService.getReleaseStage(name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, DateHelper.convertListToLong(releaseId));
         float time_last = (curTime - System.nanoTime()) * 0.000000001f;
         log.info("Время выполнения WorkPage {}", time_last);
         return workDTOs;

@@ -52,13 +52,14 @@ public class InfoServiceIntegration extends ServiceIntegration {
         }
     }
 
-    public void sendReport(@NonNull ReportTypeDto reportType, @NonNull String author, Long chatId, Integer threadId) {
+    public void sendReport(@NonNull ReportTypeDto reportType, @NonNull String author, Long chatId, Integer threadId, Integer originMessageId) {
         try {
             StringBuilder sb = new StringBuilder();
             addTeg(sb, "reportType", reportType);
             addTeg(sb, "author", author);
             addTeg(sb, "chatId", chatId);
             addTeg(sb, "threadId", threadId);
+            addTeg(sb, "originMessageId", originMessageId);
             webClientInfo.get().uri("/report" + sb)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),

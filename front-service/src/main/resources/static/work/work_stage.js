@@ -36,7 +36,9 @@ angular.module('workTimeService').controller('workStageController', function ($s
                 $scope.Filt = {size: 10};
             }
             let Filter = $scope.Filt;
-            console.log($scope.Filt)
+            console.log(Filter)
+            console.log(Filter.releaseId);
+
             $http({
                 url: constPatchReleaseStage,
                 method: "get",
@@ -47,7 +49,7 @@ angular.module('workTimeService').controller('workStageController', function ($s
                     codeSap: Filter ? Filter.codeSap : null,
                     codeZi: Filter ? Filter.codeZi : null,
                     task: Filter ? Filter.task : null,
-                    releaseId: Filter ? Filter.releaseId : null,
+                    releaseId: Filter.releaseId && Filter.releaseId[0] !== undefined ? Filter.releaseId : null,
                     sort: Filter ? Filter.sort : null,
                     stageZi: Filter ? Filter.stageZi : null
                 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.Release;
 import ru.darujo.repository.ReleaseRepository;
+import ru.darujo.specifications.Specifications;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,9 +42,9 @@ public class ReleaseService {
         releaseRepository.deleteById(id);
     }
 
-    public List<Release> findAll(
-    ) {
+    public List<Release> findAll(List<Long> releaseIdList) {
         Specification<@NonNull Release> specification = Specification.unrestricted();
+        specification = Specifications.in(specification, "id", releaseIdList);
         return releaseRepository.findAll(specification, Sort.by("sort").and(Sort.by("name")));
     }
 }

@@ -111,7 +111,7 @@ public class WorkRepController {
                                           @RequestParam(required = false) Long codeSap,
                                           @RequestParam(required = false) String codeZi,
                                           @RequestParam(required = false) String task,
-                                          @RequestParam(required = false) Long releaseId,
+                                          @RequestParam(required = false) List<Long> releaseId,
                                           @RequestParam(defaultValue = "release") String sort) {
         Timestamp dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ", true);
         Timestamp dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ", true);

@@ -30,6 +30,7 @@ import ru.darujo.specifications.Specifications;
 import ru.darujo.url.UrlWorkTime;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -273,7 +274,7 @@ public class WorkService {
         return workPage;
     }
 
-    public Page<@NonNull WorkLittle> findWorkLittle(Integer page, Integer size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId) {
+    public Page<@NonNull WorkLittle> findWorkLittle(Integer page, Integer size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, List<Long> releaseIdArray) {
         Specification<@NonNull WorkLittle> specification;
         if (sort != null && sort.length() > 8 && sort.startsWith("release.")) {
             specification = Specification.unrestricted();
@@ -283,8 +284,15 @@ public class WorkService {
         specification = Specifications.like(specification, "codeZI", codeZi);
         specification = Specifications.like(specification, "name", name);
         specification = Specifications.like(specification, "task", task);
-        Release release = releaseService.findOptionalById(releaseId).orElse(null);
-        specification = Specifications.eq(specification, "release", release);
+        if (releaseIdArray != null && !releaseIdArray.isEmpty()) {
+            List<Object> releases = new ArrayList<>();
+            for (Long releaseId : releaseIdArray) {
+                Release release = releaseService.findOptionalById(releaseId).orElse(null);
+                releases.add(release);
+
+            }
+            specification = Specifications.inO(specification, "release", releases);
+        }
         specification = Specifications.eq(specification, "codeSap", codeSap);
 
         if (stageZiLe != null) {

@@ -236,7 +236,8 @@ public class UserService {
                                     userInfoType.getUser().getId(),
                                     userInfoType.getUser().getNikName(),
                                     userInfoType.getTelegramId() == null ? userInfoType.getUser().getTelegramId() : userInfoType.getTelegramId(),
-                                    userInfoType.getThreadId())).toList();
+                                    userInfoType.getThreadId(),
+                                    null)).toList();
             messageTypeListMap.put(type, userDTOs);
         }
         return new MapUserInfoDto(messageTypeListMap);

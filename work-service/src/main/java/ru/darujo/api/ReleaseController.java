@@ -41,6 +41,6 @@ public class ReleaseController {
 
     @GetMapping("")
     public List<ReleaseDto> WorkPage() {
-        return releaseService.findAll().stream().map(ReleaseConvertor::getReleaseDto).collect(Collectors.toList());
+        return releaseService.findAll(null).stream().map(ReleaseConvertor::getReleaseDto).collect(Collectors.toList());
     }
 }

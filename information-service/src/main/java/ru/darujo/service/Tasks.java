@@ -16,6 +16,7 @@ import ru.darujo.integration.CalendarServiceIntegration;
 import ru.darujo.integration.TaskServiceIntegration;
 import ru.darujo.integration.WorkServiceIntegration;
 import ru.darujo.integration.WorkTimeServiceIntegration;
+import ru.darujo.model.ChatInfo;
 import ru.darujo.url.UrlWorkTime;
 
 import java.sql.Timestamp;
@@ -147,14 +148,22 @@ public class Tasks {
         };
     }
 
-    public RunnableNotException sendReportWorkFull(MessageType messageType, String author, Long chatId, Integer threadId) {
+    private UserInfoDto getUserInfoDto(ChatInfo chatInfo) {
+        if (chatInfo == null) {
+            return null;
+        }
+        return new UserInfoDto(null, chatInfo.getAuthor(), chatInfo.getChatId(), chatInfo.getThreadId(), chatInfo.getOriginMessageId());
+    }
+
+    public RunnableNotException sendReportWorkFull(MessageType messageType, ChatInfo chatInfo) {
         return new RunnableNotException(() -> {
             log.info("sendReportWorkFull");
             LinkedList<String> sort = new LinkedList<>();
             sort.add("release");
             String report = htmlService.printRep(workServiceIntegration.getTimeWork(null, true, null, null, sort));
-            messageInformationService.sendFile(new MessageInfoDto(author,
-                    (chatId == null ? null : new UserInfoDto(null, author, chatId, threadId)),
+            messageInformationService.sendFile(new MessageInfoDto(
+                    chatInfo == null ? null : chatInfo.getAuthor(),
+                    getUserInfoDto(chatInfo),
                     messageType, "Рассылка отчете статус ЗИ"
             ), "Zi_Report_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
 
@@ -247,12 +256,13 @@ public class Tasks {
         });
     }
 
-    public RunnableNotException getZiWork(MessageType messageType, String author, Long chatId, Integer threadId) {
+    public RunnableNotException getZiWork(MessageType messageType, ChatInfo chatInfo) {
         return new RunnableNotException(() -> {
             log.info("getZiWork");
             String report = getReportWork(true);
-            messageInformationService.sendFile(new MessageInfoDto(author,
-                    (chatId == null ? null : new UserInfoDto(null, author, chatId, threadId)),
+            messageInformationService.sendFile(new MessageInfoDto(
+                    chatInfo == null ? null : chatInfo.getAuthor(),
+                    getUserInfoDto(chatInfo),
                     messageType, "Факт загрузки по ЗИ"
             ), "ZI_Work_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
         });
@@ -265,12 +275,13 @@ public class Tasks {
         return htmlService.getWeekWork(ziSplit, true, true, true, taskListType, weekWorkList);
     }
 
-    public RunnableNotException getWeekWork(MessageType messageType, String author, Long chatId, Integer threadId) {
+    public RunnableNotException getWeekWork(MessageType messageType, ChatInfo chatInfo) {
         return new RunnableNotException(() -> {
             log.info("getWeekWork");
             String report = getReportWork(false);
-            messageInformationService.sendFile(new MessageInfoDto(author,
-                    (chatId == null ? null : new UserInfoDto(null, author, chatId, threadId)),
+            messageInformationService.sendFile(new MessageInfoDto(
+                    chatInfo == null ? null : chatInfo.getAuthor(),
+                    getUserInfoDto(chatInfo),
                     messageType, "Факт загрузки за предыдущую неделю"
             ), "Week_Work_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
         });

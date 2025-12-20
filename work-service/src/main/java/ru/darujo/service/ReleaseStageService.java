@@ -6,9 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.darujo.convertor.WorkConvertor;
 import ru.darujo.dto.work.ReleaseStageDto;
+import ru.darujo.model.Release;
 
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
@@ -16,15 +17,19 @@ import java.util.PriorityQueue;
 @Service
 public class ReleaseStageService {
     private WorkService workService;
+    private ReleaseService releaseService;
 
     @Autowired
     public void setWorkService(WorkService workService) {
         this.workService = workService;
     }
 
-    public PriorityQueue<@NonNull ReleaseStageDto> getReleaseStage(String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId) {
+    public PriorityQueue<@NonNull ReleaseStageDto> getReleaseStage(String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, List<Long> releaseIdList) {
         Map<Long, ReleaseStageDto> releaseStageDtoMap = new HashMap<>();
-        workService.findWorkLittle(null, null, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId)
+        if (releaseIdList != null && !releaseIdList.isEmpty()) {
+            releaseService.findAll(releaseIdList).forEach(release -> releaseStageDtoMap.put(release.getId(), getReleaseStageDto(release)));
+        }
+        workService.findWorkLittle(null, null, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseIdList)
                 .forEach(workLittle -> {
                     ReleaseStageDto releaseStageDto = releaseStageDtoMap.computeIfAbsent(
                             workLittle.getRelease() == null ? 0 : workLittle.getRelease().getId(),
@@ -33,18 +38,13 @@ public class ReleaseStageService {
                                             "Без релиза",
                                             null,
                                             null, -1F)
-                                    :
-                                    new ReleaseStageDto(workLittle.getRelease().getId(),
-                                            workLittle.getRelease().getName(),
-                                            workLittle.getRelease().getIssuingReleasePlan(),
-                                            workLittle.getRelease().getIssuingReleaseFact(),
-                                            workLittle.getRelease().getSort())
+                                    : getReleaseStageDto(workLittle.getRelease())
                     );
 
                     releaseStageDto.getWorks()[workLittle.getStageZI()].add(WorkConvertor.getWorkLittleDto(workLittle));
 
                 });
-        PriorityQueue<ReleaseStageDto> releaseStageDTOs = new PriorityQueue<>(Comparator.comparing(ReleaseStageDto::getSort).thenComparing(ReleaseStageDto::getName));
+        PriorityQueue<ReleaseStageDto> releaseStageDTOs = new PriorityQueue<>();
         releaseStageDTOs.addAll(releaseStageDtoMap.values());
         return releaseStageDTOs;
     }
@@ -55,4 +55,16 @@ public class ReleaseStageService {
 
     }
 
+    private ReleaseStageDto getReleaseStageDto(Release release) {
+        return new ReleaseStageDto(release.getId(),
+                release.getName(),
+                release.getIssuingReleasePlan(),
+                release.getIssuingReleaseFact(),
+                release.getSort());
+    }
+
+    @Autowired
+    public void setReleaseService(ReleaseService releaseService) {
+        this.releaseService = releaseService;
+    }
 }

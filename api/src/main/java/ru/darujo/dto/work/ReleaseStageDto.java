@@ -1,12 +1,13 @@
 package ru.darujo.dto.work;
 
+import org.jetbrains.annotations.NotNull;
 import ru.darujo.assistant.helper.DateHelper;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReleaseStageDto {
+public class ReleaseStageDto implements Comparable<ReleaseStageDto> {
     private Long id;
     // Порядковый номер релиза
     private String name;
@@ -70,5 +71,22 @@ public class ReleaseStageDto {
     @SuppressWarnings("unused")
     public Float getSort() {
         return sort;
+    }
+
+    @Override
+    public int compareTo(@NotNull ReleaseStageDto releaseStageDto) {
+        if (sort == null) {
+            if (releaseStageDto.getSort() == null) {
+                return name.compareTo(releaseStageDto.getName());
+            }
+            return 1;
+        } else {
+            int result = sort.compareTo(releaseStageDto.getSort());
+            if (result != 0) {
+                return result;
+            }
+            return name.compareTo(releaseStageDto.getName());
+        }
+
     }
 }

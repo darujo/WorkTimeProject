@@ -114,10 +114,6 @@ public class Specifications {
         return specification;
     }
 
-    private static <T> Specification<@NonNull T> eq(String field, Integer value) {
-        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(field), value));
-
-    }
     public static <T> Specification<@NonNull T> eq(Specification<@NonNull T> specification, String field, Boolean value) {
         if (value != null) {
             if (specification == null) {
@@ -129,10 +125,6 @@ public class Specifications {
         return specification;
     }
 
-    private static <T> Specification<@NonNull T> eq(String field, boolean value) {
-        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(field), value));
-
-    }
     public static <T> Specification<@NonNull T> eq(Specification<@NonNull T> specification, String field, Date value) {
         if (value != null) {
             if (specification == null) {
@@ -144,10 +136,11 @@ public class Specifications {
         return specification;
     }
 
-    private static <T> Specification<@NonNull T> eq(String field, Date value) {
+    private static <T> Specification<@NonNull T> eq(String field, Object value) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(field), value));
 
     }
+
     public static <T> Specification<@NonNull T> isNotNull(Specification<@NonNull T> specification, String field, Boolean value) {
         if (value != null && value) {
             if (specification == null) {
@@ -158,10 +151,12 @@ public class Specifications {
         }
         return specification;
     }
+
     private static <T> Specification<@NonNull T> isNotNull(String field) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.isNotNull(root.get(field)));
 
     }
+
     public static <T> Specification<@NonNull T> eq(Specification<@NonNull T> specification, String field, Long value) {
         if (value != null) {
             if (specification == null) {
@@ -171,11 +166,6 @@ public class Specifications {
             }
         }
         return specification;
-    }
-
-    private static <T> Specification<@NonNull T> eq(String field, Long value) {
-        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(field), value));
-
     }
 
     //нужно для того чтобы записи на разных страницах не повторялись
@@ -220,7 +210,7 @@ public class Specifications {
         return specification;
     }
 
-    public static <T> Specification<@NonNull T> inLong(Specification<@NonNull T> specification, String field, List<Long> value) {
+    public static <T> Specification<@NonNull T> in(Specification<@NonNull T> specification, String field, List<?> value) {
         if (value != null && !value.isEmpty()) {
             if (value.size() == 1) {
                 specification = eq(specification, field, value.get(0));
@@ -235,27 +225,7 @@ public class Specifications {
         return specification;
     }
 
-    private static <T> Specification<@NonNull T> in(String field, List<Long> value) {
-        return ((root, query, criteriaBuilder) ->
-                root.get(field).in(value));
-    }
-
-    public static <T> Specification<@NonNull T> in(Specification<@NonNull T> specification, String field, List<String> value) {
-        if (value != null && !value.isEmpty()) {
-            if (value.size() == 1) {
-                specification = eq(specification,field, value.get(0));
-            } else {
-                if (specification == null) {
-                    specification = inString(field, value);
-                } else {
-                    specification = specification.and(inString(field, value));
-                }
-            }
-        }
-        return specification;
-    }
-
-    private static <T> Specification<@NonNull T> inString(String field, List<String> value) {
+    private static <T> Specification<@NonNull T> in(String field, List<?> value) {
         return ((root, query, criteriaBuilder) ->
                 root.get(field).in(value));
     }
@@ -271,11 +241,6 @@ public class Specifications {
         return specification;
     }
 
-    private static <T> Specification<@NonNull T> eq(String field, String value) {
-        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(field), value));
-
-    }
-
     public static <T> Specification<@NonNull T> notEqual(Specification<@NonNull T> specification, String field, Long value) {
         if (value != null) {
             if (specification == null) {
@@ -287,7 +252,7 @@ public class Specifications {
         return specification;
     }
 
-    private static <T> Specification<@NonNull T> notEqual(String field, Long value) {
+    private static <T> Specification<@NonNull T> notEqual(String field, Object value) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.notEqual(root.get(field), value)
         );
     }
@@ -303,9 +268,10 @@ public class Specifications {
         return specification;
     }
 
-    public static <T> Specification<@NonNull T> ne(String field, Long value) {
+    public static <T> Specification<@NonNull T> ne(String field, Object value) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.notEqual(root.get(field), value));
     }
+
     public static <T> Specification<@NonNull T> ne(Specification<@NonNull T> specification, String field, Boolean value) {
         if (value != null) {
             if (specification == null) {
@@ -316,9 +282,11 @@ public class Specifications {
         }
         return specification;
     }
+
     public static <T> Specification<@NonNull T> ne(String field, Boolean value) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.notEqual(root.get(field), value));
     }
+
     public static <T> Specification<@NonNull T> eqIgnoreCase(Specification<@NonNull T> specification, String field, String value) {
         if (value != null) {
             if (specification == null) {
@@ -345,9 +313,24 @@ public class Specifications {
         return specification;
     }
 
-    private static <T> Specification<@NonNull T> eq(String field, Object value) {
-        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(field), value));
+    public static <T> Specification<@NonNull T> inO(Specification<@NonNull T> specification, String field, List<Object> value) {
+        if (value != null && !value.isEmpty()) {
+            if (value.size() == 1) {
+                specification = eq(specification, field, value.get(0));
+            } else {
+                if (specification == null) {
+                    specification = inObject(field, value);
+                } else {
+                    specification = specification.and(inObject(field, value));
+                }
+            }
+        }
+        return specification;
+    }
 
+    private static <T> Specification<@NonNull T> inObject(String field, List<Object> value) {
+        return ((root, query, criteriaBuilder) ->
+                root.get(field).in(value));
     }
 
 }

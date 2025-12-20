@@ -1,5 +1,6 @@
 package ru.darujo.convertor;
 
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.work.WorkDto;
 import ru.darujo.dto.work.WorkEditDto;
 import ru.darujo.dto.work.WorkLittleDto;
@@ -380,13 +381,7 @@ public class WorkBuilder {
         if (timestamp == null) {
             return null;
         }
-        Calendar c = Calendar.getInstance();
-        c.setTime(timestamp);
-        c.set(Calendar.HOUR_OF_DAY, 0);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND, 0);
-        return new Timestamp(c.getTimeInMillis());
+        return DateHelper.dateNoTime(timestamp);
     }
 
     public WorkBuilder setReleaseId(Long releaseId) {
