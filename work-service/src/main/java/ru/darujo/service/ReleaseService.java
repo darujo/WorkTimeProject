@@ -30,7 +30,10 @@ public class ReleaseService {
         return releaseRepository.findById(id);
     }
 
-    public Release findById(long id) {
+    public Release findById(Long id) {
+        if (id == null) {
+            return null;
+        }
         return findOptionalById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Релиз с id " + id + " не найден."));
     }
 
