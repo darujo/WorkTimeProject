@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import ru.darujo.assistant.helper.DataHelper;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.convertor.TaskConvertor;
 import ru.darujo.dto.TaskDto;
 import ru.darujo.dto.ratestage.AttrDto;
@@ -55,7 +55,7 @@ public class TaskController {
     public boolean TaskRefresh(@PathVariable long id,
                                @RequestParam(required = false, name = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStr
     ) {
-        Timestamp date = DataHelper.DTZToDate(dateStr, "date");
+        Timestamp date = DateHelper.DTZToDate(dateStr, "date");
         return taskService.refreshTime(id, date);
 
     }

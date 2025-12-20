@@ -1,6 +1,6 @@
 package ru.darujo.dto.ratestage;
 
-import ru.darujo.assistant.helper.DataHelper;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.user.UserFio;
 
 import java.sql.Timestamp;
@@ -102,12 +102,12 @@ public class WorkAgreementRequestDto implements UserFio {
 
     @SuppressWarnings("unused")
     public String getTimestampStr() {
-        return DataHelper.dateTimeToStr(timestamp);
+        return DateHelper.dateTimeToStr(timestamp);
     }
 
     @SuppressWarnings("unused")
     public String getTermStr() {
-        return DataHelper.dateToDDMMYYYY(term);
+        return DateHelper.dateToDDMMYYYY(term);
     }
 
     public void setFirstName(String authorFirstName) {

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.darujo.assistant.helper.DataHelper;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.calendar.UserVacationsDto;
 import ru.darujo.service.VacationReportService;
 
@@ -28,8 +28,8 @@ public class VacationReportController {
                                         @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
                                         @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr,
                                         @RequestParam(required = false) String periodSplit) {
-        Timestamp dateStart = DataHelper.DTZToDate(dateStartStr, "dateStart = ", true);
-        Timestamp dateEnd = DataHelper.DTZToDate(dateEndStr, "dateEnd = ", true);
+        Timestamp dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ", true);
+        Timestamp dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ", true);
 
         return vacationReportService.getUserVacations(nikName, dateStart, dateEnd, periodSplit);
     }
@@ -43,7 +43,7 @@ public class VacationReportController {
         if (dateStartStr == null) {
             dateStart = new Timestamp(System.currentTimeMillis());
         } else {
-            dateStart = DataHelper.DTZToDate(dateStartStr, "dateStart = ", true);
+            dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ", true);
         }
 
         return vacationReportService.getLastWorkDay(username, dateStart, dayMinus, lastWeek);
@@ -57,7 +57,7 @@ public class VacationReportController {
         if (dateStr == null) {
             date = new Timestamp(System.currentTimeMillis());
         } else {
-            date = DataHelper.DTZToDate(dateStr, "dateStart = ", true);
+            date = DateHelper.DTZToDate(dateStr, "dateStart = ", true);
         }
         return vacationReportService.isWorkDayUser(date, username);
     }
@@ -69,7 +69,7 @@ public class VacationReportController {
         if (dateStr == null) {
             date = new Timestamp(System.currentTimeMillis());
         } else {
-            date = DataHelper.DTZToDate(dateStr, "date = ", false);
+            date = DateHelper.DTZToDate(dateStr, "date = ", false);
         }
         return vacationReportService.isDayAfterWeek(date, dayMinus);
     }

@@ -78,7 +78,8 @@ angular.module('workTimeService').controller('releaseController', function ($sco
             name: null,
             password: null,
             issuingReleasePlan: null,
-            issuingReleaseFact: null
+            issuingReleaseFact: null,
+            sort: null
         };
 
         console.log($scope.Release);

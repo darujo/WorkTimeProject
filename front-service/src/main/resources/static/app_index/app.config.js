@@ -74,6 +74,10 @@ angular.module('workTimeService').config(["$ocLazyLoadProvider", function ($ocLa
         }, {
             name: 'workGraph', // module
             files: ['workGraph/workGraph.js?ver=2.0'.toLowerCase()]
-        }]
+        }, {
+            name: 'workStage', // module
+            files: ['work/work_stage.js?ver=2.0'.toLowerCase()]
+        }
+        ]
     });
 }]);

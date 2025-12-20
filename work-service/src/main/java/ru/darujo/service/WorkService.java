@@ -30,6 +30,7 @@ import ru.darujo.specifications.Specifications;
 import ru.darujo.url.UrlWorkTime;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -156,17 +157,30 @@ public class WorkService {
         checkWork(work);
         Boolean ratedOld = null;
         Integer stageOld = null;
+        String releaseNameOld = null;
         if (work.getId() != null) {
             Work workSave = workRepository.findById(work.getId()).orElse(null);
             if (workSave != null) {
                 ratedOld = workSave.getRated();
                 stageOld = workSave.getStageZI();
+                releaseNameOld = workSave.getRelease() != null ? workSave.getRelease().getName() : null;
             }
         }
         updateWorkLastDevelop(work);
         work = workRepository.save(work);
-        if (stageOld != null && !stageOld.equals(work.getStageZI())) {
-            sendInform(login, MessageType.CHANGE_STAGE_WORK, String.format("%s сменил <b>этап ЗИ</b> %s -> %s по ЗИ %s %s", login, stageOld, work.getStageZI(), work.getCodeSap(), UrlWorkTime.getUrlWorkSap(work.getCodeSap(), work.getName())));
+        String releaseNameNew = work.getRelease()!= null ? work.getRelease().getName() : null;
+        StringBuilder workEditText = new StringBuilder();
+        workEditText.append(ChangeObj("этап ЗИ",stageOld,work.getStageZI()));
+        if (!ChangeObj("релиз",releaseNameOld,releaseNameNew).isEmpty())
+        {
+            if (!workEditText.isEmpty()){
+                workEditText.append(",");
+            }
+            workEditText.append(ChangeObj("релиз",releaseNameOld,releaseNameNew));
+        }
+        if (!workEditText.isEmpty()
+        ){
+            sendInform(login, MessageType.CHANGE_STAGE_WORK, String.format("%s сменил %s по ЗИ %s %s", login, workEditText, work.getCodeSap(), UrlWorkTime.getUrlWorkSap(work.getCodeSap(), work.getName())));
         }
         if (ratedOld != null && !ratedOld.equals(work.getRated())) {
             sendInform(login, MessageType.ESTIMATION_WORK, getMesChangRated(login, work));
@@ -211,11 +225,11 @@ public class WorkService {
 
     @Transactional
     public Page<@NonNull Work> findWorks(int page, int size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId) {
-        return (Page<@NonNull Work>) findAll(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId);
+        return findAll(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId);
     }
 
 
-    public Iterable<Work> findAll(Integer page, Integer size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId) {
+    public Page<@NonNull Work> findAll(Integer page, Integer size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId) {
         Specification<@NonNull Work> specification;
         if (sort != null && sort.length() > 8 && sort.startsWith("release.")) {
             specification = Specification.unrestricted();
@@ -242,25 +256,25 @@ public class WorkService {
         }
 
 
-        Iterable<Work> workPage;
+        Page<@NonNull Work> workPage;
         if (sort == null) {
             if (page != null && size != null) {
                 workPage = workRepository.findAll(specification, PageRequest.of(page - 1, size));
             } else {
-                workPage = workRepository.findAll(specification);
+                workPage = new PageImpl<>(workRepository.findAll(specification));
             }
 
         } else {
             if (page != null && size != null) {
                 workPage = workRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.Direction.ASC, sort));
             } else {
-                workPage = workRepository.findAll(specification, Sort.by(sort));
+                workPage = new PageImpl<>(workRepository.findAll(specification, Sort.by(sort)));
             }
         }
         return workPage;
     }
 
-    public Page<@NonNull WorkLittle> findWorkLittle(Integer page, Integer size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId) {
+    public Page<@NonNull WorkLittle> findWorkLittle(Integer page, Integer size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, List<Long> releaseIdArray) {
         Specification<@NonNull WorkLittle> specification;
         if (sort != null && sort.length() > 8 && sort.startsWith("release.")) {
             specification = Specification.unrestricted();
@@ -270,8 +284,15 @@ public class WorkService {
         specification = Specifications.like(specification, "codeZI", codeZi);
         specification = Specifications.like(specification, "name", name);
         specification = Specifications.like(specification, "task", task);
-        Release release = releaseService.findOptionalById(releaseId).orElse(null);
-        specification = Specifications.eq(specification, "release", release);
+        if (releaseIdArray != null && !releaseIdArray.isEmpty()) {
+            List<Object> releases = new ArrayList<>();
+            for (Long releaseId : releaseIdArray) {
+                Release release = releaseService.findOptionalById(releaseId).orElse(null);
+                releases.add(release);
+
+            }
+            specification = Specifications.inO(specification, "release", releases);
+        }
         specification = Specifications.eq(specification, "codeSap", codeSap);
 
         if (stageZiLe != null) {
@@ -363,6 +384,52 @@ public class WorkService {
         }
         return workLittle;
 
+    }
+
+    @Transactional
+    public void setReleaseAndStageZi(String login, Long workId, Long releaseId, Integer stageZI) {
+        WorkLittle workLittle = workLittleRepository.findById(workId).orElseThrow(() -> new ResourceNotFoundRunTime("Не найдено ЗИ"));
+        Release release = releaseService.findOptionalById(releaseId).orElse(null);
+
+        Boolean ratedOld = workLittle.getRated();
+        Integer stageOld = workLittle.getStageZI();
+        String releaseNameOld = workLittle.getRelease()!= null ? workLittle.getRelease().getName() : null;
+        workLittle.setStageZI(stageZI);
+        workLittle.setRelease(release);
+
+        workLittle = workLittleRepository.save(workLittle);
+        String releaseNameNew = workLittle.getRelease()!= null ? workLittle.getRelease().getName() : null;
+        StringBuilder workEditText = new StringBuilder();
+        workEditText.append(ChangeObj("этап ЗИ",stageOld,workLittle.getStageZI()));
+        if (!ChangeObj("релиз",releaseNameOld,releaseNameNew).isEmpty())
+        {
+            if (!workEditText.isEmpty()){
+                workEditText.append(",");
+            }
+            workEditText.append(ChangeObj("релиз",releaseNameOld,releaseNameNew));
+        }
+        if (!workEditText.isEmpty()
+        ){
+            sendInform(login, MessageType.CHANGE_STAGE_WORK, String.format("%s сменил %s по ЗИ %s %s", login, workEditText, workLittle.getCodeSap(), UrlWorkTime.getUrlWorkSap(workLittle.getCodeSap(), workLittle.getName())));
+        }
+        if (ratedOld != null && !ratedOld.equals(workLittle.getRated())) {
+            sendInform(login, MessageType.ESTIMATION_WORK, getMesChangRated(login, workLittle));
+        }
+    }
+
+    private String ChangeObj(String text, Object oldObj, Object newObj) {
+        if(oldObj == null){
+            if (newObj !=null ){
+                return String.format("проставлен <b>%s</b> %s",text,newObj);
+            }
+        } else if(newObj ==null){
+            return String.format("удален <b>%s</b> %s",text,oldObj);
+        } else {
+            if (!oldObj.equals(newObj)){
+               return String.format("<b>%s</b> %s -> %s",text,oldObj,newObj);
+            }
+        }
+        return "";
     }
 
     @Getter

@@ -1,9 +1,13 @@
 package ru.darujo.api;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.*;
-import ru.darujo.assistant.helper.DataHelper;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.MapStringFloat;
 import ru.darujo.dto.PageDto;
 import ru.darujo.dto.PageObjDto;
@@ -17,6 +21,7 @@ import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.List;
+
 
 @RestController()
 @RequestMapping("/v1/works/rep")
@@ -106,10 +111,10 @@ public class WorkRepController {
                                           @RequestParam(required = false) Long codeSap,
                                           @RequestParam(required = false) String codeZi,
                                           @RequestParam(required = false) String task,
-                                          @RequestParam(required = false) Long releaseId,
+                                          @RequestParam(required = false) List<Long> releaseId,
                                           @RequestParam(defaultValue = "release") String sort) {
-        Timestamp dateStart = DataHelper.DTZToDate(dateStartStr, "dateStart = ", true);
-        Timestamp dateEnd = DataHelper.DTZToDate(dateEndStr, "dateEnd = ", true);
+        Timestamp dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ", true);
+        Timestamp dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ", true);
         Integer stageZiLe = null;
         Integer stageZiGe = null;
         if (stageZi != null) {
@@ -121,7 +126,7 @@ public class WorkRepController {
             }
         }
         return workRepService.getWeekWork(ziSplit, addTotal, nikName, weekSplit, dateStart, dateEnd,
-               page, size, name, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId, sort);
+                page, size, name, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId, sort);
     }
 
     @GetMapping("/graph")
@@ -137,8 +142,8 @@ public class WorkRepController {
                                                      @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
                                                      @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr,
                                                      @RequestParam(required = false) String period) {
-        Timestamp dateEnd = DataHelper.DTZToDate(dateEndStr, "dateEnd = ", false);
-        Timestamp dateStart = DataHelper.DTZToDate(dateStartStr, "dateStart = ", false);
+        Timestamp dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ", false);
+        Timestamp dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ", false);
         Integer stageZiLe = null;
         Integer stageZiGe = null;
         if (stageZi != null) {
@@ -163,5 +168,6 @@ public class WorkRepController {
 
         return workRepService.getWorkGraphRep(page, size, nameZi, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId, sort, dateStart, dateEnd, period);
     }
+
 
 }

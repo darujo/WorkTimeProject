@@ -17,9 +17,10 @@ import ru.darujo.model.Task;
 import ru.darujo.repository.TaskRepository;
 import ru.darujo.specifications.Specifications;
 
-
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -109,7 +110,7 @@ public class TaskService {
                                    Integer page,
                                    Integer size) {
         Specification<@NonNull Task> specification = Specification.where(Specifications.queryDistinctTrue());
-        specification = Specifications.inLong(specification, "id", listTaskId);
+        specification = Specifications.in(specification, "id", listTaskId);
         specification = Specifications.like(specification,"nikName", nikName );
         specification = Specifications.like(specification,"codeBTS", codeBTS);
         specification = Specifications.like(specification,"codeDEVBO", codeDEVBO);

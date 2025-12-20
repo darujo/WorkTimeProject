@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMe
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
+import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.darujo.model.ChatInfo;
@@ -36,13 +37,8 @@ public class TelegramBotSend {
     }
 
 
-    public void sendMessage(ChatInfo chatInfo, String text) throws TelegramApiException {
-        SendMessage message = new SendMessage(chatInfo.getChatId(), text);
-        message.setMessageThreadId(chatInfo.getThreadId());
-        message.enableHtml(true);
-        tgClient.execute(message);
-        messageSendService.saveMessageSend(new MessageSend(chatInfo, text));
-
+    public Message sendMessage(ChatInfo chatInfo, String text) throws TelegramApiException {
+        return sendMessage(chatInfo, text, null);
     }
 
     public void sendPhoto(ChatInfo chatInfo, File file, String text) throws TelegramApiException {
@@ -67,6 +63,7 @@ public class TelegramBotSend {
     public void sendDocument(ChatInfo chatInfo, String fileName, File file, String text) throws TelegramApiException {
         SendDocument message = new SendDocument(chatInfo.getChatId(), new InputFile(file, fileName));
         message.setMessageThreadId(chatInfo.getThreadId());
+        message.setReplyToMessageId(chatInfo.getOriginMessageId());
         if (!text.isEmpty()) {
             message.setCaption(text);
         }
@@ -77,33 +74,40 @@ public class TelegramBotSend {
         }
     }
 
-    // Клавиатура раздела с ключевыми словами для поиска
-    public void sendMessage(String chatId, Integer threadId, String text, InlineKeyboardMarkup menu) throws TelegramApiException {
-        SendMessage message = new SendMessage(chatId, text);
-        message.setMessageThreadId(threadId);
+    public Message sendMessage(ChatInfo chatInfo, String text, InlineKeyboardMarkup menu) throws TelegramApiException {
+        SendMessage message = new SendMessage(chatInfo.getChatId(), text);
+        message.setMessageThreadId(chatInfo.getThreadId());
+        message.enableHtml(true);
+        message.setReplyToMessageId(chatInfo.getOriginMessageId());
         message.setReplyMarkup(menu);
-        tgClient.execute(message);
-
+        Message messageSend = tgClient.execute(message);
+        messageSendService.saveMessageSend(new MessageSend(chatInfo, text));
+        return messageSend;
     }
 
-    public void deleteMessage(String chatId, int messageId) throws TelegramApiException {
-        DeleteMessage delete = new DeleteMessage(chatId, messageId);
+    public void deleteMessage(ChatInfo chatInfo) throws TelegramApiException {
+        if (chatInfo.getOriginMessageId() == null) {
+            return;
+        }
+        DeleteMessage delete = new DeleteMessage(chatInfo.getChatId(), chatInfo.getOriginMessageId());
+        chatInfo.setOriginMessageId(null);
         tgClient.execute(delete);
     }
 
-    public void editMessage(String chatId, int messageId, String newText, InlineKeyboardMarkup menu) throws TelegramApiException {
+    public void editMessage(ChatInfo chatInfo, String newText, InlineKeyboardMarkup menu) throws TelegramApiException {
         EditMessageText edit = new EditMessageText(newText);
-        edit.setChatId(chatId);
-        edit.setMessageId(messageId);
+        edit.setChatId(chatInfo.getChatId());
+        edit.setMessageId(chatInfo.getOriginMessageId());
         edit.setText(newText);
         edit.setReplyMarkup(menu);
+
         tgClient.execute(edit);
     }
 
-    public void EditPhoto(String chatId, int messageId, String newText, InlineKeyboardMarkup menu, File file) throws TelegramApiException {
+    public void EditPhoto(ChatInfo chatInfo, String newText, InlineKeyboardMarkup menu, File file) throws TelegramApiException {
         EditMessageMedia edit = new EditMessageMedia(new InputMediaPhoto(file, "menu.jpg"));
-        edit.setChatId(chatId);
-        edit.setMessageId(messageId);
+        edit.setChatId(chatInfo.getChatId());
+        edit.setMessageId(chatInfo.getOriginMessageId());
         edit.getMedia().setCaption(newText);
 //        edit.(newText);
         edit.setReplyMarkup(menu);

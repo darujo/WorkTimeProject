@@ -2,6 +2,7 @@ package ru.darujo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
@@ -85,36 +86,36 @@ public class MenuService {
 
     Map<Integer, MenuParam> paramMap = new HashMap<>();
 
-    public void getMenu(ChatInfo chatInfo, Integer messageId, String command, File file) throws TelegramApiException {
+    public void getMenu(ChatInfo chatInfo, String command, File file) throws TelegramApiException {
         try {
             CommandType commandType = CommandType.valueOf(command);
-            getMenu(chatInfo, messageId, commandType, file);
+            getMenu(chatInfo, commandType, file);
         } catch (IllegalArgumentException ex) {
-            MenuParam menuParam = getMenuParam(chatInfo, messageId);
+            MenuParam menuParam = getMenuParam(chatInfo);
             if (menuParam == null) {
                 return;
             }
             try {
 
                 menuParam.setReportTypeDto(ReportTypeDto.valueOf(command));
-                telegramBotSend.EditPhoto(chatInfo.getChatId(), messageId, "Кому разослать результат по отчету " + command + "?", getMenuWorkStatus(), file);
+                telegramBotSend.EditPhoto(chatInfo, "Кому разослать результат по отчету " + command + "?", getMenuWorkStatus(), file);
             } catch (IllegalArgumentException illegalArgumentException) {
-                reOpenMainMenu(chatInfo, messageId);
+                reOpenMainMenu(chatInfo);
             }
 
         }
 
     }
 
-    public void getMenu(ChatInfo chatInfo, Integer messageId, CommandType command, File file) throws TelegramApiException {
+    public void getMenu(ChatInfo chatInfo, CommandType command, File file) throws TelegramApiException {
         MenuParam menuParam = null;
 
         if (command.getNewParam()) {
             menuParam = new MenuParam();
-            paramMap.put(messageId, menuParam);
+            paramMap.put(chatInfo.getOriginMessageId(), menuParam);
         } else {
             if (command.getAvailParam()) {
-                menuParam = getMenuParam(chatInfo, messageId);
+                menuParam = getMenuParam(chatInfo);
             }
 
         }
@@ -122,61 +123,61 @@ public class MenuService {
         if (command.equals(CommandType.REPORT)) {
             ResultMes resultMes = userServiceIntegration.checkUserTelegram(Long.parseLong(chatInfo.getChatId()));
             if (resultMes.isOk()) {
-                telegramBotSend.EditPhoto(chatInfo.getChatId(), messageId, "Какой отчет вы хотите построить?", getMenuReport(), file);
+                telegramBotSend.EditPhoto(chatInfo, "Какой отчет вы хотите построить?", getMenuReport(), file);
             } else {
-                telegramBotSend.deleteMessage(chatInfo.getChatId(), messageId);
+                telegramBotSend.deleteMessage(chatInfo);
                 telegramBotSend.sendMessage(chatInfo, resultMes.getMessage());
             }
         }
         if (command.equals(CommandType.SEND_ME)) {
-            sendReport(Objects.requireNonNull(menuParam).getReportTypeDto(), chatInfo, messageId, true);
+            sendReport(Objects.requireNonNull(menuParam).getReportTypeDto(), chatInfo, true);
         }
         if (command.equals(CommandType.SEND_ALL)) {
-            sendReport(Objects.requireNonNull(menuParam).getReportTypeDto(), chatInfo, messageId, false);
+            sendReport(Objects.requireNonNull(menuParam).getReportTypeDto(), chatInfo, false);
         }
         if (command.equals(CommandType.CANCEL)) {
-            deleteMessage(chatInfo.getChatId(), messageId);
+            deleteMessage(chatInfo);
         }
 
     }
 
-    private void deleteMessage(String charId, Integer messageId) throws TelegramApiException {
-        paramMap.remove(messageId);
-        telegramBotSend.deleteMessage(charId, messageId);
+    private void deleteMessage(ChatInfo chatInfo) throws TelegramApiException {
+        paramMap.remove(chatInfo.getOriginMessageId());
+        telegramBotSend.deleteMessage(chatInfo);
     }
 
-    private MenuParam getMenuParam(ChatInfo chatInfo, Integer messageId) throws TelegramApiException {
-        MenuParam menuParam = paramMap.get(messageId);
+    private MenuParam getMenuParam(ChatInfo chatInfo) throws TelegramApiException {
+        MenuParam menuParam = paramMap.get(chatInfo.getOriginMessageId());
         if (menuParam == null) {
-            reOpenMainMenu(chatInfo, messageId);
+            reOpenMainMenu(chatInfo);
         }
         return menuParam;
     }
 
-    private void reOpenMainMenu(ChatInfo chatInfo, Integer messageId) throws TelegramApiException {
-        deleteMessage(chatInfo.getChatId(), messageId);
+    private void reOpenMainMenu(ChatInfo chatInfo) throws TelegramApiException {
+        deleteMessage(chatInfo);
         telegramBotSend.sendMessage(chatInfo, "Извините Меню устарело. Начните с начала");
         openMainMenu(chatInfo);
     }
 
-    private void sendReport(ReportTypeDto reportType, ChatInfo chatInfo, Integer messageId, boolean sendMe) throws TelegramApiException {
-        telegramBotSend.deleteMessage(chatInfo.getChatId(), messageId);
+    private void sendReport(ReportTypeDto reportType, ChatInfo chatInfo, boolean sendMe) throws TelegramApiException {
+        deleteMessage(chatInfo);
         try {
             ResultMes resultMes = userServiceIntegration.checkUserTelegram(Long.parseLong(chatInfo.getChatId()));
             if (resultMes.isOk()) {
+                Message message = telegramBotSend.sendMessage(chatInfo, "Отчет \"" + reportType.getName() + "\" будет доставлен в ближайшее время");
+                chatInfo.setOriginMessageId(message.getMessageId());
                 if (sendMe) {
-                    infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), Long.parseLong(chatInfo.getChatId()), chatInfo.getThreadId());
+                    infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), Long.parseLong(chatInfo.getChatId()), chatInfo.getThreadId(), chatInfo.getOriginMessageId());
                 } else {
-                    infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), null, null);
+                    infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), null, null, null);
                 }
+            } else {
+                telegramBotSend.sendMessage(chatInfo, resultMes.getMessage());
             }
-
-            telegramBotSend.sendMessage(chatInfo, resultMes.isOk() ? "Отчет будет доставлен в ближайшее время" : resultMes.getMessage());
-
         } catch (RuntimeException ex) {
+            telegramBotSend.deleteMessage(chatInfo);
             telegramBotSend.sendMessage(chatInfo, "Что-то пошло не так отчет не будет сформирован. Попробуйте позже или обратитесь к администратору");
-        } finally {
-            deleteMessage(chatInfo.getChatId(), messageId);
         }
     }
 
@@ -214,7 +215,7 @@ public class MenuService {
     }
 
     public void openCancel(ChatInfo chatInfo, String text) throws TelegramApiException {
-        telegramBotSend.sendMessage(chatInfo.getChatId(), chatInfo.getThreadId(), text, getMenuCancel());
+        telegramBotSend.sendMessage(chatInfo, text, getMenuCancel());
     }
 
     private InlineKeyboardRow createRowCancel() {

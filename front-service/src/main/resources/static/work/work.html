@@ -81,6 +81,10 @@
             <option ng-value="10000" value="10000">10000</option>
         </select>
     </div>
+    <ul class="container">
+        <li class="nav-item"><a class="nav-link" href="#!/work_stage">Просмотр статусо по ЗИ</a></li>
+        <li class="nav-item" ng-if="rightObj.Edit"><a class="nav-link" href="#!/work_stage_edit">Изменение статусов по ЗИ</a></li>
+    </ul>
     <h1>Список ЗИ</h1>
     <table class="container">
         <tr>
@@ -106,7 +110,7 @@
             </td>
             <td class="table_head2" rowspan="2" colspan="2"> Выдача релиза даты</td>
             <td class="table_head2" rowspan="3"></td>
-            <td class="table_head2" rowspan="3"></td>
+            <td class="table_head2" rowspan="3" ng-if="rightObj.Edit"></td>
             <td class="table_head2" rowspan="3"></td>
             <td class="table_head2" rowspan="3"></td>
 
@@ -179,7 +183,7 @@
             <td>
                 <button ng-click="editWork(work.id)">Изменить</button>
             </td>
-            <td>
+            <td ng-if="rightObj.Edit">
                 <button ng-click="deleteWork(work.id)">Удалить</button>
             </td>
             <td class="text_left">

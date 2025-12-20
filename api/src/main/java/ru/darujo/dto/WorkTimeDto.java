@@ -1,14 +1,12 @@
 package ru.darujo.dto;
 
-import ru.darujo.assistant.helper.DataHelper;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.user.UserFio;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
-public class WorkTimeDto extends DataHelper implements Serializable, UserFio {
+public class WorkTimeDto extends DateHelper implements Serializable, UserFio {
 
     private Long id;
     private String nikName;

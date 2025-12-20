@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.information.MessageType;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
+import ru.darujo.model.ChatInfo;
 import ru.darujo.type.ReportTypeDto;
 
 import java.util.concurrent.Executors;
@@ -39,7 +40,7 @@ public class ScheduleService {
                 messageType.getPeriod(), TimeUnit.SECONDS);
     }
 
-    public void sendReport(String reportTypeDto, String author, Long chatId, Integer threadId) {
+    public void sendReport(String reportTypeDto, ChatInfo chatInfo) {
         MessageType messageType;
         if (reportTypeDto.equals(ReportTypeDto.USER_WORK.toString())) {
             messageType = MessageType.WEEK_WORK_REPORT;
@@ -51,7 +52,7 @@ public class ScheduleService {
             throw new ResourceNotFoundRunTime("Нет такого типа отчета");
 
         }
-        executor.schedule(getTask(messageType, author, chatId, threadId), 2, TimeUnit.SECONDS);
+        executor.schedule(getTask(messageType, chatInfo), 2, TimeUnit.SECONDS);
     }
 
     private void close() {
@@ -71,16 +72,16 @@ public class ScheduleService {
     }
 
     private RunnableNotException getTask(MessageType messageType) {
-        return getTask(messageType, null, null, null);
+        return getTask(messageType, null);
     }
 
-    private RunnableNotException getTask(MessageType messageType, String author, Long chatId, Integer threadId) {
+    private RunnableNotException getTask(MessageType messageType, ChatInfo chatInfo) {
         if (messageType.equals(MessageType.AVAIL_WORK_LAST_DAY)) {
             return tasks.getAddWorkAvail(messageType);
         } else if (messageType.equals(MessageType.AVAIL_WORK_LAST_WEEK)) {
             return tasks.getAddWorkAvailLastWeek(messageType);
         } else if (messageType.equals(MessageType.AVAIL_WORK_FULL_REPORT)) {
-            return tasks.sendReportWorkFull(messageType, author, chatId, threadId);
+            return tasks.sendReportWorkFull(messageType, chatInfo);
         } else if (messageType.equals(MessageType.VACATION_MY_START)) {
             return tasks.getMyVacationStart(messageType);
         } else if (messageType.equals(MessageType.VACATION_MY_END)) {
@@ -88,9 +89,9 @@ public class ScheduleService {
         } else if (messageType.equals(MessageType.VACATION_USER_START)) {
             return tasks.getVacationStart(messageType);
         } else if (messageType.equals(MessageType.ZI_WORK_REPORT)) {
-            return tasks.getZiWork(messageType, author, chatId, threadId);
+            return tasks.getZiWork(messageType, chatInfo);
         } else if (messageType.equals(MessageType.WEEK_WORK_REPORT)) {
-            return tasks.getWeekWork(messageType, author, chatId, threadId);
+            return tasks.getWeekWork(messageType, chatInfo);
         } else {
             throw new ResourceNotFoundRunTime("Нет такого типа отчета");
         }

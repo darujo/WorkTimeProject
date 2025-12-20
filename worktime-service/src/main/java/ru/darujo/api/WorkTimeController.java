@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import ru.darujo.assistant.helper.DataHelper;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.convertor.WorkTimeConvertor;
 import ru.darujo.dto.WorkTimeDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
@@ -13,7 +13,7 @@ import ru.darujo.model.WorkTime;
 import ru.darujo.service.WorkTimeService;
 
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.Date;
 
 @RestController()
 @RequestMapping("/v1/worktime")
@@ -83,10 +83,10 @@ public class WorkTimeController {
                                                    @RequestParam(defaultValue = "false") boolean currentUser,
                                                    @RequestParam(defaultValue = "1") Integer page,
                                                    @RequestParam(defaultValue = "10") Integer size) {
-        Date dateLt = DataHelper.DTZToDate(dateLtStr, "dateLt = ");
-        Date dateLe = DataHelper.DTZToDate(dateLeStr, "dateLe = ", false);
-        Date dateGt = DataHelper.DTZToDate(dateGtStr, "dateGt = ", false);
-        Date dateGe = DataHelper.DTZToDate(dateGeStr, "dateGe = ");
+        Date dateLt = DateHelper.DTZToDate(dateLtStr, "dateLt = ");
+        Date dateLe = DateHelper.DTZToDate(dateLeStr, "dateLe = ", false);
+        Date dateGt = DateHelper.DTZToDate(dateGtStr, "dateGt = ", false);
+        Date dateGe = DateHelper.DTZToDate(dateGeStr, "dateGe = ");
         if ((nikName == null || nikName.isEmpty()) && currentUser) {
             nikName = username;
         }

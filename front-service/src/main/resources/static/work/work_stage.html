@@ -1,0 +1,203 @@
+<div id="WorkList" class="head_text_elem">
+    <div class="filter container">
+        <details class="details_block">
+            <summary class="p-head">Фильтр</summary>
+
+            <form novalidate ng-submit="loadRelease()" class="filter">
+                <div class="filter_block">
+                    <div class="horiz">
+                        <label for="Name" class="p-head"> Наименование </label>
+                        <input class="vvod80" inputmode="text" id="Name"
+                               ng-model="Filt.name"/>
+                        <br>
+                    </div>
+                    <div class="horiz">
+                        <label for="WorkNameFilter" class="p-head"> Devbo </label>
+                        <input class="vvod20" inputmode="text" id="WorkNameFilter"
+                               ng-model="Filt.task"/>
+                        <label for="CodeSapFilter" class="p-head"> № Sap </label>
+                        <input class="vvod20" type="number" inputmode="numeric"
+                               id="CodeSapFilter"
+                               step="1"
+                               ng-model="Filt.codeSap"/>
+                        <label for="CodeZiFilter" class="p-head"> ZI- </label>
+                        <input class="vvod20" inputmode="text" id="CodeZiFilter"
+                               ng-model="Filt.codeZi"/>
+
+                    </div>
+                    <div class="horiz">
+                        <label for="StageZiFilter" class="p-head">Текущий этап ЗИ :</label>
+                        <select class="vvod20" name="StageZiFilterWorkSelect" id="StageZiFilter"
+                                ng-model="Filt.stageZi">
+                            <option ng-value="0" value="0">0</option>
+                            <option ng-value="1" value="1">I</option>
+                            <option ng-value="2" value="2">II</option>
+                            <option ng-value="3" value="3">III</option>
+                            <option ng-value="4" value="4">IV</option>
+                            <option ng-value="5" value="5">V</option>
+                            <option ng-value="15" value="15">В работе</option>
+                            <option ng-value="6" value="6">Закрытые</option>
+                            <option ng-value="19" value="19">Все</option>
+                        </select>
+                        <label for="ReleaseFilter" class="p-head">№ Релиза</label>
+                        <select class="vvod20mar10" name="ReleaseFilterWorkSelect" id="ReleaseFilter" multiple
+                                ng-model="Filt.releaseId">
+                            <option ng-repeat="release in ReleaseList" ng-value="release.id" value="release.id">
+                                {{release.name}}
+                            </option>
+                            <option ng-value="" value="">Все</option>
+                        </select>
+
+                    </div>
+                    <div class="horiz">
+
+                        <button type="submit" class="head_button">Применить</button>
+                        <button type="button" class="head_button" ng-click="clearFilter(true)">Сбросить</button>
+                        <button type="button" class="head_button" ng-click="sendFilter()">Поделиться</button>
+
+                    </div>
+                </div>
+            </form>
+        </details>
+
+    </div>
+    <div class="filter container_filter">
+        <button class="head_button" ng-click="findPage(-1)">PrevPage</button>
+        <label for="Page"></label>
+        <input class="vvod" type="number" id="Page" value="1"/>
+        <button class="head_button" ng-click="findPage(1)">NextPage</button>
+        <label for="WorkSize" class="p-head">Количество элементов</label>
+        <select class="vvod20" name="SizeFilterWorkSelect" id="WorkSize" ng-model="Filt.size" ng-change="filterWork()">
+            <option ng-value="10" value="10">10</option>
+            <option ng-value="25" value="25">25</option>
+            <option ng-value="50" value="50">50</option>
+            <option ng-value="100" value="100">100</option>
+            <option ng-value="500" value="500">500</option>
+            <option ng-value="1000" value="1000">1000</option>
+            <option ng-value="10000" value="10000">10000</option>
+        </select>
+    </div>
+    <h1>Список Релизов</h1>
+    <table class="container">
+        <tr>
+            <td class="sticky-col first-col-1 table_head2">
+                <p>Релиз</p>
+            </td>
+            <td class="table_head3">Анализ</td>
+            <td class="table_head2">Разработка прототипа</td>
+            <td class="table_head2">Стабилизация прототипа</td>
+            <td class="table_head2">Стабилизация релиза</td>
+            <td class="table_head3">ОПЭ</td>
+            <td class="table_head3">Поддержка</td>
+            <td class="table_head3">Завершенные</td>
+
+
+        </tr>
+        <tbody>
+        <tr ng-repeat="release in releaseList">
+            <td class="sticky-col first-col-1">{{release.name}}</td>
+            <td dnd-container dnd-sortable-list="release.works[0]">
+                <div ng-repeat="work in release.works[0]" class="td_task"
+                     dnd-sortable
+                     dnd-sortable-opts="{layer: 'test12'}"
+                     dnd-on-sortstart="onSortStart()"
+                     dnd-on-sort="onSort(release.id,0)"
+                     dnd-on-sortchange="onSortChange(release.id,0,work)"
+                     dnd-on-sortend="onSortEnd($release,$work,work)"
+                     dnd-on-sortenter="onSortEnter()"
+
+
+                >
+                    {{work.name}}
+                </div>
+            </td>
+            <td dnd-container dnd-sortable-list="release.works[1]">
+                <div ng-repeat="work in release.works[1]" class="td_task"
+                     dnd-sortable
+                     dnd-sortable-opts="{layer: 'test12'}"
+                     dnd-on-sortstart="onSortStart()"
+                     dnd-on-sort="onSort(release.id,1)"
+                     dnd-on-sortchange="onSortChange(release.id,1,work)"
+                     dnd-on-sortend="onSortEnd($dropmodel, $dragmodel,work)"
+                     dnd-on-sortenter="onSortEnter()"
+
+
+                >
+                    {{work.name}}
+                </div>
+            </td>
+            <td dnd-container dnd-sortable-list="release.works[2]">
+                <div ng-repeat="work in release.works[2]" class="td_task"
+                     dnd-sortable
+                     dnd-sortable-opts="{layer: 'test12'}"
+                     dnd-on-sortstart="onSortStart()"
+                     dnd-on-sort="onSort(release.id,2)"
+                     dnd-on-sortchange="onSortChange(release.id,2,work)"
+                     dnd-on-sortend="onSortEnd(release.id,2,work)"
+                     dnd-on-sortenter="onSortEnter()"
+                >
+                    {{work.name}}
+                </div>
+            </td>
+            <td dnd-container dnd-sortable-list="release.works[3]">
+                <div ng-repeat="work in release.works[3]" class="td_task"
+                     dnd-sortable
+                     dnd-sortable-opts="{layer: 'test12'}"
+                     dnd-on-sortstart="onSortStart()"
+                     dnd-on-sort="onSort(release.id,3)"
+                     dnd-on-sortchange="onSortChange(release.id,3,work)"
+                     dnd-on-sortend="onSortEnd(release.id,3,work)"
+                     dnd-on-sortenter="onSortEnter()"
+                >
+                    {{work.name}}
+                </div>
+            </td>
+            <td dnd-container dnd-sortable-list="release.works[4]">
+                <div ng-repeat="work in release.works[4]" class="td_task"
+                     dnd-sortable
+                     dnd-sortable-opts="{layer: 'test12'}"
+                     dnd-on-sortstart="onSortStart()"
+                     dnd-on-sort="onSort(release.id,4)"
+                     dnd-on-sortchange="onSortChange(release.id,4,work)"
+                     dnd-on-sortend="onSortEnd(release.id,4,work)"
+                     dnd-on-sortenter="onSortEnter()"
+                >
+                    {{work.name}}
+                </div>
+            </td>
+            <td dnd-container dnd-sortable-list="release.works[5]">
+                <div ng-repeat="work in release.works[5]" class="td_task"
+                     dnd-sortable
+                     dnd-sortable-opts="{layer: 'test12'}"
+                     dnd-on-sortstart="onSortStart()"
+                     dnd-on-sort="onSort(release.id,5)"
+                     dnd-on-sortchange="onSortChange(release.id,5,work)"
+                     dnd-on-sortend="onSortEnd(release.id,5,work)"
+                     dnd-on-sortenter="onSortEnter()"
+                >
+                    {{work.name}}
+                </div>
+            </td>
+            <td dnd-container dnd-sortable-list="release.works[6]">
+                <div ng-repeat="work in release.works[6]" class="td_task"
+                     dnd-sortable
+                     dnd-sortable-opts="{layer: 'test12'}"
+                     dnd-on-sortstart="onSortStart()"
+                     dnd-on-sort="onSort(release.id,6)"
+                     dnd-on-sortchange="onSortChange(release.id,6,work)"
+                     dnd-on-sortend="onSortEnd(release.id,6,work)"
+                     dnd-on-sortenter="onSortEnter()"
+                >
+                    {{work.name}}
+                </div>
+            </td>
+
+
+        </tr>
+        </tbody>
+    </table>
+    <div class="wait_1_2">
+        <img ng-if="load" src="../gif/wait1_2.gif" alt="Лучше ждите" width="300" height="300"/>
+    </div>
+</div>
+

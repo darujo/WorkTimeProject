@@ -10,7 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.assistant.helper.CompareHelper;
-import ru.darujo.assistant.helper.DataHelper;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.ratestage.StatusResponse;
@@ -149,7 +149,7 @@ public class WorkAgreementResponseService {
     public String toString(@NonNull WorkAgreementResponse newObj) {
         return
                 "Пользователь: " + UserServiceIntegration.getInstance().getFio(newObj.getNikName()) + "\n" +
-                        "Время: " + DataHelper.dateTimeToStr(newObj.getTimestamp()) + "\n" +
+                        "Время: " + DateHelper.dateTimeToStr(newObj.getTimestamp()) + "\n" +
                         (newObj.getComment() != null && !newObj.getComment().isBlank() ? ("Комментарий: " + newObj.getComment() + "\n") : "") +
                         "Статус: " + StatusResponse.valueOf(newObj.getStatus()).getName() + "\n";
 
@@ -161,7 +161,7 @@ public class WorkAgreementResponseService {
         }
         return
                 compareField("Пользователь", UserServiceIntegration.getInstance().getFio(old.getNikName()), UserServiceIntegration.getInstance().getFio(newObj.getNikName())) +
-                        compareField("Время", DataHelper.dateTimeToStr(old.getTimestamp()), DataHelper.dateTimeToStr(newObj.getTimestamp())) +
+                        compareField("Время", DateHelper.dateTimeToStr(old.getTimestamp()), DateHelper.dateTimeToStr(newObj.getTimestamp())) +
                         compareField("Комментарий", old.getComment(), newObj.getComment()) +
                         compareField("Статус", StatusResponse.valueOf(old.getStatus()).getName(), StatusResponse.valueOf(newObj.getStatus()).getName());
     }

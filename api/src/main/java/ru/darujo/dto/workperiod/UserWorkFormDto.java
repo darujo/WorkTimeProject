@@ -1,21 +1,22 @@
 package ru.darujo.dto.workperiod;
 
-import ru.darujo.assistant.helper.DataHelper;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.ratestage.AttrDto;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserWorkFormDto extends UserWorkDto {
     public UserWorkFormDto() {
     }
     @SuppressWarnings("unused")
     public String getDateStartStr() {
-        return DataHelper.dateToDDMMYYYY(dateStart);
+        return DateHelper.dateToDDMMYYYY(dateStart);
     }
 
     @SuppressWarnings("unused")
     public String getDateEndStr() {
-        return DataHelper.dateToDDMMYYYY(dateEnd);
+        return DateHelper.dateToDDMMYYYY(dateEnd);
     }
 
 
