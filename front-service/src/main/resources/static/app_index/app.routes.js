@@ -239,6 +239,15 @@ angular.module('workTimeService').config(function ($routeProvider) {
                 }]
             }
         })
+        .when('/update'.toLowerCase(), {
+            templateUrl: 'admin/user/update.html?ver=' + ver,
+            controller: 'updateController',
+            resolve: {
+                LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load('update'); // Resolve promise and load before view
+                }]
+            }
+        })
         .otherwise({
             redirectTo: '/'
         });
