@@ -44,7 +44,7 @@ public class ReleaseStageService {
                     releaseStageDto.getWorks()[workLittle.getStageZI()].add(WorkConvertor.getWorkLittleDto(workLittle));
 
                 });
-        PriorityQueue<ReleaseStageDto> releaseStageDTOs = new PriorityQueue<>();
+        PriorityQueue<ReleaseStageDto> releaseStageDTOs = new PriorityQueue<>(ReleaseStageDto::compareTo);
         releaseStageDTOs.addAll(releaseStageDtoMap.values());
         return releaseStageDTOs;
     }
