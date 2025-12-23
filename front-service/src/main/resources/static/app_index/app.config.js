@@ -77,6 +77,9 @@ angular.module('workTimeService').config(["$ocLazyLoadProvider", function ($ocLa
         }, {
             name: 'workStage', // module
             files: ['work/work_stage.js?ver=2.0'.toLowerCase()]
+        }, {
+            name: 'update', // module
+            files: ['admin/user/update.js?ver=2.0'.toLowerCase()]
         }
         ]
     });
