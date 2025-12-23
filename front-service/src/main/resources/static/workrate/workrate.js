@@ -6,9 +6,15 @@ angular.module('workTimeService').controller('workRateController', function ($sc
     $scope.work = {
         roleStr: null,
         stage0Fact: null,
+        stage1Fact: null,
+        stage2Fact: null,
+        stage3Fact: null,
+        stage4Fact: null,
+        stage5Fact: null,
         stageAll: null,
         criteriaStr: null
     }
+    $scope.Filter= {viewFact : false};
     $scope.showWorkStageAdd = function () {
         document.getElementById("WorkStageAdd").style.display = "block";
         document.getElementById("FormWorkStage").style.display = "none";
@@ -97,8 +103,22 @@ angular.module('workTimeService').controller('workRateController', function ($sc
         }
         showWorkStageEdit();
     }
-    $scope.editWorkStage = function (workStageId) {
-        $http.get(constPatchWorkRate + "/stage/" + workStageId)
+    $scope.editWorkStage = function (workStage) {
+        if (workStage.id === -1){
+            $scope.WorkStage = {
+                id: null,
+                workId: WorkId,
+                nikName: workStage.nikName ,
+                role: "",
+                stage0: workStage.stage0Fact,
+                stage1: workStage.stage1Fact,
+                stage2: workStage.stage2Fact,
+                stage3: workStage.stage3Fact,
+                stage4: workStage.stage4Fact
+            }
+            showWorkStageEdit();
+        }
+        $http.get(constPatchWorkRate + "/stage/" + workStage.id)
             .then(function (response) {
                 // WorkTimeIdEdit = response.data.id;
                 $scope.WorkStage = response.data;

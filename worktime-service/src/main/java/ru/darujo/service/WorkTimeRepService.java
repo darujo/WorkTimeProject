@@ -62,11 +62,12 @@ public class WorkTimeRepService {
 
     private ArrayList<Integer> getTypeForWork(String typeStr) {
         ArrayList<Integer> types = new ArrayList<>();
-
+        // toDo
         if (typeStr != null && typeStr.equals("analise")) {
             types.add(2);
             types.add(3);
             types.add(5);
+            types.add(6);
 
         } else if (typeStr != null && typeStr.equals("develop")) {
             types.add(1);

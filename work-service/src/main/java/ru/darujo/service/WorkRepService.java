@@ -209,7 +209,7 @@ public class WorkRepService {
         return new PageDto<>(workPage.getTotalPages(), workPage.getNumber(), workPage.getSize(), workFactDTOs);
     }
 
-    public MapStringFloat getFactWorkStage0(Long workId, String nikName) {
+    public MapStringFloat getFactWorkStage(Long workId, String nikName, Integer stage) {
         MapStringFloat mapStringFloat = new MapStringFloat();
         Map<String, Float> usersTime = new HashMap<>();
         mapStringFloat.setList(usersTime);
@@ -222,7 +222,7 @@ public class WorkRepService {
             users = taskServiceIntegration.getListUser(workId, work.getIssuePrototypeFact()).getList();
         }
         users.forEach(user -> {
-            Float time = getFactWork(work, 0, user);
+            Float time = getFactWork(work, stage, user);
             if (time > 0) {
                 usersTime.put(user, time);
             }

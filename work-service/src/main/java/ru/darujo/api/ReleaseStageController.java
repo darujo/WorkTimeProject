@@ -33,7 +33,7 @@ public class ReleaseStageController {
 //    }
 
     @GetMapping("")
-    public PriorityQueue<@NonNull ReleaseStageDto> ReleaseList(@RequestParam(required = false) String name,
+    public List<@NonNull ReleaseStageDto> ReleaseList(@RequestParam(required = false) String name,
                                                                @RequestParam(defaultValue = "15") Integer stageZi,
                                                                @RequestParam(required = false) Long codeSap,
                                                                @RequestParam(required = false) String codeZi,
@@ -51,7 +51,7 @@ public class ReleaseStageController {
             }
         }
         long curTime = System.nanoTime();
-        PriorityQueue<@NonNull ReleaseStageDto> workDTOs = releaseStageService.getReleaseStage(name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, DateHelper.convertListToLong(releaseId));
+        List<@NonNull ReleaseStageDto> workDTOs = releaseStageService.getReleaseStage(name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, DateHelper.convertListToLong(releaseId));
         float time_last = (curTime - System.nanoTime()) * 0.000000001f;
         log.info("Время выполнения WorkPage {}", time_last);
         return workDTOs;

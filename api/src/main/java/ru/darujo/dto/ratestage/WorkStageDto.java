@@ -15,7 +15,7 @@ public class WorkStageDto implements UserFio {
 
     @Override
     public void setLastName(String lastName) {
-      this.lastName = lastName;
+        this.lastName = lastName;
     }
 
     @Override
@@ -24,6 +24,7 @@ public class WorkStageDto implements UserFio {
 
     }
 
+    @SuppressWarnings("unused")
     public WorkStageDto() {
     }
 
@@ -37,7 +38,7 @@ public class WorkStageDto implements UserFio {
         this.stage3 = stage3;
         this.stage4 = stage4;
         this.workId = workId;
-        this.stageAll =0f;
+        this.stageAll = 0f;
         addAllTime(stage0);
         addAllTime(stage1);
         addAllTime(stage2);
@@ -51,9 +52,15 @@ public class WorkStageDto implements UserFio {
     private Float stage0;
     private Float stage0Fact;
     private Float stage1;
+    private Float stage1Fact;
     private Float stage2;
+    private Float stage2Fact;
     private Float stage3;
+    private Float stage3Fact;
     private Float stage4;
+    private Float stage4Fact;
+    private Float stage5Fact;
+
     private Float stageAll;
     private Long workId;
 
@@ -101,6 +108,7 @@ public class WorkStageDto implements UserFio {
         return patronymic;
     }
 
+    @SuppressWarnings("unused")
     public Float getStageAll() {
         return stageAll;
     }
@@ -109,8 +117,9 @@ public class WorkStageDto implements UserFio {
         return workId;
     }
 
+    @SuppressWarnings("unused")
     public String getRoleStr() {
-        if(role == null){
+        if (role == null) {
             return "";
         }
         if (role == 1) {
@@ -124,17 +133,81 @@ public class WorkStageDto implements UserFio {
 
         return "Не известная роль";
     }
-    private void  addAllTime(Float time){
-        if(time != null){
+
+    private void addAllTime(Float time) {
+        if (time != null) {
             stageAll = stageAll + time;
         }
     }
 
+    @SuppressWarnings("unused")
     public Float getStage0Fact() {
         return stage0Fact;
     }
 
+
     public void setStage0Fact(Float stage0Fact) {
         this.stage0Fact = stage0Fact;
+    }
+
+    public void setStageFact(Integer stage, Float stageFact) {
+        if (stage == 0) {
+            setStage0Fact(stageFact);
+        } else if (stage == 1) {
+            setStage1Fact(stageFact);
+        } else if (stage == 2) {
+            setStage2Fact(stageFact);
+        } else if (stage == 3) {
+            setStage3Fact(stageFact);
+        } else if (stage == 4) {
+            setStage4Fact(stageFact);
+        } else if (stage == 5) {
+            setStage5Fact(stageFact);
+        }
+    }
+
+    public void setStage1Fact(Float stage1Fact) {
+        this.stage1Fact = stage1Fact;
+    }
+
+    public void setStage2Fact(Float stage2Fact) {
+        this.stage2Fact = stage2Fact;
+    }
+
+    public void setStage3Fact(Float stage3Fact) {
+        this.stage3Fact = stage3Fact;
+    }
+
+    public void setStage4Fact(Float stage4Fact) {
+        this.stage4Fact = stage4Fact;
+    }
+
+    public void setStage5Fact(Float stage5Fact) {
+        this.stage5Fact = stage5Fact;
+    }
+
+    @SuppressWarnings("unused")
+    public Float getStage1Fact() {
+        return stage1Fact;
+    }
+
+    @SuppressWarnings("unused")
+    public Float getStage2Fact() {
+        return stage2Fact;
+    }
+
+    @SuppressWarnings("unused")
+    public Float getStage3Fact() {
+        return stage3Fact;
+    }
+
+    @SuppressWarnings("unused")
+    public Float getStage4Fact() {
+        return stage4Fact;
+    }
+
+    @SuppressWarnings("unused")
+    public Float getStage5Fact() {
+        return stage5Fact;
     }
 }

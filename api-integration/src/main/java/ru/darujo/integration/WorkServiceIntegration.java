@@ -47,12 +47,13 @@ public class WorkServiceIntegration extends ServiceIntegration {
         }
     }
 
-    public MapStringFloat getWorkTimeStageFact(Long workId) {
+    public MapStringFloat getWorkTimeStageFact(Long workId, Integer stage) {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "workId", workId);
+        addTeg(stringBuilder, "stage", stage);
 
         try {
-            return webClientWork.get().uri("/rep/time/fact/stage0" + stringBuilder)
+            return webClientWork.get().uri("/rep/time/fact/stage" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
