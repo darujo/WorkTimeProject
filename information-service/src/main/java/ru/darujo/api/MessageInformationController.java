@@ -2,12 +2,15 @@ package ru.darujo.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.model.ChatInfo;
 import ru.darujo.service.MessageInformationService;
 import ru.darujo.service.ScheduleService;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Timestamp;
 
 @RestController()
@@ -37,6 +40,17 @@ public class MessageInformationController {
             messageInfoDto.setDataTime(new Timestamp(System.currentTimeMillis()));
         }
         return messageInformationService.addMessage(messageInfoDto);
+    }
+    @PostMapping("update")
+    public String addMessageInformation(@RequestHeader(required = false) String username,
+                                         @RequestPart("file") MultipartFile multipartFile) {
+        try(FileOutputStream fout = new FileOutputStream(multipartFile.getOriginalFilename())){
+            fout.write(multipartFile.getBytes());
+            return "Success!";
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Failed!";
+        }
     }
 
     @PostMapping("/set/types")
