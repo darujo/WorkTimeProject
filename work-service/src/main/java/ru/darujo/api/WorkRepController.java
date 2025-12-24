@@ -89,10 +89,11 @@ public class WorkRepController {
         return workRepService.getFactWork(workId, stage, nikName);
     }
 
-    @GetMapping("/time/fact/stage0")
+    @GetMapping("/time/fact/stage")
     public MapStringFloat getFactWork(@RequestParam Long workId,
-                                      @RequestParam(required = false) String nikName) {
-        return workRepService.getFactWorkStage0(workId, nikName);
+                                      @RequestParam(required = false) String nikName,
+                                      @RequestParam(defaultValue = "0") Integer stage) {
+        return workRepService.getFactWorkStage(workId, nikName,stage);
     }
 
     @GetMapping("/fact/week")

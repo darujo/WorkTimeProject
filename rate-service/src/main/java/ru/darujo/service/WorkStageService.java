@@ -96,30 +96,31 @@ public class WorkStageService {
         userServiceIntegration.updFio(userFio);
     }
 
-    private MapStringFloat getWorkTimeAnaliseFact(Long workId) {
+    private MapStringFloat getWorkTimeFact(Long workId, Integer stage) {
         try {
-            return workServiceIntegration.getWorkTimeStageFact(workId);
+            return workServiceIntegration.getWorkTimeStageFact(workId, stage);
         } catch (RuntimeException ex) {
-            return new MapStringFloat();
+            return null;
         }
     }
 
     public void updWorkStage(Long workId, List<WorkStageDto> workStages) {
-        MapStringFloat mapStringFloat = getWorkTimeAnaliseFact(workId);
-        if (!mapStringFloat.getList().isEmpty()) {
-            Map<String, WorkStageDto> workStageMap = new HashMap<>();
-            workStages.forEach(workStage -> workStageMap.put(workStage.getNikName(), workStage));
-            mapStringFloat.getList().forEach((nikName, time) -> {
-                WorkStageDto workStage = workStageMap.get(nikName);
-                if (workStage != null) {
-                    workStage.setStage0Fact(time);
-                } else {
-                    workStage = new WorkStageDto(-1L, nikName, -1, null, null, null, null, null, workId);
-                    workStage.setStage0Fact(time);
-                    updFio(workStage);
-                    workStages.add(workStage);
-                }
-            });
+        for (int stage = 0; stage < 6; stage++) {
+            MapStringFloat mapStringFloat = getWorkTimeFact(workId, stage);
+            if (mapStringFloat!= null && !mapStringFloat.getList().isEmpty()) {
+                Map<String, WorkStageDto> workStageMap = new HashMap<>();
+                workStages.forEach(workStage -> workStageMap.put(workStage.getNikName(), workStage));
+                int finalStage = stage;
+                mapStringFloat.getList().forEach((nikName, time) -> {
+                    WorkStageDto workStage = workStageMap.get(nikName);
+                    if (workStage == null) {
+                        workStage = new WorkStageDto(-1L, nikName, -1, null, null, null, null, null, workId);
+                        updFio(workStage);
+                        workStages.add(workStage);
+                    }
+                    workStage.setStageFact(finalStage, time);
+                });
+            }
         }
     }
 
