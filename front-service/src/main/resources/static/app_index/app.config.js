@@ -4,16 +4,16 @@ angular.module('workTimeService').config(["$ocLazyLoadProvider", function ($ocLa
         'events': true, // For Event 'true/false'
         'modules': [{ // Set modules initially
             name: 'agreement', // module
-            files: ['workrate/agreement.js?ver=2.0']
+            files: ['workRate/agreement.js?ver=2.0'.toLowerCase()]
         }, {
             name: 'agreementRequest', // module
-            files: ['workrate/request.js?ver=2.0']
+            files: ['workRate/request.js?ver=2.0'.toLowerCase()]
         }, {
             name: 'agreementResponse', // module
-            files: ['workrate/response.js?ver=']
+            files: ['workRate/response.js?ver='.toLowerCase()]
         }, {
             name: 'workTime', // module
-            files: ['worktime/worktime.js?ver=2.0']
+            files: ['workTime/workTime.js?ver=2.0'.toLowerCase()]
         }, {
             name: 'workTimeRep', // module
             files: ['rep/workTimeRep.js?ver=2.0'.toLowerCase()]
@@ -34,7 +34,7 @@ angular.module('workTimeService').config(["$ocLazyLoadProvider", function ($ocLa
             files: ['task/task.js?ver=2.0']
         }, {
             name: 'workRate', // module
-            files: ['workrate/workRate.js?ver=2.0'.toLowerCase()]
+            files: ['workRate/workRate.js?ver=2.0'.toLowerCase()]
         }, {
             name: 'calendar', // module
             files: ['calendar/calendar.js?ver=2.0']
@@ -76,10 +76,10 @@ angular.module('workTimeService').config(["$ocLazyLoadProvider", function ($ocLa
             files: ['workGraph/workGraph.js?ver=2.0'.toLowerCase()]
         }, {
             name: 'workStage', // module
-            files: ['work/work_stage.js?ver=2.0'.toLowerCase()]
+            files: ['work/work_stage.js?ver=2.0']
         }, {
             name: 'update', // module
-            files: ['admin/user/update.js?ver=2.0'.toLowerCase()]
+            files: ['admin/user/update.js?ver=2.0']
         }
         ]
     });

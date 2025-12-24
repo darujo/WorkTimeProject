@@ -19,6 +19,6 @@
         <p><textarea id="MesText" class="vvod check_box_td" ng-model="Message.text" required
                      placeholder="Введите сообщение"></textarea></p>
         <label for="file">Выберите файл:</label>
-        <input type="file" name="file" id="file" file-model="Message.fileUpload">
+        <input type="file" id="file" class="file-input" accept=".png, .jpg, .jpeg" file-model = "Message.fileToUpload" />
     </form>
 </div>
