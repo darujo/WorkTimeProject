@@ -61,6 +61,7 @@ public class TelegramBotSend {
     }
 
     public void sendDocument(ChatInfo chatInfo, String fileName, File file, String text) throws TelegramApiException {
+
         SendDocument message = new SendDocument(chatInfo.getChatId(), new InputFile(file, fileName));
         message.setMessageThreadId(chatInfo.getThreadId());
         message.setReplyToMessageId(chatInfo.getOriginMessageId());

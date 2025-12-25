@@ -20,6 +20,7 @@
         <module>code-service</module>
 		<module>information-service</module>
 		<module>telegram-service</module>
+        <module>update-service</module>
 
 
     </modules>

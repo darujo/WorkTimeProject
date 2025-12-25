@@ -22,11 +22,9 @@ import java.util.List;
 @Slf4j
 @Component
 public class TaskServiceIntegration extends ServiceIntegration {
-    private WebClient webClientTask;
-
     @Autowired
-    public void setWebClientTask(WebClient webClientTask) {
-        this.webClientTask = webClientTask;
+    public void setWebClient(WebClient webClientTask) {
+        super.setWebClient(webClientTask);
     }
 
     public Float getTimeWork(Long workId, String nikName, Date dateGt, Date dateLe) {
@@ -42,7 +40,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "type", type);
 
         try {
-            return webClientTask.get().uri("/rep/fact/time" + stringBuilder)
+            return webClient.get().uri("/rep/fact/time" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
@@ -62,7 +60,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "workId", workID);
         addTeg(stringBuilder, "dateLe", dateLe);
         try {
-            return webClientTask.get().uri("/rep/fact/user" + stringBuilder)
+            return webClient.get().uri("/rep/fact/user" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
@@ -75,7 +73,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
     }
 
     public TaskDto getTask(Long id) {
-        return webClientTask.get().uri("/" + id)
+        return webClient.get().uri("/" + id)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                         cR -> getMessage(cR, "Задача c id = " + id + " не найдена"))
@@ -90,7 +88,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "codeBTS", taskBts);
         log.info("/list/id{}", stringBuilder);
 
-        return webClientTask.get().uri("/list/id" + stringBuilder)
+        return webClient.get().uri("/list/id" + stringBuilder)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                         cR -> getMessage(cR, "Задачи не найдены"))
@@ -101,7 +99,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
 
     public Boolean availWorkTime(Long id) {
         try {
-            return webClientTask.get().uri("/rep/fact/avail/" + id)
+            return webClient.get().uri("/rep/fact/avail/" + id)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Задача c id = " + id + " не найдена"))
@@ -120,7 +118,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
     public Boolean setTaskRefreshTime(Long taskId, Date dateWork) {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "date", dateWork);
-        return webClientTask.get().uri("/refresh/" + taskId + stringBuilder)
+        return webClient.get().uri("/refresh/" + taskId + stringBuilder)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                         cR -> getMessage(cR, "Задача c id = " + taskId + " не найдена"))
@@ -139,7 +137,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "addTotal", addTotal);
 
         try {
-            return webClientTask.get().uri("/rep/fact/week" + stringBuilder)
+            return webClient.get().uri("/rep/fact/week" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
@@ -158,7 +156,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "dateLe", dateLe);
         addTeg(stringBuilder, "dateGe", dateGe);
         try {
-            return webClientTask.get().uri("/rep/fact/lastTime" + stringBuilder)
+            return webClient.get().uri("/rep/fact/lastTime" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Задача c id = " + workId + " не найдена"))
@@ -172,7 +170,7 @@ public class TaskServiceIntegration extends ServiceIntegration {
 
     public List<AttrDto<Integer>> getTaskTypes() {
         try {
-            return webClientTask.get().uri("/code/type")
+            return webClient.get().uri("/code/type")
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Не удалось получить справочник TaskType"))

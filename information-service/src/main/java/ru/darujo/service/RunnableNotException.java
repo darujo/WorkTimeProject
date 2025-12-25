@@ -16,6 +16,10 @@ public class RunnableNotException implements Runnable{
         try {
             runnable.run();
         }catch (Exception ex){
+            log.error(Boolean.toString(Thread.interrupted()));
+            if(Thread.interrupted()){
+                throw new RuntimeException("Команда на завершение");
+            }
             log.error(ex.getMessage());
             log.error(Arrays.toString(ex.getStackTrace()));
         }

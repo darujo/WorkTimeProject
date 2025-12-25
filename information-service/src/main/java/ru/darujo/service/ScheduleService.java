@@ -1,6 +1,7 @@
 package ru.darujo.service;
 
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.information.MessageType;
@@ -13,6 +14,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Service
+@Slf4j
 public class ScheduleService {
     private Tasks tasks;
 
@@ -55,18 +57,19 @@ public class ScheduleService {
         executor.schedule(getTask(messageType, chatInfo), 2, TimeUnit.SECONDS);
     }
 
-    private void close() {
+    public void close() {
         // Корректное завершение
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+//        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             executor.shutdown();
             try {
-                if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                while (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                    log.error("sto1");
                     executor.shutdownNow();
                 }
             } catch (InterruptedException e) {
                 executor.shutdownNow();
             }
-        }));
+//        }));
 
 
     }

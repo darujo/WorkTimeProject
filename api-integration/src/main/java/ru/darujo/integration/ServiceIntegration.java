@@ -3,7 +3,9 @@ package ru.darujo.integration;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.ClientResponse;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
@@ -12,11 +14,52 @@ import java.util.Date;
 
 @Slf4j
 public abstract class ServiceIntegration {
+    protected WebClient webClient;
+
+    protected void setWebClient(WebClient webClient) {
+        this.webClient = webClient;
+    }
+
+    public Void test() {
+        if (webClient == null){
+            throw new RuntimeException("Сервис не подерживает тест соединение");
+        }
+        try {
+            return webClient.get().uri("/test")
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            cR -> getMessage(cR,"Проверка не прошла "))
+                    .bodyToMono(Void.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundRunTime("Проверка не прошла или обратитесь к администратору " + ex.getMessage());
+        }
+    }
+    public void shutDown() {
+        if (webClient == null){
+            throw new RuntimeException("Сервис не подерживает тест соединение");
+        }
+        try {
+            webClient.post().uri("/shutdownContext")
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            cR -> getMessage(cR,"Проверка не прошла "))
+                    .bodyToMono(Void.class)
+                    .subscribe(unused -> log.info("Конец"))
+//                    .doOnError(throwable -> log.error(throwable.getMessage()))
+//                    .block()
+                    ;
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundRunTime("Проверка не прошла или обратитесь к администратору " + ex.getMessage());
+        }
+    }
     @Data
     protected static class ErrorResponse {
         private String message;
         private int errorCode;
     }
+
 
     protected Mono<? extends @NonNull Throwable> getMessage(ClientResponse clientResponse, String message) {
         return clientResponse
@@ -48,7 +91,7 @@ public abstract class ServiceIntegration {
         }
     }
 
-    protected void addTeg(StringBuilder stringBuilder, String str, Boolean value) {
+    protected void addTeg(StringBuilder stringBuilder, String str, Object value) {
         if (value != null) {
             if (!stringBuilder.isEmpty()) {
                 stringBuilder.append("&");
