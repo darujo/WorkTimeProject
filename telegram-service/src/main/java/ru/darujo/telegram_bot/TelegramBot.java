@@ -13,21 +13,37 @@ import java.util.Arrays;
 @Component
 @SuppressWarnings("unused")
 public class TelegramBot {
+    TelegramBotsLongPollingApplication botsApplication;
     @Autowired
     public TelegramBot(@Value("${telegram-bot.token}") String botToken,
                        TelegramBotRequest telegramBotRequest) {
         try {
+
             // нельзя оборачивать в try так как отвалится процесс Приема сообщений
-            @SuppressWarnings("resource")
-            TelegramBotsLongPollingApplication botsApplication = new TelegramBotsLongPollingApplication();
+            botsApplication = new TelegramBotsLongPollingApplication();
 
             botsApplication.registerBot(botToken, telegramBotRequest);
+          //  Thread.currentThread().join();
         } catch (TelegramApiException e) {
             log.error(e.getMessage());
             log.error(Arrays.toString(e.getStackTrace()));
 
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
+    }
+    public void close(){
+        try {
+            //ToDo не останавливает процес
+            botsApplication.stop();
+            botsApplication.close();
+
+            log.error("sttop ok ");
+        } catch (Exception e) {
+            log.error("stop ----");
+            throw new RuntimeException(e);
+        }
     }
 
 

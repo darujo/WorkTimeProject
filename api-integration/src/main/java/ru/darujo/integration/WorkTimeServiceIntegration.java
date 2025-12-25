@@ -18,11 +18,9 @@ import java.util.List;
 @Log4j2
 @Component
 public class WorkTimeServiceIntegration extends ServiceIntegration {
-    private WebClient webClientWorkTime;
-
     @Autowired
-    public void setWebClientWorkTime(WebClient webClientWorkTime) {
-        this.webClientWorkTime = webClientWorkTime;
+    public void setWebClient(WebClient webClientWorkTime) {
+        super.setWebClient(webClientWorkTime);
     }
 
     public Float getTimeTask(Long taskId, String nikName, Date dateLE, Date dateGT, String type) {
@@ -36,7 +34,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
 
 
         try {
-            return webClientWorkTime.get().uri("/rep/fact/time" + stringBuilder)
+            return webClient.get().uri("/rep/fact/time" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
@@ -55,7 +53,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "dateLe", dateLe);
 
         try {
-            return webClientWorkTime.get().uri("/rep/fact/user" + stringBuilder)
+            return webClient.get().uri("/rep/fact/user" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
@@ -69,7 +67,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
 
     public Boolean availTime(Long taskId) {
         try {
-            return webClientWorkTime.get().uri("/rep/fact/availTime/" + taskId)
+            return webClient.get().uri("/rep/fact/availTime/" + taskId)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
@@ -102,7 +100,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
 
         try {
             log.info("/rep/fact/week{}", stringBuilder);
-            return webClientWorkTime.get().uri("/rep/fact/week" + stringBuilder)
+            return webClient.get().uri("/rep/fact/week" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
@@ -131,7 +129,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "dateEnd", dateEnd);
 
         try {
-            return webClientWorkTime.get().uri("/rep/fact/week" + stringBuilder)
+            return webClient.get().uri("/rep/fact/week" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
@@ -151,7 +149,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
             addTeg(stringBuilder, "dateLe", dateLe);
             addTeg(stringBuilder, "dateGe", dateGe);
 
-            return webClientWorkTime.get().uri("/rep/fact/lastTime" + stringBuilder)
+            return webClient.get().uri("/rep/fact/lastTime" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени. Статус "))
@@ -173,7 +171,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
             addTeg(stringBuilder, "nikName", nikName);
             addTeg(stringBuilder, "periodSplit", period);
 
-            return webClientWorkTime.get().uri("/rep/fact/user/work/only" + stringBuilder)
+            return webClient.get().uri("/rep/fact/user/work/only" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени. Статус"))

@@ -23,11 +23,9 @@ import java.util.Objects;
 @Slf4j
 @Component
 public class UserServiceIntegration extends ServiceIntegration {
-    private WebClient webClientUser;
-
     @Autowired
-    public void setWebClientUser(WebClient webClientUser) {
-        this.webClientUser = webClientUser;
+    public void setWebClient(WebClient webClientUser) {
+        super.setWebClient(webClientUser);
     }
     private static UserServiceIntegration INSTANCE;
     public static UserServiceIntegration getInstance(){
@@ -45,7 +43,7 @@ public class UserServiceIntegration extends ServiceIntegration {
             addTeg(stringBuilder, "nikName", nikName);
         }
         try {
-            return webClientUser.get().uri("/user" + stringBuilder)
+            return webClient.get().uri("/user" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные пользователю"))
@@ -65,7 +63,7 @@ public class UserServiceIntegration extends ServiceIntegration {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "nikName", nikNameOrRole);
         try {
-            return Objects.requireNonNull(webClientUser.get().uri(stringBuilder.toString())
+            return Objects.requireNonNull(webClient.get().uri(stringBuilder.toString())
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
@@ -89,7 +87,7 @@ public class UserServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "telegramId", telegramId);
         addTeg(stringBuilder, "threadId", threadId);
         try {
-            return webClientUser.get().uri("/user/telegram/link" + stringBuilder)
+            return webClient.get().uri("/user/telegram/link" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
@@ -111,7 +109,7 @@ public class UserServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "telegramId", telegramId);
         addTeg(stringBuilder, "threadId", threadId);
         try {
-            return webClientUser.get().uri("/user/telegram/delete" + stringBuilder)
+            return webClient.get().uri("/user/telegram/delete" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
@@ -130,7 +128,7 @@ public class UserServiceIntegration extends ServiceIntegration {
 
     public MapUserInfoDto getUserMessageDTOs() {
         try {
-            return webClientUser.get().uri("/information")
+            return webClient.get().uri("/information")
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
@@ -148,7 +146,7 @@ public class UserServiceIntegration extends ServiceIntegration {
 
     public ResultMes checkUserTelegram(@NonNull Long chatId) {
         try {
-            return webClientUser.get().uri("/user/telegram/get/" + chatId)
+            return webClient.get().uri("/user/telegram/get/" + chatId)
                     .retrieve()
 //                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
 //                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные пользователю" + clientResponse.bodyToMono(String.class).flatMap(s -> {log.error(s);

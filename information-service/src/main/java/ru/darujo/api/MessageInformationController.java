@@ -41,17 +41,6 @@ public class MessageInformationController {
         }
         return messageInformationService.addMessage(messageInfoDto);
     }
-    @PostMapping("update")
-    public String addMessageInformation(@RequestHeader(required = false) String username,
-                                         @RequestPart("file") MultipartFile multipartFile) {
-        try(FileOutputStream fout = new FileOutputStream(multipartFile.getOriginalFilename())){
-            fout.write(multipartFile.getBytes());
-            return "Success!";
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "Failed!";
-        }
-    }
 
     @PostMapping("/set/types")
     public void setMessageTypeListMap(@RequestBody MapUserInfoDto messageTypeListMap) {

@@ -13,11 +13,9 @@ import ru.darujo.exceptions.ResourceNotFoundRunTime;
 @Component
 @ConditionalOnMissingClass
 public class RateServiceIntegration extends ServiceIntegration {
-    private WebClient webClientRate;
-
     @Autowired
-    public void setWebClientCalendar(WebClient webClientRate) {
-        this.webClientRate = webClientRate;
+    public void setWebClient(WebClient webClientRate) {
+        super.setWebClient(webClientRate);
     }
 
 
@@ -28,7 +26,7 @@ public class RateServiceIntegration extends ServiceIntegration {
             }
             StringBuilder stringBuilder = new StringBuilder();
             addTeg(stringBuilder, "workId", workId);
-            return webClientRate.get().uri("/time/all" + stringBuilder)
+            return webClient.get().uri("/time/all" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить плановые трудозатраты"))

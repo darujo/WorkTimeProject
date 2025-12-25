@@ -20,12 +20,3 @@ spring:
 
   jackson:
     default-property-inclusion: non_absent
-  servlet:
-    multipart:
-      enabled: true
-  # Threshold after which the files are written to a disk.
-      file-size-threshold: 2KB
-  # Max file size.
-      max-file-size: 5500KB
-  # Max Request Size
-      max-request-size: 5500KB

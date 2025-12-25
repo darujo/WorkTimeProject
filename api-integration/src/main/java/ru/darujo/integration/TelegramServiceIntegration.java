@@ -10,11 +10,9 @@ import ru.darujo.exceptions.ResourceNotFoundRunTime;
 @Slf4j
 @Component
 public class TelegramServiceIntegration extends ServiceIntegration {
-    private WebClient webClientTelegram;
-
     @Autowired
-    public void setWebClientTelegram(WebClient webClientTelegram) {
-        this.webClientTelegram = webClientTelegram;
+    public void setWebClient(WebClient webClientTelegram) {
+        super.setWebClient(webClientTelegram);
     }
 
     public void sendMessage(
@@ -35,7 +33,7 @@ public class TelegramServiceIntegration extends ServiceIntegration {
             StringBuilder sb = new StringBuilder();
             addTeg(sb, "threadId", threadId);
             addTeg(sb, "originMessageId", originMessageId);
-            webClientTelegram.post().uri("/" + chatId + "/notifications" + sb)
+            webClient.post().uri("/" + chatId + "/notifications" + sb)
                     .header("username", author)
                     .bodyValue(text)
                     .retrieve()
@@ -55,7 +53,7 @@ public class TelegramServiceIntegration extends ServiceIntegration {
         try {
             StringBuilder sb = new StringBuilder();
             addTeg(sb, "fileName", fileName);
-            webClientTelegram.post().uri("/file" + sb)
+            webClient.post().uri("/file" + sb)
                     .bodyValue(textFile)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
@@ -81,7 +79,7 @@ public class TelegramServiceIntegration extends ServiceIntegration {
             addTeg(sb, "fileName", fileName);
             addTeg(sb, "threadId", threadId);
             addTeg(sb, "originMessageId", originMessageId);
-            webClientTelegram.post().uri("/" + chatId + "/file" + sb)
+            webClient.post().uri("/" + chatId + "/file" + sb)
                     .header("username", author)
                     .bodyValue(text)
                     .retrieve()
@@ -100,7 +98,7 @@ public class TelegramServiceIntegration extends ServiceIntegration {
         try {
             StringBuilder sb = new StringBuilder();
             addTeg(sb, "fileName", fileName);
-            webClientTelegram.delete().uri("/file" + sb)
+            webClient.delete().uri("/file" + sb)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса telegram"))
