@@ -1,9 +1,13 @@
 package ru.darujo.telegram_bot;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
+import org.telegram.telegrambots.longpolling.starter.SpringLongPollingBot;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -25,7 +29,16 @@ import java.util.Map;
 
 @Slf4j
 @Component
-public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer {
+public class TelegramBotRequest implements SpringLongPollingBot,LongPollingSingleThreadUpdateConsumer {
+    @Override
+    public String getBotToken() {
+        return botToken;
+    }
+    @Override
+    public LongPollingUpdateConsumer getUpdatesConsumer() {
+        return this;
+    }
+
     private UserServiceIntegration userServiceIntegration;
 
     @Autowired
@@ -36,6 +49,8 @@ public class TelegramBotRequest implements LongPollingSingleThreadUpdateConsumer
     private FileService fileService;
     @Value("${telegram-bot.name}")
     private String botName;
+    @Value("${telegram-bot.token}")
+    private String botToken;
 
     @Autowired
     public void setFileService(FileService fileService) {
