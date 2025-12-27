@@ -1,9 +1,12 @@
 package ru.darujo.telegram_bot;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
+import org.telegram.telegrambots.meta.api.methods.ActionType;
+import org.telegram.telegrambots.meta.api.methods.send.SendChatAction;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -20,8 +23,10 @@ import ru.darujo.model.MessageSend;
 import ru.darujo.service.MessageSendService;
 
 import java.io.File;
+import java.util.Arrays;
 
 @Component
+@Slf4j
 public class TelegramBotSend {
     private final OkHttpTelegramClient tgClient;
 
@@ -113,5 +118,24 @@ public class TelegramBotSend {
 //        edit.(newText);
         edit.setReplyMarkup(menu);
         tgClient.execute(edit);
+    }
+
+    public boolean SendAction(ChatInfo chatInfo) {
+        return SendAction(chatInfo, ActionType.TYPING);
+
+    }
+
+    public boolean SendAction(ChatInfo chatInfo, ActionType actionType) {
+        SendChatAction sendChatAction = new SendChatAction(chatInfo.getChatId(), actionType.toString());
+        sendChatAction.setChatId(chatInfo.getChatId());
+        sendChatAction.setMessageThreadId(chatInfo.getThreadId());
+
+        try {
+            return tgClient.execute(sendChatAction);
+        } catch (TelegramApiException e) {
+            // TODO Auto-generated catch block
+            log.error("{} \n {}", e.getMessage(), Arrays.toString(e.getStackTrace()));
+        }
+        return false;
     }
 }

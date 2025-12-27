@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>ru.darujo</groupId>
-            <artifactId>code-service</artifactId>
+            <artifactId>api-code</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>

@@ -6,10 +6,11 @@
     <packaging>pom</packaging>
 	<modules>
 		<module>api</module>
-		<module>calendar</module>
-		<module>api-integration</module>
-		<module>repository</module>
 		<module>api-calendar</module>
+        <module>api-integration</module>
+        <module>api-repository</module>
+        <module>api-controller</module>
+        <module>calendar-service</module>
 		<module>auth-service</module>
 		<module>worktime-service</module>
 		<module>work-service</module>
@@ -17,10 +18,11 @@
 		<module>rate-service</module>
 		<module>front-service</module>
 		<module>gateway-service</module>
-        <module>code-service</module>
+        <module>api-code</module>
 		<module>information-service</module>
 		<module>telegram-service</module>
         <module>update-service</module>
+        <module>api-controller</module>
 
 
     </modules>

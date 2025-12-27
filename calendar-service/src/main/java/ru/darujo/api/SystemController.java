@@ -7,7 +7,7 @@ import ru.darujo.TestAndShutdownController;
 
 
 @RestController()
-@RequestMapping("/v1/task")
+@RequestMapping("/v1")
 @Log4j2
 public class SystemController extends TestAndShutdownController {
 }
