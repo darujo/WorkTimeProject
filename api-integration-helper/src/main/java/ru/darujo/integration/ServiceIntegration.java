@@ -21,14 +21,14 @@ public abstract class ServiceIntegration {
     }
 
     public Void test() {
-        if (webClient == null){
+        if (webClient == null) {
             throw new RuntimeException("Сервис не подерживает тест соединение");
         }
         try {
             return webClient.get().uri("/test")
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR,"Проверка не прошла "))
+                            cR -> getMessage(cR, "Проверка не прошла "))
                     .bodyToMono(Void.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -36,24 +36,24 @@ public abstract class ServiceIntegration {
             throw new ResourceNotFoundRunTime("Проверка не прошла или обратитесь к администратору " + ex.getMessage());
         }
     }
+
     public void shutDown() {
-        if (webClient == null){
+        if (webClient == null) {
             throw new RuntimeException("Сервис не подерживает тест соединение");
         }
         try {
             webClient.post().uri("/shutdownContext")
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR,"Проверка не прошла "))
+                            cR -> getMessage(cR, "Проверка не прошла "))
                     .bodyToMono(Void.class)
-                    .subscribe(unused -> log.info("Конец"))
-//                    .doOnError(throwable -> log.error(throwable.getMessage()))
-//                    .block()
-                    ;
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundRunTime("Проверка не прошла или обратитесь к администратору " + ex.getMessage());
         }
     }
+
     @Data
     protected static class ErrorResponse {
         private String message;
@@ -64,10 +64,10 @@ public abstract class ServiceIntegration {
     protected Mono<? extends @NonNull Throwable> getMessage(ClientResponse clientResponse, String message) {
         return clientResponse
                 .bodyToMono(ErrorResponse.class)
-                .flatMap(error ->{
+                .flatMap(error -> {
                             log.error("{} {}", message, error.getMessage());
-                        return Mono.error(new ResourceNotFoundRunTime(message + " " + error.getMessage()));
-                }
+                            return Mono.error(new ResourceNotFoundRunTime(message + " " + error.getMessage()));
+                        }
 
                 );
     }

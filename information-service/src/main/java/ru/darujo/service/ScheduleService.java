@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
-public class ScheduleService {
+public class ScheduleService implements AutoCloseable {
     private Tasks tasks;
 
     @Autowired
@@ -57,6 +57,7 @@ public class ScheduleService {
         executor.schedule(getTask(messageType, chatInfo), 2, TimeUnit.SECONDS);
     }
 
+    @Override
     public void close() {
         // Корректное завершение
 //        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -70,8 +71,6 @@ public class ScheduleService {
                 executor.shutdownNow();
             }
 //        }));
-
-
     }
 
     private RunnableNotException getTask(MessageType messageType) {

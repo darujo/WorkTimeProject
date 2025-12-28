@@ -3,7 +3,7 @@ package ru.darujo.properties;
 import lombok.Data;
 
 @Data
-public abstract class ServiceProperty {
+public abstract class ServiceProperty implements PropertyConnectionInterface {
     private String url;
     private Integer connectionTimeOut;
     private Integer readTimeOut;

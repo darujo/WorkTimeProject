@@ -7,10 +7,12 @@
 	<modules>
 		<module>api</module>
 		<module>api-calendar</module>
-        <module>api-integration</module>
+		<module>api-code</module>
+		<module>api-integration-helper</module>
+		<module>api-integration</module>
         <module>api-repository</module>
         <module>api-controller</module>
-        <module>calendar-service</module>
+		<module>calendar-service</module>
 		<module>auth-service</module>
 		<module>worktime-service</module>
 		<module>work-service</module>
@@ -18,14 +20,12 @@
 		<module>rate-service</module>
 		<module>front-service</module>
 		<module>gateway-service</module>
-        <module>api-code</module>
 		<module>information-service</module>
 		<module>telegram-service</module>
         <module>update-service</module>
-        <module>api-controller</module>
 
 
-    </modules>
+	</modules>
 	<groupId>ru.darujo</groupId>
 	<artifactId>WorkTimeProject</artifactId>
 	<version>0.0.1-SNAPSHOT</version>

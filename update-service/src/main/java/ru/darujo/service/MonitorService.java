@@ -67,6 +67,7 @@ public class MonitorService {
                 serviceIntegration.test();
                 log.info("Сервис {} в строю", name);
                 serviceIntegration.shutDown();
+                log.info("Команда остановкиуспешно отправлена сервису {}", name);
             } catch (RuntimeException ex) {
                 log.error("Сервис {} {}", name, ex.getMessage());
             }

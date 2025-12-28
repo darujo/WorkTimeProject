@@ -7,11 +7,11 @@
     <import class="ch.qos.logback.core.ConsoleAppender"/>
 
     <appender name="FILE" class="RollingFileAppender">
-        <file>logs/app-information.log</file>
+        <file>logs/app-update.log</file>
         <rollingPolicy
                 class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
-            <fileNamePattern>logs/app-information.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/old/app-update.%d{yyyy-MM-dd}.log</fileNamePattern>
 
             <!-- Храним файлы логов 10 дней -->
             <maxHistory>10</maxHistory>
