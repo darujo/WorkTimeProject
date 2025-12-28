@@ -26,3 +26,4 @@ app:
 telegram-bot:
   name: "DaruWorkBot"
   token: "7540883202:DDHRreIZun_QKWWsZJKaJVfl5wLeXm013uM"
+  admin-id: 496071536
