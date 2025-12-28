@@ -54,6 +54,16 @@ public class MonitorService {
         addServiceIntegration("workTime", workTimeServiceIntegration);
     }
 
+    @Autowired
+    public void setFrontServiceIntegration(FrontServiceIntegration frontServiceIntegration) {
+        addServiceIntegration("front", frontServiceIntegration);
+    }
+
+    @Autowired
+    public void setGateWayServiceIntegration(GateWayServiceIntegration gateWayServiceIntegration) {
+        addServiceIntegration("gateWay", gateWayServiceIntegration);
+    }
+
     private void addServiceIntegration(String name, ServiceIntegration serviceIntegration) {
         log.info(name);
         serviceIntegrationMap.put(name, serviceIntegration);

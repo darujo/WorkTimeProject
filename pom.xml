@@ -9,6 +9,8 @@
 		<module>api-calendar</module>
 		<module>api-code</module>
 		<module>api-integration-helper</module>
+        <module>api-integration-front</module>
+        <module>api-integration-gateway</module>
 		<module>api-integration</module>
         <module>api-repository</module>
         <module>api-controller</module>
