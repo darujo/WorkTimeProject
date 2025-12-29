@@ -27,6 +27,7 @@ public class JwtRequest implements Serializable {
         this.password = password;
     }
 
+    @SuppressWarnings("unused")
     public JwtRequest() {
     }
 }

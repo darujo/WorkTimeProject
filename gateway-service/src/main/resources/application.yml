@@ -38,7 +38,7 @@ spring:
               predicates:
                 - Path=/gate/shutdownContext
               filters:
-                - JwtAdminFilter
+                - JwtStopServiceFilter
             - id: gate-test
               uri: forward:///v1/system/test
               predicates:

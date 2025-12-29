@@ -37,12 +37,13 @@ public abstract class ServiceIntegration {
         }
     }
 
-    public void shutDown() {
+    public void shutDown(String token) {
         if (webClient == null) {
             throw new RuntimeException("Сервис не подерживает тест соединение");
         }
         try {
             webClient.post().uri("/shutdownContext")
+                    .header("Authorization", "Bearer " + token)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Проверка не прошла "))

@@ -38,6 +38,11 @@ public class TelegramController {
         telegramBotSend.sendMessage(new ChatInfo(username, chatId, threadId, originMessageId), text);
     }
 
+    @PostMapping(value = "/send/admin", consumes = MediaType.TEXT_PLAIN_VALUE)
+    public void sendMessageToTelegram(@RequestBody String text) throws TelegramApiException {
+        telegramBotSend.sendMessageForAdmin(text);
+    }
+
     @PostMapping(value = "/file", consumes = MediaType.TEXT_PLAIN_VALUE)
     public String addFile(@RequestParam String fileName,
                           @RequestBody String body) {
@@ -54,8 +59,9 @@ public class TelegramController {
         File file = fileService.getFile(fileName);
         telegramBotSend.sendDocument(new ChatInfo(username, chatId, threadId, originMessageId), fileName, file, text);
     }
+
     @DeleteMapping(value = "/file")
-    public void deleteFile(@RequestParam String fileName){
+    public void deleteFile(@RequestParam String fileName) {
         fileService.delFile(fileName);
     }
 }

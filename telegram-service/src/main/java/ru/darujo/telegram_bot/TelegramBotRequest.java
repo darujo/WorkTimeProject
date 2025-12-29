@@ -51,8 +51,7 @@ public class TelegramBotRequest implements SpringLongPollingBot, LongPollingUpda
     private String botName;
     @Value("${telegram-bot.token}")
     private String botToken;
-    @Value("${telegram-bot.admin-id}")
-    private String adminId;
+
 
     @Autowired
     public void setFileService(FileService fileService) {
@@ -278,7 +277,7 @@ public class TelegramBotRequest implements SpringLongPollingBot, LongPollingUpda
     @Override
     public void close() { // <-- 8
         try {
-            telegramBotSend.sendMessage(new ChatInfo("AutoClose", adminId, null, null), "⚠️ The bot has stopped");
+            telegramBotSend.sendMessageForAdmin("⚠️ The bot has stopped");
         } catch (TelegramApiException e) {
             log.error("Failed to send message while stopping the bot", e);
         }

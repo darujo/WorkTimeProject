@@ -11,6 +11,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import ru.darujo.dto.CustomPageImpl;
 import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.ResultMes;
+import ru.darujo.dto.jwt.JwtRequest;
+import ru.darujo.dto.jwt.JwtResponse;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.user.UserFio;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
@@ -35,6 +37,27 @@ public class UserServiceIntegration extends ServiceIntegration {
     public void init(){
         INSTANCE = this;
     }
+
+    public JwtResponse getToken(String username, String password) {
+
+        try {
+            return webClient.post().uri("/auth/")
+                    .bodyValue(new JwtRequest(username, password))
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные пользователю"))
+                    .bodyToMono(JwtResponse.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .block();
+        } catch (RuntimeException ex) {
+            if (ex instanceof ResourceNotFoundRunTime) {
+                throw ex;
+            } else {
+                throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить пользователя (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            }
+        }
+    }
+
     public UserDto getUserDto(Long userId, String nikName) {
         StringBuilder stringBuilder = new StringBuilder();
         if (userId != null) {
@@ -43,7 +66,7 @@ public class UserServiceIntegration extends ServiceIntegration {
             addTeg(stringBuilder, "nikName", nikName);
         }
         try {
-            return webClient.get().uri("/user" + stringBuilder)
+            return webClient.get().uri("/users/user" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные пользователю"))
@@ -63,7 +86,7 @@ public class UserServiceIntegration extends ServiceIntegration {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "nikName", nikNameOrRole);
         try {
-            return Objects.requireNonNull(webClient.get().uri(stringBuilder.toString())
+            return Objects.requireNonNull(webClient.get().uri("/users" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
@@ -87,7 +110,7 @@ public class UserServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "telegramId", telegramId);
         addTeg(stringBuilder, "threadId", threadId);
         try {
-            return webClient.get().uri("/user/telegram/link" + stringBuilder)
+            return webClient.get().uri("/users/user/telegram/link" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
@@ -109,7 +132,7 @@ public class UserServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "telegramId", telegramId);
         addTeg(stringBuilder, "threadId", threadId);
         try {
-            return webClient.get().uri("/user/telegram/delete" + stringBuilder)
+            return webClient.get().uri("/users/user/telegram/delete" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
@@ -128,7 +151,7 @@ public class UserServiceIntegration extends ServiceIntegration {
 
     public MapUserInfoDto getUserMessageDTOs() {
         try {
-            return webClient.get().uri("/information")
+            return webClient.get().uri("/users/information")
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))

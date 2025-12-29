@@ -91,6 +91,14 @@ public class TelegramBotSend {
         return messageSend;
     }
 
+    @Value("${telegram-bot.admin-id}")
+    private String adminId;
+
+    public Message sendMessageForAdmin(String text) throws TelegramApiException {
+        return sendMessage(new ChatInfo(null, adminId, null, null), text);
+
+    }
+
     public void deleteMessage(ChatInfo chatInfo) throws TelegramApiException {
         if (chatInfo.getOriginMessageId() == null) {
             return;

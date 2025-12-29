@@ -47,6 +47,21 @@ public class TelegramServiceIntegration extends ServiceIntegration {
         }
     }
 
+    public void sendMessageForAdmin(
+            String text) {
+        try {
+            webClient.post().uri("/send/admin")
+                    .bodyValue(text)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса telegram"))
+                    .bodyToMono(Void.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
+    }
     public void addFile(
             String fileName,
             String textFile) {
