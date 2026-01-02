@@ -19,14 +19,12 @@ import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.user.*;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.InfoServiceIntegration;
+import ru.darujo.model.Right;
 import ru.darujo.model.User;
 import ru.darujo.repository.UserRepository;
 import ru.darujo.specifications.Specifications;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -126,6 +124,17 @@ public class UserService {
 
     @Transactional
     public User loadUserByNikName(String nikName) throws UsernameNotFoundException {
+        // todo вынести в настройки
+        if (nikName.equals("system_user_update")) {
+            User user = new User(-1L, nikName, hashPassword(
+                    "Приносить пользу миру — это единственный способ стать счастливым."),
+
+                    null, null, null, false);
+            List<Right> right = new ArrayList<>();
+            right.add(new Right(-1L, "STOP_SERVICE", "право на стоп"));
+            user.setRights(right);
+            return user;
+        }
         return findByNikName(nikName).orElseThrow(() -> new UsernameNotFoundException("Не найден пользователь по логину " + nikName));
     }
 

@@ -165,7 +165,7 @@
 
     $scope.clearFilter = function (load) {
         console.log("clearFilter");
-        if ($scope.Filt === null || !load) {
+        if ($scope.Filt === null || load) {
             $scope.Filt = {
                 size: 10
             };

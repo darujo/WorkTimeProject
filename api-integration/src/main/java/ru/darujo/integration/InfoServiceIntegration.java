@@ -14,17 +14,15 @@ import ru.darujo.type.ReportTypeDto;
 @Slf4j
 @Component
 public class InfoServiceIntegration extends ServiceIntegration {
-    private WebClient webClientInfo;
-
     @Autowired
-    public void setWebClientInfo(WebClient webClientInfo) {
-        this.webClientInfo = webClientInfo;
+    public void setWebClient(WebClient webClientInfo) {
+        super.setWebClient(webClientInfo);
     }
 
 
     public void setMessageTypeListMap(MapUserInfoDto mapUserInfoDto) {
         try {
-            webClientInfo.post().uri("/set/types")
+            webClient.post().uri("/set/types")
                     .bodyValue(mapUserInfoDto)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
@@ -39,7 +37,7 @@ public class InfoServiceIntegration extends ServiceIntegration {
 
     public void addMessage(MessageInfoDto messageInfoDto) {
         try {
-            webClientInfo.post().uri("/add/message")
+            webClient.post().uri("/add/message")
                     .bodyValue(messageInfoDto)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
@@ -60,7 +58,7 @@ public class InfoServiceIntegration extends ServiceIntegration {
             addTeg(sb, "chatId", chatId);
             addTeg(sb, "threadId", threadId);
             addTeg(sb, "originMessageId", originMessageId);
-            webClientInfo.get().uri("/report" + sb)
+            webClient.get().uri("/report" + sb)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))

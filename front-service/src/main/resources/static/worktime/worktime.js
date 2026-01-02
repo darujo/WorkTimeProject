@@ -39,7 +39,7 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
         taskDevbo: null,
         taskBts: null,
         nikName: null,
-        currentUser: null
+        currentUser: true
     }
     $scope.FiltTask = {
         size: null,
@@ -492,7 +492,7 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
     }
     $scope.clearFilter = function (load) {
         console.log("clearFilter");
-
+        console.log($scope.Filter)
         if (load) {
             $scope.Filter = {
                 taskId: null,
@@ -504,6 +504,7 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
         } else {
             console.log($scope.Filter);
             $scope.Filter["size"] = $scope.Filter.size ? $scope.Filter.size : 10;
+            $scope.Filter["currentUser"] = $scope.Filter.currentUser ? $scope.Filter.currentUser : true;
             console.log($scope.Filter);
         }
     }
@@ -517,7 +518,9 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
             $scope.filterTask();
         }
     }
+    console.log(" get filter 1 ", $scope.Filter)
     $scope.Filter = $location.getFilter("wortTimeFilter");
+    console.log(" get filter 2 ", $scope.Filter)
     $scope.FiltTask = $location.getFilter("wortTimeEditFilter");
 
     $scope.clearFilter(false);

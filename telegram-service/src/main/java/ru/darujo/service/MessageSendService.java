@@ -16,8 +16,8 @@ public class MessageSendService {
     }
 
 
-    public MessageSend saveMessageSend(MessageSend messageSend) {
-        return messageSendRepository.save(messageSend);
+    public void saveMessageSend(MessageSend messageSend) {
+        messageSendRepository.save(messageSend);
     }
 
 

@@ -289,7 +289,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
     }
     $scope.clearFilter = function (load) {
         console.log("clearFilter");
-        if ($scope.Filt === null || !load) {
+        if ($scope.Filt === null || load) {
             $scope.Filt = {
                 stageZi: 15,
                 size: 10

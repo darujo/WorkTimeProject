@@ -12,7 +12,9 @@ import ru.darujo.model.Right;
 import ru.darujo.model.Role;
 import ru.darujo.model.User;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,11 +35,15 @@ public class AuthService implements UserDetailsService {
     private Collection<? extends GrantedAuthority> mapGrandAuthority(Collection<Role> roles, Collection<Right> rights) {
         Collection<SimpleGrantedAuthority> grantedAuthorities;
         Set<String> authority = new HashSet<>();
-        roles.forEach(role -> {
-            authority.add("ROLE_" + role.getName());
-            role.getRights().forEach(right -> authority.add(right.getName()));
-        });
-        rights.forEach(right -> authority.add(right.getName()));
+        if (roles != null) {
+            roles.forEach(role -> {
+                authority.add("ROLE_" + role.getName());
+                role.getRights().forEach(right -> authority.add(right.getName()));
+            });
+        }
+        if (rights != null) {
+            rights.forEach(right -> authority.add(right.getName()));
+        }
         grantedAuthorities = authority.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
 //        grantedAuthorities.addAll(rights.stream().map(right -> new SimpleGrantedAuthority(right.getName())).toList());
         return grantedAuthorities;

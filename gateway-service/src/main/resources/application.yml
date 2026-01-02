@@ -10,6 +10,7 @@ server:
 spring:
   main:
     banner-mode: console
+    web-application-type: reactive
   application:
     name: gateway-service
   cloud:
@@ -30,8 +31,22 @@ spring:
                 allow-credentials: true
           httpclient:
             connect-timeout: 10000
-            response-timeout: 30s
+            response-timeout: 60s
           routes:
+            - id: gate
+              uri: forward:///v1/system/shutdownContext
+              predicates:
+                - Path=/gate/shutdownContext
+              filters:
+                - JwtStopServiceFilter
+            - id: gate-test
+              uri: forward:///v1/system/test
+              predicates:
+                - Path=/gate/test
+            #              filters:
+            #                - JwtAdminFilter
+            #                - StripPrefix=1
+            #                            - PrefixPath=system/
             - id: user-admin-service
               uri: "http://localhost:8183"
               predicates:

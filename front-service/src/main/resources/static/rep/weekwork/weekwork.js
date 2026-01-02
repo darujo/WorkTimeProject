@@ -12,7 +12,7 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
     }
     $scope.clearFilter = function (load) {
         console.log("clearFilter");
-        if ($scope.Filt === null || !load) {
+        if ($scope.Filt === null || load) {
             $scope.Filt = {
                 dateStart: new Date(),
                 dateEnd: new Date(),

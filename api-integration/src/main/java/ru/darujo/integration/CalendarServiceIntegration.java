@@ -22,11 +22,9 @@ import java.util.Objects;
 @Component
 @ConditionalOnMissingClass
 public class CalendarServiceIntegration extends ServiceIntegration {
-    private WebClient webClientCalendar;
-
     @Autowired
-    public void setWebClientCalendar(WebClient webClientCalendar) {
-        this.webClientCalendar = webClientCalendar;
+    public void setWebClient(WebClient webClientCalendar) {
+        super.setWebClient(webClientCalendar);
     }
 
     public List<WeekWorkDto> getWeekTime(Timestamp dateStart, Timestamp dateEnd) {
@@ -36,7 +34,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
         StringBuilder stringBuilder = getDateTeg(dateStart, dateEnd);
         addTeg(stringBuilder,"period",period);
         try {
-            return webClientCalendar.get().uri("/calendar/period/time" + stringBuilder)
+            return webClient.get().uri("/calendar/period/time" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR,"Что-то пошло не так не удалось получить работы за период"))
@@ -52,7 +50,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
         StringBuilder stringBuilder = getDateTeg(dateStart, dateEnd);
 
         try {
-            return webClientCalendar.get().uri("/calendar/work/time" + stringBuilder)
+            return webClient.get().uri("/calendar/work/time" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период"))
@@ -69,7 +67,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder,"nikName",nikName);
 
         try {
-            return Objects.requireNonNull(webClientCalendar.get().uri("/vacation" + stringBuilder)
+            return Objects.requireNonNull(webClient.get().uri("/vacation" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период"))
@@ -90,7 +88,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder,"lastWeek",lastWeek);
 
         try {
-            return webClientCalendar.get().uri("/vacation/report/user/work/day/last" + stringBuilder)
+            return webClient.get().uri("/vacation/report/user/work/day/last" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
@@ -108,7 +106,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder,"date",date);
 
         try {
-            return webClientCalendar.get().uri("/vacation/report/user/work/day" + stringBuilder)
+            return webClient.get().uri("/vacation/report/user/work/day" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
@@ -126,7 +124,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder,"dayMinus",dayMinus);
 
         try {
-            return webClientCalendar.get().uri("/vacation/report/work/day/after/week" + stringBuilder)
+            return webClient.get().uri("/vacation/report/work/day/after/week" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
@@ -156,7 +154,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder,"day",day);
 
         try {
-            return webClientCalendar.get().uri("/vacation/inform/day/begin" + stringBuilder)
+            return webClient.get().uri("/vacation/inform/day/begin" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
@@ -173,7 +171,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder,"nikName",nikName);
 
         try {
-            return webClientCalendar.get().uri("/vacation/inform/day/end" + stringBuilder)
+            return webClient.get().uri("/vacation/inform/day/end" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
@@ -193,7 +191,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder,"day",day);
 
         try {
-            return webClientCalendar.get().uri("/vacation/inform/user/day/begin" + stringBuilder)
+            return webClient.get().uri("/vacation/inform/user/day/begin" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))

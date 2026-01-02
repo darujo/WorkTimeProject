@@ -20,11 +20,9 @@ import java.util.List;
 @Slf4j
 @Component
 public class WorkServiceIntegration extends ServiceIntegration {
-    private WebClient webClientWork;
-
     @Autowired
-    public void setWebClientWork(WebClient webClientWork) {
-        this.webClientWork = webClientWork;
+    public void setWebClient(WebClient webClientWork) {
+        super.setWebClient(webClientWork);
     }
 
     public WorkLittleDto getWorEditDto(Long workId) {
@@ -32,7 +30,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
             return new WorkLittleDto();
         }
         try {
-            return webClientWork.get().uri("/obj/little/" + workId)
+            return webClient.get().uri("/obj/little/" + workId)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
@@ -53,7 +51,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "stage", stage);
 
         try {
-            return webClientWork.get().uri("/rep/time/fact/stage" + stringBuilder)
+            return webClient.get().uri("/rep/time/fact/stage" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
@@ -72,7 +70,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
         if (workId != null) {
             StringBuilder stringBuilder = new StringBuilder();
             addTeg(stringBuilder, "date", dateWork);
-            return webClientWork.get().uri("/refresh/" + workId + stringBuilder)
+            return webClient.get().uri("/refresh/" + workId + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "ЗИ c id = " + workId + " не найдена"))
@@ -97,7 +95,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
             sort.forEach(s -> addTeg(stringBuilder, "sort", s));
         }
         try {
-            return webClientWork.get().uri("/rep" + stringBuilder)
+            return webClient.get().uri("/rep" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
@@ -163,7 +161,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "sort", sort);
 
         try {
-            return webClientWork.get().uri("/rep/fact/week" + stringBuilder)
+            return webClient.get().uri("/rep/fact/week" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
