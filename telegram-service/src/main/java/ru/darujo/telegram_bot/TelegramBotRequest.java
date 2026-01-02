@@ -1,5 +1,6 @@
 package ru.darujo.telegram_bot;
 
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,11 +48,16 @@ public class TelegramBotRequest implements SpringLongPollingBot, LongPollingUpda
     }
 
     private FileService fileService;
-    @Value("${telegram-bot.name}")
+
     private String botName;
     @Value("${telegram-bot.token}")
     private String botToken;
 
+    @PostConstruct
+    public void init() {
+        botName = telegramBotSend.getName();
+        messageForAdmin("Бот @" + botName + " запущен");
+    }
 
     @Autowired
     public void setFileService(FileService fileService) {
@@ -91,7 +97,13 @@ public class TelegramBotRequest implements SpringLongPollingBot, LongPollingUpda
     @Async // <-- 7
     public void consume(List<Update> updates) {
         updates.forEach(request -> {
-            if (request.hasMessage()) {
+            if (request.hasChannelPost()) {
+                try {
+                    telegramBotSend.sendMessage(new ChatInfo("null", "@" + request.getChannelPost().getChat().getUserName(), null, request.getChannelPost().getMessageId()), "Был крутой пост. @DaruJo85 помните его");
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+            } else if (request.hasMessage()) {
 
                 Message requestMessage = request.getMessage();
 
@@ -100,7 +112,10 @@ public class TelegramBotRequest implements SpringLongPollingBot, LongPollingUpda
                 String chatId = Long.toString(requestMessage.getChatId());
                 Integer threadId = requestMessage.getMessageThreadId();
                 ChatInfo chatInfo = new ChatInfo(requestMessage.getFrom().getUserName(), chatId, threadId, requestMessage.getMessageId());
-                telegramBotSend.SendAction(chatInfo);
+                if (telegramBotSend.SendAction(chatInfo)) {
+                    log.error("Не удалось уведомить пользователя, что я что-то делаю.");
+                }
+
 
                 messageReceiveService.saveMessageReceive(
                         new MessageReceive(
@@ -276,8 +291,12 @@ public class TelegramBotRequest implements SpringLongPollingBot, LongPollingUpda
 
     @Override
     public void close() { // <-- 8
+        messageForAdmin("⚠️ The bot @" + botName + " has stopped");
+    }
+
+    private void messageForAdmin(String text) {
         try {
-            telegramBotSend.sendMessageForAdmin("⚠️ The bot has stopped");
+            telegramBotSend.sendMessageForAdmin(text);
         } catch (TelegramApiException e) {
             log.error("Failed to send message while stopping the bot", e);
         }
