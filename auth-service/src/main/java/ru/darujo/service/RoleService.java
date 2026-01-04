@@ -14,10 +14,14 @@ import ru.darujo.model.Role;
 import ru.darujo.repository.RoleRepository;
 import ru.darujo.specifications.Specifications;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class RoleService {
+
     private RoleRepository roleRepository;
 
     @Autowired
@@ -90,11 +94,11 @@ public class RoleService {
         return getRoleRight(role.getId());
     }
 
-    public Collection<Role> getRoleList(String code, String name) {
+    public List<Role> getRoleList(String code, String name) {
         Specification<@NonNull Role> specification = Specification.unrestricted();
         specification = Specifications.like(specification,"code",code);
         specification = Specifications.like(specification,"name",name);
-        return new ArrayList<>(roleRepository.findAll(specification, Sort.by("name")));
+        return roleRepository.findAll(specification, Sort.by("name"));
     }
 
     @Transactional

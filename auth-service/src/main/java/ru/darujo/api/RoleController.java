@@ -6,7 +6,7 @@ import ru.darujo.convertor.RoleConvertor;
 import ru.darujo.dto.user.RoleDto;
 import ru.darujo.service.RoleService;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -21,10 +21,9 @@ public class RoleController {
     }
 
     @GetMapping("")
-    public Collection<RoleDto> getRoleList(@RequestParam(required = false) String code,
-                                           @RequestParam(required = false) String name) {
+    public List<RoleDto> getRoleList(@RequestParam(required = false) String code,
+                                     @RequestParam(required = false) String name) {
         return roleService.getRoleList(code, name).stream().map(RoleConvertor::getRoleDto).collect(Collectors.toList());
-
     }
 
 }

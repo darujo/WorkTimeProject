@@ -1,36 +1,35 @@
-package ru.darujo.dto.user;
+package ru.darujo.dto.project;
 
 import java.io.Serializable;
 
-public class RoleDto implements Serializable {
+public class ProjectDto implements Serializable {
+
     private Long id;
     private String code;
     private String name;
-    private Long projectId;
 
-    public RoleDto() {
+    @SuppressWarnings("unused")
+    public ProjectDto() {
     }
 
-    public RoleDto(Long id, String code, String name, Long projectId) {
+    public ProjectDto(Long id, String code, String name) {
         this.id = id;
         this.code = code;
         this.name = name;
-        this.projectId = projectId;
     }
 
+    @SuppressWarnings("unused")
     public Long getId() {
         return id;
     }
 
+    @SuppressWarnings("unused")
     public String getCode() {
         return code;
     }
 
+    @SuppressWarnings("unused")
     public String getName() {
         return name;
-    }
-
-    public Long getProjectId() {
-        return projectId;
     }
 }

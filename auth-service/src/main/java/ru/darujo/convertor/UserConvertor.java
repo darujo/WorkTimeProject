@@ -2,7 +2,9 @@ package ru.darujo.convertor;
 
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.user.UserEditDto;
+import ru.darujo.model.Project;
 import ru.darujo.model.User;
+import ru.darujo.service.ProjectService;
 
 public class UserConvertor {
     public static UserDto getUserDto(User user) {
@@ -12,7 +14,9 @@ public class UserConvertor {
                 user.getLastName(),
                 user.getPatronymic(),
                 user.getPasswordChange(),
-                user.getTelegramId() != null
+                user.getTelegramId() != null,
+                user.getCurrentProject().getId(),
+                user.getProjects().stream().map(ProjectConvertor::getProjectDto).toList()
         );
     }
 
@@ -23,8 +27,8 @@ public class UserConvertor {
                 user.getLastName(),
                 user.getPatronymic(),
                 user.getPassword(),
-                "",
-                user.getPasswordChange());
+                user.getPasswordChange(),
+                user.getProjects().stream().map(Project::getId).toList());
     }
 
     public static User getUser(UserEditDto user) {
@@ -34,7 +38,8 @@ public class UserConvertor {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getPatronymic(),
-                user.getPasswordChange());
+                user.getPasswordChange(),
+                user.getProjects().stream().map(ProjectService.getInstance()::findById).toList());
     }
 
 }

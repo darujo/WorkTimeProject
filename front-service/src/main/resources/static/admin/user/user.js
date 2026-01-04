@@ -1,7 +1,7 @@
  angular.module('workTimeService').controller('userController', function ($scope, $http, $location) {
 
-    const constPatchUser = window.location.origin + '/users';
-    const constPatchAdmin = window.location.origin + '/admin/users';
+     const constPatchUser = window.location.origin + '';
+     const constPatchAdmin = window.location.origin + '/admin';
 
     let showUsers = function () {
         document.getElementById("UserList").style.display = "block";
@@ -44,7 +44,7 @@
             Filter = $scope.Filt;
             console.log(Filter);
             $http({
-                url: constPatchUser,
+                url: constPatchUser + "/users",
                 method: "get",
                 params: {
                     page: page,
@@ -111,7 +111,7 @@
 
     $scope.editUser = function (userId) {
         console.log("edit");
-        $http.get(constPatchAdmin + "/edit/user/" + userId)
+        $http.get(constPatchAdmin + "/users/edit/user/" + userId)
             .then(function (response) {
                 $scope.User = response.data;
                 console.log($scope.User);
@@ -126,8 +126,25 @@
             });
     };
 
+     $scope.loadProject = function () {
+         console.log("");
+         $http.get(constPatchUser + "/project")
+             .then(function (response) {
+                 $scope.ProjectList = response.data.content;
+                 console.log("ProjectList")
+                 console.log($scope.ProjectList);
+
+
+             }, function errorCallback(response) {
+                 console.log(response)
+                 if ($location.checkAuthorized(response)) {
+                     //     alert(response.data.message);
+                 }
+             });
+     };
+
     $scope.deleteUser = function (userId) {
-        $http.delete(constPatchAdmin + "/edit/user/" + userId)
+        $http.delete(constPatchAdmin + "/users/edit/user/" + userId)
             .then(function (response) {
                 console.log("Delete response")
                 console.log(response);
@@ -145,7 +162,7 @@
         console.log($scope.User);
         if (!sendSave) {
             sendSave = true;
-            $http.post(constPatchAdmin + "/edit/user", $scope.User)
+            $http.post(constPatchAdmin + "/users/edit/user", $scope.User)
                 .then(function (response) {
                     console.log("Save response")
                     console.log(response);
@@ -184,7 +201,7 @@
 
      $scope.genHash = function (){
          $http({
-             url: constPatchAdmin + "/user/password/hash" ,
+             url: constPatchAdmin + "/users/user/password/hash",
              method: "get",
              params: {
                  textPassword: $scope.User ? $scope.User.textPassword : null
@@ -207,7 +224,7 @@
 
 
      }
-
+     $scope.loadProject();
     // $scope.UserList = $location.UserList;
     $scope.Filt = $location.getFilter("userFilter");
 

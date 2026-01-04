@@ -96,7 +96,9 @@ public class UserService {
         checkNull(user.getNikName(), "логин");
         checkNull(user.getFirstName(), "имя");
         checkNull(user.getLastName(), "фамилия");
-
+        if (user.getProjects().isEmpty()) {
+            throw new ResourceNotFoundRunTime("У пользователя должен быть хотя бы один проект");
+        }
         if (user.getId() != null) {
             if (userRepository.findByNikNameIgnoreCaseAndIdIsNot(user.getNikName(), user.getId()).isPresent()) {
                 throw new ResourceNotFoundRunTime("Уже есть пользователь с таким ником");
@@ -104,6 +106,8 @@ public class UserService {
             User saveUser = userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + user.getId() + " не найден"));
             user.setRights(saveUser.getRights());
             user.setRoles(saveUser.getRoles());
+            user.setCurrentProject(saveUser.getCurrentProject());
+//            user.setProjects(saveUser.getProjects());
             user.setTelegramId(saveUser.getTelegramId());
         } else {
             if (userRepository.findByNikNameIgnoreCase(user.getNikName()).isPresent()) {
@@ -129,7 +133,7 @@ public class UserService {
             User user = new User(-1L, nikName, hashPassword(
                     "Приносить пользу миру — это единственный способ стать счастливым."),
 
-                    null, null, null, false);
+                    null, null, null, false, null);
             List<Right> right = new ArrayList<>();
             right.add(new Right(-1L, "STOP_SERVICE", "право на стоп"));
             user.setRights(right);

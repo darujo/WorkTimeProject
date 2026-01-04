@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class RoleRightDto extends RoleDto implements Serializable {
+    @SuppressWarnings("unused")
     public RoleRightDto() {
         rights = new ArrayList<>();
     }
@@ -12,7 +13,7 @@ public class RoleRightDto extends RoleDto implements Serializable {
     private final Collection<RoleRightActiveDto> rights;
 
     public RoleRightDto(Long id, String code, String name, Collection<RoleRightActiveDto> roles) {
-        super(id, code, name);
+        super(id, code, name, null);
         this.rights = roles;
     }
 
