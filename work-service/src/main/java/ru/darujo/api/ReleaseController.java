@@ -27,20 +27,25 @@ public class ReleaseController {
 
     @PostMapping("")
     public ReleaseDto WorkSave(@RequestBody ReleaseDto releaseDto,
-                            @RequestHeader(defaultValue = "false", name = "ZI_EDIT") boolean right) {
-        if (!right) {
+                               @RequestParam("system_right") List<String> system_right,
+//                               @RequestHeader(defaultValue = "false", name = "ZI_EDIT") boolean right,
+                               @RequestParam(name = "system_project") Long projectId) {
+        if (system_right.contains("ZI_EDIT")) {
             throw new ResourceNotFoundRunTime("У вас нет права ZI_EDIT");
         }
-        return ReleaseConvertor.getReleaseDto(releaseService.saveRelease(ReleaseConvertor.getRelease(releaseDto)));
+        return ReleaseConvertor.getReleaseDto(releaseService.saveRelease(ReleaseConvertor.getRelease(projectId, releaseDto)));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteRelease(@PathVariable long id) {
+    public void deleteRelease(@PathVariable long id
+    ) {
         releaseService.deleteRelease(id);
     }
 
     @GetMapping("")
-    public List<ReleaseDto> WorkPage() {
-        return releaseService.findAll(null).stream().map(ReleaseConvertor::getReleaseDto).collect(Collectors.toList());
+    public List<ReleaseDto> WorkPage(
+            @RequestParam(name = "system_project", required = false) Long projectId
+    ) {
+        return releaseService.findAll(null, projectId).stream().map(ReleaseConvertor::getReleaseDto).collect(Collectors.toList());
     }
 }

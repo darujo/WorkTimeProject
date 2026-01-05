@@ -45,9 +45,10 @@ public class ReleaseService {
         releaseRepository.deleteById(id);
     }
 
-    public List<Release> findAll(List<Long> releaseIdList) {
+    public List<Release> findAll(List<Long> releaseIdList, Long projectId) {
         Specification<@NonNull Release> specification = Specification.unrestricted();
         specification = Specifications.in(specification, "id", releaseIdList);
+        specification = Specifications.eq(specification, "projectId", projectId);
         return releaseRepository.findAll(specification, Sort.by("sort").and(Sort.by("name")));
     }
 }

@@ -53,7 +53,10 @@ public class RoleService {
         }
     }
 
-    public Role saveRole(Role role) {
+    public Role saveRole(Long projectId, Role role) {
+        if (role.getProject() == null) {
+            role.setProject(ProjectService.getInstance().findById(projectId));
+        }
         checkNull(role.getName(), "код");
         checkNull(role.getLabel(), "Наименование");
 
@@ -62,6 +65,9 @@ public class RoleService {
                 throw new ResourceNotFoundRunTime("Уже есть группа с таким кодом");
             }
             Role saveRole = roleRepository.findById(role.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Группа с id " + role.getId() + " не найден"));
+            if (!saveRole.getProject().equals(role.getProject())) {
+                throw new ResourceNotFoundRunTime("Нельзя переносить роль в другой проект");
+            }
             role.setUsers(saveRole.getUsers());
             role.setRights(saveRole.getRights());
         } else {

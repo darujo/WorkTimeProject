@@ -99,6 +99,11 @@ public class UserService {
         if (user.getProjects().isEmpty()) {
             throw new ResourceNotFoundRunTime("У пользователя должен быть хотя бы один проект");
         }
+        if (user.getCurrentProject() == null
+                || !user.getProjects().contains(user.getCurrentProject())) {
+            user.setCurrentProject(user.getProjects().get(0));
+        }
+
         if (user.getId() != null) {
             if (userRepository.findByNikNameIgnoreCaseAndIdIsNot(user.getNikName(), user.getId()).isPresent()) {
                 throw new ResourceNotFoundRunTime("Уже есть пользователь с таким ником");
