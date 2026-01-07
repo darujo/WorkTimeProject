@@ -13,9 +13,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.darujo.convertor.WorkTimeConvertor;
-import ru.darujo.dto.*;
-import ru.darujo.dto.user.UserFio;
+import ru.darujo.dto.TaskDto;
+import ru.darujo.dto.WorkTimeDto;
 import ru.darujo.dto.user.UserDto;
+import ru.darujo.dto.user.UserFio;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.CalendarServiceIntegration;
 import ru.darujo.integration.TaskServiceIntegration;
@@ -91,7 +92,7 @@ public class WorkTimeService {
         workTimeRepository.deleteById(id);
     }
 
-    public Page<@NonNull WorkTime> findWorkTime(Long[] taskId, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, String comment, Integer page, Integer size) {
+    public Page<@NonNull WorkTime> findWorkTime(Long[] taskId, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, String comment, Long projectId, Integer page, Integer size) {
         Specification<@NonNull WorkTime> specification = (root, query, criteriaBuilder) -> null;
         Sort sort = null;
         if (taskId != null) {
@@ -122,6 +123,7 @@ public class WorkTimeService {
         specification = Specifications.gt(specification, "workDate", dateGT);
         specification = Specifications.eq(specification, "type", type);
         specification = Specifications.like(specification, "comment", comment);
+        specification = Specifications.eq(specification, "projectId", projectId);
         if (sort == null)
             sort = Sort.by(Sort.Direction.DESC, "workDate");
         else {
@@ -135,14 +137,14 @@ public class WorkTimeService {
         }
     }
 
-    public Page<@NonNull WorkTime> findWorkTimeTask(String taskDEVBO, String taskBts, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, String comment, Integer page, Integer size) {
+    public Page<@NonNull WorkTime> findWorkTimeTask(String taskDEVBO, String taskBts, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, String comment, Long projectId, Integer page, Integer size) {
         Page<@NonNull WorkTime> workTimes;
         List<Long> taskIdList = taskServiceIntegration.getTaskList(taskDEVBO, taskBts);
         if (taskIdList == null || taskIdList.isEmpty()) {
             return new PageImpl<>(new ArrayList<>());
         }
 
-        workTimes = findWorkTime(taskIdList.toArray(new Long[0]), nikName, dateLt, dateLe, dateGT, dateGE, type, comment, page, size)
+        workTimes = findWorkTime(taskIdList.toArray(new Long[0]), nikName, dateLt, dateLe, dateGT, dateGE, type, comment, projectId, page, size)
 
         ;
         return workTimes;
@@ -220,21 +222,22 @@ public class WorkTimeService {
         return !workTimeRepository.findAll(specification).isEmpty();
     }
 
-    public boolean checkRight(String right, boolean rightEdit, boolean rightCreate, boolean rightChangeUser) {
+    public boolean checkRight(String right, List<String> userRight) {
         right = right.toLowerCase();
         switch (right) {
             case "edit":
-                if (!rightEdit) {
+            case "delete":
+                if (!userRight.contains("WORK_TIME_EDIT")) {
                     throw new ResourceNotFoundRunTime("У вас нет права на редактирование WORK_TIME_EDIT");
                 }
                 break;
             case "create":
-                if (!rightCreate) {
+                if (!userRight.contains("WORK_TIME_CREATE")) {
                     throw new ResourceNotFoundRunTime("У вас нет права на создание WORK_TIME_CREATE");
                 }
                 break;
             case "changeuser":
-                if (!rightChangeUser) {
+                if (!userRight.contains("WORK_TIME_CHANGE_USER")) {
                     throw new ResourceNotFoundRunTime("У вас нет права на изменение пользователя WORK_TIME_CHANGE_USER");
                 }
                 break;
@@ -243,7 +246,7 @@ public class WorkTimeService {
     }
 
     public Timestamp getLastTime(Long[] taskId, Timestamp dateGe, Timestamp dateLe) {
-        Page<@NonNull WorkTime> workTimes = findWorkTime(taskId, null, null, dateLe, null, dateGe, null, null, 1, 1);
+        Page<@NonNull WorkTime> workTimes = findWorkTime(taskId, null, null, dateLe, null, dateGe, null, null, null, 1, 1);
 
         return workTimes.getContent().size() == 1 ? workTimes.getContent().get(0).getWorkDate() : null;
     }

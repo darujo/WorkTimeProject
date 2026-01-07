@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.darujo.dto.jwt.JwtRequest;
 import ru.darujo.dto.jwt.JwtResponse;
 import ru.darujo.model.User;
@@ -44,6 +41,14 @@ public class AuthController {
         User user = authService.getUser(jwtRequest.getUsername());
         String token = jwtTokenUtils.generateToken(user);
         return ResponseEntity.ok(new JwtResponse(token));
+    }
+
+    @GetMapping("/token/new")
+    public JwtResponse changeProject(@RequestHeader String username,
+                                     @RequestParam(required = false) Long projectId) {
+        User user = authService.changeProject(username, projectId);
+        String token = jwtTokenUtils.generateToken(user);
+        return new JwtResponse(token);
     }
 
 }

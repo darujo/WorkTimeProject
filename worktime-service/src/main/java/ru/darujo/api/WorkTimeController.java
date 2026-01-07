@@ -14,6 +14,7 @@ import ru.darujo.service.WorkTimeService;
 
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.List;
 
 @RestController()
 @RequestMapping("/v1/worktime")
@@ -27,44 +28,40 @@ public class WorkTimeController {
 
     @GetMapping("/conv")
     public WorkTimeDto workConv() {
-        workTimeService.findWorkTime(null, null, null, null, null, null, null, null, null, null).forEach(workTime -> workTimeService.saveWorkTime(WorkTimeConvertor.getWorkTime(WorkTimeConvertor.getWorkTimeDto(workTime)), false));
+        workTimeService.findWorkTime(null, null, null, null, null, null, null, null, null, null, null).forEach(workTime -> workTimeService.saveWorkTime(WorkTimeConvertor.getWorkTime(WorkTimeConvertor.getWorkTimeDto(workTime)), false));
         return new WorkTimeDto();
     }
 
     @GetMapping("/{id}")
-    public WorkTimeDto WorkTimeEdit(@PathVariable long id) {
+    public WorkTimeDto workTimeEdit(@PathVariable long id) {
         return WorkTimeConvertor.getWorkTimeDto(workTimeService.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Отмеченная работа не найден")));
     }
 
     @GetMapping("/right/{right}")
     public boolean checkRight(@PathVariable String right,
-                              @RequestHeader(defaultValue = "false", name = "WORK_TIME_EDIT") boolean rightEdit,
-                              @RequestHeader(defaultValue = "false", name = "WORK_TIME_CREATE") boolean rightCreate,
-                              @RequestHeader(defaultValue = "false", name = "WORK_TIME_CHANGE_USER") boolean rightChangeUser) {
-        return workTimeService.checkRight(right, rightEdit, rightCreate, rightChangeUser);
+                              @RequestParam("system_right") List<String> userRight) {
+        return workTimeService.checkRight(right, userRight);
 
 
     }
 
     @PostMapping("")
-    public WorkTimeDto WorkTimeSave(@RequestHeader String username,
+    public WorkTimeDto workTimeSave(@RequestHeader String username,
                                     @RequestBody WorkTimeDto workTimeDto,
-                                    @RequestHeader(defaultValue = "false", name = "WORK_TIME_EDIT") boolean right) {
-        if (!right) {
-            throw new ResourceNotFoundRunTime("У вас нет права WORK_TIME_EDIT");
-        }
+                                    @RequestParam("system_right") List<String> userRight,
+                                    @RequestParam("system_project") Long projectId) {
+        workTimeService.checkRight(workTimeDto.getId() == null ? null : "edit", userRight);
         if (workTimeDto.getNikName() == null || workTimeDto.getNikName().isEmpty()) {
             workTimeDto.setNikName(username);
         }
+        workTimeDto.setProjectId(projectId);
         return WorkTimeConvertor.getWorkTimeDto(workTimeService.saveWorkTime(WorkTimeConvertor.getWorkTime(workTimeDto)));
     }
 
     @DeleteMapping("/{id}")
     public void deleteWorkTime(@PathVariable long id,
-                               @RequestHeader(defaultValue = "false", name = "WORK_TIME_EDIT") boolean right) {
-        if (!right) {
-            throw new ResourceNotFoundRunTime("У вас нет права WORK_TIME_EDIT");
-        }
+                               @RequestParam("system_right") List<String> userRight) {
+        workTimeService.checkRight("delete", userRight);
         workTimeService.deleteWorkTime(id);
     }
 
@@ -80,6 +77,7 @@ public class WorkTimeController {
                                                    @RequestParam(required = false) String nikName,
                                                    @RequestParam(required = false) Integer type,
                                                    @RequestParam(required = false) String comment,
+                                                   @RequestParam("system_project") Long projectId,
                                                    @RequestParam(defaultValue = "false") boolean currentUser,
                                                    @RequestParam(defaultValue = "1") Integer page,
                                                    @RequestParam(defaultValue = "10") Integer size) {
@@ -101,6 +99,7 @@ public class WorkTimeController {
                     dateGe,
                     type,
                     comment,
+                    projectId,
                     page,
                     size).map(workTimeService::getWorkTimeDtoAndUpd);
         } else {
@@ -114,6 +113,7 @@ public class WorkTimeController {
                     dateGe,
                     type,
                     comment,
+                    projectId,
                     page,
                     size);
             return workTimeDTOs.map(workTimeService::getWorkTimeDtoAndUpd);

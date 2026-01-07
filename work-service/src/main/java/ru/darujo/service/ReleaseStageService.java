@@ -41,7 +41,7 @@ public class ReleaseStageService {
                                     : getReleaseStageDto(workLittle.getRelease())
                     );
 
-                    releaseStageDto.getWorks()[workLittle.getStageZI()].add(WorkConvertor.getWorkLittleDto(workLittle));
+                    releaseStageDto.getWorks()[workLittle.getStageZi()].add(WorkConvertor.getWorkLittleDto(workLittle));
 
                 });
         return releaseStageDtoMap.values().stream().sorted().collect(Collectors.toList());

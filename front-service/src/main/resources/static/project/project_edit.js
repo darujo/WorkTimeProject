@@ -1,15 +1,15 @@
-angular.module('workTimeService').controller('roleController', function ($scope, $http, $location) {
-
-    const constPatchAdmin = window.location.origin + '/admin/project';
+angular.module('workTimeService').controller('projectEditController', function ($scope, $http, $location) {
+    const constPatchProject = window.location.origin + '/projects';
+    const constPatchAdmin = window.location.origin + '/admin/projects';
 
     $scope.cancel = function () {
         $location.path('/project');
     };
 
 
-    $scope.create = function () {
-        console.log("createRole");
-        $scope.Role = {
+    let create = function () {
+        console.log("createProject");
+        $scope.Project = {
             id: null,
             code: null,
             name: null
@@ -17,9 +17,9 @@ angular.module('workTimeService').controller('roleController', function ($scope,
         console.log($scope.Role);
     };
 
-    $scope.edit = function (projectId) {
+    let edit = function (projectId) {
         console.log("edit");
-        $http.get(constPatchAdmin + "/" + projectId)
+        $http.get(constPatchProject + "/" + projectId)
             .then(function (response) {
                 $scope.Project = response.data;
                 console.log($scope.Project);
@@ -55,6 +55,14 @@ angular.module('workTimeService').controller('roleController', function ($scope,
         }
     }
     console.log("Show ok");
+    let Filt = {};
+    $location.parserFilter(Filt);
 
-    $scope.loadRole();
+    console.log("project_edit")
+    console.log(Filt);
+    if (Filt.projectId === undefined) {
+        create();
+    } else {
+        edit(Filt.projectId);
+    }
 })

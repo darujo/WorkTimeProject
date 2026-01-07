@@ -10,7 +10,7 @@ import ru.darujo.service.ProjectService;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/project")
+@RequestMapping("")
 public class ProjectController {
     private ProjectService projectService;
 
@@ -19,24 +19,24 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
-    @GetMapping("/edit/{id}")
+    @GetMapping("/projects/{id}")
     public ProjectDto getProjectEditDto(@PathVariable long id) {
         return ProjectConvertor.getProjectDto(projectService.findById(id));
     }
 
-    @PostMapping("/save")
+    @PostMapping("/admin/projects")
     public ProjectDto setProjectDto(@RequestBody ProjectDto projectDto) {
         return ProjectConvertor.getProjectDto(
                 projectService.saveProject(ProjectConvertor.getProject(projectDto)));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("admin/projects/{id}")
     public void delRoleEditDto(@PathVariable long id) {
         projectService.deleteProject(id);
     }
 
 
-    @GetMapping("")
+    @GetMapping("/projects")
     public Page<ProjectDto> getProjects(@RequestParam(required = false) String code,
                                         @RequestParam(required = false) String name) {
         return projectService.findAll(code, name).map(ProjectConvertor::getProjectDto);

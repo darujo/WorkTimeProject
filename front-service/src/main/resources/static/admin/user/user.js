@@ -128,7 +128,7 @@
 
      $scope.loadProject = function () {
          console.log("");
-         $http.get(constPatchUser + "/project")
+         $http.get(constPatchUser + "/projects")
              .then(function (response) {
                  $scope.ProjectList = response.data.content;
                  console.log("ProjectList")

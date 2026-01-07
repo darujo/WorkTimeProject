@@ -1,6 +1,5 @@
 package ru.darujo.service;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +19,7 @@ import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.InfoServiceIntegration;
 import ru.darujo.integration.RateServiceIntegration;
 import ru.darujo.integration.TaskServiceIntegration;
-import ru.darujo.model.Release;
-import ru.darujo.model.Work;
-import ru.darujo.model.WorkLittle;
-import ru.darujo.model.WorkLittleInterface;
+import ru.darujo.model.*;
 import ru.darujo.repository.WorkLittleRepository;
 import ru.darujo.repository.WorkRepository;
 import ru.darujo.specifications.Specifications;
@@ -161,31 +157,17 @@ public class WorkService {
         if (work.getId() != null) {
             Work workSave = workRepository.findById(work.getId()).orElse(null);
             if (workSave != null) {
+                if (!workSave.getProjectId().equals(work.getProjectId())) {
+                    throw new ResourceNotFoundRunTime("Нельзя сменить проект у ЗИ");
+                }
                 ratedOld = workSave.getRated();
-                stageOld = workSave.getStageZI();
+                stageOld = workSave.getStageZi();
                 releaseNameOld = workSave.getRelease() != null ? workSave.getRelease().getName() : null;
             }
         }
         updateWorkLastDevelop(work);
         work = workRepository.save(work);
-        String releaseNameNew = work.getRelease()!= null ? work.getRelease().getName() : null;
-        StringBuilder workEditText = new StringBuilder();
-        workEditText.append(ChangeObj("этап ЗИ",stageOld,work.getStageZI()));
-        if (!ChangeObj("релиз",releaseNameOld,releaseNameNew).isEmpty())
-        {
-            if (!workEditText.isEmpty()){
-                workEditText.append(",");
-            }
-            workEditText.append(ChangeObj("релиз",releaseNameOld,releaseNameNew));
-        }
-        if (!workEditText.isEmpty()
-        ){
-            sendInform(login, MessageType.CHANGE_STAGE_WORK, String.format("%s сменил %s по ЗИ %s %s", login, workEditText, work.getCodeSap(), UrlWorkTime.getUrlWorkSap(work.getCodeSap(), work.getName())));
-        }
-        if (ratedOld != null && !ratedOld.equals(work.getRated())) {
-            sendInform(login, MessageType.ESTIMATION_WORK, getMesChangRated(login, work));
-        }
-
+        changeWork(login, work, stageOld, releaseNameOld, ratedOld);
         return work;
     }
 
@@ -224,12 +206,12 @@ public class WorkService {
     }
 
     @Transactional
-    public Page<@NonNull Work> findWorks(int page, int size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId) {
-        return findAll(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId);
+    public Page<@NonNull Work> findWorks(int page, int size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId, Long projectId) {
+        return findAll(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId, projectId);
     }
 
 
-    public Page<@NonNull Work> findAll(Integer page, Integer size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId) {
+    public Page<@NonNull Work> findAll(Integer page, Integer size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId, Long projectId) {
         Specification<@NonNull Work> specification;
         if (sort != null && sort.length() > 8 && sort.startsWith("release.")) {
             specification = Specification.unrestricted();
@@ -238,20 +220,20 @@ public class WorkService {
         }
         Release release = releaseService.findOptionalById(releaseId).orElse(null);
         specification = Specifications.like(specification, "name", name);
-        specification = Specifications.like(specification, "codeZI", codeZi);
+        specification = Specifications.like(specification, "codeZi", codeZi);
         specification = Specifications.like(specification, "task", task);
         specification = Specifications.eq(specification, "release", release);
         specification = Specifications.eq(specification, "codeSap", codeSap);
-
+        specification = Specifications.eq(specification, "projectId", projectId);
         if (stageZiLe != null && stageZiLe.equals(stageZiGe)) {
-            specification = Specifications.eq(specification, "stageZI", stageZiLe);
+            specification = Specifications.eq(specification, "stageZi", stageZiLe);
 
         } else {
             if (stageZiLe != null) {
-                specification = Specifications.le(specification, "stageZI", stageZiLe);
+                specification = Specifications.le(specification, "stageZi", stageZiLe);
             }
             if (stageZiGe != null) {
-                specification = Specifications.ge(specification, "stageZI", stageZiGe);
+                specification = Specifications.ge(specification, "stageZi", stageZiGe);
             }
         }
 
@@ -281,7 +263,7 @@ public class WorkService {
         } else {
             specification = Specification.where(Specifications.queryDistinctTrue());
         }
-        specification = Specifications.like(specification, "codeZI", codeZi);
+        specification = Specifications.like(specification, "codeZi", codeZi);
         specification = Specifications.like(specification, "name", name);
         specification = Specifications.like(specification, "task", task);
         if (releaseIdArray != null && !releaseIdArray.isEmpty()) {
@@ -296,10 +278,10 @@ public class WorkService {
         specification = Specifications.eq(specification, "codeSap", codeSap);
 
         if (stageZiLe != null) {
-            specification = Specifications.le(specification, "stageZI", stageZiLe);
+            specification = Specifications.le(specification, "stageZi", stageZiLe);
         }
         if (stageZiGe != null) {
-            specification = Specifications.ge(specification, "stageZI", stageZiGe);
+            specification = Specifications.ge(specification, "stageZi", stageZiGe);
         }
         Page<@NonNull WorkLittle> workPage;
         if (page == null) {
@@ -330,8 +312,8 @@ public class WorkService {
         Release release = releaseService.findById(releaseId);
         specification = Specifications.eq(specification, "release", release);
 
-        specification = Specifications.ge(specification, "stageZI", stageZiGe);
-        specification = Specifications.le(specification, "stageZI", stageZiLe);
+        specification = Specifications.ge(specification, "stageZi", stageZiGe);
+        specification = Specifications.le(specification, "stageZi", stageZiLe);
 
         if (sortWork == null) {
             works = workRepository.findAll(specification);
@@ -350,7 +332,7 @@ public class WorkService {
         workPlanTime.setLaborOPE(workStageDto.getStage4());
     }
 
-    public boolean checkRight(String right, boolean rightEdit, boolean rightCreate) {
+    public boolean checkRight(String right, List<String> rights) {
         right = right.toLowerCase();
         switch (right) {
             case "edit":
@@ -358,7 +340,7 @@ public class WorkService {
             case "criteriaedit":
             case "typeedit":
             case "ziedit":
-                if (!rightEdit) {
+                if (!rights.contains("ZI_EDIT")) {
                     throw new ResourceNotFoundRunTime("У вас нет права на редактирование ZI_EDIT");
                 }
                 break;
@@ -367,7 +349,7 @@ public class WorkService {
             case "criteriacreate":
             case "typecreate":
             case "zicreate":
-                if (!rightCreate) {
+                if (!rights.contains("ZI_CREATE")) {
                     throw new ResourceNotFoundRunTime("У вас нет права на редактирование ZI_CREATE");
                 }
                 break;
@@ -392,24 +374,27 @@ public class WorkService {
         Release release = releaseService.findOptionalById(releaseId).orElse(null);
 
         Boolean ratedOld = workLittle.getRated();
-        Integer stageOld = workLittle.getStageZI();
-        String releaseNameOld = workLittle.getRelease()!= null ? workLittle.getRelease().getName() : null;
-        workLittle.setStageZI(stageZI);
+        Integer stageOld = workLittle.getStageZi();
+        String releaseNameOld = workLittle.getRelease() != null ? workLittle.getRelease().getName() : null;
+        workLittle.setStageZi(stageZI);
         workLittle.setRelease(release);
 
         workLittle = workLittleRepository.save(workLittle);
-        String releaseNameNew = workLittle.getRelease()!= null ? workLittle.getRelease().getName() : null;
+        changeWork(login, workLittle, stageOld, releaseNameOld, ratedOld);
+    }
+
+    private void changeWork(String login, WorkLittleInterface workLittle, Integer stageOld, String releaseNameOld, Boolean ratedOld) {
+        String releaseNameNew = workLittle.getRelease() != null ? workLittle.getRelease().getName() : null;
         StringBuilder workEditText = new StringBuilder();
-        workEditText.append(ChangeObj("этап ЗИ",stageOld,workLittle.getStageZI()));
-        if (!ChangeObj("релиз",releaseNameOld,releaseNameNew).isEmpty())
-        {
-            if (!workEditText.isEmpty()){
+        workEditText.append(ChangeObj("этап ЗИ", stageOld, workLittle.getStageZi()));
+        if (!ChangeObj("релиз", releaseNameOld, releaseNameNew).isEmpty()) {
+            if (!workEditText.isEmpty()) {
                 workEditText.append(",");
             }
-            workEditText.append(ChangeObj("релиз",releaseNameOld,releaseNameNew));
+            workEditText.append(ChangeObj("релиз", releaseNameOld, releaseNameNew));
         }
         if (!workEditText.isEmpty()
-        ){
+        ) {
             sendInform(login, MessageType.CHANGE_STAGE_WORK, String.format("%s сменил %s по ЗИ %s %s", login, workEditText, workLittle.getCodeSap(), UrlWorkTime.getUrlWorkSap(workLittle.getCodeSap(), workLittle.getName())));
         }
         if (ratedOld != null && !ratedOld.equals(workLittle.getRated())) {
@@ -418,35 +403,18 @@ public class WorkService {
     }
 
     private String ChangeObj(String text, Object oldObj, Object newObj) {
-        if(oldObj == null){
-            if (newObj !=null ){
-                return String.format("проставлен <b>%s</b> %s",text,newObj);
+        if (oldObj == null) {
+            if (newObj != null) {
+                return String.format("проставлен <b>%s</b> %s", text, newObj);
             }
-        } else if(newObj ==null){
-            return String.format("удален <b>%s</b> %s",text,oldObj);
+        } else if (newObj == null) {
+            return String.format("удален <b>%s</b> %s", text, oldObj);
         } else {
-            if (!oldObj.equals(newObj)){
-               return String.format("<b>%s</b> %s -> %s",text,oldObj,newObj);
+            if (!oldObj.equals(newObj)) {
+                return String.format("<b>%s</b> %s -> %s", text, oldObj, newObj);
             }
         }
         return "";
-    }
-
-    @Getter
-    public class SaveDateDevelopEndFact {
-        private boolean save;
-        private Timestamp date;
-
-
-        public SaveDateDevelopEndFact setSave(boolean save) {
-            this.save = save;
-            return this;
-        }
-
-        public SaveDateDevelopEndFact setDate(Timestamp date) {
-            this.date = date;
-            return this;
-        }
     }
 
     public SaveDateDevelopEndFact checkSetDevelopEndDate(Work work, Timestamp date) {

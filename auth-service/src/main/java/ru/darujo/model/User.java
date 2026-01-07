@@ -41,9 +41,13 @@ public class User {
     @Column(name = "telegram_id")
     private Long telegramId;
 
+
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project currentProject;
+
+    @Column(name = "block")
+    private boolean block;
 
     @ManyToMany
     @JoinTable(name = "user_projects",
@@ -63,7 +67,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "right_id"))
     private Collection<Right> rights;
 
-    public User(Long id, String nikName, String password, String firstName, String lastName, String patronymic, Boolean passwordChange, List<Project> projects) {
+    public User(Long id, String nikName, String password, String firstName, String lastName, String patronymic, Boolean passwordChange, List<Project> projects, boolean block) {
         this.id = id;
         this.nikName = nikName;
         this.password = password;
@@ -72,6 +76,7 @@ public class User {
         this.patronymic = patronymic;
         this.passwordChange = passwordChange;
         this.projects = projects;
+        this.block = block;
     }
 
     public Project getCurrentProject() {

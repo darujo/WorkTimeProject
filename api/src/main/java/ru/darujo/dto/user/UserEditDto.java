@@ -21,8 +21,9 @@ public class UserEditDto implements Serializable {
     @SuppressWarnings("unused")
     private String textPassword;
     private List<Long> projects;
+    private Boolean block;
 
-    public UserEditDto(Long id, String nikName, String firstName, String lastName, String patronymic, String userPassword, Boolean passwordChange, List<Long> projects) {
+    public UserEditDto(Long id, String nikName, String firstName, String lastName, String patronymic, String userPassword, Boolean passwordChange, List<Long> projects, Boolean block) {
         this.id = id;
         this.nikName = nikName;
         this.firstName = firstName;
@@ -31,6 +32,7 @@ public class UserEditDto implements Serializable {
         this.userPassword = userPassword;
         this.passwordChange = passwordChange;
         this.projects = projects;
+        this.block = block;
     }
 
     public Long getId() {
@@ -67,5 +69,9 @@ public class UserEditDto implements Serializable {
 
     public List<Long> getProjects() {
         return projects;
+    }
+
+    public Boolean isBlock() {
+        return block;
     }
 }

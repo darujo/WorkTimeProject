@@ -20,11 +20,12 @@ public class JwtTokenUtils {
         Map<String, Object> claims = new HashMap<>();
         claims.put("username", userDetails.getNikName());
         claims.put("project", userDetails.getCurrentProject().getId());
+        claims.put("project_code", userDetails.getCurrentProject().getCode());
         Set<String> rightList = new HashSet<>();
         userDetails.getRights()
                 .forEach(right -> rightList.add(
                         right.getName()));
-        userDetails.getRoles()
+        userDetails.getRoles().stream().filter(role -> role.getProject().equals(userDetails.getCurrentProject()))
                 .forEach(role ->
                         role.getRights().forEach(right -> rightList.add(
                                 right.getName()))

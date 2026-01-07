@@ -46,6 +46,11 @@ public class ProjectService {
     }
 
     public void deleteProject(long id) {
-        projectRepository.deleteById(id);
+        try {
+            projectRepository.deleteById(id);
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundRunTime("Не удалось удалить проект скорее всего есть зависимые объекты: " + ex.getMessage());
+        }
+
     }
 }

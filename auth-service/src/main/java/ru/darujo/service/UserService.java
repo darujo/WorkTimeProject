@@ -138,7 +138,7 @@ public class UserService {
             User user = new User(-1L, nikName, hashPassword(
                     "Приносить пользу миру — это единственный способ стать счастливым."),
 
-                    null, null, null, false, null);
+                    null, null, null, false, null, false);
             List<Right> right = new ArrayList<>();
             right.add(new Right(-1L, "STOP_SERVICE", "право на стоп"));
             user.setRights(right);

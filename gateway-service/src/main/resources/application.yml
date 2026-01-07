@@ -50,7 +50,7 @@ spring:
             - id: user-admin-service
               uri: "http://localhost:8183"
               predicates:
-                - Path=/admin/users/**,/admin/roles/**
+                - Path=/admin/users/**,/admin/roles/**,/admin/projects/**
               filters:
                 - StripPrefix=0
                 - PrefixPath=/app-auth/
@@ -105,7 +105,7 @@ spring:
             - id: user-service
               uri: "http://localhost:8183"
               predicates:
-                - Path=/users/**,/roles/**,/project/**
+                - Path=/users/**,/roles/**,/projects/**,/token/**
               filters:
                 - StripPrefix=0
                 - PrefixPath=/app-auth
@@ -143,4 +143,4 @@ spring:
 
 jwt:
   secretKey: h4f8093h4f983yhrt9834hr0934hf0hf493g493gf438rh438th34g34g
-  lifeTimeToken: 36000000
+

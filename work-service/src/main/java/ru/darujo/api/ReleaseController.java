@@ -21,12 +21,12 @@ public class ReleaseController {
     }
 
     @GetMapping("/{id}")
-    public ReleaseDto WorkEdit(@PathVariable long id) {
+    public ReleaseDto releaseEdit(@PathVariable long id) {
         return ReleaseConvertor.getReleaseDto(releaseService.findById(id));
     }
 
     @PostMapping("")
-    public ReleaseDto WorkSave(@RequestBody ReleaseDto releaseDto,
+    public ReleaseDto releaseSave(@RequestBody ReleaseDto releaseDto,
                                @RequestParam("system_right") List<String> system_right,
 //                               @RequestHeader(defaultValue = "false", name = "ZI_EDIT") boolean right,
                                @RequestParam(name = "system_project") Long projectId) {
@@ -43,7 +43,7 @@ public class ReleaseController {
     }
 
     @GetMapping("")
-    public List<ReleaseDto> WorkPage(
+    public List<ReleaseDto> releasePage(
             @RequestParam(name = "system_project", required = false) Long projectId
     ) {
         return releaseService.findAll(null, projectId).stream().map(ReleaseConvertor::getReleaseDto).collect(Collectors.toList());

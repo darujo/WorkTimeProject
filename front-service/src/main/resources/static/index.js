@@ -58,6 +58,21 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                 });
         }
     }
+    $scope.changeProject = function (projectId) {
+        $http.get(constPatchAuth + '/token/new?projectId=' + projectId)
+            .then(function successCallback(response) {
+                console.log(response)
+
+                $scope.getUser();
+                $localStorage.authUser["token"] = response.data.token;
+
+
+                // document.getElementById("UserName").value = response.data.lastName + " " + response.data.firstName + " " + response.data.patronymic;
+            }, function errorCallback(response) {
+                console.log(response);
+            });
+
+    }
     $scope.addTime = function () {
         console.log("index addTime")
         $localStorage.WorkTime = {

@@ -11,14 +11,15 @@ public class TaskConvertor {
                 .setId(task.getId())
                 .setNikName(task.getNikName())
                 .setCodeBTS(task.getCodeBTS())
-                .setCodeDEVBO(task.getCodeDEVBO())
+                .setCodeDEVBO(task.getCode())
                 .setDescription(task.getDescription())
                 .setType(task.getType())
                 .setWorkId(task.getWorkId ())
                 .setTimeCreate(task.getTimeCreate())
                 .getTaskDto();
     }
-    public static Task getTask(TaskDto taskDto){
+
+    public static Task getTask(Long projectId, TaskDto taskDto) {
         return TaskBuilder
                 .createWorkTime()
                 .setId(taskDto.getId())
@@ -29,6 +30,7 @@ public class TaskConvertor {
                 .setType(taskDto.getType())
                 .setWorkId(taskDto.getWorkId ())
                 .setTimeCreate(taskDto.getTimeCreate())
+                .setProjectId(projectId)
                 .getTask();
     }
 }

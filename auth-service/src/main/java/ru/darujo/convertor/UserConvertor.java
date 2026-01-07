@@ -16,7 +16,8 @@ public class UserConvertor {
                 user.getPasswordChange(),
                 user.getTelegramId() != null,
                 user.getCurrentProject().getId(),
-                user.getProjects().stream().map(ProjectConvertor::getProjectDto).toList()
+                user.getProjects().stream().map(ProjectConvertor::getProjectDto).toList(),
+                user.isBlock()
         );
     }
 
@@ -28,7 +29,8 @@ public class UserConvertor {
                 user.getPatronymic(),
                 user.getPassword(),
                 user.getPasswordChange(),
-                user.getProjects().stream().map(Project::getId).toList());
+                user.getProjects().stream().map(Project::getId).toList(),
+                user.isBlock());
     }
 
     public static User getUser(UserEditDto user) {
@@ -39,7 +41,8 @@ public class UserConvertor {
                 user.getLastName(),
                 user.getPatronymic(),
                 user.getPasswordChange(),
-                user.getProjects().stream().map(ProjectService.getInstance()::findById).toList());
+                user.getProjects().stream().map(ProjectService.getInstance()::findById).toList(),
+                user.isBlock() != null && user.isBlock());
     }
 
 }

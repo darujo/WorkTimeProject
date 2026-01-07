@@ -1,3 +1,12 @@
+ALTER TABLE work_time_project."work"
+    RENAME COLUMN codezi TO code_zi;
+ALTER TABLE work_time_project."work"
+    RENAME COLUMN stagezi TO stage_zi;
+ALTER TABLE work_time_project.task
+    RENAME COLUMN codebts TO code_bts;
+ALTER TABLE work_time_project.task
+    RENAME COLUMN codedevbo TO code;
+
 ALTER TABLE work_time_project."release"
     ADD project_id int8;
 ALTER TABLE work_time_project."work"

@@ -1,7 +1,7 @@
 angular.module('workTimeService').controller('projectController', function ($scope, $http, $location) {
 
-    const constPatchProject = window.location.origin + '/project';
-    // const constPatchAdmin = window.location.origin + '/admin/roles';
+    const constPatchProject = window.location.origin + '/projects';
+    const constPatchAdmin = window.location.origin + '/admin/projects';
 
     $scope.loadProject = function () {
         $scope.findPage(0);
@@ -34,7 +34,7 @@ angular.module('workTimeService').controller('projectController', function ($sco
                 console.log(response);
                 console.log("response,data :");
                 console.log(response.data);
-                $scope.ProjectList = response.data;
+                $scope.ProjectList = response.data.content;
                 $scope.load = false;
             }, function errorCallback(response) {
                 $scope.load = false;
@@ -54,16 +54,16 @@ angular.module('workTimeService').controller('projectController', function ($sco
 
     $scope.createProject = function () {
         console.log("createProject");
-        $location.path('/project_edit').search({projectId: null});
+        $location.path('/projectEdit').search({projectId: null});
     };
 
-    $scope.editRole = function (projectId) {
+    $scope.editProject = function (projectId) {
         console.log("edit");
-        $location.path('/project_edit').search({projectId: projectId});
+        $location.path('/projectEdit').search({projectId: projectId});
     };
 
     $scope.deleteProject = function (projectId) {
-        $http.delete(constPatchAdmin + "/edit/project/" + projectId)
+        $http.delete(constPatchAdmin + "/" + projectId)
             .then(function (response) {
                 console.log("Delete response")
                 console.log(response);
@@ -71,7 +71,7 @@ angular.module('workTimeService').controller('projectController', function ($sco
             }, function errorCallback(response) {
                 console.log(response)
                 if ($location.checkAuthorized(response)) {
-                    //     alert(response.data.message);
+                    alert(response.data.message);
                 }
             });
     };

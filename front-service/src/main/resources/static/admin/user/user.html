@@ -1,5 +1,6 @@
 <div id="UserList" class="head_text_elem">
     <ul class="container">
+
         <li class="nav-item"><a class="nav-link" href="#!/vacation">Отпуска</a></li>
         <li class="nav-item"><a class="nav-link" href="#!/uservacation">График отпусков</a></li>
     </ul>
@@ -124,6 +125,10 @@
             <input class="vvod20" type="checkbox"
                    id="CurrentUser"
                    ng-model="User.passwordChange"/>
+            <label for="BlockUser" class="form_label">Заблокирован</label>
+            <input class="vvod20" type="checkbox"
+                   id="BlockUser"
+                   ng-model="User.block"/>
         </div>
         <div class="horiz">
             <label for="FirstName" class="form_label">Имя:</label>
@@ -138,7 +143,7 @@
             <br>
         </div>
         <div class="horiz">
-            <label for="UserProject" class="p-head">№ Релиза</label>
+            <label for="UserProject" class="p-head">Проект</label>
             <select class="vvod80mar10" name="UserProject" id="UserProject"
                     ng-model="User.projects" multiple required>
                 <option ng-repeat="project in ProjectList" ng-value="project.id" value="project.id">

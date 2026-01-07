@@ -13,7 +13,7 @@ public class WorkConvertor {
                 .createWork()
                 .setId(work.getId())
                 .setCodeSap(work.getCodeSap())
-                .setCodeZI(work.getCodeZI())
+                .setCodeZI(work.getCodeZi())
                 .setDebugEndFact(work.getDebugEndFact())
                 .setDevelopEndFact(work.getDevelopEndFact())
                 .setIssuePrototypeFact(work.getIssuePrototypeFact())
@@ -27,7 +27,7 @@ public class WorkConvertor {
                 .setDescription(work.getDescription())
                 .setStartTaskPlan(work.getStartTaskPlan())
                 .setStartTaskFact(work.getStartTaskFact())
-                .setStageZI(work.getStageZI());
+                .setStageZI(work.getStageZi());
         if (work.getRelease() != null) {
             workBuilder
                     .setReleaseId(work.getRelease().getId())
@@ -62,7 +62,7 @@ public class WorkConvertor {
                 .setDebugStartFact(work.getDebugStartFact())
                 .setReleaseStartFact(work.getReleaseStartFact())
                 .setOpeStartFact(work.getOpeStartFact())
-
+                .setProjectId(work.getProjectId())
                 .getWorkEditDto();
     }
 
@@ -106,7 +106,7 @@ public class WorkConvertor {
                 .setDebugStartFact(workDto.getDebugStartFact())
                 .setReleaseStartFact(workDto.getReleaseStartFact())
                 .setOpeStartFact(workDto.getOpeStartFact())
-
+                .setProjectId(workDto.getProjectId())
                 .getWork();
     }
 
@@ -115,8 +115,8 @@ public class WorkConvertor {
                 .createWork()
                 .setId(work.getId())
                 .setCodeSap(work.getCodeSap())
-                .setCodeZI(work.getCodeZI())
-                .setStageZI(work.getStageZI())
+                .setCodeZI(work.getCodeZi())
+                .setStageZI(work.getStageZi())
                 .setName(work.getName())
                 .setRated(work.getRated())
                 .getWorkLittleDto();
@@ -128,8 +128,8 @@ public class WorkConvertor {
                 .createWork()
                 .setId(work.getId())
                 .setCodeSap(work.getCodeSap())
-                .setCodeZI(work.getCodeZI())
-                .setStageZI(work.getStageZI())
+                .setCodeZI(work.getCodeZi())
+                .setStageZI(work.getStageZi())
                 .setName(work.getName())
                 .getWorkLittleDto();
 

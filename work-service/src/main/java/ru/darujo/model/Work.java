@@ -19,8 +19,8 @@ public class Work implements WorkLittleInterface{
     @Column(name = "code_sap")
     private Long codeSap;
     // Код Зи
-    @Column(name = "codeZI")
-    private String codeZI;
+    @Column(name = "code_zi")
+    private String codeZi;
     // Наименование Зи
     @Column(name = "name")
     private String name;
@@ -73,8 +73,8 @@ public class Work implements WorkLittleInterface{
     @Column(name = "start_task_fact")
     private Timestamp startTaskFact;
     // Текущий этап ЗИ
-    @Column(name = "stageZI")
-    private Integer stageZI;
+    @Column(name = "stage_zi")
+    private Integer stageZi;
     // Порядковый номер релиза
     @ManyToOne
     @JoinColumn(name = "release_id")
@@ -112,10 +112,12 @@ public class Work implements WorkLittleInterface{
     private Timestamp opeStartPlan;
     @Column(name = "rated")
     private Boolean rated;
+    @Column(name = "project_id")
+    private Long projectId;
 
     public Work(Long id,
                 Long codeSap,
-                String codeZI,
+                String codeZi,
                 String name,
                 Timestamp analiseEndFact,
                 Timestamp analiseEndPlan,
@@ -133,7 +135,7 @@ public class Work implements WorkLittleInterface{
                 String description,
                 Timestamp startTaskPlan,
                 Timestamp startTaskFact,
-                Integer stageZI,
+                Integer stageZi,
                 Release release,
                 Timestamp analiseStartFact,
                 Timestamp developStartFact,
@@ -148,7 +150,7 @@ public class Work implements WorkLittleInterface{
                 Boolean rated) {
         this.id = id;
         this.codeSap = codeSap;
-        this.codeZI = codeZI;
+        this.codeZi = codeZi;
         this.name = name;
         this.analiseEndFact = analiseEndFact;
         this.analiseEndPlan = analiseEndPlan;
@@ -166,7 +168,7 @@ public class Work implements WorkLittleInterface{
         this.description = description;
         this.startTaskPlan = startTaskPlan;
         this.startTaskFact = startTaskFact;
-        this.stageZI = stageZI;
+        this.stageZi = stageZi;
         this.release = release;
         this.analiseStartFact = analiseStartFact;
         this.developStartFact = developStartFact;

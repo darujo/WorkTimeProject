@@ -49,7 +49,7 @@ public abstract class JwtRightFilter extends AbstractGatewayFilterFactory<JwtRig
                 try {
                     exchange = populateRequestHeader(exchange, token);
                 } catch (RuntimeException ex) {
-                    return this.onError(exchange, ex.getMessage(), HttpStatus.FORBIDDEN);
+                    return this.onError(exchange, "gateWay: " + ex.getMessage(), HttpStatus.FORBIDDEN);
                 }
             } else {
                 return this.onError(exchange, "Токен отсутствует", HttpStatus.UNAUTHORIZED);
@@ -81,7 +81,8 @@ public abstract class JwtRightFilter extends AbstractGatewayFilterFactory<JwtRig
         }
         ServerHttpRequest serverHttpRequest = new ServerHttpRequestImpl(builder.build());
         MultiValueMap<String, String> params = serverHttpRequest.getQueryParams();
-        params.add("system_project", claims.get("project", String.class));
+        params.add("system_project", Long.toString(claims.get("project", Long.class)));
+        params.add("system_project_code", claims.get("project_code", String.class));
         if (authorities != null) {
             authorities.forEach(s -> params.add("system_right", s));
         }

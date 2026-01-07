@@ -80,7 +80,7 @@ public class WorkRepService {
                         workRepDTOs.add(
                                 new WorkRepDto(
                                         work.getId(),
-                                        work.getCodeZI(),
+                                        work.getCodeZi(),
                                         work.getName(),
                                         work.getStartTaskPlan(),
                                         work.getStartTaskFact(),
@@ -130,7 +130,7 @@ public class WorkRepService {
                                                boolean hideNotTime) {
         AtomicInteger num = new AtomicInteger();
         List<WorkFactDto> workFactDTOs = new ArrayList<>();
-        Page<@NonNull Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, releaseId);
+        Page<@NonNull Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, releaseId, null);
         workPage.forEach(work -> {
                     Set<String> users = taskServiceIntegration.getListUser(work.getId(), null).getList();
                     if (userName != null) {
@@ -148,7 +148,7 @@ public class WorkRepService {
                             String codeZi;
                             String name;
                             if (i == 0) {
-                                codeZi = work.getCodeZI();
+                                codeZi = work.getCodeZi();
                                 name = work.getName();
                             } else {
                                 codeZi = null;
@@ -158,7 +158,7 @@ public class WorkRepService {
                             try {
                                 userDto = userServiceIntegration.getUserDto(null, user);
                             } catch (ResourceNotFoundRunTime ex) {
-                                userDto = new UserDto(-1L, "", "логином", "Не найден пользователь с", user);
+                                userDto = new UserDto(-1L, "", "логином", "Не найден пользователь с", user, false);
                             }
                             workFactDTOs.add(
                                     new WorkFactDto(
@@ -185,7 +185,7 @@ public class WorkRepService {
                             workFactDTOs.add(
                                     new WorkFactDto(
                                             num.incrementAndGet(),
-                                            work.getCodeZI(),
+                                            work.getCodeZi(),
                                             work.getName(),
                                             1,
                                             null,
@@ -305,9 +305,9 @@ public class WorkRepService {
                     workUserTimes.add(new WorkUserTime(
                             work.getId(),
                             work.getCodeSap(),
-                            work.getCodeZI(),
+                            work.getCodeZi(),
                             work.getName(),
-                            work.getStageZI(),
+                            work.getStageZi(),
                             taskServiceIntegration.getWorkUserOrZi(work.getId(), nikName, addTotal))
                     )
             );
@@ -342,7 +342,7 @@ public class WorkRepService {
                                                      Timestamp dateEnd,
                                                      String period) {
         List<WeekWorkDto> weekWorkDTOs = calendarServiceIntegration.getPeriodTime(dateStart, dateEnd, period);
-        Page<@NonNull Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, releaseId);
+        Page<@NonNull Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, releaseId, null);
         List<WorkGraphDto> workGraphDTOs =
                 workPage.map(work -> new WorkGraphDto(WorkConvertor.getWorkLittleDto(work),
                         weekWorkDTOs.stream().map(weekWorkDto -> new WorkPeriodColorDto(weekWorkDto, getColor(weekWorkDto, work, true))).collect(Collectors.toList()),

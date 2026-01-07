@@ -28,6 +28,9 @@
                     <details class="details_block_menu" open id="DetailPrim">
                         <summary class="p-head">Меню</summary>
                         <div class="nav-item">
+                            <a class="nav-link" href="#!/project">Проекты</a>
+                        </div>
+                        <div class="nav-item">
                             <a class="nav-link" href="#!/release">Релизы</a>
                         </div>
 
@@ -147,6 +150,15 @@
         <!--    <input id="UserName" class="user_view""-->
         <!--           type="readonly"-->
         <!--    >-->
+    </div>
+    <div class="nav-item">
+        <label for="UserProject" class="p-head"></label>
+        <select class="vvod" name="UserProject" id="UserProject"
+                ng-model="UserLogin.projectId" ng-change="changeProject(UserLogin.projectId)">
+            <option ng-repeat="project in UserLogin.projects" ng-value="project.id" value="project.id">
+                {{project.code}} {{project.name}}
+            </option>
+        </select>
     </div>
 </div>
 <div>

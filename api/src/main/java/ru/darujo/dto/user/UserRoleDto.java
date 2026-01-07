@@ -13,7 +13,7 @@ public class UserRoleDto extends UserDto implements Serializable {
     private final Collection<UserRoleActiveDto> roles ;
 
     public UserRoleDto(Long id, String nikName, String firstName, String lastName, String patronymic, Collection<UserRoleActiveDto> roles) {
-        super(id, nikName, firstName, lastName, patronymic);
+        super(id, nikName, firstName, lastName, patronymic, false);
         this.roles = roles;
     }
 
