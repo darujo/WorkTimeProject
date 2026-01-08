@@ -1,11 +1,13 @@
 package ru.darujo.service;
 
 import jakarta.annotation.PostConstruct;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.darujo.integration.*;
 import ru.darujo.model.ServiceType;
+import ru.darujo.object.ServiceIntegrationObject;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -13,8 +15,9 @@ import java.util.function.Consumer;
 @Slf4j
 @Service
 public class MonitorService {
-    private final Map<ServiceType, ServiceIntegration> serviceIntegrationMapFirst = new HashMap<>();
-    private final Map<ServiceType, ServiceIntegration> serviceIntegrationMapSecond = new HashMap<>();
+    @Getter
+    private final PriorityQueue<ServiceIntegrationObject> serviceIntegrations = new PriorityQueue<>(Comparator.comparing(ServiceIntegrationObject::getSort));
+
     private ServiceStatusService serviceStatusService;
 
     @Autowired
@@ -74,14 +77,12 @@ public class MonitorService {
 
     private void addServiceIntegration(ServiceType serviceType, ServiceIntegration serviceIntegration) {
         log.info(serviceType.toString());
-        serviceIntegrationMapFirst.put(serviceType, serviceIntegration);
+        serviceIntegrations.add(new ServiceIntegrationObject(serviceType, serviceIntegration, serviceType.getPriorityStop()));
     }
 
     @PostConstruct
     public void init() {
         availService();
-//        stopServiceFirst();
-//        stopServiceSecond();
 
 
     }
@@ -89,21 +90,21 @@ public class MonitorService {
     public void availService() {
         Set<ServiceType> serviceIntegrationsError = Collections.synchronizedSet(new HashSet<>());
 
-        availService(serviceIntegrationMapFirst, serviceIntegrationsError::add);
-        availService(serviceIntegrationMapSecond, serviceIntegrationsError::add);
+        availService(serviceIntegrations, serviceIntegrationsError::add);
+
         serviceStatusService.newServiceStatus(serviceIntegrationsError);
     }
 
-    public void availService(Map<ServiceType, ServiceIntegration> serviceIntegrations, Consumer<ServiceType> addService) {
+    public void availService(PriorityQueue<ServiceIntegrationObject> serviceIntegrations, Consumer<ServiceType> addService) {
 
-        serviceIntegrations.forEach((serviceType, serviceIntegration) -> {
+        serviceIntegrations.forEach((serviceIntegrationObj) -> {
             try {
 
-                serviceIntegration.test();
-                log.info("Сервис {} в строю", serviceType);
+                serviceIntegrationObj.getServiceIntegration().test();
+                log.info("Сервис {} в строю", serviceIntegrationObj.getServiceType());
             } catch (RuntimeException ex) {
-                addService.accept(serviceType);
-                log.error("Не прошла команда тест {} {}", serviceType, ex.getMessage());
+                addService.accept(serviceIntegrationObj.getServiceType());
+                log.error("Не прошла команда тест {} {}", serviceIntegrationObj.getServiceType(), ex.getMessage());
             }
 
         });
@@ -112,25 +113,24 @@ public class MonitorService {
 
     String token;
 
-    public void stopServiceFirst() {
-        stopService(serviceIntegrationMapFirst);
+    public void stopServiceAll() {
+        stopService(serviceIntegrations);
 
     }
 
-    public void stopServiceSecond() {
-        stopService(serviceIntegrationMapSecond);
-
+    public String getToken() {
+        return ((UserServiceIntegration) serviceIntegrations.stream().filter(serviceIntegrationObject -> serviceIntegrationObject.getServiceType().equals(ServiceType.USER)).findAny().orElseThrow(() -> new RuntimeException("")).getServiceIntegration()
+        ).getToken("system_user_update", "Приносить пользу миру — это единственный способ стать счастливым.").getToken();
     }
 
-    public void stopService(Map<ServiceType, ServiceIntegration> serviceIntegrations) {
-        token = ((UserServiceIntegration) serviceIntegrations.get(ServiceType.USER)).getToken("system_user_update", "Приносить пользу миру — это единственный способ стать счастливым.").getToken();
-        serviceIntegrationMapFirst.forEach((name, serviceIntegration) -> {
+    public void stopService(PriorityQueue<ServiceIntegrationObject> serviceIntegrations) {
+        token = getToken();
+        serviceIntegrations.forEach((serviceIntegrationObject) -> {
             try {
-
-                serviceIntegration.shutDown(token);
-                log.info("Команда остановки успешно отправлена сервису {}", name);
+                serviceIntegrationObject.getServiceIntegration().shutDown(token);
+                log.info("Команда остановки успешно отправлена сервису {}", serviceIntegrationObject.getServiceType());
             } catch (RuntimeException ex) {
-                log.error("Сервис {} {}", name, ex.getMessage());
+                log.error("Сервис {} {}", serviceIntegrationObject.getServiceType(), ex.getMessage());
             }
 
         });
