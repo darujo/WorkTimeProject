@@ -126,6 +126,14 @@ spring:
                 - StripPrefix=1
                 - PrefixPath=/app/
                 - JwtAuthFilter
+            - id: update-service
+              uri: "http://localhost:8189"
+              predicates:
+                - Path=/update-service/**
+              filters:
+                - StripPrefix=1
+                - PrefixPath=/app/
+                - JwtAuthFilter
             - id: front-add
               uri: "http://localhost:8185"
               predicates:
