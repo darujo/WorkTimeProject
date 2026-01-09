@@ -16,7 +16,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public class UpdateService {
     private ScheduleService scheduleService;
+    private MonitorService monitorService;
 
+    @Autowired
+    public void setMonitorService(MonitorService monitorService) {
+        this.monitorService = monitorService;
+    }
     @Autowired
     public void setScheduleService(ScheduleService scheduleService) {
         this.scheduleService = scheduleService;
@@ -43,9 +48,13 @@ public class UpdateService {
     public boolean loadUpdate(String username, String description, List<MultipartFile> multipartFiles) {
         log.info("Пользователь {} загрузил обновление с описанием {}", username, description);
         boolean flag = loadUpdate(multipartFiles);
-        scheduleService.addUpdate(multipartFiles.stream().map(MultipartFile::getOriginalFilename).toList());
+        scheduleService.addUpdate(multipartFiles.stream().map(multipartFile -> pathSave + "/" + multipartFile.getOriginalFilename()).toList());
         return flag;
     }
 
+    public boolean stopAll() {
+        monitorService.stopServiceAll();
+        return true;
+    }
 
 }

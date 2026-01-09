@@ -101,13 +101,14 @@ public class MonitorService {
             try {
 
                 serviceIntegrationObj.getServiceIntegration().test();
-                log.info("Сервис {} в строю", serviceIntegrationObj.getServiceType());
+//                log.info("Сервис {} в строю", serviceIntegrationObj.getServiceType());
             } catch (RuntimeException ex) {
                 addService.accept(serviceIntegrationObj.getServiceType());
-                log.error("Не прошла команда тест {} {}", serviceIntegrationObj.getServiceType(), ex.getMessage());
+//                log.error("Не прошла команда тест {} {}", serviceIntegrationObj.getServiceType(), ex.getMessage());
             }
 
         });
+
 
     }
 
@@ -119,8 +120,14 @@ public class MonitorService {
     }
 
     public String getToken() {
+        try {
+
+
         return ((UserServiceIntegration) serviceIntegrations.stream().filter(serviceIntegrationObject -> serviceIntegrationObject.getServiceType().equals(ServiceType.USER)).findAny().orElseThrow(() -> new RuntimeException("")).getServiceIntegration()
         ).getToken("system_user_update", "Приносить пользу миру — это единственный способ стать счастливым.").getToken();
+        } catch (RuntimeException ex) {
+            return "";
+        }
     }
 
     public void stopService(PriorityQueue<ServiceIntegrationObject> serviceIntegrations) {

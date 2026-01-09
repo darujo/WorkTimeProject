@@ -80,7 +80,7 @@ public class User {
     }
 
     public Project getCurrentProject() {
-        if (currentProject == null) {
+        if (currentProject == null && !nikName.equals("system_user_update")) {
             if (!getProjects().isEmpty()) {
                 currentProject = getProjects().get(0);
             } else {

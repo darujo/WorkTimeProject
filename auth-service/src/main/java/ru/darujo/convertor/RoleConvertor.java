@@ -15,7 +15,11 @@ public class RoleConvertor {
         return new Role(role.getId(), role.getCode(), role.getName(), null);
     }
     public static Role getRole(RoleDto role){
-        return new Role(role.getId(), role.getCode(), role.getName(), ProjectService.getInstance().findById(role.getProjectId()));
+        return new Role(
+                role.getId(),
+                role.getCode(),
+                role.getName(),
+                role.getProjectId() == null ? null : ProjectService.getInstance().findById(role.getProjectId()));
     }
     public static RoleDto getRoleDto(Role role){
         return new RoleDto(role.getId(), role.getName(), role.getLabel(), role.getProject().getId());

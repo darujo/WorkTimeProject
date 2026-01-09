@@ -18,4 +18,8 @@ public class RightService {
     public Iterable<Right> getListRight(){
         return  rightRepository.findAll();
     }
+
+    public Right getRight(String name) {
+        return rightRepository.findByNameIgnoreCase(name).orElse(null);
+    }
 }

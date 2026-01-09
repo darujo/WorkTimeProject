@@ -11,6 +11,8 @@ import ru.darujo.dto.user.UserEditDto;
 import ru.darujo.dto.user.UserRoleDto;
 import ru.darujo.service.UserService;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/admin/users")
@@ -33,9 +35,13 @@ public class AdminUserController {
     }
 
     @PostMapping("/edit/user")
-    public UserEditDto setUserEditDto(@RequestBody UserEditDto user) {
+    public UserEditDto setUserEditDto(@RequestBody UserEditDto user,
+                                      @RequestParam("system_right") List<String> right) {
         return UserConvertor.getUserEditDto(
-                userService.saveUser(UserConvertor.getUser(user),user.getTextPassword()));
+                userService.saveUser(
+                        UserConvertor.getUser(user),
+                        user.getTextPassword(),
+                        right.contains("ADMIN_USER") && user.isAdmin() != null ? user.isAdmin() : false));
     }
 
     @GetMapping("/user/roles/{userId}")

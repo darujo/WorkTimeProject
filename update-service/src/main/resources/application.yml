@@ -14,7 +14,7 @@ spring:
 
   jpa:
     database: postgresql
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: update
 
@@ -32,5 +32,11 @@ spring:
 
 update:
   save-into: "c:/daru/build"
-  run-service-command: "start \"%s:%s\" java -jar %s%s-0.0.1-SNAPSHOT.jar"
-  unpack-command: "C://daru/build/7z.exe x %s"
+  run-service-command:
+    command: "C:/Users/Daru/.jdks/jbr-21.0.9/bin/java.exe"
+    #    ["java.exe", "-jar", "%s-0.0.1-SNAPSHOT.jar"]
+    param: "%s-0.0.1-SNAPSHOT.jar"
+  #    param: ""
+  unpack-command:
+    command: "C:/daru/build/7z.exe"
+    param: "x %s -o%s"

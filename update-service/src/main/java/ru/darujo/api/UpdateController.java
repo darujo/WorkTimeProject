@@ -27,5 +27,11 @@ public class UpdateController {
         return updateService.loadUpdate(username, description, multipartFiles) ? "Success!" : "Failed!";
     }
 
+    @GetMapping("/stop")
+    public String updateFile() {
+
+        return updateService.stopAll() ? "Success!" : "Failed!";
+    }
+
 
 }

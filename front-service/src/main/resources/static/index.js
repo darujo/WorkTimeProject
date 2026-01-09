@@ -46,6 +46,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                 .then(function successCallback(response) {
                     console.log(response)
                     $scope.UserLogin = response.data;
+                    $location.UserLogin = $scope.UserLogin;
                     if ($scope.UserLogin.passwordChange) {
                         $location.path('/userPassword'.toLowerCase()).search({});
 
@@ -65,6 +66,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
 
                 $scope.getUser();
                 $localStorage.authUser["token"] = response.data.token;
+                $http.defaults.headers.common.Authorization = 'Bearer ' + response.data.token;
 
 
                 // document.getElementById("UserName").value = response.data.lastName + " " + response.data.firstName + " " + response.data.patronymic;
@@ -424,7 +426,6 @@ angular.module('workTimeService').controller('indexController', function ($rootS
 
     function wait() {
         return new Promise((resolve, reject) => {
-            console.log(reject);
             setTimeout(() => {
                 resolve('Timeout resolved');
             }, 10);

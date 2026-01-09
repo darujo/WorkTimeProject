@@ -19,10 +19,11 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public abstract class JwtRightFilter extends AbstractGatewayFilterFactory<JwtRightFilter.Config> {
-    protected abstract String getRight();
+    protected abstract List<String> getRight();
 
     protected JwtUtil jwtUtil;
 
@@ -67,7 +68,7 @@ public abstract class JwtRightFilter extends AbstractGatewayFilterFactory<JwtRig
         Claims claims = jwtUtil.getAllClamsForToken(token);
         ArrayList<String> authorities = claims.get("authorities", ArrayList.class);
         if (getRight() != null) {
-            if (authorities == null || !authorities.contains(getRight().toUpperCase())) {
+            if (authorities == null || authorities.stream().noneMatch(s -> getRight().contains(s))) {
                 throw new RuntimeException("У вас недостаточно прав (" + getRight() + ")");
             }
         }
@@ -81,8 +82,16 @@ public abstract class JwtRightFilter extends AbstractGatewayFilterFactory<JwtRig
         }
         ServerHttpRequest serverHttpRequest = new ServerHttpRequestImpl(builder.build());
         MultiValueMap<String, String> params = serverHttpRequest.getQueryParams();
-        params.add("system_project", Long.toString(claims.get("project", Long.class)));
-        params.add("system_project_code", claims.get("project_code", String.class));
+        try {
+            params.add("system_project", Long.toString(claims.get("project", Long.class)));
+        } catch (RuntimeException ignored) {
+
+        }
+        try {
+            params.add("system_project_code", claims.get("project_code", String.class));
+        } catch (RuntimeException ignored) {
+
+        }
         if (authorities != null) {
             authorities.forEach(s -> params.add("system_right", s));
         }

@@ -101,7 +101,9 @@
             lastName: null,
             firstName: null,
             patronymic: null,
-            passwordChange: true
+            passwordChange: true,
+            block: false,
+            admin: false
         };
 
         console.log($scope.User);
@@ -224,6 +226,8 @@
 
 
      }
+
+
      $scope.loadProject();
     // $scope.UserList = $location.UserList;
     $scope.Filt = $location.getFilter("userFilter");

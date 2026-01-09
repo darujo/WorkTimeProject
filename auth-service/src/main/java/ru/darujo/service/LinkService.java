@@ -122,7 +122,7 @@ public class LinkService {
     @Transactional
     public void linkDeleteTelegram(Long telegramId, Integer threadId) {
         if (threadId == null) {
-            userService.getUserList(null, null, null, null, null, null, null, telegramId, null)
+            userService.getUserList(null, null, null, null, null, null, null, telegramId, null, null)
                     .forEach(user -> {
                         user.setTelegramId(null);
                         userInfoTypeService.getInfoTypes(user, null, null, null)

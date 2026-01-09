@@ -58,6 +58,13 @@ public class UserService {
         this.roleService = roleService;
     }
 
+    private RightService rightService;
+
+    @Autowired
+    public void setRightService(RightService rightService) {
+        this.rightService = rightService;
+    }
+
     private InfoServiceIntegration infoServiceIntegration;
 
     @Autowired
@@ -88,15 +95,15 @@ public class UserService {
 
     @Transactional
     public User saveUser(User user) {
-        return saveUser(user, null);
+        return saveUser(user, null, null);
     }
 
     @Transactional
-    public User saveUser(User user, String textPassword) {
+    public User saveUser(User user, String textPassword, Boolean isAdmin) {
         checkNull(user.getNikName(), "логин");
         checkNull(user.getFirstName(), "имя");
         checkNull(user.getLastName(), "фамилия");
-        if (user.getProjects().isEmpty()) {
+        if (user.getProjects() == null || user.getProjects().isEmpty()) {
             throw new ResourceNotFoundRunTime("У пользователя должен быть хотя бы один проект");
         }
         if (user.getCurrentProject() == null
@@ -112,6 +119,7 @@ public class UserService {
             user.setRights(saveUser.getRights());
             user.setRoles(saveUser.getRoles());
             user.setCurrentProject(saveUser.getCurrentProject());
+
 //            user.setProjects(saveUser.getProjects());
             user.setTelegramId(saveUser.getTelegramId());
         } else {
@@ -125,6 +133,23 @@ public class UserService {
             } else {
                 if (!checkPassword(textPassword, user.getPassword())) {
                     throw new ResourceNotFoundRunTime("Пароль и хэш не совпадают");
+                }
+            }
+        }
+        if (isAdmin != null) {
+            Right right = rightService.getRight("ADMIN_USER");
+            if (isAdmin) {
+                if (user.getRights() == null) {
+                    List<Right> rights = new ArrayList<>();
+                    rights.add(right);
+                    user.setRights(rights);
+                }
+                if (!user.getRights().contains(right)) {
+                    user.getRights().add(right);
+                }
+            } else {
+                if (user.getRights() != null) {
+                    user.getRights().remove(right);
                 }
             }
         }
@@ -156,8 +181,9 @@ public class UserService {
                                            String firstName,
                                            String patronymic,
                                            Long telegramId,
-                                           Boolean telegramIsNotNull) {
-        Specification<@NonNull User> specification = getUserSpecification(role, nikName, lastName, firstName, patronymic, telegramId, telegramIsNotNull);
+                                           Boolean telegramIsNotNull,
+                                           Long projectId) {
+        Specification<@NonNull User> specification = getUserSpecification(role, nikName, lastName, firstName, patronymic, telegramId, telegramIsNotNull, projectId);
         Sort sort = Sort.by("lastName")
                 .and(Sort.by("firstName"));
         Page<@NonNull User> userPage;
@@ -172,10 +198,10 @@ public class UserService {
         return userPage;
     }
 
-    private Specification<@NonNull User> getUserSpecification(String role, String nikName, String lastName, String firstName, String patronymic, Long telegramId, Boolean telegramIsNotNull) {
+    private Specification<@NonNull User> getUserSpecification(String role, String nikName, String lastName, String firstName, String patronymic, Long telegramId, Boolean telegramIsNotNull, Long projectId) {
         Specification<@NonNull User> specification = Specification.unrestricted();
         if (role != null && !role.isEmpty()) {
-            specification = Specifications.in(specification, "nikName", roleService.findByName(role).orElseThrow(() -> new UsernameNotFoundException("Роль не найдена " + role))
+            specification = Specifications.in(specification, "nikName", roleService.findByName(projectId, role).orElseThrow(() -> new UsernameNotFoundException("Роль не найдена " + role))
                     .getUsers()
                     .stream().map(User::getNikName).collect(Collectors.toList()));
         }
@@ -312,7 +338,7 @@ public class UserService {
     }
 
     public boolean exists(Long chatId) {
-        return userRepository.exists(getUserSpecification(null, null, null, null, null, chatId, null));
+        return userRepository.exists(getUserSpecification(null, null, null, null, null, chatId, null, null));
     }
 
 

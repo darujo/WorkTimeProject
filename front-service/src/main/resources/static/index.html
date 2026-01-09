@@ -151,7 +151,7 @@
         <!--           type="readonly"-->
         <!--    >-->
     </div>
-    <div class="nav-item">
+    <div class="nav-item" ng-show="isUserLoggedIn()">
         <label for="UserProject" class="p-head"></label>
         <select class="vvod" name="UserProject" id="UserProject"
                 ng-model="UserLogin.projectId" ng-change="changeProject(UserLogin.projectId)">

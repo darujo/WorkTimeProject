@@ -34,7 +34,7 @@ public class ScheduleService implements AutoCloseable {
     }
 
     public void addUpdate(List<String> fileNameUpdates, List<ServiceType> serviceTypeList) {
-        executor.schedule(taskService.getTask(fileNameUpdates, serviceTypeList), 1, TimeUnit.MINUTES);
+        executor.schedule(taskService.getTask(fileNameUpdates, serviceTypeList), 1, TimeUnit.SECONDS);
     }
 
     @Override
