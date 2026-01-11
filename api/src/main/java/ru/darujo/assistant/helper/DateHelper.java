@@ -5,6 +5,7 @@ import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -65,6 +66,22 @@ public class DateHelper {
             return null;
         }
         return sdfIso.format(date);
+    }
+
+    private static DateTimeFormatter dateTimeFormatter;
+
+    public static DateTimeFormatter getDateTimeFormatter() {
+        if (dateTimeFormatter == null) {
+            dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        }
+        return dateTimeFormatter;
+    }
+
+    public static String dateTimeToStr(ZonedDateTime date) {
+        if (date == null) {
+            return null;
+        }
+        return date.toLocalDateTime().format(getDateTimeFormatter());
     }
 
     private static final SimpleDateFormat sdfDT = new SimpleDateFormat("dd.MM.yyyy HH:mm");

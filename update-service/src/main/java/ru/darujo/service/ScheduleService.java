@@ -6,7 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.darujo.model.ServiceType;
 
-import java.util.Arrays;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -26,15 +27,24 @@ public class ScheduleService implements AutoCloseable {
 
     @PostConstruct
     private void init() {
+
         executor.scheduleAtFixedRate(taskService.getTaskAvailService(), 0, 2, TimeUnit.MINUTES);
+//        addUpdate(new ArrayList<>());
     }
 
-    public void addUpdate(List<String> fileNameUpdates) {
-        addUpdate(fileNameUpdates, Arrays.stream(ServiceType.values()).toList());
+
+    public void addUpdate(ZonedDateTime timestamp, List<ServiceType> serviceTypeList, List<String> fileNameUpdates) {
+        executor.schedule(taskService.getTaskInfo(timestamp, " устнановлены обновления."), getStart(timestamp, 10L), TimeUnit.SECONDS);
+        executor.schedule(taskService.getTask(fileNameUpdates, serviceTypeList), getStart(timestamp), TimeUnit.SECONDS);
     }
 
-    public void addUpdate(List<String> fileNameUpdates, List<ServiceType> serviceTypeList) {
-        executor.schedule(taskService.getTask(fileNameUpdates, serviceTypeList), 1, TimeUnit.SECONDS);
+    private long getStart(ZonedDateTime timestamp) {
+        return getStart(timestamp, 0L);
+    }
+
+    private long getStart(ZonedDateTime timestamp, Long minute) {
+        long second = ChronoUnit.SECONDS.between(ZonedDateTime.now(), timestamp.minusMinutes(minute));
+        return second < 0 ? 1L : second;
     }
 
     @Override

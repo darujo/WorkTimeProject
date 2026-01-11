@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import ru.darujo.dto.information.MessageInfoDto;
+import ru.darujo.dto.information.MessageType;
+import ru.darujo.integration.InfoServiceIntegration;
 import ru.darujo.integration.ServiceIntegration;
 import ru.darujo.model.RunnableNotException;
 import ru.darujo.model.ServiceType;
@@ -15,12 +18,20 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Slf4j
 @Component
 public class TaskService {
     private MonitorService monitorService;
+    private InfoServiceIntegration infoServiceIntegration;
+
+    @Autowired
+    public void setInfoServiceIntegration(InfoServiceIntegration infoServiceIntegration) {
+        this.infoServiceIntegration = infoServiceIntegration;
+    }
 
     @Autowired
     public void setMonitorService(MonitorService monitorService) {
@@ -29,8 +40,6 @@ public class TaskService {
 
     @Value("${update.run-service-command.command}")
     private String runFile;
-    @Value("${update.run-service-command.param}")
-    private String runFileParam;
     @Value("${update.save-into}")
     private String pathFile;
     @Value("${update.unpack-command.command}")
@@ -42,11 +51,7 @@ public class TaskService {
 
     @PostConstruct
     public void init() {
-        try {
-            new ProcessBuilder(runFile, "-jar", String.format(runFileParam, ServiceType.TASK.getName())).directory(new File(pathFile)).start();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
     }
 
     public RunnableNotException getTaskAvailService() {
@@ -59,12 +64,16 @@ public class TaskService {
         return new RunnableNotException(() ->
         {
             try {
+                infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.SYSTEM_INFO, "Запущено обновление. Сервис может быть не доступен. Приносим извинения за предоставленые неудобства"));
+            } catch (RuntimeException ex) {
+                log.error(ex.getMessage());
+            }
+            try {
                 String token = monitorService.getToken();
                 for (ServiceIntegrationObject serviceIntegration : monitorService.getServiceIntegrations()) {
                     if (serviceTypeList == null || serviceTypeList.contains(serviceIntegration.getServiceType())) {
                         try {
-                            updateOneService(serviceIntegration.getServiceIntegration(), token);
-                            // todo надо чтобы сервис уведомлений закрывался последним
+                            shutDownOneService(serviceIntegration.getServiceIntegration(), token);
                             Thread.sleep(20000);
                         } catch (RuntimeException ignored) {
 
@@ -77,19 +86,7 @@ public class TaskService {
                 );
                 for (ServiceIntegrationObject serviceIntegration : monitorService.getServiceIntegrations()) {
                     if (serviceTypeList == null || serviceTypeList.contains(serviceIntegration.getServiceType())) {
-                        startService(serviceIntegration.getServiceType());
-                        int iterate = 0;
-                        boolean flagStart = false;
-                        while (iterate < 5 && !flagStart) {
-                            iterate++;
-                            Thread.sleep(10000);
-                            try {
-                                serviceIntegration.getServiceIntegration().test();
-                                flagStart = true;
-                            } catch (RuntimeException ex) {
-                                log.info("Итерация {} сервис {} не доступен", iterate, serviceIntegration.getServiceType());
-                            }
-                        }
+                        startOneService(serviceIntegration);
                     }
                 }
             } catch (InterruptedException e) {
@@ -100,21 +97,36 @@ public class TaskService {
         );
     }
 
-    private void startService(ServiceType serviceType) {
-//        String param = String.format(runFileParam, pathFile, serviceType.getName());
-//        if (!open(runFile, param)) {
-//            log.error("Не удалось выполнить команду {} c параметрами {}", runFile, param);
-//        }
-        String param = String.format(runFileParam, serviceType.getName());
-        try {
-
-            new ProcessBuilder(runFile, "-jar", param).directory(new File(pathFile)).start();
-        } catch (IOException e) {
-            log.error("Не удалось выполнить команду {} c параметрами {}", runFile, param);
+    private void startOneService(ServiceIntegrationObject serviceIntegration) throws InterruptedException {
+        boolean flagStart = false;
+        serviceIntegration.setProcess(startService(serviceIntegration.getServiceType()));
+        int iterate = 0;
+        while (iterate < 20 && !flagStart) {
+            iterate++;
+            Thread.sleep(5000);
+            try {
+                serviceIntegration.getServiceIntegration().test();
+                flagStart = true;
+            } catch (RuntimeException ex) {
+                log.info("Итерация {} сервис {} не доступен", iterate, serviceIntegration.getServiceType());
+            }
         }
     }
 
-    private void updateOneService(ServiceIntegration serviceIntegration, String token) {
+    private Process startService(ServiceType serviceType) {
+        String param = String.format(runFile, serviceType.getName());
+        try {
+            return new ProcessBuilder(param)
+                    .directory(new File(pathFile))
+                    .start();
+        } catch (IOException e) {
+            log.error("Не удалось выполнить команду {} c параметрами {}", runFile, param);
+            return null;
+        }
+
+    }
+
+    private void shutDownOneService(ServiceIntegration serviceIntegration, String token) {
         serviceIntegration.shutDown(token);
     }
 
@@ -129,39 +141,26 @@ public class TaskService {
         }
     }
 
-    public static boolean open(String command, String param) {
+    public static void open(String command, String param) {
 
         try {
-            Runtime.getRuntime().exec(command + " " + param);
-            return true;
+            log.info(
+                    getProcessOutput(
+                            Runtime.getRuntime().exec(command + " " + param)
+                    )
+            );
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-//        try {
-//            if (OSDetector.isWindows()) {
-//                Runtime.getRuntime().exec(new String[]
-//                        {"rundll32", "url.dll,FileProtocolHandler",
-//                                command});
-//                return true;
-//            } else if (OSDetector.isLinux() || OSDetector.isMac()) {
-//                Runtime.getRuntime().exec(new String[]{"/usr/bin/open",
-//                        command});
-//                return true;
-//            }
-//            else {
-        // Unknown OS, try with desktop
-//                if (Desktop.isDesktopSupported()) {
-//                    Desktop.getDesktop().(command);
-//                    return true;
-//                } else {
-//                    return false;
-//                }
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace(System.err);
-//            return false;
-//        }
-//        return false;
     }
 
+    public RunnableNotException getTaskInfo(ZonedDateTime zonedDateTime, String text) {
+        return new RunnableNotException(() -> {
+            try {
+                infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.SYSTEM_INFO, String.format("Через %s будет %s", ChronoUnit.MINUTES.between(ZonedDateTime.now(), zonedDateTime), text)));
+            } catch (RuntimeException ignore) {
+            }
+        });
+    }
 }

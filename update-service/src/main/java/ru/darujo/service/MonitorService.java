@@ -77,7 +77,7 @@ public class MonitorService {
 
     private void addServiceIntegration(ServiceType serviceType, ServiceIntegration serviceIntegration) {
         log.info(serviceType.toString());
-        serviceIntegrations.add(new ServiceIntegrationObject(serviceType, serviceIntegration, serviceType.getPriorityStop()));
+        serviceIntegrations.add(new ServiceIntegrationObject(serviceType, serviceIntegration, serviceType.getPriorityStop(), null));
     }
 
     @PostConstruct

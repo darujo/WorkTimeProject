@@ -62,13 +62,17 @@ public class ServiceStatusService {
     }
 
     private void addServiceStatus(Set<ServiceType> serviceTypeList) {
+        boolean allServiceOk = serviceTypeList.isEmpty();
         Set<ServiceModel> serviceModels = new HashSet<>();
         serviceTypeList.forEach(serviceType -> serviceModels.add(serviceModelService.getServiceModel(serviceType.name())));
         try {
-            telegramServiceIntegration.sendMessageForAdmin(serviceTypeList.isEmpty() ? "Все сервисы доступны" :
+            telegramServiceIntegration.sendMessageForAdmin(allServiceOk ? "Все сервисы доступны" :
                     String.format("Не доступные сервисы %s", serviceTypeList));
         } catch (ResourceNotFoundRunTime ex) {
             log.error(ex.getMessage());
+        }
+        if (allServiceOk) {
+            UpdateService.getINSTANCE().allServiceOk();
         }
         serviceStatusRepository.save(new ServiceStatus(serviceModels));
     }

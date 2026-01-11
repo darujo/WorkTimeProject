@@ -23,17 +23,17 @@ spring:
   servlet:
     multipart:
       enabled: true
-  # Threshold after which the files are written to a disk.
+      # Threshold after which the files are written to a disk.
       file-size-threshold: 2KB
-  # Max file size.
+      # Max file size.
       max-file-size: 1000MB
-  # Max Request Size
+      # Max Request Size
       max-request-size: 5500MB
 
 update:
-  save-into: "c:/daru/build"
+  save-into: "C:/daru/worktime/build"
   run-service-command:
-    command: "c:/daru/build/%s.bat"
+    command: "C:/daru/worktime/build/%s.bat"
   unpack-command:
-    command: "C:/daru/build/7z.exe"
+    command: "C:/daru/worktime/build/7z.exe"
     param: "x %s -o%s -y"

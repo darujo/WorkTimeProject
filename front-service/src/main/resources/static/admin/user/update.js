@@ -22,7 +22,8 @@ updateApp.controller('updateController', function ($scope, $http, $location) {
         const constPatchInfo = window.location.origin + '/update-service/v1/update';
         $scope.FormFile = {
             desc: "",
-            files: []
+            files: [],
+            dateUpdate: new Date()
         }
         $scope.InfoTypes = null;
         $scope.Message = {};
@@ -43,32 +44,46 @@ updateApp.controller('updateController', function ($scope, $http, $location) {
             console.log("SendMessage");
             if (!sendMessageForAll) {
                 sendMessageForAll = true;
-                // $http.post(constPatchInfo + "?type=" + $scope.Message.type, $scope.Message.text)
-                let config = {
-                    reportProgress: true, // Без observe: 'events' не работает
-                    observe: 'events', // без reportProgress: true только HttpEventType.Sent и HttpEventType.Response
-                    transformRequest: angular.identity,
-                    transformResponse: angular.identity,
-                    headers: {
-                        'Content-Type': undefined
-                    }
-                }
 
-                $http.post(constPatchInfo, formData, config)
+                $http(
+                    {
+                        url: constPatchInfo,
+                        method: "post",
+                        params: {
+                            dateUpdate: $scope.FormFile.dateUpdate,
+                            type: $scope.FormFile.type
+                        },
+                        data: formData,
+                        // reportProgress: true, // Без observe: 'events' не работает
+                        // observe: 'events', // без reportProgress: true только HttpEventType.Sent и HttpEventType.Response
+                        transformRequest: angular.identity,
+                        transformResponse: angular.identity,
+                        headers: {
+                            'Content-Type': undefined
+                        }
+
+                        // , formData, config
+                    }
+                )
                     .then(function (response) {
-                        console.log("Save response")
+                        console.log("Send Update")
                         console.log(response);
                         sendMessageForAll = false;
-                        alert("Сообщения отправлены");
+                        alert("Обновление успешно отправлено");
                     }, function errorCallback(response) {
                         sendMessageForAll = false;
                         console.log(response.data);
                         if ($location.checkAuthorized(response)) {
 
                             alert(response.data.message);
+                        } else {
+                            alert(response.data);
                         }
                     });
+            } else {
+                alert("Подождите отправляется предыдущее обновление")
             }
+
         }
 
         $scope.backUser = function () {
