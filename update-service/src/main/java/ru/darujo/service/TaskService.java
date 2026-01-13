@@ -60,11 +60,11 @@ public class TaskService {
         );
     }
 
-    public RunnableNotException getTask(List<String> fileNameUpdates, List<ServiceType> serviceTypeList) {
+    public RunnableNotException getTask(List<String> fileNameUpdates, List<ServiceType> serviceTypeList, String textUpdates) {
         return new RunnableNotException(() ->
         {
             try {
-                infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.SYSTEM_INFO, "Запущено обновление. Сервис может быть не доступен. Приносим извинения за предоставленые неудобства"));
+                infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.SYSTEM_INFO, "Запущено обновление. Сервис может быть недоступен. Приносим извинения за предоставленые неудобства"));
             } catch (RuntimeException ex) {
                 log.error(ex.getMessage());
             }
@@ -81,7 +81,14 @@ public class TaskService {
                     }
                 }
                 Thread.sleep(80000);
-                fileNameUpdates.forEach(s ->
+                fileNameUpdates.stream().filter(s -> {
+                            int pos = s.indexOf(".");
+                            if (pos > 0) {
+                                return s.substring(pos).equals(".7z") || s.substring(pos).equals(".7z.001");
+                            }
+                            return false;
+                        }
+                ).forEach(s ->
                         open(unpack, String.format(unpackParam, s, pathSave))
                 );
                 for (ServiceIntegrationObject serviceIntegration : monitorService.getServiceIntegrations()) {
@@ -89,6 +96,19 @@ public class TaskService {
                         startOneService(serviceIntegration);
                     }
                 }
+                boolean flagOk = false;
+                while (!flagOk) {
+                    flagOk = monitorService.allServiceOk();
+                }
+                try {
+                    infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.UPDATE_INFO, textUpdates));
+                } catch (RuntimeException ignore) {
+                }
+                try {
+                    infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.SYSTEM_INFO, "Сервис снова доступен."));
+                } catch (RuntimeException ignore) {
+                }
+
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

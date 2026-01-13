@@ -71,9 +71,6 @@ public class ServiceStatusService {
         } catch (ResourceNotFoundRunTime ex) {
             log.error(ex.getMessage());
         }
-        if (allServiceOk) {
-            UpdateService.getINSTANCE().allServiceOk();
-        }
         serviceStatusRepository.save(new ServiceStatus(serviceModels));
     }
 

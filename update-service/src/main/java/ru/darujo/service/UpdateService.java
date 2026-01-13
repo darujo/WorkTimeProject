@@ -65,21 +65,21 @@ public class UpdateService {
         return flag.get();
     }
 
-    private String textUpdates;
 
     public boolean loadUpdate(String username, ZonedDateTime timestamp, List<String> types, String description, List<MultipartFile> multipartFiles) {
         log.info("Пользователь {} загрузил обновление с описанием {}", username, description);
-        try {
-            infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.SYSTEM_INFO, String.format("%s будут проводиться сервисные работы. Сервис может быть. Приносим извинения за предоставленые неудобства", DateHelper.dateTimeToStr(timestamp))));
-        } catch (RuntimeException ex) {
-            log.error(ex.getMessage());
-        }
+
         boolean flag = loadUpdate(multipartFiles);
         scheduleService.addUpdate(
                 timestamp,
                 types == null || types.isEmpty() || types.contains(null) ? null : types.stream().map(ServiceType::valueOf).toList(),
-                multipartFiles.stream().map(multipartFile -> pathSave + "/" + multipartFile.getOriginalFilename()).toList());
-        textUpdates = (textUpdates == null || textUpdates.isEmpty() ? "" : (textUpdates + "\n")) + description;
+                multipartFiles.stream().map(multipartFile -> pathSave + "/" + multipartFile.getOriginalFilename()).toList(),
+                description);
+        try {
+            infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.SYSTEM_INFO, String.format("%s будут проводиться сервисные работы. Сервис может быть недоступен. Приносим извинения за предоставленые неудобства.", DateHelper.dateTimeToStr(timestamp))));
+        } catch (RuntimeException ex) {
+            log.error(ex.getMessage());
+        }
         return flag;
     }
 
@@ -88,17 +88,5 @@ public class UpdateService {
         return true;
     }
 
-    public void allServiceOk() {
-        if (textUpdates != null) {
-            try {
-                infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.UPDATE_INFO, textUpdates));
-            } catch (RuntimeException ignore) {
-            }
-            textUpdates = null;
-            try {
-                infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.SYSTEM_INFO, "Сервис снова доступен."));
-            } catch (RuntimeException ignore) {
-            }
-        }
-    }
+
 }

@@ -33,9 +33,9 @@ public class ScheduleService implements AutoCloseable {
     }
 
 
-    public void addUpdate(ZonedDateTime timestamp, List<ServiceType> serviceTypeList, List<String> fileNameUpdates) {
+    public void addUpdate(ZonedDateTime timestamp, List<ServiceType> serviceTypeList, List<String> fileNameUpdates, String textUpdates) {
         executor.schedule(taskService.getTaskInfo(timestamp, " устнановлены обновления."), getStart(timestamp, 10L), TimeUnit.SECONDS);
-        executor.schedule(taskService.getTask(fileNameUpdates, serviceTypeList), getStart(timestamp), TimeUnit.SECONDS);
+        executor.schedule(taskService.getTask(fileNameUpdates, serviceTypeList, textUpdates), getStart(timestamp), TimeUnit.SECONDS);
     }
 
     private long getStart(ZonedDateTime timestamp) {

@@ -127,7 +127,7 @@ public class TelegramBotSend {
     }
 
     public Message sendMessage(ChatInfo chatInfo, String text, InlineKeyboardMarkup menu) throws TelegramApiException {
-        SendMessage message = new SendMessage(adminId, text);
+        SendMessage message = new SendMessage(chatInfo.getChatId(), text);
 
         message.setMessageThreadId(chatInfo.getThreadId());
         message.enableHtml(true);

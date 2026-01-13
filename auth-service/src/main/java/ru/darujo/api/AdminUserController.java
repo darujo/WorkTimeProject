@@ -45,13 +45,15 @@ public class AdminUserController {
     }
 
     @GetMapping("/user/roles/{userId}")
-    public UserRoleDto getUserRoles(@PathVariable Long userId) {
-        return userService.getUserRoles(userId);
+    public UserRoleDto getUserRoles(@PathVariable Long userId,
+                                    @RequestParam("system_project") Long project) {
+        return userService.getUserRoles(userId, project);
 
     }
     @PostMapping("/user/roles")
-    public UserRoleDto getUserRoles(@RequestBody UserRoleDto userRoleDto) {
-        return userService.setUserRoles(userRoleDto);
+    public UserRoleDto getUserRoles(@RequestParam("system_project") Long project,
+                                    @RequestBody UserRoleDto userRoleDto) {
+        return userService.setUserRoles(project, userRoleDto);
 
     }
     @GetMapping("/user/password/hash")

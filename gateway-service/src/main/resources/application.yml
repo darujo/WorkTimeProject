@@ -31,7 +31,7 @@ spring:
                 allow-credentials: true
           httpclient:
             connect-timeout: 10000
-            response-timeout: 60s
+            response-timeout: 800s
           routes:
             - id: gate
               uri: forward:///v1/system/shutdownContext

@@ -3,6 +3,7 @@ package ru.darujo.service;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.darujo.integration.*;
@@ -88,11 +89,22 @@ public class MonitorService {
     }
 
     public void availService() {
+        Set<ServiceType> serviceIntegrationsError = getServiceTypes();
+
+        serviceStatusService.newServiceStatus(serviceIntegrationsError);
+    }
+
+    public boolean allServiceOk() {
+        Set<ServiceType> serviceIntegrationsError = getServiceTypes();
+
+        return serviceIntegrationsError.isEmpty();
+    }
+
+    private @NonNull Set<ServiceType> getServiceTypes() {
         Set<ServiceType> serviceIntegrationsError = Collections.synchronizedSet(new HashSet<>());
 
         availService(serviceIntegrations, serviceIntegrationsError::add);
-
-        serviceStatusService.newServiceStatus(serviceIntegrationsError);
+        return serviceIntegrationsError;
     }
 
     public void availService(PriorityQueue<ServiceIntegrationObject> serviceIntegrations, Consumer<ServiceType> addService) {

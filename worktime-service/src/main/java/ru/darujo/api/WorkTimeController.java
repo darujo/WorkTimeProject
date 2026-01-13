@@ -50,7 +50,7 @@ public class WorkTimeController {
                                     @RequestBody WorkTimeDto workTimeDto,
                                     @RequestParam("system_right") List<String> userRight,
                                     @RequestParam("system_project") Long projectId) {
-        workTimeService.checkRight(workTimeDto.getId() == null ? null : "edit", userRight);
+        workTimeService.checkRight(workTimeDto.getId() == null ? "create" : "edit", userRight);
         if (workTimeDto.getNikName() == null || workTimeDto.getNikName().isEmpty()) {
             workTimeDto.setNikName(username);
         }

@@ -215,26 +215,37 @@ public class UserService {
     }
 
     @Transactional
-    public UserRoleDto getUserRoles(Long userId) {
+    public UserRoleDto getUserRoles(Long userId, Long projectId) {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + userId + " не найден"));
         Map<Long, UserRoleActiveDto> roleActiveDtoMap = new HashMap<>();
-        roleService.getListRole().forEach(role -> roleActiveDtoMap.put(role.getId(), RoleConvertor.getUserRoleActiveDto(role, Boolean.FALSE)));
-        user.getRoles().forEach(role -> roleActiveDtoMap.get(role.getId()).setActive(Boolean.TRUE));
+        roleService.getListRole().forEach(role -> {
+            if (role.getProject().getId().equals(projectId)) {
+                roleActiveDtoMap.put(role.getId(), RoleConvertor.getUserRoleActiveDto(role, Boolean.FALSE));
+            }
+        });
+        if (user.getRoles() != null) {
+            user.getRoles().forEach(role -> {
+                UserRoleActiveDto userRoleActiveDto = roleActiveDtoMap.get(role.getId());
+                if (userRoleActiveDto != null) {
+                    userRoleActiveDto.setActive(Boolean.TRUE);
+                }
+            });
+        }
         return new UserRoleDto(user.getId(), user.getNikName(), user.getFirstName(), user.getLastName(), user.getPatronymic(), roleActiveDtoMap.values());
     }
 
     @Transactional
-    public UserRoleDto setUserRoles(UserRoleDto userRole) {
+    public UserRoleDto setUserRoles(Long projectId, UserRoleDto userRole) {
         User user = userRepository.findById(userRole.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + userRole.getId() + " не найден"));
-        user.getRoles().clear();
+        user.getRoles().removeIf(role -> role.getProject().getId().equals(projectId));
         userRole.getRoles().forEach((roleDto) -> {
             if (roleDto.getActive()) {
-                user.getRoles().add(RoleConvertor.getRole(roleDto));
+                user.getRoles().add(RoleConvertor.getRole(roleDto, projectId));
             }
         });
         userRepository.save(user);
-        return getUserRoles(user.getId());
+        return getUserRoles(user.getId(), projectId);
     }
 
     public String hashPassword(String plainTextPassword) {

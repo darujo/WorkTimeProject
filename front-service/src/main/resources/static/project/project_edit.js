@@ -2,7 +2,8 @@ angular.module('workTimeService').controller('projectEditController', function (
     const constPatchProject = window.location.origin + '/projects';
     const constPatchAdmin = window.location.origin + '/admin/projects';
 
-    $scope.cancel = function () {
+    $scope.backProject = function () {
+        console.log("dfsgfdgdfgdf")
         $location.path('/project');
     };
 
