@@ -147,7 +147,8 @@ public class Work implements WorkLittleInterface{
                 Timestamp debugStartPlan,
                 Timestamp releaseStartPlan,
                 Timestamp opeStartPlan,
-                Boolean rated) {
+                Boolean rated,
+                Long projectId) {
         this.id = id;
         this.codeSap = codeSap;
         this.codeZi = codeZi;
@@ -181,6 +182,7 @@ public class Work implements WorkLittleInterface{
         this.releaseStartPlan = releaseStartPlan;
         this.opeStartPlan = opeStartPlan;
         this.rated = rated;
+        this.projectId = projectId;
     }
 
 }

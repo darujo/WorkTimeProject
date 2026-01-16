@@ -30,7 +30,7 @@ public class ReleaseController {
                                @RequestParam("system_right") List<String> system_right,
 //                               @RequestHeader(defaultValue = "false", name = "ZI_EDIT") boolean right,
                                @RequestParam(name = "system_project") Long projectId) {
-        if (system_right.contains("ZI_EDIT")) {
+        if (!system_right.contains("ZI_EDIT")) {
             throw new ResourceNotFoundRunTime("У вас нет права ZI_EDIT");
         }
         return ReleaseConvertor.getReleaseDto(releaseService.saveRelease(ReleaseConvertor.getRelease(projectId, releaseDto)));

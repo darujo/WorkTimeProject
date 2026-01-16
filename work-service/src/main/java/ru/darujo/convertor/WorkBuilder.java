@@ -377,7 +377,8 @@ public class WorkBuilder {
                 debugStartPlan,
                 releaseStartPlan,
                 opeStartPlan,
-                rated);
+                rated,
+                projectId);
     }
 
     public WorkLittleDto getWorkLittleDto() {
