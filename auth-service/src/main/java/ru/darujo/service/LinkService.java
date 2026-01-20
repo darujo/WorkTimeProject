@@ -66,7 +66,7 @@ public class LinkService {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         for (Map.Entry<Integer, SingleCode> entry : mapCode.entrySet()) {
             if (entry.getValue().getTimestamp().before(timestamp)
-                    || (entry.getValue().getMessageType().equals(messageType)
+                    || (entry.getValue().getMessageType() != null && (entry.getValue().getMessageType().equals(messageType))
                     && entry.getValue().getLogin().equals(login))) {
                 mapCode.remove(entry.getKey());
             }

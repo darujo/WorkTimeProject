@@ -40,7 +40,8 @@ public class ServerHttpRequestImpl extends ServerHttpRequestDecorator {
         }
         StringBuilder sb = new StringBuilder();
         queryParams.forEach((s, strings) -> strings.forEach(s2 -> addTeg(sb, s, s2)));
-        return URI.create(url + sb);
+
+        return URI.create(url + sb.toString().replace(" ", "+"));
 
 
     }
