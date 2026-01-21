@@ -1,9 +1,10 @@
 package ru.darujo.model;
 
 import lombok.Getter;
+import ru.darujo.type.TypeEnum;
 
 @Getter
-public enum ServiceType {
+public enum ServiceType implements TypeEnum {
     USER(10, "auth-service", 8183),
     INFORMATION(80, "information-service", 8188),
     WORK(10, "work-service", 8182),

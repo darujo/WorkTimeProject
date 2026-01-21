@@ -11,6 +11,7 @@ import ru.darujo.model.ServiceType;
 import ru.darujo.object.ServiceIntegrationObject;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 @Slf4j
@@ -83,27 +84,43 @@ public class MonitorService {
 
     @PostConstruct
     public void init() {
-        availService();
+//        availService();
 
 
     }
 
     public void availService() {
-        Set<ServiceType> serviceIntegrationsError = getServiceTypes();
-
-        serviceStatusService.newServiceStatus(serviceIntegrationsError);
+        Map<ServiceType, Integer> serviceIntegrationsError = getServiceErrorTypes(true);
+        AtomicBoolean flagError = new AtomicBoolean(false);
+        serviceIntegrationsError.forEach((serviceType, count) -> {
+            if (count > 2) {
+                flagError.set(true);
+            }
+        });
+        if (flagError.get()) {
+            serviceStatusService.newServiceStatus(serviceIntegrationsError.keySet());
+        }
     }
 
     public boolean allServiceOk() {
-        Set<ServiceType> serviceIntegrationsError = getServiceTypes();
+        Map<ServiceType, Integer> serviceIntegrationsError = getServiceErrorTypes(false);
 
         return serviceIntegrationsError.isEmpty();
     }
 
-    private @NonNull Set<ServiceType> getServiceTypes() {
-        Set<ServiceType> serviceIntegrationsError = Collections.synchronizedSet(new HashSet<>());
+    Map<ServiceType, Integer> serviceIntegrationsError = Collections.synchronizedMap(new HashMap<>());
 
-        availService(serviceIntegrations, serviceIntegrationsError::add);
+    private @NonNull Map<ServiceType, Integer> getServiceErrorTypes(boolean addCount) {
+        for (ServiceType serviceType : ServiceType.values()) {
+            serviceIntegrationsError.putIfAbsent(serviceType, 0);
+        }
+        Set<ServiceType> serviceOk = Collections.synchronizedSet(new HashSet<>());
+
+        availService(serviceIntegrations, serviceOk::add);
+        serviceOk.forEach(serviceType -> serviceIntegrationsError.remove(serviceType));
+        if (addCount) {
+            serviceIntegrationsError.forEach((serviceType, count) -> serviceIntegrationsError.put(serviceType, count + 1));
+        }
         return serviceIntegrationsError;
     }
 
@@ -113,9 +130,10 @@ public class MonitorService {
             try {
 
                 serviceIntegrationObj.getServiceIntegration().test();
+                addService.accept(serviceIntegrationObj.getServiceType());
 //                log.info("Сервис {} в строю", serviceIntegrationObj.getServiceType());
             } catch (RuntimeException ex) {
-                addService.accept(serviceIntegrationObj.getServiceType());
+
 //                log.error("Не прошла команда тест {} {}", serviceIntegrationObj.getServiceType(), ex.getMessage());
             }
 

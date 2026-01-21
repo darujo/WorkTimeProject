@@ -10,9 +10,9 @@
             <select multiple class="vvod40 mar5" name="UpdateType" id="UpdateType" ng-model="FormFile.type">
 
                 <option ng-repeat="type in UpdateTypes" ng-value="type.code" value="type.code">
-                    {{type.name}}
+                    {{type.value}}
                 </option>
-                <option value="">Все</option>
+                <option ng-value=null value="">Все</option>
             </select>
         </div>
         <div class="horiz">
@@ -24,7 +24,7 @@
             <label for="UpdateText">
                 Обновления:
             </label>
-            <p><textarea id="UpdateText" class="vvod check_box_td" ng-model="FormFile.desc" required
+            <p><textarea id="UpdateText" class="vvod check_box_td" ng-model="FormFile.desc"
                          placeholder="Введите сообщение"></textarea></p>
         </div>
         <div class="horiz">

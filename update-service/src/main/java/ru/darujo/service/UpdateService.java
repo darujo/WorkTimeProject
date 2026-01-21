@@ -9,12 +9,14 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.dto.information.MessageType;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.InfoServiceIntegration;
 import ru.darujo.model.ServiceType;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -52,31 +54,37 @@ public class UpdateService {
 
     public boolean loadUpdate(List<MultipartFile> multipartFiles) {
         AtomicBoolean flag = new AtomicBoolean(true);
-        multipartFiles.forEach(multipartFile -> {
-                    try (FileOutputStream fileOutputStream = new FileOutputStream(pathSave + "/" + (multipartFile.getOriginalFilename() == null ? "update" : multipartFile.getOriginalFilename()))) {
-                        fileOutputStream.write(multipartFile.getBytes());
+        if (multipartFiles != null) {
+            multipartFiles.forEach(multipartFile -> {
+                        try (FileOutputStream fileOutputStream = new FileOutputStream(pathSave + "/" + (multipartFile.getOriginalFilename() == null ? "update" : multipartFile.getOriginalFilename()))) {
+                            fileOutputStream.write(multipartFile.getBytes());
 
-                    } catch (IOException e) {
-                        log.error(Arrays.toString(e.getStackTrace()));
-                        flag.set(false);
+                        } catch (IOException e) {
+                            log.error(Arrays.toString(e.getStackTrace()));
+                            flag.set(false);
+                        }
                     }
-                }
-        );
+            );
+        }
         return flag.get();
     }
 
 
     public boolean loadUpdate(String username, ZonedDateTime timestamp, List<String> types, String description, List<MultipartFile> multipartFiles) {
         log.info("Пользователь {} загрузил обновление с описанием {}", username, description);
-
+        if (multipartFiles != null && !multipartFiles.isEmpty() && (description == null || description.isBlank())) {
+            throw new ResourceNotFoundRunTime("Должно быть заполнено описание");
+        }
         boolean flag = loadUpdate(multipartFiles);
         scheduleService.addUpdate(
                 timestamp,
                 types == null || types.isEmpty() || types.contains(null) ? null : types.stream().map(ServiceType::valueOf).toList(),
-                multipartFiles.stream().map(multipartFile -> pathSave + "/" + multipartFile.getOriginalFilename()).toList(),
+                multipartFiles == null ? null : multipartFiles.stream().map(multipartFile -> pathSave + "/" + multipartFile.getOriginalFilename()).toList(),
                 description);
         try {
-            infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.SYSTEM_INFO, String.format("%s будут проводиться сервисные работы. Сервис может быть недоступен. Приносим извинения за предоставленые неудобства.", DateHelper.dateTimeToStr(timestamp))));
+            if (ChronoUnit.MINUTES.between(ZonedDateTime.now(), timestamp) > 0) {
+                infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.SYSTEM_INFO, String.format("%s будут проводиться сервисные работы. Сервис может быть недоступен. Приносим извинения за предоставленые неудобства.", DateHelper.dateTimeToStr(timestamp))));
+            }
         } catch (RuntimeException ex) {
             log.error(ex.getMessage());
         }
@@ -87,6 +95,5 @@ public class UpdateService {
         monitorService.stopServiceAll();
         return true;
     }
-
 
 }

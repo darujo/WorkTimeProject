@@ -69,20 +69,20 @@ public class DateHelper {
     }
 
     private static DateTimeFormatter dateTimeFormatter;
-    // TODO доделать без преобразования
-//    public static DateTimeFormatter getDateTimeFormatter() {
-//        if (dateTimeFormatter == null) {
-//            dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-//        }
-//        return dateTimeFormatter;
-//    }
+
+    public static DateTimeFormatter getDateTimeFormatter() {
+        if (dateTimeFormatter == null) {
+            dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm").withZone(ZonedDateTime.now().getZone());
+        }
+        return dateTimeFormatter;
+    }
 
     public static String dateTimeToStr(ZonedDateTime date) {
         if (date == null) {
             return null;
         }
-//        return date.toLocalDateTime().format(getDateTimeFormatter());
-        return dateTimeToStr(Timestamp.from(date.toInstant()));
+
+        return date.format(getDateTimeFormatter());
     }
 
     private static final SimpleDateFormat sdfDT = new SimpleDateFormat("dd.MM.yyyy HH:mm");
@@ -104,5 +104,15 @@ public class DateHelper {
                 .map(Long::parseLong).toList();
     }
 
+    public static List<String> convertListNotNull(List<String> list) {
+        if (list == null
+                || list.contains(null)
+                || list.contains("null")
+                || list.contains("undefined")) {
+            return null;
+        }
+
+        return list;
+    }
 
 }

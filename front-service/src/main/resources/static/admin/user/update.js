@@ -19,11 +19,12 @@ updateApp.directive('fileModel', ['$parse', function ($parse) {
 
 updateApp.controller('updateController', function ($scope, $http, $location) {
 
-        const constPatchInfo = window.location.origin + '/update-service/v1/update';
+    const constPatchUpdate = window.location.origin + '/update-service/v1/update';
         $scope.FormFile = {
             desc: "",
             files: [],
-            dateUpdate: new Date()
+            dateUpdate: new Date(),
+            type: "null"
         }
         $scope.InfoTypes = null;
         $scope.Message = {};
@@ -47,7 +48,7 @@ updateApp.controller('updateController', function ($scope, $http, $location) {
 
                 $http(
                     {
-                        url: constPatchInfo,
+                        url: constPatchUpdate,
                         method: "post",
                         params: {
                             dateUpdate: $scope.FormFile.dateUpdate,
@@ -85,7 +86,23 @@ updateApp.controller('updateController', function ($scope, $http, $location) {
             }
 
         }
+    let getService = function () {
+        console.log("edit");
+        $http.get(constPatchUpdate + "/services")
+            .then(function (response) {
+                $scope.UpdateTypes = response.data;
+                console.log($scope.UpdateTypes);
 
+
+            }, function errorCallback(response) {
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                    //     alert(response.data.message);
+                }
+            });
+    };
+    getService();
+    console.log("$scope.FormFile.type", $scope.FormFile.type, $scope.FormFile.type === "null");
         $scope.backUser = function () {
             $location.path('/');
 

@@ -81,16 +81,18 @@ public class TaskService {
                     }
                 }
                 Thread.sleep(80000);
-                fileNameUpdates.stream().filter(s -> {
-                            int pos = s.indexOf(".");
-                            if (pos > 0) {
-                                return s.substring(pos).equals(".7z") || s.substring(pos).equals(".7z.001");
+                if (fileNameUpdates != null) {
+                    fileNameUpdates.stream().filter(s -> {
+                                int pos = s.indexOf(".");
+                                if (pos > 0) {
+                                    return s.substring(pos).equals(".7z") || s.substring(pos).equals(".7z.001");
+                                }
+                                return false;
                             }
-                            return false;
-                        }
-                ).forEach(s ->
-                        open(unpack, String.format(unpackParam, s, pathSave))
-                );
+                    ).forEach(s ->
+                            open(unpack, String.format(unpackParam, s, pathSave))
+                    );
+                }
                 for (ServiceIntegrationObject serviceIntegration : monitorService.getServiceIntegrations()) {
                     if (serviceTypeList == null || serviceTypeList.contains(serviceIntegration.getServiceType())) {
                         startOneService(serviceIntegration);
@@ -101,7 +103,9 @@ public class TaskService {
                     flagOk = monitorService.allServiceOk();
                 }
                 try {
-                    infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.UPDATE_INFO, textUpdates));
+                    if (textUpdates != null) {
+                        infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.UPDATE_INFO, textUpdates));
+                    }
                 } catch (RuntimeException ignore) {
                 }
                 try {
@@ -178,7 +182,10 @@ public class TaskService {
     public RunnableNotException getTaskInfo(ZonedDateTime zonedDateTime, String text) {
         return new RunnableNotException(() -> {
             try {
-                infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.SYSTEM_INFO, String.format("Через %s будет %s", ChronoUnit.MINUTES.between(ZonedDateTime.now(), zonedDateTime), text)));
+                long minutes = ChronoUnit.MINUTES.between(ZonedDateTime.now(), zonedDateTime);
+                if (minutes > 0) {
+                    infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.SYSTEM_INFO, String.format("Через %s будет %s", minutes, text)));
+                }
             } catch (RuntimeException ignore) {
             }
         });
