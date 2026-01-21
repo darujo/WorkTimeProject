@@ -4,6 +4,7 @@ import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -72,7 +73,7 @@ public class DateHelper {
 
     public static DateTimeFormatter getDateTimeFormatter() {
         if (dateTimeFormatter == null) {
-            dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm").withZone(ZonedDateTime.now().getZone());
+            dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm").withZone(ZoneId.systemDefault());
         }
         return dateTimeFormatter;
     }
