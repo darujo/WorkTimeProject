@@ -13,13 +13,15 @@ import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.InfoServiceIntegration;
 import ru.darujo.model.ServiceType;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Slf4j
@@ -52,21 +54,28 @@ public class UpdateService {
     @Value("${update.save-into}")
     private String pathSave;
 
-    public boolean loadUpdate(List<MultipartFile> multipartFiles) {
-        AtomicBoolean flag = new AtomicBoolean(true);
+    public List<File> loadUpdate(List<MultipartFile> multipartFiles) {
+        List<File> files = new ArrayList<>();
+
+        AtomicInteger num = new AtomicInteger();
         if (multipartFiles != null) {
             multipartFiles.forEach(multipartFile -> {
-                        try (FileOutputStream fileOutputStream = new FileOutputStream(pathSave + "/" + (multipartFile.getOriginalFilename() == null ? "update" : multipartFile.getOriginalFilename()))) {
-                            fileOutputStream.write(multipartFile.getBytes());
-
+                if (multipartFile.getOriginalFilename() == null) {
+                    num.getAndIncrement();
+                }
+                String fileName = pathSave + "/" + (multipartFile.getOriginalFilename() == null ? "update" + num : multipartFile.getOriginalFilename());
+                try (FileOutputStream fileOutputStream = new FileOutputStream(fileName)) {
+                    fileOutputStream.write(multipartFile.getBytes());
+                    File file = new File(fileName);
+                    files.add(file);
                         } catch (IOException e) {
                             log.error(Arrays.toString(e.getStackTrace()));
-                            flag.set(false);
+
                         }
                     }
             );
         }
-        return flag.get();
+        return files;
     }
 
 
@@ -75,11 +84,16 @@ public class UpdateService {
         if (multipartFiles != null && !multipartFiles.isEmpty() && (description == null || description.isBlank())) {
             throw new ResourceNotFoundRunTime("Должно быть заполнено описание");
         }
-        boolean flag = loadUpdate(multipartFiles);
+        List<File> files = loadUpdate(multipartFiles);
+        boolean flag = multipartFiles == null || multipartFiles.size() == files.size();
+        if (!flag) {
+            files.forEach(File::deleteOnExit);
+            throw new ResourceNotFoundRunTime("Все файлы удалось сохранить.");
+        }
         scheduleService.addUpdate(
                 timestamp,
                 types == null || types.isEmpty() || types.contains(null) ? null : types.stream().map(ServiceType::valueOf).toList(),
-                multipartFiles == null ? null : multipartFiles.stream().map(multipartFile -> pathSave + "/" + multipartFile.getOriginalFilename()).toList(),
+                files,
                 description);
         try {
             if (ChronoUnit.MINUTES.between(ZonedDateTime.now(), timestamp) > 0) {
@@ -88,7 +102,7 @@ public class UpdateService {
         } catch (RuntimeException ex) {
             log.error(ex.getMessage());
         }
-        return flag;
+        return true;
     }
 
     public boolean stopAll() {

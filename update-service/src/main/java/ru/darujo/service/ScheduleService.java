@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.darujo.model.ServiceType;
 
+import java.io.File;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -33,7 +34,7 @@ public class ScheduleService implements AutoCloseable {
     }
 
 
-    public void addUpdate(ZonedDateTime timestamp, List<ServiceType> serviceTypeList, List<String> fileNameUpdates, String textUpdates) {
+    public void addUpdate(ZonedDateTime timestamp, List<ServiceType> serviceTypeList, List<File> fileNameUpdates, String textUpdates) {
         executor.schedule(taskService.getTaskInfo(timestamp, " устнановлены обновления."), getStart(timestamp, 10L), TimeUnit.SECONDS);
         executor.schedule(taskService.getTask(fileNameUpdates, serviceTypeList, textUpdates), getStart(timestamp), TimeUnit.SECONDS);
     }

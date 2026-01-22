@@ -60,7 +60,7 @@ public class TaskService {
         );
     }
 
-    public RunnableNotException getTask(List<String> fileNameUpdates, List<ServiceType> serviceTypeList, String textUpdates) {
+    public RunnableNotException getTask(List<File> fileNameUpdates, List<ServiceType> serviceTypeList, String textUpdates) {
         return new RunnableNotException(() ->
         {
             try {
@@ -82,16 +82,23 @@ public class TaskService {
                 }
                 Thread.sleep(80000);
                 if (fileNameUpdates != null) {
-                    fileNameUpdates.stream().filter(s -> {
-                                int pos = s.indexOf(".");
+                    fileNameUpdates.stream().filter(file -> {
+                        String fileName = file.getAbsolutePath();
+                        int pos = fileName.indexOf(".");
                                 if (pos > 0) {
-                                    return s.substring(pos).equals(".7z") || s.substring(pos).equals(".7z.001");
+                                    return fileName.substring(pos).equals(".7z") || fileName.substring(pos).equals(".7z.001");
                                 }
                                 return false;
                             }
-                    ).forEach(s ->
-                            open(unpack, String.format(unpackParam, s, pathSave))
+                    ).forEach(file ->
+                            open(unpack, String.format(unpackParam, file, pathSave))
                     );
+                    // ToDo Подумать как удалять только архивы
+                    fileNameUpdates.forEach(file -> {
+                        if (!file.delete()) {
+                            file.deleteOnExit();
+                        }
+                    });
                 }
                 for (ServiceIntegrationObject serviceIntegration : monitorService.getServiceIntegrations()) {
                     if (serviceTypeList == null || serviceTypeList.contains(serviceIntegration.getServiceType())) {
