@@ -35,12 +35,11 @@ public class CodeService {
 
     public static String getTaskType(Integer code) {
         String codeName = getInstance().codes.get("taskType").get(code).getName();
-        return Objects.requireNonNullElseGet(codeName, () -> "Неизвестный код " + code);
+        return Objects.requireNonNullElseGet(codeName, () -> "Не известный тип " + code);
     }
 
     public static Boolean getTaskTypeIsZi(Integer code) {
-        Boolean isZi = getInstance().codes.get("taskType").get(code).isZi();
-        return Objects.requireNonNullElse(isZi, false);
+        return getInstance().codes.get("taskType").get(code).isZi();
     }
 
     private static CodeService obj;

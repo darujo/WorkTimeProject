@@ -1,20 +1,25 @@
 package ru.darujo.service;
 
 import jakarta.annotation.PostConstruct;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.darujo.integration.*;
 import ru.darujo.model.ServiceType;
+import ru.darujo.object.ServiceIntegrationObject;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 @Slf4j
 @Service
 public class MonitorService {
-    private final Map<ServiceType, ServiceIntegration> serviceIntegrationMapFirst = new HashMap<>();
-    private final Map<ServiceType, ServiceIntegration> serviceIntegrationMapSecond = new HashMap<>();
+    @Getter
+    private final PriorityQueue<ServiceIntegrationObject> serviceIntegrations = new PriorityQueue<>(Comparator.comparing(ServiceIntegrationObject::getSort));
+
     private ServiceStatusService serviceStatusService;
 
     @Autowired
@@ -74,63 +79,95 @@ public class MonitorService {
 
     private void addServiceIntegration(ServiceType serviceType, ServiceIntegration serviceIntegration) {
         log.info(serviceType.toString());
-        serviceIntegrationMapFirst.put(serviceType, serviceIntegration);
+        serviceIntegrations.add(new ServiceIntegrationObject(serviceType, serviceIntegration, serviceType.getPriorityStop(), null));
     }
 
     @PostConstruct
     public void init() {
-        availService();
-//        stopServiceFirst();
-//        stopServiceSecond();
+//        availService();
 
 
     }
 
     public void availService() {
-        Set<ServiceType> serviceIntegrationsError = Collections.synchronizedSet(new HashSet<>());
-
-        availService(serviceIntegrationMapFirst, serviceIntegrationsError::add);
-        availService(serviceIntegrationMapSecond, serviceIntegrationsError::add);
-        serviceStatusService.newServiceStatus(serviceIntegrationsError);
+        Map<ServiceType, Integer> serviceIntegrationsError = getServiceErrorTypes(true);
+        AtomicBoolean flagError = new AtomicBoolean(false);
+        serviceIntegrationsError.forEach((serviceType, count) -> {
+            if (count > 2) {
+                flagError.set(true);
+            }
+        });
+        if (flagError.get()) {
+            serviceStatusService.newServiceStatus(serviceIntegrationsError.keySet());
+        }
     }
 
-    public void availService(Map<ServiceType, ServiceIntegration> serviceIntegrations, Consumer<ServiceType> addService) {
+    public boolean allServiceOk() {
+        Map<ServiceType, Integer> serviceIntegrationsError = getServiceErrorTypes(false);
 
-        serviceIntegrations.forEach((serviceType, serviceIntegration) -> {
+        return serviceIntegrationsError.isEmpty();
+    }
+
+    Map<ServiceType, Integer> serviceIntegrationsError = Collections.synchronizedMap(new HashMap<>());
+
+    private @NonNull Map<ServiceType, Integer> getServiceErrorTypes(boolean addCount) {
+        for (ServiceType serviceType : ServiceType.values()) {
+            serviceIntegrationsError.putIfAbsent(serviceType, 0);
+        }
+        Set<ServiceType> serviceOk = Collections.synchronizedSet(new HashSet<>());
+
+        availService(serviceIntegrations, serviceOk::add);
+        serviceOk.forEach(serviceType -> serviceIntegrationsError.remove(serviceType));
+        if (addCount) {
+            serviceIntegrationsError.forEach((serviceType, count) -> serviceIntegrationsError.put(serviceType, count + 1));
+        }
+        return serviceIntegrationsError;
+    }
+
+    public void availService(PriorityQueue<ServiceIntegrationObject> serviceIntegrations, Consumer<ServiceType> addService) {
+
+        serviceIntegrations.forEach((serviceIntegrationObj) -> {
             try {
 
-                serviceIntegration.test();
-                log.info("Сервис {} в строю", serviceType);
+                serviceIntegrationObj.getServiceIntegration().test();
+                addService.accept(serviceIntegrationObj.getServiceType());
+//                log.info("Сервис {} в строю", serviceIntegrationObj.getServiceType());
             } catch (RuntimeException ex) {
-                addService.accept(serviceType);
-                log.error("Не прошла команда тест {} {}", serviceType, ex.getMessage());
+
+//                log.error("Не прошла команда тест {} {}", serviceIntegrationObj.getServiceType(), ex.getMessage());
             }
 
         });
+
 
     }
 
     String token;
 
-    public void stopServiceFirst() {
-        stopService(serviceIntegrationMapFirst);
+    public void stopServiceAll() {
+        stopService(serviceIntegrations);
 
     }
 
-    public void stopServiceSecond() {
-        stopService(serviceIntegrationMapSecond);
+    public String getToken() {
+        try {
 
+
+        return ((UserServiceIntegration) serviceIntegrations.stream().filter(serviceIntegrationObject -> serviceIntegrationObject.getServiceType().equals(ServiceType.USER)).findAny().orElseThrow(() -> new RuntimeException("")).getServiceIntegration()
+        ).getToken("system_user_update", "Приносить пользу миру — это единственный способ стать счастливым.").getToken();
+        } catch (RuntimeException ex) {
+            return "";
+        }
     }
 
-    public void stopService(Map<ServiceType, ServiceIntegration> serviceIntegrations) {
-        token = ((UserServiceIntegration) serviceIntegrations.get(ServiceType.USER)).getToken("system_user_update", "Приносить пользу миру — это единственный способ стать счастливым.").getToken();
-        serviceIntegrationMapFirst.forEach((name, serviceIntegration) -> {
+    public void stopService(PriorityQueue<ServiceIntegrationObject> serviceIntegrations) {
+        token = getToken();
+        serviceIntegrations.forEach((serviceIntegrationObject) -> {
             try {
-
-                serviceIntegration.shutDown(token);
-                log.info("Команда остановки успешно отправлена сервису {}", name);
+                serviceIntegrationObject.getServiceIntegration().shutDown(token);
+                log.info("Команда остановки успешно отправлена сервису {}", serviceIntegrationObject.getServiceType());
             } catch (RuntimeException ex) {
-                log.error("Сервис {} {}", name, ex.getMessage());
+                log.error("Сервис {} {}", serviceIntegrationObject.getServiceType(), ex.getMessage());
             }
 
         });

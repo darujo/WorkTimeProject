@@ -25,9 +25,11 @@ public class AdminRoleController {
     }
 
     @PostMapping("/edit/role")
-    public RoleDto setRoleEditDto(@RequestBody RoleDto roleDto) {
+    public RoleDto setRoleEditDto(
+            @RequestBody RoleDto roleDto,
+            @RequestParam(name = "system_project") Long projectId) {
         return RoleConvertor.getRoleDto(
-                roleService.saveRole(RoleConvertor.getRole(roleDto)));
+                roleService.saveRole(projectId, RoleConvertor.getRole(roleDto)));
     }
 
     @DeleteMapping("/edit/role/{id}")

@@ -4,7 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
-import ru.darujo.dto.*;
+import ru.darujo.dto.ListString;
+import ru.darujo.dto.TaskDto;
+import ru.darujo.dto.WorkTimeDto;
 import ru.darujo.dto.calendar.VacationDto;
 import ru.darujo.dto.calendar.WeekWorkDto;
 import ru.darujo.dto.user.UserDto;
@@ -51,7 +53,7 @@ public class WorkTimeRepService {
         AtomicReference<Float> time = new AtomicReference<>((float) 0);
         for (Integer type : types) {
 
-            workTimeService.findWorkTime(taskId, nikName, null, dateLe, dateGt, null, type, null, null, null).
+            workTimeService.findWorkTime(taskId, nikName, null, dateLe, dateGt, null, type, null, null, null, null).
 
                     forEach(workTime ->
                             time.set(time.get() + workTime.getWorkTime())
@@ -80,7 +82,7 @@ public class WorkTimeRepService {
 
     public ListString getFactUser(Long[] taskId, Date dateLe) {
         ListString users = new ListString();
-        workTimeService.findWorkTime(taskId, null, null, dateLe, null, null, null, null, null, null).forEach(workTime -> users.getList().add(workTime.getNikName()));
+        workTimeService.findWorkTime(taskId, null, null, dateLe, null, null, null, null, null, null, null).forEach(workTime -> users.getList().add(workTime.getNikName()));
         return users;
     }
 
@@ -113,7 +115,7 @@ public class WorkTimeRepService {
                         userWorkDtoMap.put(userWorkDtoTotal.getNikName(), userWorkDtoTotal);
                     }
                     UserWorkDto finalUserWorkDtoTotal = userWorkDtoTotal;
-                    workTimeService.findWorkTime(taskId, nikName, null, weekWorkDto.getDayEnd(), null, weekWorkDto.getDayStart(), null, null, null, null)
+                    workTimeService.findWorkTime(taskId, nikName, null, weekWorkDto.getDayEnd(), null, weekWorkDto.getDayStart(), null, null, null, null, null)
                             .forEach(workTime -> {
                                 Integer type = tasks.get(workTime.getTaskId());
                                 if (type == null) {
@@ -243,14 +245,11 @@ public class WorkTimeRepService {
                         weekWorkPeriodDTOs.add(workPeriodDto);
                     });
             List<WorkTimeDto> workTimeDTOs = new ArrayList<>();
-//            if (addTotal) {
-            WorkTimeDto workTimeDto = new WorkTimeDto(null, null, null, null, null, timeFact + " из " + timePlan, null);
+            WorkTimeDto workTimeDto = new WorkTimeDto(null, null, null, null, null, timeFact + " из " + timePlan, null, null);
             workTimeDTOs.add(workTimeDto);
             WorkPeriodDto workPeriodDto = new WorkPeriodDto(null, null, null, null, workTimeDTOs);
             weekWorkPeriodDTOs.add(workPeriodDto);
 
-//            }
-            // Добавим итог
             // TODO может зря убрал 8 часов
             UserWorkPeriodDto userWorkPeriodDto = new UserWorkPeriodDto(user.getNikName(), weekWorkPeriodDTOs);
             workTimeService.updFio(userWorkPeriodDto);
@@ -278,6 +277,7 @@ public class WorkTimeRepService {
                         dateEnd,
                         null,
                         dateStart,
+                        null,
                         null,
                         null,
                         null,

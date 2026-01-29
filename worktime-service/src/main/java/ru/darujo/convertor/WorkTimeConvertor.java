@@ -15,6 +15,7 @@ public class WorkTimeConvertor {
                 .setWorkTime(workTime.getWorkTime())
                 .setComment(workTime.getComment())
                 .setType(workTime.getType())
+                .setProjectId(workTime.getProjectId())
                 .getWorkTimeDto();
     }
     public static WorkTime getWorkTime(WorkTimeDto workTimeDto){
@@ -27,6 +28,7 @@ public class WorkTimeConvertor {
                 .setWorkTime(workTimeDto.getWorkTime())
                 .setComment(workTimeDto.getComment())
                 .setType(workTimeDto.getType())
+                .setProjectId(workTimeDto.getProjectId())
                 .getWorkTime();
     }
 }

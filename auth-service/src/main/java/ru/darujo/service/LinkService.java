@@ -66,7 +66,7 @@ public class LinkService {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         for (Map.Entry<Integer, SingleCode> entry : mapCode.entrySet()) {
             if (entry.getValue().getTimestamp().before(timestamp)
-                    || (entry.getValue().getMessageType().equals(messageType)
+                    || (entry.getValue().getMessageType() != null && (entry.getValue().getMessageType().equals(messageType))
                     && entry.getValue().getLogin().equals(login))) {
                 mapCode.remove(entry.getKey());
             }
@@ -122,7 +122,7 @@ public class LinkService {
     @Transactional
     public void linkDeleteTelegram(Long telegramId, Integer threadId) {
         if (threadId == null) {
-            userService.getUserList(null, null, null, null, null, null, null, telegramId, null)
+            userService.getUserList(null, null, null, null, null, null, null, telegramId, null, null)
                     .forEach(user -> {
                         user.setTelegramId(null);
                         userInfoTypeService.getInfoTypes(user, null, null, null)

@@ -56,6 +56,7 @@ public class WorkTimeDto extends DateHelper implements Serializable, UserFio {
     // № внутренней задачи (DEVBO)
     private String taskCodeDEVBO;
     private Integer taskType;
+    private Long projectId;
 
     public void setTaskDescription(String taskDescription) {
         this.taskDescription = taskDescription;
@@ -99,7 +100,7 @@ public class WorkTimeDto extends DateHelper implements Serializable, UserFio {
     public WorkTimeDto() {
     }
 
-    public WorkTimeDto(Long id, String nikName, Timestamp workDate, Float workTime, Long taskId, String comment, Integer type) {
+    public WorkTimeDto(Long id, String nikName, Timestamp workDate, Float workTime, Long taskId, String comment, Integer type, Long projectId) {
         this.id = id;
         this.nikName = nikName;
         this.workDate = workDate;
@@ -107,6 +108,7 @@ public class WorkTimeDto extends DateHelper implements Serializable, UserFio {
         this.taskId = taskId;
         this.comment = comment;
         this.type = type;
+        this.projectId = projectId;
     }
 
     public String getNikName() {
@@ -163,5 +165,13 @@ public class WorkTimeDto extends DateHelper implements Serializable, UserFio {
 
     public void setWorkTime(Float workTime) {
         this.workTime = workTime;
+    }
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 }

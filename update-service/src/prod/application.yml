@@ -1,0 +1,39 @@
+server:
+  port: 8189
+  servlet:
+    context-path: /app
+spring:
+  main:
+    banner-mode: off
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/work_time_monitor?options=--search_path%3Dupdate
+    username: postgres
+    password: 5397
+
+
+  jpa:
+    database: postgresql
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+
+  jackson:
+    default-property-inclusion: non_absent
+  servlet:
+    multipart:
+      enabled: true
+      # Threshold after which the files are written to a disk.
+      file-size-threshold: 2KB
+      # Max file size.
+      max-file-size: 105MB
+      # Max Request Size
+      max-request-size: 1200MB
+
+update:
+  save-into: "C:/daru/worktime/build"
+  run-service-command:
+    command: "C:/daru/worktime/build/%s.bat"
+  unpack-command:
+    command: "C:/daru/worktime/build/7z.exe"
+    param: "x %s -o%s -y"

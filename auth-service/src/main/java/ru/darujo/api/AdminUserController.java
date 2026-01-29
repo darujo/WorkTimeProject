@@ -11,6 +11,8 @@ import ru.darujo.dto.user.UserEditDto;
 import ru.darujo.dto.user.UserRoleDto;
 import ru.darujo.service.UserService;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/admin/users")
@@ -33,19 +35,25 @@ public class AdminUserController {
     }
 
     @PostMapping("/edit/user")
-    public UserEditDto setUserEditDto(@RequestBody UserEditDto user) {
+    public UserEditDto setUserEditDto(@RequestBody UserEditDto user,
+                                      @RequestParam("system_right") List<String> right) {
         return UserConvertor.getUserEditDto(
-                userService.saveUser(UserConvertor.getUser(user),user.getTextPassword()));
+                userService.saveUser(
+                        UserConvertor.getUser(user),
+                        user.getTextPassword(),
+                        right.contains("ADMIN_USER") && user.isAdmin() != null ? user.isAdmin() : false));
     }
 
     @GetMapping("/user/roles/{userId}")
-    public UserRoleDto getUserRoles(@PathVariable Long userId) {
-        return userService.getUserRoles(userId);
+    public UserRoleDto getUserRoles(@PathVariable Long userId,
+                                    @RequestParam("system_project") Long project) {
+        return userService.getUserRoles(userId, project);
 
     }
     @PostMapping("/user/roles")
-    public UserRoleDto getUserRoles(@RequestBody UserRoleDto userRoleDto) {
-        return userService.setUserRoles(userRoleDto);
+    public UserRoleDto getUserRoles(@RequestParam("system_project") Long project,
+                                    @RequestBody UserRoleDto userRoleDto) {
+        return userService.setUserRoles(project, userRoleDto);
 
     }
     @GetMapping("/user/password/hash")

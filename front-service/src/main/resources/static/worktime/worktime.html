@@ -25,7 +25,8 @@
                         <div class="horiz">
                             <label class="p-head" for="UserFilter">ФИО</label>
                             <select class="vvod40mar10" name="UserFilterWorkTimeSelect" id="UserFilter" ng-model="Filter.nikName">
-                                <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">
+                                <option ng-repeat="user in UserList" ng-if="availProject(user.projects)"
+                                        ng-value="user.nikName" value="user.nikName">
                                     {{user.lastName}}
                                     {{user.firstName}} {{user.patronymic}}
                                 </option>

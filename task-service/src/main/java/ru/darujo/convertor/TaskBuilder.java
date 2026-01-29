@@ -16,10 +16,12 @@ public class TaskBuilder {
     // Краткое описание ошибки
     private String description;
     // Тип задачи
-    private  Integer type;
+    private Integer type;
     // № ЗИ (ZI)
-    private  Long workId;
+    private Long workId;
     private Timestamp timeCreate;
+    private Long projectId;
+
     public TaskBuilder setId(Long id) {
         this.id = id;
         return this;
@@ -60,10 +62,16 @@ public class TaskBuilder {
         return this;
     }
 
-    public static TaskBuilder createWorkTime () {
+    public static TaskBuilder createWorkTime() {
         return new TaskBuilder();
     }
-    public TaskDto getTaskDto(){
+
+    public TaskBuilder setProjectId(Long projectId) {
+        this.projectId = projectId;
+        return this;
+    }
+
+    public TaskDto getTaskDto() {
         return new TaskDto(id,
                 nikName,
                 null,
@@ -76,7 +84,8 @@ public class TaskBuilder {
                 workId,
                 timeCreate);
     }
-    public Task getTask(){
+
+    public Task getTask() {
         return new Task(
                 id,
                 nikName,
@@ -86,6 +95,7 @@ public class TaskBuilder {
                 type,
                 workId,
                 null,
-                timeCreate);
+                timeCreate,
+                projectId);
     }
 }

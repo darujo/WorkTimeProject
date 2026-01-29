@@ -453,7 +453,8 @@ TD {
     position: relative;
     overflow: auto;
     border: 1px solid black;
-    height: 85vmax;
+    height: 70vmax;
+    max-height: 1000px;
 }
 
 

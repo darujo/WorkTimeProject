@@ -15,6 +15,7 @@ import ru.darujo.dto.workperiod.WorkUserTime;
 import ru.darujo.dto.workrep.WorkFactDto;
 import ru.darujo.dto.workrep.WorkGraphsDto;
 import ru.darujo.dto.workrep.WorkRepDto;
+import ru.darujo.model.StageZiFind;
 import ru.darujo.service.WorkRepService;
 
 import java.sql.Timestamp;
@@ -40,17 +41,8 @@ public class WorkRepController {
                                         @RequestParam(defaultValue = "15") Integer stageZi,
                                         @RequestParam(required = false) Long releaseId,
                                         @RequestParam(required = false) String[] sort) {
-        Integer stageZiLe = null;
-        Integer stageZiGe = null;
-        if (stageZi != null) {
-            if (stageZi < 10) {
-                stageZiGe = stageZi;
-                stageZiLe = stageZi;
-            } else {
-                stageZiLe = stageZi - 10;
-            }
-        }
-        return workRepService.getWorkRep(ziName, availWork, stageZiGe, stageZiLe, releaseId, sort);
+        StageZiFind stageZiFind = new StageZiFind(stageZi);
+        return workRepService.getWorkRep(ziName, availWork, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), releaseId, sort);
     }
 
     @GetMapping("/work/fact")
@@ -68,17 +60,8 @@ public class WorkRepController {
         if (nikName != null && nikName.isEmpty()) {
             nikName = null;
         }
-        Integer stageZiLe = null;
-        Integer stageZiGe = null;
-        if (stageZi != null) {
-            if (stageZi < 10) {
-                stageZiGe = stageZi;
-                stageZiLe = stageZi;
-            } else {
-                stageZiLe = stageZi - 10;
-            }
-        }
-        return workRepService.getWorkFactRep(page, size, nikName, name, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId, sort, hideNotTime);
+        StageZiFind stageZiFind = new StageZiFind(stageZi);
+        return workRepService.getWorkFactRep(page, size, nikName, name, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, sort, hideNotTime);
     }
 
     @GetMapping("/time/fact")
@@ -93,7 +76,7 @@ public class WorkRepController {
     public MapStringFloat getFactWork(@RequestParam Long workId,
                                       @RequestParam(required = false) String nikName,
                                       @RequestParam(defaultValue = "0") Integer stage) {
-        return workRepService.getFactWorkStage(workId, nikName,stage);
+        return workRepService.getFactWorkStage(workId, nikName, stage);
     }
 
     @GetMapping("/fact/week")
@@ -116,18 +99,10 @@ public class WorkRepController {
                                           @RequestParam(defaultValue = "release") String sort) {
         Timestamp dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ", true);
         Timestamp dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ", true);
-        Integer stageZiLe = null;
-        Integer stageZiGe = null;
-        if (stageZi != null) {
-            if (stageZi < 10) {
-                stageZiGe = stageZi;
-                stageZiLe = stageZi;
-            } else {
-                stageZiLe = stageZi - 10;
-            }
-        }
+        StageZiFind stageZiFind = new StageZiFind(stageZi);
+
         return workRepService.getWeekWork(ziSplit, addTotal, nikName, weekSplit, dateStart, dateEnd,
-                page, size, name, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId, sort);
+                page, size, name, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, sort);
     }
 
     @GetMapping("/graph")
@@ -145,16 +120,7 @@ public class WorkRepController {
                                                      @RequestParam(required = false) String period) {
         Timestamp dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ", false);
         Timestamp dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ", false);
-        Integer stageZiLe = null;
-        Integer stageZiGe = null;
-        if (stageZi != null) {
-            if (stageZi < 10) {
-                stageZiGe = stageZi;
-                stageZiLe = stageZi;
-            } else {
-                stageZiLe = stageZi - 10;
-            }
-        }
+        StageZiFind stageZiFind = new StageZiFind(stageZi);
         if (dateStart == null) {
             Calendar c = Calendar.getInstance();
             c.add(Calendar.DATE, -100);
@@ -167,7 +133,7 @@ public class WorkRepController {
             dateEnd = new Timestamp(c.getTimeInMillis());
         }
 
-        return workRepService.getWorkGraphRep(page, size, nameZi, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId, sort, dateStart, dateEnd, period);
+        return workRepService.getWorkGraphRep(page, size, nameZi, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, sort, dateStart, dateEnd, period);
     }
 
 

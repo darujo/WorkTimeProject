@@ -4,7 +4,9 @@ import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -67,6 +69,23 @@ public class DateHelper {
         return sdfIso.format(date);
     }
 
+    private static DateTimeFormatter dateTimeFormatter;
+
+    public static DateTimeFormatter getDateTimeFormatter() {
+        if (dateTimeFormatter == null) {
+            dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm").withZone(ZoneId.systemDefault());
+        }
+        return dateTimeFormatter;
+    }
+
+    public static String dateTimeToStr(ZonedDateTime date) {
+        if (date == null) {
+            return null;
+        }
+
+        return date.format(getDateTimeFormatter());
+    }
+
     private static final SimpleDateFormat sdfDT = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
     public static String dateTimeToStr(Date date) {
@@ -86,5 +105,15 @@ public class DateHelper {
                 .map(Long::parseLong).toList();
     }
 
+    public static List<String> convertListNotNull(List<String> list) {
+        if (list == null
+                || list.contains(null)
+                || list.contains("null")
+                || list.contains("undefined")) {
+            return null;
+        }
+
+        return list;
+    }
 
 }

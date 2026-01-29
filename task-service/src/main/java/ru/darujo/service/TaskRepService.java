@@ -13,7 +13,8 @@ import ru.darujo.repository.TaskRepository;
 import ru.darujo.specifications.Specifications;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,7 +51,7 @@ public class TaskRepService {
             Date dateLe,
             Date dateGt,
             String type) {
-        return ((List<Task>) taskService.findTask(null, codeBTS, codeDEVBO, description, workId, null, null, null))
+        return ((List<Task>) taskService.findTask(null, codeBTS, codeDEVBO, description, workId, null, null, null, null))
                 .stream()
                 .map(task -> workTimeServiceIntegration.getTimeTask(task.getId(), nikName, dateLe, dateGt, type))
                 .reduce(Float::sum)
@@ -59,7 +60,7 @@ public class TaskRepService {
 
     public ListString getFactUsers(Long workId, Date dateLe) {
         ListString users = new ListString();
-        ((List<Task>) taskService.findTask(null, null, null, null, workId, null, null, null))
+        ((List<Task>) taskService.findTask(null, null, null, null, workId, null, null, null, null))
                 .stream().map(task ->
                         workTimeServiceIntegration
                                 .getUsers(task.getId(), dateLe))
@@ -80,14 +81,14 @@ public class TaskRepService {
     }
 
     public List<UserWorkDto> getWeekWork(Long workId, String nikName, Boolean addTotal) {
-        List<Task> tasks = (List<Task>) taskService.findTask(null, null, null, null, workId, null, null, null);
+        List<Task> tasks = (List<Task>) taskService.findTask(null, null, null, null, workId, null, null, null, null);
 
         return workTimeServiceIntegration.getWorkUserOrZi(tasks.stream().map(Task::getId).collect(Collectors.toList()), nikName, addTotal, false, null, null);
 
     }
 
     public Timestamp getLastTime(long workId, Timestamp dateLe, Timestamp dateGe) {
-        List<Task> tasks = (List<Task>) taskService.findTask(null, null, null, null, workId, null, null, null);
+        List<Task> tasks = (List<Task>) taskService.findTask(null, null, null, null, workId, null, null, null, null);
 
         return workTimeServiceIntegration.getLastTime(tasks.stream().map(Task::getId).collect(Collectors.toList()), dateLe, dateGe);
     }

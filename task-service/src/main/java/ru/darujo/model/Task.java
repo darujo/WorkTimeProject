@@ -1,10 +1,10 @@
 package ru.darujo.model;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import jakarta.persistence.*;
 import java.sql.Timestamp;
 
 @NoArgsConstructor
@@ -20,11 +20,11 @@ public class Task {
     @Column(name = "nik_name")
     private String nikName;
     // № запроса (BTS)
-    @Column(name = "codeBTS")
+    @Column(name = "code_bts")
     private String codeBTS;
     // № внутренней задачи (D E V B O)
-    @Column(name = "codeDEVBO")
-    private String codeDEVBO;
+    @Column(name = "code")
+    private String code;
     // Краткое описание ошибки
     @Column(name = "description")
     private String description;
@@ -38,4 +38,7 @@ public class Task {
     private Timestamp refresh;
     @Column(name = "time_create")
     private Timestamp timeCreate;
+    @Column(name = "project_id")
+    private Long projectId;
+
 }

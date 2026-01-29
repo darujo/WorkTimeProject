@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @Configurable
 public abstract class TestAndShutdownController {
-    protected ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
     @Autowired
     public void setApplicationContext(ApplicationContext applicationContext) {

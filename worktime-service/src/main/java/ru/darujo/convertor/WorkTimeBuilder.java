@@ -1,10 +1,10 @@
 package ru.darujo.convertor;
 
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.WorkTimeDto;
 import ru.darujo.model.WorkTime;
 
 import java.sql.Timestamp;
-import java.util.Calendar;
 
 public class WorkTimeBuilder {
     private Long id;
@@ -14,6 +14,7 @@ public class WorkTimeBuilder {
     private Long taskId;
     private String comment;
     private Integer type;
+    private Long projectId;
 
     public WorkTimeBuilder setId(Long id) {
         this.id = id;
@@ -31,7 +32,11 @@ public class WorkTimeBuilder {
     }
 
     public WorkTimeBuilder setWorkDate(Timestamp workDate) {
-        this.workDate = dateToStartTime(workDate);
+        if (workDate == null) {
+            this.workDate = null;
+        } else {
+            this.workDate = DateHelper.dateNoTime(workDate);
+        }
         return this;
     }
 
@@ -50,29 +55,23 @@ public class WorkTimeBuilder {
         return this;
     }
 
+    public WorkTimeBuilder setProjectId(Long projectId) {
+        this.projectId = projectId;
+        return this;
+    }
+
     public static WorkTimeBuilder createWorkTime() {
         return new WorkTimeBuilder();
     }
 
 
     public WorkTimeDto getWorkTimeDto() {
-        return new WorkTimeDto(id, nikName, workDate, workTime, taskId, comment, type);
+        return new WorkTimeDto(id, nikName, workDate, workTime, taskId, comment, type, projectId);
     }
 
     public WorkTime getWorkTime() {
-        return new WorkTime(id, nikName, workDate, workTime, taskId, comment, type);
+        return new WorkTime(id, nikName, workDate, workTime, taskId, comment, type, projectId);
     }
 
-    public Timestamp dateToStartTime(Timestamp timestamp) {
-        if (timestamp == null) {
-            return null;
-        }
-        Calendar c = Calendar.getInstance();
-        c.setTime(timestamp);
-        c.set(Calendar.HOUR_OF_DAY, 0);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND, 0);
-        return new Timestamp(c.getTimeInMillis());
-    }
+
 }

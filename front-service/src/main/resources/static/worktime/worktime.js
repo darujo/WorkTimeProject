@@ -541,6 +541,19 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
         console.log("result RoleList");
         console.log(result);
     });
+    $scope.availProject = function (list) {
+        return $scope.availProjectInList(list, $location.UserLogin.projectId)
+    }
+    $scope.availProjectInList = function (list, searchVal) {
+        console.log("availProjectInList search ", searchVal)
+
+        for (let i = 0; i < list.length; i++) {
+            if (list[i]["id"] === searchVal) {
+                return true;
+            }
+        }
+        return false;
+    }
     $scope.loadWorkTime();
     console.log("----------------------------------------")
     console.log($location.UserList);

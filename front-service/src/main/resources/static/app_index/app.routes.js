@@ -248,6 +248,24 @@ angular.module('workTimeService').config(function ($routeProvider) {
                 }]
             }
         })
+        .when('/project'.toLowerCase(), {
+            templateUrl: 'project/project.html?ver=' + ver,
+            controller: 'projectController',
+            resolve: {
+                LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load('project'); // Resolve promise and load before view
+                }]
+            }
+        })
+        .when('/projectEdit', {
+            templateUrl: 'project/project_edit.html?ver=' + ver,
+            controller: 'projectEditController',
+            resolve: {
+                LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load('project_edit'); // Resolve promise and load before view
+                }]
+            }
+        })
         .otherwise({
             redirectTo: '/'
         });

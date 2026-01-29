@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.assistant.helper.DateHelper;
@@ -62,33 +63,24 @@ public class TaskController {
 
     @GetMapping("/right/{right}")
     public boolean checkRight(@PathVariable String right,
-                              @RequestHeader(defaultValue = "false", name = "TASK_EDIT") boolean rightEdit,
-                              @RequestHeader(defaultValue = "false", name = "TASK_CREATE") boolean rightCreate) {
-        right = right.toLowerCase();
-        if (right.equals("edit")) {
-            if (!rightEdit) {
-                throw new ResourceNotFoundRunTime("У вас нет права на редактирование TASK_EDIT");
-            }
-        } else if (right.equals("create")) {
-            if (!rightCreate) {
-                throw new ResourceNotFoundRunTime("У вас нет права на редактирование TASK_CREATE");
-            }
-        }
-        return true;
+                              @RequestParam("system_right") List<String> userRight
+    ) {
+
+        return taskService.checkRight(right, userRight);
 
     }
 
     @PostMapping("")
     public TaskDto TaskSave(@RequestHeader(required = false) String username,
                             @RequestBody TaskDto taskDto,
-                            @RequestHeader(defaultValue = "false", name = "TASK_EDIT") boolean right) {
-        if (!right) {
-            throw new ResourceNotFoundRunTime("У вас нет права TASK_EDIT");
-        }
+                            @RequestParam("system_right") List<String> right,
+                            @RequestParam("system_project") Long projectId,
+                            @RequestParam("system_project_code") String projectName) {
+        taskService.checkRight(taskDto.getId() == null ? "create" : "edit", right);
         if (taskDto.getNikName() == null || !taskDto.getNikName().isEmpty()) {
             taskDto.setNikName(username);
         }
-        return TaskConvertor.getTaskDto(taskService.saveWorkTime(TaskConvertor.getTask(taskDto)));
+        return TaskConvertor.getTaskDto(taskService.saveWorkTime(projectName, TaskConvertor.getTask(projectId, taskDto)));
     }
 
     @PostMapping("/checkAvail")
@@ -102,46 +94,46 @@ public class TaskController {
 
     @DeleteMapping("/{id}")
     public void deleteTask(@PathVariable long id,
-                           @RequestHeader(defaultValue = "false", name = "TASK_EDIT") boolean right) {
-        if (!right) {
-            throw new ResourceNotFoundRunTime("У вас нет права TASK_EDIT");
-        }
+                           @RequestParam("system_right") List<String> right) {
+        taskService.checkRight("delete", right);
         taskService.deleteWorkTime(id);
     }
 
     @GetMapping("")
-    public Iterable<TaskDto> findTasks(@RequestParam(required = false) String nikName,
-                                       @RequestParam(required = false) String codeBTS,
-                                       @RequestParam(required = false) String codeDEVBO,
-                                       @RequestParam(required = false) String description,
-                                       @RequestParam(required = false) Long workId,
-                                       @RequestParam(required = false) String ziName,
-                                       @RequestParam(required = false) Integer type,
-                                       @RequestParam(defaultValue = "1") Integer page,
-                                       @RequestParam(defaultValue = "10") Integer size,
-                                       @RequestParam(required = false) Long[] arrTaskId) {
+    public Page<TaskDto> findTasks(@RequestParam(required = false) String nikName,
+                                   @RequestParam(required = false) String codeBTS,
+                                   @RequestParam(required = false) String codeDEVBO,
+                                   @RequestParam(required = false) String description,
+                                   @RequestParam(required = false) Long workId,
+                                   @RequestParam(required = false) String ziName,
+                                   @RequestParam(required = false) Integer type,
+                                   @RequestParam(defaultValue = "1") Integer page,
+                                   @RequestParam(defaultValue = "10") Integer size,
+                                   @RequestParam(required = false) Long[] arrTaskId,
+                                   @RequestParam("system_project") Long projectId) {
         List<Long> listTaskId = null;
         if (arrTaskId != null && arrTaskId.length != 0) {
             listTaskId = Arrays.asList(arrTaskId);
 
         }
         if (workId == null && ziName != null) {
-            return findTasks(nikName, codeBTS, codeDEVBO, description, ziName, null, type, listTaskId);
+            return findTasks(nikName, codeBTS, codeDEVBO, description, ziName, null, type, listTaskId, projectId);
         }
 
-        return findTasks(nikName, codeBTS, codeDEVBO, description, workId, type, page, size, listTaskId);
+        return findTasks(nikName, codeBTS, codeDEVBO, description, workId, type, page, size, listTaskId, projectId);
     }
 
 
     public Page<@NonNull TaskDto> findTasks(String userName,
-                                                 String codeBTS,
-                                                 String codeDEVBO,
-                                                 String description,
-                                                 Long workId,
-                                                 Integer type,
-                                                 Integer page,
-                                                 Integer size,
-                                                 List<Long> listTaskId) {
+                                            String codeBTS,
+                                            String codeDEVBO,
+                                            String description,
+                                            Long workId,
+                                            Integer type,
+                                            Integer page,
+                                            Integer size,
+                                            List<Long> listTaskId,
+                                            Long projectId) {
         clearCash();
         return ((Page<@NonNull Task>) taskService.findTask(userName,
                 codeBTS,
@@ -150,6 +142,7 @@ public class TaskController {
                 workId,
                 type,
                 listTaskId,
+                projectId,
                 page,
                 size)).map(this::taskAddValue);
     }
@@ -159,7 +152,8 @@ public class TaskController {
                                     @RequestParam(required = false) String codeBTS,
                                     @RequestParam(required = false) String codeDEVBO,
                                     @RequestParam(required = false) String description,
-                                    @RequestParam(required = false) Long workId) {
+                                    @RequestParam(required = false) Long workId,
+                                    @RequestParam(required = false) Long projectId) {
         Set<Long> listId = new HashSet<>();
         taskService.findTask(nikName,
                 codeBTS,
@@ -167,6 +161,7 @@ public class TaskController {
                 description,
                 workId,
                 null,
+                projectId,
                 null,
                 null).forEach(task -> listId.add(task.getId()));
         return listId;
@@ -200,14 +195,15 @@ public class TaskController {
         return taskDto;
     }
 
-    public List<TaskDto> findTasks(String userName,
+    public Page<TaskDto> findTasks(String userName,
                                    String codeBTS,
                                    String codeDEVBO,
                                    String description,
                                    String ziName,
                                    Long workId,
                                    Integer type,
-                                   List<Long> listTaskId) {
+                                   List<Long> listTaskId,
+                                   Long projectId) {
         clearCash();
         List<TaskDto> taskDtoList = new ArrayList<>();
         taskService.findTask(userName,
@@ -217,6 +213,7 @@ public class TaskController {
                 workId,
                 type,
                 listTaskId,
+                projectId,
                 null,
                 null).forEach(task ->
         {
@@ -226,7 +223,7 @@ public class TaskController {
             }
 
         });
-        return taskDtoList;
+        return new PageImpl<>(taskDtoList);
     }
 
 

@@ -165,7 +165,8 @@ angular.module('workTimeService').controller('vacationController', function ($sc
         if ($scope.Filt === null || load) {
             $scope.Filt = {
                 size: 10,
-                nikName: "current"
+                nikName: "current",
+                dateStart: new Date()
             };
         } else {
             $scope.Filt ["size"] = $scope.Filt.size ? $scope.Filt.size : 10;

@@ -28,13 +28,14 @@ public class HtmlService {
         sb.append("<td class=\"table_head1\" rowspan=\"5\"> № п/п</td>");
         sb.append("<td class=\"table_head2\" rowspan=\"5\">Код Зи</td>");
         sb.append("<td class=\"sticky-col first-col table_head1\" rowspan=\"5\"> Наименование </td>");
+        sb.append("<td class=\"table_col1\" rowspan=\"5\">");
+        sb.append("№ релиза");
+        sb.append("</td>");
+
         sb.append("<td class=\"table_head2\" colspan=\"4\"> 0 этап</td>");
         sb.append("<td class=\"table_head2\" colspan=\"2\" rowspan=\"4\"> Дата начала доработки</td>");
         sb.append("<td class=\"table_head1\" colspan=\"6\"> I этап</td>");
         sb.append("<td class=\"table_head2\" colspan=\"4\"> II этап</td>");
-        sb.append("<td class=\"table_col1\" rowspan=\"5\">");
-        sb.append("№ релиза");
-        sb.append("</td>");
         sb.append("<td class=\"table_col1\" colspan = \"2\" rowspan = \"3\" > Выдача релиза </td >");
         sb.append("<td class=\"table_head1\" colspan = \"4\" > III этап </td >");
         sb.append("<td class=\"table_head2\" colspan = \"4\" > IV этап </td >");
@@ -119,6 +120,9 @@ public class HtmlService {
             sb.append(printNotNull(work.getName()));
             sb.append("</td>");
             sb.append("<td>");
+            sb.append(printNotNull(work.getRelease()));
+            sb.append("</td>");
+            sb.append("<td>");
             sb.append(printNotNull(work.getAnaliseEndPlanStr()));
             sb.append("</td>");
             sb.append("<td>");
@@ -168,9 +172,6 @@ public class HtmlService {
             sb.append("</td>");
             sb.append("<td> ");
             sb.append(printNotNull(work.getTimeDebug()));
-            sb.append("</td>");
-            sb.append("<td>");
-            sb.append(printNotNull(work.getRelease()));
             sb.append("</td>");
             sb.append("<td class=\"table_col1\" >");
             sb.append(printNotNull(work.getIssuingReleasePlanStr()));
@@ -235,9 +236,9 @@ public class HtmlService {
         sb.append("<html>");
         sb.append("<head>");
         sb.append("<meta charset=\"utf-8\">");
-        sb.append("<style type=\"text/css\">");
+        sb.append("<style type=\"text/css\">{");
         addStyle(sb);
-        sb.append("</style>");
+        sb.append("}</style>");
         sb.append("</head>");
     }
 

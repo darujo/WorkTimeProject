@@ -54,12 +54,20 @@ angular.module('workTimeService').controller('taskController', function ($scope,
 
     $scope.loadTask = function () {
         console.log("loadTask");
+        console.log(location.href)
+        console.log(location.href.indexOf("?"))
+        console.log($scope.Filt)
         if (location.href.indexOf("?") !== -1) {
             $scope.Filt = $location.parserFilter($scope.Filt);
         } else {
             $scope.Filt = $location.getFilter("taskFilter");
-            $scope.Filt["favouriteTask"] = $scope.Filt ? $scope.Filt.favouriteTask : null;
-            $scope.Filt["size"] = $scope.Filt.size ? $scope.Filt.size : 10;
+            if ($scope.Filt === null) {
+                $scope.clearFilter(false)
+            } else {
+
+                $scope.Filt["favouriteTask"] = $scope.Filt ? $scope.Filt.favouriteTask ? $scope.Filt.favouriteTask : null : null;
+                $scope.Filt["size"] = $scope.Filt.size ? $scope.Filt.size : 10;
+            }
         }
         console.log("loadUrl");
         console.log($scope.Filt);
@@ -372,7 +380,8 @@ angular.module('workTimeService').controller('taskController', function ($scope,
     $scope.clearFilter = function (load) {
         $scope.Filt = {
             workId: null,
-            size: 10
+            size: 10,
+            favouriteTask: null
         }
         if (load) {
             $scope.filterWork();

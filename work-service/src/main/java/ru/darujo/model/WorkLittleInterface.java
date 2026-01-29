@@ -8,4 +8,8 @@ public interface WorkLittleInterface {
     String getName();
 
     Long getId();
+
+    Release getRelease();
+
+    Integer getStageZi();
 }

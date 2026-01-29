@@ -1,0 +1,57 @@
+<div id="RoleList" class="head_text_elem">
+    <div class="filter container_filter">
+        <details class="details_block">
+            <summary class="p-head">Фильтр</summary>
+
+            <form novalidate ng-submit="filterProject()" class="filter">
+                <div class="filter">
+                    <div class="filter_block">
+
+                        <div class="horiz">
+                            <label for="CodeFilter" class="p-head">Код:</label>
+                            <input class="vvod30mar" type="text" id="CodeFilter"
+                                   ng-model="Filt.code"/>
+                            <label for="NameFilter" class="p-head">Наименование:</label>
+                            <input class="vvod30mar" type="text" id="NameFilter"
+                                   ng-model="Filt.name"/>
+                        </div>
+                        <button type="submit" class="head_button" id="FilterButton">Применить</button>
+                        <button type="button" class="head_button" ng-click="clearFilter(true)">Сбросить</button>
+                    </div>
+                </div>
+            </form>
+        </details>
+        <button class="head_button" ng-click="createProject()">Добавить проект</button>
+
+    </div>
+
+    <h1>Список проектов</h1>
+    <table>
+        <tr>
+            <td class="table_head2">Код</td>
+            <td class="table_head2">Наименвание</td>
+
+            <td class="table_head2"></td>
+            <td class="table_head2"></td>
+
+
+        </tr>
+        <tbody>
+        <tr ng-repeat="project in ProjectList">
+
+            <td>{{project.code}}</td>
+            <td>{{project.name}}</td>
+            <td>
+                <button ng-click="editProject(project.id)">Изменить</button>
+            </td>
+            <td>
+                <button ng-click="deleteProject(project.id)">Удалить</button>
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+    <div class="wait_1_2">
+        <img ng-if="load" src="../gif/wait1_2.gif" alt="Лучше ждите" width="300" height="300"/>
+    </div>
+</div>

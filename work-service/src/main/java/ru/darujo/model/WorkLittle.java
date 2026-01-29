@@ -19,15 +19,13 @@ public class WorkLittle implements WorkLittleInterface {
     @Column(name = "code_sap")
     private Long codeSap;
     // Код Зи
-    @Column(name = "codeZI")
-    private String codeZI;
+    @Column(name = "code_zi")
+    private String codeZi;
     // Наименование Зи
     @Column(name = "name")
     private String name;
-    // Разработка прототипа Факт
-    // ВЕНДЕРКА Факт
-    @Column(name = "stageZI")
-    private Integer stageZI;
+    @Column(name = "stage_zi")
+    private Integer stageZi;
     @Column(name = "task")
     private String task;
     @ManyToOne

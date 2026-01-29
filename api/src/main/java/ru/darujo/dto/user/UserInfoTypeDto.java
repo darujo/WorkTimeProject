@@ -12,7 +12,7 @@ public class UserInfoTypeDto extends UserDto implements Serializable {
     private Collection<UserInfoTypeActiveDto> infoTypes = null;
 
     public UserInfoTypeDto(Long id, String nikName, String firstName, String lastName, String patronymic, Collection<UserInfoTypeActiveDto> roles) {
-        super(id, nikName, firstName, lastName, patronymic);
+        super(id, nikName, firstName, lastName, patronymic, false);
         this.infoTypes = roles;
     }
 
