@@ -30,6 +30,9 @@ public class TelegramServiceIntegration extends ServiceIntegration {
             Integer originMessageId,
             String text) {
         try {
+            if (text == null) {
+                return;
+            }
             StringBuilder sb = new StringBuilder();
             addTeg(sb, "threadId", threadId);
             addTeg(sb, "originMessageId", originMessageId);
@@ -62,6 +65,7 @@ public class TelegramServiceIntegration extends ServiceIntegration {
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-Telegram) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
+
     public void addFile(
             String fileName,
             String textFile) {

@@ -169,7 +169,7 @@ public class UserServiceIntegration extends ServiceIntegration {
 
     public ResultMes checkUserTelegram(@NonNull Long chatId) {
         try {
-            return webClient.get().uri("/user/telegram/get/" + chatId)
+            return webClient.get().uri("/users/user/telegram/get/" + chatId)
                     .retrieve()
 //                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
 //                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные пользователю" + clientResponse.bodyToMono(String.class).flatMap(s -> {log.error(s);

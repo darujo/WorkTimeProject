@@ -24,5 +24,7 @@ app:
   http:
     bot: bot
 telegram-bot:
-  token: "7540883202:DDHRreIZun_QKWWsZJKaJVfl5wLeXm013uM"
+  token: "7540883202:AAHRreIZun_QKWWsZJKaJVfl5wLeXm013uM"
   admin-id: 496071536
+#  token: "8503763341:AAHOsgfAMzDomSslCt9om_3iQG9LuxTRI8o"
+#  admin-id: "@daru_kanal" # Имя канала или id чата
