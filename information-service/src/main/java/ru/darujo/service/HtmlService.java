@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -108,110 +109,112 @@ public class HtmlService {
 
         sb.append("</tr >");
         sb.append("<tbody >");
+        AtomicInteger i = new AtomicInteger();
         works.forEach(work -> {
+            nextRow(i.getAndIncrement());
             sb.append("<tr>");
-            sb.append("<td>");
+            sb.append(getTegStart("td"));
             sb.append(printNotNull(work.getId()));
             sb.append("</td>");
-            sb.append("<td class=\"text_not_wrap\" >");
+            sb.append(getTegStart("td", "text_not_wrap"));
             sb.append(printNotNull(work.getCodeZI()));
             sb.append("</td>");
-            sb.append("<td class=\"sticky-col first-col\" >");
+            sb.append(getTegStart("td", "sticky-col first-col"));
             sb.append(printNotNull(work.getName()));
             sb.append("</td>");
-            sb.append("<td>");
+            sb.append(getTegStart("td"));
             sb.append(printNotNull(work.getRelease()));
             sb.append("</td>");
-            sb.append("<td>");
+            sb.append(getTegStart("td"));
             sb.append(printNotNull(work.getAnaliseEndPlanStr()));
             sb.append("</td>");
-            sb.append("<td>");
+            sb.append(getTegStart("td"));
             sb.append(printNotNull(work.getAnaliseEndFactStr()));
             sb.append("</td>");
-            sb.append("<td>");
+            sb.append(getTegStart("td"));
             sb.append(printNotNull(work.getLaborAnalise()));
             sb.append("</td>");
-            sb.append("<td>");
+            sb.append(getTegStart("td", work.getLaborAnalise(), work.getTimeAnalise()));
             sb.append(printNotNull(work.getTimeAnalise()));
             sb.append("</td>");
-            sb.append("<td>");
+            sb.append(getTegStart("td"));
             sb.append(printNotNull(work.getStartTaskPlanStr()));
             sb.append("</td>");
-            sb.append("<td>");
+            sb.append(getTegStart("td"));
             sb.append(printNotNull(work.getStartTaskFactStr()));
             sb.append("</td>");
 
-            sb.append("<td>");
+            sb.append(getTegStart("td"));
             sb.append(printNotNull(work.getLaborDevelop()));
             sb.append("</td>");
-            sb.append("<td>");
+            sb.append(getTegStart("td", work.getLaborDevelop(), work.getTimeDevelop()));
             sb.append(printNotNull(work.getTimeDevelop()));
             sb.append("</td>");
-            sb.append("<td class=\"table_col2\" >");
+            sb.append(getTegStart("td"));
             sb.append(printNotNull(work.getDevelopEndPlanStr()));
             sb.append("</td>");
-            sb.append("<td class=\"table_col2\"> ");
+            sb.append(getTegStart("td"));
             sb.append(printNotNull(work.getDevelopEndFactStr()));
             sb.append("</td>");
-            sb.append("<td class=\"table_col2\" >");
+            sb.append(getTegStart("td", "table_col2"));
             sb.append(printNotNull(work.getIssuePrototypePlanStr()));
             sb.append("</td>");
-            sb.append("<td class=\"table_col2\" > ");
+            sb.append(getTegStart("td", "table_col2"));
             sb.append(printNotNull(work.getIssuePrototypeFactStr()));
             sb.append("</td>");
 
-            sb.append("<td> ");
+            sb.append(getTegStart("td"));
             sb.append(printNotNull(work.getDebugEndPlanStr()));
             sb.append("</td>");
-            sb.append("<td> ");
+            sb.append(getTegStart("td"));
             sb.append(printNotNull(work.getDebugEndFactStr()));
             sb.append("</td>");
 
-            sb.append("<td> ");
+            sb.append(getTegStart("td"));
             sb.append(printNotNull(work.getLaborDebug()));
             sb.append("</td>");
-            sb.append("<td> ");
+            sb.append(getTegStart("td", work.getLaborDebug(), work.getTimeDebug()));
             sb.append(printNotNull(work.getTimeDebug()));
             sb.append("</td>");
-            sb.append("<td class=\"table_col1\" >");
+            sb.append(getTegStart("td", "table_col1"));
             sb.append(printNotNull(work.getIssuingReleasePlanStr()));
             sb.append("</td>");
-            sb.append("<td class=\"table_col1\" >");
+            sb.append(getTegStart("td", "table_col1"));
             sb.append(printNotNull(work.getIssuingReleaseFactStr()));
             sb.append("</td>");
-            sb.append("<td> ");
+            sb.append(getTegStart("td"));
             sb.append(printNotNull(work.getReleaseEndPlanStr()));
             sb.append("</td>");
-            sb.append("<td>");
+            sb.append(getTegStart("td"));
             sb.append(printNotNull(work.getReleaseEndFactStr()));
             sb.append("</td>");
 
-            sb.append("<td>");
+            sb.append(getTegStart("td"));
             sb.append(printNotNull(work.getLaborRelease()));
             sb.append("</td>");
-            sb.append("<td>");
+            sb.append(getTegStart("td", work.getLaborRelease(), work.getTimeRelease()));
             sb.append(printNotNull(work.getTimeRelease()));
             sb.append("</td>");
-            sb.append("<td>");
+            sb.append(getTegStart("td"));
             sb.append(printNotNull(work.getOpeEndPlanStr()));
             sb.append("</td>");
-            sb.append("<td>");
+            sb.append(getTegStart("td"));
             sb.append(printNotNull(work.getOpeEndFactStr()));
             sb.append("</td>");
-            sb.append("<td>");
+            sb.append(getTegStart("td"));
             sb.append(printNotNull(work.getLaborOPE()));
             sb.append("</td>");
-            sb.append("<td>");
+            sb.append(getTegStart("td", work.getLaborOPE(), work.getTimeOPE()));
             sb.append(printNotNull(work.getTimeOPE()));
             sb.append("</td>");
-            sb.append("<td>");
+            sb.append(getTegStart("td"));
             sb.append(printNotNull(work.getTimePlan()));
             sb.append("</td>");
-            sb.append("<td>");
+            sb.append(getTegStart("td", work.getTimePlan(), work.getTimeFact()));
             sb.append(printNotNull(work.getTimeFact()));
             sb.append("</td>");
 
-            sb.append("<td>");
+            sb.append(getTegStart("td"));
             sb.append(printNotNull(work.getTimeWender()));
             sb.append("</td>");
 
@@ -230,15 +233,37 @@ public class HtmlService {
 
     }
 
+    private String rowClass;
+
+    private void nextRow(Integer integer) {
+        rowClass = "table_row_" + (integer % 2 + 1);
+    }
+
+    private String getTegStart(String teg) {
+        return getTegStart(teg, "");
+    }
+
+    private String getTegStart(String teg, Float plan, Float fact) {
+        return getTegStart(teg, plan != null && fact != null && plan < fact);
+    }
+
+    private String getTegStart(String teg, boolean flag) {
+        return String.format("<%s class=\"%s\">", teg, flag ? "table_row_bed" : rowClass);
+    }
+
+    private String getTegStart(String teg, String textClass) {
+        return String.format("<%s class=\"%s %s\">", teg, textClass, rowClass);
+    }
+
     private void getHead(StringBuilder sb) {
         sb.append("<!DOCTYPE HTML>");
 
         sb.append("<html>");
         sb.append("<head>");
         sb.append("<meta charset=\"utf-8\">");
-        sb.append("<style type=\"text/css\">{");
+        sb.append("<style type=\"text/css\">");
         addStyle(sb);
-        sb.append("}</style>");
+        sb.append("</style>");
         sb.append("</head>");
     }
 
@@ -281,14 +306,15 @@ public class HtmlService {
         sb.append("</tr>");
         AtomicReference<Integer> i = new AtomicReference<>(0);
         sb.append("<tbody >");
-
+        AtomicInteger rowI = new AtomicInteger();
         weekWorkList.forEach(work_zi -> {
+            nextRow(rowI.getAndIncrement());
             i.getAndSet(i.get() + 1);
             AtomicReference<Integer> j = new AtomicReference<>(0);
             work_zi.getUserWorkFormDTOs().forEach(work -> {
                 j.getAndSet(j.get() + 1);
                 sb.append("<tr>");
-                sb.append("<td>");
+                sb.append(getTegStart("td"));
                 sb.append("<div class=\"horiz\">");
                 if (ziSplit) {
                     sb.append("<p>").append(i).append(".</p>");
@@ -297,21 +323,21 @@ public class HtmlService {
                 sb.append("</div>");
                 sb.append("</td>");
                 if (ziSplit && work.getUserCol() != null) {
-                    sb.append("<td rowspan=\"").append(work.getUserCol()).append("\">");
+                    sb.append(getTegStart("td rowspan=\"" + work.getUserCol() + "\""));
                     sb.append(printNotNull(work_zi.getName()));
                     sb.append("</td>");
                 }
                 if (!ziSplit && work.getUserCol() != null) {
-                    sb.append("<td rowspan=\"").append(work.getUserCol()).append("\">");
+                    sb.append(getTegStart("td rowspan=\"" + work.getUserCol() + "\""));
                     sb.append(printNotNull(work.getDateStartStr()));
                     sb.append("-");
                     sb.append(printNotNull(work.getDateEndStr()));
                     sb.append("</td>");
                 }
                 if (work.getAuthorFirstName() == null) {
-                    sb.append("<td >").append(work.getNikName() == null ? "" : printNotNull(work.getNikName())).append("</td>");
+                    sb.append(getTegStart("td")).append(work.getNikName() == null ? "" : printNotNull(work.getNikName())).append("</td>");
                 } else
-                    sb.append("<td >")
+                    sb.append(getTegStart("td "))
                             .append(printNotNull(work.getAuthorLastName()))
                             .append(" ")
                             .append(printNotNull(work.getAuthorFirstName()))
@@ -320,7 +346,7 @@ public class HtmlService {
                             .append("</td>");
 
                 taskListType.forEach(taskType -> {
-                    sb.append("<td>");
+                    sb.append(getTegStart("td"));
                     sb.append("<div class=\"horiz\">");
                     if (workTask) {
                         sb.append("<div class=\"div-type\" >");
@@ -348,13 +374,11 @@ public class HtmlService {
                 });
 
                 if (!ziSplit && work.getUserCol() != null) {
-                    sb.append("<td rowspan=\"")
-                            .append(printNotNull(work.getUserCol()))
-                            .append("\">")
+                    sb.append(getTegStart("<td rowspan=\"" + printNotNull(work.getUserCol()) + "\""))
                             .append(printNotNull(work.getWorkPlan()))
                             .append("</td>");
                 }
-                sb.append("<td>")
+                sb.append(getTegStart("td"))
                         .append(printNotNull(work.getWorkAllFact()))
                         .append("</td>");
                 sb.append("</tr>");
@@ -369,8 +393,8 @@ public class HtmlService {
 
     }
 
-    private String printNotNull(Object objects){
-        if(objects == null){
+    private String printNotNull(Object objects) {
+        if (objects == null) {
             return "";
         } else {
             return objects.toString();

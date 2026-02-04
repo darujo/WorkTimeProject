@@ -149,7 +149,7 @@ public class Tasks {
     }
 
     private UserInfoDto getUserInfoDto(ChatInfo chatInfo) {
-        if (chatInfo == null) {
+        if (chatInfo == null || chatInfo.getChatId() == null) {
             return null;
         }
         return new UserInfoDto(null, chatInfo.getAuthor(), chatInfo.getChatId(), chatInfo.getThreadId(), chatInfo.getOriginMessageId());
@@ -159,7 +159,7 @@ public class Tasks {
         return new RunnableNotException(() -> {
             log.info("sendReportWorkFull");
             LinkedList<String> sort = new LinkedList<>();
-            sort.add("release");
+            sort.add("release.sort");
             String report = htmlService.printRep(workServiceIntegration.getTimeWork(null, true, null, null, sort));
             messageInformationService.sendFile(new MessageInfoDto(
                     chatInfo == null ? null : chatInfo.getAuthor(),

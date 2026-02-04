@@ -32,5 +32,4 @@ public class Release {
 
     @Column(name = "project_id")
     private Long projectId;
-
 }

@@ -88,7 +88,7 @@ angular.module('workTimeService').controller('workTimeRepController', function (
             console.log(result);
         });
 
-        $scope.addSortNotLoad ("releaseId");
+        $scope.addSortNotLoad("release.sort");
         $scope.loadWorkTime();
     }
 
@@ -125,7 +125,7 @@ angular.module('workTimeService').controller('workTimeRepController', function (
             return "Начало доработки план";
         } else if (element === "startTaskFact") {
             return "Начало доработки факт";
-        } else if (element === "releaseId") {
+        } else if (element === "release.sort") {
             return "Релиз";
         } else if (element === "codeZI") {
             return "Код ЗИ";
