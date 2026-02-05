@@ -1,8 +1,12 @@
 package ru.darujo.dto.user;
 
+import ru.darujo.dto.project.ProjectDto;
+
 import java.io.Serializable;
+import java.util.List;
 
 public class UserDto implements Serializable {
+    @SuppressWarnings("unused")
     public UserDto() {
     }
 
@@ -16,8 +20,11 @@ public class UserDto implements Serializable {
     private String patronymic;
     private Boolean passwordChange;
     private Boolean telegramAdd;
+    private Long projectId;
+    private List<ProjectDto> projects;
+    private boolean block;
 
-    public UserDto(Long id, String nikName, String firstName, String lastName, String patronymic,Boolean passwordChange, Boolean telegramAdd) {
+    public UserDto(Long id, String nikName, String firstName, String lastName, String patronymic, Boolean passwordChange, Boolean telegramAdd, Long projectId, List<ProjectDto> projects, boolean block) {
         this.id = id;
         this.nikName = nikName;
         this.firstName = firstName;
@@ -25,14 +32,20 @@ public class UserDto implements Serializable {
         this.patronymic = patronymic;
         this.passwordChange = passwordChange;
         this.telegramAdd = telegramAdd;
+        this.projectId = projectId;
+        this.projects = projects;
+        this.block = block;
     }
-    public UserDto(Long id, String nikName, String firstName, String lastName, String patronymic) {
+
+    public UserDto(Long id, String nikName, String firstName, String lastName, String patronymic, boolean block) {
         this.id = id;
         this.nikName = nikName;
         this.firstName = firstName;
         this.lastName = lastName;
         this.patronymic = patronymic;
+        this.block = block;
     }
+
     public UserDto(String nikName) {
         this.nikName = nikName;
     }
@@ -66,5 +79,19 @@ public class UserDto implements Serializable {
     @SuppressWarnings("unused")
     public Boolean getTelegramAdd() {
         return telegramAdd;
+    }
+
+    @SuppressWarnings("unused")
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    @SuppressWarnings("unused")
+    public List<ProjectDto> getProjects() {
+        return projects;
+    }
+
+    public boolean isBlock() {
+        return block;
     }
 }

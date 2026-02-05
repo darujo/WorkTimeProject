@@ -1,8 +1,11 @@
 package ru.darujo.service;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
+import ru.darujo.integration.TelegramServiceIntegration;
 import ru.darujo.model.ServiceModel;
 import ru.darujo.model.ServiceStatus;
 import ru.darujo.model.ServiceType;
@@ -11,10 +14,17 @@ import ru.darujo.repository.ServiceStatusRepository;
 import java.util.HashSet;
 import java.util.Set;
 
+@Slf4j
 @Service
 public class ServiceStatusService {
     private ServiceStatusRepository serviceStatusRepository;
     private ServiceModelService serviceModelService;
+    private TelegramServiceIntegration telegramServiceIntegration;
+
+    @Autowired
+    public void setTelegramServiceIntegration(TelegramServiceIntegration telegramServiceIntegration) {
+        this.telegramServiceIntegration = telegramServiceIntegration;
+    }
 
     @Autowired
     public void setServiceStatusRepository(ServiceStatusRepository serviceStatusRepository) {
@@ -52,8 +62,15 @@ public class ServiceStatusService {
     }
 
     private void addServiceStatus(Set<ServiceType> serviceTypeList) {
+        boolean allServiceOk = serviceTypeList.isEmpty();
         Set<ServiceModel> serviceModels = new HashSet<>();
         serviceTypeList.forEach(serviceType -> serviceModels.add(serviceModelService.getServiceModel(serviceType.name())));
+        try {
+            telegramServiceIntegration.sendMessageForAdmin(allServiceOk ? "Все сервисы доступны" :
+                    String.format("Не доступные сервисы %s", serviceTypeList));
+        } catch (ResourceNotFoundRunTime ex) {
+            log.error(ex.getMessage());
+        }
         serviceStatusRepository.save(new ServiceStatus(serviceModels));
     }
 

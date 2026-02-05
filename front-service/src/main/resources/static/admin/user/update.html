@@ -5,20 +5,45 @@
             <button type="submit" class="head_button">Отправить</button>
             <button type="button" class="head_button" ng-click="backUser()">Назад</button>
         </div>
+        <div class="horiz">
+            <label for="UpdateType">Сервисы для обновления</label>
+            <select multiple class="vvod40 mar5" name="UpdateType" id="UpdateType" ng-model="FormFile.type">
 
-        <!--    <label for="MesType"></label>-->
-        <!--    <select required class="vvod40 mar5" name="mesType" id="MesType" ng-model="Message.type" >-->
-        <!--        <option value="">&#45;&#45;Выберите тип сообщения&#45;&#45;</option>-->
-        <!--        <option ng-repeat="type in InfoTypes" ng-value="type.code" value="type.code">-->
-        <!--            {{type.name}}-->
-        <!--        </option>-->
-        <!--    </select>-->
-        <label for="MesText">
-            Сообщение:
-        </label>
-        <p><textarea id="MesText" class="vvod check_box_td" ng-model="Message.text" required
-                     placeholder="Введите сообщение"></textarea></p>
-        <label for="file">Выберите файл:</label>
-        <input type="file" id="file" class="file-input" accept=".png, .jpg, .jpeg" file-model = "Message.fileToUpload" />
+                <option ng-repeat="type in UpdateTypes" ng-value="type.code" value="type.code">
+                    {{type.value}}
+                </option>
+                <option ng-value=null value="">Все</option>
+            </select>
+        </div>
+        <div class="horiz">
+            <label for="UpdateTimestamp" class="p-form">Дата и время обновления</label>
+            <input class="vvod" type="datetime-local" id="UpdateTimestamp" step="any"
+                   ng-model="FormFile.dateUpdate"/>
+        </div>
+        <div class="horiz">
+            <label for="UpdateText">
+                Обновления:
+            </label>
+            <p><textarea id="UpdateText" class="vvod check_box_td" ng-model="FormFile.desc"
+                         placeholder="Введите сообщение"></textarea></p>
+        </div>
+        <div class="horiz">
+            <label for="file1">Выберите файл:</label>
+            <div class="block-list">
+                <input type="file" id="file1" class="file-input" accept=".7z, .7z.*" file-model="FormFile.files[0]"/>
+                <input type="file" id="file2" class="file-input" accept=".7z, .7z.*" file-model="FormFile.files[1]"
+                       ng-if="FormFile.files[0]"/>
+                <input type="file" id="file3" class="file-input" accept=".7z, .7z.*" file-model="FormFile.files[2]"
+                       ng-if="FormFile.files[1]"/>
+                <input type="file" id="file4" class="file-input" accept=".7z, .7z.*" file-model="FormFile.files[3]"
+                       ng-if="FormFile.files[2]"/>
+                <input type="file" id="file5" class="file-input" accept=".7z, .7z.*" file-model="FormFile.files[4]"
+                       ng-if="FormFile.files[3]"/>
+                <input type="file" id="file6" class="file-input" accept=".7z, .7z.*" file-model="FormFile.files[5]"
+                       ng-if="FormFile.files[4]"/>
+                <input type="file" id="file7" class="file-input" accept=".7z, .7z.*" file-model="FormFile.files[6]"
+                       ng-if="FormFile.files[5]"/>
+            </div>
+        </div>
     </form>
 </div>

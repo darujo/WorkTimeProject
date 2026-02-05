@@ -80,6 +80,7 @@ public class WorkBuilder {
     //начало разработки план
     private Timestamp developEndPlan;
     private Boolean rated;
+    private Long projectId;
 
     public WorkBuilder setRated(Boolean rated) {
         this.rated = rated;
@@ -109,6 +110,11 @@ public class WorkBuilder {
 
     public WorkBuilder setStageZI(Integer stageZI) {
         this.stageZI = stageZI;
+        return this;
+    }
+
+    public WorkBuilder setProjectId(Long projectId) {
+        this.projectId = projectId;
         return this;
     }
 
@@ -321,7 +327,8 @@ public class WorkBuilder {
                 debugStartPlan,
                 releaseStartPlan,
                 opeStartPlan,
-                rated);
+                rated,
+                projectId);
     }
 
     public Work getWork() {
@@ -359,7 +366,7 @@ public class WorkBuilder {
                 startTaskPlan,
                 startTaskFact,
                 stageZI,
-                releaseId != null ? new Release(releaseId, release, issuingReleasePlan, issuingReleaseFact, null) : null,
+                releaseId != null ? new Release(releaseId, release, issuingReleasePlan, issuingReleaseFact, null, projectId) : null,
                 analiseStartFact,
                 developStartFact,
                 debugStartFact,
@@ -370,7 +377,8 @@ public class WorkBuilder {
                 debugStartPlan,
                 releaseStartPlan,
                 opeStartPlan,
-                rated);
+                rated,
+                projectId);
     }
 
     public WorkLittleDto getWorkLittleDto() {

@@ -4,7 +4,7 @@ import ru.darujo.dto.work.ReleaseDto;
 import ru.darujo.model.Release;
 
 public class ReleaseConvertor {
-    public static Release getRelease(ReleaseDto releaseDto){
+    public static Release getRelease(Long projectId, ReleaseDto releaseDto) {
         Float sort = releaseDto.getSort();
         if (sort == null) {
             try {
@@ -14,7 +14,7 @@ public class ReleaseConvertor {
             }
 
         }
-        return new Release(releaseDto.getId(), releaseDto.getName(), releaseDto.getIssuingReleasePlan(), releaseDto.getIssuingReleaseFact(), sort);
+        return new Release(releaseDto.getId(), releaseDto.getName(), releaseDto.getIssuingReleasePlan(), releaseDto.getIssuingReleaseFact(), sort, projectId);
     }
     public static ReleaseDto getReleaseDto(Release release){
         return new ReleaseDto(release.getId(), release.getName(), release.getIssuingReleasePlan(), release.getIssuingReleaseFact(), release.getSort());

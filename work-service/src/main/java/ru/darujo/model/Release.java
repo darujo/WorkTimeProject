@@ -30,4 +30,6 @@ public class Release {
     @Column(name = "sort")
     private Float sort;
 
+    @Column(name = "project_id")
+    private Long projectId;
 }

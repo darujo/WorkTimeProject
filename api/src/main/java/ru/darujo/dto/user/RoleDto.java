@@ -6,14 +6,16 @@ public class RoleDto implements Serializable {
     private Long id;
     private String code;
     private String name;
+    private Long projectId;
 
     public RoleDto() {
     }
 
-    public RoleDto(Long id, String code, String name) {
+    public RoleDto(Long id, String code, String name, Long projectId) {
         this.id = id;
         this.code = code;
         this.name = name;
+        this.projectId = projectId;
     }
 
     public Long getId() {
@@ -26,6 +28,10 @@ public class RoleDto implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public Long getProjectId() {
+        return projectId;
     }
 
 }

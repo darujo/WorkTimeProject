@@ -66,7 +66,7 @@ public abstract class ServiceIntegration {
         return clientResponse
                 .bodyToMono(ErrorResponse.class)
                 .flatMap(error -> {
-                            log.error("{} {}", message, error.getMessage());
+//                            log.error("{} {}", message, error.getMessage());
                             return Mono.error(new ResourceNotFoundRunTime(message + " " + error.getMessage()));
                         }
 

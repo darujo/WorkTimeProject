@@ -2,10 +2,13 @@ package ru.darujo.telegram_bot;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
 import org.telegram.telegrambots.longpolling.util.TelegramOkHttpClientFactory;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -28,5 +31,13 @@ public class TelegramBotConfig {
                 () -> scheduledExecutorService
         );
 
+    }
+
+    @Value("${telegram-bot.token}")
+    private String botToken;
+
+    @Bean
+    public TelegramClient telegramClient() {
+        return new OkHttpTelegramClient(botToken);
     }
 }

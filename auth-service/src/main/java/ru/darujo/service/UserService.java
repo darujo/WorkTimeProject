@@ -58,6 +58,13 @@ public class UserService {
         this.roleService = roleService;
     }
 
+    private RightService rightService;
+
+    @Autowired
+    public void setRightService(RightService rightService) {
+        this.rightService = rightService;
+    }
+
     private InfoServiceIntegration infoServiceIntegration;
 
     @Autowired
@@ -88,14 +95,21 @@ public class UserService {
 
     @Transactional
     public User saveUser(User user) {
-        return saveUser(user, null);
+        return saveUser(user, null, null);
     }
 
     @Transactional
-    public User saveUser(User user, String textPassword) {
+    public User saveUser(User user, String textPassword, Boolean isAdmin) {
         checkNull(user.getNikName(), "логин");
         checkNull(user.getFirstName(), "имя");
         checkNull(user.getLastName(), "фамилия");
+        if (user.getProjects() == null || user.getProjects().isEmpty()) {
+            throw new ResourceNotFoundRunTime("У пользователя должен быть хотя бы один проект");
+        }
+        if (user.getCurrentProject() == null
+                || !user.getProjects().contains(user.getCurrentProject())) {
+            user.setCurrentProject(user.getProjects().get(0));
+        }
 
         if (user.getId() != null) {
             if (userRepository.findByNikNameIgnoreCaseAndIdIsNot(user.getNikName(), user.getId()).isPresent()) {
@@ -104,6 +118,9 @@ public class UserService {
             User saveUser = userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + user.getId() + " не найден"));
             user.setRights(saveUser.getRights());
             user.setRoles(saveUser.getRoles());
+            user.setCurrentProject(saveUser.getCurrentProject());
+
+//            user.setProjects(saveUser.getProjects());
             user.setTelegramId(saveUser.getTelegramId());
         } else {
             if (userRepository.findByNikNameIgnoreCase(user.getNikName()).isPresent()) {
@@ -119,6 +136,23 @@ public class UserService {
                 }
             }
         }
+        if (isAdmin != null) {
+            Right right = rightService.getRight("ADMIN_USER");
+            if (isAdmin) {
+                if (user.getRights() == null) {
+                    List<Right> rights = new ArrayList<>();
+                    rights.add(right);
+                    user.setRights(rights);
+                }
+                if (!user.getRights().contains(right)) {
+                    user.getRights().add(right);
+                }
+            } else {
+                if (user.getRights() != null) {
+                    user.getRights().remove(right);
+                }
+            }
+        }
         return userRepository.save(user);
     }
 
@@ -129,7 +163,7 @@ public class UserService {
             User user = new User(-1L, nikName, hashPassword(
                     "Приносить пользу миру — это единственный способ стать счастливым."),
 
-                    null, null, null, false);
+                    null, null, null, false, null, false);
             List<Right> right = new ArrayList<>();
             right.add(new Right(-1L, "STOP_SERVICE", "право на стоп"));
             user.setRights(right);
@@ -147,8 +181,9 @@ public class UserService {
                                            String firstName,
                                            String patronymic,
                                            Long telegramId,
-                                           Boolean telegramIsNotNull) {
-        Specification<@NonNull User> specification = getUserSpecification(role, nikName, lastName, firstName, patronymic, telegramId, telegramIsNotNull);
+                                           Boolean telegramIsNotNull,
+                                           Long projectId) {
+        Specification<@NonNull User> specification = getUserSpecification(role, nikName, lastName, firstName, patronymic, telegramId, telegramIsNotNull, projectId);
         Sort sort = Sort.by("lastName")
                 .and(Sort.by("firstName"));
         Page<@NonNull User> userPage;
@@ -163,10 +198,10 @@ public class UserService {
         return userPage;
     }
 
-    private Specification<@NonNull User> getUserSpecification(String role, String nikName, String lastName, String firstName, String patronymic, Long telegramId, Boolean telegramIsNotNull) {
+    private Specification<@NonNull User> getUserSpecification(String role, String nikName, String lastName, String firstName, String patronymic, Long telegramId, Boolean telegramIsNotNull, Long projectId) {
         Specification<@NonNull User> specification = Specification.unrestricted();
         if (role != null && !role.isEmpty()) {
-            specification = Specifications.in(specification, "nikName", roleService.findByName(role).orElseThrow(() -> new UsernameNotFoundException("Роль не найдена " + role))
+            specification = Specifications.in(specification, "nikName", roleService.findByName(projectId, role).orElseThrow(() -> new UsernameNotFoundException("Роль не найдена " + role))
                     .getUsers()
                     .stream().map(User::getNikName).collect(Collectors.toList()));
         }
@@ -180,26 +215,37 @@ public class UserService {
     }
 
     @Transactional
-    public UserRoleDto getUserRoles(Long userId) {
+    public UserRoleDto getUserRoles(Long userId, Long projectId) {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + userId + " не найден"));
         Map<Long, UserRoleActiveDto> roleActiveDtoMap = new HashMap<>();
-        roleService.getListRole().forEach(role -> roleActiveDtoMap.put(role.getId(), RoleConvertor.getUserRoleActiveDto(role, Boolean.FALSE)));
-        user.getRoles().forEach(role -> roleActiveDtoMap.get(role.getId()).setActive(Boolean.TRUE));
+        roleService.getListRole().forEach(role -> {
+            if (role.getProject().getId().equals(projectId)) {
+                roleActiveDtoMap.put(role.getId(), RoleConvertor.getUserRoleActiveDto(role, Boolean.FALSE));
+            }
+        });
+        if (user.getRoles() != null) {
+            user.getRoles().forEach(role -> {
+                UserRoleActiveDto userRoleActiveDto = roleActiveDtoMap.get(role.getId());
+                if (userRoleActiveDto != null) {
+                    userRoleActiveDto.setActive(Boolean.TRUE);
+                }
+            });
+        }
         return new UserRoleDto(user.getId(), user.getNikName(), user.getFirstName(), user.getLastName(), user.getPatronymic(), roleActiveDtoMap.values());
     }
 
     @Transactional
-    public UserRoleDto setUserRoles(UserRoleDto userRole) {
+    public UserRoleDto setUserRoles(Long projectId, UserRoleDto userRole) {
         User user = userRepository.findById(userRole.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + userRole.getId() + " не найден"));
-        user.getRoles().clear();
+        user.getRoles().removeIf(role -> role.getProject().getId().equals(projectId));
         userRole.getRoles().forEach((roleDto) -> {
             if (roleDto.getActive()) {
-                user.getRoles().add(RoleConvertor.getRole(roleDto));
+                user.getRoles().add(RoleConvertor.getRole(roleDto, projectId));
             }
         });
         userRepository.save(user);
-        return getUserRoles(user.getId());
+        return getUserRoles(user.getId(), projectId);
     }
 
     public String hashPassword(String plainTextPassword) {
@@ -303,7 +349,7 @@ public class UserService {
     }
 
     public boolean exists(Long chatId) {
-        return userRepository.exists(getUserSpecification(null, null, null, null, null, chatId, null));
+        return userRepository.exists(getUserSpecification(null, null, null, null, null, chatId, null, null));
     }
 
 

@@ -10,14 +10,19 @@ import ru.darujo.convertor.RightConvertor;
 import ru.darujo.dto.user.RoleRightActiveDto;
 import ru.darujo.dto.user.RoleRightDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
+import ru.darujo.model.Project;
 import ru.darujo.model.Role;
 import ru.darujo.repository.RoleRepository;
 import ru.darujo.specifications.Specifications;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class RoleService {
+
     private RoleRepository roleRepository;
 
     @Autowired
@@ -32,36 +37,48 @@ public class RoleService {
         this.rightService = rightService;
     }
 
-    public Optional<Role> findByName(String role) {
-        return roleRepository.findByNameIgnoreCase(role);
+    public Optional<Role> findByName(Long projectId, String role) {
+        return findByName(ProjectService.getInstance().findById(projectId), role);
     }
 
-    public Iterable<Role> getListRole(){
-        return  roleRepository.findAll();
+    public Optional<Role> findByName(Project project, String role) {
+        return roleRepository.findByNameIgnoreCaseAndProject(role, project);
+    }
+
+    public Iterable<Role> getListRole() {
+        return roleRepository.findAll();
     }
 
     public Role findById(long id) {
         return roleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Роль не найдена"));
     }
+
     public void checkNull(String filed, String text) {
         if (filed == null || filed.isEmpty()) {
             throw new ResourceNotFoundRunTime("Не заполнено поле " + text);
         }
     }
 
-    public Role saveRole(Role role) {
+    public Role saveRole(Long projectId, Role role) {
+        Project project = ProjectService.getInstance().findById(projectId);
+        if (role.getProject() == null) {
+            role.setProject(project);
+        }
         checkNull(role.getName(), "код");
         checkNull(role.getLabel(), "Наименование");
 
         if (role.getId() != null) {
-            if (roleRepository.findByNameIgnoreCaseAndIdIsNot(role.getName(), role.getId()).isPresent()) {
+            if (roleRepository.findByNameIgnoreCaseAndIdIsNotAndProject(role.getName(), role.getId(), project).isPresent()) {
                 throw new ResourceNotFoundRunTime("Уже есть группа с таким кодом");
             }
             Role saveRole = roleRepository.findById(role.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Группа с id " + role.getId() + " не найден"));
+            if (!saveRole.getProject().equals(role.getProject())) {
+                throw new ResourceNotFoundRunTime("Нельзя переносить роль в другой проект");
+            }
             role.setUsers(saveRole.getUsers());
             role.setRights(saveRole.getRights());
         } else {
-            if (roleRepository.findByNameIgnoreCase(role.getName()).isPresent()) {
+            if (roleRepository.findByNameIgnoreCaseAndProject(role.getName(), project).isPresent()) {
                 throw new ResourceNotFoundRunTime("Уже есть группа с таким кодом");
             }
         }
@@ -73,16 +90,23 @@ public class RoleService {
 
         Role rights = roleRepository.findById(roleId).orElseThrow(() -> new ResourceNotFoundRunTime("Группа с id " + roleId + " не найден"));
         Map<Long, RoleRightActiveDto> rightActiveDtoHashMap = new HashMap<>();
-        rightService.getListRight().forEach(right -> rightActiveDtoHashMap.put(right.getId(), RightConvertor.getRoleRightActiveDto(right,Boolean.FALSE)));
+        rightService
+                .getListRight()
+                .forEach(right -> {
+                    if (!right.getName().startsWith("ADMIN_")) {
+                        rightActiveDtoHashMap.put(right.getId(), RightConvertor.getRoleRightActiveDto(right, Boolean.FALSE));
+                    }
+                });
         rights.getRights().forEach(right -> rightActiveDtoHashMap.get(right.getId()).setActive(Boolean.TRUE));
-        return new RoleRightDto(rights.getId(), rights.getName(), rights.getLabel(), rightActiveDtoHashMap.values());
+        return new RoleRightDto(rights.getId(), rights.getName(), rights.getLabel(), rightActiveDtoHashMap.values().stream().toList());
     }
+
     @Transactional
     public RoleRightDto setRoleRight(RoleRightDto roleRightDto) {
         Role role = roleRepository.findById(roleRightDto.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Группа с id " + roleRightDto.getId() + " не найден"));
         role.getRights().clear();
         roleRightDto.getRights().forEach((rightActiveDto) -> {
-            if(rightActiveDto.getActive()){
+            if (rightActiveDto.getActive()) {
                 role.getRights().add(RightConvertor.getRight(rightActiveDto));
             }
         });
@@ -90,11 +114,12 @@ public class RoleService {
         return getRoleRight(role.getId());
     }
 
-    public Collection<Role> getRoleList(String code, String name) {
+    public List<Role> getRoleList(String code, String name, Long projectId) {
         Specification<@NonNull Role> specification = Specification.unrestricted();
-        specification = Specifications.like(specification,"code",code);
-        specification = Specifications.like(specification,"name",name);
-        return new ArrayList<>(roleRepository.findAll(specification, Sort.by("name")));
+        specification = Specifications.like(specification, "code", code);
+        specification = Specifications.like(specification, "name", name);
+        specification = Specifications.eq(specification, "project", ProjectService.getInstance().findById(projectId));
+        return roleRepository.findAll(specification, Sort.by("name"));
     }
 
     @Transactional

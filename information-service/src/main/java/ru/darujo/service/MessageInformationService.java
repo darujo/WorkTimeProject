@@ -90,6 +90,9 @@ public class MessageInformationService {
         if (messageTypeListMap == null) {
             init();
         }
+        if (messageInfoDto.getText().isBlank()) {
+            return false;
+        }
         if (messageInfoDto.getUserInfoDto() != null) {
             MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true, messageInfoDto.getDataTime()));
             saveUserSend(new UserSend(
@@ -187,6 +190,7 @@ public class MessageInformationService {
                         messageInfoDto.getUserInfoDto().getOriginMessageId(),
                         messageInformation));
             } else {
+                log.error(messageTypeListMap.get(messageInfoDto.getType()).toString());
                 messageTypeListMap.get(messageInfoDto.getType()).forEach(userInfoDto -> saveUserSend(new UserSend(
                         Long.toString(userInfoDto.getTelegramId()),
                         userInfoDto.getThreadId(),

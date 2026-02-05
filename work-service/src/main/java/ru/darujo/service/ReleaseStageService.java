@@ -8,7 +8,9 @@ import ru.darujo.convertor.WorkConvertor;
 import ru.darujo.dto.work.ReleaseStageDto;
 import ru.darujo.model.Release;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -22,10 +24,10 @@ public class ReleaseStageService {
         this.workService = workService;
     }
 
-    public List<@NonNull ReleaseStageDto> getReleaseStage(String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, List<Long> releaseIdList) {
+    public List<@NonNull ReleaseStageDto> getReleaseStage(String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, List<Long> releaseIdList, Long projectId) {
         Map<Long, ReleaseStageDto> releaseStageDtoMap = new HashMap<>();
         if (releaseIdList != null && !releaseIdList.isEmpty()) {
-            releaseService.findAll(releaseIdList).forEach(release -> releaseStageDtoMap.put(release.getId(), getReleaseStageDto(release)));
+            releaseService.findAll(releaseIdList, projectId).forEach(release -> releaseStageDtoMap.put(release.getId(), getReleaseStageDto(release)));
         }
         workService.findWorkLittle(null, null, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseIdList)
                 .forEach(workLittle -> {
@@ -39,7 +41,7 @@ public class ReleaseStageService {
                                     : getReleaseStageDto(workLittle.getRelease())
                     );
 
-                    releaseStageDto.getWorks()[workLittle.getStageZI()].add(WorkConvertor.getWorkLittleDto(workLittle));
+                    releaseStageDto.getWorks()[workLittle.getStageZi()].add(WorkConvertor.getWorkLittleDto(workLittle));
 
                 });
         return releaseStageDtoMap.values().stream().sorted().collect(Collectors.toList());

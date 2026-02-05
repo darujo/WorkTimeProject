@@ -31,7 +31,7 @@ spring:
                 allow-credentials: true
           httpclient:
             connect-timeout: 10000
-            response-timeout: 60s
+            response-timeout: 800s
           routes:
             - id: gate
               uri: forward:///v1/system/shutdownContext
@@ -50,7 +50,7 @@ spring:
             - id: user-admin-service
               uri: "http://localhost:8183"
               predicates:
-                - Path=/admin/users/**,/admin/roles/**
+                - Path=/admin/users/**,/admin/roles/**,/admin/projects/**
               filters:
                 - StripPrefix=0
                 - PrefixPath=/app-auth/
@@ -105,7 +105,7 @@ spring:
             - id: user-service
               uri: "http://localhost:8183"
               predicates:
-                - Path=/users/**,/roles/**
+                - Path=/users/**,/roles/**,/projects/**,/token/**
               filters:
                 - StripPrefix=0
                 - PrefixPath=/app-auth
@@ -122,6 +122,14 @@ spring:
               uri: "http://localhost:8186"
               predicates:
                 - Path=/rate-service/**
+              filters:
+                - StripPrefix=1
+                - PrefixPath=/app/
+                - JwtAuthFilter
+            - id: update-service
+              uri: "http://localhost:8189"
+              predicates:
+                - Path=/update-service/**
               filters:
                 - StripPrefix=1
                 - PrefixPath=/app/
@@ -143,4 +151,4 @@ spring:
 
 jwt:
   secretKey: h4f8093h4f983yhrt9834hr0934hf0hf493g493gf438rh438th34g34g
-  lifeTimeToken: 36000000
+

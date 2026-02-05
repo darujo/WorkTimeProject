@@ -14,14 +14,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public abstract class JwtRightFilter extends AbstractGatewayFilterFactory<JwtRightFilter.Config> {
-    protected abstract String getRight();
+    protected abstract List<String> getRight();
 
     protected JwtUtil jwtUtil;
 
@@ -39,6 +41,7 @@ public abstract class JwtRightFilter extends AbstractGatewayFilterFactory<JwtRig
     public @NonNull GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
+
             if (!isAuthMissing(request)) {
                 final String token = getAuthHeaders(request);
                 if (jwtUtil.isInvalid(token)) {
@@ -47,7 +50,7 @@ public abstract class JwtRightFilter extends AbstractGatewayFilterFactory<JwtRig
                 try {
                     exchange = populateRequestHeader(exchange, token);
                 } catch (RuntimeException ex) {
-                    return this.onError(exchange, ex.getMessage(), HttpStatus.FORBIDDEN);
+                    return this.onError(exchange, "gateWay: " + ex.getMessage(), HttpStatus.FORBIDDEN);
                 }
             } else {
                 return this.onError(exchange, "Токен отсутствует", HttpStatus.UNAUTHORIZED);
@@ -61,20 +64,39 @@ public abstract class JwtRightFilter extends AbstractGatewayFilterFactory<JwtRig
 
 
     private ServerWebExchange populateRequestHeader(ServerWebExchange exchange, String token) {
+
         Claims claims = jwtUtil.getAllClamsForToken(token);
-        ArrayList<String> listString = claims.get("authorities", ArrayList.class);
+        ArrayList<String> authorities = claims.get("authorities", ArrayList.class);
         if (getRight() != null) {
-            if (listString == null || !listString.contains(getRight().toUpperCase())) {
+            if (authorities == null || authorities.stream().noneMatch(s -> getRight().contains(s))) {
                 throw new RuntimeException("У вас недостаточно прав (" + getRight() + ")");
             }
         }
+
         ServerHttpRequest.Builder builder =
                 exchange.getRequest().mutate()
                         .header("username", claims.getSubject());
-        if (listString != null) {
-            listString.forEach(s -> builder.header(s, "true"));
+
+        if (authorities != null) {
+            authorities.forEach(s -> builder.header(s, "true"));
         }
-        return exchange.mutate().request(builder.build()).build();
+        ServerHttpRequest serverHttpRequest = new ServerHttpRequestImpl(builder.build());
+        MultiValueMap<String, String> params = serverHttpRequest.getQueryParams();
+        try {
+            params.add("system_project", Long.toString(claims.get("project", Long.class)));
+        } catch (RuntimeException ignored) {
+
+        }
+        try {
+            params.add("system_project_code", claims.get("project_code", String.class));
+        } catch (RuntimeException ignored) {
+
+        }
+        if (authorities != null) {
+            authorities.forEach(s -> params.add("system_right", s));
+        }
+
+        return exchange.mutate().request(serverHttpRequest).build();
     }
 
     private Mono<@NonNull Void> onError(ServerWebExchange exchange, String text, HttpStatus status) {

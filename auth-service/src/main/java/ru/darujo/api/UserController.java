@@ -42,7 +42,8 @@ public class UserController {
                                               @RequestParam(required = false) String nikName,
                                               @RequestParam(required = false) String lastName,
                                               @RequestParam(required = false) String firstName,
-                                              @RequestParam(required = false) String patronymic) {
+                                              @RequestParam(required = false) String patronymic,
+                                              @RequestParam(name = "system_project", required = false) Long projectId) {
         String role = null;
         if (nikName != null) {
             if (nikName.equals("All")) {
@@ -52,7 +53,7 @@ public class UserController {
                 nikName = null;
             }
         }
-        return userService.getUserList(role, page, size, nikName, lastName, firstName, patronymic, null, null).map(UserConvertor::getUserDto);
+        return userService.getUserList(role, page, size, nikName, lastName, firstName, patronymic, null, null, projectId).map(UserConvertor::getUserDto);
 
 
     }
@@ -66,19 +67,22 @@ public class UserController {
 
 
     @GetMapping("/information")
-    public MapUserInfoDto getUserMessageDTOs(    ) {
+    public MapUserInfoDto getUserMessageDTOs() {
         return userService.getUserMessageDTOs();
     }
+
     @GetMapping("/user/info/types")
     public UserInfoTypeDto getUserInfoTypes() {
         return userService.getUserInfoTypes(null);
 
     }
+
     @GetMapping("/user/info/type/{userId}")
     public UserInfoTypeDto getUserInfoTypes(@PathVariable Long userId) {
         return userService.getUserInfoTypes(userId);
 
     }
+
     @PostMapping("/user/info/type")
     public UserInfoTypeDto getUserInfoTypes(@RequestBody UserInfoTypeDto userInfoTypeDto) {
         return userService.setUserInfoTypes(userInfoTypeDto);

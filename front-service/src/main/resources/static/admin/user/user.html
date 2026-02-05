@@ -1,5 +1,6 @@
 <div id="UserList" class="head_text_elem">
     <ul class="container">
+
         <li class="nav-item"><a class="nav-link" href="#!/vacation">Отпуска</a></li>
         <li class="nav-item"><a class="nav-link" href="#!/uservacation">График отпусков</a></li>
     </ul>
@@ -124,18 +125,35 @@
             <input class="vvod20" type="checkbox"
                    id="CurrentUser"
                    ng-model="User.passwordChange"/>
+            <label for="BlockUser" class="form_label">Заблокирован</label>
+            <input class="vvod20" type="checkbox"
+                   id="BlockUser"
+                   ng-model="User.block"/>
+            <label for="BlockUser" class="form_label">Редактирование в любом проекте</label>
+            <input class="vvod20" type="checkbox"
+                   id="AdminUser"
+                   ng-model="User.admin"/>
         </div>
         <div class="horiz">
             <label for="FirstName" class="form_label">Имя:</label>
             <input class="vvod80mar10" type="text" id="FirstName" step="any"
-                                                  ng-model="User.firstName"/>
+                   ng-model="User.firstName"/>
             <br>
         </div>
         <div class="horiz">
             <label for="Patronymic" class="form_label">Отчество:</label>
             <input class="vvod80mar10" type="text" id="Patronymic" step="any"
-                                                       ng-model="User.patronymic"/>
+                   ng-model="User.patronymic"/>
             <br>
+        </div>
+        <div class="horiz">
+            <label for="UserProject" class="p-head">Проект</label>
+            <select class="vvod80mar10" name="UserProject" id="UserProject"
+                    ng-model="User.projects" multiple required>
+                <option ng-repeat="project in ProjectList" ng-value="project.id" value="project.id">
+                    {{project.code}} {{project.name}}
+                </option>
+            </select>
         </div>
         <button type="submit" class="button" id="ButtonSaveDown">Сохранить</button>
         <button type="button" ng-click="loadUser()" class="button">Вернуться к списку</button>

@@ -330,6 +330,17 @@ TD {
     background-color: rgb(248, 203, 173);
 }
 
+.table_row_2 {
+    background-color: rgb(224, 224, 224);
+}
+
+.table_row_1 {
+    /*background-color: rgb(180, 0, 231);*/
+}
+
+.table_row_bed {
+    background-color: rgb(226, 124, 131);
+}
 .filter {
     display: flex;
     /*noinspection CssInvalidPropertyValue*/
@@ -453,7 +464,7 @@ TD {
     position: relative;
     overflow: auto;
     border: 1px solid black;
-    height: 85vmax;
+    max-height: 85vmax;;
 }
 
 

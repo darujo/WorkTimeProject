@@ -47,13 +47,13 @@ public class TaskService {
     }
 
     @Transactional
-    public Task saveWorkTime(Task task) {
-        if(task.getCodeDEVBO() != null && task.getCodeDEVBO().equalsIgnoreCase("DevBO-000")){
-            task.setCodeDEVBO(null);
+    public Task saveWorkTime(String projectName, Task task) {
+        if (task.getCode() != null && task.getCode().equalsIgnoreCase(projectName + "-000")) {
+            task.setCode(null);
         }
-        if (task.getCodeDEVBO() == null || task.getCodeDEVBO().isEmpty() || task.getCodeDEVBO().equalsIgnoreCase("DeVbo-000")) {
+        if (task.getCode() == null || task.getCode().isEmpty() || task.getCode().equalsIgnoreCase("DeVbo-000")) {
             if (task.getCodeBTS() == null || task.getCodeBTS().isEmpty()) {
-                throw new ResourceNotFoundRunTime("Не задан номер DEVBO и BTS");
+                throw new ResourceNotFoundRunTime("Не задан номер " + projectName + " и BTS");
             }
         }
         if (CodeService.getTaskTypeIsZi(task.getType())) {
@@ -83,40 +83,44 @@ public class TaskService {
 
     public Iterable<Task> findTask(String nikName,
                                    String codeBTS,
-                                   String codeDEVBO,
+                                   String code,
                                    String description,
                                    Long workId,
                                    Integer type,
+                                   Long projectId,
                                    Integer page,
                                    Integer size) {
         return findTask(nikName,
                 codeBTS,
-                codeDEVBO,
+                code,
                 description,
                 workId,
                 type,
                 null,
+                projectId,
                 page,
                 size);
     }
 
     public Iterable<Task> findTask(String nikName,
                                    String codeBTS,
-                                   String codeDEVBO,
+                                   String code,
                                    String description,
                                    Long workId,
                                    Integer type,
                                    List<Long> listTaskId,
+                                   Long projectId,
                                    Integer page,
                                    Integer size) {
         Specification<@NonNull Task> specification = Specification.where(Specifications.queryDistinctTrue());
         specification = Specifications.in(specification, "id", listTaskId);
         specification = Specifications.like(specification,"nikName", nikName );
         specification = Specifications.like(specification,"codeBTS", codeBTS);
-        specification = Specifications.like(specification,"codeDEVBO", codeDEVBO);
+        specification = Specifications.like(specification, "code", code);
         specification = Specifications.like(specification,"description", description);
         specification = Specifications.eq(specification, "type", type);
         specification = Specifications.eq(specification, "workId", workId);
+        specification = Specifications.eq(specification, "projectId", projectId);
         if (page != null) {
             return taskRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "refresh")));
         } else {
@@ -152,13 +156,13 @@ public class TaskService {
         return text + " " + testAvail;
     }
 
-    public String taskCheckAvail(Long id, Long workId, String codeDEVBO, String codeBTS) {
+    public String taskCheckAvail(Long id, Long workId, String code, String codeBTS) {
 
         String text = checkAvail(id, workId, "codeBTS", codeBTS);
         if (text != null) {
             return text;
         }
-        text = checkAvail(id, workId, "codeDEVBO", codeDEVBO);
+        text = checkAvail(id, workId, "code", code);
         return text;
     }
 
@@ -183,5 +187,19 @@ public class TaskService {
             }
         }
         return null;
+    }
+
+    public boolean checkRight(String right, List<String> userRights) {
+        right = right.toLowerCase();
+        if (right.equals("edit") || right.equals("delete")) {
+            if (!userRights.contains("TASK_EDIT")) {
+                throw new ResourceNotFoundRunTime("У вас нет права на редактирование TASK_EDIT");
+            }
+        } else if (right.equals("create")) {
+            if (!userRights.contains("TASK_CREATE")) {
+                throw new ResourceNotFoundRunTime("У вас нет права на редактирование TASK_CREATE");
+            }
+        }
+        return true;
     }
 }

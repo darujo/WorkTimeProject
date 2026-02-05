@@ -80,6 +80,12 @@ angular.module('workTimeService').config(["$ocLazyLoadProvider", function ($ocLa
         }, {
             name: 'update', // module
             files: ['admin/user/update.js?ver=2.0']
+        }, {
+            name: 'project', // module
+            files: ['project/project.js?ver=2.0']
+        }, {
+            name: 'project_edit', // module
+            files: ['project/project_edit.js?ver=3s.0']
         }
         ]
     });

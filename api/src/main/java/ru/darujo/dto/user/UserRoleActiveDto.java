@@ -1,15 +1,15 @@
 package ru.darujo.dto.user;
 
-import java.util.Objects;
 
 public class UserRoleActiveDto extends RoleDto{
     private Boolean active;
 
+    @SuppressWarnings("unused")
     public UserRoleActiveDto() {
     }
 
     public UserRoleActiveDto(Long id, String code, String name, Boolean active) {
-        super(id, code, name);
+        super(id, code, name, null);
         this.active = active;
     }
 

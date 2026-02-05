@@ -25,6 +25,9 @@ public class Role {
 
     @Column(name = "label")
     private String label;
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private Project project;
 
     @ManyToMany
     @JoinTable(name = "role_rights",
@@ -38,10 +41,11 @@ public class Role {
             inverseJoinColumns = @JoinColumn(name ="user_id"))
     private Collection<User> users;
 
-    public Role(Long id, String name, String label) {
+    public Role(Long id, String name, String label, Project project) {
         this.id = id;
         this.name = name;
         this.label = label;
+        this.project = project;
     }
 
     @Override

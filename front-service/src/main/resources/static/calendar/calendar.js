@@ -84,6 +84,6 @@ angular.module('workTimeService').controller('calendarController', function ($sc
         $scope.loadMonth(11);
         $scope.loadMonth(12);
     };
-    $scope.Filt = {year: "2025"};
+    $scope.Filt = {year: new Date().getFullYear().toString()};
     $scope.selectYear();
 })

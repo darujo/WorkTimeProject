@@ -29,5 +29,7 @@ public class  WorkTime {
     private String comment;
     @Column(name = "type")
     private Integer type;
+    @Column(name = "project_id")
+    private Long projectId;
 
 }
