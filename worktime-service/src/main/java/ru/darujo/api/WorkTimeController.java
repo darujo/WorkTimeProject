@@ -39,7 +39,7 @@ public class WorkTimeController {
 
     @GetMapping("/right/{right}")
     public boolean checkRight(@PathVariable String right,
-                              @RequestParam("system_right") List<String> userRight) {
+                              @RequestParam(name = "system_right", required = false) List<String> userRight) {
         return workTimeService.checkRight(right, userRight);
 
 

@@ -114,10 +114,10 @@ public class TaskService {
                                    Integer size) {
         Specification<@NonNull Task> specification = Specification.where(Specifications.queryDistinctTrue());
         specification = Specifications.in(specification, "id", listTaskId);
-        specification = Specifications.like(specification,"nikName", nikName );
-        specification = Specifications.like(specification,"codeBTS", codeBTS);
+        specification = Specifications.like(specification, "nikName", nikName);
+        specification = Specifications.like(specification, "codeBTS", codeBTS);
         specification = Specifications.like(specification, "code", code);
-        specification = Specifications.like(specification,"description", description);
+        specification = Specifications.like(specification, "description", description);
         specification = Specifications.eq(specification, "type", type);
         specification = Specifications.eq(specification, "workId", workId);
         specification = Specifications.eq(specification, "projectId", projectId);
@@ -172,10 +172,10 @@ public class TaskService {
 
         if (value != null && !value.isEmpty()) {
             specification = Specifications.like(specification, dbField, value);
-            specification = Specifications.notEqual(specification,"id", id);
+            specification = Specifications.notEqual(specification, "id", id);
             Page<@NonNull Task> page;
             if (workId != null) {
-                Specification<@NonNull Task> specificationNotWork = Specifications.notEqual(specification,"workId", workId);
+                Specification<@NonNull Task> specificationNotWork = Specifications.notEqual(specification, "workId", workId);
                 page = taskRepository.findAll(specificationNotWork, PageRequest.of(0, 5));
                 if (page.getTotalElements() > 0) {
                     return "Уже есть с " + dbField + ": " + value + "  по другим ЗИ " + page.getTotalElements() + " записей";
@@ -192,11 +192,11 @@ public class TaskService {
     public boolean checkRight(String right, List<String> userRights) {
         right = right.toLowerCase();
         if (right.equals("edit") || right.equals("delete")) {
-            if (!userRights.contains("TASK_EDIT")) {
+            if (userRights == null || !userRights.contains("TASK_EDIT")) {
                 throw new ResourceNotFoundRunTime("У вас нет права на редактирование TASK_EDIT");
             }
         } else if (right.equals("create")) {
-            if (!userRights.contains("TASK_CREATE")) {
+            if (userRights == null || !userRights.contains("TASK_CREATE")) {
                 throw new ResourceNotFoundRunTime("У вас нет права на редактирование TASK_CREATE");
             }
         }

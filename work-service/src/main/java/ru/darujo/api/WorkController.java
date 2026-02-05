@@ -57,7 +57,7 @@ public class WorkController {
 
     @GetMapping("/right/{right}")
     public boolean checkRight(@PathVariable String right,
-                              @RequestParam("system_right") List<String> rights) {
+                              @RequestParam(name = "system_right", required = false) List<String> rights) {
         return workService.checkRight(right, rights);
     }
 

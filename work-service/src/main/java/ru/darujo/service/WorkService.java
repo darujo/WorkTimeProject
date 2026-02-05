@@ -340,7 +340,7 @@ public class WorkService {
             case "criteriaedit":
             case "typeedit":
             case "ziedit":
-                if (!rights.contains("ZI_EDIT")) {
+                if (rights == null || !rights.contains("ZI_EDIT")) {
                     throw new ResourceNotFoundRunTime("У вас нет права на редактирование ZI_EDIT");
                 }
                 break;
@@ -349,7 +349,7 @@ public class WorkService {
             case "criteriacreate":
             case "typecreate":
             case "zicreate":
-                if (!rights.contains("ZI_CREATE")) {
+                if (rights == null || !rights.contains("ZI_CREATE")) {
                     throw new ResourceNotFoundRunTime("У вас нет права на редактирование ZI_CREATE");
                 }
                 break;
