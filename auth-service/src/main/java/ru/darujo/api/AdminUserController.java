@@ -36,12 +36,18 @@ public class AdminUserController {
 
     @PostMapping("/edit/user")
     public UserEditDto setUserEditDto(@RequestBody UserEditDto user,
-                                      @RequestParam("system_right") List<String> right) {
+                                      @RequestParam(name = "system_right", required = false) List<String> right) {
         return UserConvertor.getUserEditDto(
                 userService.saveUser(
                         UserConvertor.getUser(user),
                         user.getTextPassword(),
-                        right.contains("ADMIN_USER") && user.isAdmin() != null ? user.isAdmin() : false));
+                        right != null
+                                && right.contains("ADMIN_USER")
+                                && user.isAdmin() != null
+                                ?
+                                user.isAdmin()
+                                :
+                                false));
     }
 
     @GetMapping("/user/roles/{userId}")
@@ -50,21 +56,24 @@ public class AdminUserController {
         return userService.getUserRoles(userId, project);
 
     }
+
     @PostMapping("/user/roles")
     public UserRoleDto getUserRoles(@RequestParam("system_project") Long project,
                                     @RequestBody UserRoleDto userRoleDto) {
         return userService.setUserRoles(project, userRoleDto);
 
     }
+
     @GetMapping("/user/password/hash")
     public AttrDto<?> getPasswordHash(@RequestParam String textPassword) {
         return new AttrDto<>("passwordHash", userService.hashPassword(textPassword));
 
     }
+
     @GetMapping("/user/password/check")
     public Boolean getPasswordCheck(@RequestParam String passwordText,
                                     @RequestParam String passwordHash) {
-        return userService.checkPassword(passwordText,passwordHash);
+        return userService.checkPassword(passwordText, passwordHash);
 
 
     }

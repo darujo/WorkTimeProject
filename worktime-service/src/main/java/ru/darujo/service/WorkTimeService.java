@@ -227,17 +227,17 @@ public class WorkTimeService {
         switch (right) {
             case "edit":
             case "delete":
-                if (!userRight.contains("WORK_TIME_EDIT")) {
+                if (userRight == null || !userRight.contains("WORK_TIME_EDIT")) {
                     throw new ResourceNotFoundRunTime("У вас нет права на редактирование WORK_TIME_EDIT");
                 }
                 break;
             case "create":
-                if (!userRight.contains("WORK_TIME_CREATE")) {
+                if (userRight == null || !userRight.contains("WORK_TIME_CREATE")) {
                     throw new ResourceNotFoundRunTime("У вас нет права на создание WORK_TIME_CREATE");
                 }
                 break;
             case "changeuser":
-                if (!userRight.contains("WORK_TIME_CHANGE_USER")) {
+                if (userRight == null || !userRight.contains("WORK_TIME_CHANGE_USER")) {
                     throw new ResourceNotFoundRunTime("У вас нет права на изменение пользователя WORK_TIME_CHANGE_USER");
                 }
                 break;
