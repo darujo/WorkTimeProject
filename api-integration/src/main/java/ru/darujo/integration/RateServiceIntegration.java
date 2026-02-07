@@ -19,7 +19,8 @@ public class RateServiceIntegration extends ServiceIntegration {
     }
 
 
-    public WorkStageDto getTimePlan(Long workId) {
+    public WorkStageDto getTimePlan(Long workId, Long projectId) {
+        // todo в разбивке добавить проект
         try {
             if (workId == null) {
                 throw new ResourceNotFoundRunTime("Не задана workId для получения плановых затрат");

@@ -2,6 +2,7 @@ package ru.darujo.dto.work;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 
 public class WorkEditDto implements Serializable, WorkPlanTime {
     private Long id;
@@ -88,6 +89,7 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
 
     private Boolean rated;
     private Long projectId;
+    private List<Long> projectList;
 
 
     public WorkEditDto(Long id,
@@ -126,7 +128,8 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
                        Timestamp releaseStartPlan,
                        Timestamp opeStartPlan,
                        Boolean rated,
-                       Long projectId) {
+                       Long projectId,
+                       List<Long> projectList) {
         this.id = id;
         this.codeSap = codeSap;
         this.codeZI = codeZI;
@@ -164,9 +167,9 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
         this.opeStartPlan = opeStartPlan;
         this.rated = rated;
         this.projectId = projectId;
+        this.projectList = projectList;
     }
 
-    @Override
     public Long getId() {
         return id;
     }
@@ -367,11 +370,17 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
         return developEndPlan;
     }
 
+    public List<Long> getProjectList() {
+        return projectList;
+    }
+
+    @Override
     public Long getProjectId() {
         return projectId;
     }
 
-    public void setProjectId(Long projectId) {
-        this.projectId = projectId;
+    @Override
+    public Long getWorkId() {
+        return id;
     }
 }

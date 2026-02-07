@@ -38,15 +38,16 @@ public class WorkStageController {
 
     @GetMapping("")
     public List<WorkStageDto> WorkStageList(@RequestParam Long workId,
-                                            @RequestParam(defaultValue = "false") boolean loadFact) {
+                                            @RequestParam(defaultValue = "false") boolean loadFact,
+                                            @RequestParam("system_project") Long projectId) {
         List<WorkStageDto> workStageDTOs = new ArrayList<>();
-        workStageService.findWorkStage(workId).forEach(workStage -> workStageDTOs.add(WorkStageConvertor.getWorkStageDto(workStage)));
+        workStageService.findWorkStage(workId, projectId).forEach(workStage -> workStageDTOs.add(WorkStageConvertor.getWorkStageDto(workStage)));
         workStageDTOs.forEach(workStageDto ->
                 workStageService.updFio(workStageDto)
 
         );
         if (loadFact) {
-            workStageService.updWorkStage(workId, workStageDTOs);
+            workStageService.updWorkStage(workId, workStageDTOs, projectId);
         }
         return workStageDTOs;
     }

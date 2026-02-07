@@ -64,19 +64,20 @@ public class WorkRepController {
         return workRepService.getWorkFactRep(page, size, nikName, name, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, sort, hideNotTime);
     }
 
-    @GetMapping("/time/fact")
-    public Float getFactWork(@RequestParam Long workId,
-                             @RequestParam Integer stage,
-                             @RequestParam(required = false) String nikName
-    ) {
-        return workRepService.getFactWork(workId, stage, nikName);
-    }
+//    @GetMapping("/time/fact")
+//    public Float getFactWork(@RequestParam Long workId,
+//                             @RequestParam Integer stage,
+//                             @RequestParam(required = false) String nikName
+//    ) {
+//        return workRepService.getFactWork(workId, stage, nikName);
+//    }
 
     @GetMapping("/time/fact/stage")
     public MapStringFloat getFactWork(@RequestParam Long workId,
                                       @RequestParam(required = false) String nikName,
-                                      @RequestParam(defaultValue = "0") Integer stage) {
-        return workRepService.getFactWorkStage(workId, nikName, stage);
+                                      @RequestParam(defaultValue = "0") Integer stage,
+                                      @RequestParam Long projectId) {
+        return workRepService.getFactWorkStage(workId, nikName, stage, projectId);
     }
 
     @GetMapping("/fact/week")

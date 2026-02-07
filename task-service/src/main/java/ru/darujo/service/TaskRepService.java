@@ -58,9 +58,9 @@ public class TaskRepService {
                 .orElse(0f);
     }
 
-    public ListString getFactUsers(Long workId, Date dateLe) {
+    public ListString getFactUsers(Long workId, Long projectId, Date dateLe) {
         ListString users = new ListString();
-        ((List<Task>) taskService.findTask(null, null, null, null, workId, null, null, null, null))
+        ((List<Task>) taskService.findTask(null, null, null, null, workId, null, projectId, null, null))
                 .stream().map(task ->
                         workTimeServiceIntegration
                                 .getUsers(task.getId(), dateLe))
@@ -69,9 +69,10 @@ public class TaskRepService {
         return users;
     }
 
-    public Boolean getAvailTime(long workId) {
+    public Boolean getAvailTime(long workId, Long projectId) {
         Specification<@NonNull Task> specification = Specification.unrestricted();
         specification = Specifications.eq(specification, "workId", workId);
+        specification = Specifications.eq(specification, "projectId", projectId);
         List<Task> tasks = taskRepository.findAll(specification);
         if (tasks.isEmpty()) {
             return false;

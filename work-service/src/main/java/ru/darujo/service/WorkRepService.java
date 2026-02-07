@@ -20,8 +20,7 @@ import ru.darujo.integration.CalendarServiceIntegration;
 import ru.darujo.integration.TaskServiceIntegration;
 import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.integration.WorkTimeServiceIntegration;
-import ru.darujo.model.Work;
-import ru.darujo.model.WorkLittle;
+import ru.darujo.model.*;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -44,7 +43,7 @@ public class WorkRepService {
         this.workTimeServiceIntegration = workTimeServiceIntegration;
     }
 
-    UserServiceIntegration userServiceIntegration;
+    private UserServiceIntegration userServiceIntegration;
 
     @Autowired
     public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
@@ -58,11 +57,18 @@ public class WorkRepService {
         this.workService = workService;
     }
 
-    CalendarServiceIntegration calendarServiceIntegration;
+    private CalendarServiceIntegration calendarServiceIntegration;
 
     @Autowired
     public void setCalendarServiceIntegration(CalendarServiceIntegration calendarServiceIntegration) {
         this.calendarServiceIntegration = calendarServiceIntegration;
+    }
+
+    private WorkProjectService workProjectService;
+
+    @Autowired
+    public void setWorkProjectService(WorkProjectService workProjectService) {
+        this.workProjectService = workProjectService;
     }
 
     public List<WorkRepDto> getWorkRep(String name, Boolean availWork, Integer stageZiGe, Integer stageZiLe, Long releaseId, String[] sort) {
@@ -70,48 +76,60 @@ public class WorkRepService {
         List<Work> works = workService.getWorkList(name, stageZiGe, stageZiLe, releaseId, sort);
         works.forEach(work ->
                 {
-                    boolean availWorkTime = false;
-                    if (availWork != null) {
-                        availWorkTime = taskServiceIntegration.availWorkTime(work.getId());
-                    }
-                    if (availWork == null ||
-                            (availWork && availWorkTime) ||
-                            (!availWork && !availWorkTime)) {
+                    List<WorkRepProjectDto> workRepProjectDtoList = new ArrayList<>();
+                    work.getProjectList().forEach(projectId -> {
+                        boolean availWorkTime = false;
+                        if (availWork != null) {
+                            availWorkTime = taskServiceIntegration.availWorkTime(work.getId(), projectId);
+                        }
+                        if (availWork == null ||
+                                (availWork && availWorkTime) ||
+                                (!availWork && !availWorkTime)) {
+                            WorkProject workProject = workProjectService.getWorkProjectOrEmpty(work, projectId);
+                            workRepProjectDtoList.add(
+                                    new WorkRepProjectDto(work.getId(),
+                                            projectId,
+                                            workProject.getStartTaskPlan(),
+                                            workProject.getStartTaskFact(),
+                                            workProject.getAnaliseEndPlan(),
+                                            workProject.getAnaliseEndFact(),
+                                            workProject.getIssuePrototypePlan(),
+                                            workProject.getIssuePrototypeFact(),
+                                            workProject.getDebugEndPlan(),
+                                            workProject.getDebugEndFact(),
+                                            workProject.getRelease() != null ? workProject.getRelease().getName() : null,
+                                            workProject.getRelease() != null ? workProject.getRelease().getIssuingReleasePlan() : null,
+                                            workProject.getRelease() != null ? workProject.getRelease().getIssuingReleaseFact() : null,
+                                            workProject.getReleaseEndPlan(),
+                                            workProject.getReleaseEndFact(),
+                                            workProject.getOpeEndPlan(),
+                                            workProject.getOpeEndFact(),
+                                            getFactWork(workProject, 0),
+                                            getFactWork(workProject, 1),
+                                            getFactWork(workProject, 2),
+                                            getFactWork(workProject, 3),
+                                            getFactWork(workProject, 4),
+                                            getFactWork(workProject, 5),
+                                            workProject.getIssuePrototypePlan(),
+                                            workProject.getIssuePrototypeFact()
+                                    )
+                            );
+
+                        }
+                    });
+                    if (!workRepProjectDtoList.isEmpty()) {
+                        workRepProjectDtoList.forEach(workService::updWorkPlanTime);
                         workRepDTOs.add(
                                 new WorkRepDto(
                                         work.getId(),
                                         work.getCodeZi(),
                                         work.getName(),
-                                        work.getStartTaskPlan(),
-                                        work.getStartTaskFact(),
-                                        work.getAnaliseEndPlan(),
-                                        work.getAnaliseEndFact(),
-                                        work.getIssuePrototypePlan(),
-                                        work.getIssuePrototypeFact(),
-                                        work.getDebugEndPlan(),
-                                        work.getDebugEndFact(),
-                                        work.getRelease() != null ? work.getRelease().getName() : null,
-                                        work.getRelease() != null ? work.getRelease().getIssuingReleasePlan() : null,
-                                        work.getRelease() != null ? work.getRelease().getIssuingReleaseFact() : null,
-                                        work.getReleaseEndPlan(),
-                                        work.getReleaseEndFact(),
-                                        work.getOpeEndPlan(),
-                                        work.getOpeEndFact(),
-                                        getFactWork(work, 0),
-                                        getFactWork(work, 1),
-                                        getFactWork(work, 2),
-                                        getFactWork(work, 3),
-                                        getFactWork(work, 4),
-                                        getFactWork(work, 5),
-                                        work.getIssuePrototypePlan(),
-                                        work.getIssuePrototypeFact()
-
+                                        workRepProjectDtoList
                                 )
                         );
                     }
                 }
         );
-        workRepDTOs.forEach(workService::updWorkPlanTime);
         return workRepDTOs;
     }
 
@@ -130,9 +148,13 @@ public class WorkRepService {
                                                boolean hideNotTime) {
         AtomicInteger num = new AtomicInteger();
         List<WorkFactDto> workFactDTOs = new ArrayList<>();
-        Page<@NonNull Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, releaseId, null);
-        workPage.forEach(work -> {
-                    Set<String> users = taskServiceIntegration.getListUser(work.getId(), null).getList();
+        Page<@NonNull Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, releaseId);
+        workPage.forEach(work -> work.getProjectList().forEach(projectId ->
+                {
+                    WorkFactDto workFactDto = null;
+                    int userProject = 0;
+                    WorkProject workProject = workProjectService.getWorkProjectOrEmpty(work, projectId);
+                    Set<String> users = taskServiceIntegration.getListUser(work.getId(), projectId, null).getList();
                     if (userName != null) {
                         if (users.contains(userName)) {
                             users = new HashSet<>();
@@ -144,10 +166,11 @@ public class WorkRepService {
                     if (users != null && !users.isEmpty()) {
                         List<String> userList = new ArrayList<>(users);
                         for (int i = 0; i < users.size(); i++) {
+                            userProject++;
                             String user = userList.get(i);
                             String codeZi;
                             String name;
-                            if (i == 0) {
+                            if (workFactDto == null) {
                                 codeZi = work.getCodeZi();
                                 name = work.getName();
                             } else {
@@ -160,69 +183,73 @@ public class WorkRepService {
                             } catch (ResourceNotFoundRunTime ex) {
                                 userDto = new UserDto(-1L, "", "логином", "Не найден пользователь с", user, false);
                             }
-                            workFactDTOs.add(
-                                    new WorkFactDto(
-                                            num.incrementAndGet(),
-                                            codeZi,
-                                            name,
-                                            users.size(),
-                                            user,
-                                            userDto.getFirstName(),
-                                            userDto.getLastName(),
-                                            userDto.getPatronymic(),
-                                            getFactWork(work, 0, user),
-                                            getFactWork(work, 1, user),
-                                            getFactWork(work, 2, user),
-                                            getFactWork(work, 3, user),
-                                            getFactWork(work, 4, user),
-                                            getFactWork(work, 5, user)
-                                    )
+                            workFactDto = new WorkFactDto(
+                                    num.incrementAndGet(),
+                                    codeZi,
+                                    name,
+                                    users.size(),
+                                    user,
+                                    userDto.getFirstName(),
+                                    userDto.getLastName(),
+                                    userDto.getPatronymic(),
+                                    getFactWork(workProject, 0, user),
+                                    getFactWork(workProject, 1, user),
+                                    getFactWork(workProject, 2, user),
+                                    getFactWork(workProject, 3, user),
+                                    getFactWork(workProject, 4, user),
+                                    getFactWork(workProject, 5, user)
                             );
+                            workFactDTOs.add(workFactDto);
 
                         }
+
                     } else {
                         if (!hideNotTime) {
-                            workFactDTOs.add(
-                                    new WorkFactDto(
-                                            num.incrementAndGet(),
-                                            work.getCodeZi(),
-                                            work.getName(),
-                                            1,
-                                            null,
-                                            null,
-                                            null,
-                                            null,
-                                            null,
-                                            null,
-                                            null,
-                                            null,
-                                            null,
-                                            null
+                            userProject++;
+                            workFactDto = new WorkFactDto(
+                                    num.incrementAndGet(),
+                                    work.getCodeZi(),
+                                    work.getName(),
+                                    1,
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    null
 
-                                    )
+                            );
+                            workFactDTOs.add(
+                                    workFactDto
                             );
                         }
                     }
-
-                }
+                    if (workFactDto != null) {
+                        workFactDto.setUserCol(userProject);
+                    }
+                })
         );
         return new PageDto<>(workPage.getTotalPages(), workPage.getNumber(), workPage.getSize(), workFactDTOs);
     }
 
-    public MapStringFloat getFactWorkStage(Long workId, String nikName, Integer stage) {
+    public MapStringFloat getFactWorkStage(Long workId, String nikName, Integer stage, Long projectId) {
         MapStringFloat mapStringFloat = new MapStringFloat();
         Map<String, Float> usersTime = new HashMap<>();
         mapStringFloat.setList(usersTime);
-        Work work = workService.findById(workId);
+        WorkFull workFull = workService.findById(workId, projectId);
         Set<String> users;
         if (nikName != null && !nikName.isEmpty()) {
             users = new HashSet<>();
             users.add(nikName);
         } else {
-            users = taskServiceIntegration.getListUser(workId, work.getIssuePrototypeFact()).getList();
+            users = taskServiceIntegration.getListUser(workId, projectId, workFull.getWorkProject().getIssuePrototypeFact()).getList();
         }
         users.forEach(user -> {
-            Float time = getFactWork(work, stage, user);
+            Float time = getFactWork(workFull.getWorkProject(), stage, user);
             if (time > 0) {
                 usersTime.put(user, time);
             }
@@ -230,59 +257,54 @@ public class WorkRepService {
         return mapStringFloat;
     }
 
-    public Float getFactWork(Long workId, Integer stage, String nikName) {
-        Work work = workService.findById(workId);
-        return getFactWork(work, stage, nikName);
+    private Float getFactWork(WorkProject workProject, Integer stage) {
+        return getFactWork(workProject, stage, null);
     }
 
-    private Float getFactWork(Work work, Integer stage) {
-        return getFactWork(work, stage, null);
-    }
-
-    public Float getFactWork(Work work, Integer stage, String nikName) {
+    public Float getFactWork(WorkProject workProject, Integer stage, String nikName) {
         if (stage == 0) {
-            return taskServiceIntegration.getTimeWork(work.getId(),
+            return taskServiceIntegration.getTimeWork(workProject.getWork().getId(),
                     nikName,
                     null,
-                    getTimeDevelop(work),
+                    getTimeDevelop(workProject),
                     "analise");
         }
         if (stage == 1) {
             return taskServiceIntegration.getTimeWork(
-                    work.getId(),
+                    workProject.getWork().getId(),
                     nikName,
                     null,
-                    getTimeDevelop(work),
+                    getTimeDevelop(workProject),
                     "develop");
         }
         if (stage == 2) {
-            return taskServiceIntegration.getTimeWork(work.getId(),
+            return taskServiceIntegration.getTimeWork(workProject.getWork().getId(),
                     nikName,
-                    getTimeDevelop(work),
-                    work.getDebugEndFact());
+                    getTimeDevelop(workProject),
+                    workProject.getDebugEndFact());
         }
         if (stage == 3) {
-            return taskServiceIntegration.getTimeWork(work.getId(),
+            return taskServiceIntegration.getTimeWork(workProject.getWork().getId(),
                     nikName,
-                    work.getDebugEndFact(),
-                    work.getReleaseEndFact());
+                    workProject.getDebugEndFact(),
+                    workProject.getReleaseEndFact());
         }
         if (stage == 4) {
-            return taskServiceIntegration.getTimeWork(work.getId(),
+            return taskServiceIntegration.getTimeWork(workProject.getWork().getId(),
                     nikName,
-                    work.getReleaseEndFact(),
-                    work.getOpeEndFact());
+                    workProject.getReleaseEndFact(),
+                    workProject.getOpeEndFact());
         }
         if (stage == 5) {
-            taskServiceIntegration.getTimeWork(work.getId(),
+            taskServiceIntegration.getTimeWork(workProject.getWork().getId(),
                     nikName,
-                    work.getOpeEndFact(),
+                    workProject.getOpeEndFact(),
                     null);
         }
         return 0f;
     }
 
-    private Timestamp getTimeDevelop(Work work) {
+    private Timestamp getTimeDevelop(WorkProject work) {
         Timestamp timestampDevelop;
         if (work.getIssuePrototypeFact() == null
                 && work.getDebugEndFact() == null
@@ -300,16 +322,17 @@ public class WorkRepService {
                                           Integer page, Integer size, String name, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, List<Long> releaseIdList, String sort) {
         List<WorkUserTime> workUserTimes = new ArrayList<>();
         if (ziSplit) {
-            Page<@NonNull WorkLittle> works = workService.findWorkLittle(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseIdList);
-            works.forEach(work ->
-                    workUserTimes.add(new WorkUserTime(
-                            work.getId(),
-                            work.getCodeSap(),
-                            work.getCodeZi(),
-                            work.getName(),
-                            work.getStageZi(),
-                            taskServiceIntegration.getWorkUserOrZi(work.getId(), nikName, addTotal))
-                    )
+            Page<@NonNull WorkLittleFull> works = workService.findWorkLittle(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseIdList, null);
+            works.forEach(workLittleFull -> {
+                        WorkLittle work = workLittleFull.getWork();
+                        workUserTimes.add(new WorkUserTime(
+                                work.getId(),
+                                work.getCodeSap(),
+                                work.getCodeZi(),
+                                work.getName(),
+                                taskServiceIntegration.getWorkUserOrZi(work.getId(), nikName, addTotal))
+                        );
+                    }
             );
 
         } else {
@@ -319,7 +342,6 @@ public class WorkRepService {
                     null,
                     null,
                     "Без ЗИ",
-                    null,
                     workTimeServiceIntegration.getWorkUserOrZiBig(null, nikName, addTotal, weekSplit, dateStart, dateEnd))
             );
 
@@ -342,12 +364,21 @@ public class WorkRepService {
                                                      Timestamp dateEnd,
                                                      String period) {
         List<WeekWorkDto> weekWorkDTOs = calendarServiceIntegration.getPeriodTime(dateStart, dateEnd, period);
-        Page<@NonNull Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, releaseId, null);
+        Page<@NonNull Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, releaseId);
         List<WorkGraphDto> workGraphDTOs =
-                workPage.map(work -> new WorkGraphDto(WorkConvertor.getWorkLittleDto(work),
-                        weekWorkDTOs.stream().map(weekWorkDto -> new WorkPeriodColorDto(weekWorkDto, getColor(weekWorkDto, work, true))).collect(Collectors.toList()),
-                        weekWorkDTOs.stream().map(weekWorkDto -> new WorkPeriodColorDto(weekWorkDto, getColor(weekWorkDto, work, false))).collect(Collectors.toList())
-                )).toList();
+                workPage.map(work -> {
+                    List<ProjectGraphDto> projectGraphDtoList = new ArrayList<>();
+                    work.getProjectList().forEach(projectId -> {
+                        WorkProject workProject = workProjectService.getWorkProjectOrEmpty(work, projectId);
+                        projectGraphDtoList.add(new ProjectGraphDto(projectId,
+                                weekWorkDTOs.stream().map(weekWorkDto -> new WorkPeriodColorDto(weekWorkDto, getColor(weekWorkDto, workProject, true))).collect(Collectors.toList()),
+                                weekWorkDTOs.stream().map(weekWorkDto -> new WorkPeriodColorDto(weekWorkDto, getColor(weekWorkDto, workProject, false))).collect(Collectors.toList())
+                        ));
+                    });
+                    return new WorkGraphDto(WorkConvertor.getWorkLittleDto(work), projectGraphDtoList
+
+                    );
+                }).toList();
         WorkGraphsDto workFactDTOs = new WorkGraphsDto(weekWorkDTOs, workGraphDTOs);
 
         return new PageObjDto<>(workPage.getTotalPages(), workPage.getNumber(), workPage.getSize(), workFactDTOs);
@@ -356,7 +387,7 @@ public class WorkRepService {
 
     Map<Integer, ColorDto> colorDtoMap = new HashMap<>();
 
-    private ColorDto getColor(WeekWorkDto weekWorkDto, Work work, boolean plan) {
+    private ColorDto getColor(WeekWorkDto weekWorkDto, WorkProject work, boolean plan) {
         List<String> colorTypes;
         if (plan) {
             colorTypes = getPeriodPlanTypes(work, weekWorkDto.getDayStart(), weekWorkDto.getDayEnd());
@@ -378,7 +409,7 @@ public class WorkRepService {
 
     }
 
-    private List<String> getPeriodFactTypes(Work work, Timestamp dayStart, Timestamp dayEnd) {
+    private List<String> getPeriodFactTypes(WorkProject work, Timestamp dayStart, Timestamp dayEnd) {
         List<String> colorTypes = new ArrayList<>();
         if (isPeriodIntersect(work.getAnaliseStartFact(), work.getAnaliseEndFact(), dayStart, dayEnd)) {
             colorTypes.add("analise");
@@ -398,7 +429,7 @@ public class WorkRepService {
         return colorTypes;
     }
 
-    private List<String> getPeriodPlanTypes(Work work, Timestamp dayStart, Timestamp dayEnd) {
+    private List<String> getPeriodPlanTypes(WorkProject work, Timestamp dayStart, Timestamp dayEnd) {
         List<String> colorTypes = new ArrayList<>();
         if (isPeriodIntersect(work.getAnaliseStartPlan(), work.getAnaliseEndPlan(), dayStart, dayEnd)) {
             colorTypes.add("analise");

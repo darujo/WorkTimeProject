@@ -45,10 +45,11 @@ public class WorkServiceIntegration extends ServiceIntegration {
         }
     }
 
-    public MapStringFloat getWorkTimeStageFact(Long workId, Integer stage) {
+    public MapStringFloat getWorkTimeStageFact(Long workId, Long projectId, Integer stage) {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "workId", workId);
         addTeg(stringBuilder, "stage", stage);
+        addTeg(stringBuilder, "projectId", projectId);
 
         try {
             return webClient.get().uri("/rep/time/fact/stage" + stringBuilder)
@@ -66,10 +67,11 @@ public class WorkServiceIntegration extends ServiceIntegration {
         }
     }
 
-    public Boolean setWorkDate(Long workId, Date dateWork) {
+    public Boolean setWorkDate(Long workId, Long projectId, Date dateWork) {
         if (workId != null) {
             StringBuilder stringBuilder = new StringBuilder();
             addTeg(stringBuilder, "date", dateWork);
+            addTeg(stringBuilder, "projectId", projectId);
             return webClient.get().uri("/refresh/" + workId + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),

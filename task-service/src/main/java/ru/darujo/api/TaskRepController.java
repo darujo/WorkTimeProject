@@ -48,18 +48,20 @@ public class TaskRepController {
 
     @GetMapping("/user")
     public ListString getFactUsers(@RequestParam(required = false) Long workId,
-                                   @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr
+                                   @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
+                                   @RequestParam(required = false) Long projectId
     ) {
         Timestamp dateLe = DateHelper.DTZToDate(dateLeStr, "dateLe = ");
 
         return taskRepService.getFactUsers(
-                workId, dateLe);
+                workId, projectId, dateLe);
     }
 
     @GetMapping("/avail/{workId}")
-    public Boolean getFactUsers(@PathVariable long workId
+    public Boolean getFactUsers(@PathVariable long workId,
+                                @RequestParam(required = false) Long projectId
     ) {
-        return taskRepService.getAvailTime(workId);
+        return taskRepService.getAvailTime(workId, projectId);
     }
 
     @GetMapping("/week")

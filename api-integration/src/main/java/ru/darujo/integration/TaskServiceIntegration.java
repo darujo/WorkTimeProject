@@ -52,13 +52,14 @@ public class TaskServiceIntegration extends ServiceIntegration {
         }
     }
 
-    public ListString getListUser(Long workID, Date dateLe) {
+    public ListString getListUser(Long workID, Long projectId, Date dateLe) {
         StringBuilder stringBuilder = new StringBuilder();
         if (workID == null) {
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору не задан workId");
         }
         addTeg(stringBuilder, "workId", workID);
         addTeg(stringBuilder, "dateLe", dateLe);
+        addTeg(stringBuilder, "projectId", projectId);
         try {
             return webClient.get().uri("/rep/fact/user" + stringBuilder)
                     .retrieve()
@@ -97,9 +98,12 @@ public class TaskServiceIntegration extends ServiceIntegration {
                 .block();
     }
 
-    public Boolean availWorkTime(Long id) {
+    public Boolean availWorkTime(Long id, Long projectId) {
+        StringBuilder stringBuilder = new StringBuilder();
+        addTeg(stringBuilder, "projectId", projectId);
+
         try {
-            return webClient.get().uri("/rep/fact/avail/" + id)
+            return webClient.get().uri("/rep/fact/avail/" + id + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Задача c id = " + id + " не найдена"))

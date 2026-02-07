@@ -32,4 +32,9 @@ public class Release {
 
     @Column(name = "project_id")
     private Long projectId;
+
+    public Release(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }
