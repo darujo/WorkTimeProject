@@ -133,7 +133,8 @@ public class RateService {
         stage[2] = 0f;
         stage[3] = 0f;
         stage[4] = 0f;
-        workStageService.findWorkStage(workId).forEach(workStage -> {
+        // todo возможно надо передать projectId
+        workStageService.findWorkStage(workId, null).forEach(workStage -> {
             stage[0] = stage[0] + getTime(workStage.getStage0());
             stage[1] = stage[1] + getTime(workStage.getStage1());
             stage[2] = stage[2] + getTime(workStage.getStage2());
