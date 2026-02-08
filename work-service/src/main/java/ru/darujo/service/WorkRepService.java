@@ -86,34 +86,36 @@ public class WorkRepService {
                                 (availWork && availWorkTime) ||
                                 (!availWork && !availWorkTime)) {
                             WorkProject workProject = workProjectService.getWorkProjectOrEmpty(work, projectId);
-                            workRepProjectDtoList.add(
-                                    new WorkRepProjectDto(work.getId(),
-                                            projectId,
-                                            workProject.getStartTaskPlan(),
-                                            workProject.getStartTaskFact(),
-                                            workProject.getAnaliseEndPlan(),
-                                            workProject.getAnaliseEndFact(),
-                                            workProject.getIssuePrototypePlan(),
-                                            workProject.getIssuePrototypeFact(),
-                                            workProject.getDebugEndPlan(),
-                                            workProject.getDebugEndFact(),
-                                            workProject.getRelease() != null ? workProject.getRelease().getName() : null,
-                                            workProject.getRelease() != null ? workProject.getRelease().getIssuingReleasePlan() : null,
-                                            workProject.getRelease() != null ? workProject.getRelease().getIssuingReleaseFact() : null,
-                                            workProject.getReleaseEndPlan(),
-                                            workProject.getReleaseEndFact(),
-                                            workProject.getOpeEndPlan(),
-                                            workProject.getOpeEndFact(),
-                                            getFactWork(workProject, 0),
-                                            getFactWork(workProject, 1),
-                                            getFactWork(workProject, 2),
-                                            getFactWork(workProject, 3),
-                                            getFactWork(workProject, 4),
-                                            getFactWork(workProject, 5),
-                                            workProject.getIssuePrototypePlan(),
-                                            workProject.getIssuePrototypeFact()
-                                    )
+
+                            WorkRepProjectDto workRepProjectDto = new WorkRepProjectDto(work.getId(),
+                                    projectId,
+                                    workProject.getStartTaskPlan(),
+                                    workProject.getStartTaskFact(),
+                                    workProject.getAnaliseEndPlan(),
+                                    workProject.getAnaliseEndFact(),
+                                    workProject.getIssuePrototypePlan(),
+                                    workProject.getIssuePrototypeFact(),
+                                    workProject.getDebugEndPlan(),
+                                    workProject.getDebugEndFact(),
+                                    workProject.getRelease() != null ? workProject.getRelease().getName() : null,
+                                    workProject.getRelease() != null ? workProject.getRelease().getIssuingReleasePlan() : null,
+                                    workProject.getRelease() != null ? workProject.getRelease().getIssuingReleaseFact() : null,
+                                    workProject.getReleaseEndPlan(),
+                                    workProject.getReleaseEndFact(),
+                                    workProject.getOpeEndPlan(),
+                                    workProject.getOpeEndFact(),
+                                    getFactWork(workProject, 0),
+                                    getFactWork(workProject, 1),
+                                    getFactWork(workProject, 2),
+                                    getFactWork(workProject, 3),
+                                    getFactWork(workProject, 4),
+                                    getFactWork(workProject, 5),
+                                    workProject.getIssuePrototypePlan(),
+                                    workProject.getIssuePrototypeFact()
+
                             );
+                            workService.updateProjectInfo(workRepProjectDto);
+                            workRepProjectDtoList.add(workRepProjectDto);
 
                         }
                     });
@@ -263,7 +265,9 @@ public class WorkRepService {
 
     public Float getFactWork(WorkProject workProject, Integer stage, String nikName) {
         if (stage == 0) {
-            return taskServiceIntegration.getTimeWork(workProject.getWork().getId(),
+            return taskServiceIntegration.getTimeWork(
+                    workProject.getWork().getId(),
+                    workProject.getProjectId(),
                     nikName,
                     null,
                     getTimeDevelop(workProject),
@@ -272,31 +276,40 @@ public class WorkRepService {
         if (stage == 1) {
             return taskServiceIntegration.getTimeWork(
                     workProject.getWork().getId(),
+                    workProject.getProjectId(),
                     nikName,
                     null,
                     getTimeDevelop(workProject),
                     "develop");
         }
         if (stage == 2) {
-            return taskServiceIntegration.getTimeWork(workProject.getWork().getId(),
+            return taskServiceIntegration.getTimeWork(
+                    workProject.getWork().getId(),
+                    workProject.getProjectId(),
                     nikName,
                     getTimeDevelop(workProject),
                     workProject.getDebugEndFact());
         }
         if (stage == 3) {
-            return taskServiceIntegration.getTimeWork(workProject.getWork().getId(),
+            return taskServiceIntegration.getTimeWork(
+                    workProject.getWork().getId(),
+                    workProject.getProjectId(),
                     nikName,
                     workProject.getDebugEndFact(),
                     workProject.getReleaseEndFact());
         }
         if (stage == 4) {
-            return taskServiceIntegration.getTimeWork(workProject.getWork().getId(),
+            return taskServiceIntegration.getTimeWork(
+                    workProject.getWork().getId(),
+                    workProject.getProjectId(),
                     nikName,
                     workProject.getReleaseEndFact(),
                     workProject.getOpeEndFact());
         }
         if (stage == 5) {
-            taskServiceIntegration.getTimeWork(workProject.getWork().getId(),
+            taskServiceIntegration.getTimeWork(
+                    workProject.getWork().getId(),
+                    workProject.getProjectId(),
                     nikName,
                     workProject.getOpeEndFact(),
                     null);

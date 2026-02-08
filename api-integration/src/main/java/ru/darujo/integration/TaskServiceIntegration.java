@@ -27,17 +27,18 @@ public class TaskServiceIntegration extends ServiceIntegration {
         super.setWebClient(webClientTask);
     }
 
-    public Float getTimeWork(Long workId, String nikName, Date dateGt, Date dateLe) {
-        return getTimeWork(workId, nikName, dateGt, dateLe, null);
+    public Float getTimeWork(Long workId, Long projectId, String nikName, Date dateGt, Date dateLe) {
+        return getTimeWork(workId, projectId, nikName, dateGt, dateLe, null);
     }
 
-    public Float getTimeWork(Long workId, String nikName, Date dateGt, Date dateLe, String type) {
+    public Float getTimeWork(Long workId, Long projectId, String nikName, Date dateGt, Date dateLe, String type) {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "workId", workId);
         addTeg(stringBuilder, "nikName", nikName);
         addTeg(stringBuilder, "dateLe", dateLe);
         addTeg(stringBuilder, "dateGt", dateGt);
         addTeg(stringBuilder, "type", type);
+        addTeg(stringBuilder, "projectId", projectId);
 
         try {
             return webClient.get().uri("/rep/fact/time" + stringBuilder)

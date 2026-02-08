@@ -3,6 +3,7 @@ package ru.darujo.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.darujo.service.WorkService;
 
 import java.util.List;
 
@@ -45,4 +46,10 @@ public class Work implements WorkLittleInterface {
         this.projectList = projectList;
     }
 
+    public List<Long> getProjectList() {
+        if (projectList == null) {
+            return WorkService.getProjectDtoMap().keySet().stream().toList();
+        }
+        return projectList;
+    }
 }

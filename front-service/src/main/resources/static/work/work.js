@@ -324,6 +324,13 @@ angular.module('workTimeService').controller('workController', function ($scope,
         console.log("result releaseList");
         console.log(result);
     });
+
+    $location.getProjects().then(function (result) {
+        $scope.ProjectList = result;
+        console.log("result ProjectList");
+        console.log(result);
+    });
+
     checkRight("Edit", false);
 
     console.log("workFilter");

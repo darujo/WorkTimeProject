@@ -25,6 +25,8 @@ public class WorkProjectLittle implements WorkProjectInter {
     private Release release;
     @Column(name = "stage_zi")
     private Integer stageZi;
+    @Column(name = "task")
+    private String task;
 
     public WorkProjectLittle(Long projectId, WorkLittle workLittle) {
         this.projectId = projectId;

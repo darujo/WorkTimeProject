@@ -29,6 +29,7 @@ public class TaskRepController {
                              @RequestParam(required = false) String codeDEVBO,
                              @RequestParam(required = false) String description,
                              @RequestParam(required = false) Long workId,
+                             @RequestParam(required = false) Long projectId,
                              @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
                              @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
                              @RequestParam(required = false) String type
@@ -41,6 +42,7 @@ public class TaskRepController {
                 codeDEVBO,
                 description,
                 workId,
+                projectId,
                 dateLe,
                 dateGt,
                 type);

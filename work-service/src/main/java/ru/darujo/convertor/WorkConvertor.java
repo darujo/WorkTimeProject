@@ -11,6 +11,7 @@ public class WorkConvertor {
         WorkBuilder workBuilder = WorkBuilder
                 .createWork()
                 .setId(work.getId())
+                .setWorkProjectId(workProject.getId())
                 .setCodeSap(work.getCodeSap())
                 .setCodeZI(work.getCodeZi())
                 .setDebugEndFact(workProject.getDebugEndFact())
@@ -72,6 +73,7 @@ public class WorkConvertor {
         WorkProject workProject = WorkBuilder
                 .createWork()
                 .setId(workDto.getId())
+                .setWorkProjectId(workDto.getWorkProjectId())
                 .setCodeSap(workDto.getCodeSap())
                 .setCodeZI(workDto.getCodeZI())
                 .setAnaliseEndFact(workDto.getAnaliseEndFact())
@@ -119,6 +121,7 @@ public class WorkConvertor {
         return WorkBuilder
                 .createWork()
                 .setId(work.getId())
+                .setWorkProjectId(workProjectLittle == null ? null : workProjectLittle.getId())
                 .setCodeSap(work.getCodeSap())
                 .setCodeZI(work.getCodeZi())
                 .setStageZI(workProjectLittle == null ? null : workProjectLittle.getStageZi())

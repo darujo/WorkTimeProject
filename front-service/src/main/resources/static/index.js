@@ -1,5 +1,6 @@
 angular.module('workTimeService').controller('indexController', function ($rootScope, $scope, $http, $location, $localStorage) {
     const constPatchAuth = window.location.origin;
+    const constPatchProj = window.location.origin + '/projects';
     const constPatchUser = window.location.origin + '/users';
     const constPatchRole = window.location.origin + '/roles';
     const constPatchCode = window.location.origin + '/task-service/v1/';
@@ -423,6 +424,30 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         });
 
     }
+    let ProjectLoad = false;
+    let ProjectList;
+    let loadProjects = function () {
+        console.log("Projects")
+
+        $http({
+            url: constPatchProj,
+            method: "get"
+
+        }).then(function (response) {
+            console.log("response Project");
+            console.log(response.data);
+            ProjectList = response.data.content;
+            ProjectLoad = true;
+        }, function errorCallback(response) {
+            console.log(" --- response Project");
+            console.log(response)
+            ProjectLoad = true;
+            if ($location.checkAuthorized(response)) {
+                alert(response.data.message);
+            }
+        });
+
+    }
 
     function wait() {
         return new Promise((resolve, reject) => {
@@ -452,6 +477,14 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         }
         return UserList;
     }
+
+    $location.getProjects = async function () {
+        while (!ProjectLoad) {
+            await wait();
+        }
+        return ProjectList;
+    }
+
     $scope.saveSetting = function () {
         $localStorage.UserSettingWorkTime = $scope.SettingUser;
     }
@@ -460,6 +493,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         loadRoles();
         loadUsers();
         loadRelease();
+        loadProjects();
         $scope.getUser();
 
     }

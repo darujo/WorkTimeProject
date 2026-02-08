@@ -55,7 +55,7 @@ public class WorkRepController {
                                             @RequestParam(required = false) String codeZi,
                                             @RequestParam(required = false) String task,
                                             @RequestParam(required = false) Long releaseId,
-                                            @RequestParam(defaultValue = "release") String sort,
+                                            @RequestParam(defaultValue = "release.sort") String sort,
                                             @RequestParam(defaultValue = "true") boolean hideNotTime) {
         if (nikName != null && nikName.isEmpty()) {
             nikName = null;
@@ -97,7 +97,7 @@ public class WorkRepController {
                                           @RequestParam(required = false) String codeZi,
                                           @RequestParam(required = false) String task,
                                           @RequestParam(required = false) List<Long> releaseId,
-                                          @RequestParam(defaultValue = "release") String sort) {
+                                          @RequestParam(defaultValue = "release.sort") String sort) {
         Timestamp dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ", true);
         Timestamp dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ", true);
         StageZiFind stageZiFind = new StageZiFind(stageZi);

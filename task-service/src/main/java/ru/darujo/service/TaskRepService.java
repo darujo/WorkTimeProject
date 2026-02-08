@@ -48,10 +48,11 @@ public class TaskRepService {
             String codeDEVBO,
             String description,
             Long workId,
+            Long projectId,
             Date dateLe,
             Date dateGt,
             String type) {
-        return ((List<Task>) taskService.findTask(null, codeBTS, codeDEVBO, description, workId, null, null, null, null))
+        return ((List<Task>) taskService.findTask(null, codeBTS, codeDEVBO, description, workId, null, projectId, null, null))
                 .stream()
                 .map(task -> workTimeServiceIntegration.getTimeTask(task.getId(), nikName, dateLe, dateGt, type))
                 .reduce(Float::sum)

@@ -14,6 +14,7 @@ import java.util.List;
 
 public class WorkBuilder {
     private Long id;
+    private Long workProjectId;
     // Код SAP
     private Long codeSap;
     // Код Зи
@@ -113,6 +114,11 @@ public class WorkBuilder {
 
     public WorkBuilder setStageZI(Integer stageZI) {
         this.stageZI = stageZI;
+        return this;
+    }
+
+    public WorkBuilder setWorkProjectId(Long workProjectId) {
+        this.workProjectId = workProjectId;
         return this;
     }
 
@@ -301,6 +307,7 @@ public class WorkBuilder {
     public WorkEditDto getWorkEditDto() {
         return new WorkEditDto(
                 id,
+                workProjectId,
                 codeSap,
                 codeZI,
                 name,
@@ -409,7 +416,7 @@ public class WorkBuilder {
     }
 
     public WorkProject getWorkProject() {
-        return new WorkProject(null,
+        return new WorkProject(workProjectId,
                 projectId,
                 getWork(),
                 analiseEndFact,
