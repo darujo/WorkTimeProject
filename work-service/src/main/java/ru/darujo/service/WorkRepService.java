@@ -383,10 +383,12 @@ public class WorkRepService {
                     List<ProjectGraphDto> projectGraphDtoList = new ArrayList<>();
                     work.getProjectList().forEach(projectId -> {
                         WorkProject workProject = workProjectService.getWorkProjectOrEmpty(work, projectId);
-                        projectGraphDtoList.add(new ProjectGraphDto(projectId,
+                        ProjectGraphDto projectGraphDto = new ProjectGraphDto(projectId,
                                 weekWorkDTOs.stream().map(weekWorkDto -> new WorkPeriodColorDto(weekWorkDto, getColor(weekWorkDto, workProject, true))).collect(Collectors.toList()),
                                 weekWorkDTOs.stream().map(weekWorkDto -> new WorkPeriodColorDto(weekWorkDto, getColor(weekWorkDto, workProject, false))).collect(Collectors.toList())
-                        ));
+                        );
+                        workService.updateProjectInfo(projectGraphDto);
+                        projectGraphDtoList.add(projectGraphDto);
                     });
                     return new WorkGraphDto(WorkConvertor.getWorkLittleDto(work), projectGraphDtoList
 
