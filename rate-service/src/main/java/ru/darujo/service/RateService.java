@@ -35,9 +35,9 @@ public class RateService {
         this.workTypeService = workTypeService;
     }
 
-    public Float getTimeStageNotAnalise(Long workId){
+    public Float getTimeStageNotAnalise(Long workId) {
         AtomicReference<Float> timeStage = new AtomicReference<>();
-        timeStage.set( 0f);
+        timeStage.set(0f);
         List<WorkStage> workStageList = workStageService.findWorkStage(workId, null);
         workStageList.forEach(
                 workStage -> timeStage.set(timeStage.get()
@@ -51,28 +51,28 @@ public class RateService {
     }
 
 
-    public Float getTimeCriteria(Long workId){
+    public Float getTimeCriteria(Long workId) {
         AtomicReference<Float> timeCriteria = new AtomicReference<>();
 
-        timeCriteria.set( 0f);
+        timeCriteria.set(0f);
 
         List<WorkCriteria> workCriteriaList = workCriteriaService.findWorkCriteria(workId);
         workCriteriaList.forEach(
                 workCriteria -> timeCriteria.set(
                         timeCriteria.get() + getTime(workCriteria.getDevelop10()) + getTime(workCriteria.getDevelop50()) + getTime(workCriteria.getDevelop100())));
-       return timeCriteria.get();
+        return timeCriteria.get();
 
     }
 
-    public Float getTimeType(Long workId){
+    public Float getTimeType(Long workId) {
         AtomicReference<Float> timeType = new AtomicReference<>();
 
-        timeType.set( 0f);
+        timeType.set(0f);
 
         List<WorkType> workTypeList = workTypeService.findWorkCriteria(workId);
         workTypeList.forEach(
                 workType -> timeType.set(
-                        timeType.get() + getTime(workType.getTime()) ));
+                        timeType.get() + getTime(workType.getTime())));
         return timeType.get();
 
     }
@@ -81,11 +81,11 @@ public class RateService {
         Float timeStage = getTimeStageNotAnalise(workId);
         Float timeCriteria = getTimeCriteria(workId);
         float time = timeCriteria - timeStage;
+        if (time == 0 || timeStage == 0 || timeCriteria == 0) {
+            return new AttrDto<>(time, "");
+        }
         if (time < 0) {
             return new AttrDto<>(time, "Плановой оценки больше чем критериев на " + time * -1);
-        }
-        if (time == 0) {
-            return new AttrDto<>(time, "");
         }
         return new AttrDto<>(time, "Критериев больше чем плановой оценки на " + time);
     }
@@ -94,11 +94,11 @@ public class RateService {
         Float timeType = getTimeType(workId);
         Float timeCriteria = getTimeCriteria(workId);
         float time = timeCriteria - timeType;
+        if (time == 0 || timeType == 0 || timeCriteria == 0) {
+            return new AttrDto<>(time, "");
+        }
         if (time < 0) {
             return new AttrDto<>(time, "Работ больше чем критериев на " + time * -1);
-        }
-        if (time == 0) {
-            return new AttrDto<>(time, "");
         }
         return new AttrDto<>(time, "Критериев больше чем работ на " + time);
     }
@@ -107,24 +107,25 @@ public class RateService {
         Float timeStage = getTimeStageNotAnalise(workId);
         Float timeType = getTimeType(workId);
         float time = timeType - timeStage;
+        if (time == 0 || timeStage == 0 || timeType == 0) {
+            return new AttrDto<>(time, "");
+        }
         if (time < 0) {
             return new AttrDto<>(time, "Плановой оценки больше чем работ на " + time * -1);
         }
-        if (time == 0) {
-            return new AttrDto<>(time, "");
-        }
+
         return new AttrDto<>(time, "Работ больше чем плановой оценки на " + time);
     }
 
-    private Float getTime(Float time){
-        if (time == null){
+    private Float getTime(Float time) {
+        if (time == null) {
             return 0f;
         }
         return time;
     }
 
     public WorkStageDto AllTime(Long workId, boolean loadFact) {
-        if(loadFact){
+        if (loadFact) {
             throw new ResourceNotFoundRunTime("Загрузка с фактом не поддерживается");
         }
         final Float[] stage = new Float[5];
