@@ -20,13 +20,13 @@ public class RateServiceIntegration extends ServiceIntegration {
 
 
     public WorkStageDto getTimePlan(Long workId, Long projectId) {
-        // todo в разбивке добавить проект
         try {
             if (workId == null) {
                 throw new ResourceNotFoundRunTime("Не задана workId для получения плановых затрат");
             }
             StringBuilder stringBuilder = new StringBuilder();
             addTeg(stringBuilder, "workId", workId);
+            addTeg(stringBuilder, "workId", projectId);
             return webClient.get().uri("/time/all" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),

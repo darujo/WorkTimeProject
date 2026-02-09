@@ -90,8 +90,12 @@ public class WorkService {
 
     @PostConstruct
     public static void init() {
-        userServiceIntegration.getProjects(null, null).forEach(projectDto ->
-                projectDtoMap.put(projectDto.getId(), projectDto));
+        try {
+            userServiceIntegration.getProjects(null, null).forEach(projectDto ->
+                    projectDtoMap.put(projectDto.getId(), projectDto));
+        } catch (RuntimeException ignore){
+
+        }
 
     }
 

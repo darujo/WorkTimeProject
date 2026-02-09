@@ -27,7 +27,15 @@ public class WorkStageController {
     }
 
     @PostMapping("")
-    public WorkStageDto WorkStageSave(@RequestBody WorkStageDto workStageDto) {
+    public WorkStageDto WorkStageSave(@RequestBody WorkStageDto workStageDto,
+                                      @RequestParam("system_project") Long projectId) {
+        if (workStageDto.getProjectId() == null){
+            workStageDto.setProjectId(projectId);
+        }
+        if (!workStageDto.getProjectId().equals(projectId)){
+            throw new ResourceNotFoundRunTime("Нельзя поменять проект");
+        }
+
         return WorkStageConvertor.getWorkStageDto(workStageService.saveWorkStage(WorkStageConvertor.getWorkStage(workStageDto)));
     }
 

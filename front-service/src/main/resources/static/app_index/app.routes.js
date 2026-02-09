@@ -266,6 +266,15 @@ angular.module('workTimeService').config(function ($routeProvider) {
                 }]
             }
         })
+        .when('/rate', {
+            templateUrl: 'workRate/rate.html?ver=' + ver,
+            controller: 'rateController',
+            resolve: {
+                LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load('rate'); // Resolve promise and load before view
+                }]
+            }
+        })
         .otherwise({
             redirectTo: '/'
         });

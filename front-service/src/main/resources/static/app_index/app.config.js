@@ -85,7 +85,10 @@ angular.module('workTimeService').config(["$ocLazyLoadProvider", function ($ocLa
             files: ['project/project.js?ver=2.0']
         }, {
             name: 'project_edit', // module
-            files: ['project/project_edit.js?ver=3s.0']
+            files: ['project/project_edit.js?ver=3.0']
+        }, {
+            name: 'rate', // module
+            files: ['workRate/rate.js?ver=3.0'.toLowerCase()]
         }
         ]
     });

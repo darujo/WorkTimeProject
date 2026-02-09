@@ -1,0 +1,116 @@
+<div id="WorkStageList" class="head_text_elem">
+    <h1>{{ZI.codeSap}} </h1>
+    <h1>{{ZI.codeZI}} {{ZI.name}} </h1>
+    <button type="button" class="head_button mar5" id="WorkPage" ng-click="workPage()">Назад</button>
+</div>
+
+<div>
+    <img ng-if="load" src="../gif/wait1.gif" alt="wait1" width="900" height="506"/>
+</div>
+
+<div ng-repeat-start="projectRate in ProjectRateList">
+    <h1 ng-style="getStyle(ZI.rated ? 0 : 1)">{{ZI.rated ? "Оценка выполнена" : "Оценка не выполнена"}}</h1>
+
+    <h1 ng-style="getStyle(RateStatusSC.code)">{{RateStatusSC.value}}</h1>
+    <h1 ng-style="getStyle(RateStatusST.code)">{{RateStatusST.value}}</h1>
+    <h1 ng-style="getStyle(RateStatusCT.code)">{{RateStatusCT.value}}</h1>
+    <div class="horiz">
+        <h1>Плановая оценка</h1>
+
+    </div>
+    <div>
+        <label for="FavoriteTask" class="p-head">Показать факт</label>
+        <input type="checkbox"
+               id="FavoriteTask"
+               ng-model="Filter.viewFact"/>
+    </div>
+    <table>
+        <tr>
+            <td class="table_head1">№ п/п</td>
+            <td class="table_head2">ФИО</td>
+            <td class="table_head1">Вид работ</td>
+            <td ng-if="Filter.viewFact" class="table_head2">0 факт</td>
+            <td class="table_head2">0 этап</td>
+            <td ng-if="Filter.viewFact" class="table_head1">I факт</td>
+            <td class="table_head2">I этап</td>
+            <td ng-if="Filter.viewFact" class="table_head2">II факт</td>
+            <td class="table_head2">II этап</td>
+            <td ng-if="Filter.viewFact" class="table_head1">III факт</td>
+            <td class="table_head1">III этап</td>
+            <td ng-if="Filter.viewFact" class="table_head2">IV факт</td>
+            <td class="table_head2">IV этап</td>
+            <td ng-if="Filter.viewFact" class="table_head2">V факт</td>
+            <td class="table_head1">Итого, ч/часов</td>
+        </tr>
+        <tbody>
+        <tr ng-repeat="work in projectRate.workStageList">
+            <td>{{$index + 1}}</td>
+            <td ng-if="!work.firstName">{{work.nikName}}</td>
+            <td ng-if="work.firstName">{{work.lastName}} {{work.firstName}}
+                {{work.patronymic}}
+            </td>
+
+            <td>{{work.roleStr}}</td>
+            <td ng-if="Filter.viewFact">{{work.stage0Fact}}</td>
+            <td>{{work.stage0}}</td>
+            <td ng-if="Filter.viewFact">{{work.stage1Fact}}</td>
+            <td>{{work.stage1}}</td>
+            <td ng-if="Filter.viewFact">{{work.stage2Fact}}</td>
+            <td>{{work.stage2}}</td>
+            <td ng-if="Filter.viewFact">{{work.stage3Fact}}</td>
+            <td>{{work.stage3}}</td>
+            <td ng-if="Filter.viewFact">{{work.stage4Fact}}</td>
+            <td>{{work.stage4}}</td>
+            <td ng-if="Filter.viewFact">{{work.stage5Fact}}</td>
+            <td>{{work.stageAll}}</td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<div id="WorkCriteriaList" class="head_text_elem">
+    <div class="horiz">
+        <h1>Критерии</h1>
+    </div>
+    <table>
+        <tr>
+            <td class="table_head2">База</td>
+            <td class="table_head1">Минимальная доработка (10% кода) ед.</td>
+            <td class="table_head2">Общая переработка (50% кода) ед.</td>
+            <td class="table_head1">Новая доработка или ре инженеринг кода ед.</td>
+        </tr>
+        <tbody>
+        <tr ng-repeat="work in projectRate.workCriteriaList">
+            <td>{{work.criteriaStr}}</td>
+            <td>{{work.develop10}}</td>
+            <td>{{work.develop50}}</td>
+            <td>{{work.develop100}}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div id="WorkTypeList" class="head_text_elem" ng-repeat-end>
+    <div class="horiz">
+        <h1>Работы</h1>
+    </div>
+    <table>
+        <tr>
+            <td class="table_head1">П.Н.</td>
+            <td class="table_head2">Планируемые ТрЗ</td>
+            <td class="table_head1">Часы</td>
+            <td class="table_head2">Р/дн</td>
+
+        </tr>
+        <tbody>
+        <tr ng-repeat="work in projectRate.workTypeList">
+            <td>{{$index + 1}}</td>
+            <td>{{work.type}}</td>
+            <td>{{work.time}}</td>
+            <td>{{work.time / 8}}</td>
+
+        </tr>
+        </tbody>
+    </table>
+</div>

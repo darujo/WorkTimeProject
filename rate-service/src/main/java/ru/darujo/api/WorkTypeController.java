@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/v1/type")
 public class WorkTypeController {
     private WorkTypeService workTypeService;
+
     @Autowired
     public void setWorkType(WorkTypeService workTypeService) {
         this.workTypeService = workTypeService;
@@ -26,7 +27,15 @@ public class WorkTypeController {
     }
 
     @PostMapping("")
-    public WorkTypeDto WorkStageSave(@RequestBody WorkTypeDto workTypeDto) {
+    public WorkTypeDto WorkStageSave(@RequestBody WorkTypeDto workTypeDto,
+                                     @RequestParam("system_project") Long projectId) {
+        if (workTypeDto.getProjectId() == null){
+            workTypeDto.setProjectId(projectId);
+        }
+        if (!workTypeDto.getProjectId().equals(projectId)){
+            throw new ResourceNotFoundRunTime("Нельзя поменять проект");
+        }
+
         return WorkTypeConvertor.getWorkTypeDto(workTypeService.saveWorkType(WorkTypeConvertor.getWorkType(workTypeDto)));
     }
 
@@ -36,8 +45,10 @@ public class WorkTypeController {
     }
 
     @GetMapping("")
-    public List<WorkTypeDto> WorkStageList(@RequestParam Long workId) {
-        return workTypeService.findWorkCriteria(workId).stream().map(WorkTypeConvertor::getWorkTypeDto).collect(Collectors.toList());
+    public List<WorkTypeDto> WorkStageList(@RequestParam Long workId,
+                                           @RequestParam("system_project") Long projectId
+    ) {
+        return workTypeService.findWorkCriteria(workId, projectId).stream().map(WorkTypeConvertor::getWorkTypeDto).collect(Collectors.toList());
     }
 
 }

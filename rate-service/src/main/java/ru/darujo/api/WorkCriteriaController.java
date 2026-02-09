@@ -26,7 +26,14 @@ public class WorkCriteriaController {
     }
 
     @PostMapping("")
-    public WorkCriteriaDto WorkCriteriaSave(@RequestBody WorkCriteriaDto workCriteriaDto) {
+    public WorkCriteriaDto WorkCriteriaSave(@RequestBody WorkCriteriaDto workCriteriaDto,
+                                            @RequestParam("system_project") Long projectId) {
+        if (workCriteriaDto.getProjectId() == null){
+            workCriteriaDto.setProjectId(projectId);
+        }
+        if (!workCriteriaDto.getProjectId().equals(projectId)){
+            throw new ResourceNotFoundRunTime("Нельзя поменять проект");
+        }
         return WorkCriteriaConvertor.getWorkCriteriaDto(workCriteriaService.saveWorkCriteria(WorkCriteriaConvertor.getWorkCriteria(workCriteriaDto)));
     }
 
@@ -36,8 +43,9 @@ public class WorkCriteriaController {
     }
 
     @GetMapping("")
-    public List<WorkCriteriaDto> WorkCriteriaList(@RequestParam Long workId) {
-        return workCriteriaService.findWorkCriteria(workId).stream().map(WorkCriteriaConvertor::getWorkCriteriaDto).collect(Collectors.toList());
+    public List<WorkCriteriaDto> WorkCriteriaList(@RequestParam Long workId,
+                                                  @RequestParam("system_project") Long projectId) {
+        return workCriteriaService.findWorkCriteria(workId,projectId).stream().map(WorkCriteriaConvertor::getWorkCriteriaDto).collect(Collectors.toList());
     }
 
 }

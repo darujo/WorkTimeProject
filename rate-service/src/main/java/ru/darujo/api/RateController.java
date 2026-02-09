@@ -17,17 +17,20 @@ public class RateController {
     }
 
     @GetMapping("/compare/sc")
-    public AttrDto<Float> ComparisonStageCriteria(@RequestParam Long workId) {
-        return rateService.ComparisonStageCriteria(workId);
+    public AttrDto<Float> ComparisonStageCriteria(@RequestParam Long workId,
+                                                  @RequestParam (defaultValue = "false") Long projectId) {
+        return rateService.ComparisonStageCriteria(workId, projectId);
     }
 
     @GetMapping("/compare/st")
-    public AttrDto<Float> ComparisonStageType(@RequestParam Long workId) {
-        return rateService.ComparisonStageType(workId);
+    public AttrDto<Float> ComparisonStageType(@RequestParam Long workId,
+                                              @RequestParam (defaultValue = "false") Long projectId) {
+        return rateService.ComparisonStageType(workId, projectId);
     }
     @GetMapping("/compare/ct")
-    public AttrDto<Float> ComparisonCriteriaType(@RequestParam Long workId) {
-        return rateService.ComparisonCriteriaType(workId);
+    public AttrDto<Float> ComparisonCriteriaType(@RequestParam Long workId,
+                                                 @RequestParam (defaultValue = "false") Long projectId) {
+        return rateService.ComparisonCriteriaType(workId, projectId);
     }
     @GetMapping("/time/all")
     public WorkStageDto AllTime(@RequestParam Long workId,

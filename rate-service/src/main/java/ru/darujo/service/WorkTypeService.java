@@ -49,8 +49,9 @@ public class WorkTypeService {
     }
 
 
-    public List<WorkType> findWorkCriteria(Long workId) {
+    public List<WorkType> findWorkCriteria(Long workId, Long projectId) {
         Specification<@NonNull WorkType> specification = Specification.where(Specifications.eq(null, "workId", workId));
+        specification = Specifications.eq(specification, "projectId", projectId);
         return workTypeRepository.findAll(specification, Sort.by("workId").and(Sort.by("number").and(Sort.by("type"))));
     }
 
