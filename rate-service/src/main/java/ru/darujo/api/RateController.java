@@ -31,8 +31,10 @@ public class RateController {
     }
     @GetMapping("/time/all")
     public WorkStageDto AllTime(@RequestParam Long workId,
-                                @RequestParam (defaultValue = "false") boolean loadFact ) {
-        return rateService.AllTime(workId,loadFact);
+                                @RequestParam (defaultValue = "false") boolean loadFact,
+                                @RequestParam (defaultValue = "false") Long projectId
+    ) {
+        return rateService.AllTime(workId, projectId, loadFact);
 
     }
 

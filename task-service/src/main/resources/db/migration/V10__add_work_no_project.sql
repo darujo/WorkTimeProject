@@ -88,3 +88,14 @@ SELECT w.analise_end_fact,
        w.release_id,
        w.id
 FROM work_time_project.work w;
+
+-- Column: work_time_project.work.project_list
+
+-- ALTER TABLE IF EXISTS work_time_project.work DROP COLUMN IF EXISTS project_list;
+
+ALTER TABLE IF EXISTS work_time_project."work"
+    ADD COLUMN project_list bigint[];
+
+UPDATE work_time_project."work"
+SET project_list = '{1}'
+WHERE true;
