@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -26,5 +28,7 @@ public class WorkLittle implements WorkLittleInterface {
     private String name;
     @Column(name = "task")
     private String task;
+    @Column(name = "project_list")
+    private List<Long> projectList;
 
 }

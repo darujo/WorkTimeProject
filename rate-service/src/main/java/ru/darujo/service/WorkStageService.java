@@ -80,6 +80,7 @@ public class WorkStageService {
     @Transactional
     public WorkStage saveWorkStage(WorkStage workStage) {
         validWorkStage(workStage);
+        workServiceIntegration.addProject(workStage.getWorkId(), workStage.getProjectId());
         return workStageRepository.save(workStage);
     }
 

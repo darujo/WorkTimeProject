@@ -131,6 +131,20 @@ public class WorkController {
 
     }
 
+    @GetMapping("/rate/{id}")
+    public boolean getRate(@PathVariable long id,
+                           @RequestParam Long projectId
+    ) {
+        return workService.getRate(id, projectId);
+    }
+
+    @GetMapping("/project/add/{id}")
+    public void addProject(@PathVariable long id,
+                           @RequestParam Long projectId
+    ) {
+        workService.addProject(id, projectId);
+    }
+
     @GetMapping("/change/{id}/rated")
     public WorkLittle ChangeRated(@RequestHeader String username,
                                   @PathVariable long id,

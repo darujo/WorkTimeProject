@@ -13,7 +13,7 @@ angular.module('workTimeService').controller('rateController', function ($scope,
         stageAll: null,
         criteriaStr: null
     }
-    $scope.Filter= {viewFact : false};
+    $scope.Filter = {viewFact: false};
 
     let WorkId;
 
@@ -50,7 +50,7 @@ angular.module('workTimeService').controller('rateController', function ($scope,
             }).then(function (response) {
                 $scope.loadRateWait = false;
                 console.log(response.data);
-                $scope.ProjectRateList = response.data;
+                $scope.WorkRate = response.data;
             }, function errorCallback(response) {
                 $scope.loadRateWait = false;
                 console.log(response)
@@ -68,12 +68,10 @@ angular.module('workTimeService').controller('rateController', function ($scope,
     $location.parserFilter($scope.Filt);
     WorkId = $scope.Filt.workId;
 
-    if (WorkId === undefined)
-    {
+    if (WorkId === undefined) {
         $scope.workPage();
         return;
     }
-
 
 
     $scope.getStyle = function (code) {

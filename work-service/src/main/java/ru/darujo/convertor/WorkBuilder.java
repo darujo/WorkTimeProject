@@ -126,6 +126,7 @@ public class WorkBuilder {
         this.projectList = projectList;
         return this;
     }
+
     public WorkBuilder setProjectId(Long projectId) {
         this.projectId = projectId;
         return this;
@@ -370,7 +371,7 @@ public class WorkBuilder {
     }
 
     public WorkLittleDto getWorkLittleDto() {
-        return new WorkLittleDto(id, codeSap, codeZI, name, stageZI, rated);
+        return new WorkLittleDto(id, codeSap, codeZI, name, stageZI, rated, projectList);
     }
 
     public Timestamp dateToStartTime(Timestamp timestamp) {

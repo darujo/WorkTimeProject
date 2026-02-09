@@ -3,22 +3,42 @@ package ru.darujo.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import ru.darujo.convertor.WorkCriteriaConvertor;
+import ru.darujo.convertor.WorkStageConvertor;
+import ru.darujo.convertor.WorkTypeConvertor;
+import ru.darujo.dto.project.ProjectDto;
 import ru.darujo.dto.ratestage.AttrDto;
+import ru.darujo.dto.ratestage.RateDto;
+import ru.darujo.dto.ratestage.WorkRateDto;
 import ru.darujo.dto.ratestage.WorkStageDto;
+import ru.darujo.dto.work.WorkLittleDto;
+import ru.darujo.dto.workrep.ProjectUpdateInter;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
+import ru.darujo.integration.UserServiceIntegration;
+import ru.darujo.integration.WorkServiceIntegration;
 import ru.darujo.model.WorkCriteria;
 import ru.darujo.model.WorkStage;
 import ru.darujo.model.WorkType;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @Primary
 public class RateService {
-    WorkStageService workStageService;
-    WorkCriteriaService workCriteriaService;
-    WorkTypeService workTypeService;
+    private UserServiceIntegration userServiceIntegration;
+    private WorkStageService workStageService;
+    private WorkCriteriaService workCriteriaService;
+    private WorkTypeService workTypeService;
+    private WorkServiceIntegration workServiceIntegration;
+
+    @Autowired
+    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+        this.userServiceIntegration = userServiceIntegration;
+    }
 
     @Autowired
     public void setWorkStageService(WorkStageService workStageService) {
@@ -77,7 +97,7 @@ public class RateService {
 
     }
 
-    public AttrDto<Float> ComparisonStageCriteria(Long workId, Long projectId) {
+    public AttrDto<Float> comparisonStageCriteria(Long workId, Long projectId) {
         Float timeStage = getTimeStageNotAnalise(workId, projectId);
         Float timeCriteria = getTimeCriteria(workId, projectId);
         float time = timeCriteria - timeStage;
@@ -90,7 +110,7 @@ public class RateService {
         return new AttrDto<>(time, "Критериев больше чем плановой оценки на " + time);
     }
 
-    public AttrDto<Float> ComparisonCriteriaType(Long workId, Long projectId) {
+    public AttrDto<Float> comparisonCriteriaType(Long workId, Long projectId) {
         Float timeType = getTimeType(workId, projectId);
         Float timeCriteria = getTimeCriteria(workId, projectId);
         float time = timeCriteria - timeType;
@@ -103,7 +123,7 @@ public class RateService {
         return new AttrDto<>(time, "Критериев больше чем работ на " + time);
     }
 
-    public AttrDto<Float> ComparisonStageType(Long workId, Long projectId) {
+    public AttrDto<Float> comparisonStageType(Long workId, Long projectId) {
         Float timeStage = getTimeStageNotAnalise(workId, projectId);
         Float timeType = getTimeType(workId, projectId);
         float time = timeType - timeStage;
@@ -154,5 +174,91 @@ public class RateService {
                 stage[4],
                 workId,
                 projectId);
+    }
+
+    public WorkRateDto getRate(Long workId) {
+        WorkLittleDto workLittleDto = workServiceIntegration.getWorEditDto(workId);
+        List<RateDto> rateDtoList = new ArrayList<>();
+        List<WorkStageDto> workStageDtoListTotal = new ArrayList<>();
+        workLittleDto.getProjectList().forEach(projectId -> {
+            List<WorkStageDto> workStageList = new ArrayList<>();
+            workStageService.findWorkStage(workId, projectId).forEach(workStage -> workStageList.add(WorkStageConvertor.getWorkStageDto(workStage)));
+            workStageService.updWorkStage(workId, workStageList, projectId);
+            WorkStageDto workStageDto = getTotal(workStageList);
+            workStageList.add(workStageDto);
+            workStageDtoListTotal.add(workStageDto);
+            RateDto rateDto = new RateDto(projectId,
+                    workServiceIntegration.getRate(workId, projectId),
+                    workStageList,
+                    workCriteriaService.findWorkCriteria(workId, projectId).stream().map(WorkCriteriaConvertor::getWorkCriteriaDto).toList(),
+                    workTypeService.findWorkCriteria(workId, projectId).stream().map(WorkTypeConvertor::getWorkTypeDto).toList(),
+                    comparisonStageCriteria(workId, projectId),
+                    comparisonStageType(workId, projectId),
+                    comparisonCriteriaType(workId, projectId)
+            );
+            updateProject(rateDto);
+            rateDtoList.add(rateDto);
+        });
+        return new WorkRateDto(workLittleDto.getName(), workLittleDto.getCodeSap(), workLittleDto.getCodeZI(), rateDtoList, getTotal(workStageDtoListTotal));
+    }
+
+    private WorkStageDto getTotal(List<WorkStageDto> workStageDtoList) {
+        WorkStageDto workStageDtoTotal = new WorkStageDto(null, "Итого", null, 0f, 0f, 0f, 0f, 0f, null, null);
+        workStageDtoTotal.setStage0Fact(0f);
+        workStageDtoTotal.setStage1Fact(0f);
+        workStageDtoTotal.setStage2Fact(0f);
+        workStageDtoTotal.setStage3Fact(0f);
+        workStageDtoTotal.setStage4Fact(0f);
+        workStageDtoTotal.setStage5Fact(0f);
+
+        workStageDtoList.forEach(workStageDto -> {
+            workStageDtoTotal.setStage0(workStageDtoTotal.getStage0() + workStageDto.getStage0());
+            workStageDtoTotal.setStage1(workStageDtoTotal.getStage1() + workStageDto.getStage1());
+            workStageDtoTotal.setStage2(workStageDtoTotal.getStage2() + workStageDto.getStage2());
+            workStageDtoTotal.setStage3(workStageDtoTotal.getStage3() + workStageDto.getStage3());
+            workStageDtoTotal.setStage4(workStageDtoTotal.getStage4() + workStageDto.getStage4());
+            workStageDtoTotal.setStage0Fact(workStageDtoTotal.getStage0Fact() + workStageDto.getStage0Fact());
+            workStageDtoTotal.setStage1Fact(workStageDtoTotal.getStage1Fact() + workStageDto.getStage1Fact());
+            workStageDtoTotal.setStage2Fact(workStageDtoTotal.getStage2Fact() + workStageDto.getStage2Fact());
+            workStageDtoTotal.setStage3Fact(workStageDtoTotal.getStage3Fact() + workStageDto.getStage3Fact());
+            workStageDtoTotal.setStage4Fact(workStageDtoTotal.getStage4Fact() + workStageDto.getStage4Fact());
+            workStageDtoTotal.setStage5Fact(workStageDtoTotal.getStage5Fact() + workStageDto.getStage5Fact());
+
+        });
+        workStageDtoTotal.setStageAll(workStageDtoTotal.getStage0()
+                + workStageDtoTotal.getStage1()
+                + workStageDtoTotal.getStage2()
+                + workStageDtoTotal.getStage3()
+                + workStageDtoTotal.getStage4());
+        return workStageDtoTotal;
+    }
+
+    private static final Map<Long, ProjectDto> projectDtoMap = new HashMap<>();
+
+    public void init() {
+        try {
+            userServiceIntegration.getProjects(null, null).forEach(projectDto ->
+                    projectDtoMap.put(projectDto.getId(), projectDto));
+        } catch (RuntimeException ignore) {
+
+        }
+
+    }
+
+    public Map<Long, ProjectDto> getProjectDtoMap() {
+        projectDtoMap.clear();
+        init();
+        return projectDtoMap;
+    }
+
+    public void updateProject(ProjectUpdateInter projectUpdateInter) {
+        ProjectDto projectDto = getProjectDtoMap().get(projectUpdateInter.getProjectId());
+        projectUpdateInter.setProjectName(projectDto.getName());
+        projectUpdateInter.setProjectCode(projectDto.getCode());
+    }
+
+    @Autowired
+    public void setWorkServiceIntegration(WorkServiceIntegration workServiceIntegration) {
+        this.workServiceIntegration = workServiceIntegration;
     }
 }

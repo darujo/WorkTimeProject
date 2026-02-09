@@ -29,10 +29,10 @@ public class WorkStageController {
     @PostMapping("")
     public WorkStageDto WorkStageSave(@RequestBody WorkStageDto workStageDto,
                                       @RequestParam("system_project") Long projectId) {
-        if (workStageDto.getProjectId() == null){
+        if (workStageDto.getProjectId() == null) {
             workStageDto.setProjectId(projectId);
         }
-        if (!workStageDto.getProjectId().equals(projectId)){
+        if (!workStageDto.getProjectId().equals(projectId)) {
             throw new ResourceNotFoundRunTime("Нельзя поменять проект");
         }
 
@@ -45,7 +45,7 @@ public class WorkStageController {
     }
 
     @GetMapping("")
-    public List<WorkStageDto> WorkStageList(@RequestParam Long workId,
+    public List<WorkStageDto> workStageList(@RequestParam Long workId,
                                             @RequestParam(defaultValue = "false") boolean loadFact,
                                             @RequestParam("system_project") Long projectId) {
         List<WorkStageDto> workStageDTOs = new ArrayList<>();

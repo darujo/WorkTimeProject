@@ -1,6 +1,7 @@
 package ru.darujo.dto.work;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class WorkLittleDto implements Serializable {
     public WorkLittleDto() {
@@ -15,14 +16,16 @@ public class WorkLittleDto implements Serializable {
     private String name;
     private Integer stageZI;
     private Boolean rated;
+    private List<Long> projectList;
 
-    public WorkLittleDto(Long id, Long codeSap, String codeZI, String name, Integer stageZI, Boolean rated) {
+    public WorkLittleDto(Long id, Long codeSap, String codeZI, String name, Integer stageZI, Boolean rated, List<Long> projectList) {
         this.id = id;
         this.codeSap = codeSap;
         this.codeZI = codeZI;
         this.name = name;
         this.stageZI = stageZI;
         this.rated = rated;
+        this.projectList = projectList;
     }
 
     @SuppressWarnings("unused")
@@ -49,5 +52,10 @@ public class WorkLittleDto implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    @SuppressWarnings("unused")
+    public List<Long> getProjectList() {
+        return projectList;
     }
 }

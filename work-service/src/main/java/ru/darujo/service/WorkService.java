@@ -93,7 +93,7 @@ public class WorkService {
         try {
             userServiceIntegration.getProjects(null, null).forEach(projectDto ->
                     projectDtoMap.put(projectDto.getId(), projectDto));
-        } catch (RuntimeException ignore){
+        } catch (RuntimeException ignore) {
 
         }
 
@@ -438,9 +438,17 @@ public class WorkService {
         return "";
     }
 
+    public Work addProject(long workId, Long projectId) {
+        Work work = workRepository.findById(workId).orElseThrow(() -> new ResourceNotFoundRunTime("Не найдено ЗИ с id " + workId));
+        if (!work.getProjectList().contains(projectId)) {
+            work.getProjectList().add(projectId);
+            workRepository.save(work);
+        }
+        return work;
+    }
 
     public boolean setWorkDate(long workId, Long projectId, Timestamp date) {
-        Work work = workRepository.findById(workId).orElseThrow(() -> new ResourceNotFoundRunTime("Не найдено ЗИ с id " + workId));
+        Work work = addProject(workId, projectId);
         return workProjectService.setWorkDate(work, projectId, date);
     }
 
@@ -457,4 +465,11 @@ public class WorkService {
         }
     }
 
+    public Boolean getRate(Long id, Long projectId) {
+        WorkProjectLittle workProject = findLittleById(id, projectId).getWorkProject();
+        if (workProject != null) {
+            return workProject.getRated();
+        }
+        return null;
+    }
 }

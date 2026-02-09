@@ -63,6 +63,7 @@ public class WorkStageDto implements UserFio {
     private Float stage5Fact;
 
     private Float stageAll;
+    //    private Float stageAllFact;
     private Long workId;
     private Long projectId;
 
@@ -168,6 +169,7 @@ public class WorkStageDto implements UserFio {
         }
     }
 
+
     public void setStage1Fact(Float stage1Fact) {
         this.stage1Fact = stage1Fact;
     }
@@ -219,5 +221,46 @@ public class WorkStageDto implements UserFio {
 
     public void setProjectId(Long projectId) {
         this.projectId = projectId;
+    }
+
+    public void setStage0(Float stage0) {
+        this.stage0 = stage0;
+    }
+
+    public void setStage1(Float stage1) {
+        this.stage1 = stage1;
+    }
+
+    public void setStage2(Float stage2) {
+        this.stage2 = stage2;
+    }
+
+    public void setStage3(Float stage3) {
+        this.stage3 = stage3;
+    }
+
+    public void setStage4(Float stage4) {
+        this.stage4 = stage4;
+    }
+
+    public void setStageAll(Float stageAll) {
+        this.stageAll = stageAll;
+    }
+
+    @SuppressWarnings("unused")
+    public float getStageAllFact() {
+        return getTime(stage0Fact)
+                + getTime(stage1Fact)
+                + getTime(stage2Fact)
+                + getTime(stage3Fact)
+                + getTime(stage4Fact)
+                + getTime(stage5Fact);
+    }
+
+    private Float getTime(Float time) {
+        if (time == null) {
+            return 0f;
+        }
+        return time;
     }
 }

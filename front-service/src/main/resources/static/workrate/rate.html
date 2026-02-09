@@ -1,6 +1,6 @@
 <div id="WorkStageList" class="head_text_elem">
-    <h1>{{ZI.codeSap}} </h1>
-    <h1>{{ZI.codeZI}} {{ZI.name}} </h1>
+    <h1>{{WorkRate.sap}} </h1>
+    <h1>{{WorkRate.code}} {{WorkRate.name}} </h1>
     <button type="button" class="head_button mar5" id="WorkPage" ng-click="workPage()">Назад</button>
 </div>
 
@@ -8,12 +8,12 @@
     <img ng-if="load" src="../gif/wait1.gif" alt="wait1" width="900" height="506"/>
 </div>
 
-<div ng-repeat-start="projectRate in ProjectRateList">
+<div ng-repeat-start="projectRate in WorkRate.rateList">
     <h1 ng-style="getStyle(ZI.rated ? 0 : 1)">{{ZI.rated ? "Оценка выполнена" : "Оценка не выполнена"}}</h1>
 
-    <h1 ng-style="getStyle(RateStatusSC.code)">{{RateStatusSC.value}}</h1>
-    <h1 ng-style="getStyle(RateStatusST.code)">{{RateStatusST.value}}</h1>
-    <h1 ng-style="getStyle(RateStatusCT.code)">{{RateStatusCT.value}}</h1>
+    <h1 ng-style="getStyle(projectRate.rateStatusSC.code)">{{projectRate.rateStatusSC.value}}</h1>
+    <h1 ng-style="getStyle(projectRate.rateStatusST.code)">{{projectRate.rateStatusST.value}}</h1>
+    <h1 ng-style="getStyle(projectRate.rateStatusCT.code)">{{projectRate.rateStatusCT.value}}</h1>
     <div class="horiz">
         <h1>Плановая оценка</h1>
 

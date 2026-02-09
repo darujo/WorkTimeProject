@@ -127,10 +127,12 @@ public class WorkConvertor {
                 .setStageZI(workProjectLittle == null ? null : workProjectLittle.getStageZi())
                 .setName(work.getName())
                 .setRated(workProjectLittle == null ? null : workProjectLittle.getRated())
+                .setProjectList(work.getProjectList())
                 .getWorkLittleDto();
 
 
     }
+
     public static WorkLittleDto getWorkLittleDto(Work work) {
         return WorkBuilder
                 .createWork()
@@ -138,6 +140,7 @@ public class WorkConvertor {
                 .setCodeSap(work.getCodeSap())
                 .setCodeZI(work.getCodeZi())
                 .setName(work.getName())
+                .setProjectList(work.getProjectList())
                 .getWorkLittleDto();
 
 

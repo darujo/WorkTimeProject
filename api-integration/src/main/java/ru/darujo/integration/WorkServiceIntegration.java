@@ -83,6 +83,36 @@ public class WorkServiceIntegration extends ServiceIntegration {
         return false;
     }
 
+    public Boolean getRate(Long workId, Long projectId) {
+        if (workId != null && projectId != null) {
+            StringBuilder stringBuilder = new StringBuilder();
+            addTeg(stringBuilder, "projectId", projectId);
+            return webClient.get().uri("/rate/" + workId + stringBuilder)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            cR -> getMessage(cR, "ЗИ c id = " + workId + " не найдена"))
+                    .bodyToMono(Boolean.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .block();
+        }
+        return false;
+    }
+
+    public void addProject(Long workId, Long projectId) {
+        if (workId != null && projectId != null) {
+            StringBuilder stringBuilder = new StringBuilder();
+            addTeg(stringBuilder, "projectId", projectId);
+            webClient.get().uri("/project/add/" + workId + stringBuilder)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            cR -> getMessage(cR, "ЗИ c id = " + workId + " не найдена"))
+                    .bodyToMono(Void.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .block();
+        }
+
+    }
+
     public List<WorkRepDto> getTimeWork(String ziName,
                                         Boolean availWork,
                                         Integer stageZi,
