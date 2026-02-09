@@ -118,7 +118,7 @@ public class WorkStageService {
                 mapStringFloat.getList().forEach((nikName, time) -> {
                     WorkStageDto workStage = workStageMap.get(nikName);
                     if (workStage == null) {
-                        workStage = new WorkStageDto(-1L, nikName, -1, null, null, null, null, null, workId);
+                        workStage = new WorkStageDto(-1L, nikName, -1, null, null, null, null, null, workId, projectId);
                         updFio(workStage);
                         workStages.add(workStage);
                     }

@@ -4,7 +4,7 @@ import ru.darujo.dto.ratestage.WorkStageDto;
 import ru.darujo.model.WorkStage;
 
 public class WorkStageBuilder {
-    public static WorkStageBuilder createWorkStage () {
+    public static WorkStageBuilder createWorkStage() {
         return new WorkStageBuilder();
     }
 
@@ -17,6 +17,8 @@ public class WorkStageBuilder {
     private Float stage3;
     private Float stage4;
     private Long workId;
+    private Long projectId;
+
     public WorkStageBuilder setId(Long id) {
         this.id = id;
         return this;
@@ -62,10 +64,16 @@ public class WorkStageBuilder {
         return this;
     }
 
-    public WorkStageDto getWorkStateDto(){
-        return new WorkStageDto(id,nikName,role,stage0,stage1,stage2,stage3,stage4,workId);
+    public WorkStageBuilder setProjectId(Long projectId) {
+        this.projectId = projectId;
+        return this;
     }
-    public WorkStage getWorkStage(){
-        return new WorkStage(id,nikName,role,stage0,stage1,stage2,stage3,stage4,workId);
+
+    public WorkStageDto getWorkStateDto() {
+        return new WorkStageDto(id, nikName, role, stage0, stage1, stage2, stage3, stage4, workId, projectId);
+    }
+
+    public WorkStage getWorkStage() {
+        return new WorkStage(id, nikName, role, stage0, stage1, stage2, stage3, stage4, workId, projectId);
     }
 }

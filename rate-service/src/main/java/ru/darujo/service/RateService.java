@@ -124,7 +124,7 @@ public class RateService {
         return time;
     }
 
-    public WorkStageDto AllTime(Long workId, boolean loadFact) {
+    public WorkStageDto AllTime(Long workId, Long projectId, boolean loadFact) {
         if (loadFact) {
             throw new ResourceNotFoundRunTime("Загрузка с фактом не поддерживается");
         }
@@ -151,6 +151,7 @@ public class RateService {
                 stage[2],
                 stage[3],
                 stage[4],
-                workId);
+                workId,
+                projectId);
     }
 }

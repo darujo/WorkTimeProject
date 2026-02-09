@@ -28,7 +28,7 @@ public class WorkStageDto implements UserFio {
     public WorkStageDto() {
     }
 
-    public WorkStageDto(Long id, String nikName, Integer role, Float stage0, Float stage1, Float stage2, Float stage3, Float stage4, Long workId) {
+    public WorkStageDto(Long id, String nikName, Integer role, Float stage0, Float stage1, Float stage2, Float stage3, Float stage4, Long workId, Long projectId) {
         this.id = id;
         this.nikName = nikName;
         this.role = role;
@@ -39,6 +39,7 @@ public class WorkStageDto implements UserFio {
         this.stage4 = stage4;
         this.workId = workId;
         this.stageAll = 0f;
+        this.projectId = projectId;
         addAllTime(stage0);
         addAllTime(stage1);
         addAllTime(stage2);
@@ -63,6 +64,7 @@ public class WorkStageDto implements UserFio {
 
     private Float stageAll;
     private Long workId;
+    private Long projectId;
 
     public Long getId() {
         return id;
@@ -209,5 +211,9 @@ public class WorkStageDto implements UserFio {
     @SuppressWarnings("unused")
     public Float getStage5Fact() {
         return stage5Fact;
+    }
+
+    public Long getProjectId() {
+        return projectId;
     }
 }

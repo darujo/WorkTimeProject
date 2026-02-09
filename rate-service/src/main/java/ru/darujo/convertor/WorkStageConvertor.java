@@ -16,6 +16,7 @@ public class WorkStageConvertor {
                 .setStage3(workStage.getStage3())
                 .setStage4(workStage.getStage4())
                 .setWorkId(workStage.getWorkId())
+                .setProjectId(workStage.getProjectId())
                 .getWorkStateDto();
     }
     public static WorkStage getWorkStage(WorkStageDto workState){
@@ -29,5 +30,6 @@ public class WorkStageConvertor {
                 .setStage3(workState.getStage3())
                 .setStage4(workState.getStage4())
                 .setWorkId(workState.getWorkId())
+                .setProjectId(workState.getProjectId())
                 .getWorkStage();    }
 }

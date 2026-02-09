@@ -8,17 +8,20 @@ public class WorkCriteriaDto {
     private Float develop50;
     private Float develop100;
     private Long workId;
+    private Long projectId;
 
+    @SuppressWarnings("unused")
     public WorkCriteriaDto() {
     }
 
-    public WorkCriteriaDto(Long id, Integer criteria, Float develop10, Float develop50, Float develop100, Long workId) {
+    public WorkCriteriaDto(Long id, Integer criteria, Float develop10, Float develop50, Float develop100, Long workId, Long projectId) {
         this.id = id;
         this.criteria = criteria;
         this.develop10 = develop10;
         this.develop50 = develop50;
         this.develop100 = develop100;
         this.workId = workId;
+        this.projectId = projectId;
     }
 
     public Long getId() {
@@ -45,6 +48,7 @@ public class WorkCriteriaDto {
         return workId;
     }
 
+    @SuppressWarnings("unused")
     public String getCriteriaStr() {
         if (criteria == 1) {
             return "Реализация импорта данных";
@@ -59,7 +63,7 @@ public class WorkCriteriaDto {
             return "Реализация экспорта";
         }
         if (criteria == 5) {
-            return "Поддержака(реализация) протокола интеграции";
+            return "Поддержака (реализация) протокола интеграции";
         }
         if (criteria == 6) {
             return "Реализация внешнего сервиса (ОС Windows)";
@@ -72,5 +76,9 @@ public class WorkCriteriaDto {
         }
 
         return "Не известная роль";
+    }
+
+    public Long getProjectId() {
+        return projectId;
     }
 }
