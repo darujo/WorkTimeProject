@@ -68,7 +68,7 @@ angular.module('workTimeService').config(function ($routeProvider) {
                 }]
             }
         })
-        .when('/rate', {
+        .when('/work_rate', {
             templateUrl: 'workRate/workRate.html?ver='.toLowerCase() + ver,
             controller: 'workRateController',
             resolve: {

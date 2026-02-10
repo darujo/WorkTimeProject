@@ -11,15 +11,15 @@ public class WorkRateDto implements Serializable {
     private String name;
     private Long sap;
     private String code;
-    private List<RateDto> rateDtoList;
-    private WorkStageDto workStageDto;
+    private List<RateDto> rateList;
+    private WorkStageDto stageTotal;
 
-    public WorkRateDto(String name, Long sap, String code, List<RateDto> rateDtoList, WorkStageDto workStageDto) {
+    public WorkRateDto(String name, Long sap, String code, List<RateDto> rateList, WorkStageDto stageTotal) {
         this.name = name;
         this.sap = sap;
         this.code = code;
-        this.rateDtoList = rateDtoList;
-        this.workStageDto = workStageDto;
+        this.rateList = rateList;
+        this.stageTotal = stageTotal;
     }
 
     @SuppressWarnings("unused")
@@ -38,12 +38,12 @@ public class WorkRateDto implements Serializable {
     }
 
     @SuppressWarnings("unused")
-    public List<RateDto> getRateDtoList() {
-        return rateDtoList;
+    public List<RateDto> getRateList() {
+        return rateList;
     }
 
     @SuppressWarnings("unused")
-    public WorkStageDto getWorkStageDto() {
-        return workStageDto;
+    public WorkStageDto getStageTotal() {
+        return stageTotal;
     }
 }

@@ -105,8 +105,10 @@ public class WorkProject implements WorkProjectInter {
     @Column(name = "stage_zi")
     private Integer stageZi;
 
-    public WorkProject(Long projectId, Work work) {
+    public WorkProject(Long projectId, Work work, Integer stageZi) {
         this.projectId = projectId;
         this.work = work;
+        this.stageZi = stageZi;
     }
+
 }

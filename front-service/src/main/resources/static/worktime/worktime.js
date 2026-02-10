@@ -541,6 +541,12 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
         console.log("result RoleList");
         console.log(result);
     });
+    $location.getWorkTimeTypes().then(function (result) {
+        $scope.WorkTimeTypeList = result;
+        console.log("result WorkTimeTypeList");
+        console.log(result);
+    });
+
     $scope.availProject = function (list) {
         return $scope.availProjectInList(list, $location.UserLogin.projectId)
     }

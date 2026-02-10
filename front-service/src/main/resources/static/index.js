@@ -5,6 +5,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     const constPatchRole = window.location.origin + '/roles';
     const constPatchCode = window.location.origin + '/task-service/v1/';
     const constPatchRelease = window.location.origin + '/work-service/v1/release';
+    const constPatchWorkTime = window.location.origin + '/worktime-service/v1/code';
     $scope.loadFilter = null;
     $scope.tryToAuth = function () {
         $http.post(constPatchAuth + '/auth', $scope.user)
@@ -69,7 +70,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                 $localStorage.authUser["token"] = response.data.token;
                 $http.defaults.headers.common.Authorization = 'Bearer ' + response.data.token;
 
-
+                init();
                 // document.getElementById("UserName").value = response.data.lastName + " " + response.data.firstName + " " + response.data.patronymic;
             }, function errorCallback(response) {
                 console.log(response);
@@ -129,19 +130,19 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     };
 
     $scope.addTelegram = function () {
-            console.log("getUser")
-            // document.getElementById("UserName").value = nikName;
+        console.log("getUser")
+        // document.getElementById("UserName").value = nikName;
 
-            $http.get(constPatchAuth + '/users/user/telegram/get')
-                .then(function successCallback(response) {
-                    console.log(response)
-                    $scope.CodeTelegram = response.data;
+        $http.get(constPatchAuth + '/users/user/telegram/get')
+            .then(function successCallback(response) {
+                console.log(response)
+                $scope.CodeTelegram = response.data;
 
 
-                    // document.getElementById("UserName").value = response.data.lastName + " " + response.data.firstName + " " + response.data.patronymic;
-                }, function errorCallback(response) {
-                    console.log(response);
-                });
+                // document.getElementById("UserName").value = response.data.lastName + " " + response.data.firstName + " " + response.data.patronymic;
+            }, function errorCallback(response) {
+                console.log(response);
+            });
     };
 
     $scope.deleteTelegram = function () {
@@ -449,6 +450,31 @@ angular.module('workTimeService').controller('indexController', function ($rootS
 
     }
 
+    let WorkTimeTypeLoad = false;
+    let WorkTimeTypeList;
+    let loadWorkTimeTypes = function () {
+        console.log("WorkTimeTypes")
+
+        $http({
+            url: constPatchWorkTime,
+            method: "get"
+
+        }).then(function (response) {
+            console.log("response WorkTimeType");
+            console.log(response.data);
+            WorkTimeTypeList = response.data;
+            WorkTimeTypeLoad = true;
+        }, function errorCallback(response) {
+            console.log(" --- response WorkTimeType");
+            console.log(response)
+            WorkTimeTypeLoad = true;
+            if ($location.checkAuthorized(response)) {
+                alert(response.data.message);
+            }
+        });
+
+    }
+
     function wait() {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
@@ -477,6 +503,26 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         }
         return UserList;
     }
+    $location.getProjectCode = function () {
+        console.log("-------------------------ddddd----------------------------------------------------")
+        console.log($scope.UserLogin.project)
+        console.log("---------------------------------------------------------------------")
+
+        return searchJson(ProjectList, "id", $scope.UserLogin.projectId, "code");
+    }
+
+    let searchJson = function (list, searchField, searchVal, resultField) {
+        // console.log("searchJson");
+        // console.log(list);
+        // console.log(searchField);
+        // console.log(searchVal);
+        // console.log(resultField);
+        for (let i = 0; i < list.length; i++) {
+            if (list[i][searchField] === searchVal) {
+                return list[i][resultField]
+            }
+        }
+    }
 
     $location.getProjects = async function () {
         while (!ProjectLoad) {
@@ -485,6 +531,12 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         return ProjectList;
     }
 
+    $location.getWorkTimeTypes = async function () {
+        while (!WorkTimeTypeLoad) {
+            await wait();
+        }
+        return WorkTimeTypeList;
+    }
     $scope.saveSetting = function () {
         $localStorage.UserSettingWorkTime = $scope.SettingUser;
     }
@@ -494,6 +546,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         loadUsers();
         loadRelease();
         loadProjects();
+        loadWorkTimeTypes();
         $scope.getUser();
 
     }

@@ -443,7 +443,7 @@ public class WorkBuilder {
                 releaseStartPlan,
                 opeStartPlan,
                 rated,
-                new Release(releaseId, release),
+                releaseId == null ? null : new Release(releaseId, release),
                 startTaskPlan,
                 startTaskFact,
                 task,

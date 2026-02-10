@@ -280,7 +280,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
         // window.open('#!/task',"_parent");
     }
     $scope.addRate = function (workId) {
-        $location.path('/rate').search({workId: workId, currentProject: true});
+        $location.path('/work_rate').search({workId: workId, view: "current"});
     }
 
     $scope.addAgreement = function (workId) {

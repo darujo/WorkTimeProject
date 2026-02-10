@@ -44,7 +44,10 @@ public class WorkProjectLittleService {
         return workProject;
     }
 
-    public WorkProjectLittle getWorkProject(WorkLittle work, @NonNull Long projectId) {
+    public WorkProjectLittle getWorkProject(WorkLittle work, Long projectId) {
+        if(projectId== null){
+            return null;
+        }
         return workProjectLittleRepository.findByWorkLittleAndProjectId(work, projectId);
     }
 

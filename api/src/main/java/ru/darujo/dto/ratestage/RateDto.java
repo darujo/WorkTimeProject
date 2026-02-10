@@ -13,9 +13,9 @@ public class RateDto implements ProjectUpdateInter {
     private String projectCode;
     private String projectName;
     private Boolean rated;
-    private List<WorkStageDto> workStageDtoList;
-    private List<WorkCriteriaDto> workCriteriaDtoList;
-    private List<WorkTypeDto> workTypeDtoList;
+    private List<WorkStageDto> workStageList;
+    private List<WorkCriteriaDto> workCriteriaList;
+    private List<WorkTypeDto> workTypeList;
     private AttrDto<Float> rateStatusSC;
     private AttrDto<Float> rateStatusST;
     private AttrDto<Float> rateStatusCT;
@@ -30,12 +30,12 @@ public class RateDto implements ProjectUpdateInter {
         this.projectName = projectName;
     }
 
-    public RateDto(Long projectId, Boolean rated, List<WorkStageDto> workStageDtoList, List<WorkCriteriaDto> workCriteriaDtoList, List<WorkTypeDto> workTypeDtoList, AttrDto<Float> rateStatusSC, AttrDto<Float> rateStatusST, AttrDto<Float> rateStatusCT) {
+    public RateDto(Long projectId, Boolean rated, List<WorkStageDto> workStageList, List<WorkCriteriaDto> workCriteriaList, List<WorkTypeDto> workTypeList, AttrDto<Float> rateStatusSC, AttrDto<Float> rateStatusST, AttrDto<Float> rateStatusCT) {
         this.projectId = projectId;
         this.rated = rated;
-        this.workStageDtoList = workStageDtoList;
-        this.workCriteriaDtoList = workCriteriaDtoList;
-        this.workTypeDtoList = workTypeDtoList;
+        this.workStageList = workStageList;
+        this.workCriteriaList = workCriteriaList;
+        this.workTypeList = workTypeList;
         this.rateStatusSC = rateStatusSC;
         this.rateStatusST = rateStatusST;
         this.rateStatusCT = rateStatusCT;
@@ -62,18 +62,18 @@ public class RateDto implements ProjectUpdateInter {
     }
 
     @SuppressWarnings("unused")
-    public List<WorkStageDto> getWorkStageDtoList() {
-        return workStageDtoList;
+    public List<WorkStageDto> getWorkStageList() {
+        return workStageList;
     }
 
     @SuppressWarnings("unused")
-    public List<WorkCriteriaDto> getWorkCriteriaDtoList() {
-        return workCriteriaDtoList;
+    public List<WorkCriteriaDto> getWorkCriteriaList() {
+        return workCriteriaList;
     }
 
     @SuppressWarnings("unused")
-    public List<WorkTypeDto> getWorkTypeDtoList() {
-        return workTypeDtoList;
+    public List<WorkTypeDto> getWorkTypeList() {
+        return workTypeList;
     }
 
     @SuppressWarnings("unused")

@@ -84,10 +84,11 @@ public class WorkServiceIntegration extends ServiceIntegration {
     }
 
     public Boolean getRate(Long workId, Long projectId) {
+        Boolean flag = false;
         if (workId != null && projectId != null) {
             StringBuilder stringBuilder = new StringBuilder();
             addTeg(stringBuilder, "projectId", projectId);
-            return webClient.get().uri("/rate/" + workId + stringBuilder)
+            flag = webClient.get().uri("/rate/" + workId + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "ЗИ c id = " + workId + " не найдена"))
@@ -95,7 +96,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         }
-        return false;
+        return flag;
     }
 
     public void addProject(Long workId, Long projectId) {

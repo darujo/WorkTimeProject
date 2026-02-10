@@ -377,9 +377,11 @@ angular.module('workTimeService').controller('workRateController', function ($sc
         }
     };
 // ---------------------------------------------------------------------------------
-
+    console.log(" fileee = ")
     $scope.Filt = {}
     $location.parserFilter($scope.Filt);
+    console.log(" fileee = ")
+    console.log($scope.Filt)
     WorkId = $scope.Filt.workId;
 
     if (WorkId === undefined)
@@ -387,8 +389,8 @@ angular.module('workTimeService').controller('workRateController', function ($sc
         $scope.workPage();
         return;
     }
-
-    if ($scope.Filt.currentProject !== true){
+    console.log(" view = ", $scope.Filt.view)
+    if ($scope.Filt.view !== "current"){
         $location.path('/rate').search({workId: WorkId});
         return;
     }

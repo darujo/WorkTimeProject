@@ -146,12 +146,12 @@ public class WorkController {
     }
 
     @GetMapping("/change/{id}/rated")
-    public WorkLittle ChangeRated(@RequestHeader String username,
+    public WorkLittleDto ChangeRated(@RequestHeader String username,
                                   @PathVariable long id,
                                   @RequestParam(required = false, name = "rated") Boolean rated,
                                   @RequestParam("system_project") Long projectId
     ) {
-        return workService.setRated(username, id, projectId, rated);
+        return WorkConvertor.getWorkLittleDto(workService.setRated(username, id, projectId, rated));
 
     }
 }

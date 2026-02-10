@@ -71,6 +71,8 @@ public class WorkStageService {
         specification = Specifications.eq(specification, "nikName", workStage.getNikName());
         specification = Specifications.eq(specification, "role", workStage.getRole());
         specification = Specifications.ne(specification, "id", workStage.getId());
+        specification = Specifications.eq(specification, "projectId", workStage.getProjectId());
+
         WorkStage workStageFind = workStageRepository.findOne(specification).orElse(null);
         if (workStageFind != null) {
             throw new ResourceNotFoundRunTime("Уже есть запись с таким ФИО и ролью");

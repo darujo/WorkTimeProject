@@ -37,6 +37,8 @@ public class WorkTypeService {
         Specification<@NonNull WorkType> specification = Specification.where(Specifications.eq(null, "workId", workType.getWorkId()));
         specification = Specifications.eqIgnoreCase(specification, "type", workType.getType());
         specification = Specifications.ne(specification, "id", workType.getId());
+        specification = Specifications.eq(specification, "projectId", workType.getProjectId());
+
         WorkType workTypeFind = workTypeRepository.findOne(specification).orElse(null);
         if (workTypeFind != null) {
             throw new ResourceNotFoundRunTime("Уже есть запись с такой работой");

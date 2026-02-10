@@ -197,10 +197,25 @@ public class WorkService {
             }
         }
         workProjectService.updateWorkLastDevelop(workFull.getWorkProject());
+        if(!workFull.getWork().getProjectList().contains(workFull.getWorkProject().getProjectId())){
+            workFull.getWork().getProjectList().add(workFull.getWorkProject().getProjectId());
+        }
         Work work = workRepository.save(workFull.getWork());
         workProjectService.save(workFull.getWorkProject());
+        updateProjectList(work);
         changeWork(login, work, workFull.getWorkProject(), stageOld, releaseNameOld, ratedOld);
         return workFull;
+    }
+
+    private void updateProjectList (Work work){
+        work.getProjectList().forEach(projectId ->{
+            WorkProject workProject = workProjectService.getWorkProject(work,projectId);
+            if (workProject ==null){
+                workProject = new WorkProject(projectId,work,0);
+                workProjectService.save(workProject);
+            }
+        } );
+
     }
 
     private String getMesChangRated(String login, WorkLittleInterface work, WorkProjectInter workProject, String projectName) {
@@ -251,13 +266,19 @@ public class WorkService {
         specification = Specifications.like(specification, "name", name);
         specification = Specifications.like(specification, "codeZi", codeZi);
         specification = Specifications.eq(specification, "codeSap", codeSap);
-        if (projectId != null) {
+        if (projectId != null
+                && (stageZiGe != null || (stageZiLe != null && stageZiLe != 9) || task != null || releaseId != null)) {
             List<Work> workList = null;
             if (name != null || codeSap != null || codeZi != null) {
                 workList = workRepository.findAll(specification);
             }
             return workProjectService.getWorkFull(page, size, sort, stageZiGe, stageZiLe, task, releaseId, projectId, workList);
         }
+        if (sort != null && sort.length() > 8 && sort.startsWith("release.")) {
+            log.error("Сортировка по релизу не возможна без выбора проекта");
+            sort = null;
+        }
+
         specification = Specifications.in(specification, "id", workProjectLittleService.getListWorkId(task, releaseId, stageZiLe, stageZiGe, null));
 
         Page<@NonNull Work> workPage;
@@ -342,6 +363,9 @@ public class WorkService {
     }
 
     public void updWorkPlanTime(WorkPlanTime workPlanTime) {
+        if(workPlanTime.getProjectId() == null){
+            return;
+        }
         WorkStageDto workStageDto = rateServiceIntegration.getTimePlan(workPlanTime.getWorkId(), workPlanTime.getProjectId());
         workPlanTime.setLaborAnalise(workStageDto.getStage0());
         workPlanTime.setLaborDevelop(workStageDto.getStage1());
@@ -375,7 +399,7 @@ public class WorkService {
         return true;
     }
 
-    public WorkLittle setRated(String login, long workId, Long projectId, Boolean rated) {
+    public WorkLittleFull setRated(String login, long workId, Long projectId, Boolean rated) {
         WorkLittle work = workLittleRepository.findById(workId).orElseThrow(() -> new ResourceNotFoundRunTime("Не найдена работа с таким Id"));
         WorkProjectLittle workProjectLittle = workProjectLittleService.getWorkProjectOrEmpty(work, projectId);
         if (workProjectLittle.getRated() == null || !workProjectLittle.getRated().equals(rated)) {
@@ -384,7 +408,7 @@ public class WorkService {
             ProjectDto projectDto = projectDtoMap.get(workProjectLittle.getProjectId());
             sendInform(login, MessageType.ESTIMATION_WORK, getMesChangRated(login, work, workProjectLittle, projectDto == null ? "" : projectDto.getName() + " (" + projectDto.getCode() + ")"));
         }
-        return work;
+        return new WorkLittleFull(work, workProjectLittle );
 
     }
 
@@ -467,9 +491,9 @@ public class WorkService {
 
     public Boolean getRate(Long id, Long projectId) {
         WorkProjectLittle workProject = findLittleById(id, projectId).getWorkProject();
-        if (workProject != null) {
+        if (workProject != null && workProject.getRated() != null) {
             return workProject.getRated();
         }
-        return null;
+        return false;
     }
 }

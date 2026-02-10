@@ -11,29 +11,34 @@ public class WorkConvertor {
         WorkBuilder workBuilder = WorkBuilder
                 .createWork()
                 .setId(work.getId())
-                .setWorkProjectId(workProject.getId())
                 .setCodeSap(work.getCodeSap())
                 .setCodeZI(work.getCodeZi())
-                .setDebugEndFact(workProject.getDebugEndFact())
-                .setDevelopEndFact(workProject.getDevelopEndFact())
-                .setIssuePrototypeFact(workProject.getIssuePrototypeFact())
-                .setOpeEndFact(workProject.getOpeEndFact())
-                .setReleaseEndFact(workProject.getReleaseEndFact())
-                .setAnaliseEndFact(workProject.getAnaliseEndFact())
-                .setAnaliseEndPlan(workProject.getAnaliseEndPlan())
                 .setName(work.getName())
-                .setTask(workProject.getTask())
-                .setRated(workProject.getRated())
-                .setDescription(work.getDescription())
-                .setStartTaskPlan(workProject.getStartTaskPlan())
-                .setStartTaskFact(workProject.getStartTaskFact())
-                .setStageZI(workProject.getStageZi());
-        if (workProject.getRelease() != null) {
+                .setDescription(work.getDescription());
+        if (workProject != null) {
             workBuilder
-                    .setReleaseId(workProject.getRelease().getId())
-                    .setRelease(workProject.getRelease().getName())
-                    .setIssuingReleaseFact(workProject.getRelease().getIssuingReleaseFact())
-                    .setIssuingReleasePlan(workProject.getRelease().getIssuingReleasePlan());
+                    .setWorkProjectId(workProject.getId())
+                    .setDebugEndFact(workProject.getDebugEndFact())
+                    .setDevelopEndFact(workProject.getDevelopEndFact())
+                    .setIssuePrototypeFact(workProject.getIssuePrototypeFact())
+                    .setOpeEndFact(workProject.getOpeEndFact())
+                    .setReleaseEndFact(workProject.getReleaseEndFact())
+                    .setAnaliseEndFact(workProject.getAnaliseEndFact())
+                    .setAnaliseEndPlan(workProject.getAnaliseEndPlan())
+                    .setTask(workProject.getTask())
+                    .setRated(workProject.getRated())
+                    .setStartTaskPlan(workProject.getStartTaskPlan())
+                    .setStartTaskFact(workProject.getStartTaskFact())
+                    .setStageZI(workProject.getStageZi())
+                    .setProjectId(workProject.getProjectId());
+
+            if (workProject.getRelease() != null) {
+                workBuilder
+                        .setReleaseId(workProject.getRelease().getId())
+                        .setRelease(workProject.getRelease().getName())
+                        .setIssuingReleaseFact(workProject.getRelease().getIssuingReleaseFact())
+                        .setIssuingReleasePlan(workProject.getRelease().getIssuingReleasePlan());
+            }
         }
         return workBuilder;
     }
@@ -46,27 +51,26 @@ public class WorkConvertor {
     public static WorkEditDto getWorkEditDto(WorkFull workFull) {
         Work work = workFull.getWork();
         WorkProject workProject = workFull.getWorkProject();
-        return setWorkBuilderBase(work, workProject)
-                .setDebugEndPlan(workProject.getDebugEndPlan())
-                .setDevelopEndPlan(workProject.getDevelopEndPlan())
-                .setIssuePrototypePlan(workProject.getIssuePrototypePlan())
-                .setOpeEndPlan(workProject.getOpeEndPlan())
-                .setReleaseEndPlan(workProject.getReleaseEndPlan())
-
-                .setAnaliseStartPlan(workProject.getAnaliseStartPlan())
-                .setDevelopStartPlan(workProject.getDevelopStartPlan())
-                .setDebugStartPlan(workProject.getDebugStartPlan())
-                .setReleaseStartPlan(workProject.getReleaseStartPlan())
-                .setOpeStartPlan(workProject.getOpeStartPlan())
-
-                .setAnaliseStartFact(workProject.getAnaliseStartFact())
-                .setDevelopStartFact(workProject.getDevelopStartFact())
-                .setDebugStartFact(workProject.getDebugStartFact())
-                .setReleaseStartFact(workProject.getReleaseStartFact())
-                .setOpeStartFact(workProject.getOpeStartFact())
-                .setProjectList(work.getProjectList())
-                .setProjectId(workProject.getProjectId())
-                .getWorkEditDto();
+        WorkBuilder workBuilder = setWorkBuilderBase(work, workProject)
+                .setProjectList(work.getProjectList());
+        if (workProject != null) {
+            workBuilder.setDebugEndPlan(workProject.getDebugEndPlan())
+                    .setDevelopEndPlan(workProject.getDevelopEndPlan())
+                    .setIssuePrototypePlan(workProject.getIssuePrototypePlan())
+                    .setOpeEndPlan(workProject.getOpeEndPlan())
+                    .setReleaseEndPlan(workProject.getReleaseEndPlan())
+                    .setAnaliseStartPlan(workProject.getAnaliseStartPlan())
+                    .setDevelopStartPlan(workProject.getDevelopStartPlan())
+                    .setDebugStartPlan(workProject.getDebugStartPlan())
+                    .setReleaseStartPlan(workProject.getReleaseStartPlan())
+                    .setOpeStartPlan(workProject.getOpeStartPlan())
+                    .setAnaliseStartFact(workProject.getAnaliseStartFact())
+                    .setDevelopStartFact(workProject.getDevelopStartFact())
+                    .setDebugStartFact(workProject.getDebugStartFact())
+                    .setReleaseStartFact(workProject.getReleaseStartFact())
+                    .setOpeStartFact(workProject.getOpeStartFact());
+        }
+        return workBuilder.getWorkEditDto();
     }
 
     public static WorkFull getWork(WorkEditDto workDto, Long projectId) {

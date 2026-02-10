@@ -1,22 +1,31 @@
 package ru.darujo.service;
 
-import ru.darujo.model.WorkTimeType;
+import ru.darujo.model.WorkTimeTypeDto;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class WorkTimeTypeService {
-    Map<Long, WorkTimeType> workTimeTypeMap = new HashMap<>();
-    WorkTimeType admin;
+    private static final Map<Integer, WorkTimeTypeDto> workTimeTypeMap = new HashMap<>();
+    private static WorkTimeTypeDto admin;
 
-    public void init() {
-        workTimeTypeMap.put(1L, new WorkTimeType(null, 1L, "Разработка", true));
-        workTimeTypeMap.put(2L, new WorkTimeType(null, 2L, "Консультация", false));
-        workTimeTypeMap.put(3L, new WorkTimeType(null, 3L, "Анализ", false));
-        workTimeTypeMap.put(4L, new WorkTimeType(null, 4L, "Тестирование", false));
-        workTimeTypeMap.put(5L, new WorkTimeType(null, 5L, "Анализ ошибки", false));
-        workTimeTypeMap.put(6L, new WorkTimeType(null, 6L, "Акс", false));
-        admin = new WorkTimeType(null, 7L, "Административная", false);
+    public static void init() {
+        if (workTimeTypeMap.size() > 0) {
+            return;
+        }
+        List<Long> analisList = new ArrayList<>();
+        analisList.add(2L);
+        workTimeTypeMap.put(1, new WorkTimeTypeDto(null, 1, "Разработка", true));
+        workTimeTypeMap.put(2, new WorkTimeTypeDto(null, 2, "Консультация", false));
+        workTimeTypeMap.put(3, new WorkTimeTypeDto(null, 3, "Анализ", false));
+        workTimeTypeMap.put(4, new WorkTimeTypeDto(null, 4, "Тестирование", false));
+        workTimeTypeMap.put(5, new WorkTimeTypeDto(null, 5, "Анализ ошибки", false));
+        workTimeTypeMap.put(6, new WorkTimeTypeDto(null, 6, "Акс", false));
+
+        admin = new WorkTimeTypeDto(null, 7, "Административная", false);
+        workTimeTypeMap.put(8, new WorkTimeTypeDto(analisList, 8, "Согласование Тз", false));
 //        if (type == null) {
 //            return null;
 //        } else if (taskType != null && taskType == 3) {
@@ -37,4 +46,35 @@ public class WorkTimeTypeService {
 //            return type.toString();
 //        }
     }
+
+    public static String getName(Integer type) {
+        init();
+        WorkTimeTypeDto workTimeTypeDto = workTimeTypeMap.get(type);
+        if (workTimeTypeDto != null) {
+            return workTimeTypeDto.getName();
+        }
+        return type.toString();
+    }
+
+    public static String getAdminName() {
+        init();
+        return admin.getName();
+    }
+
+    public static List<WorkTimeTypeDto> getTypeDtoList(Long projectId, Boolean develop) {
+        init();
+        List<WorkTimeTypeDto> typesList;
+        typesList = workTimeTypeMap.values().stream().filter(workTimeTypeDto ->
+                        (projectId == null
+                                || workTimeTypeDto.getProjectList() == null
+                                || workTimeTypeDto.getProjectList().contains(projectId))
+                                && (develop == null
+                                || workTimeTypeDto.isDevelop() == develop)).toList();
+        return typesList;
+    }
+    public static List<Integer> getTypes(Boolean develop) {
+        return getTypeDtoList(null, develop).stream()
+                .map(WorkTimeTypeDto::getCode).toList();
+    }
+
 }

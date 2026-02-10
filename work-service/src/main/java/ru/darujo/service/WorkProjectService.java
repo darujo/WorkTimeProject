@@ -45,7 +45,7 @@ public class WorkProjectService {
     public WorkProject getWorkProjectOrEmpty(Work work, @NonNull Long projectId) {
         WorkProject workProject = workProjectRepository.findByWorkAndProjectId(work, projectId);
         if (workProject == null) {
-            workProject = new WorkProject(projectId, work);
+            workProject = new WorkProject(projectId, work, null);
         }
         return workProject;
     }

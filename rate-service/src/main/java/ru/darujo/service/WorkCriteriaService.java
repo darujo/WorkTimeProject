@@ -39,6 +39,7 @@ public class WorkCriteriaService {
         }
         Specification<@NonNull WorkCriteria> specification = Specification.where(Specifications.eq(null, "workId", workCriteria.getWorkId()));
         specification = Specifications.eq(specification, "criteria", workCriteria.getCriteria());
+        specification = Specifications.eq(specification, "projectId", workCriteria.getProjectId());
         specification = Specifications.ne(specification, "id", workCriteria.getId());
         WorkCriteria workCriteriaFind = workCriteriaRepository.findOne(specification).orElse(null);
         if (workCriteriaFind != null) {

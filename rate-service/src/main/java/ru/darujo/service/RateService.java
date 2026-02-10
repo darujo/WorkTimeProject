@@ -184,7 +184,9 @@ public class RateService {
             List<WorkStageDto> workStageList = new ArrayList<>();
             workStageService.findWorkStage(workId, projectId).forEach(workStage -> workStageList.add(WorkStageConvertor.getWorkStageDto(workStage)));
             workStageService.updWorkStage(workId, workStageList, projectId);
+            workStageList.forEach(workStageDto -> workStageService.updFio(workStageDto));
             WorkStageDto workStageDto = getTotal(workStageList);
+
             workStageList.add(workStageDto);
             workStageDtoListTotal.add(workStageDto);
             RateDto rateDto = new RateDto(projectId,
@@ -212,17 +214,17 @@ public class RateService {
         workStageDtoTotal.setStage5Fact(0f);
 
         workStageDtoList.forEach(workStageDto -> {
-            workStageDtoTotal.setStage0(workStageDtoTotal.getStage0() + workStageDto.getStage0());
-            workStageDtoTotal.setStage1(workStageDtoTotal.getStage1() + workStageDto.getStage1());
-            workStageDtoTotal.setStage2(workStageDtoTotal.getStage2() + workStageDto.getStage2());
-            workStageDtoTotal.setStage3(workStageDtoTotal.getStage3() + workStageDto.getStage3());
-            workStageDtoTotal.setStage4(workStageDtoTotal.getStage4() + workStageDto.getStage4());
-            workStageDtoTotal.setStage0Fact(workStageDtoTotal.getStage0Fact() + workStageDto.getStage0Fact());
-            workStageDtoTotal.setStage1Fact(workStageDtoTotal.getStage1Fact() + workStageDto.getStage1Fact());
-            workStageDtoTotal.setStage2Fact(workStageDtoTotal.getStage2Fact() + workStageDto.getStage2Fact());
-            workStageDtoTotal.setStage3Fact(workStageDtoTotal.getStage3Fact() + workStageDto.getStage3Fact());
-            workStageDtoTotal.setStage4Fact(workStageDtoTotal.getStage4Fact() + workStageDto.getStage4Fact());
-            workStageDtoTotal.setStage5Fact(workStageDtoTotal.getStage5Fact() + workStageDto.getStage5Fact());
+            workStageDtoTotal.setStage0(workStageDtoTotal.getStage0() + floatNotNull(workStageDto.getStage0()));
+            workStageDtoTotal.setStage1(workStageDtoTotal.getStage1() + floatNotNull(workStageDto.getStage1()));
+            workStageDtoTotal.setStage2(workStageDtoTotal.getStage2() + floatNotNull(workStageDto.getStage2()));
+            workStageDtoTotal.setStage3(workStageDtoTotal.getStage3() + floatNotNull(workStageDto.getStage3()));
+            workStageDtoTotal.setStage4(workStageDtoTotal.getStage4() + floatNotNull(workStageDto.getStage4()));
+            workStageDtoTotal.setStage0Fact(workStageDtoTotal.getStage0Fact() + floatNotNull(workStageDto.getStage0Fact()));
+            workStageDtoTotal.setStage1Fact(workStageDtoTotal.getStage1Fact() + floatNotNull(workStageDto.getStage1Fact()));
+            workStageDtoTotal.setStage2Fact(workStageDtoTotal.getStage2Fact() + floatNotNull(workStageDto.getStage2Fact()));
+            workStageDtoTotal.setStage3Fact(workStageDtoTotal.getStage3Fact() + floatNotNull(workStageDto.getStage3Fact()));
+            workStageDtoTotal.setStage4Fact(workStageDtoTotal.getStage4Fact() + floatNotNull(workStageDto.getStage4Fact()));
+            workStageDtoTotal.setStage5Fact(workStageDtoTotal.getStage5Fact() + floatNotNull(workStageDto.getStage5Fact()));
 
         });
         workStageDtoTotal.setStageAll(workStageDtoTotal.getStage0()
@@ -232,7 +234,12 @@ public class RateService {
                 + workStageDtoTotal.getStage4());
         return workStageDtoTotal;
     }
-
+    private Float floatNotNull(Float time){
+        if (time == null){
+            return 0f;
+        }
+        return time;
+    }
     private static final Map<Long, ProjectDto> projectDtoMap = new HashMap<>();
 
     public void init() {
