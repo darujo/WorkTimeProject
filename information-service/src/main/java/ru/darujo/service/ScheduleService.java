@@ -33,11 +33,11 @@ public class ScheduleService implements AutoCloseable {
                 scheduleAtFixedRate(messageType);
             }
         }
-        ChatInfo chatInfo = new ChatInfo(null, 496071536L, null, null);
-        executor.schedule(getTask(MessageType.AVAIL_WORK_FULL_REPORT, chatInfo), 10, TimeUnit.SECONDS);
-        executor.schedule(getTask(MessageType.AVAIL_WORK_FULL_REPORT_PROJECT, chatInfo), 1, TimeUnit.SECONDS);
-        executor.schedule(getTask(MessageType.ZI_WORK_REPORT, chatInfo), 60, TimeUnit.MILLISECONDS);
-        executor.schedule(getTask(MessageType.ZI_WORK_REPORT_PROJECT, chatInfo), 100, TimeUnit.SECONDS);
+//        ChatInfo chatInfo = new ChatInfo(null, 496071536L, null, null);
+//        executor.schedule(getTask(MessageType.AVAIL_WORK_FULL_REPORT, chatInfo), 10, TimeUnit.SECONDS);
+//        executor.schedule(getTask(MessageType.AVAIL_WORK_FULL_REPORT_PROJECT, chatInfo), 1, TimeUnit.SECONDS);
+//        executor.schedule(getTask(MessageType.ZI_WORK_REPORT, chatInfo), 60, TimeUnit.MILLISECONDS);
+//        executor.schedule(getTask(MessageType.ZI_WORK_REPORT_PROJECT, chatInfo), 100, TimeUnit.SECONDS);
     }
 
     private void scheduleAtFixedRate(MessageType messageType) {
