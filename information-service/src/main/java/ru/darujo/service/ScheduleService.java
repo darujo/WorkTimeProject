@@ -53,8 +53,12 @@ public class ScheduleService implements AutoCloseable {
             messageType = MessageType.WEEK_WORK_REPORT;
         } else if (reportTypeDto.equals(ReportTypeDto.ZI_STATUS.toString())) {
             messageType = MessageType.AVAIL_WORK_FULL_REPORT;
+        } else if (reportTypeDto.equals(ReportTypeDto.ZI_STATUS_PROJECT.toString())) {
+            messageType = MessageType.AVAIL_WORK_FULL_REPORT_PROJECT;
         } else if (reportTypeDto.equals(ReportTypeDto.ZI_WORK.toString())) {
             messageType = MessageType.ZI_WORK_REPORT;
+        } else if (reportTypeDto.equals(ReportTypeDto.ZI_WORK_PROJECT.toString())) {
+            messageType = MessageType.ZI_WORK_REPORT_PROJECT;
         } else {
             throw new ResourceNotFoundRunTime("Нет такого типа отчета");
 
