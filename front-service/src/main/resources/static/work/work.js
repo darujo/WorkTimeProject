@@ -103,7 +103,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 }
             }).then(function (response) {
                 console.log(response);
-                $scope.WorkList = response.data.content;
+                $scope.WorkList = response.data._embedded.workDtoList;
                 console.log($scope.WorkList);
                 maxPage = response.data["totalPages"];
                 $scope.load = false;
@@ -280,11 +280,10 @@ angular.module('workTimeService').controller('workController', function ($scope,
         // window.open('#!/task',"_parent");
     }
     $scope.addRate = function (workId) {
-        console.log("Другая");
-        $location.path('/rate').search({workId: workId});
+        $location.path('/work_rate').search({workId: workId, view: "current"});
     }
+
     $scope.addAgreement = function (workId) {
-        console.log("Другая");
         $location.path('/agreement').search({workId: workId});
     }
     $scope.clearFilter = function (load) {
@@ -324,6 +323,13 @@ angular.module('workTimeService').controller('workController', function ($scope,
         console.log("result releaseList");
         console.log(result);
     });
+
+    $location.getProjects().then(function (result) {
+        $scope.ProjectList = result;
+        console.log("result ProjectList");
+        console.log(result);
+    });
+
     checkRight("Edit", false);
 
     console.log("workFilter");

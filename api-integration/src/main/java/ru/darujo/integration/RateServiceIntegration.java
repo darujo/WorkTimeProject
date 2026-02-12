@@ -19,13 +19,14 @@ public class RateServiceIntegration extends ServiceIntegration {
     }
 
 
-    public WorkStageDto getTimePlan(Long workId) {
+    public WorkStageDto getTimePlan(Long workId, Long projectId) {
+        if (workId == null) {
+            throw new ResourceNotFoundRunTime("Не задана workId для получения плановых затрат");
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        addTeg(stringBuilder, "workId", workId);
+        addTeg(stringBuilder, "projectId", projectId);
         try {
-            if (workId == null) {
-                throw new ResourceNotFoundRunTime("Не задана workId для получения плановых затрат");
-            }
-            StringBuilder stringBuilder = new StringBuilder();
-            addTeg(stringBuilder, "workId", workId);
             return webClient.get().uri("/time/all" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
@@ -34,6 +35,7 @@ public class RateServiceIntegration extends ServiceIntegration {
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
+            log.error(stringBuilder.toString());
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить План " + ex.getMessage());
         }
     }

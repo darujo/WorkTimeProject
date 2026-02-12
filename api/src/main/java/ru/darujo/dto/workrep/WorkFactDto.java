@@ -3,6 +3,7 @@ package ru.darujo.dto.workrep;
 import java.io.Serializable;
 
 public class WorkFactDto implements Serializable {
+    @SuppressWarnings("unused")
     public WorkFactDto() {
     }
     private Integer num;
@@ -14,26 +15,17 @@ public class WorkFactDto implements Serializable {
     private String authorLastName;
     private String authorPatronymic;
 
-    public void setAuthorFirstName(String authorFirstName) {
-        this.authorFirstName = authorFirstName;
-    }
-
-    public void setAuthorLastName(String authorLastName) {
-        this.authorLastName = authorLastName;
-    }
-
-    public void setAuthorPatronymic(String authorPatronymic) {
-        this.authorPatronymic = authorPatronymic;
-    }
-
+    @SuppressWarnings("unused")
     public String getAuthorFirstName() {
         return authorFirstName;
     }
 
+    @SuppressWarnings("unused")
     public String getAuthorLastName() {
         return authorLastName;
     }
 
+    @SuppressWarnings("unused")
     public String getAuthorPatronymic() {
         return authorPatronymic;
     }
@@ -51,18 +43,22 @@ public class WorkFactDto implements Serializable {
     // ВЕНДЕРКА
     private Float timeWender;
 
+    @SuppressWarnings("unused")
     public Integer getNum() {
         return num;
     }
 
+    @SuppressWarnings("unused")
     public Integer getUserCol() {
         return userCol;
     }
 
+    @SuppressWarnings("unused")
     public String getCodeZi() {
         return codeZi;
     }
 
+    @SuppressWarnings("unused")
     public String getNikName() {
         return nikName;
     }
@@ -84,32 +80,40 @@ public class WorkFactDto implements Serializable {
         this.timeWender = timeWender;
     }
 
+    @SuppressWarnings("unused")
     public String getName() {
         return name;
     }
 
+    @SuppressWarnings("unused")
     public Float getTimeAnalise() {return timeAnalise; }
 
+    @SuppressWarnings("unused")
     public Float getTimeDevelop() {
         return timeDevelop;
     }
 
+    @SuppressWarnings("unused")
     public Float getTimeDebug() {
         return timeDebug;
     }
 
+    @SuppressWarnings("unused")
     public Float getTimeRelease() {
         return timeRelease;
     }
 
+    @SuppressWarnings("unused")
     public Float getTimeOPE() {
         return timeOPE;
     }
 
+    @SuppressWarnings("unused")
     public Float getTimeWender() {
         return timeWender;
     }
 
-
-
+    public void setUserCol(Integer userCol) {
+        this.userCol = userCol;
+    }
 }

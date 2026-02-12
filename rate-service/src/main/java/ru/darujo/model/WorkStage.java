@@ -31,5 +31,7 @@ public class WorkStage {
     private Float stage4;
     @Column(name = "work_id")
     private Long workId;
+    @Column(name = "project_id")
+    private Long projectId;
 
 }

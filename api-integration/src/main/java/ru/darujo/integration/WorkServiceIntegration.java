@@ -45,10 +45,11 @@ public class WorkServiceIntegration extends ServiceIntegration {
         }
     }
 
-    public MapStringFloat getWorkTimeStageFact(Long workId, Integer stage) {
+    public MapStringFloat getWorkTimeStageFact(Long workId, Long projectId, Integer stage) {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "workId", workId);
         addTeg(stringBuilder, "stage", stage);
+        addTeg(stringBuilder, "projectId", projectId);
 
         try {
             return webClient.get().uri("/rep/time/fact/stage" + stringBuilder)
@@ -66,10 +67,11 @@ public class WorkServiceIntegration extends ServiceIntegration {
         }
     }
 
-    public Boolean setWorkDate(Long workId, Date dateWork) {
+    public Boolean setWorkDate(Long workId, Long projectId, Date dateWork) {
         if (workId != null) {
             StringBuilder stringBuilder = new StringBuilder();
             addTeg(stringBuilder, "date", dateWork);
+            addTeg(stringBuilder, "projectId", projectId);
             return webClient.get().uri("/refresh/" + workId + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
@@ -81,16 +83,50 @@ public class WorkServiceIntegration extends ServiceIntegration {
         return false;
     }
 
+    public Boolean getRate(Long workId, Long projectId) {
+        Boolean flag = false;
+        if (workId != null && projectId != null) {
+            StringBuilder stringBuilder = new StringBuilder();
+            addTeg(stringBuilder, "projectId", projectId);
+            flag = webClient.get().uri("/rate/" + workId + stringBuilder)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            cR -> getMessage(cR, "ЗИ c id = " + workId + " не найдена"))
+                    .bodyToMono(Boolean.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .block();
+        }
+        return flag;
+    }
+
+    public void addProject(Long workId, Long projectId) {
+        if (workId != null && projectId != null) {
+            StringBuilder stringBuilder = new StringBuilder();
+            addTeg(stringBuilder, "projectId", projectId);
+            webClient.get().uri("/project/add/" + workId + stringBuilder)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            cR -> getMessage(cR, "ЗИ c id = " + workId + " не найдена"))
+                    .bodyToMono(Void.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .block();
+        }
+
+    }
+
     public List<WorkRepDto> getTimeWork(String ziName,
                                         Boolean availWork,
                                         Integer stageZi,
                                         Long releaseId,
-                                        LinkedList<String> sort) {
+                                        Long projectId,
+                                        LinkedList<String> sort
+                                        ) {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "ziName", ziName);
         addTeg(stringBuilder, "availWork", availWork);
         addTeg(stringBuilder, "stageZi", stageZi);
         addTeg(stringBuilder, "releaseId", releaseId);
+        addTeg(stringBuilder, "projectId", projectId);
         if (sort != null) {
             sort.forEach(s -> addTeg(stringBuilder, "sort", s));
         }
@@ -111,7 +147,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
         }
     }
 
-    public List<WorkUserTime> getWorkUserTime(boolean ziSplit, Timestamp date) {
+    public List<WorkUserTime> getWorkUserTime(boolean ziSplit, Long projectId, Timestamp date) {
         return getWorkUserTime(ziSplit,
                 null,
                 true,
@@ -119,6 +155,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
                 date,
                 date,
                 null,
+                projectId,
                 null,
                 null,
                 null,
@@ -136,6 +173,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
                                               Timestamp dateEnd,
 
                                               String name,
+                                              Long projectId,
                                               Integer stageZi,
                                               Long codeSap,
                                               String codeZi,
@@ -153,6 +191,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "weekSplit", weekSplit);
 
         addTeg(stringBuilder, "name", name);
+        addTeg(stringBuilder, "projectId", projectId);
         addTeg(stringBuilder, "stageZi", stageZi);
         addTeg(stringBuilder, "codeSap", codeSap);
         addTeg(stringBuilder, "codeZi", codeZi);

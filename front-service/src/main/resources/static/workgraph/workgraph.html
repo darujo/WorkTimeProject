@@ -52,7 +52,8 @@
                     </div>
                     <div class="horiz">
                         <label for="Period" class="p-head">Разбивка по периодам</label>
-                        <select class="vvod40 mar5" name="PeriodFilterUserVacationSelect" id="Period" ng-model="Filt.period">
+                        <select class="vvod40 mar5" name="PeriodFilterUserVacationSelect" id="Period"
+                                ng-model="Filt.period">
                             <option ng-value="1" value="1">Дни</option>
                             <option ng-value="2" value="2">Недели по дням</option>
                             <option ng-value="3" value="3">Недели</option>
@@ -107,9 +108,10 @@
     </h1>
     <table>
         <tr>
-            <td  class="sticky-col first-col table_head2" rowspan="3">
+            <td class="sticky-col first-col table_head2" rowspan="3">
                 ЗИ
             </td>
+            <td class="table_head2" rowspan="3">Проект</td>
             <td class="table_head2">Тип</td>
             <td class="table_head2" ng-repeat="periodWork in WeekWorkDTOs">
                 {{periodWork.period}}
@@ -117,19 +119,25 @@
 
         </tr>
         <tbody ng-repeat="workGraph in WorkGraphDTOs">
-        <tr>
-            <td  class="sticky-col first-col" rowspan="2">{{workGraph.workLittleDto.name}}</td>
+        <tr ng-repeat-start="workGraphProject in workGraph.projectGraphList">
+            <td class="sticky-col first-col" ng-if="$first" rowspan="{{workGraph.projectGraphList.length * 2}} ">
+                {{workGraph.workLittleDto.name}}
+            </td>
+            <td class="sticky-col first-col" rowspan="2 ">{{workGraphProject.projectName}}
+                ({{workGraphProject.projectCode}})
+            </td>
             <td>План</td>
-            <td ng-repeat="workPeriod in workGraph.workPeriodColorPlanDTOs"
+            <td ng-repeat="workPeriod in workGraphProject.workPeriodColorPlanDTOs"
                 ng-style="getStyleColorBack(workPeriod.colorDto.color)"></td>
         </tr>
-        <tr>
-<!--            <td rowspan="2">{{workGraph.workLittleDto.name}}</td>-->
+        <tr ng-repeat-end>
+            <!--            <td rowspan="2">{{workGraph.workLittleDto.name}}</td>-->
             <td>Факт</td>
-            <td ng-repeat="workPeriod in workGraph.workPeriodColorFactDTOs"
+            <td ng-repeat="workPeriod in workGraphProject.workPeriodColorFactDTOs"
                 ng-style="getStyleColorBack(workPeriod.colorDto.color)"></td>
         </tr>
         </tbody>
+
     </table>
 
 

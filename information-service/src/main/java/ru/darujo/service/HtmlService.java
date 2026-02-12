@@ -10,17 +10,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class HtmlService {
-    public String printRep(List<WorkRepDto> works) {
+    public String printRep(List<WorkRepDto> works, String headText) {
 
         StringBuilder sb = new StringBuilder();
         getHead(sb);
+        sb.append("<h1>").append(headText).append("</h1>");
         sb.append("<body>");
         sb.append("<div  class=\"wrapper\">");
         sb.append("<table>");
@@ -29,6 +32,7 @@ public class HtmlService {
         sb.append("<td class=\"table_head1\" rowspan=\"5\"> № п/п</td>");
         sb.append("<td class=\"table_head2\" rowspan=\"5\">Код Зи</td>");
         sb.append("<td class=\"sticky-col first-col table_head1\" rowspan=\"5\"> Наименование </td>");
+        sb.append("<td class=\"table_head2\" rowspan=\"5\">Проект</td>");
         sb.append("<td class=\"table_col1\" rowspan=\"5\">");
         sb.append("№ релиза");
         sb.append("</td>");
@@ -110,116 +114,124 @@ public class HtmlService {
         sb.append("</tr >");
         sb.append("<tbody >");
         AtomicInteger i = new AtomicInteger();
-        works.forEach(work -> {
+        works.forEach(workRepDto -> {
             nextRow(i.getAndIncrement());
-            sb.append("<tr>");
-            sb.append(getTegStart("td"));
-            sb.append(printNotNull(work.getId()));
-            sb.append("</td>");
-            sb.append(getTegStart("td", "text_not_wrap"));
-            sb.append(printNotNull(work.getCodeZI()));
-            sb.append("</td>");
-            sb.append(getTegStart("td", "sticky-col first-col"));
-            sb.append(printNotNull(work.getName()));
-            sb.append("</td>");
-            sb.append(getTegStart("td"));
-            sb.append(printNotNull(work.getRelease()));
-            sb.append("</td>");
-            sb.append(getTegStart("td"));
-            sb.append(printNotNull(work.getAnaliseEndPlanStr()));
-            sb.append("</td>");
-            sb.append(getTegStart("td"));
-            sb.append(printNotNull(work.getAnaliseEndFactStr()));
-            sb.append("</td>");
-            sb.append(getTegStart("td"));
-            sb.append(printNotNull(work.getLaborAnalise()));
-            sb.append("</td>");
-            sb.append(getTegStart("td", work.getLaborAnalise(), work.getTimeAnalise()));
-            sb.append(printNotNull(work.getTimeAnalise()));
-            sb.append("</td>");
-            sb.append(getTegStart("td"));
-            sb.append(printNotNull(work.getStartTaskPlanStr()));
-            sb.append("</td>");
-            sb.append(getTegStart("td"));
-            sb.append(printNotNull(work.getStartTaskFactStr()));
-            sb.append("</td>");
+            AtomicBoolean first = new AtomicBoolean(true);
+            workRepDto.getWorkRepProjectDtoList().forEach(workRepProjectDto -> {
+                sb.append("<tr>");
+                if (first.getAndSet(false)) {
+                    sb.append(getTegStart("td rowspan=\"" + workRepDto.getWorkRepProjectDtoList().size() + "\""));
+                    sb.append(printNotNull(workRepDto.getId()));
+                    sb.append("</td>");
+                    sb.append(getTegStart("td rowspan=\"" + workRepDto.getWorkRepProjectDtoList().size() + "\"", "text_not_wrap"));
+                    sb.append(printNotNull(workRepDto.getCodeZI()));
+                    sb.append("</td>");
+                    sb.append(getTegStart("td rowspan=\"" + workRepDto.getWorkRepProjectDtoList().size() + "\"", "sticky-col first-col"));
+                    sb.append(printNotNull(workRepDto.getName()));
+                    sb.append("</td>");
+                }
+                sb.append(getTegStart("td"));
+                sb.append(printNotNull(workRepProjectDto.getProjectCode() + " " + workRepProjectDto.getProjectName()));
+                sb.append("</td>");
+                sb.append(getTegStart("td"));
+                sb.append(printNotNull(workRepProjectDto.getRelease()));
+                sb.append("</td>");
+                sb.append(getTegStart("td"));
+                sb.append(printNotNull(workRepProjectDto.getAnaliseEndPlanStr()));
+                sb.append("</td>");
+                sb.append(getTegStart("td", workRepProjectDto.getAnaliseEndPlan(), workRepProjectDto.getAnaliseEndFact()));
+                sb.append(printNotNull(workRepProjectDto.getAnaliseEndFactStr()));
+                sb.append("</td>");
+                sb.append(getTegStart("td"));
+                sb.append(printNotNull(workRepProjectDto.getLaborAnalise()));
+                sb.append("</td>");
+                sb.append(getTegStart("td", workRepProjectDto.getLaborAnalise(), workRepProjectDto.getTimeAnalise()));
+                sb.append(printNotNull(workRepProjectDto.getTimeAnalise()));
+                sb.append("</td>");
+                sb.append(getTegStart("td"));
+                sb.append(printNotNull(workRepProjectDto.getStartTaskPlanStr()));
+                sb.append("</td>");
+                sb.append(getTegStart("td", workRepProjectDto.getStartTaskPlan(), workRepProjectDto.getStartTaskFact()));
+                sb.append(printNotNull(workRepProjectDto.getStartTaskFactStr()));
+                sb.append("</td>");
 
-            sb.append(getTegStart("td"));
-            sb.append(printNotNull(work.getLaborDevelop()));
-            sb.append("</td>");
-            sb.append(getTegStart("td", work.getLaborDevelop(), work.getTimeDevelop()));
-            sb.append(printNotNull(work.getTimeDevelop()));
-            sb.append("</td>");
-            sb.append(getTegStart("td"));
-            sb.append(printNotNull(work.getDevelopEndPlanStr()));
-            sb.append("</td>");
-            sb.append(getTegStart("td"));
-            sb.append(printNotNull(work.getDevelopEndFactStr()));
-            sb.append("</td>");
-            sb.append(getTegStart("td", "table_col2"));
-            sb.append(printNotNull(work.getIssuePrototypePlanStr()));
-            sb.append("</td>");
-            sb.append(getTegStart("td", "table_col2"));
-            sb.append(printNotNull(work.getIssuePrototypeFactStr()));
-            sb.append("</td>");
+                sb.append(getTegStart("td"));
+                sb.append(printNotNull(workRepProjectDto.getLaborDevelop()));
+                sb.append("</td>");
+                sb.append(getTegStart("td", workRepProjectDto.getLaborDevelop(), workRepProjectDto.getTimeDevelop()));
+                sb.append(printNotNull(workRepProjectDto.getTimeDevelop()));
+                sb.append("</td>");
+                sb.append(getTegStart("td"));
+                sb.append(printNotNull(workRepProjectDto.getDevelopEndPlanStr()));
+                sb.append("</td>");
+                sb.append(getTegStart("td", workRepProjectDto.getDevelopEndPlan(), workRepProjectDto.getDevelopEndFact()));
+                sb.append(printNotNull(workRepProjectDto.getDevelopEndFactStr()));
+                sb.append("</td>");
+                sb.append(getTegStart("td", "table_col2"));
+                sb.append(printNotNull(workRepProjectDto.getIssuePrototypePlanStr()));
+                sb.append("</td>");
+                sb.append(getTegStart("td", "table_col2", workRepProjectDto.getIssuePrototypePlan(), workRepProjectDto.getIssuePrototypeFact()));
+                sb.append(printNotNull(workRepProjectDto.getIssuePrototypeFactStr()));
+                sb.append("</td>");
 
-            sb.append(getTegStart("td"));
-            sb.append(printNotNull(work.getDebugEndPlanStr()));
-            sb.append("</td>");
-            sb.append(getTegStart("td"));
-            sb.append(printNotNull(work.getDebugEndFactStr()));
-            sb.append("</td>");
+                sb.append(getTegStart("td"));
+                sb.append(printNotNull(workRepProjectDto.getDebugEndPlanStr()));
+                sb.append("</td>");
+                sb.append(getTegStart("td", workRepProjectDto.getDebugEndPlan(), workRepProjectDto.getDebugEndFact()));
+                sb.append(printNotNull(workRepProjectDto.getDebugEndFactStr()));
+                sb.append("</td>");
 
-            sb.append(getTegStart("td"));
-            sb.append(printNotNull(work.getLaborDebug()));
-            sb.append("</td>");
-            sb.append(getTegStart("td", work.getLaborDebug(), work.getTimeDebug()));
-            sb.append(printNotNull(work.getTimeDebug()));
-            sb.append("</td>");
-            sb.append(getTegStart("td", "table_col1"));
-            sb.append(printNotNull(work.getIssuingReleasePlanStr()));
-            sb.append("</td>");
-            sb.append(getTegStart("td", "table_col1"));
-            sb.append(printNotNull(work.getIssuingReleaseFactStr()));
-            sb.append("</td>");
-            sb.append(getTegStart("td"));
-            sb.append(printNotNull(work.getReleaseEndPlanStr()));
-            sb.append("</td>");
-            sb.append(getTegStart("td"));
-            sb.append(printNotNull(work.getReleaseEndFactStr()));
-            sb.append("</td>");
+                sb.append(getTegStart("td"));
+                sb.append(printNotNull(workRepProjectDto.getLaborDebug()));
+                sb.append("</td>");
+                sb.append(getTegStart("td", workRepProjectDto.getLaborDebug(), workRepProjectDto.getTimeDebug()));
+                sb.append(printNotNull(workRepProjectDto.getTimeDebug()));
+                sb.append("</td>");
+                sb.append(getTegStart("td", "table_col1"));
+                sb.append(printNotNull(workRepProjectDto.getIssuingReleasePlanStr()));
+                sb.append("</td>");
+                sb.append(getTegStart("td", "table_col1", workRepProjectDto.getIssuingReleasePlan(), workRepProjectDto.getIssuingReleaseFact() ));
+                sb.append(printNotNull(workRepProjectDto.getIssuingReleaseFactStr()));
+                sb.append("</td>");
+                sb.append(getTegStart("td"));
+                sb.append(printNotNull(workRepProjectDto.getReleaseEndPlanStr()));
+                sb.append("</td>");
+                sb.append(getTegStart("td", workRepProjectDto.getReleaseEndPlan(), workRepProjectDto.getReleaseEndFact()));
+                sb.append(printNotNull(workRepProjectDto.getReleaseEndFactStr()));
+                sb.append("</td>");
 
-            sb.append(getTegStart("td"));
-            sb.append(printNotNull(work.getLaborRelease()));
-            sb.append("</td>");
-            sb.append(getTegStart("td", work.getLaborRelease(), work.getTimeRelease()));
-            sb.append(printNotNull(work.getTimeRelease()));
-            sb.append("</td>");
-            sb.append(getTegStart("td"));
-            sb.append(printNotNull(work.getOpeEndPlanStr()));
-            sb.append("</td>");
-            sb.append(getTegStart("td"));
-            sb.append(printNotNull(work.getOpeEndFactStr()));
-            sb.append("</td>");
-            sb.append(getTegStart("td"));
-            sb.append(printNotNull(work.getLaborOPE()));
-            sb.append("</td>");
-            sb.append(getTegStart("td", work.getLaborOPE(), work.getTimeOPE()));
-            sb.append(printNotNull(work.getTimeOPE()));
-            sb.append("</td>");
-            sb.append(getTegStart("td"));
-            sb.append(printNotNull(work.getTimePlan()));
-            sb.append("</td>");
-            sb.append(getTegStart("td", work.getTimePlan(), work.getTimeFact()));
-            sb.append(printNotNull(work.getTimeFact()));
-            sb.append("</td>");
+                sb.append(getTegStart("td"));
+                sb.append(printNotNull(workRepProjectDto.getLaborRelease()));
+                sb.append("</td>");
+                sb.append(getTegStart("td", workRepProjectDto.getLaborRelease(), workRepProjectDto.getTimeRelease()));
+                sb.append(printNotNull(workRepProjectDto.getTimeRelease()));
+                sb.append("</td>");
+                sb.append(getTegStart("td"));
+                sb.append(printNotNull(workRepProjectDto.getOpeEndPlanStr()));
+                sb.append("</td>");
+                sb.append(getTegStart("td", workRepProjectDto.getOpeEndPlan(), workRepProjectDto.getOpeEndFact()));
+                sb.append(printNotNull(workRepProjectDto.getOpeEndFactStr()));
+                sb.append("</td>");
+                sb.append(getTegStart("td"));
+                sb.append(printNotNull(workRepProjectDto.getLaborOPE()));
+                sb.append("</td>");
+                sb.append(getTegStart("td", workRepProjectDto.getLaborOPE(), workRepProjectDto.getTimeOPE()));
+                sb.append(printNotNull(workRepProjectDto.getTimeOPE()));
+                sb.append("</td>");
+                sb.append(getTegStart("td"));
+                sb.append(printNotNull(workRepProjectDto.getTimePlan()));
+                sb.append("</td>");
+                sb.append(getTegStart("td", workRepProjectDto.getTimePlan(), workRepProjectDto.getTimeFact()));
+                sb.append(printNotNull(workRepProjectDto.getTimeFact()));
+                sb.append("</td>");
 
-            sb.append(getTegStart("td"));
-            sb.append(printNotNull(work.getTimeWender()));
-            sb.append("</td>");
+                sb.append(getTegStart("td"));
+                sb.append(printNotNull(workRepProjectDto.getTimeWender()));
+                sb.append("</td>");
 
 
-            sb.append("</tr>");
+                sb.append("</tr>");
+            });
         });
         sb.append("</tbody>");
         sb.append("</table>");
@@ -247,12 +259,22 @@ public class HtmlService {
         return getTegStart(teg, plan != null && fact != null && plan < fact);
     }
 
+    private String getTegStart(String teg, Timestamp plan, Timestamp fact) {
+        return getTegStart(teg, plan != null && fact != null && plan.before(fact));
+    }
+
+    private String getTegStart(String teg, String textClass, Timestamp plan, Timestamp fact) {
+        return getTegStart(teg, textClass, plan != null && fact != null && plan.before(fact));
+    }
     private String getTegStart(String teg, boolean flag) {
         return String.format("<%s class=\"%s\">", teg, flag ? "table_row_bed" : rowClass);
     }
 
     private String getTegStart(String teg, String textClass) {
         return String.format("<%s class=\"%s %s\">", teg, textClass, rowClass);
+    }
+    private String getTegStart(String teg, String textClass, boolean flag) {
+        return String.format("<%s class=\"%s %s\">", teg, textClass, flag ? "table_row_bed" : rowClass);
     }
 
     private void getHead(StringBuilder sb) {
@@ -267,7 +289,8 @@ public class HtmlService {
         sb.append("</head>");
     }
 
-    public String getWeekWork(boolean ziSplit,
+    public String getWeekWork(String headText,
+                              boolean ziSplit,
                               boolean workTask,
                               boolean workTime,
                               boolean workPercent,
@@ -278,7 +301,7 @@ public class HtmlService {
         getHead(sb);
         sb.append("<body>");
 
-        sb.append("<h1>Факт загрузки </h1>");
+        sb.append("<h1>").append(headText).append("</h1>");
         sb.append("<table>");
         sb.append("<tr>");
         sb.append("<td class=\"table_head1\" rowspan=\"2\">№ п/п</td>");

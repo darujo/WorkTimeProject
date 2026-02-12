@@ -134,5 +134,16 @@ angular.module('workTimeService').controller('workTimeRepController', function (
         }
         return element;
     }
+    $scope.getStyle = function (flag) {
+        // if (new Date(date1) < new Date(date2)) {
+        if (flag) {
+            return {
+                'background-color': 'red',
+                'color': 'white'
+            };
+        } else {
+            return {};
+        }
+    };
     init();
 })

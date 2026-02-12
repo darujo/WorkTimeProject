@@ -15,8 +15,12 @@ public enum MessageType implements TypeEnum {
     AVAIL_WORK_LAST_DAY("Работы отмеченные вами за предыдущий рабочий день. Рассылается по рабочим дням", 11),
     AVAIL_WORK_LAST_WEEK("Работы отмеченные вами за предыдущую неделю. Рассылается на второй рабочий день.", 12),
     AVAIL_WORK_FULL_REPORT("Статус ЗИ.", DayOfWeek.TUESDAY, 20),
+    AVAIL_WORK_FULL_REPORT_PROJECT("Статус ЗИ по проектам.", DayOfWeek.TUESDAY, 20, 10),
+
     WEEK_WORK_REPORT("Факт загрузки за предыдущую неделю.", DayOfWeek.TUESDAY, 20),
     ZI_WORK_REPORT("Факт загрузки по ЗИ.", DayOfWeek.TUESDAY, 20),
+    ZI_WORK_REPORT_PROJECT("Факт загрузки по ЗИ по проектам.", DayOfWeek.TUESDAY, 20, 10),
+
     VACATION_MY_START("Начало вашего отпуска в день перед отпуском", 20),
     VACATION_MY_END("Конец Вашего отпуска в последний день отпуска", 14),
     VACATION_USER_START("Список отпусков ежедневно", 12),
@@ -31,9 +35,11 @@ public enum MessageType implements TypeEnum {
     private final Integer hour;
     private final Integer minute;
     private final Integer period;
-
     MessageType(String name, Integer hour) {
         this(name, null, hour, null, 1);
+    }
+    MessageType(String name, DayOfWeek dayOfWeek, Integer hour, Integer minute) {
+        this(name, dayOfWeek, hour, minute, 1);
     }
 
     MessageType(String name) {

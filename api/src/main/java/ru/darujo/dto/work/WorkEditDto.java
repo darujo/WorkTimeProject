@@ -2,9 +2,11 @@ package ru.darujo.dto.work;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 
 public class WorkEditDto implements Serializable, WorkPlanTime {
     private Long id;
+    private Long workProjectId;
     // Код SAP
     private Long codeSap;
     // Код Зи
@@ -88,9 +90,11 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
 
     private Boolean rated;
     private Long projectId;
+    private List<Long> projectList;
 
 
     public WorkEditDto(Long id,
+                       Long workProjectId,
                        Long codeSap,
                        String codeZI,
                        String name,
@@ -126,8 +130,10 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
                        Timestamp releaseStartPlan,
                        Timestamp opeStartPlan,
                        Boolean rated,
-                       Long projectId) {
+                       Long projectId,
+                       List<Long> projectList) {
         this.id = id;
+        this.workProjectId = workProjectId;
         this.codeSap = codeSap;
         this.codeZI = codeZI;
         this.name = name;
@@ -164,9 +170,9 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
         this.opeStartPlan = opeStartPlan;
         this.rated = rated;
         this.projectId = projectId;
+        this.projectList = projectList;
     }
 
-    @Override
     public Long getId() {
         return id;
     }
@@ -367,11 +373,22 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
         return developEndPlan;
     }
 
+    public List<Long> getProjectList() {
+        return projectList;
+    }
+
+    @Override
     public Long getProjectId() {
         return projectId;
     }
 
-    public void setProjectId(Long projectId) {
-        this.projectId = projectId;
+    @Override
+    public Long getWorkId() {
+        return id;
+    }
+
+    @SuppressWarnings("unused")
+    public Long getWorkProjectId() {
+        return workProjectId;
     }
 }

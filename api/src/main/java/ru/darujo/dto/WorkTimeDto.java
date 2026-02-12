@@ -51,6 +51,7 @@ public class WorkTimeDto extends DateHelper implements Serializable, UserFio {
     private Integer type;
     @SuppressWarnings("unused")
     private String typeStr;
+    private String adminStr;
     private String taskDescription;
     private String taskCodeBTS;
     // № внутренней задачи (DEVBO)
@@ -100,7 +101,7 @@ public class WorkTimeDto extends DateHelper implements Serializable, UserFio {
     public WorkTimeDto() {
     }
 
-    public WorkTimeDto(Long id, String nikName, Timestamp workDate, Float workTime, Long taskId, String comment, Integer type, Long projectId) {
+    public WorkTimeDto(Long id, String nikName, Timestamp workDate, Float workTime, Long taskId, String comment, Integer type, String typeStr, String adminStr, Long projectId) {
         this.id = id;
         this.nikName = nikName;
         this.workDate = workDate;
@@ -108,6 +109,8 @@ public class WorkTimeDto extends DateHelper implements Serializable, UserFio {
         this.taskId = taskId;
         this.comment = comment;
         this.type = type;
+        this.typeStr = typeStr;
+        this.adminStr = adminStr;
         this.projectId = projectId;
     }
 
@@ -120,21 +123,9 @@ public class WorkTimeDto extends DateHelper implements Serializable, UserFio {
         if (type == null) {
             return null;
         } else if (taskType != null && taskType == 3) {
-            return "Административная";
-        } else if (type == 1) {
-            return "Разработка";
-        } else if (type == 2) {
-            return "Консультация";
-        } else if (type == 3) {
-            return "Анализ";
-        } else if (type == 4) {
-            return "Тестирование";
-        } else if (type == 5) {
-            return "Анализ ошибки";
-        } else if (type == 6) {
-            return "Акс";
+            return adminStr;
         } else {
-            return type.toString();
+            return typeStr;
         }
     }
 

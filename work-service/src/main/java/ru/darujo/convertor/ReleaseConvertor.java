@@ -1,22 +1,23 @@
 package ru.darujo.convertor;
 
-import ru.darujo.dto.work.ReleaseDto;
+import ru.darujo.dto.work.ReleaseEditDto;
 import ru.darujo.model.Release;
 
 public class ReleaseConvertor {
-    public static Release getRelease(Long projectId, ReleaseDto releaseDto) {
-        Float sort = releaseDto.getSort();
+    public static Release getRelease(Long projectId, ReleaseEditDto releaseEditDto) {
+        Float sort = releaseEditDto.getSort();
         if (sort == null) {
             try {
-                sort = Float.parseFloat(releaseDto.getName());
+                sort = Float.parseFloat(releaseEditDto.getName());
             } catch (NumberFormatException ignored) {
                 sort = 999f;
             }
 
         }
-        return new Release(releaseDto.getId(), releaseDto.getName(), releaseDto.getIssuingReleasePlan(), releaseDto.getIssuingReleaseFact(), sort, projectId);
+        return new Release(releaseEditDto.getId(), releaseEditDto.getName(), releaseEditDto.getIssuingReleasePlan(), releaseEditDto.getIssuingReleaseFact(), sort, projectId);
     }
-    public static ReleaseDto getReleaseDto(Release release){
-        return new ReleaseDto(release.getId(), release.getName(), release.getIssuingReleasePlan(), release.getIssuingReleaseFact(), release.getSort());
+
+    public static ReleaseEditDto getReleaseDto(Release release) {
+        return new ReleaseEditDto(release.getId(), release.getName(), release.getProjectId(), release.getIssuingReleasePlan(), release.getIssuingReleaseFact(), release.getSort());
     }
 }
