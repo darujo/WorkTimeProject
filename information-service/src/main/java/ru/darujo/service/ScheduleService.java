@@ -33,6 +33,11 @@ public class ScheduleService implements AutoCloseable {
                 scheduleAtFixedRate(messageType);
             }
         }
+        ChatInfo chatInfo = new ChatInfo(null, 496071536L, null, null);
+        executor.schedule(getTask(MessageType.AVAIL_WORK_FULL_REPORT, chatInfo), 10, TimeUnit.SECONDS);
+        executor.schedule(getTask(MessageType.AVAIL_WORK_FULL_REPORT_PROJECT, chatInfo), 1, TimeUnit.SECONDS);
+        executor.schedule(getTask(MessageType.ZI_WORK_REPORT, chatInfo), 60, TimeUnit.MILLISECONDS);
+        executor.schedule(getTask(MessageType.ZI_WORK_REPORT_PROJECT, chatInfo), 100, TimeUnit.SECONDS);
     }
 
     private void scheduleAtFixedRate(MessageType messageType) {
@@ -61,15 +66,15 @@ public class ScheduleService implements AutoCloseable {
     public void close() {
         // Корректное завершение
 //        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            executor.shutdown();
-            try {
-                while (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
-                    log.error("sto1");
-                    executor.shutdownNow();
-                }
-            } catch (InterruptedException e) {
+        executor.shutdown();
+        try {
+            while (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                log.error("sto1");
                 executor.shutdownNow();
             }
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
+        }
 //        }));
     }
 
@@ -84,6 +89,8 @@ public class ScheduleService implements AutoCloseable {
             return tasks.getAddWorkAvailLastWeek(messageType);
         } else if (messageType.equals(MessageType.AVAIL_WORK_FULL_REPORT)) {
             return tasks.sendReportWorkFull(messageType, chatInfo);
+        } else if (messageType.equals(MessageType.AVAIL_WORK_FULL_REPORT_PROJECT)) {
+            return tasks.sendReportWorkFullProject(messageType, chatInfo);
         } else if (messageType.equals(MessageType.VACATION_MY_START)) {
             return tasks.getMyVacationStart(messageType);
         } else if (messageType.equals(MessageType.VACATION_MY_END)) {
@@ -92,6 +99,8 @@ public class ScheduleService implements AutoCloseable {
             return tasks.getVacationStart(messageType);
         } else if (messageType.equals(MessageType.ZI_WORK_REPORT)) {
             return tasks.getZiWork(messageType, chatInfo);
+        } else if (messageType.equals(MessageType.ZI_WORK_REPORT_PROJECT)) {
+            return tasks.getZiWorkProject(messageType, chatInfo);
         } else if (messageType.equals(MessageType.WEEK_WORK_REPORT)) {
             return tasks.getWeekWork(messageType, chatInfo);
         } else {

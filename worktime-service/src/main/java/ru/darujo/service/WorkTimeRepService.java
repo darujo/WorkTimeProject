@@ -73,6 +73,20 @@ public class WorkTimeRepService {
         } else {
             types = WorkTimeTypeService.getTypes(null);
         }
+        List<Integer> types2 = new ArrayList<>();
+        if (typeStr != null && typeStr.equals("analise")) {
+            types2.add(2);
+            types2.add(3);
+            types2.add(5);
+            types2.add(6);
+
+        } else if (typeStr != null && typeStr.equals("develop")) {
+            types2.add(1);
+            types2.add(4);
+        } else {
+            types2.add(null);
+
+        }
         return types;
     }
 

@@ -118,12 +118,15 @@ public class WorkServiceIntegration extends ServiceIntegration {
                                         Boolean availWork,
                                         Integer stageZi,
                                         Long releaseId,
-                                        LinkedList<String> sort) {
+                                        Long projectId,
+                                        LinkedList<String> sort
+                                        ) {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "ziName", ziName);
         addTeg(stringBuilder, "availWork", availWork);
         addTeg(stringBuilder, "stageZi", stageZi);
         addTeg(stringBuilder, "releaseId", releaseId);
+        addTeg(stringBuilder, "projectId", projectId);
         if (sort != null) {
             sort.forEach(s -> addTeg(stringBuilder, "sort", s));
         }
@@ -144,7 +147,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
         }
     }
 
-    public List<WorkUserTime> getWorkUserTime(boolean ziSplit, Timestamp date) {
+    public List<WorkUserTime> getWorkUserTime(boolean ziSplit, Long projectId, Timestamp date) {
         return getWorkUserTime(ziSplit,
                 null,
                 true,
@@ -152,6 +155,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
                 date,
                 date,
                 null,
+                projectId,
                 null,
                 null,
                 null,
@@ -169,6 +173,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
                                               Timestamp dateEnd,
 
                                               String name,
+                                              Long projectId,
                                               Integer stageZi,
                                               Long codeSap,
                                               String codeZi,
@@ -186,6 +191,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "weekSplit", weekSplit);
 
         addTeg(stringBuilder, "name", name);
+        addTeg(stringBuilder, "projectId", projectId);
         addTeg(stringBuilder, "stageZi", stageZi);
         addTeg(stringBuilder, "codeSap", codeSap);
         addTeg(stringBuilder, "codeZi", codeZi);

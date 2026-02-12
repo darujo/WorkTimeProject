@@ -89,7 +89,7 @@ public class WorkService {
     private static final Map<Long, ProjectDto> projectDtoMap = new HashMap<>();
 
     @PostConstruct
-    public static void init() {
+    public void init() {
         try {
             userServiceIntegration.getProjects(null, null).forEach(projectDto ->
                     projectDtoMap.put(projectDto.getId(), projectDto));
@@ -98,14 +98,6 @@ public class WorkService {
         }
 
     }
-
-    public static Map<Long, ProjectDto> getProjectDtoMap() {
-        if (projectDtoMap.isEmpty()) {
-            init();
-        }
-        return projectDtoMap;
-    }
-
 
     public WorkFull findById(long id, long projectId) {
         Work work = workRepository.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Задача не найден"));
@@ -197,7 +189,7 @@ public class WorkService {
             }
         }
         workProjectService.updateWorkLastDevelop(workFull.getWorkProject());
-        if(!workFull.getWork().getProjectList().contains(workFull.getWorkProject().getProjectId())){
+        if (!workFull.getWork().getProjectList().contains(workFull.getWorkProject().getProjectId())) {
             workFull.getWork().getProjectList().add(workFull.getWorkProject().getProjectId());
         }
         Work work = workRepository.save(workFull.getWork());
@@ -207,14 +199,14 @@ public class WorkService {
         return workFull;
     }
 
-    private void updateProjectList (Work work){
-        work.getProjectList().forEach(projectId ->{
-            WorkProject workProject = workProjectService.getWorkProject(work,projectId);
-            if (workProject ==null){
-                workProject = new WorkProject(projectId,work,0);
+    private void updateProjectList(Work work) {
+        work.getProjectList().forEach(projectId -> {
+            WorkProject workProject = workProjectService.getWorkProject(work, projectId);
+            if (workProject == null) {
+                workProject = new WorkProject(projectId, work, 0);
                 workProjectService.save(workProject);
             }
-        } );
+        });
 
     }
 
@@ -338,6 +330,10 @@ public class WorkService {
         return workPage.map(workLittle -> new WorkLittleFull(workLittle, null));
     }
 
+    public List<Work> getWorkList(String name, Integer stageZiGe, Integer stageZiLe, Long releaseId, Long projectId, String[] sort) {
+        return findAll(null, null, name, sort[0], stageZiGe, stageZiLe, null, null, null, releaseId, projectId).map(WorkFull::getWork).getContent();
+    }
+
     public List<Work> getWorkList(String name, Integer stageZiGe, Integer stageZiLe, Long releaseId, String[] sort) {
         List<Work> works;
         Specification<@NonNull Work> specification = Specification.unrestricted();
@@ -363,7 +359,7 @@ public class WorkService {
     }
 
     public void updWorkPlanTime(WorkPlanTime workPlanTime) {
-        if(workPlanTime.getProjectId() == null){
+        if (workPlanTime.getProjectId() == null) {
             return;
         }
         WorkStageDto workStageDto = rateServiceIntegration.getTimePlan(workPlanTime.getWorkId(), workPlanTime.getProjectId());
@@ -401,6 +397,7 @@ public class WorkService {
 
     public WorkLittleFull setRated(String login, long workId, Long projectId, Boolean rated) {
         WorkLittle work = workLittleRepository.findById(workId).orElseThrow(() -> new ResourceNotFoundRunTime("Не найдена работа с таким Id"));
+        init();
         WorkProjectLittle workProjectLittle = workProjectLittleService.getWorkProjectOrEmpty(work, projectId);
         if (workProjectLittle.getRated() == null || !workProjectLittle.getRated().equals(rated)) {
             workProjectLittle.setRated(rated);
@@ -408,7 +405,7 @@ public class WorkService {
             ProjectDto projectDto = projectDtoMap.get(workProjectLittle.getProjectId());
             sendInform(login, MessageType.ESTIMATION_WORK, getMesChangRated(login, work, workProjectLittle, projectDto == null ? "" : projectDto.getName() + " (" + projectDto.getCode() + ")"));
         }
-        return new WorkLittleFull(work, workProjectLittle );
+        return new WorkLittleFull(work, workProjectLittle);
 
     }
 
@@ -428,6 +425,7 @@ public class WorkService {
     }
 
     private void changeWork(String login, WorkLittleInterface workLittle, WorkProjectInter workProject, Integer stageOld, String releaseNameOld, Boolean ratedOld) {
+        init();
         String releaseNameNew = workProject.getRelease() != null ? workProject.getRelease().getName() : null;
         StringBuilder workEditText = new StringBuilder();
         workEditText.append(ChangeObj("этап ЗИ", stageOld, workProject.getStageZi()));

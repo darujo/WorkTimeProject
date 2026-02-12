@@ -134,10 +134,12 @@ public class TaskServiceIntegration extends ServiceIntegration {
 
     public List<UserWorkFormDto> getWorkUserOrZi(
             Long workId,
+            Long projectId,
             String nikName,
             Boolean addTotal) throws ResourceNotFoundRunTime {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "workId", workId);
+        addTeg(stringBuilder, "projectId", projectId);
         addTeg(stringBuilder, "nikName", nikName);
         addTeg(stringBuilder, "addTotal", addTotal);
 

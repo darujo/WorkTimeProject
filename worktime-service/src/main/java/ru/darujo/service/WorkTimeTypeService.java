@@ -20,7 +20,7 @@ public class WorkTimeTypeService {
         workTimeTypeMap.put(1, new WorkTimeTypeDto(null, 1, "Разработка", true));
         workTimeTypeMap.put(2, new WorkTimeTypeDto(null, 2, "Консультация", false));
         workTimeTypeMap.put(3, new WorkTimeTypeDto(null, 3, "Анализ", false));
-        workTimeTypeMap.put(4, new WorkTimeTypeDto(null, 4, "Тестирование", false));
+        workTimeTypeMap.put(4, new WorkTimeTypeDto(null, 4, "Тестирование", true));
         workTimeTypeMap.put(5, new WorkTimeTypeDto(null, 5, "Анализ ошибки", false));
         workTimeTypeMap.put(6, new WorkTimeTypeDto(null, 6, "Акс", false));
 
@@ -64,12 +64,14 @@ public class WorkTimeTypeService {
     public static List<WorkTimeTypeDto> getTypeDtoList(Long projectId, Boolean develop) {
         init();
         List<WorkTimeTypeDto> typesList;
-        typesList = workTimeTypeMap.values().stream().filter(workTimeTypeDto ->
-                        (projectId == null
+        typesList = workTimeTypeMap.values().stream().filter(workTimeTypeDto -> {
+                        boolean dd = (projectId == null
                                 || workTimeTypeDto.getProjectList() == null
                                 || workTimeTypeDto.getProjectList().contains(projectId))
                                 && (develop == null
-                                || workTimeTypeDto.isDevelop() == develop)).toList();
+                                || workTimeTypeDto.isDevelop() == develop);
+                        return dd;
+        }).toList();
         return typesList;
     }
     public static List<Integer> getTypes(Boolean develop) {

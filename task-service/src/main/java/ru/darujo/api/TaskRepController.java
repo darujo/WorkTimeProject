@@ -68,10 +68,11 @@ public class TaskRepController {
 
     @GetMapping("/week")
     public List<UserWorkDto> getWeekWork(@RequestParam(required = false) Long workId,
+                                         @RequestParam(required = false) Long projectId,
                                          @RequestParam(required = false) String nikName,
                                          @RequestParam(required = false) Boolean addTotal
     ) {
-        return taskRepService.getWeekWork(workId, nikName, addTotal);
+        return taskRepService.getWeekWork(workId,projectId, nikName, addTotal);
     }
 
     @GetMapping("/lastTime")

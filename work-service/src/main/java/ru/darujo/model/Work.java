@@ -47,9 +47,6 @@ public class Work implements WorkLittleInterface {
     }
 
     public List<Long> getProjectList() {
-        if (projectList == null) {
-            return WorkService.getProjectDtoMap().keySet().stream().toList();
-        }
         return projectList;
     }
 }

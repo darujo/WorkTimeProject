@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -18,10 +19,11 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class HtmlService {
-    public String printRep(List<WorkRepDto> works) {
+    public String printRep(List<WorkRepDto> works, String headText) {
 
         StringBuilder sb = new StringBuilder();
         getHead(sb);
+        sb.append("<h1>").append(headText).append("</h1>");
         sb.append("<body>");
         sb.append("<div  class=\"wrapper\">");
         sb.append("<table>");
@@ -108,7 +110,7 @@ public class HtmlService {
         sb.append("<td class=\"table_head2\" > Факт </td >");
         sb.append("<td class=\"table_head1\" > План </td >");
         sb.append("<td class=\"table_head1\" > Факт </td >");
-//todo добавить разбивку по проектам
+
         sb.append("</tr >");
         sb.append("<tbody >");
         AtomicInteger i = new AtomicInteger();
@@ -129,7 +131,7 @@ public class HtmlService {
                     sb.append("</td>");
                 }
                 sb.append(getTegStart("td"));
-                sb.append(printNotNull(workRepProjectDto.getProjectId() + " " + workRepProjectDto.getProjectCode() + " " + workRepProjectDto.getProjectName()));
+                sb.append(printNotNull(workRepProjectDto.getProjectCode() + " " + workRepProjectDto.getProjectName()));
                 sb.append("</td>");
                 sb.append(getTegStart("td"));
                 sb.append(printNotNull(workRepProjectDto.getRelease()));
@@ -137,7 +139,7 @@ public class HtmlService {
                 sb.append(getTegStart("td"));
                 sb.append(printNotNull(workRepProjectDto.getAnaliseEndPlanStr()));
                 sb.append("</td>");
-                sb.append(getTegStart("td"));
+                sb.append(getTegStart("td", workRepProjectDto.getAnaliseEndPlan(), workRepProjectDto.getAnaliseEndFact()));
                 sb.append(printNotNull(workRepProjectDto.getAnaliseEndFactStr()));
                 sb.append("</td>");
                 sb.append(getTegStart("td"));
@@ -149,7 +151,7 @@ public class HtmlService {
                 sb.append(getTegStart("td"));
                 sb.append(printNotNull(workRepProjectDto.getStartTaskPlanStr()));
                 sb.append("</td>");
-                sb.append(getTegStart("td"));
+                sb.append(getTegStart("td", workRepProjectDto.getStartTaskPlan(), workRepProjectDto.getStartTaskFact()));
                 sb.append(printNotNull(workRepProjectDto.getStartTaskFactStr()));
                 sb.append("</td>");
 
@@ -162,20 +164,20 @@ public class HtmlService {
                 sb.append(getTegStart("td"));
                 sb.append(printNotNull(workRepProjectDto.getDevelopEndPlanStr()));
                 sb.append("</td>");
-                sb.append(getTegStart("td"));
+                sb.append(getTegStart("td", workRepProjectDto.getDevelopEndPlan(), workRepProjectDto.getDevelopEndFact()));
                 sb.append(printNotNull(workRepProjectDto.getDevelopEndFactStr()));
                 sb.append("</td>");
                 sb.append(getTegStart("td", "table_col2"));
                 sb.append(printNotNull(workRepProjectDto.getIssuePrototypePlanStr()));
                 sb.append("</td>");
-                sb.append(getTegStart("td", "table_col2"));
+                sb.append(getTegStart("td", "table_col2", workRepProjectDto.getIssuePrototypePlan(), workRepProjectDto.getIssuePrototypeFact()));
                 sb.append(printNotNull(workRepProjectDto.getIssuePrototypeFactStr()));
                 sb.append("</td>");
 
                 sb.append(getTegStart("td"));
                 sb.append(printNotNull(workRepProjectDto.getDebugEndPlanStr()));
                 sb.append("</td>");
-                sb.append(getTegStart("td"));
+                sb.append(getTegStart("td", workRepProjectDto.getDebugEndPlan(), workRepProjectDto.getDebugEndFact()));
                 sb.append(printNotNull(workRepProjectDto.getDebugEndFactStr()));
                 sb.append("</td>");
 
@@ -188,13 +190,13 @@ public class HtmlService {
                 sb.append(getTegStart("td", "table_col1"));
                 sb.append(printNotNull(workRepProjectDto.getIssuingReleasePlanStr()));
                 sb.append("</td>");
-                sb.append(getTegStart("td", "table_col1"));
+                sb.append(getTegStart("td", "table_col1", workRepProjectDto.getIssuingReleasePlan(), workRepProjectDto.getIssuingReleaseFact() ));
                 sb.append(printNotNull(workRepProjectDto.getIssuingReleaseFactStr()));
                 sb.append("</td>");
                 sb.append(getTegStart("td"));
                 sb.append(printNotNull(workRepProjectDto.getReleaseEndPlanStr()));
                 sb.append("</td>");
-                sb.append(getTegStart("td"));
+                sb.append(getTegStart("td", workRepProjectDto.getReleaseEndPlan(), workRepProjectDto.getReleaseEndFact()));
                 sb.append(printNotNull(workRepProjectDto.getReleaseEndFactStr()));
                 sb.append("</td>");
 
@@ -207,7 +209,7 @@ public class HtmlService {
                 sb.append(getTegStart("td"));
                 sb.append(printNotNull(workRepProjectDto.getOpeEndPlanStr()));
                 sb.append("</td>");
-                sb.append(getTegStart("td"));
+                sb.append(getTegStart("td", workRepProjectDto.getOpeEndPlan(), workRepProjectDto.getOpeEndFact()));
                 sb.append(printNotNull(workRepProjectDto.getOpeEndFactStr()));
                 sb.append("</td>");
                 sb.append(getTegStart("td"));
@@ -257,12 +259,22 @@ public class HtmlService {
         return getTegStart(teg, plan != null && fact != null && plan < fact);
     }
 
+    private String getTegStart(String teg, Timestamp plan, Timestamp fact) {
+        return getTegStart(teg, plan != null && fact != null && plan.before(fact));
+    }
+
+    private String getTegStart(String teg, String textClass, Timestamp plan, Timestamp fact) {
+        return getTegStart(teg, textClass, plan != null && fact != null && plan.before(fact));
+    }
     private String getTegStart(String teg, boolean flag) {
         return String.format("<%s class=\"%s\">", teg, flag ? "table_row_bed" : rowClass);
     }
 
     private String getTegStart(String teg, String textClass) {
         return String.format("<%s class=\"%s %s\">", teg, textClass, rowClass);
+    }
+    private String getTegStart(String teg, String textClass, boolean flag) {
+        return String.format("<%s class=\"%s %s\">", teg, textClass, flag ? "table_row_bed" : rowClass);
     }
 
     private void getHead(StringBuilder sb) {
@@ -277,7 +289,8 @@ public class HtmlService {
         sb.append("</head>");
     }
 
-    public String getWeekWork(boolean ziSplit,
+    public String getWeekWork(String headText,
+                              boolean ziSplit,
                               boolean workTask,
                               boolean workTime,
                               boolean workPercent,
@@ -288,7 +301,7 @@ public class HtmlService {
         getHead(sb);
         sb.append("<body>");
 
-        sb.append("<h1>Факт загрузки </h1>");
+        sb.append("<h1>").append(headText).append("</h1>");
         sb.append("<table>");
         sb.append("<tr>");
         sb.append("<td class=\"table_head1\" rowspan=\"2\">№ п/п</td>");

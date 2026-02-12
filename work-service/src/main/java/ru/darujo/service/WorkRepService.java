@@ -71,13 +71,19 @@ public class WorkRepService {
         this.workProjectService = workProjectService;
     }
 
-    public List<WorkRepDto> getWorkRep(String name, Boolean availWork, Integer stageZiGe, Integer stageZiLe, Long releaseId, String[] sort) {
+    public List<WorkRepDto> getWorkRep(String name, Boolean availWork, Integer stageZiGe, Integer stageZiLe, Long releaseId, Long projectIdPar, String[] sort) {
+        workService.init();
         List<WorkRepDto> workRepDTOs = new ArrayList<>();
-        List<Work> works = workService.getWorkList(name, stageZiGe, stageZiLe, releaseId, sort);
+        List<Work> works;
+        if (projectIdPar != null) {
+            works = workService.getWorkList(name, stageZiGe, stageZiLe, releaseId, projectIdPar, sort);
+        } else {
+            works = workService.getWorkList(name, stageZiGe, stageZiLe, releaseId, sort);
+        }
         works.forEach(work ->
                 {
                     List<WorkRepProjectDto> workRepProjectDtoList = new ArrayList<>();
-                    work.getProjectList().forEach(projectId -> {
+                    work.getProjectList().stream().filter(projectId -> projectIdPar == null || projectId.equals(projectIdPar) ).forEach(projectId -> {
                         boolean availWorkTime = false;
                         if (availWork != null) {
                             availWorkTime = taskServiceIntegration.availWorkTime(work.getId(), projectId);
@@ -332,10 +338,10 @@ public class WorkRepService {
 
 
     public List<WorkUserTime> getWeekWork(boolean ziSplit, Boolean addTotal, String nikName, Boolean weekSplit, Timestamp dateStart, Timestamp dateEnd,
-                                          Integer page, Integer size, String name, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, List<Long> releaseIdList, String sort) {
+                                          Integer page, Integer size, String name, Long projectId, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, List<Long> releaseIdList, String sort) {
         List<WorkUserTime> workUserTimes = new ArrayList<>();
         if (ziSplit) {
-            Page<@NonNull WorkLittleFull> works = workService.findWorkLittle(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseIdList, null);
+            Page<@NonNull WorkLittleFull> works = workService.findWorkLittle(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseIdList, projectId);
             works.forEach(workLittleFull -> {
                         WorkLittle work = workLittleFull.getWork();
                         workUserTimes.add(new WorkUserTime(
@@ -343,7 +349,7 @@ public class WorkRepService {
                                 work.getCodeSap(),
                                 work.getCodeZi(),
                                 work.getName(),
-                                taskServiceIntegration.getWorkUserOrZi(work.getId(), nikName, addTotal))
+                                taskServiceIntegration.getWorkUserOrZi(work.getId(), projectId, nikName, addTotal))
                         );
                     }
             );
@@ -376,6 +382,7 @@ public class WorkRepService {
                                                      Timestamp dateStart,
                                                      Timestamp dateEnd,
                                                      String period) {
+        workService.init();
         List<WeekWorkDto> weekWorkDTOs = calendarServiceIntegration.getPeriodTime(dateStart, dateEnd, period);
         Page<@NonNull Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, releaseId);
         List<WorkGraphDto> workGraphDTOs =
