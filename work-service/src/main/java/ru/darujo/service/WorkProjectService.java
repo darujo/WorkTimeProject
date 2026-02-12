@@ -173,7 +173,7 @@ public class WorkProjectService {
 
         } else {
             if (page != null && size != null) {
-                workPage = workProjectRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.Direction.ASC, sort));
+                workPage = workProjectRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.by(sort)));
             } else {
                 workPage = new PageImpl<>(workProjectRepository.findAll(specification, Sort.by(sort)));
             }

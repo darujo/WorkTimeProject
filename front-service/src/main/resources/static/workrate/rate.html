@@ -11,8 +11,9 @@
 
          id="DetailPrim">
     <!--         open -->
-    <summary class="p-head">{{projectRate.projectName}} ({{projectRate.projectCode}}) <p
-            ng-style="getStyle(projectRate.rated ? 0 : 1)">{{projectRate.rated ? "Оценка выполнена" : "Оценка не выполнена"}}</p>
+    <summary class="p-head">{{projectRate.projectName}} ({{projectRate.projectCode}})
+        <p ng-style="getStyle(projectRate.rated ? 0 : 1)">{{projectRate.rated ? "Оценка выполнена" : "Оценка не
+            выполнена"}}</p>
     </summary>
     <div>
 
@@ -122,6 +123,12 @@
     </div>
 </details>
 <h1>Итоги</h1>
+<div>
+    <label for="TotalWork" class="p-head">Показать факт</label>
+    <input type="checkbox"
+           id="TotalWork"
+           ng-model="Filter.viewFact"/>
+</div>
 <table>
     <tr>
         <td class="table_head1">№ п/п</td>

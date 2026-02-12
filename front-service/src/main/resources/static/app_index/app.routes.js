@@ -1,5 +1,5 @@
 angular.module('workTimeService').config(function ($routeProvider) {
-    let ver = "2.0";
+    let ver = "3.1";
     console.log(ver);
     $routeProvider
         .when('/', {

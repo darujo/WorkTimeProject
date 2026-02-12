@@ -103,7 +103,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 }
             }).then(function (response) {
                 console.log(response);
-                $scope.WorkList = response.data.content;
+                $scope.WorkList = response.data._embedded.workDtoList;
                 console.log($scope.WorkList);
                 maxPage = response.data["totalPages"];
                 $scope.load = false;

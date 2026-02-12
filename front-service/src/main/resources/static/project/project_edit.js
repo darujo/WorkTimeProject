@@ -44,7 +44,7 @@ angular.module('workTimeService').controller('projectEditController', function (
                     console.log("Save response")
                     console.log(response);
                     sendSave = false;
-                    $scope.cancel();
+                    $scope.backProject();
                 }, function errorCallback(response) {
                     sendSave = false;
                     console.log(response.data);

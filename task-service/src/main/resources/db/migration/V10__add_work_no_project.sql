@@ -95,7 +95,8 @@ FROM work_time_project.work w;
 
 ALTER TABLE IF EXISTS work_time_project."work"
     ADD COLUMN project_list bigint[];
-
+ALTER TABLE IF EXISTS work_time_project."work"
+    DROP COLUMN project_id;
 UPDATE work_time_project."work"
 SET project_list = '{1}'
 WHERE true;

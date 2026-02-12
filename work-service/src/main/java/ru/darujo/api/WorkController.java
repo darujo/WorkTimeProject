@@ -4,7 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.convertor.WorkConvertor;
@@ -13,7 +15,6 @@ import ru.darujo.dto.work.WorkEditDto;
 import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.model.StageZiFind;
 import ru.darujo.model.WorkFull;
-import ru.darujo.model.WorkLittle;
 import ru.darujo.service.WorkService;
 
 import java.sql.Timestamp;
@@ -24,6 +25,7 @@ import java.util.List;
 @RestController()
 @RequestMapping("/v1/works")
 public class WorkController {
+
     private WorkService workService;
 
     @Autowired
@@ -81,16 +83,18 @@ public class WorkController {
     }
 
     @GetMapping("")
-    public Page<@NonNull WorkDto> workPage(@RequestParam(defaultValue = "1") int page,
-                                           @RequestParam(defaultValue = "10") int size,
-                                           @RequestParam(required = false) String name,
-                                           @RequestParam(defaultValue = "15") Integer stageZi,
-                                           @RequestParam(required = false) Long codeSap,
-                                           @RequestParam(required = false) String codeZi,
-                                           @RequestParam(required = false) String task,
-                                           @RequestParam(required = false) Long releaseId,
-                                           @RequestParam(defaultValue = "release.name") String sort,
-                                           @RequestParam("system_project") Long projectId
+    public PagedModel<?> workPage(@RequestParam(defaultValue = "1") int page,
+                                  @RequestParam(defaultValue = "10") int size,
+                                  @RequestParam(required = false) String name,
+                                  @RequestParam(defaultValue = "15") Integer stageZi,
+                                  @RequestParam(required = false) Long codeSap,
+                                  @RequestParam(required = false) String codeZi,
+                                  @RequestParam(required = false) String task,
+                                  @RequestParam(required = false) Long releaseId,
+                                  @RequestParam(defaultValue = "release.sort") String sort,
+                                  @RequestParam("system_project") Long projectId,
+                                  PagedResourcesAssembler<WorkDto> pagedAssembler
+
     ) {
         StageZiFind stageZiFind = new StageZiFind(stageZi);
         long curTime = System.nanoTime();
@@ -99,7 +103,7 @@ public class WorkController {
         workDTOs.forEach(workService::updWorkPlanTime);
         float time_last = (curTime - System.nanoTime()) * 0.000000001f;
         log.info("Время выполнения WorkPage {}", time_last);
-        return workDTOs;
+        return pagedAssembler.toModel(workDTOs);
     }
 
 
@@ -147,9 +151,9 @@ public class WorkController {
 
     @GetMapping("/change/{id}/rated")
     public WorkLittleDto ChangeRated(@RequestHeader String username,
-                                  @PathVariable long id,
-                                  @RequestParam(required = false, name = "rated") Boolean rated,
-                                  @RequestParam("system_project") Long projectId
+                                     @PathVariable long id,
+                                     @RequestParam(required = false, name = "rated") Boolean rated,
+                                     @RequestParam("system_project") Long projectId
     ) {
         return WorkConvertor.getWorkLittleDto(workService.setRated(username, id, projectId, rated));
 

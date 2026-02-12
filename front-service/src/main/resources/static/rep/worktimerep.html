@@ -153,62 +153,77 @@
             <!--        // ВЕНДЕРКА План-->
             <td>{{workProject.analiseEndPlanStr}}</td>
             <!--        // ВЕНДЕРКА-->
-            <td>{{workProject.analiseEndFactStr}}</td>
+            <td ng-style="getStyle(workProject.analiseEndPlan < workProject.analiseEndFact)">
+                {{workProject.analiseEndFactStr}}
+            </td>
             <td>{{workProject.laborAnalise}}</td>
-            <td>{{workProject.timeAnalise}}</td>
+            <td ng-style="getStyle(workProject.laborAnalise < workProject.timeAnalise )">{{workProject.timeAnalise}}
+            </td>
             <!--        // Дата начала доработки План-->
             <td>{{workProject.startTaskPlanStr}}</td>
             <!--        // Дата начала доработки Факт-->
-            <td>{{workProject.startTaskFactStr}}</td>
+            <td ng-style="getStyle(workProject.startTaskPlan < workProject.startTaskFact )">
+                {{workProject.startTaskFactStr}}
+            </td>
 
             <!--        // Плановые трудозатраты, чел/час разработки-->
             <td>{{workProject.laborDevelop}}</td>
             <!--        // Разработка прототипа-->
-            <td>{{workProject.timeDevelop}}</td>
+            <td ng-style="getStyle(workProject.laborDevelop < workProject.timeDevelop)">{{workProject.timeDevelop}}</td>
             <!--        //начало разработки план-->
             <td class="table_col2">{{workProject.developEndPlanStr}}</td>
             <!--        //начало разработки факт-->
-            <td class="table_col2">{{workProject.developEndFactStr}}</td>
+            <td class="table_col2" ng-style="getStyle(workProject.developEndPlan < workProject.developEndFact )">
+                {{workProject.developEndFactStr}}
+            </td>
             <td class="table_col2">{{workProject.issuePrototypePlanStr}}</td>
             <!--        //начало разработки факт-->
-            <td class="table_col2">{{workProject.issuePrototypeFactStr}}</td>
+            <td class="table_col2" ng-style="getStyle(workProject.issuePrototypePlan < workProject.issuePrototypeFact)">
+                {{workProject.issuePrototypeFactStr}}
+            </td>
                         
 <!--        // Стабилизация прототипа план-->
             <td>{{workProject.debugEndPlanStr}}</td>
             <!--        // Стабилизация прототипа факт-->
-            <td>{{workProject.debugEndFactStr}}</td>
+            <td ng-style="getStyle(workProject.debugEndPlan < workProject.debugEndFact)">
+                {{workProject.debugEndFactStr}}
+            </td>
 
             <!--        // Плановые трудозатраты, чел/час Стабилизация прототипа-->
             <td>{{workProject.laborDebug}}</td>
             <!--        // Стабилизация прототипа-->
-            <td>{{workProject.timeDebug}}</td>
+            <td ng-style="getStyle(workProject.laborDebug < workProject.timeDebug)">{{workProject.timeDebug}}</td>
             <!--        // Порядковый номер релиза-->
             <td>{{workProject.release}}</td>
             <!--        // Выдача релиза даты План-->
             <td class="table_col1">{{workProject.issuingReleasePlanStr}}</td>
             <!--        // Выдача релиза дата факт-->
-            <td class="table_col1">{{workProject.issuingReleaseFactStr}}</td>
+            <td class="table_col1" ng-style="getStyle(workProject.issuingReleasePlan < workProject.issuingReleaseFact)">
+                {{workProject.issuingReleaseFactStr}}
+            </td>
             <!--        // Стабилизация релиза-->
             <td>{{workProject.releaseEndPlanStr}}</td>
             <!--        // Стабилизация релиза-->
-            <td>{{workProject.releaseEndFactStr}}</td>
+            <td ng-style="getStyle(workProject.releaseEndPlan < workProject.releaseEndFact)">
+                {{workProject.releaseEndFactStr}}
+            </td>
 
             <!--        // Плановые трудозатраты, чел/час Стабилизация релиза-->
             <td>{{workProject.laborRelease}}</td>
             <!--        // Стабилизация релиза-->
-            <td>{{workProject.timeRelease}}</td>
+            <td ng-style="getStyle(workProject.laborRelease < workProject.timeRelease)">{{workProject.timeRelease}}</td>
             <!--        // ОПЭ релиза-->
             <td>{{workProject.opeEndPlanStr}}</td>
             <!--        // ОПЭ релиза-->
-            <td>{{workProject.opeEndFactStr}}</td>
+            <td ng-style="getStyle(workProject.opeEndPlan < workProject.opeEndFact)">{{workProject.opeEndFactStr}}</td>
             <!--        // Плановые трудозатраты, чел/час ОПЭ-->
             <td>{{workProject.laborOPE}}</td>
             <!--        // ОПЭ релиза-->
-            <td>{{workProject.timeOPE}}</td>
+            <td ng-style="getStyle(workProject.laborOPE < workProject.timeOPE)">{{workProject.timeOPE}}</td>
             <!--        // плановое время-->
             <td>{{workProject.timePlan}}</td>
             <!--        // фактическое время-->
-            <td>{{workProject.timeFact}}</td>
+            <td ng-style="getStyle(workProject.timePlan < workProject.timeFact)">{{workProject.timeFact}}</td>
 
             <!--        // ВЕНДЕРКА-->
             <td>{{workProject.timeWender}}</td>

@@ -28,6 +28,7 @@ import ru.darujo.specifications.Specifications;
 import ru.darujo.url.UrlWorkTime;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -188,6 +189,9 @@ public class WorkService {
                 releaseNameOld = workSave.getRelease() != null ? workSave.getRelease().getName() : null;
             }
         }
+        if (workFull.getWork().getProjectList() == null) {
+            workFull.getWork().setProjectList(new ArrayList<>());
+        }
         workProjectService.updateWorkLastDevelop(workFull.getWorkProject());
         if (!workFull.getWork().getProjectList().contains(workFull.getWorkProject().getProjectId())) {
             workFull.getWork().getProjectList().add(workFull.getWorkProject().getProjectId());
@@ -212,16 +216,18 @@ public class WorkService {
 
     private String getMesChangRated(String login, WorkLittleInterface work, WorkProjectInter workProject, String projectName) {
         return workProject.getRated() ?
-                String.format("%s проставил <u><b>оценка выполнена</b></u> по ЗИ %s %s в проекте %s",
+                String.format("%s проставил <u><b>оценка выполнена</b></u> по ЗИ %s %s в проекте %s оценка %s",
                         login,
                         work.getCodeSap(),
                         UrlWorkTime.getUrlRate(work.getId(), work.getName()),
-                        projectName) :
-                String.format("%s <u><b>отменил оценку</b></u> по ЗИ %s %s в проекте %s ",
+                        projectName,
+                        UrlWorkTime.getUrlRateAll(work.getId(), "ЗИ целиком")) :
+                String.format("%s <u><b>отменил оценку</b></u> по ЗИ %s %s в проекте %s оценка %s",
                         login,
                         work.getCodeSap(),
                         UrlWorkTime.getUrlRate(work.getId(), work.getName()),
-                        projectName);
+                        projectName,
+                        UrlWorkTime.getUrlRateAll(work.getId(), "ЗИ целиком"));
     }
 
     private void sendInform(String login, MessageType type, String text) {

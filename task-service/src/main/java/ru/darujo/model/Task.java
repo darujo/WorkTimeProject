@@ -38,7 +38,7 @@ public class Task {
     private Timestamp refresh;
     @Column(name = "time_create")
     private Timestamp timeCreate;
-    @Column(name = "project_id")
+    @Column(name = "project_id", nullable = false)
     private Long projectId;
 
 }
