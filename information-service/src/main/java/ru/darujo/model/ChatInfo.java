@@ -11,7 +11,7 @@ public class ChatInfo {
     @Setter
     private String author;
     @Setter
-    private Long chatId;
+    private String chatId;
     @Setter
     private Integer threadId;
     @Setter

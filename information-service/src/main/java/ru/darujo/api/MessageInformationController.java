@@ -47,7 +47,7 @@ public class MessageInformationController {
     @GetMapping("/report")
     public void sendReport(@RequestParam String reportType,
                            @RequestParam String author,
-                           @RequestParam(required = false) Long chatId,
+                           @RequestParam(required = false) String chatId,
                            @RequestParam(required = false) Integer threadId,
                            @RequestParam(required = false) Integer originMessageId) {
         scheduleService.sendReport(reportType, new ChatInfo(author, chatId, threadId, originMessageId));

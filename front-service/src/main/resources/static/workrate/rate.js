@@ -4,13 +4,14 @@ angular.module('workTimeService').controller('rateController', function ($scope,
     const constPatchWork = window.location.origin + '/work-service/v1';
     $scope.work = {
         roleStr: null,
-        stage0Fact: null,
-        stage1Fact: null,
-        stage2Fact: null,
-        stage3Fact: null,
-        stage4Fact: null,
-        stage5Fact: null,
-        stageAll: null,
+        stage0Fact: 0,
+        stage1Fact: 0,
+        stage2Fact: 0,
+        stage3Fact: 0,
+        stage4Fact: 0,
+        stage5Fact: 0,
+        stageAll: 0,
+        stageAllFact: 0,
         criteriaStr: null
     }
     $scope.Filter = {viewFact: false};
@@ -30,6 +31,16 @@ angular.module('workTimeService').controller('rateController', function ($scope,
             if ($location.checkAuthorized(response)) {
             }
         });
+    };
+    $scope.getStyle = function (flag) {
+        if (flag) {
+            return {
+                'background-color': 'red',
+                'color': 'white'
+            };
+        } else {
+            return {};
+        }
     };
 
     let loadRate = function () {
@@ -74,7 +85,7 @@ angular.module('workTimeService').controller('rateController', function ($scope,
     }
 
 
-    $scope.getStyle = function (code) {
+    $scope.getStyleText = function (code) {
         let codeInt = parseInt(code);
         if (codeInt !== 0) {
             return {

@@ -12,12 +12,21 @@ public class WorkTimeTypeService {
     private static WorkTimeTypeDto admin;
 
     public static void init() {
-        if (workTimeTypeMap.size() > 0) {
+        if (!workTimeTypeMap.isEmpty()) {
             return;
         }
         List<Long> analisList = new ArrayList<>();
         analisList.add(2L);
-        workTimeTypeMap.put(1, new WorkTimeTypeDto(null, 1, "Разработка", true));
+        workTimeTypeMap.put(8, new WorkTimeTypeDto(analisList, 8, "Уточнение требований", false));
+        workTimeTypeMap.put(9, new WorkTimeTypeDto(analisList, 9, "Подготовка ТЗ", false));
+        workTimeTypeMap.put(10, new WorkTimeTypeDto(analisList, 10, "Согласование ТЗ с разработчиком, ЦК", false));
+        workTimeTypeMap.put(11, new WorkTimeTypeDto(analisList, 11, "Согласование ТЗ с заказчиком", false));
+        workTimeTypeMap.put(12, new WorkTimeTypeDto(analisList, 12, "Подготовка СТ", true));
+        workTimeTypeMap.put(13, new WorkTimeTypeDto(analisList, 13, "Согласование СТ с Разработчиком и ЦК, Направление СТ Заказчику ", true));
+        workTimeTypeMap.put(14, new WorkTimeTypeDto(analisList, 14, "ТЕХПСИ", false));
+        workTimeTypeMap.put(15, new WorkTimeTypeDto(analisList, 15, "ПСИ", false));
+
+        workTimeTypeMap.put(1, new WorkTimeTypeDto(null, 1, "Разработка", true, analisList));
         workTimeTypeMap.put(2, new WorkTimeTypeDto(null, 2, "Консультация", false));
         workTimeTypeMap.put(3, new WorkTimeTypeDto(null, 3, "Анализ", false));
         workTimeTypeMap.put(4, new WorkTimeTypeDto(null, 4, "Тестирование", true));
@@ -25,7 +34,6 @@ public class WorkTimeTypeService {
         workTimeTypeMap.put(6, new WorkTimeTypeDto(null, 6, "Акс", false));
 
         admin = new WorkTimeTypeDto(null, 7, "Административная", false);
-        workTimeTypeMap.put(8, new WorkTimeTypeDto(analisList, 8, "Согласование Тз", false));
 //        if (type == null) {
 //            return null;
 //        } else if (taskType != null && taskType == 3) {
@@ -64,14 +72,13 @@ public class WorkTimeTypeService {
     public static List<WorkTimeTypeDto> getTypeDtoList(Long projectId, Boolean develop) {
         init();
         List<WorkTimeTypeDto> typesList;
-        typesList = workTimeTypeMap.values().stream().filter(workTimeTypeDto -> {
-                        boolean dd = (projectId == null
-                                || workTimeTypeDto.getProjectList() == null
-                                || workTimeTypeDto.getProjectList().contains(projectId))
-                                && (develop == null
-                                || workTimeTypeDto.isDevelop() == develop);
-                        return dd;
-        }).toList();
+        typesList = workTimeTypeMap.values().stream().filter(workTimeTypeDto -> (projectId == null
+                || workTimeTypeDto.getProjectList() == null
+                || workTimeTypeDto.getProjectList().contains(projectId))
+                && (develop == null
+                || workTimeTypeDto.isDevelop() == develop)
+                && (workTimeTypeDto.getProjectNotList() == null
+                || !workTimeTypeDto.getProjectNotList().contains(projectId))).toList();
         return typesList;
     }
     public static List<Integer> getTypes(Boolean develop) {

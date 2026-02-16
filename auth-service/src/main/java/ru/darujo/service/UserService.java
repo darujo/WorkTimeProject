@@ -118,8 +118,9 @@ public class UserService {
             User saveUser = userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + user.getId() + " не найден"));
             user.setRights(saveUser.getRights());
             user.setRoles(saveUser.getRoles());
-            user.setCurrentProject(saveUser.getCurrentProject());
-
+            if (user.getCurrentProject() == null) {
+                user.setCurrentProject(saveUser.getCurrentProject());
+            }
 //            user.setProjects(saveUser.getProjects());
             user.setTelegramId(saveUser.getTelegramId());
         } else {
@@ -290,7 +291,7 @@ public class UserService {
                             userInfoType -> new UserInfoDto(
                                     userInfoType.getUser().getId(),
                                     userInfoType.getUser().getNikName(),
-                                    userInfoType.getTelegramId() == null ? userInfoType.getUser().getTelegramId() : userInfoType.getTelegramId(),
+                                    userInfoType.getTelegramId() == null ? Long.toString(userInfoType.getUser().getTelegramId()) : Long.toString(userInfoType.getTelegramId()),
                                     userInfoType.getThreadId(),
                                     null)).toList();
             messageTypeListMap.put(type, userDTOs);

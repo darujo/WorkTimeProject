@@ -17,7 +17,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
         console.log($scope.Work)
 
     };
-    $scope.rightObj ={Edit:false,Create:false};
+    $scope.rightObj = {Edit: false, Create: false};
 
     let checkRight = function (right, message) {
         document.getElementById("ButtonSaveDown").style.display = "none";
@@ -103,7 +103,11 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 }
             }).then(function (response) {
                 console.log(response);
-                $scope.WorkList = response.data._embedded.workDtoList;
+                if (response.data._embedded) {
+                    $scope.WorkList = response.data._embedded.workDtoList;
+                } else {
+                    $scope.WorkList = null;
+                }
                 console.log($scope.WorkList);
                 maxPage = response.data["totalPages"];
                 $scope.load = false;

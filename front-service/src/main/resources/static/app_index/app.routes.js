@@ -267,7 +267,7 @@ angular.module('workTimeService').config(function ($routeProvider) {
             }
         })
         .when('/rate', {
-            templateUrl: 'workRate/rate.html?ver=' + ver,
+            templateUrl: 'workRate/rate.html?ver='.toLowerCase() + ver,
             controller: 'rateController',
             resolve: {
                 LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
