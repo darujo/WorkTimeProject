@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 import ru.darujo.convertor.RightConvertor;
 import ru.darujo.dto.user.RoleRightActiveDto;
 import ru.darujo.dto.user.RoleRightDto;
+import ru.darujo.dto.user.UserRoleDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.Project;
 import ru.darujo.model.Role;
+import ru.darujo.model.User;
 import ru.darujo.repository.RoleRepository;
 import ru.darujo.specifications.Specifications;
 
@@ -45,8 +47,10 @@ public class RoleService {
         return roleRepository.findByNameIgnoreCaseAndProject(role, project);
     }
 
-    public Iterable<Role> getListRole() {
-        return roleRepository.findAll();
+    public List<Role> getListRole(Project project) {
+        Specification<Role> specification = Specification.unrestricted();
+        specification = Specifications.eq(specification, "project", project);
+        return roleRepository.findAll(specification);
     }
 
     public Role findById(long id) {
@@ -88,7 +92,7 @@ public class RoleService {
     @Transactional
     public RoleRightDto getRoleRight(Long roleId) {
 
-        Role rights = roleRepository.findById(roleId).orElseThrow(() -> new ResourceNotFoundRunTime("Группа с id " + roleId + " не найден"));
+        Role role = roleRepository.findById(roleId).orElseThrow(() -> new ResourceNotFoundRunTime("Группа с id " + roleId + " не найден"));
         Map<Long, RoleRightActiveDto> rightActiveDtoHashMap = new HashMap<>();
         rightService
                 .getListRight()
@@ -97,8 +101,8 @@ public class RoleService {
                         rightActiveDtoHashMap.put(right.getId(), RightConvertor.getRoleRightActiveDto(right, Boolean.FALSE));
                     }
                 });
-        rights.getRights().forEach(right -> rightActiveDtoHashMap.get(right.getId()).setActive(Boolean.TRUE));
-        return new RoleRightDto(rights.getId(), rights.getName(), rights.getLabel(), rightActiveDtoHashMap.values().stream().toList());
+        role.getRights().forEach(right -> rightActiveDtoHashMap.get(right.getId()).setActive(Boolean.TRUE));
+        return new RoleRightDto(role.getId(), role.getName(), role.getLabel(), rightActiveDtoHashMap.values().stream().toList());
     }
 
     @Transactional
@@ -114,17 +118,41 @@ public class RoleService {
         return getRoleRight(role.getId());
     }
 
-    public List<Role> getRoleList(String code, String name, Long projectId) {
+    public List<Role> getRoleList(String code, String name, Long projectId, User user) {
         Specification<@NonNull Role> specification = Specification.unrestricted();
         specification = Specifications.like(specification, "code", code);
         specification = Specifications.like(specification, "name", name);
         specification = Specifications.eq(specification, "project", ProjectService.getInstance().findById(projectId));
-        return roleRepository.findAll(specification, Sort.by("name"));
+        List<Role> roles = roleRepository.findAll(specification, Sort.by("name"));
+        if (user != null) {
+            roles = roles.stream().filter(role -> role.getUsers() != null && role.getUsers().contains(user)).toList();
+        }
+        return roles;
     }
 
     @Transactional
     public void deleteRole(long id) {
         Role role = roleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Группа не найдена"));
         roleRepository.delete(role);
+    }
+
+    @Transactional
+    public void setUserRole(User user, UserRoleDto userRole) {
+//        user.getRoles().removeIf(role -> role.getProject().getId().equals(projectId));
+        userRole.getRoles().forEach((roleDto) -> {
+            Role role = findById(roleDto.getId());
+            if (roleDto.getActive()) {
+                if (!role.getUsers().contains(user)) {
+                    role.getUsers().add(user);
+                    roleRepository.save(role);
+                }
+            } else {
+                if (role.getUsers().contains(user)) {
+                    role.getUsers().remove(user);
+                    roleRepository.save(role);
+                }
+            }
+        });
+//        userRepository.save(user);
     }
 }

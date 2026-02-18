@@ -2,9 +2,11 @@ package ru.darujo.utils;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.darujo.model.User;
+import ru.darujo.service.RoleService;
 
 import java.util.*;
 
@@ -15,6 +17,12 @@ public class JwtTokenUtils {
     private String secretKey;
     @Value("${jwt.lifeTimeToken}")
     private Integer lifeTimeToken;
+    private RoleService roleService;
+
+    @Autowired
+    public void setRoleService(RoleService roleService) {
+        this.roleService = roleService;
+    }
 
     public String generateToken(User userDetails) {
         Map<String, Object> claims = new HashMap<>();
@@ -29,13 +37,13 @@ public class JwtTokenUtils {
                     .forEach(right -> rightList.add(
                             right.getName()));
         }
-        if (userDetails.getRoles() != null) {
-            userDetails.getRoles().stream().filter(role -> role.getProject().equals(userDetails.getCurrentProject()))
+
+        roleService.getListRole(userDetails.getCurrentProject())
                     .forEach(role ->
                             role.getRights().forEach(right -> rightList.add(
                                     right.getName()))
                     );
-        }
+
         if (!rightList.isEmpty()) {
             claims.put("authorities", rightList);
         }

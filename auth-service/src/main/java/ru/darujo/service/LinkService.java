@@ -156,9 +156,13 @@ public class LinkService {
         return new ResultMes(flag, flag ? "" : "Нет ни одного пользователя с таким телеграмм");
     }
 
+    @Transactional
     public void linkDeleteTelegram(String nikName, String messageType) {
         User user = userService.findByNikName(nikName).orElseThrow(() -> new ResourceNotFoundRunTime("Не найден с логином " + nikName));
-
+        if (messageType == null) {
+            user.setTelegramId(null);
+            userService.saveUser(user);
+        }
         userInfoTypeService.getInfoTypes(user, null, null, messageType)
                 .forEach(userInfoType -> {
                     userInfoType.setTelegramId(null);
