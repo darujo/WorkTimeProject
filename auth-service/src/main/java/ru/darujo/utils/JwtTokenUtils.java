@@ -38,11 +38,11 @@ public class JwtTokenUtils {
                             right.getName()));
         }
 
-        roleService.getListRole(userDetails.getCurrentProject())
-                    .forEach(role ->
-                            role.getRights().forEach(right -> rightList.add(
-                                    right.getName()))
-                    );
+        roleService.getRoleList(null, null, userDetails.getCurrentProject().getId(), userDetails)
+                .forEach(role ->
+                        role.getRights().forEach(right -> rightList.add(
+                                right.getName()))
+                );
 
         if (!rightList.isEmpty()) {
             claims.put("authorities", rightList);

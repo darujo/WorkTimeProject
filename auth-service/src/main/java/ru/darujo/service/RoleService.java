@@ -138,7 +138,6 @@ public class RoleService {
 
     @Transactional
     public void setUserRole(User user, UserRoleDto userRole) {
-//        user.getRoles().removeIf(role -> role.getProject().getId().equals(projectId));
         userRole.getRoles().forEach((roleDto) -> {
             Role role = findById(roleDto.getId());
             if (roleDto.getActive()) {
@@ -153,6 +152,5 @@ public class RoleService {
                 }
             }
         });
-//        userRepository.save(user);
     }
 }
