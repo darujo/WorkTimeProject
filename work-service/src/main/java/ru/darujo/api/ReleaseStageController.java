@@ -51,8 +51,9 @@ public class ReleaseStageController {
     public void changeWork(@RequestHeader String username,
                            @RequestParam Long workId,
                            @RequestParam(required = false) Long releaseId,
+                           @RequestParam(name = "system_project", required = false) Long projectId,
                            @RequestParam Integer stageZi
     ) {
-        releaseStageService.changeStage(username, workId, releaseId, stageZi);
+        releaseStageService.changeStage(username, workId, projectId, releaseId, stageZi);
     }
 }

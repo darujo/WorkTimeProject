@@ -13,6 +13,7 @@ import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.ResultMes;
 import ru.darujo.dto.jwt.JwtRequest;
 import ru.darujo.dto.jwt.JwtResponse;
+import ru.darujo.dto.project.ProjectDto;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.user.UserFio;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
@@ -90,7 +91,7 @@ public class UserServiceIntegration extends ServiceIntegration {
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
-                    .bodyToMono(new ParameterizedTypeReference<@org.jspecify.annotations.NonNull CustomPageImpl<UserDto>>() {
+                    .bodyToMono(new ParameterizedTypeReference<@NonNull CustomPageImpl<UserDto>>() {
                     })
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block()).getContent();
@@ -223,5 +224,28 @@ public class UserServiceIntegration extends ServiceIntegration {
             userDtoMap.put(nikName, userDto);
         }
         return userDto;
+    }
+
+    public List<ProjectDto> getProjects(String code, String name) {
+        StringBuilder stringBuilder = new StringBuilder();
+        addTeg(stringBuilder, "code", code);
+        addTeg(stringBuilder, "name", name);
+        try {
+            return Objects.requireNonNull(webClient.get().uri("/projects" + stringBuilder)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
+                    .bodyToMono(new ParameterizedTypeReference<@NonNull CustomPageImpl<ProjectDto>>() {
+                    })
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .block()).getContent();
+        } catch (RuntimeException ex) {
+            if (ex instanceof ResourceNotFoundRunTime) {
+                throw ex;
+            } else {
+                throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить проекты (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            }
+        }
+
     }
 }

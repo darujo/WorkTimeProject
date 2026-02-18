@@ -29,6 +29,7 @@ public class TaskRepController {
                              @RequestParam(required = false) String codeDEVBO,
                              @RequestParam(required = false) String description,
                              @RequestParam(required = false) Long workId,
+                             @RequestParam(required = false) Long projectId,
                              @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
                              @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
                              @RequestParam(required = false) String type
@@ -41,6 +42,7 @@ public class TaskRepController {
                 codeDEVBO,
                 description,
                 workId,
+                projectId,
                 dateLe,
                 dateGt,
                 type);
@@ -48,26 +50,29 @@ public class TaskRepController {
 
     @GetMapping("/user")
     public ListString getFactUsers(@RequestParam(required = false) Long workId,
-                                   @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr
+                                   @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
+                                   @RequestParam(required = false) Long projectId
     ) {
         Timestamp dateLe = DateHelper.DTZToDate(dateLeStr, "dateLe = ");
 
         return taskRepService.getFactUsers(
-                workId, dateLe);
+                workId, projectId, dateLe);
     }
 
     @GetMapping("/avail/{workId}")
-    public Boolean getFactUsers(@PathVariable long workId
+    public Boolean getFactUsers(@PathVariable long workId,
+                                @RequestParam(required = false) Long projectId
     ) {
-        return taskRepService.getAvailTime(workId);
+        return taskRepService.getAvailTime(workId, projectId);
     }
 
     @GetMapping("/week")
     public List<UserWorkDto> getWeekWork(@RequestParam(required = false) Long workId,
+                                         @RequestParam(required = false) Long projectId,
                                          @RequestParam(required = false) String nikName,
                                          @RequestParam(required = false) Boolean addTotal
     ) {
-        return taskRepService.getWeekWork(workId, nikName, addTotal);
+        return taskRepService.getWeekWork(workId,projectId, nikName, addTotal);
     }
 
     @GetMapping("/lastTime")

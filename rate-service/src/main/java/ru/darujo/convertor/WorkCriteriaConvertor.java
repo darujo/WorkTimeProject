@@ -13,6 +13,7 @@ public class WorkCriteriaConvertor {
                 .setDevelop50(workCriteria.getDevelop50())
                 .setDevelop100(workCriteria.getDevelop100())
                 .setWorkId(workCriteria.getWorkId())
+                .setProjectId(workCriteria.getProjectId())
                 .getWorkCriteriaDto();
     }
     public static WorkCriteria getWorkCriteria(WorkCriteriaDto workCriteria){
@@ -23,5 +24,6 @@ public class WorkCriteriaConvertor {
                 .setDevelop50(workCriteria.getDevelop50())
                 .setDevelop100(workCriteria.getDevelop100())
                 .setWorkId(workCriteria.getWorkId())
+                .setProjectId(workCriteria.getProjectId())
                 .getWorkCriteria();    }
 }

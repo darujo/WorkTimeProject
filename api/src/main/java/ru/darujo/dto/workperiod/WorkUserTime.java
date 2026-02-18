@@ -14,15 +14,13 @@ public class WorkUserTime {
     private String codeZI;
     // Наименование Зи
     private String name;
-    private Integer stageZI;
     private List<UserWorkFormDto> userWorkFormDTOs;
 
-    public WorkUserTime(Long id, Long codeSap, String codeZI, String name, Integer stageZI, List<UserWorkFormDto> userWorkFormDTOs) {
+    public WorkUserTime(Long id, Long codeSap, String codeZI, String name, List<UserWorkFormDto> userWorkFormDTOs) {
         this.id = id;
         this.codeSap = codeSap;
         this.codeZI = codeZI;
         this.name = name;
-        this.stageZI = stageZI;
         this.userWorkFormDTOs = userWorkFormDTOs;
     }
 
@@ -41,11 +39,6 @@ public class WorkUserTime {
 
     public String getName() {
         return name;
-    }
-
-    @SuppressWarnings("unused")
-    public Integer getStageZI() {
-        return stageZI;
     }
 
     public List<UserWorkFormDto> getUserWorkFormDTOs() {

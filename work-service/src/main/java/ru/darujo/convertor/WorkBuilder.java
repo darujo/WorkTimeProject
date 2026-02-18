@@ -6,12 +6,15 @@ import ru.darujo.dto.work.WorkEditDto;
 import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.model.Release;
 import ru.darujo.model.Work;
+import ru.darujo.model.WorkProject;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.List;
 
 public class WorkBuilder {
     private Long id;
+    private Long workProjectId;
     // Код SAP
     private Long codeSap;
     // Код Зи
@@ -80,6 +83,7 @@ public class WorkBuilder {
     //начало разработки план
     private Timestamp developEndPlan;
     private Boolean rated;
+    private List<Long> projectList;
     private Long projectId;
 
     public WorkBuilder setRated(Boolean rated) {
@@ -110,6 +114,16 @@ public class WorkBuilder {
 
     public WorkBuilder setStageZI(Integer stageZI) {
         this.stageZI = stageZI;
+        return this;
+    }
+
+    public WorkBuilder setWorkProjectId(Long workProjectId) {
+        this.workProjectId = workProjectId;
+        return this;
+    }
+
+    public WorkBuilder setProjectList(List<Long> projectList) {
+        this.projectList = projectList;
         return this;
     }
 
@@ -270,6 +284,7 @@ public class WorkBuilder {
     public WorkDto getWorkDto() {
         return new WorkDto(
                 id,
+                projectId,
                 codeSap,
                 codeZI,
                 name,
@@ -293,6 +308,7 @@ public class WorkBuilder {
     public WorkEditDto getWorkEditDto() {
         return new WorkEditDto(
                 id,
+                workProjectId,
                 codeSap,
                 codeZI,
                 name,
@@ -328,10 +344,11 @@ public class WorkBuilder {
                 releaseStartPlan,
                 opeStartPlan,
                 rated,
-                projectId);
+                projectId,
+                projectList);
     }
 
-    public Work getWork() {
+    private Work getWork() {
         analiseEndFact = getDate(analiseEndFact, developStartFact);
 //        issuePrototypeFact = getDate(issuePrototypeFact, debugStartFact);
         debugStartFact = getDateAddDay(debugStartFact, issuePrototypeFact);
@@ -349,40 +366,12 @@ public class WorkBuilder {
                 codeSap,
                 codeZI,
                 name,
-                analiseEndFact,
-                analiseEndPlan,
-                developEndFact,
-                developEndPlan,
-                issuePrototypeFact,
-                issuePrototypePlan,
-                debugEndFact,
-                debugEndPlan,
-                releaseEndFact,
-                releaseEndPlan,
-                opeEndFact,
-                opeEndPlan,
-                task,
                 description,
-                startTaskPlan,
-                startTaskFact,
-                stageZI,
-                releaseId != null ? new Release(releaseId, release, issuingReleasePlan, issuingReleaseFact, null, projectId) : null,
-                analiseStartFact,
-                developStartFact,
-                debugStartFact,
-                releaseStartFact,
-                opeStartFact,
-                analiseStartPlan,
-                developStartPlan,
-                debugStartPlan,
-                releaseStartPlan,
-                opeStartPlan,
-                rated,
-                projectId);
+                projectList);
     }
 
     public WorkLittleDto getWorkLittleDto() {
-        return new WorkLittleDto(id, codeSap, codeZI, name, stageZI, rated);
+        return new WorkLittleDto(id, codeSap, codeZI, name, stageZI, rated, projectList);
     }
 
     public Timestamp dateToStartTime(Timestamp timestamp) {
@@ -427,4 +416,37 @@ public class WorkBuilder {
 
     }
 
+    public WorkProject getWorkProject() {
+        return new WorkProject(workProjectId,
+                projectId,
+                getWork(),
+                analiseEndFact,
+                analiseEndPlan,
+                developEndFact,
+                developEndPlan,
+                issuePrototypeFact,
+                issuePrototypePlan,
+                debugEndFact,
+                debugEndPlan,
+                releaseEndFact,
+                releaseEndPlan,
+                opeEndFact,
+                opeEndPlan,
+                analiseStartFact,
+                developStartFact,
+                debugStartFact,
+                releaseStartFact,
+                opeStartFact,
+                analiseStartPlan,
+                developStartPlan,
+                debugStartPlan,
+                releaseStartPlan,
+                opeStartPlan,
+                rated,
+                releaseId == null ? null : new Release(releaseId, release),
+                startTaskPlan,
+                startTaskFact,
+                task,
+                stageZI);
+    }
 }

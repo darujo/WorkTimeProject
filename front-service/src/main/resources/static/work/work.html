@@ -83,7 +83,8 @@
     </div>
     <ul class="container">
         <li class="nav-item"><a class="nav-link" href="#!/work_stage">Просмотр статусо по ЗИ</a></li>
-        <li class="nav-item" ng-if="rightObj.Edit"><a class="nav-link" href="#!/work_stage_edit">Изменение статусов по ЗИ</a></li>
+        <li class="nav-item" ng-if="rightObj.Edit"><a class="nav-link" href="#!/work_stage_edit">Изменение статусов по
+            ЗИ</a></li>
     </ul>
     <h1>Список ЗИ</h1>
     <table class="container">
@@ -98,14 +99,14 @@
                 <button class="table_head2 button_table" ng-click="workSort('name')"> Наименование</button>
             </td>
             <td class="table_head2" rowspan="3"> № внутренней задачи (DEVBO)</td>
-<!--            <td class="table_head2" rowspan="3"> Краткое описание внутренней задачи</td>-->
+            <!--            <td class="table_head2" rowspan="3"> Краткое описание внутренней задачи</td>-->
             <td class="table_head3" rowspan="3"> Плановая дата завершения 0 этапа</td>
             <td class="table_head2" rowspan="2" colspan="2"> Дата начала доработки</td>
             <td class="table_head2" colspan="5"> Плановые трудозатраты, чел/час</td>
             <td class="table_head2" colspan="5"> Факт дата завершения этапа</td>
             <td class="table_head3" rowspan="3"> Текущий этап ЗИ</td>
             <td class="table_head2" rowspan="3">
-                <button class="table_head2 button_table" ng-click="workSort('releaseId')">Порядковый номер релиза
+                <button class="table_head2 button_table" ng-click="workSort('release.sort')">Порядковый номер релиза
                 </button>
             </td>
             <td class="table_head2" rowspan="2" colspan="2"> Выдача релиза даты</td>
@@ -159,7 +160,7 @@
                 <button ng-click="addTime(work.id)">{{work.name}}</button>
             </td>
             <td>{{work.task}}</td>
-<!--            <td class="text_left text_not_wrap">{{work.description}}</td>-->
+            <!--            <td class="text_left text_not_wrap">{{work.description}}</td>-->
             <td class="date">{{work.analiseEndPlan}}</td>
             <td class="date">{{work.startTaskPlan}}</td>
             <td>{{work.startTaskFact}}</td>
@@ -170,7 +171,7 @@
             <td>{{work.laborOPE}}</td>
 
             <td>{{work.analiseEndFact}}</td>
-<!--            <td>{{work.developEndFact}}</td>-->
+            <!--            <td>{{work.developEndFact}}</td>-->
             <td>{{work.issuePrototypeFact}}</td>
             <td>{{work.debugEndFact}}</td>
             <td>{{work.releaseEndFact}}</td>
@@ -344,13 +345,13 @@
                 <tr>
                     <td>
                         <p class="vvod"> Окончание разработки</p>
-<!--                        <label for="DevelopStartPlan" class="p-form">-->
-<!--                            <input class="vvod" type="date" id="DevelopStartPlan" step="any"-->
-<!--                                   ng-model="Work.developStartPlan"/>-->
-<!--                        </label>-->
+                        <!--                        <label for="DevelopStartPlan" class="p-form">-->
+                        <!--                            <input class="vvod" type="date" id="DevelopStartPlan" step="any"-->
+                        <!--                                   ng-model="Work.developStartPlan"/>-->
+                        <!--                        </label>-->
                     </td>
                     <td>
-<!--                        <p>-</p>-->
+                        <!--                        <p>-</p>-->
                     </td>
                     <td>
                         <label for="DevelopEndPlan" class="p-form">
@@ -362,12 +363,12 @@
                     </td>
                     <td>
                         <p class="vvod"> Окончание разработки</p>
-<!--                        <label for="DevelopStartFact" class="p-form"></label>-->
-<!--                        <input class="vvod" type="date" id="DevelopStartFact" step="any"-->
-<!--                               ng-model="Work.developStartFact"/>-->
+                        <!--                        <label for="DevelopStartFact" class="p-form"></label>-->
+                        <!--                        <input class="vvod" type="date" id="DevelopStartFact" step="any"-->
+                        <!--                               ng-model="Work.developStartFact"/>-->
                     </td>
                     <td>
-<!--                        <p>-</p>-->
+                        <!--                        <p>-</p>-->
                     </td>
                     <td>
                         <label for="DevelopEndFact" class="p-form"></label>
@@ -622,6 +623,15 @@
                 <br>
             </div>
         </details>
+        <div class="horiz">
+            <label for="WorkProject" class="p-head">Проект</label>
+            <select class="vvod80mar10" name="WorkProject" id="WorkProject"
+                    ng-model="Work.projectList" multiple required>
+                <option ng-repeat="project in ProjectList" ng-value="project.id" value="project.id">
+                    {{project.code}} {{project.name}}
+                </option>
+            </select>
+        </div>
         <button type="submit" class="button" id="ButtonSaveDown">Сохранить</button>
         <button type="button" ng-click="loadWork()" class="button">Вернуться к списку</button>
     </form>

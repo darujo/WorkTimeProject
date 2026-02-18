@@ -45,10 +45,10 @@ public class LinkController {
     }
 
     @GetMapping("/delete/type")
-    public void linkDeleteTelegramType(@RequestParam String nikName,
+    public void linkDeleteTelegramType(@RequestHeader String username,
                                        @RequestParam(required = false) String messageType
     ) {
-        linkService.linkDeleteTelegram(nikName, messageType);
+        linkService.linkDeleteTelegram(username, messageType);
     }
 
 }

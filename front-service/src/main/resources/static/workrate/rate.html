@@ -1,0 +1,192 @@
+<div id="WorkStageList" class="head_text_elem">
+    <h1>{{WorkRate.sap}} </h1>
+    <h1>{{WorkRate.code}} {{WorkRate.name}} </h1>
+    <button type="button" class="head_button mar5" id="WorkPage" ng-click="workPage()">Назад</button>
+</div>
+
+<div>
+    <img ng-if="load" src="../gif/wait1.gif" alt="wait1" width="900" height="506"/>
+</div>
+<details ng-repeat="projectRate in WorkRate.rateList" class="details_block_menu"
+
+         id="DetailPrim">
+    <!--         open -->
+    <summary class="p-head">{{projectRate.projectName}} ({{projectRate.projectCode}})
+        <p ng-style="getStyleText(projectRate.rated ? 0 : 1)">{{projectRate.rated ? "Оценка выполнена" : "Оценка не
+            выполнена"}}</p>
+    </summary>
+    <div>
+
+
+        <p ng-style="getStyleText(projectRate.rateStatusSC.code)">{{projectRate.rateStatusSC.value}}</p>
+        <p ng-style="getStyleText(projectRate.rateStatusST.code)">{{projectRate.rateStatusST.value}}</p>
+        <p ng-style="getStyleText(projectRate.rateStatusCT.code)">{{projectRate.rateStatusCT.value}}</p>
+        <div class="horiz">
+            <h1>Плановая оценка</h1>
+
+        </div>
+        <div>
+            <label for="FavoriteTask" class="p-head">Показать факт</label>
+            <input type="checkbox"
+                   id="FavoriteTask"
+                   ng-model="Filter.viewFact"/>
+        </div>
+        <table>
+            <tr>
+                <td class="table_head2">№ п/п</td>
+                <td class="table_head2">ФИО</td>
+                <td class="table_head2">Вид работ</td>
+                <td ng-if="Filter.viewFact" class="table_head1">0 факт</td>
+                <td class="table_head2">0 этап</td>
+                <td ng-if="Filter.viewFact" class="table_head1">I факт</td>
+                <td class="table_head2">I этап</td>
+                <td ng-if="Filter.viewFact" class="table_head1">II факт</td>
+                <td class="table_head2">II этап</td>
+                <td ng-if="Filter.viewFact" class="table_head1">III факт</td>
+                <td class="table_head2">III этап</td>
+                <td ng-if="Filter.viewFact" class="table_head1">IV факт</td>
+                <td class="table_head2">IV этап</td>
+                <td ng-if="Filter.viewFact" class="table_head1">V факт</td>
+                <td ng-if="Filter.viewFact" class="table_head1">Итого, ч/часов факт</td>
+                <td class="table_head2">Итого, ч/часов</td>
+            </tr>
+            <tbody>
+            <tr ng-repeat="work in projectRate.workStageList">
+                <td>{{$index + 1}}</td>
+                <td ng-if="!work.firstName">{{work.nikName}}</td>
+                <td ng-if="work.firstName">{{work.lastName}} {{work.firstName}}
+                    {{work.patronymic}}
+                </td>
+
+                <td>{{work.roleStr}}</td>
+                <td ng-if="Filter.viewFact" ng-style="getStyle(work.stage0Fact > work.stage0)">{{work.stage0Fact}}</td>
+                <td>{{work.stage0}}</td>
+                <td ng-if="Filter.viewFact" ng-style="getStyle(work.stage1Fact > work.stage1 )">{{work.stage1Fact}}</td>
+                <td>{{work.stage1}}</td>
+                <td ng-if="Filter.viewFact" ng-style="getStyle(work.stage2Fact > work.stage2 )">{{work.stage2Fact}}</td>
+                <td>{{work.stage2}}</td>
+                <td ng-if="Filter.viewFact" ng-style="getStyle(work.stage3Fact , work.stage3 )">{{work.stage3Fact}}</td>
+                <td>{{work.stage3}}</td>
+                <td ng-if="Filter.viewFact" ng-style="getStyle(work.stage4Fact > work.stage4 )">{{work.stage4Fact}}</td>
+                <td>{{work.stage4}}</td>
+                <td ng-if="Filter.viewFact">{{work.stage5Fact}}</td>
+                <td ng-if="Filter.viewFact" ng-style="getStyle(work.stageAllFact > work.stageAll )">
+                    {{work.stageAllFact}}
+                </td>
+                <td>{{work.stageAll}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div id="WorkCriteriaList" class="head_text_elem">
+        <div class="horiz">
+            <h1>Критерии</h1>
+        </div>
+        <table>
+            <tr>
+                <td class="table_head2">База</td>
+                <td class="table_head1">Минимальная доработка (10% кода) ед.</td>
+                <td class="table_head2">Общая переработка (50% кода) ед.</td>
+                <td class="table_head1">Новая доработка или ре инженеринг кода ед.</td>
+            </tr>
+            <tbody>
+            <tr ng-repeat="work in projectRate.workCriteriaList">
+                <td>{{work.criteriaStr}}</td>
+                <td>{{work.develop10}}</td>
+                <td>{{work.develop50}}</td>
+                <td>{{work.develop100}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="WorkTypeList" class="head_text_elem">
+        <div class="horiz">
+            <h1>Работы</h1>
+        </div>
+        <table>
+            <tr>
+                <td class="table_head1">П.Н.</td>
+                <td class="table_head2">Планируемые ТрЗ</td>
+                <td class="table_head1">Часы</td>
+                <td class="table_head2">Р/дн</td>
+
+            </tr>
+            <tbody>
+            <tr ng-repeat="work in projectRate.workTypeList">
+                <td>{{$index + 1}}</td>
+                <td>{{work.type}}</td>
+                <td>{{work.time}}</td>
+                <td>{{work.time / 8}}</td>
+
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</details>
+<h1>Итоги</h1>
+<div>
+    <label for="TotalWork" class="p-head">Показать факт</label>
+    <input type="checkbox"
+           id="TotalWork"
+           ng-model="Filter.viewFact"/>
+</div>
+<table>
+    <tr>
+        <td class="table_head2">№ п/п</td>
+        <td class="table_head2">ФИО</td>
+        <td class="table_head2">Вид работ</td>
+        <td ng-if="Filter.viewFact" class="table_head1">0 факт</td>
+        <td class="table_head2">0 этап</td>
+        <td ng-if="Filter.viewFact" class="table_head1">I факт</td>
+        <td class="table_head2">I этап</td>
+        <td ng-if="Filter.viewFact" class="table_head1">II факт</td>
+        <td class="table_head2">II этап</td>
+        <td ng-if="Filter.viewFact" class="table_head1">III факт</td>
+        <td class="table_head2">III этап</td>
+        <td ng-if="Filter.viewFact" class="table_head1">IV факт</td>
+        <td class="table_head2">IV этап</td>
+        <td ng-if="Filter.viewFact" class="table_head1">V факт</td>
+        <td ng-if="Filter.viewFact" class="table_head1">Итого, ч/часов факт</td>
+        <td class="table_head2">Итого, ч/часов</td>
+    </tr>
+    <tbody>
+    <tr>
+        <td>{{$index + 1}}</td>
+        <td ng-if="!WorkRate.stageTotal.firstName">{{WorkRate.stageTotal.nikName}}</td>
+        <td ng-if="WorkRate.stageTotal.firstName">{{WorkRate.stageTotal.lastName}} {{rateTot.firstName}}
+            {{WorkRate.stageTotal.patronymic}}
+        </td>
+
+        <td>{{WorkRate.stageTotal.roleStr}}</td>
+        <td ng-if="Filter.viewFact" ng-style="getStyle(WorkRate.stageTotal.stage0Fact > WorkRate.stageTotal.stage0 )">
+            {{WorkRate.stageTotal.stage0Fact}}
+        </td>
+        <td>{{WorkRate.stageTotal.stage0}}</td>
+        <td ng-if="Filter.viewFact" ng-style="getStyle(WorkRate.stageTotal.stage1Fact > WorkRate.stageTotal.stage1 )">
+            {{WorkRate.stageTotal.stage1Fact}}
+        </td>
+        <td>{{WorkRate.stageTotal.stage1}}</td>
+        <td ng-if="Filter.viewFact" ng-style="getStyle(WorkRate.stageTotal.stage2Fact > WorkRate.stageTotal.stage2 )">
+            {{WorkRate.stageTotal.stage2Fact}}
+        </td>
+        <td>{{WorkRate.stageTotal.stage2}}</td>
+        <td ng-if="Filter.viewFact" ng-style="getStyle(WorkRate.stageTotal.stage3Fact > WorkRate.stageTotal.stage3 )">
+            {{WorkRate.stageTotal.stage3Fact}}
+        </td>
+        <td>{{WorkRate.stageTotal.stage3}}</td>
+        <td ng-if="Filter.viewFact" ng-style="getStyle(WorkRate.stageTotal.stage4Fact > WorkRate.stageTotal.stage4 )">
+            {{WorkRate.stageTotal.stage4Fact}}
+        </td>
+        <td>{{WorkRate.stageTotal.stage4}}</td>
+        <td ng-if="Filter.viewFact">{{WorkRate.stageTotal.stage5Fact}}</td>
+        <td ng-if="Filter.viewFact"
+            ng-style="getStyle(WorkRate.stageTotal.stageAllFact > WorkRate.stageTotal.stageAll )">
+            {{WorkRate.stageTotal.stageAllFact}}
+        </td>
+        <td>{{WorkRate.stageTotal.stageAll}}</td>
+    </tr>
+    </tbody>
+</table>

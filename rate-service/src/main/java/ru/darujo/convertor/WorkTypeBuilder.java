@@ -12,6 +12,7 @@ public class WorkTypeBuilder {
     private String type;
     private Float time;
     private Long workId;
+    private Long projectId;
     private Integer number;
 
     public WorkTypeBuilder setId(Long id) {
@@ -39,11 +40,16 @@ public class WorkTypeBuilder {
         return this;
     }
 
+    public WorkTypeBuilder setProjectId(Long projectId) {
+        this.projectId = projectId;
+        return this;
+    }
+
     public WorkTypeDto getWorkTypeDto() {
-        return new WorkTypeDto(id, type, time, workId, number);
+        return new WorkTypeDto(id, type, time, workId, number, projectId);
     }
 
     public WorkType getWorkType() {
-        return new WorkType(id, type, time, workId, number);
+        return new WorkType(id, type, time, workId, number, projectId);
     }
 }

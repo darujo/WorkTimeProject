@@ -40,9 +40,10 @@ public class WorkRepController {
                                         @RequestParam(required = false) Boolean availWork,
                                         @RequestParam(defaultValue = "15") Integer stageZi,
                                         @RequestParam(required = false) Long releaseId,
+                                        @RequestParam(required = false) Long projectId,
                                         @RequestParam(required = false) String[] sort) {
         StageZiFind stageZiFind = new StageZiFind(stageZi);
-        return workRepService.getWorkRep(ziName, availWork, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), releaseId, sort);
+        return workRepService.getWorkRep(ziName, availWork, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), releaseId, projectId, sort);
     }
 
     @GetMapping("/work/fact")
@@ -55,7 +56,7 @@ public class WorkRepController {
                                             @RequestParam(required = false) String codeZi,
                                             @RequestParam(required = false) String task,
                                             @RequestParam(required = false) Long releaseId,
-                                            @RequestParam(defaultValue = "release") String sort,
+                                            @RequestParam(defaultValue = "release.sort") String sort,
                                             @RequestParam(defaultValue = "true") boolean hideNotTime) {
         if (nikName != null && nikName.isEmpty()) {
             nikName = null;
@@ -64,19 +65,20 @@ public class WorkRepController {
         return workRepService.getWorkFactRep(page, size, nikName, name, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, sort, hideNotTime);
     }
 
-    @GetMapping("/time/fact")
-    public Float getFactWork(@RequestParam Long workId,
-                             @RequestParam Integer stage,
-                             @RequestParam(required = false) String nikName
-    ) {
-        return workRepService.getFactWork(workId, stage, nikName);
-    }
+//    @GetMapping("/time/fact")
+//    public Float getFactWork(@RequestParam Long workId,
+//                             @RequestParam Integer stage,
+//                             @RequestParam(required = false) String nikName
+//    ) {
+//        return workRepService.getFactWork(workId, stage, nikName);
+//    }
 
     @GetMapping("/time/fact/stage")
     public MapStringFloat getFactWork(@RequestParam Long workId,
                                       @RequestParam(required = false) String nikName,
-                                      @RequestParam(defaultValue = "0") Integer stage) {
-        return workRepService.getFactWorkStage(workId, nikName, stage);
+                                      @RequestParam(defaultValue = "0") Integer stage,
+                                      @RequestParam Long projectId) {
+        return workRepService.getFactWorkStage(workId, nikName, stage, projectId);
     }
 
     @GetMapping("/fact/week")
@@ -91,18 +93,22 @@ public class WorkRepController {
                                           @RequestParam(required = false) Integer page,
                                           @RequestParam(required = false) Integer size,
                                           @RequestParam(required = false) String name,
+                                          @RequestParam(required = false) Long projectId,
                                           @RequestParam(defaultValue = "15") Integer stageZi,
                                           @RequestParam(required = false) Long codeSap,
                                           @RequestParam(required = false) String codeZi,
                                           @RequestParam(required = false) String task,
                                           @RequestParam(required = false) List<Long> releaseId,
-                                          @RequestParam(defaultValue = "release") String sort) {
+                                          @RequestParam(defaultValue = "release.sort") String sort) {
+        if(projectId == null){
+            sort = "name";
+        }
         Timestamp dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ", true);
         Timestamp dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ", true);
         StageZiFind stageZiFind = new StageZiFind(stageZi);
 
         return workRepService.getWeekWork(ziSplit, addTotal, nikName, weekSplit, dateStart, dateEnd,
-                page, size, name, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, sort);
+                page, size, name, projectId, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, sort);
     }
 
     @GetMapping("/graph")

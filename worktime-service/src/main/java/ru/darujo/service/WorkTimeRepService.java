@@ -48,7 +48,7 @@ public class WorkTimeRepService {
     }
 
     public float getTimeWork(Long[] taskId, String nikName, Date dateGt, Date dateLe, String typeStr) {
-        ArrayList<Integer> types = getTypeForWork(typeStr);
+        List<Integer> types = getTypeForWork(typeStr);
 
         AtomicReference<Float> time = new AtomicReference<>((float) 0);
         for (Integer type : types) {
@@ -62,20 +62,30 @@ public class WorkTimeRepService {
         return time.get();
     }
 
-    private ArrayList<Integer> getTypeForWork(String typeStr) {
-        ArrayList<Integer> types = new ArrayList<>();
+    private List<Integer> getTypeForWork(String typeStr) {
+        List<Integer> types;
         // toDo
         if (typeStr != null && typeStr.equals("analise")) {
-            types.add(2);
-            types.add(3);
-            types.add(5);
-            types.add(6);
+            types = WorkTimeTypeService.getTypes(false);
 
         } else if (typeStr != null && typeStr.equals("develop")) {
-            types.add(1);
-            types.add(4);
+            types = WorkTimeTypeService.getTypes(true);
         } else {
-            types.add(null);
+            types = WorkTimeTypeService.getTypes(null);
+        }
+        List<Integer> types2 = new ArrayList<>();
+        if (typeStr != null && typeStr.equals("analise")) {
+            types2.add(2);
+            types2.add(3);
+            types2.add(5);
+            types2.add(6);
+
+        } else if (typeStr != null && typeStr.equals("develop")) {
+            types2.add(1);
+            types2.add(4);
+        } else {
+            types2.add(null);
+
         }
         return types;
     }
@@ -245,7 +255,7 @@ public class WorkTimeRepService {
                         weekWorkPeriodDTOs.add(workPeriodDto);
                     });
             List<WorkTimeDto> workTimeDTOs = new ArrayList<>();
-            WorkTimeDto workTimeDto = new WorkTimeDto(null, null, null, null, null, timeFact + " из " + timePlan, null, null);
+            WorkTimeDto workTimeDto = new WorkTimeDto(null, null, null, null, null, timeFact + " из " + timePlan, null, null, null, null);
             workTimeDTOs.add(workTimeDto);
             WorkPeriodDto workPeriodDto = new WorkPeriodDto(null, null, null, null, workTimeDTOs);
             weekWorkPeriodDTOs.add(workPeriodDto);

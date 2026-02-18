@@ -4,17 +4,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.convertor.WorkConvertor;
 import ru.darujo.dto.work.WorkDto;
 import ru.darujo.dto.work.WorkEditDto;
 import ru.darujo.dto.work.WorkLittleDto;
-import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.StageZiFind;
-import ru.darujo.model.Work;
-import ru.darujo.model.WorkLittle;
+import ru.darujo.model.WorkFull;
 import ru.darujo.service.WorkService;
 
 import java.sql.Timestamp;
@@ -25,6 +25,7 @@ import java.util.List;
 @RestController()
 @RequestMapping("/v1/works")
 public class WorkController {
+
     private WorkService workService;
 
     @Autowired
@@ -34,12 +35,12 @@ public class WorkController {
 
 
     @GetMapping("/find")
-    public Iterable<Work> workList(@RequestParam(required = false) String name,
-                                   @RequestParam(required = false) String task
+    public Iterable<WorkFull> workList(@RequestParam(required = false) String name,
+                                       @RequestParam(required = false) String task
     ) {
         long curTime = System.nanoTime();
 
-        Iterable<Work> works = workService.findWorks(1, 100000000, name, null, null, null, null, null, task, null, null);
+        Iterable<WorkFull> works = workService.findWorks(1, 100000000, name, null, null, null, null, null, task, null, null);
         float time_last = (System.nanoTime() - curTime) * 0.000000001f;
         log.info("Время выполнения workList {}", time_last);
         return works;
@@ -48,8 +49,9 @@ public class WorkController {
 
 
     @GetMapping("/{id}")
-    public WorkEditDto workEdit(@PathVariable long id) {
-        Work work = workService.findById(id);
+    public WorkEditDto workEdit(@PathVariable long id,
+                                @RequestParam("system_project") Long projectId) {
+        WorkFull work = workService.findById(id, projectId);
         WorkEditDto workEditDto = WorkConvertor.getWorkEditDto(work);
         workService.updWorkPlanTime(workEditDto);
         return workEditDto;
@@ -67,9 +69,8 @@ public class WorkController {
                             @RequestParam("system_right") List<String> rights,
                             @RequestParam("system_project") Long projectId) {
         workService.checkRight("edit", rights);
-        workDto.setProjectId(projectId);
+        WorkFull work = workService.saveWork(userName, WorkConvertor.getWork(workDto, projectId));
 
-        Work work = workService.saveWork(userName, WorkConvertor.getWork(workDto));
         return WorkConvertor.getWorkDto(work);
     }
 
@@ -82,16 +83,18 @@ public class WorkController {
     }
 
     @GetMapping("")
-    public Page<@NonNull WorkDto> workPage(@RequestParam(defaultValue = "1") int page,
-                                           @RequestParam(defaultValue = "10") int size,
-                                           @RequestParam(required = false) String name,
-                                           @RequestParam(defaultValue = "15") Integer stageZi,
-                                           @RequestParam(required = false) Long codeSap,
-                                           @RequestParam(required = false) String codeZi,
-                                           @RequestParam(required = false) String task,
-                                           @RequestParam(required = false) Long releaseId,
-                                           @RequestParam(defaultValue = "release.name") String sort,
-                                           @RequestParam("system_project") Long projectId
+    public PagedModel<?> workPage(@RequestParam(defaultValue = "1") int page,
+                                  @RequestParam(defaultValue = "10") int size,
+                                  @RequestParam(required = false) String name,
+                                  @RequestParam(defaultValue = "15") Integer stageZi,
+                                  @RequestParam(required = false) Long codeSap,
+                                  @RequestParam(required = false) String codeZi,
+                                  @RequestParam(required = false) String task,
+                                  @RequestParam(required = false) Long releaseId,
+                                  @RequestParam(defaultValue = "release.sort") String sort,
+                                  @RequestParam("system_project") Long projectId,
+                                  PagedResourcesAssembler<WorkDto> pagedAssembler
+
     ) {
         StageZiFind stageZiFind = new StageZiFind(stageZi);
         long curTime = System.nanoTime();
@@ -100,7 +103,7 @@ public class WorkController {
         workDTOs.forEach(workService::updWorkPlanTime);
         float time_last = (curTime - System.nanoTime()) * 0.000000001f;
         log.info("Время выполнения WorkPage {}", time_last);
-        return workDTOs;
+        return pagedAssembler.toModel(workDTOs);
     }
 
 
@@ -109,32 +112,50 @@ public class WorkController {
                                                        @RequestParam(defaultValue = "10") int size,
                                                        @RequestParam(required = false) String name,
                                                        @RequestParam(defaultValue = "15") Integer stageZi,
-                                                       @RequestParam(required = false) String sort) {
+                                                       @RequestParam(required = false) String sort,
+                                                       @RequestParam("system_project") Long projectId) {
         StageZiFind stageZiFind = new StageZiFind(stageZi);
 
-        return (workService.findWorkLittle(page, size, name, sort, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), null, null, null, null)).map(WorkConvertor::getWorkLittleDto);
+        return (workService.findWorkLittle(page, size, name, sort, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), null, null, null, null, projectId)).map(WorkConvertor::getWorkLittleDto);
     }
 
     @GetMapping("/obj/little/{id}")
-    public WorkLittleDto workLittleDto(@PathVariable long id) {
-        return WorkConvertor.getWorkLittleDto(workService.findLittleById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Задача не найден")));
+    public WorkLittleDto workLittleDto(@PathVariable long id,
+                                       @RequestParam(name = "system_project", required = false) Long projectId) {
+        return WorkConvertor.getWorkLittleDto(workService.findLittleById(id, projectId));
     }
 
     @GetMapping("/refresh/{id}")
     public boolean taskRefresh(@PathVariable long id,
-                               @RequestParam(required = false, name = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStr
+                               @RequestParam(required = false, name = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStr,
+                               @RequestParam Long projectId
     ) {
         Timestamp date = DateHelper.DTZToDate(dateStr, "date", false);
-        return workService.setWorkDate(id, date);
+        return workService.setWorkDate(id, projectId, date);
 
     }
 
-    @GetMapping("/change/{id}/rated")
-    public WorkLittle ChangeRated(@RequestHeader String username,
-                                  @PathVariable long id,
-                                  @RequestParam(required = false, name = "rated") Boolean rated
+    @GetMapping("/rate/{id}")
+    public boolean getRate(@PathVariable long id,
+                           @RequestParam Long projectId
     ) {
-        return workService.setRated(username, id, rated);
+        return workService.getRate(id, projectId);
+    }
+
+    @GetMapping("/project/add/{id}")
+    public void addProject(@PathVariable long id,
+                           @RequestParam Long projectId
+    ) {
+        workService.addProject(id, projectId);
+    }
+
+    @GetMapping("/change/{id}/rated")
+    public WorkLittleDto ChangeRated(@RequestHeader String username,
+                                     @PathVariable long id,
+                                     @RequestParam(required = false, name = "rated") Boolean rated,
+                                     @RequestParam("system_project") Long projectId
+    ) {
+        return WorkConvertor.getWorkLittleDto(workService.setRated(username, id, projectId, rated));
 
     }
 }

@@ -17,7 +17,10 @@ import ru.darujo.model.WorkStage;
 import ru.darujo.repository.WorkStageRepository;
 import ru.darujo.specifications.Specifications;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -68,6 +71,8 @@ public class WorkStageService {
         specification = Specifications.eq(specification, "nikName", workStage.getNikName());
         specification = Specifications.eq(specification, "role", workStage.getRole());
         specification = Specifications.ne(specification, "id", workStage.getId());
+        specification = Specifications.eq(specification, "projectId", workStage.getProjectId());
+
         WorkStage workStageFind = workStageRepository.findOne(specification).orElse(null);
         if (workStageFind != null) {
             throw new ResourceNotFoundRunTime("Уже есть запись с таким ФИО и ролью");
@@ -77,6 +82,7 @@ public class WorkStageService {
     @Transactional
     public WorkStage saveWorkStage(WorkStage workStage) {
         validWorkStage(workStage);
+        workServiceIntegration.addProject(workStage.getWorkId(), workStage.getProjectId());
         return workStageRepository.save(workStage);
     }
 
@@ -85,9 +91,10 @@ public class WorkStageService {
     }
 
 
-    public List<WorkStage> findWorkStage(Long workId, Integer role) {
+    public List<WorkStage> findWorkStage(Long workId, Integer role, Long projectId) {
         Specification<@NonNull WorkStage> specification = Specification.where(Specifications.eq(null, "workId", workId));
         specification = Specifications.eq(specification, "role", role);
+        specification = Specifications.eq(specification, "projectId", projectId);
         return workStageRepository.findAll(specification);
     }
 
@@ -96,25 +103,25 @@ public class WorkStageService {
         userServiceIntegration.updFio(userFio);
     }
 
-    private MapStringFloat getWorkTimeFact(Long workId, Integer stage) {
+    private MapStringFloat getWorkTimeFact(Long workId, Long projectId, Integer stage) {
         try {
-            return workServiceIntegration.getWorkTimeStageFact(workId, stage);
+            return workServiceIntegration.getWorkTimeStageFact(workId, projectId, stage);
         } catch (RuntimeException ex) {
             return null;
         }
     }
 
-    public void updWorkStage(Long workId, List<WorkStageDto> workStages) {
+    public void updWorkStage(Long workId, List<WorkStageDto> workStages, Long projectId) {
         for (int stage = 0; stage < 6; stage++) {
-            MapStringFloat mapStringFloat = getWorkTimeFact(workId, stage);
-            if (mapStringFloat!= null && !mapStringFloat.getList().isEmpty()) {
+            MapStringFloat mapStringFloat = getWorkTimeFact(workId, projectId, stage);
+            if (mapStringFloat != null && !mapStringFloat.getList().isEmpty()) {
                 Map<String, WorkStageDto> workStageMap = new HashMap<>();
                 workStages.forEach(workStage -> workStageMap.put(workStage.getNikName(), workStage));
                 int finalStage = stage;
                 mapStringFloat.getList().forEach((nikName, time) -> {
                     WorkStageDto workStage = workStageMap.get(nikName);
                     if (workStage == null) {
-                        workStage = new WorkStageDto(-1L, nikName, -1, null, null, null, null, null, workId);
+                        workStage = new WorkStageDto(-1L, nikName, -1, null, null, null, null, null, workId, projectId);
                         updFio(workStage);
                         workStages.add(workStage);
                     }
@@ -124,7 +131,7 @@ public class WorkStageService {
         }
     }
 
-    public List<WorkStage> findWorkStage(Long workId) {
-        return findWorkStage(workId, null);
+    public List<WorkStage> findWorkStage(Long workId, Long projectId) {
+        return findWorkStage(workId, null, projectId);
     }
 }

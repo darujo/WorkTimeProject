@@ -13,7 +13,7 @@
                                    ng-model="Filter.taskId"/>
                             <!--                        </div>-->
                             <!--                        <div class="horiz">-->
-                            <label class="p-head" for="TaskDevbo">DEVBO</label>
+                            <label class="p-head" for="TaskDevbo">Код Задачи</label>
                             <input class="vvod30mar" type="text" id="TaskDevbo"
                                    ng-model="Filter.taskDevbo"/>
                             <!--                        </div>-->
@@ -105,7 +105,7 @@
             <td class="table_head2">Дата</td>
             <td class="table_head2">Время</td>
             <td class="table_head2">Комментарий</td>
-            <td class="table_head2">Devbo</td>
+            <td class="table_head2">Код задачи</td>
             <td class="table_head2">Bts</td>
             <td class="table_head2">Описание задачи</td>
             <td class="table_head2">Тип</td>
@@ -197,7 +197,7 @@
                     <div class="horiz">
                         <label for="BtsFilter" class="p-filter">BTS:</label>
                         <input class="vvod40" type="text" id="BtsFilter" step="any" ng-model="FiltTask.bts"/>
-                        <label for="DevBoFilter" class="p-filter">DEVBO :</label>
+                        <label for="DevBoFilter" class="p-filter">Код Задачи :</label>
                         <input class="vvod40" type="text" id="DevBoFilter" step="any" ng-model="FiltTask.devbo"/>
                     </div>
                     <div class="horiz">
@@ -235,7 +235,7 @@
             <tr>
                 <td>Автор</td>
                 <td>№ запроса (BTS)</td>
-                <td>№ внутренней задачи (DEVBO)</td>
+                <td>№ внутренней задачи</td>
                 <td>Краткое описание</td>
                 <td>Тип задачи</td>
                 <td>№ ЗИ (ZI)</td>
@@ -291,12 +291,7 @@
         <div class="horiz" ng-if="showType()">
             <label for="TypeWorkTime" class="form_label">Тип:</label>
             <select class="vvod20mar10" name="TypeWorkTimeSelect" id="TypeWorkTime" ng-model="WorkTime.type">
-                <option ng-value="1" value="1">Разработка</option>
-                <option ng-value="2" value="2">Консультация</option>
-                <option ng-value="3" value="3">Анализ ТЗ</option>
-                <option ng-value="5" value="5">Анализ ошибки</option>
-                <option ng-value="4" value="4">Тестирование</option>
-                <option ng-value="6" value="6">АКС</option>
+                <option ng-repeat="type in WorkTimeTypeList" ng-value="type.code" value="type.code">{{type.name}}</option>
             </select>
             <br>
         </div>

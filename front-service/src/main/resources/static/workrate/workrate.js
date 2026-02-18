@@ -26,6 +26,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
         document.getElementById("WorkStageAdd").style.display = "none";
         document.getElementById("FormWorkStage").style.display = "block";
     };
+
     let WorkId;
     $scope.loadWork = function () {
         console.log("loadWork");
@@ -41,6 +42,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
             }
         });
     };
+
     $scope.changeRated = function (rated) {
         console.log("changeRated");
         $scope.ZI[rated] = false;
@@ -170,17 +172,21 @@ angular.module('workTimeService').controller('workRateController', function ($sc
                 });
         }
     };
+
     $scope.workPage = function () {
         $location.path('/work').search({});
     }
+
     $scope.showWorkCriteriaAdd = function () {
         document.getElementById("WorkCriteriaAdd").style.display = "block";
         document.getElementById("FormWorkCriteria").style.display = "none";
     };
+
     let showWorkCriteriaEdit = function () {
         document.getElementById("WorkCriteriaAdd").style.display = "none";
         document.getElementById("FormWorkCriteria").style.display = "block";
     };
+
     $scope.loadWorkCriteria = function () {
         console.log("loadWorkCriteria");
         if ($scope.load2) {
@@ -371,15 +377,24 @@ angular.module('workTimeService').controller('workRateController', function ($sc
         }
     };
 // ---------------------------------------------------------------------------------
-
+    console.log(" fileee = ")
     $scope.Filt = {}
     $location.parserFilter($scope.Filt);
+    console.log(" fileee = ")
+    console.log($scope.Filt)
     WorkId = $scope.Filt.workId;
+
     if (WorkId === undefined)
     {
         $scope.workPage();
         return;
     }
+    console.log(" view = ", $scope.Filt.view)
+    if ($scope.Filt.view !== "current"){
+        $location.path('/rate').search({workId: WorkId});
+        return;
+    }
+
     $scope.stageCreate = false;
     $scope.stageEdit = false;
     $scope.criteriaCreate = false;
@@ -473,6 +488,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
             }
         });
     };
+
     let loadRateStatusST = function () {
         console.log("loadRateStatus2");
         $http({
@@ -491,6 +507,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
             }
         });
     };
+
     let loadRateStatusCT = function () {
         console.log("loadRateStatusCT");
         $http({
@@ -509,6 +526,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
             }
         });
     };
+
     $scope.getStyle = function (code) {
         let codeInt = parseInt(code);
         if (codeInt !== 0) {

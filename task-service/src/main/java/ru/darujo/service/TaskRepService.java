@@ -48,19 +48,20 @@ public class TaskRepService {
             String codeDEVBO,
             String description,
             Long workId,
+            Long projectId,
             Date dateLe,
             Date dateGt,
             String type) {
-        return ((List<Task>) taskService.findTask(null, codeBTS, codeDEVBO, description, workId, null, null, null, null))
+        return ((List<Task>) taskService.findTask(null, codeBTS, codeDEVBO, description, workId, null, projectId, null, null))
                 .stream()
                 .map(task -> workTimeServiceIntegration.getTimeTask(task.getId(), nikName, dateLe, dateGt, type))
                 .reduce(Float::sum)
                 .orElse(0f);
     }
 
-    public ListString getFactUsers(Long workId, Date dateLe) {
+    public ListString getFactUsers(Long workId, Long projectId, Date dateLe) {
         ListString users = new ListString();
-        ((List<Task>) taskService.findTask(null, null, null, null, workId, null, null, null, null))
+        ((List<Task>) taskService.findTask(null, null, null, null, workId, null, projectId, null, null))
                 .stream().map(task ->
                         workTimeServiceIntegration
                                 .getUsers(task.getId(), dateLe))
@@ -69,9 +70,10 @@ public class TaskRepService {
         return users;
     }
 
-    public Boolean getAvailTime(long workId) {
+    public Boolean getAvailTime(long workId, Long projectId) {
         Specification<@NonNull Task> specification = Specification.unrestricted();
         specification = Specifications.eq(specification, "workId", workId);
+        specification = Specifications.eq(specification, "projectId", projectId);
         List<Task> tasks = taskRepository.findAll(specification);
         if (tasks.isEmpty()) {
             return false;
@@ -80,8 +82,8 @@ public class TaskRepService {
 
     }
 
-    public List<UserWorkDto> getWeekWork(Long workId, String nikName, Boolean addTotal) {
-        List<Task> tasks = (List<Task>) taskService.findTask(null, null, null, null, workId, null, null, null, null);
+    public List<UserWorkDto> getWeekWork(Long workId, Long projectId, String nikName, Boolean addTotal) {
+        List<Task> tasks = (List<Task>) taskService.findTask(null, null, null, null, workId, null, projectId, null, null);
 
         return workTimeServiceIntegration.getWorkUserOrZi(tasks.stream().map(Task::getId).collect(Collectors.toList()), nikName, addTotal, false, null, null);
 

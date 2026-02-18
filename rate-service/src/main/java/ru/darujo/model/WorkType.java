@@ -23,5 +23,7 @@ public class WorkType {
     private Long workId;
     @Column(name = "number")
     private Integer number;
+    @Column(name = "project_id")
+    private Long projectId;
 
 }

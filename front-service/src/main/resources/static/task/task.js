@@ -164,7 +164,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
             workId: null,
             codeBTS: null,
             userName: null,
-            codeDEVBO: "DEVBO-000",
+            codeDEVBO: $location.getProjectCode() + "-000",
             description: null,
             type: 1
 

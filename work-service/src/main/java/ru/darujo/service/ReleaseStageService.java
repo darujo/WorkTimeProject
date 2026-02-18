@@ -29,26 +29,25 @@ public class ReleaseStageService {
         if (releaseIdList != null && !releaseIdList.isEmpty()) {
             releaseService.findAll(releaseIdList, projectId).forEach(release -> releaseStageDtoMap.put(release.getId(), getReleaseStageDto(release)));
         }
-        workService.findWorkLittle(null, null, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseIdList)
-                .forEach(workLittle -> {
+        workService.findWorkLittle(null, null, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseIdList, projectId)
+                .forEach(workLittleFull -> {
                     ReleaseStageDto releaseStageDto = releaseStageDtoMap.computeIfAbsent(
-                            workLittle.getRelease() == null ? 0 : workLittle.getRelease().getId(),
-                            k -> workLittle.getRelease() == null ?
+                            workLittleFull.getWorkProject().getRelease() == null ? 0 : workLittleFull.getWorkProject().getRelease().getId(),
+                            k -> workLittleFull.getWorkProject().getRelease() == null ?
                                     new ReleaseStageDto(0L,
                                             "Без релиза",
-                                            null,
-                                            null, -1F)
-                                    : getReleaseStageDto(workLittle.getRelease())
+                                            -1F)
+                                    : getReleaseStageDto(workLittleFull.getWorkProject().getRelease())
                     );
 
-                    releaseStageDto.getWorks()[workLittle.getStageZi()].add(WorkConvertor.getWorkLittleDto(workLittle));
+                    releaseStageDto.getWorks()[workLittleFull.getWorkProject().getStageZi()].add(WorkConvertor.getWorkLittleDto(workLittleFull));
 
                 });
         return releaseStageDtoMap.values().stream().sorted().collect(Collectors.toList());
     }
 
-    public void changeStage(String login, Long workId, Long releaseId, Integer stageZI) {
-        workService.setReleaseAndStageZi(login, workId, releaseId, stageZI);
+    public void changeStage(String login, Long workId, Long projectId, Long releaseId, Integer stageZI) {
+        workService.setReleaseAndStageZi(login, workId, projectId, releaseId, stageZI);
 
 
     }
@@ -56,8 +55,6 @@ public class ReleaseStageService {
     private ReleaseStageDto getReleaseStageDto(Release release) {
         return new ReleaseStageDto(release.getId(),
                 release.getName(),
-                release.getIssuingReleasePlan(),
-                release.getIssuingReleaseFact(),
                 release.getSort());
     }
 

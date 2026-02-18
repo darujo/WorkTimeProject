@@ -19,6 +19,7 @@ import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.user.*;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.InfoServiceIntegration;
+import ru.darujo.model.Project;
 import ru.darujo.model.Right;
 import ru.darujo.model.User;
 import ru.darujo.repository.UserRepository;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 public class UserService {
     @Getter
     private static UserService INSTANCE;
+    private ProjectService projectService;
 
     public UserService() {
         INSTANCE = this;
@@ -117,9 +119,10 @@ public class UserService {
             }
             User saveUser = userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + user.getId() + " не найден"));
             user.setRights(saveUser.getRights());
-            user.setRoles(saveUser.getRoles());
-            user.setCurrentProject(saveUser.getCurrentProject());
-
+//            user.setRoles(saveUser.getRoles());
+            if (user.getCurrentProject() == null) {
+                user.setCurrentProject(saveUser.getCurrentProject());
+            }
 //            user.setProjects(saveUser.getProjects());
             user.setTelegramId(saveUser.getTelegramId());
         } else {
@@ -201,7 +204,7 @@ public class UserService {
     private Specification<@NonNull User> getUserSpecification(String role, String nikName, String lastName, String firstName, String patronymic, Long telegramId, Boolean telegramIsNotNull, Long projectId) {
         Specification<@NonNull User> specification = Specification.unrestricted();
         if (role != null && !role.isEmpty()) {
-            specification = Specifications.in(specification, "nikName", roleService.findByName(projectId, role).orElseThrow(() -> new UsernameNotFoundException("Роль не найдена " + role))
+            specification = Specifications.in(specification, "r", roleService.findByName(projectId, role).orElseThrow(() -> new UsernameNotFoundException("Роль не найдена " + role))
                     .getUsers()
                     .stream().map(User::getNikName).collect(Collectors.toList()));
         }
@@ -219,32 +222,24 @@ public class UserService {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + userId + " не найден"));
         Map<Long, UserRoleActiveDto> roleActiveDtoMap = new HashMap<>();
-        roleService.getListRole().forEach(role -> {
-            if (role.getProject().getId().equals(projectId)) {
-                roleActiveDtoMap.put(role.getId(), RoleConvertor.getUserRoleActiveDto(role, Boolean.FALSE));
-            }
-        });
-        if (user.getRoles() != null) {
-            user.getRoles().forEach(role -> {
+        Project project = projectService.findById(projectId);
+        roleService.getListRole(project).forEach(role -> roleActiveDtoMap.put(role.getId(), RoleConvertor.getUserRoleActiveDto(role, Boolean.FALSE)));
+
+        roleService.getRoleList(null, null, projectId, user).forEach(role -> {
                 UserRoleActiveDto userRoleActiveDto = roleActiveDtoMap.get(role.getId());
                 if (userRoleActiveDto != null) {
                     userRoleActiveDto.setActive(Boolean.TRUE);
                 }
             });
-        }
+
         return new UserRoleDto(user.getId(), user.getNikName(), user.getFirstName(), user.getLastName(), user.getPatronymic(), roleActiveDtoMap.values());
     }
 
     @Transactional
     public UserRoleDto setUserRoles(Long projectId, UserRoleDto userRole) {
         User user = userRepository.findById(userRole.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + userRole.getId() + " не найден"));
-        user.getRoles().removeIf(role -> role.getProject().getId().equals(projectId));
-        userRole.getRoles().forEach((roleDto) -> {
-            if (roleDto.getActive()) {
-                user.getRoles().add(RoleConvertor.getRole(roleDto, projectId));
-            }
-        });
-        userRepository.save(user);
+        roleService.setUserRole(user, userRole);
+
         return getUserRoles(user.getId(), projectId);
     }
 
@@ -290,7 +285,7 @@ public class UserService {
                             userInfoType -> new UserInfoDto(
                                     userInfoType.getUser().getId(),
                                     userInfoType.getUser().getNikName(),
-                                    userInfoType.getTelegramId() == null ? userInfoType.getUser().getTelegramId() : userInfoType.getTelegramId(),
+                                    userInfoType.getTelegramId() == null ? Long.toString(userInfoType.getUser().getTelegramId()) : Long.toString(userInfoType.getTelegramId()),
                                     userInfoType.getThreadId(),
                                     null)).toList();
             messageTypeListMap.put(type, userDTOs);
@@ -353,4 +348,8 @@ public class UserService {
     }
 
 
+    @Autowired
+    public void setProjectService(ProjectService projectService) {
+        this.projectService = projectService;
+    }
 }

@@ -96,7 +96,7 @@ public class MessageInformationService {
         if (messageInfoDto.getUserInfoDto() != null) {
             MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true, messageInfoDto.getDataTime()));
             saveUserSend(new UserSend(
-                    Long.toString(messageInfoDto.getUserInfoDto().getTelegramId()),
+                    messageInfoDto.getUserInfoDto().getTelegramId(),
                     messageInfoDto.getUserInfoDto().getThreadId(),
                     messageInfoDto.getUserInfoDto().getOriginMessageId(),
                     messageInformation));
@@ -104,7 +104,7 @@ public class MessageInformationService {
             saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), false, messageInfoDto.getDataTime()));
         } else {
             MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true, messageInfoDto.getDataTime()));
-            messageTypeListMap.get(messageInfoDto.getType()).forEach(userTelegramDto -> saveUserSend(new UserSend(Long.toString(userTelegramDto.getTelegramId()), userTelegramDto.getThreadId(), null, messageInformation)));
+            messageTypeListMap.get(messageInfoDto.getType()).forEach(userTelegramDto -> saveUserSend(new UserSend(userTelegramDto.getTelegramId(), userTelegramDto.getThreadId(), null, messageInformation)));
         }
         sendAllNotSendMessage();
         return true;
@@ -124,7 +124,7 @@ public class MessageInformationService {
                 .findAll(specification)
                 .forEach(messageInformation -> {
                     messageTypeListMap.get(MessageType.valueOf(messageInformation.getType())).forEach(userInfoDto -> saveUserSend(new UserSend(
-                            Long.toString(userInfoDto.getTelegramId()),
+                            userInfoDto.getTelegramId(),
                             userInfoDto.getThreadId(),
                             userInfoDto.getOriginMessageId(),
                             messageInformation)));
@@ -185,14 +185,13 @@ public class MessageInformationService {
             MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true, messageInfoDto.getDataTime()));
             if (messageInfoDto.getUserInfoDto() != null) {
                 saveUserSend(new UserSend(
-                        Long.toString(messageInfoDto.getUserInfoDto().getTelegramId()),
+                        messageInfoDto.getUserInfoDto().getTelegramId(),
                         messageInfoDto.getUserInfoDto().getThreadId(),
                         messageInfoDto.getUserInfoDto().getOriginMessageId(),
                         messageInformation));
             } else {
-                log.error(messageTypeListMap.get(messageInfoDto.getType()).toString());
                 messageTypeListMap.get(messageInfoDto.getType()).forEach(userInfoDto -> saveUserSend(new UserSend(
-                        Long.toString(userInfoDto.getTelegramId()),
+                        userInfoDto.getTelegramId(),
                         userInfoDto.getThreadId(),
                         userInfoDto.getOriginMessageId(),
                         messageInformation)));
