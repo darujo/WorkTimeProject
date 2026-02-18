@@ -74,14 +74,14 @@ public class TelegramBotSend {
             tgClient.execute(setMyCommands);
 
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            log.error(e.getMessage(), e);
         }
         setMyCommands.setScope(new BotCommandScopeAllGroupChats());
         try {
             tgClient.execute(setMyCommands);
 
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -92,7 +92,9 @@ public class TelegramBotSend {
             User user = tgClient.execute(getMyName);
             return user.getUserName();
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
+            log.error(Arrays.toString(e.getStackTrace()));
+            return null;
         }
 
     }

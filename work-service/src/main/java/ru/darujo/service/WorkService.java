@@ -269,6 +269,9 @@ public class WorkService {
             List<Work> workList = null;
             if (name != null || codeSap != null || codeZi != null) {
                 workList = workRepository.findAll(specification);
+                if (workList.isEmpty()) {
+                    return new PageImpl<>(new ArrayList<>());
+                }
             }
             return workProjectService.getWorkFull(page, size, sort, stageZiGe, stageZiLe, task, releaseId, projectId, workList);
         }
@@ -315,6 +318,9 @@ public class WorkService {
             List<WorkLittle> workLittleList = null;
             if (codeSap != null || codeZi != null || name != null) {
                 workLittleList = workLittleRepository.findAll(specification);
+                if (workLittleList.isEmpty()) {
+                    return new PageImpl<>(new ArrayList<>());
+                }
             }
             return workProjectLittleService.getWorkFull(page, size, sort, stageZiGe, stageZiLe, task, releaseIdArray, projectId, null, workLittleList);
         }
