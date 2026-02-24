@@ -283,6 +283,7 @@ public class HtmlService {
         sb.append("<html>");
         sb.append("<head>");
         sb.append("<meta charset=\"utf-8\">");
+        sb.append("<meta name=\"color-scheme\" content=\"dark light\">");
         sb.append("<style type=\"text/css\">");
         addStyle(sb);
         sb.append("</style>");

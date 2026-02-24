@@ -89,13 +89,20 @@ public class WorkService {
 
     private static final Map<Long, ProjectDto> projectDtoMap = new HashMap<>();
 
+    public static ProjectDto getProjectDto(Long projectId) {
+        ProjectDto projectDto = projectDtoMap.get(projectId);
+        if (projectDto == null) {
+            projectDto = new ProjectDto(null, "неизвестный", "неизвестный", 5, "этап 0", "этап 1", "этап 2", "этап 3", "этап 4");
+        }
+        return projectDto;
+    }
     @PostConstruct
     public void init() {
         try {
             userServiceIntegration.getProjects(null, null).forEach(projectDto ->
                     projectDtoMap.put(projectDto.getId(), projectDto));
-        } catch (RuntimeException ignore) {
-
+        } catch (RuntimeException e) {
+            log.error(e.getMessage(), e);
         }
 
     }
@@ -144,27 +151,28 @@ public class WorkService {
                 }
             }
         }
-        checkDate(workProject.getAnaliseStartFact(), workProject.getAnaliseEndFact(), "начала анализа (факт)", "конца анализа (факт)");
-        checkDate(workProject.getDevelopStartFact(), workProject.getIssuePrototypeFact(), "начала разработки (факт)", "конца разработки (факт)");
-        checkDate(workProject.getDebugStartFact(), workProject.getDebugEndFact(), "начала отладки (факт)", "конца отладки (факт)");
-        checkDate(workProject.getReleaseStartFact(), workProject.getReleaseEndFact(), "начала тестирования релиза (факт)", "конца тестирования релиза (факт)");
-        checkDate(workProject.getOpeStartFact(), workProject.getOpeEndFact(), "начала ОПЭ (факт)", "конца ОПЭ (факт)");
+        ProjectDto projectDto = getProjectDto(workProject.getProjectId());
+        checkDate(workProject.getAnaliseStartFact(), workProject.getAnaliseEndFact(), "начала \"" + projectDto.getStage0Name() + "\" (факт)", "конца \"" + projectDto.getStage0Name() + "\" (факт)");
+        checkDate(workProject.getDevelopStartFact(), workProject.getIssuePrototypeFact(), "начала \"" + projectDto.getStage1Name() + "\" (факт)", "конца \"" + projectDto.getStage1Name() + "\" (факт)");
+        checkDate(workProject.getDebugStartFact(), workProject.getDebugEndFact(), "начала \"" + projectDto.getStage2Name() + "\" (факт)", "конца \"" + projectDto.getStage2Name() + "\" (факт)");
+        checkDate(workProject.getReleaseStartFact(), workProject.getReleaseEndFact(), "начала \"" + projectDto.getStage3Name() + "\" (факт)", "конца \"" + projectDto.getStage3Name() + "\" (факт)");
+        checkDate(workProject.getOpeStartFact(), workProject.getOpeEndFact(), "начала \"" + projectDto.getStage4Name() + "\" (факт)", "конца \"" + projectDto.getStage4Name() + "\" (факт)");
 
-        checkDate(workProject.getAnaliseEndFact(), workProject.getIssuePrototypeFact(), "конца анализа (факт)", "конца разработки (факт)");
-        checkDate(workProject.getIssuePrototypeFact(), workProject.getDebugEndFact(), "конца разработки (факт)", "конца отладки (факт)");
-        checkDate(workProject.getDebugEndFact(), workProject.getReleaseEndFact(), "конца отладки (факт)", "конца тестирования релиза (факт)");
-        checkDate(workProject.getReleaseEndFact(), workProject.getOpeEndFact(), "конца тестирования релиза (факт)", "конца ОПЭ (факт)");
+        checkDate(workProject.getAnaliseEndFact(), workProject.getIssuePrototypeFact(), "конца \"" + projectDto.getStage0Name() + "\" (факт)", "конца \"" + projectDto.getStage1Name() + "\" (факт)");
+        checkDate(workProject.getIssuePrototypeFact(), workProject.getDebugEndFact(), "конца \"" + projectDto.getStage1Name() + "\" (факт)", "конца \"" + projectDto.getStage2Name() + "\" (факт)");
+        checkDate(workProject.getDebugEndFact(), workProject.getReleaseEndFact(), "конца \"" + projectDto.getStage2Name() + "\" (факт)", "конца \"" + projectDto.getStage3Name() + "\" (факт)");
+        checkDate(workProject.getReleaseEndFact(), workProject.getOpeEndFact(), "конца \"" + projectDto.getStage3Name() + "\" (факт)", "конца \"" + projectDto.getStage4Name() + "\" (факт)");
 
-        checkDate(workProject.getAnaliseStartPlan(), workProject.getAnaliseEndPlan(), "начала анализа (план)", "конца анализа (план)");
-        checkDate(workProject.getDevelopStartPlan(), workProject.getIssuePrototypePlan(), "начала разработки (план)", "конца разработки (план)");
-        checkDate(workProject.getDebugStartPlan(), workProject.getDebugEndPlan(), "начала отладки (план)", "конца отладки (план)");
-        checkDate(workProject.getReleaseStartPlan(), workProject.getReleaseEndPlan(), "начала тестирования релиза (план)", "конца тестирования релиза (план)");
-        checkDate(workProject.getOpeStartPlan(), workProject.getOpeEndPlan(), "начала ОПЭ (план)", "конца ОПЭ (план)");
+        checkDate(workProject.getAnaliseStartPlan(), workProject.getAnaliseEndPlan(), "начала \"" + projectDto.getStage0Name() + "\" (план)", "конца \"" + projectDto.getStage0Name() + "\" (план)");
+        checkDate(workProject.getDevelopStartPlan(), workProject.getIssuePrototypePlan(), "начала \"" + projectDto.getStage1Name() + "\" (план)", "конца \"" + projectDto.getStage1Name() + "\" (план)");
+        checkDate(workProject.getDebugStartPlan(), workProject.getDebugEndPlan(), "начала \"" + projectDto.getStage2Name() + "\" (план)", "конца \"" + projectDto.getStage2Name() + "\" (план)");
+        checkDate(workProject.getReleaseStartPlan(), workProject.getReleaseEndPlan(), "начала \"" + projectDto.getStage3Name() + "\" (план)", "конца \"" + projectDto.getStage3Name() + "\" (план)");
+        checkDate(workProject.getOpeStartPlan(), workProject.getOpeEndPlan(), "начала \"" + projectDto.getStage4Name() + "\" (план)", "конца \"" + projectDto.getStage4Name() + "\" (план)");
 
-        checkDate(workProject.getAnaliseEndPlan(), workProject.getIssuePrototypePlan(), "конца анализа (план)", "конца разработки (план)");
-        checkDate(workProject.getIssuePrototypePlan(), workProject.getDebugEndPlan(), "конца разработки (план)", "конца отладки (план)");
-        checkDate(workProject.getDebugEndPlan(), workProject.getReleaseEndPlan(), "конца отладки (план)", "конца тестирования релиза (план)");
-        checkDate(workProject.getReleaseEndPlan(), workProject.getOpeEndPlan(), "конца тестирования релиза (план)", "конца ОПЭ (план)");
+        checkDate(workProject.getAnaliseEndPlan(), workProject.getIssuePrototypePlan(), "конца \"" + projectDto.getStage0Name() + "\" (план)", "конца \"" + projectDto.getStage1Name() + "\" (план)");
+        checkDate(workProject.getIssuePrototypePlan(), workProject.getDebugEndPlan(), "конца \"" + projectDto.getStage1Name() + "\" (план)", "конца \"" + projectDto.getStage2Name() + "\" (план)");
+        checkDate(workProject.getDebugEndPlan(), workProject.getReleaseEndPlan(), "конца \"" + projectDto.getStage2Name() + "\" (план)", "конца \"" + projectDto.getStage3Name() + "\" (план)");
+        checkDate(workProject.getReleaseEndPlan(), workProject.getOpeEndPlan(), "конца \"" + projectDto.getStage3Name() + "\" (план)", "конца \"" + projectDto.getStage4Name() + "\" (план)");
 
 
     }

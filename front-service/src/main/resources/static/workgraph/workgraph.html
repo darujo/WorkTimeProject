@@ -111,8 +111,8 @@
             <td class="sticky-col first-col table_head2" rowspan="3">
                 ЗИ
             </td>
-            <td class="table_head2" rowspan="3">Проект</td>
-            <td class="table_head2">Тип</td>
+            <td class="table_head2 sticky-col second-col-2" rowspan="3">Проект</td>
+            <td class="table_head2 sticky-col three-col-2">Тип</td>
             <td class="table_head2" ng-repeat="periodWork in WeekWorkDTOs">
                 {{periodWork.period}}
             </td>
@@ -120,19 +120,19 @@
         </tr>
         <tbody ng-repeat="workGraph in WorkGraphDTOs">
         <tr ng-repeat-start="workGraphProject in workGraph.projectGraphList">
-            <td class="sticky-col first-col" ng-if="$first" rowspan="{{workGraph.projectGraphList.length * 2}} ">
+            <td class="sticky-col first-col-2" ng-if="$first" rowspan="{{workGraph.projectGraphList.length * 2}} ">
                 {{workGraph.workLittleDto.name}}
             </td>
-            <td class="sticky-col first-col" rowspan="2 ">{{workGraphProject.projectName}}
+            <td class="sticky-col second-col-2" rowspan="2 ">{{workGraphProject.projectName}}
                 ({{workGraphProject.projectCode}})
             </td>
-            <td>План</td>
+            <td class="sticky-col three-col-2">План</td>
             <td ng-repeat="workPeriod in workGraphProject.workPeriodColorPlanDTOs"
                 ng-style="getStyleColorBack(workPeriod.colorDto.color)"></td>
         </tr>
         <tr ng-repeat-end>
             <!--            <td rowspan="2">{{workGraph.workLittleDto.name}}</td>-->
-            <td>Факт</td>
+            <td class="sticky-col three-col-2">Факт</td>
             <td ng-repeat="workPeriod in workGraphProject.workPeriodColorFactDTOs"
                 ng-style="getStyleColorBack(workPeriod.colorDto.color)"></td>
         </tr>

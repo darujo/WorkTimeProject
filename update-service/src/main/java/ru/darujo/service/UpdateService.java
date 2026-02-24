@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -69,7 +68,7 @@ public class UpdateService {
                     File file = new File(fileName);
                     files.add(file);
                         } catch (IOException e) {
-                            log.error(Arrays.toString(e.getStackTrace()));
+                    log.error(e.getMessage(), e);
 
                         }
                     }
@@ -100,7 +99,7 @@ public class UpdateService {
                 infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.SYSTEM_INFO, String.format("%s будут проводиться сервисные работы. Сервис может быть недоступен. Приносим извинения за предоставленые неудобства.", DateHelper.dateTimeToStr(timestamp))));
             }
         } catch (RuntimeException ex) {
-            log.error(ex.getMessage());
+            log.error(ex.getMessage(), ex);
         }
         return true;
     }

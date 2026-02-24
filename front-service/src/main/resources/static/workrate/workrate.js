@@ -545,6 +545,19 @@ angular.module('workTimeService').controller('workRateController', function ($sc
         console.log("result UserList");
         console.log(result);
     });
+    $scope.Project = {
+        stageEnd: 5,
+        stage0Name: "--Анализ--",
+        stage1Name: "--Разработка прототипа--",
+        stage2Name: "--Стабилизация прототипа--",
+        stage3Name: "--Стабилизация релиза--",
+        stage4Name: "--ОПЭ--"
+    }
+    $location.getProject().then(function (result) {
+        $scope.Project = result;
+        console.log("result current Project");
+        console.log(result);
+    });
     $scope.showWorkStageAdd();
     $scope.showWorkCriteriaAdd();
     $scope.showWorkTypeAdd();

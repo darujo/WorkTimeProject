@@ -43,13 +43,13 @@ public class User {
 
 
     @ManyToOne
-    @JoinColumn(name = "project_id")
+    @JoinColumn(name = "project_id", nullable = false)
     private Project currentProject;
 
-    @Column(name = "block")
+    @Column(name = "block", nullable = false)
     private boolean block;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_projects",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "project_id"))
@@ -61,7 +61,7 @@ public class User {
 //            inverseJoinColumns = @JoinColumn(name = "role_id"))
 //    private Collection<Role> roles;
 //
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_rights",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "right_id"))

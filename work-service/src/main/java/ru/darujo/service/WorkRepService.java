@@ -12,6 +12,7 @@ import ru.darujo.dto.MapStringFloat;
 import ru.darujo.dto.PageDto;
 import ru.darujo.dto.PageObjDto;
 import ru.darujo.dto.calendar.WeekWorkDto;
+import ru.darujo.dto.project.ProjectDto;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.workperiod.WorkUserTime;
 import ru.darujo.dto.workrep.*;
@@ -83,7 +84,7 @@ public class WorkRepService {
         works.forEach(work ->
                 {
                     List<WorkRepProjectDto> workRepProjectDtoList = new ArrayList<>();
-                    work.getProjectList().stream().filter(projectId -> projectIdPar == null || projectId.equals(projectIdPar) ).forEach(projectId -> {
+                    work.getProjectList().stream().filter(projectId -> projectIdPar == null || projectId.equals(projectIdPar)).forEach(projectId -> {
                         boolean availWorkTime = false;
                         if (availWork != null) {
                             availWorkTime = taskServiceIntegration.availWorkTime(work.getId(), projectId);
@@ -92,7 +93,7 @@ public class WorkRepService {
                                 (availWork && availWorkTime) ||
                                 (!availWork && !availWorkTime)) {
                             WorkProject workProject = workProjectService.getWorkProjectOrEmpty(work, projectId);
-
+                            ProjectDto projectDto = WorkService.getProjectDto(projectId);
                             WorkRepProjectDto workRepProjectDto = new WorkRepProjectDto(work.getId(),
                                     projectId,
                                     workProject.getStartTaskPlan(),
@@ -110,12 +111,12 @@ public class WorkRepService {
                                     workProject.getReleaseEndFact(),
                                     workProject.getOpeEndPlan(),
                                     workProject.getOpeEndFact(),
-                                    getFactWork(workProject, 0),
-                                    getFactWork(workProject, 1),
-                                    getFactWork(workProject, 2),
-                                    getFactWork(workProject, 3),
-                                    getFactWork(workProject, 4),
-                                    getFactWork(workProject, 5),
+                                    getFactWork(workProject, projectDto.getStageEnd(), 0),
+                                    getFactWork(workProject, projectDto.getStageEnd(), 1),
+                                    getFactWork(workProject, projectDto.getStageEnd(), 2),
+                                    getFactWork(workProject, projectDto.getStageEnd(), 3),
+                                    getFactWork(workProject, projectDto.getStageEnd(), 4),
+                                    getFactWork(workProject, projectDto.getStageEnd(), 5),
                                     workProject.getIssuePrototypePlan(),
                                     workProject.getIssuePrototypeFact()
 
@@ -159,6 +160,8 @@ public class WorkRepService {
         Page<@NonNull Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, releaseId);
         workPage.forEach(work -> work.getProjectList().forEach(projectId ->
                 {
+                    ProjectDto projectDto = WorkService.getProjectDto(projectId);
+
                     WorkFactDto workFactDto = null;
                     int userProject = 0;
                     WorkProject workProject = workProjectService.getWorkProjectOrEmpty(work, projectId);
@@ -200,12 +203,12 @@ public class WorkRepService {
                                     userDto.getFirstName(),
                                     userDto.getLastName(),
                                     userDto.getPatronymic(),
-                                    getFactWork(workProject, 0, user),
-                                    getFactWork(workProject, 1, user),
-                                    getFactWork(workProject, 2, user),
-                                    getFactWork(workProject, 3, user),
-                                    getFactWork(workProject, 4, user),
-                                    getFactWork(workProject, 5, user)
+                                    getFactWork(workProject, projectDto.getStageEnd(), 0, user),
+                                    getFactWork(workProject, projectDto.getStageEnd(), 1, user),
+                                    getFactWork(workProject, projectDto.getStageEnd(), 2, user),
+                                    getFactWork(workProject, projectDto.getStageEnd(), 3, user),
+                                    getFactWork(workProject, projectDto.getStageEnd(), 4, user),
+                                    getFactWork(workProject, projectDto.getStageEnd(), 5, user)
                             );
                             workFactDTOs.add(workFactDto);
 
@@ -256,8 +259,9 @@ public class WorkRepService {
         } else {
             users = taskServiceIntegration.getListUser(workId, projectId, workFull.getWorkProject().getIssuePrototypeFact()).getList();
         }
+        ProjectDto projectDto = WorkService.getProjectDto(projectId);
         users.forEach(user -> {
-            Float time = getFactWork(workFull.getWorkProject(), stage, user);
+            Float time = getFactWork(workFull.getWorkProject(), projectDto.getStageEnd(), stage, user);
             if (time > 0) {
                 usersTime.put(user, time);
             }
@@ -265,21 +269,21 @@ public class WorkRepService {
         return mapStringFloat;
     }
 
-    private Float getFactWork(WorkProject workProject, Integer stage) {
-        return getFactWork(workProject, stage, null);
+    private Float getFactWork(WorkProject workProject, Integer stageEnd, Integer stage) {
+        return getFactWork(workProject, stageEnd, stage, null);
     }
 
-    public Float getFactWork(WorkProject workProject, Integer stage, String nikName) {
+    public Float getFactWork(WorkProject workProject, Integer projectStageEnd, Integer stage, String nikName) {
         if (stage == 0) {
             return taskServiceIntegration.getTimeWork(
                     workProject.getWork().getId(),
                     workProject.getProjectId(),
                     nikName,
                     null,
-                    getTimeDevelop(workProject),
+                    projectStageEnd != null && projectStageEnd == 1 ? workProject.getAnaliseEndFact() : getTimeDevelop(workProject),
                     "analise");
         }
-        if (stage == 1) {
+        if (stage == 1 && (projectStageEnd == null || projectStageEnd > 1)) {
             return taskServiceIntegration.getTimeWork(
                     workProject.getWork().getId(),
                     workProject.getProjectId(),
@@ -288,7 +292,7 @@ public class WorkRepService {
                     getTimeDevelop(workProject),
                     "develop");
         }
-        if (stage == 2) {
+        if (stage == 2 && (projectStageEnd == null || projectStageEnd > 2)) {
             return taskServiceIntegration.getTimeWork(
                     workProject.getWork().getId(),
                     workProject.getProjectId(),
@@ -296,7 +300,7 @@ public class WorkRepService {
                     getTimeDevelop(workProject),
                     workProject.getDebugEndFact());
         }
-        if (stage == 3) {
+        if (stage == 3 && (projectStageEnd == null || projectStageEnd > 3)) {
             return taskServiceIntegration.getTimeWork(
                     workProject.getWork().getId(),
                     workProject.getProjectId(),
@@ -304,7 +308,7 @@ public class WorkRepService {
                     workProject.getDebugEndFact(),
                     workProject.getReleaseEndFact());
         }
-        if (stage == 4) {
+        if (stage == 4 && (projectStageEnd == null || projectStageEnd > 4)) {
             return taskServiceIntegration.getTimeWork(
                     workProject.getWork().getId(),
                     workProject.getProjectId(),
@@ -313,11 +317,27 @@ public class WorkRepService {
                     workProject.getOpeEndFact());
         }
         if (stage == 5) {
+            Timestamp timestamp = null;
+            if (projectStageEnd == null) {
+                timestamp = workProject.getOpeEndFact();
+            } else if (projectStageEnd == 1) {
+                timestamp = workProject.getAnaliseEndFact();
+            } else if (projectStageEnd == 2) {
+                timestamp = getTimeDevelop(workProject);
+            } else if (projectStageEnd == 3) {
+                timestamp = workProject.getDebugEndFact();
+            } else if (projectStageEnd == 4) {
+                timestamp = workProject.getReleaseEndFact();
+            } else if (projectStageEnd == 5) {
+                timestamp = workProject.getOpeEndFact();
+            }
+
+
             taskServiceIntegration.getTimeWork(
                     workProject.getWork().getId(),
                     workProject.getProjectId(),
                     nikName,
-                    workProject.getOpeEndFact(),
+                    timestamp,
                     null);
         }
         return 0f;
@@ -493,7 +513,7 @@ public class WorkRepService {
         color = null;
         types.forEach(type -> addColor(getColor(type)));
         if (color == null) {
-            return ColorHelper.WHITE;
+            return null;
         }
         color.save();
         return color;

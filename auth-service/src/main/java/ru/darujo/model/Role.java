@@ -26,7 +26,7 @@ public class Role {
     @Column(name = "label")
     private String label;
     @ManyToOne
-    @JoinColumn(name = "project_id")
+    @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
     @ManyToMany
@@ -35,7 +35,7 @@ public class Role {
             inverseJoinColumns =@JoinColumn(name = "right_id"))
     private Collection<Right> rights;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name ="role_id"),
             inverseJoinColumns = @JoinColumn(name ="user_id"))

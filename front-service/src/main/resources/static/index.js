@@ -36,7 +36,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             $location.path(myHash).search(myFilter);
         }
     }
-
+    let LoadCurrentUser = false;
     $scope.getUser = function () {
         console.log($localStorage.authUser);
         if (typeof $localStorage.authUser !== "undefined") {
@@ -46,9 +46,11 @@ angular.module('workTimeService').controller('indexController', function ($rootS
 
             $http.get(constPatchAuth + '/users/user?nikName=' + nikName)
                 .then(function successCallback(response) {
+                    console.log("---UserLogin---")
                     console.log(response)
                     $scope.UserLogin = response.data;
                     $location.UserLogin = $scope.UserLogin;
+                    LoadCurrentUser = true;
                     if ($scope.UserLogin.passwordChange) {
                         $location.path('/userPassword'.toLowerCase()).search({});
 
@@ -504,11 +506,13 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         return UserList;
     }
     $location.getProjectCode = function () {
-        console.log("-------------------------ddddd----------------------------------------------------")
-        console.log($scope.UserLogin.project)
-        console.log("---------------------------------------------------------------------")
-
         return searchJson(ProjectList, "id", $scope.UserLogin.projectId, "code");
+    }
+    $location.getProject = async function () {
+        while (!ProjectLoad || !LoadCurrentUser) {
+            await wait();
+        }
+        return searchJsonObj(ProjectList, "id", $scope.UserLogin.projectId);
     }
 
     let searchJson = function (list, searchField, searchVal, resultField) {
@@ -520,6 +524,18 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         for (let i = 0; i < list.length; i++) {
             if (list[i][searchField] === searchVal) {
                 return list[i][resultField]
+            }
+        }
+    }
+    let searchJsonObj = function (list, searchField, searchVal) {
+        // console.log("searchJson");
+        // console.log(list);
+        // console.log(searchField);
+        // console.log(searchVal);
+        // console.log(resultField);
+        for (let i = 0; i < list.length; i++) {
+            if (list[i][searchField] === searchVal) {
+                return list[i];
             }
         }
     }

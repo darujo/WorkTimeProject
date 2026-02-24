@@ -33,6 +33,7 @@ public class JwtTokenUtils {
         }
         Set<String> rightList = new HashSet<>();
         if (userDetails.getRights() != null) {
+
             userDetails.getRights()
                     .forEach(right -> rightList.add(
                             right.getName()));

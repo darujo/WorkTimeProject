@@ -3,7 +3,6 @@ angular.module('workTimeService').controller('projectEditController', function (
     const constPatchAdmin = window.location.origin + '/admin/projects';
 
     $scope.backProject = function () {
-        console.log("dfsgfdgdfgdf")
         $location.path('/project');
     };
 
@@ -13,7 +12,13 @@ angular.module('workTimeService').controller('projectEditController', function (
         $scope.Project = {
             id: null,
             code: null,
-            name: null
+            name: null,
+            stageEnd: null,
+            stage0Name: null,
+            stage1Name: null,
+            stage2Name: null,
+            stage3Name: null,
+            stage4Name: null
         };
         console.log($scope.Role);
     };
@@ -56,14 +61,14 @@ angular.module('workTimeService').controller('projectEditController', function (
         }
     }
     console.log("Show ok");
-    let Filt = {};
-    $location.parserFilter(Filt);
+    let Filter = {};
+    $location.parserFilter(Filter);
 
     console.log("project_edit")
-    console.log(Filt);
-    if (Filt.projectId === undefined) {
+    console.log(Filter);
+    if (Filter.projectId === undefined) {
         create();
     } else {
-        edit(Filt.projectId);
+        edit(Filter.projectId);
     }
 })

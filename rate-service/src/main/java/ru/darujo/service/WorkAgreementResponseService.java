@@ -103,7 +103,7 @@ public class WorkAgreementResponseService {
             infoServiceIntegration.addMessage(
                     new MessageInfoDto(
                             author,
-                            MessageType.EDIT_WORK_REQUEST,
+                            MessageType.EDIT_WORK_RESPONSE,
                             workAgreementResponseSave == null
                                     ?
                                     ("Добавлен согласование по ЗИ " + UrlWorkTime.getUrlAgreement(workLittleDto) + " по версии ТЗ " + workAgreementResponse.getRequest().getVersion() + "\n" + workAgreementResponse)
@@ -127,7 +127,7 @@ public class WorkAgreementResponseService {
         infoServiceIntegration.addMessage(
                 new MessageInfoDto(
                         author,
-                        MessageType.EDIT_WORK_REQUEST,
+                        MessageType.EDIT_WORK_RESPONSE,
                         ("Удалено согласование по ЗИ " + UrlWorkTime.getUrlAgreement(workAgreementResponseSave.getWorkId(), workLittleDto.getName()) + " по версии " + workAgreementResponseSave.getRequest().getVersion() + "\n" + workAgreementResponseSave)
                 )
         );

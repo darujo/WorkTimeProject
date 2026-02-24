@@ -102,8 +102,8 @@
             <!--            <td class="table_head2" rowspan="3"> Краткое описание внутренней задачи</td>-->
             <td class="table_head3" rowspan="3"> Плановая дата завершения 0 этапа</td>
             <td class="table_head2" rowspan="2" colspan="2"> Дата начала доработки</td>
-            <td class="table_head2" colspan="5"> Плановые трудозатраты, чел/час</td>
-            <td class="table_head2" colspan="5"> Факт дата завершения этапа</td>
+            <td class="table_head2" colspan="{{Project.stageEnd}}"> Плановые трудозатраты, чел/час</td>
+            <td class="table_head2" colspan="{{Project.stageEnd}}"> Факт дата завершения этапа</td>
             <td class="table_head3" rowspan="3"> Текущий этап ЗИ</td>
             <td class="table_head2" rowspan="3">
                 <button class="table_head2 button_table" ng-click="workSort('release.sort')">Порядковый номер релиза
@@ -119,16 +119,16 @@
         </tr>
         <tr>
             <td class="table_head2"> 0 этап</td>
-            <td class="table_head2"> I этап</td>
-            <td class="table_head2"> II этап</td>
-            <td class="table_head2"> III этап</td>
-            <td class="table_head2"> IV этап</td>
+            <td class="table_head2" ng-if="Project.stageEnd > 1"> I этап</td>
+            <td class="table_head2" ng-if="Project.stageEnd > 2"> II этап</td>
+            <td class="table_head2" ng-if="Project.stageEnd > 3"> III этап</td>
+            <td class="table_head2" ng-if="Project.stageEnd > 4"> IV этап</td>
 
             <td class="table_head2"> 0 этап</td>
-            <td class="table_head2"> I этап</td>
-            <td class="table_head2"> II этап</td>
-            <td class="table_head2"> III этап</td>
-            <td class="table_head2"> IV этап</td>
+            <td class="table_head2" ng-if="Project.stageEnd > 1"> I этап</td>
+            <td class="table_head2" ng-if="Project.stageEnd > 2"> II этап</td>
+            <td class="table_head2" ng-if="Project.stageEnd > 3"> III этап</td>
+            <td class="table_head2" ng-if="Project.stageEnd > 4"> IV этап</td>
 
 
         </tr>
@@ -136,17 +136,17 @@
         <tr>
             <td class="table_head2"> План</td>
             <td class="table_head2"> Факт</td>
-            <td class="table_head2"> Анализ</td>
-            <td class="table_head2"> Разработка прототипа</td>
-            <td class="table_head2"> Стабилизация прототипа</td>
-            <td class="table_head2"> Стабилизация релиза</td>
-            <td class="table_head2"> ОПЭ</td>
+            <td class="table_head2">{{Project.stage0Name}}</td>
+            <td class="table_head2" ng-if="Project.stageEnd > 1">{{Project.stage1Name}}</td>
+            <td class="table_head2" ng-if="Project.stageEnd > 2">{{Project.stage2Name}}</td>
+            <td class="table_head2" ng-if="Project.stageEnd > 3">{{Project.stage3Name}}</td>
+            <td class="table_head2" ng-if="Project.stageEnd > 4">{{Project.stage4Name}}</td>
 
-            <td class="table_head2"> Согласование требований</td>
-            <td class="table_head2"> Разработка прототипа</td>
-            <td class="table_head2"> Стабилизация прототипа</td>
-            <td class="table_head2"> Стабилизация релиза</td>
-            <td class="table_head2"> ОПЭ</td>
+            <td class="table_head2">{{Project.stage0Name}}</td>
+            <td class="table_head2" ng-if="Project.stageEnd > 1">{{Project.stage1Name}}</td>
+            <td class="table_head2" ng-if="Project.stageEnd > 2">{{Project.stage2Name}}</td>
+            <td class="table_head2" ng-if="Project.stageEnd > 3">{{Project.stage3Name}}</td>
+            <td class="table_head2" ng-if="Project.stageEnd > 4">{{Project.stage4Name}}</td>
 
             <td class="table_head2"> План</td>
             <td class="table_head2"> Факт</td>
@@ -165,17 +165,17 @@
             <td class="date">{{work.startTaskPlan}}</td>
             <td>{{work.startTaskFact}}</td>
             <td>{{work.laborAnalise}}</td>
-            <td>{{work.laborDevelop}}</td>
-            <td>{{work.laborDebug}}</td>
-            <td>{{work.laborRelease}}</td>
-            <td>{{work.laborOPE}}</td>
+            <td ng-if="Project.stageEnd > 1">{{work.laborDevelop}}</td>
+            <td ng-if="Project.stageEnd > 2">{{work.laborDebug}}</td>
+            <td ng-if="Project.stageEnd > 3">{{work.laborRelease}}</td>
+            <td ng-if="Project.stageEnd > 4">{{work.laborOPE}}</td>
 
             <td>{{work.analiseEndFact}}</td>
             <!--            <td>{{work.developEndFact}}</td>-->
-            <td>{{work.issuePrototypeFact}}</td>
-            <td>{{work.debugEndFact}}</td>
-            <td>{{work.releaseEndFact}}</td>
-            <td>{{work.opeEndFact}}</td>
+            <td ng-if="Project.stageEnd > 1">{{work.issuePrototypeFact}}</td>
+            <td ng-if="Project.stageEnd > 2">{{work.debugEndFact}}</td>
+            <td ng-if="Project.stageEnd > 3">{{work.releaseEndFact}}</td>
+            <td ng-if="Project.stageEnd > 4">{{work.opeEndFact}}</td>
 
             <td>{{work.stageZI}}</td>
             <td>{{work.release}}</td>
@@ -247,7 +247,7 @@
 
                 <tr>
                     <td colspan="7">
-                        <p>Анализ</p>
+                        <p>{{Project.stage0Name}}</p>
                     </td>
                 </tr>
                 <tr>
@@ -294,12 +294,12 @@
                     </td>
                 </tr>
                 <!--    Разработка            -->
-                <tr>
+                <tr ng-if="Project.stageEnd > 1">
                     <td colspan="7">
-                        <p>Разработка прототипа</p>
+                        <p>{{Project.stage1Name}}</p>
                     </td>
                 </tr>
-                <tr>
+                <tr ng-if="Project.stageEnd > 1">
                     <td class="table_head2" colspan="3">
                         <p class="p-form">План</p>
                     </td>
@@ -310,7 +310,7 @@
                     </td>
                 </tr>
 
-                <tr>
+                <tr ng-if="Project.stageEnd > 1">
                     <td>
                         <label for="DevelopStartPlan" class="p-form">
                             <input class="vvod" type="date" id="DevelopStartPlan" step="any"
@@ -342,7 +342,7 @@
                                ng-model="Work.issuePrototypeFact"/>
                     </td>
                 </tr>
-                <tr>
+                <tr ng-if="Project.id != 2">
                     <td>
                         <p class="vvod"> Окончание разработки</p>
                         <!--                        <label for="DevelopStartPlan" class="p-form">-->
@@ -377,12 +377,12 @@
                     </td>
                 </tr>
                 <!--      Отладка          -->
-                <tr>
+                <tr ng-if="Project.stageEnd > 2">
                     <td colspan="7">
-                        <p>Стабилизация прототипа</p>
+                        <p>{{Project.stage2Name}}</p>
                     </td>
                 </tr>
-                <tr>
+                <tr ng-if="Project.stageEnd > 2">
                     <td class="table_head2" colspan="3">
                         <p class="p-form">План</p>
                     </td>
@@ -393,7 +393,7 @@
                     </td>
                 </tr>
 
-                <tr>
+                <tr ng-if="Project.stageEnd > 2">
                     <td>
                         <label for="DebugStartPlan" class="p-form">
                             <input class="vvod" type="date" id="DebugStartPlan" step="any"
@@ -426,12 +426,12 @@
                     </td>
                 </tr>
                 <!--    релиз            -->
-                <tr>
+                <tr ng-if="Project.stageEnd > 3">
                     <td colspan="7">
-                        <p>Стабилизация релиза</p>
+                        <p>{{Project.stage3Name}}</p>
                     </td>
                 </tr>
-                <tr>
+                <tr ng-if="Project.stageEnd > 3">
                     <td class="table_head2" colspan="3">
                         <p class="p-form">План</p>
                     </td>
@@ -442,7 +442,7 @@
                     </td>
                 </tr>
 
-                <tr>
+                <tr ng-if="Project.stageEnd > 3">
                     <td>
                         <label for="ReleaseStartPlan" class="p-form">
                             <input class="vvod" type="date" id="ReleaseStartPlan" step="any"
@@ -475,12 +475,12 @@
                     </td>
                 </tr>
                 <!--    ОПЭ            -->
-                <tr>
+                <tr ng-if="Project.stageEnd > 4">
                     <td colspan="7">
-                        <p>ОПЭ релиза</p>
+                        <p>{{Project.stage4Name}} релиза</p>
                     </td>
                 </tr>
-                <tr>
+                <tr ng-if="Project.stageEnd > 4">
                     <td class="table_head2" colspan="3">
                         <p class="p-form">План</p>
                     </td>
@@ -491,7 +491,7 @@
                     </td>
                 </tr>
 
-                <tr>
+                <tr ng-if="Project.stageEnd > 4">
                     <td>
                         <label for="OpeStartPlan" class="p-form">
                             <input class="vvod" type="date" id="OpeStartPlan" step="any"
@@ -544,11 +544,11 @@
             <summary class="p-form">Плановые трудозатраты</summary>
             <p class="p-form">, чел/час</p>
             <div class="horiz">
-                <label for="LaborAnalise" class="p-form20">Анализ :</label>
-                <label for="LaborDevelop" class="p-form20">Разработка прототипа :</label>
-                <label for="LaborDebug" class="p-form20">Стабилизация прототипа :</label>
-                <label for="LaborRelease" class="p-form20">Стабилизация релиза :</label>
-                <label for="LaborOPE" class="p-form20">ОПЭ :</label>
+                <label for="LaborAnalise" class="p-form20">{{Project.stage0Name}} :</label>
+                <label for="LaborDevelop" class="p-form20" ng-if="Project.stageEnd > 1">{{Project.stage1Name}} :</label>
+                <label for="LaborDebug" class="p-form20" ng-if="Project.stageEnd > 2">{{Project.stage2Name}} :</label>
+                <label for="LaborRelease" class="p-form20" ng-if="Project.stageEnd > 3">{{Project.stage3Name}} :</label>
+                <label for="LaborOPE" class="p-form20" ng-if="Project.stageEnd > 4">{{Project.stage4Name}} :</label>
             </div>
             <div class="horiz">
                 <input class="vvod20mar" type="number" inputmode="decimal"
@@ -557,18 +557,22 @@
                 <br>
                 <input class="vvod20mar" type="number" inputmode="decimal"
                        id="LaborDevelop" step="1"
+                       ng-if="Project.stageEnd > 1"
                        ng-model="Work.laborDevelop" readonly/>
                 <br>
                 <input class="vvod20mar" type="number" inputmode="decimal"
                        id="LaborDebug" step="1"
+                       ng-if="Project.stageEnd > 2"
                        ng-model="Work.laborDebug" readonly/>
                 <br>
                 <input class="vvod20mar" type="number" inputmode="decimal"
                        id="LaborRelease" step="1"
+                       ng-if="Project.stageEnd > 3"
                        ng-model="Work.laborRelease" readonly/>
                 <br>
                 <input class="vvod20mar" type="number" inputmode="decimal" id="LaborOPE"
                        step="1"
+                       ng-if="Project.stageEnd > 4"
                        ng-model="Work.laborOPE" readonly/>
                 <br>
             </div>

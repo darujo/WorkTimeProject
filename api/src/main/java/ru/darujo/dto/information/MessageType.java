@@ -35,20 +35,28 @@ public enum MessageType implements TypeEnum {
     private final Integer hour;
     private final Integer minute;
     private final Integer period;
-    MessageType(String name, Integer hour) {
-        this(name, null, hour, null, 1);
-    }
-    MessageType(String name, DayOfWeek dayOfWeek, Integer hour, Integer minute) {
-        this(name, dayOfWeek, hour, minute, 1);
-    }
 
+    // Уведомления без периода
     MessageType(String name) {
         this(name, null, null, null, null);
     }
 
-    MessageType(String name, DayOfWeek dayOfWeek, Integer hour) {
-        this(name, dayOfWeek, hour, null, 7);
+    // Ежедневные
+    MessageType(String name, Integer hour) {
+        this(name, null, hour, null, 1);
     }
+
+    // Еженедельные
+    MessageType(String name, DayOfWeek dayOfWeek, Integer hour) {
+        this(name, dayOfWeek, hour, null);
+    }
+
+    MessageType(String name, DayOfWeek dayOfWeek, Integer hour, Integer minute) {
+        this(name, dayOfWeek, hour, minute, 7);
+    }
+
+
+
 
     MessageType(String name, DayOfWeek dayOfWeek, Integer hour, Integer minute, Integer periodDay) {
         this.name = name + getDay(dayOfWeek) + getTime(hour, minute);
@@ -115,7 +123,7 @@ public enum MessageType implements TypeEnum {
             minute = 0;
         }
         if (minute < 0 || minute > 59) {
-            throw new RuntimeException("Не верно заданы часы");
+            throw new RuntimeException("Не верно заданы минуты");
         }
         if (hour < 0 || hour > 23) {
             throw new RuntimeException("Не верно заданы часы");
@@ -140,7 +148,7 @@ public enum MessageType implements TypeEnum {
             minute = 0;
         }
         if (minute < 0 || minute > 59) {
-            throw new RuntimeException("Не верно заданы часы");
+            throw new RuntimeException("Не верно заданы минуты");
         }
         int millisecond = ((hour * 60) + minute) * 60 * 1000;
         long startTime = millisecond - milliSecondStartDay;

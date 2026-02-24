@@ -20,7 +20,7 @@ public class WorkProjectLittle implements WorkProjectInter {
     private WorkLittle workLittle;
     @Column(name = "rated")
     private Boolean rated;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "release_id")
     private Release release;
     @Column(name = "stage_zi")

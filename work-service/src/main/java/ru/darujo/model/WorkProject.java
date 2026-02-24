@@ -89,7 +89,7 @@ public class WorkProject implements WorkProjectInter {
     private Timestamp opeStartPlan;
     @Column(name = "rated")
     private Boolean rated;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "release_id")
     private Release release;
     // Дата начала доработки План

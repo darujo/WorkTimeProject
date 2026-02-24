@@ -66,7 +66,7 @@ public class TaskService {
             try {
                 infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.SYSTEM_INFO, "Запущено обновление. Сервис может быть недоступен. Приносим извинения за предоставленые неудобства"));
             } catch (RuntimeException ex) {
-                log.error(ex.getMessage());
+                log.error(ex.getMessage(), ex);
             }
             try {
                 String token = monitorService.getToken();
@@ -151,7 +151,7 @@ public class TaskService {
                     .directory(new File(pathFile))
                     .start();
         } catch (IOException e) {
-            log.error("Не удалось выполнить команду {} c параметрами {}", runFile, param);
+            log.error("Не удалось выполнить команду {} c параметрами {} {}", runFile, param, e.getMessage(), e);
             return null;
         }
 

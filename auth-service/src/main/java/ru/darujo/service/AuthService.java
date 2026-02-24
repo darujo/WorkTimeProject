@@ -1,5 +1,6 @@
 package ru.darujo.service;
 
+import jakarta.transaction.Transactional;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.Project;
 import ru.darujo.model.User;
+import ru.darujo.utils.JwtTokenUtils;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -18,6 +20,13 @@ import java.util.HashSet;
 @Service
 public class AuthService implements UserDetailsService {
     private UserService userService;
+    private JwtTokenUtils jwtTokenUtils;
+
+    @Autowired
+    public void setJwtTokenUtils(JwtTokenUtils jwtTokenUtils) {
+        this.jwtTokenUtils = jwtTokenUtils;
+    }
+
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -48,7 +57,7 @@ public class AuthService implements UserDetailsService {
         return grantedAuthorities;
     }
 
-    public @NonNull User changeProject(@NonNull String username, Long projectId) throws UsernameNotFoundException {
+    public @NonNull User getUser(@NonNull String username, Long projectId) throws UsernameNotFoundException {
         User user = userService.loadUserByNikName(username);
         if (user.isBlock()) {
             throw new ResourceNotFoundRunTime("Пользователь заблокирован");
@@ -60,5 +69,18 @@ public class AuthService implements UserDetailsService {
         user.setCurrentProject(project);
         user = userService.saveUser(user);
         return user;
+    }
+
+    @Transactional
+    public String createAuthToken(String userName) {
+        User user = getUser(userName);
+        return jwtTokenUtils.generateToken(user);
+    }
+
+    @Transactional
+    public String changeProject(String userName, Long projectId) {
+        User user = getUser(userName, projectId);
+        return jwtTokenUtils.generateToken(user);
+
     }
 }
