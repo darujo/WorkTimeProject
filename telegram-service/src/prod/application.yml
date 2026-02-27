@@ -11,7 +11,7 @@ spring:
     username: postgres
     password: 5397
   jpa:
-    database: postgresql
+    open-in-view: true
     show-sql: true
     hibernate:
       ddl-auto: validate

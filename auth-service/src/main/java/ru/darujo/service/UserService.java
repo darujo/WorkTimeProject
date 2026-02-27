@@ -226,11 +226,11 @@ public class UserService {
         roleService.getListRole(project).forEach(role -> roleActiveDtoMap.put(role.getId(), RoleConvertor.getUserRoleActiveDto(role, Boolean.FALSE)));
 
         roleService.getRoleList(null, null, projectId, user).forEach(role -> {
-                UserRoleActiveDto userRoleActiveDto = roleActiveDtoMap.get(role.getId());
-                if (userRoleActiveDto != null) {
-                    userRoleActiveDto.setActive(Boolean.TRUE);
-                }
-            });
+            UserRoleActiveDto userRoleActiveDto = roleActiveDtoMap.get(role.getId());
+            if (userRoleActiveDto != null) {
+                userRoleActiveDto.setActive(Boolean.TRUE);
+            }
+        });
 
         return new UserRoleDto(user.getId(), user.getNikName(), user.getFirstName(), user.getLastName(), user.getPatronymic(), roleActiveDtoMap.values());
     }
@@ -285,6 +285,7 @@ public class UserService {
                             userInfoType -> new UserInfoDto(
                                     userInfoType.getUser().getId(),
                                     userInfoType.getUser().getNikName(),
+                                    userInfoType.getProjectId(),
                                     userInfoType.getTelegramId() == null ? Long.toString(userInfoType.getUser().getTelegramId()) : Long.toString(userInfoType.getTelegramId()),
                                     userInfoType.getThreadId(),
                                     null)).toList();
@@ -301,7 +302,7 @@ public class UserService {
         linkService.clearMapCode(null, null);
         Map<String, UserInfoTypeActiveDto> userInfoActiveDtoMap = new HashMap<>();
         for (MessageType type : MessageType.values()) {
-            UserInfoTypeActiveDto userInfoTypeActiveDto = new UserInfoTypeActiveDto(type.toString(), type.getName(), false);
+            UserInfoTypeActiveDto userInfoTypeActiveDto = new UserInfoTypeActiveDto(null, type.toString(), type.getName(), false);
             if (user != null) {
                 userInfoTypeActiveDto.setMessage(linkService.getCode(user.getNikName(), type.toString()));
             }
@@ -309,26 +310,40 @@ public class UserService {
 
         }
         if (userId != null) {
+            Map<String, UserInfoTypeActiveDto> userInfoActiveCurrentProjectDtoMap = new HashMap<>();
+            for (MessageType type : MessageType.values()) {
+                if (type.getProject()) {
+                    UserInfoTypeActiveDto userInfoTypeActiveDto = new UserInfoTypeActiveDto(user.getCurrentProject().getId(), type.toString(), type.getName(), false);
+
+                    userInfoTypeActiveDto.setMessage(linkService.getCode(user.getNikName(), type.toString()));
+
+                    userInfoActiveCurrentProjectDtoMap.put(type.toString(), userInfoTypeActiveDto);
+                }
+            }
             userInfoTypeService
                     .getInfoTypes(user)
                     .forEach(userInfoType -> {
-                        var userInfo = userInfoActiveDtoMap.get(userInfoType.getCode());
+                        UserInfoTypeActiveDto userInfo;
+                        if (userInfoType.getProjectId() == null) {
+                            userInfo = userInfoActiveDtoMap.get(userInfoType.getCode());
+                        } else {
+                            userInfo = userInfoActiveCurrentProjectDtoMap.get(userInfoType.getCode());
+                        }
                         userInfo.setActive(userInfoType.getIsActive());
                         userInfo.setTelegramId(userInfoType.getTelegramId());
                         userInfo.setThreadId(userInfoType.getThreadId());
-
                     });
 
-            return new UserInfoTypeDto(user.getId(), user.getNikName(), user.getFirstName(), user.getLastName(), user.getPatronymic(), userInfoActiveDtoMap.values());
+            return new UserInfoTypeDto(user.getId(), user.getNikName(), user.getFirstName(), user.getLastName(), user.getPatronymic(), userInfoActiveDtoMap.values(), userInfoActiveCurrentProjectDtoMap.values());
         } else {
-            return new UserInfoTypeDto(null, null, null, null, null, userInfoActiveDtoMap.values());
+            return new UserInfoTypeDto(null, null, null, null, null, userInfoActiveDtoMap.values(), null);
         }
 
     }
 
     public UserInfoTypeDto setUserInfoTypes(UserInfoTypeDto userInfoTypeDto) {
         User user = userRepository.findById(userInfoTypeDto.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь не найден"));
-        userInfoTypeService.setUserInfoTypes(user, userInfoTypeDto.getInfoTypes());
+        userInfoTypeService.setUserInfoTypes(user, userInfoTypeDto.getInfoTypes(), userInfoTypeDto.getInfoProjectTypes());
         setMessageTypeListMap();
         return getUserInfoTypes(user.getId());
     }

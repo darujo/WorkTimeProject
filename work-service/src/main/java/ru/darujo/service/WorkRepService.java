@@ -72,7 +72,7 @@ public class WorkRepService {
         this.workProjectService = workProjectService;
     }
 
-    public List<WorkRepDto> getWorkRep(String name, Boolean availWork, Integer stageZiGe, Integer stageZiLe, Long releaseId, Long projectIdPar, String[] sort) {
+    public List<WorkRepDto> getWorkRep(String name, Boolean availWork, Integer stageZiGe, Integer stageZiLe, Long releaseId, Long projectIdPar, String[] sort, Boolean addMedium) {
         workService.init();
         List<WorkRepDto> workRepDTOs = new ArrayList<>();
         List<Work> works;
@@ -81,6 +81,14 @@ public class WorkRepService {
         } else {
             works = workService.getWorkList(name, stageZiGe, stageZiLe, releaseId, sort);
         }
+        WorkRepDto workRepDto;
+        if (addMedium) {
+            workRepDto = new WorkRepDto(null, null, "Сдение по оцененым ЗИ", new ArrayList<>());
+        } else {
+            workRepDto = null;
+        }
+        Map<Long, WorkRepProjectDto> workRepProjectDtoMap = new HashMap<>();
+
         works.forEach(work ->
                 {
                     List<WorkRepProjectDto> workRepProjectDtoList = new ArrayList<>();
@@ -118,7 +126,8 @@ public class WorkRepService {
                                     getFactWork(workProject, projectDto.getStageEnd(), 4),
                                     getFactWork(workProject, projectDto.getStageEnd(), 5),
                                     workProject.getIssuePrototypePlan(),
-                                    workProject.getIssuePrototypeFact()
+                                    workProject.getIssuePrototypeFact(),
+                                    workProject.getRated()
 
                             );
                             workService.updateProjectInfo(workRepProjectDto);
@@ -127,7 +136,37 @@ public class WorkRepService {
                         }
                     });
                     if (!workRepProjectDtoList.isEmpty()) {
-                        workRepProjectDtoList.forEach(workService::updWorkPlanTime);
+
+                        workRepProjectDtoList.forEach(workRepProjectDto -> {
+                            workService.updWorkPlanTime(workRepProjectDto);
+
+                            if (addMedium && workRepProjectDto.getRated() != null && workRepProjectDto.getRated()) {
+                                WorkRepProjectDto workRepProjectDtoTotal = workRepProjectDtoMap.computeIfAbsent(workRepProjectDto.getProjectId(), projectId ->
+                                {
+                                    WorkRepProjectDto workRepProjectDtoNew = new WorkRepProjectDto(null, workRepProjectDto.getProjectId(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 0f, 0f, 0f, 0f, 0f, 0f, null, null, true);
+                                    workRepProjectDtoNew.setLaborAnalise(0f);
+                                    workRepProjectDtoNew.setLaborDevelop(0f);
+                                    workRepProjectDtoNew.setLaborDebug(0f);
+                                    workRepProjectDtoNew.setLaborRelease(0f);
+                                    workRepProjectDtoNew.setLaborOPE(0f);
+                                    workRepDto.getWorkRepProjectDtoList().add(workRepProjectDtoNew);
+                                    return workRepProjectDtoNew;
+                                });
+                                workRepProjectDtoTotal.addLaborAnalise(workRepProjectDto.getLaborAnalise());
+                                workRepProjectDtoTotal.addLaborDevelop(workRepProjectDto.getLaborDevelop());
+                                workRepProjectDtoTotal.addLaborDebug(workRepProjectDto.getLaborDebug());
+                                workRepProjectDtoTotal.addLaborRelease(workRepProjectDto.getLaborRelease());
+                                workRepProjectDtoTotal.addLaborOPE(workRepProjectDto.getLaborOPE());
+                                workRepProjectDtoTotal.addTimeAnalise(workRepProjectDto.getTimeAnalise());
+                                workRepProjectDtoTotal.addTimeDevelop(workRepProjectDto.getTimeDevelop());
+                                workRepProjectDtoTotal.addTimeDebug(workRepProjectDto.getTimeDebug());
+                                workRepProjectDtoTotal.addTimeRelease(workRepProjectDto.getTimeRelease());
+                                workRepProjectDtoTotal.addTimeOPE(workRepProjectDto.getTimeOPE());
+                                workRepProjectDtoTotal.addTimeWender(workRepProjectDto.getTimeWender());
+                                workRepProjectDtoTotal.addCountOne();
+
+                            }
+                        });
                         workRepDTOs.add(
                                 new WorkRepDto(
                                         work.getId(),
@@ -139,6 +178,14 @@ public class WorkRepService {
                     }
                 }
         );
+        if (workRepDto != null) {
+            workRepDto.getWorkRepProjectDtoList().forEach(workRepProjectDto -> {
+                workRepProjectDto.applyCount();
+                workService.updateProjectInfo(workRepProjectDto);
+            });
+
+            workRepDTOs.add(workRepDto);
+        }
         return workRepDTOs;
     }
 
@@ -257,7 +304,7 @@ public class WorkRepService {
             users = new HashSet<>();
             users.add(nikName);
         } else {
-            users = taskServiceIntegration.getListUser(workId, projectId, workFull.getWorkProject().getIssuePrototypeFact()).getList();
+            users = taskServiceIntegration.getListUser(workId, projectId, null).getList();
         }
         ProjectDto projectDto = WorkService.getProjectDto(projectId);
         users.forEach(user -> {

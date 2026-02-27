@@ -14,52 +14,49 @@ public enum MessageType implements TypeEnum {
     UPDATE_INFO("Список исправлений в новой версии"),
     AVAIL_WORK_LAST_DAY("Работы отмеченные вами за предыдущий рабочий день. Рассылается по рабочим дням", 11),
     AVAIL_WORK_LAST_WEEK("Работы отмеченные вами за предыдущую неделю. Рассылается на второй рабочий день.", 12),
-    AVAIL_WORK_FULL_REPORT("Статус ЗИ.", DayOfWeek.TUESDAY, 20),
-    AVAIL_WORK_FULL_REPORT_PROJECT("Статус ЗИ по проектам.", DayOfWeek.TUESDAY, 20, 10),
+    AVAIL_WORK_FULL_REPORT("Статус ЗИ.", false, DayOfWeek.TUESDAY, 20),
+    AVAIL_WORK_FULL_REPORT_PROJECT("Статус ЗИ по проектам.", true, DayOfWeek.TUESDAY, 20, 10),
 
-    WEEK_WORK_REPORT("Факт загрузки за предыдущую неделю.", DayOfWeek.TUESDAY, 20),
-    ZI_WORK_REPORT("Факт загрузки по ЗИ.", DayOfWeek.TUESDAY, 20),
-    ZI_WORK_REPORT_PROJECT("Факт загрузки по ЗИ по проектам.", DayOfWeek.TUESDAY, 20, 10),
+    WEEK_WORK_REPORT("Факт загрузки за предыдущую неделю.", false, DayOfWeek.TUESDAY, 20),
+    ZI_WORK_REPORT("Факт загрузки по ЗИ.", false, DayOfWeek.TUESDAY, 20),
+    ZI_WORK_REPORT_PROJECT("Факт загрузки по ЗИ по проектам.", true, DayOfWeek.TUESDAY, 20, 10),
 
     VACATION_MY_START("Начало вашего отпуска в день перед отпуском", 20),
     VACATION_MY_END("Конец Вашего отпуска в последний день отпуска", 14),
     VACATION_USER_START("Список отпусков ежедневно", 12),
     EDIT_WORK_REQUEST("Добавлен/изменен запрос на согласование ТЗ"),
-    EDIT_WORK_RESPONSE("Добавлено/изменено согласование ТЗ")
-
-
-    ;
+    EDIT_WORK_RESPONSE("Добавлено/изменено согласование ТЗ");
 
     private final String name;
     private final DayOfWeek dayOfWeek;
     private final Integer hour;
     private final Integer minute;
     private final Integer period;
+    private final boolean project;
 
     // Уведомления без периода
     MessageType(String name) {
-        this(name, null, null, null, null);
+        this(name, false, null, null, null, null);
     }
 
     // Ежедневные
     MessageType(String name, Integer hour) {
-        this(name, null, hour, null, 1);
+        this(name, false, null, hour, null, 1);
     }
 
     // Еженедельные
-    MessageType(String name, DayOfWeek dayOfWeek, Integer hour) {
-        this(name, dayOfWeek, hour, null);
+    MessageType(String name, Boolean project, DayOfWeek dayOfWeek, Integer hour) {
+        this(name, project, dayOfWeek, hour, null);
     }
 
-    MessageType(String name, DayOfWeek dayOfWeek, Integer hour, Integer minute) {
-        this(name, dayOfWeek, hour, minute, 7);
+    MessageType(String name, Boolean project, DayOfWeek dayOfWeek, Integer hour, Integer minute) {
+        this(name, project, dayOfWeek, hour, minute, 7);
     }
 
 
-
-
-    MessageType(String name, DayOfWeek dayOfWeek, Integer hour, Integer minute, Integer periodDay) {
+    MessageType(String name, Boolean project, DayOfWeek dayOfWeek, Integer hour, Integer minute, Integer periodDay) {
         this.name = name + getDay(dayOfWeek) + getTime(hour, minute);
+        this.project = project;
         this.dayOfWeek = dayOfWeek;
         this.hour = hour;
         this.minute = minute;
@@ -119,7 +116,7 @@ public enum MessageType implements TypeEnum {
     }
 
     private Long getStartTime(Integer hour, Integer minute) {
-        if (minute== null){
+        if (minute == null) {
             minute = 0;
         }
         if (minute < 0 || minute > 59) {
@@ -144,7 +141,7 @@ public enum MessageType implements TypeEnum {
         if (hour < 0 || hour > 23) {
             throw new RuntimeException("Не верно заданы часы");
         }
-        if (minute== null){
+        if (minute == null) {
             minute = 0;
         }
         if (minute < 0 || minute > 59) {
@@ -162,5 +159,9 @@ public enum MessageType implements TypeEnum {
             startTime = startTime + 7 * 24 * 60 * 60;
         }
         return startTime;
+    }
+
+    public Boolean getProject() {
+        return project;
     }
 }

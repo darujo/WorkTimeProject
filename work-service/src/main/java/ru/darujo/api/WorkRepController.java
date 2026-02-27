@@ -41,9 +41,10 @@ public class WorkRepController {
                                         @RequestParam(defaultValue = "15") Integer stageZi,
                                         @RequestParam(required = false) Long releaseId,
                                         @RequestParam(required = false) Long projectId,
-                                        @RequestParam(required = false) String[] sort) {
+                                        @RequestParam(required = false) String[] sort,
+                                        @RequestParam(defaultValue = "true") Boolean addMedium) {
         StageZiFind stageZiFind = new StageZiFind(stageZi);
-        return workRepService.getWorkRep(ziName, availWork, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), releaseId, projectId, sort);
+        return workRepService.getWorkRep(ziName, availWork, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), releaseId, projectId, sort, addMedium);
     }
 
     @GetMapping("/work/fact")
@@ -100,7 +101,7 @@ public class WorkRepController {
                                           @RequestParam(required = false) String task,
                                           @RequestParam(required = false) List<Long> releaseId,
                                           @RequestParam(defaultValue = "release.sort") String sort) {
-        if(projectId == null){
+        if (projectId == null) {
             sort = "name";
         }
         Timestamp dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ", true);

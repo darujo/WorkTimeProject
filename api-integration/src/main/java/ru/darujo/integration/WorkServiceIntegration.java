@@ -119,7 +119,8 @@ public class WorkServiceIntegration extends ServiceIntegration {
                                         Integer stageZi,
                                         Long releaseId,
                                         Long projectId,
-                                        LinkedList<String> sort
+                                        LinkedList<String> sort,
+                                        Boolean addMedium
                                         ) {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "ziName", ziName);
@@ -127,6 +128,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "stageZi", stageZi);
         addTeg(stringBuilder, "releaseId", releaseId);
         addTeg(stringBuilder, "projectId", projectId);
+        addTeg(stringBuilder, "addMedium", addMedium);
         if (sort != null) {
             sort.forEach(s -> addTeg(stringBuilder, "sort", s));
         }

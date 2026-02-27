@@ -163,7 +163,7 @@ public class Tasks {
             log.info("sendReportWorkFull");
             LinkedList<String> sort = new LinkedList<>();
             sort.add("name");
-            String report = htmlService.printRep(workServiceIntegration.getTimeWork(null, true, null, null, null, sort),"Статус_ЗИ");
+            String report = htmlService.printRep(workServiceIntegration.getTimeWork(null, true, null, null, null, sort, true), "Статус_ЗИ");
             messageInformationService.sendFile(new MessageInfoDto(
                     chatInfo == null ? null : chatInfo.getAuthor(),
                     getUserInfoDto(chatInfo),
@@ -178,13 +178,17 @@ public class Tasks {
             log.info("sendReportWorkFullProject");
             LinkedList<String> sort = new LinkedList<>();
             sort.add("release.sort");
-            userServiceIntegration.getProjects(null,null).forEach(projectDto -> {
-                String report = htmlService.printRep(workServiceIntegration.getTimeWork(null, true, null, null, projectDto.getId(), sort),"Статус ЗИ по проекту " + projectDto.getName());
-                messageInformationService.sendFile(new MessageInfoDto(
-                        chatInfo == null ? null : chatInfo.getAuthor(),
-                        getUserInfoDto(chatInfo),
-                        messageType, "Рассылка отчете статус ЗИ по проекту " + projectDto.getName()
-                ), "Статус_ЗИ_" + projectDto.getName() + "_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
+            userServiceIntegration.getProjects(null, null).forEach(projectDto -> {
+                String report = htmlService.printRep(workServiceIntegration.getTimeWork(null, true, null, null, projectDto.getId(), sort, true), "Статус ЗИ по проекту " + projectDto.getName());
+                messageInformationService.sendFile(
+                        new MessageInfoDto(
+                                chatInfo == null ? null : chatInfo.getAuthor(),
+                                getUserInfoDto(chatInfo),
+                                messageType, "Рассылка отчете статус ЗИ по проекту " + projectDto.getName()
+                        ),
+                        projectDto.getId(),
+                        "Статус_ЗИ_" + projectDto.getName() + "_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html",
+                        report);
             });
         });
     }
@@ -290,19 +294,25 @@ public class Tasks {
     public RunnableNotException getZiWorkProject(MessageType messageType, ChatInfo chatInfo) {
         return new RunnableNotException(() -> {
             log.info("getZiWorkProject");
-            userServiceIntegration.getProjects(null,null).forEach(projectDto -> {
+            userServiceIntegration.getProjects(null, null).forEach(projectDto -> {
                 String report = getReportWork(true, projectDto.getId(), "Факт загрузки по ЗИ проект " + projectDto.getName());
-                messageInformationService.sendFile(new MessageInfoDto(
-                        chatInfo == null ? null : chatInfo.getAuthor(),
-                        getUserInfoDto(chatInfo),
-                        messageType, "Факт загрузки по ЗИ проект " + projectDto.getName()
-                ), "Факт_загрузки_по_ЗИ_" + projectDto.getName() + "_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
+                messageInformationService.sendFile(
+                        new MessageInfoDto(
+                                chatInfo == null ? null : chatInfo.getAuthor(),
+                                getUserInfoDto(chatInfo),
+                                messageType,
+                                "Факт загрузки по ЗИ проект " + projectDto.getName()
+                        ),
+                        projectDto.getId(),
+                        "Факт_загрузки_по_ЗИ_" + projectDto.getName() + "_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html",
+                        report);
             });
         });
     }
+
     private String getReportWork(boolean ziSplit, Long projectId, String headText) {
         List<AttrDto<Integer>> taskListType = taskServiceIntegration.getTaskTypes();
-        Timestamp date = calendarServiceIntegration.getLastWorkDay( null, null, 1, true);
+        Timestamp date = calendarServiceIntegration.getLastWorkDay(null, null, 1, true);
         List<WorkUserTime> weekWorkList = workServiceIntegration.getWorkUserTime(ziSplit, projectId, date);
         return htmlService.getWeekWork(headText, ziSplit, true, true, true, taskListType, weekWorkList);
     }

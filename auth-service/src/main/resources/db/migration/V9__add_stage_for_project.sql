@@ -42,7 +42,7 @@ ALTER TABLE IF EXISTS user_repo.project
 
 
 UPDATE user_repo.project
-SET stage_end    = 5,
+SET stage_end = 5,
     stage_0_name = 'Анализ',
     stage_1_name = 'Разработка прототипа',
     stage_2_name = 'Стабилизация прототипа',

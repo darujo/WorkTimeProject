@@ -20,8 +20,9 @@ public class LinkController {
     @GetMapping("/get")
     public CodeTelegramMes getGenSingleCode(@RequestHeader String username,
                                             @RequestParam(required = false) String nikName,
-                                            @RequestParam(required = false) String messageType) {
-        return linkService.getGenSingleCode(nikName == null ? username : nikName, messageType);
+                                            @RequestParam(required = false) String messageType,
+                                            @RequestParam(required = false) Long projectId) {
+        return linkService.getGenSingleCode(nikName == null ? username : nikName, messageType, projectId);
     }
 
     @GetMapping("/get/{chatId}")

@@ -28,15 +28,23 @@ public class UserInfoTypeService {
     }
 
     @Transactional
-    public void setUserInfoTypes(User user, Collection<UserInfoTypeActiveDto> userInfoTypeDto) {
+    public void setUserInfoTypes(User user, Collection<UserInfoTypeActiveDto> userInfoTypeDto, Collection<UserInfoTypeActiveDto> userInfoTypeProjectDto) {
+        setUserInfoTypes(user, userInfoTypeDto);
+        setUserInfoTypes(user, userInfoTypeProjectDto);
+    }
 
+
+    private void setUserInfoTypes(User user, Collection<UserInfoTypeActiveDto> userInfoTypeDto) {
         getInfoTypes(user).forEach(userInfoType ->
         {
             if (userInfoTypeDto
                     .stream()
                     .anyMatch(userInfoTypeActiveDto ->
                             !userInfoTypeActiveDto.getActive()
-                                    && userInfoType.getCode().equals(userInfoTypeActiveDto.getCode()))) {
+                                    && userInfoType.getCode().equals(userInfoTypeActiveDto.getCode())
+                                    && ((userInfoType.getProjectId() == null && userInfoTypeActiveDto.getProjectId() == null) ||
+                                    (userInfoType.getProjectId() != null && userInfoType.getProjectId().equals(userInfoTypeActiveDto.getProjectId())))
+                    )) {
                 userInfoType.setIsActive(false);
                 save(userInfoType);
             }
@@ -44,9 +52,15 @@ public class UserInfoTypeService {
 
         userInfoTypeDto.forEach(userInfoTypeActiveDto -> {
             if (userInfoTypeActiveDto.getActive()) {
-                UserInfoType userInfoType = userInfoTypeRepository.findFirstByCodeAndUser(userInfoTypeActiveDto.getCode(), user).orElse(null);
+                UserInfoType userInfoType;
+                if (userInfoTypeActiveDto.getProjectId() == null) {
+                    userInfoType = userInfoTypeRepository.findFirstByCodeAndUserAndProjectIdIsNull(userInfoTypeActiveDto.getCode(), user).orElse(null);
+                } else {
+                    userInfoType = userInfoTypeRepository.findFirstByCodeAndUserAndProjectId(userInfoTypeActiveDto.getCode(), user, userInfoTypeActiveDto.getProjectId()).orElse(null);
+                }
                 if (userInfoType == null) {
-                    userInfoType = new UserInfoType(userInfoTypeActiveDto.getCode(),
+                    userInfoType = new UserInfoType(userInfoTypeActiveDto.getProjectId(),
+                            userInfoTypeActiveDto.getCode(),
                             user);
 
                 }
@@ -55,7 +69,6 @@ public class UserInfoTypeService {
             }
 
         });
-
     }
 
     public List<UserInfoType> getInfoTypes(User user) {
@@ -72,8 +85,13 @@ public class UserInfoTypeService {
         return userInfoTypeRepository.findAll(specification);
     }
 
-    public Optional<UserInfoType> getInfoTypeForUser(User user, Long telegramId, Integer threadId, String messageType) {
+    public Optional<UserInfoType> getInfoTypeForUser(User user, Long projectId, Long telegramId, Integer threadId, String messageType) {
         Specification<@NonNull UserInfoType> specification = getUserInfoTypeSpecification(user, telegramId, threadId, messageType);
+        if (projectId == null) {
+            specification = Specifications.isNull(specification, "projectId");
+        } else {
+            specification = Specifications.eq(specification, "projectId", projectId);
+        }
         return userInfoTypeRepository.findOne(specification);
     }
 

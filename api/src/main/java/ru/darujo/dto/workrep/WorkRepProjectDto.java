@@ -104,6 +104,8 @@ public class WorkRepProjectDto implements WorkPlanTime, ProjectUpdateInter {
     private Timestamp issuePrototypeFact;
     @SuppressWarnings("unused")
     private String issuePrototypeFactStr;
+    @SuppressWarnings("unused")
+    private Boolean rated;
 
     public WorkRepProjectDto(Long workId,
                              Long projectId,
@@ -129,7 +131,8 @@ public class WorkRepProjectDto implements WorkPlanTime, ProjectUpdateInter {
                              Float timeOPE,
                              Float timeWender,
                              Timestamp issuePrototypePlan,
-                             Timestamp issuePrototypeFact) {
+                             Timestamp issuePrototypeFact,
+                             Boolean rated) {
         this.workId = workId;
         this.projectId = projectId;
         this.startTaskPlan = startTaskPlan;
@@ -156,6 +159,7 @@ public class WorkRepProjectDto implements WorkPlanTime, ProjectUpdateInter {
         this.timeFact = 0f;
         this.issuePrototypePlan = issuePrototypePlan;
         this.issuePrototypeFact = issuePrototypeFact;
+        this.rated = rated;
         addTimeFact(timeAnalise);
         addTimeFact(timeDevelop);
         addTimeFact(timeDebug);
@@ -460,5 +464,110 @@ public class WorkRepProjectDto implements WorkPlanTime, ProjectUpdateInter {
     @SuppressWarnings("unused")
     public String getProjectName() {
         return projectName;
+    }
+
+    public void addTimeAnalise(Float timeAnalise) {
+        if (timeAnalise != null) {
+            addTimeFact(timeAnalise);
+            this.timeAnalise = this.timeAnalise + timeAnalise;
+        }
+    }
+
+    public void addTimeDevelop(Float timeDevelop) {
+        if (timeDevelop != null) {
+            addTimeFact(timeDevelop);
+            this.timeDevelop = this.timeDevelop + timeDevelop;
+        }
+    }
+
+    public void addTimeDebug(Float timeDebug) {
+        if (timeDebug != null) {
+            addTimeFact(timeDebug);
+            this.timeDebug = this.timeDebug + timeDebug;
+        }
+    }
+
+    public void addTimeRelease(Float timeRelease) {
+        if (timeRelease != null) {
+            addTimeFact(timeRelease);
+            this.timeRelease = this.timeRelease + timeRelease;
+        }
+    }
+
+    public void addTimeOPE(Float timeOPE) {
+        if (timeOPE != null) {
+            addTimeFact(timeOPE);
+            this.timeOPE = this.timeOPE + timeOPE;
+        }
+    }
+
+    public void addTimeWender(Float timeWender) {
+        if (timeWender != null) {
+            addTimeFact(timeWender);
+            this.timeWender = this.timeWender + timeWender;
+        }
+    }
+
+    public void addLaborAnalise(Float laborAnalise) {
+        if (laborAnalise != null) {
+            this.laborAnalise = this.laborAnalise + laborAnalise;
+        }
+    }
+
+
+    public void addLaborDevelop(Float laborDevelop) {
+        if (laborDevelop != null) {
+            this.laborDevelop = this.laborDevelop + laborDevelop;
+        }
+    }
+
+
+    public void addLaborDebug(Float laborDebug) {
+        if (laborDebug != null) {
+            this.laborDebug = this.laborDebug + laborDebug;
+        }
+    }
+
+
+    public void addLaborRelease(Float laborRelease) {
+        if (laborRelease != null) {
+            this.laborRelease = this.laborRelease + laborRelease;
+        }
+    }
+
+
+    public void addLaborOPE(Float laborOPE) {
+        if (laborOPE != null) {
+            this.laborOPE = this.laborOPE + laborOPE;
+        }
+    }
+
+    public Boolean getRated() {
+        return rated;
+    }
+
+    private Integer count;
+
+    public void applyCount() {
+        laborAnalise = laborAnalise / count;
+        laborDevelop = laborDevelop / count;
+        laborDebug = laborDebug / count;
+        laborRelease = laborRelease / count;
+        laborOPE = laborOPE / count;
+        timeAnalise = timeAnalise / count;
+        timeDevelop = timeDevelop / count;
+        timeDebug = timeDebug / count;
+        timeRelease = timeRelease / count;
+        timeOPE = timeOPE / count;
+        timeWender = timeWender / count;
+        timeFact = timeFact / count;
+        count = null;
+    }
+
+    public void addCountOne() {
+        if (count == null) {
+            count = 0;
+        }
+        this.count++;
     }
 }

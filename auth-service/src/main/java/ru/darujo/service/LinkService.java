@@ -39,7 +39,7 @@ public class LinkService {
     }
 
     @Transactional
-    public CodeTelegramMes getGenSingleCode(String login, String messageType) {
+    public CodeTelegramMes getGenSingleCode(String login, String messageType, Long projectId) {
 
         if (login == null) {
             throw new ResourceNotFoundRunTime("пройдите авторизацию");
@@ -55,7 +55,7 @@ public class LinkService {
         clearMapCode(login, messageType);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis() + TIME_CODE * 60 * 1000);
         int code = (int) ((99999999 * Math.random()));
-        SingleCode singleCode = new SingleCode(login, messageType, timestamp);
+        SingleCode singleCode = new SingleCode(login, projectId, messageType, timestamp);
         mapCode.put(code, singleCode);
         return new CodeTelegramMes(true, "t.me/DaruWorkBot", code, TIME_CODE);
 
@@ -104,8 +104,8 @@ public class LinkService {
             userService.saveUser(user);
         } else {
             UserInfoType userInfoType = userInfoTypeService
-                    .getInfoTypeForUser(user, null, null, singleCode.getMessageType())
-                    .orElse(new UserInfoType(singleCode.getMessageType(), user));
+                    .getInfoTypeForUser(user, singleCode.getProjectId(), null, null, singleCode.getMessageType())
+                    .orElse(new UserInfoType(singleCode.getProjectId(), singleCode.getMessageType(), user));
             userInfoType.setTelegramId(telegramId);
             userInfoType.setThreadId(threadId);
             userInfoTypeService.save(userInfoType);

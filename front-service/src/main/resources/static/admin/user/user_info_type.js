@@ -66,7 +66,9 @@ angular.module('workTimeService').controller('userInfoTypeController', function 
             method: "get",
             params: {
                 nikName: nikName,
-                messageType: infoType.code
+                messageType: infoType.code,
+                projectId: infoType.projectId
+
             }
         }).then(function (response) {
             console.log("Save response")

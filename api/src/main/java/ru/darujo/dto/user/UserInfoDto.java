@@ -10,7 +10,7 @@ public class UserInfoDto implements Serializable {
     private Long id;
 
     private String nikName;
-
+    private Long projectId;
     private String telegramId;
     private Integer threadId;
     private Integer originMessageId;
@@ -18,6 +18,15 @@ public class UserInfoDto implements Serializable {
     public UserInfoDto(Long id, String nikName, String telegramId, Integer threadId, Integer originMessageId) {
         this.id = id;
         this.nikName = nikName;
+        this.telegramId = telegramId;
+        this.threadId = threadId;
+        this.originMessageId = originMessageId;
+    }
+
+    public UserInfoDto(Long id, String nikName, Long projectId, String telegramId, Integer threadId, Integer originMessageId) {
+        this.id = id;
+        this.nikName = nikName;
+        this.projectId = projectId;
         this.telegramId = telegramId;
         this.threadId = threadId;
         this.originMessageId = originMessageId;
@@ -41,5 +50,9 @@ public class UserInfoDto implements Serializable {
 
     public Integer getOriginMessageId() {
         return originMessageId;
+    }
+
+    public Long getProjectId() {
+        return projectId;
     }
 }

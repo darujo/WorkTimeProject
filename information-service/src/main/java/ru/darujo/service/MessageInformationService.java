@@ -175,6 +175,11 @@ public class MessageInformationService {
 
     @Transactional
     public Boolean sendFile(MessageInfoDto messageInfoDto, String fileName, String fileBody) {
+        return sendFile(messageInfoDto, null, fileName, fileBody);
+    }
+
+    @Transactional
+    public Boolean sendFile(MessageInfoDto messageInfoDto, Long projectId, String fileName, String fileBody) {
         if (messageTypeListMap == null) {
             init();
         }
@@ -190,11 +195,20 @@ public class MessageInformationService {
                         messageInfoDto.getUserInfoDto().getOriginMessageId(),
                         messageInformation));
             } else {
-                messageTypeListMap.get(messageInfoDto.getType()).forEach(userInfoDto -> saveUserSend(new UserSend(
-                        userInfoDto.getTelegramId(),
-                        userInfoDto.getThreadId(),
-                        userInfoDto.getOriginMessageId(),
-                        messageInformation)));
+                messageTypeListMap
+                        .get(messageInfoDto.getType())
+                        .stream().filter(userInfoDto ->
+                                (projectId == null
+                                        && userInfoDto.getProjectId() == null)
+                                        ||
+                                        (projectId != null
+                                                && (projectId.equals(userInfoDto.getProjectId())
+                                                || userInfoDto.getProjectId() == null)))
+                        .forEach(userInfoDto -> saveUserSend(new UserSend(
+                                userInfoDto.getTelegramId(),
+                                userInfoDto.getThreadId(),
+                                userInfoDto.getOriginMessageId(),
+                                messageInformation)));
             }
             try {
                 telegramServiceIntegration.addFile(fileName, fileBody);

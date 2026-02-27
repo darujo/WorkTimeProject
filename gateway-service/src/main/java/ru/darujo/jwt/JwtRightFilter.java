@@ -1,7 +1,5 @@
 package ru.darujo.jwt;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,13 +102,11 @@ public abstract class JwtRightFilter extends AbstractGatewayFilterFactory<JwtRig
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(status);
         DataBufferFactory bufferFactory = response.bufferFactory();
-        ObjectMapper objectMapper = new ObjectMapper();
+        tools.jackson.databind.ObjectMapper objectMapper = new ObjectMapper();
         DataBuffer wrap;
-        try {
-            wrap = bufferFactory.wrap(objectMapper.writeValueAsBytes(text));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+
+        wrap = bufferFactory.wrap(objectMapper.writeValueAsBytes(text));
+
         DataBuffer finalWrap = wrap;
         return response.writeWith(Mono.fromSupplier(() -> finalWrap));
     }

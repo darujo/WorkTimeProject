@@ -11,5 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface UserInfoTypeRepository extends CrudRepository<@NonNull UserInfoType, @NonNull Long>, JpaSpecificationExecutor<@NonNull UserInfoType> {
-    Optional<UserInfoType> findFirstByCodeAndUser(String code, User user);
+    Optional<UserInfoType> findFirstByCodeAndUserAndProjectIdIsNull(String code, User user);
+
+    Optional<UserInfoType> findFirstByCodeAndUserAndProjectId(String code, User user, Long projectId);
 }

@@ -11,10 +11,10 @@ spring:
     username: postgres
     password: 5397
   jpa:
-    database: postgresql
     show-sql: true
     hibernate:
       ddl-auto: validate
+    open-in-view: true
 
   jackson:
     default-property-inclusion: non_absent
