@@ -69,6 +69,7 @@
                     <button class="table_head1 button_table" ng-click="addSort('name')"> Наименование</button>
                 </td>
                 <td class="table_head1" rowspan="5">Проект</td>
+                <td class="table_head1" rowspan="5">Оценено</td>
                 <td class="table_head2" colspan="4"> 0 этап</td>
                 <td class="table_head2" colspan="2" rowspan="4"> Дата начала доработки</td>
                 <td class="table_head1" colspan="6"> I этап</td>
@@ -164,6 +165,11 @@
                     {{work.name}}
                 </td>
                 <td class="text_not_wrap">{{workProject.projectName}} ({{workProject.projectCode}})</td>
+                <td class="text_not_wrap">
+                    <label for="Rated"></label>
+                    <input id="Rated" class="vvod check_box_td_23" type="checkbox" ng-model="workProject.rated"/>
+                </td>
+
                 <!--        // ВЕНДЕРКА План-->
                 <td>{{workProject.analiseEndPlanStr}}</td>
                 <!--        // ВЕНДЕРКА-->

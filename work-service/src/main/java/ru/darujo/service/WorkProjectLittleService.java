@@ -65,7 +65,7 @@ public class WorkProjectLittleService {
     public Page<WorkProjectLittle> getListWork(Integer page, Integer size, String sort, Integer stageZiGe, Integer stageZiLe, String task, List<Long> releaseIdArray, Long projectId, Long releaseId, List<WorkLittle> workLittleList) {
         Specification<WorkProjectLittle> specification = Specification.unrestricted();
         specification = Specifications.like(specification, "task", task);
-        specification = Specifications.in(specification, "work", workLittleList);
+        specification = Specifications.in(specification, "workLittle", workLittleList);
         specification = Specifications.eq(specification, "projectId", projectId);
 
         if (releaseId != null) {

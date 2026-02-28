@@ -98,6 +98,7 @@
             <td class="sticky-col three-col-1 table_head2" rowspan="3">
                 <button class="table_head2 button_table" ng-click="workSort('name')"> Наименование</button>
             </td>
+            <td class="table_head2" rowspan="3">Оценено</td>
             <td class="table_head2" rowspan="3"> № внутренней задачи (DEVBO)</td>
             <!--            <td class="table_head2" rowspan="3"> Краткое описание внутренней задачи</td>-->
             <td class="table_head3" rowspan="3"> Плановая дата завершения 0 этапа</td>
@@ -158,6 +159,10 @@
             <td class="sticky-col second-col-1">{{work.codeZI}}</td>
             <td class="text_left sticky-col three-col-1">
                 <button ng-click="addTime(work.id)">{{work.name}}</button>
+            </td>
+            <td>
+                <label for="RatedTd"></label>
+                <input id="RatedTd" readonly class="vvod check_box_td_23" type="checkbox" ng-model="work.rated"/>
             </td>
             <td>{{work.task}}</td>
             <!--            <td class="text_left text_not_wrap">{{work.description}}</td>-->

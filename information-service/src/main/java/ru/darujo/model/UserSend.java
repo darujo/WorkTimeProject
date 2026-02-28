@@ -24,7 +24,7 @@ public class UserSend {
     private Boolean send;
     @Column(name = "origin_message_id")
     private Integer originMessageId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "mes_info_id")
     private MessageInformation messageInformation;
 

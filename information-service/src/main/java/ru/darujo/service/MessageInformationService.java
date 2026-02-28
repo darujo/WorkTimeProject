@@ -1,7 +1,6 @@
 package ru.darujo.service;
 
 
-import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
@@ -22,8 +21,10 @@ import ru.darujo.repository.MessageInformationRepository;
 import ru.darujo.repository.UserSendRepository;
 import ru.darujo.specifications.Specifications;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
@@ -31,27 +32,24 @@ import java.util.concurrent.atomic.AtomicReference;
 @Primary
 public class MessageInformationService {
     private UserServiceIntegration userServiceIntegration;
+    private MessageInformationRepository messageInformationRepository;
+    private UserSendRepository userSendRepository;
+    private TelegramServiceIntegration telegramServiceIntegration;
 
     @Autowired
     public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
 
-    private MessageInformationRepository messageInformationRepository;
-
     @Autowired
     public void setMessageInformationRepository(MessageInformationRepository workTypeRepository) {
         this.messageInformationRepository = workTypeRepository;
     }
 
-    private UserSendRepository userSendRepository;
-
     @Autowired
     public void setUserSendRepository(UserSendRepository userSendRepository) {
         this.userSendRepository = userSendRepository;
     }
-
-    private TelegramServiceIntegration telegramServiceIntegration;
 
     @Autowired
     public void setTelegramServiceIntegration(TelegramServiceIntegration telegramServiceIntegration) {
@@ -59,26 +57,40 @@ public class MessageInformationService {
     }
 
     Map<MessageType, List<UserInfoDto>> messageTypeListMap = null;
-
-    @PostConstruct
+    private Timestamp lastInitMesType;
     @Transactional
-    public void init() {
+    public void initMesType() {
         log.info("init mess");
-        if (messageTypeListMap == null) {
+        if (messageTypeListMap == null
+                || lastInitMesType == null
+                || lastInitMesType.before(new Timestamp(System.currentTimeMillis()))) {
+            lastInitMesType = new Timestamp(System.currentTimeMillis() + 10 * 60 * 1000);
             try {
                 messageTypeListMap = userServiceIntegration.getUserMessageDTOs().getMessageTypeListMap();
+                log.info("init mess ok");
             } catch (ResourceNotFoundRunTime exception) {
                 log.error(exception.getMessage());
             }
         }
-        if (messageTypeListMap != null && availInformNoAddUser()) {
-            updateAllNoAddUser();
+    }
+
+    @Transactional
+    public boolean sendMesNotSend() {
+        boolean flagOk = false;
+        if (availInformNoAddUser()) {
+            if (messageTypeListMap != null) {
+                updateAllNoAddUser();
+                flagOk = true;
+            }
+        } else {
+            flagOk = true;
         }
         if (availNotSendMessage()) {
-            sendAllNotSendMessage();
+            if (!sendAllNotSendMessage()) {
+                flagOk = false;
+            }
         }
-
-
+        return flagOk;
     }
 
     public void setMessageTypeListMap(MapUserInfoDto messageTypeListMap) {
@@ -87,9 +99,8 @@ public class MessageInformationService {
 
     @Transactional
     public Boolean addMessage(MessageInfoDto messageInfoDto) {
-        if (messageTypeListMap == null) {
-            init();
-        }
+        initMesType();
+
         if (messageInfoDto.getText().isBlank()) {
             return false;
         }
@@ -106,7 +117,9 @@ public class MessageInformationService {
             MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true, messageInfoDto.getDataTime()));
             messageTypeListMap.get(messageInfoDto.getType()).forEach(userTelegramDto -> saveUserSend(new UserSend(userTelegramDto.getTelegramId(), userTelegramDto.getThreadId(), null, messageInformation)));
         }
-        sendAllNotSendMessage();
+        if (sendAllNotSendMessage()) {
+            ScheduleService.getINSTANCE().sendMes();
+        }
         return true;
 
     }
@@ -149,8 +162,9 @@ public class MessageInformationService {
     }
 
     @Transactional
-    public void sendAllNotSendMessage() {
+    public boolean sendAllNotSendMessage() {
         Specification<@NonNull UserSend> specification = Specifications.ne(null, "send", true);
+        AtomicBoolean flagOk = new AtomicBoolean(true);
         userSendRepository.findAll(specification).forEach(
                 userSend -> {
                     try {
@@ -158,10 +172,12 @@ public class MessageInformationService {
                         userSend.setSend(true);
                         userSendRepository.save(userSend);
                     } catch (ResourceNotFoundRunTime exception) {
-                        log.error(exception.getMessage());
+                        flagOk.set(false);
+                        log.error(exception.getMessage(), exception);
                     }
 
                 });
+        return flagOk.get();
     }
 
 
@@ -181,7 +197,7 @@ public class MessageInformationService {
     @Transactional
     public Boolean sendFile(MessageInfoDto messageInfoDto, Long projectId, String fileName, String fileBody) {
         if (messageTypeListMap == null) {
-            init();
+            initMesType();
         }
         if (messageInfoDto.getUserInfoDto() != null && messageTypeListMap == null) {
             log.error("Нет списка получателей");
@@ -238,12 +254,14 @@ public class MessageInformationService {
                 try {
                     telegramServiceIntegration.deleteFile(fileName);
                 } catch (ResourceNotFoundRunTime ex) {
-                    log.error("Сбой при удаление файл из сервиса {} {}", fileName, ex.getMessage());
+                    log.error("Сбой при удаление файл из сервиса {} {}", fileName, ex.getMessage(), ex);
                 }
             }
 
         }
-        sendAllNotSendMessage();
+        if (sendAllNotSendMessage()) {
+            ScheduleService.getINSTANCE().sendMes();
+        }
         return true;
 
     }

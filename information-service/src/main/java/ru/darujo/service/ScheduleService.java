@@ -1,6 +1,7 @@
 package ru.darujo.service;
 
 import jakarta.annotation.PostConstruct;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,10 +25,17 @@ public class ScheduleService implements AutoCloseable {
     }
 
     ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
+    @Getter
+    public static ScheduleService INSTANCE;
+
+    public ScheduleService() {
+        INSTANCE = this;
+    }
 
     @PostConstruct
     private void init() {
-        executor.scheduleAtFixedRate(tasks.sendMessage(), 0, 60, TimeUnit.SECONDS);
+
+        sendMes();
         for (MessageType messageType : MessageType.values()) {
             if (messageType.getPeriod() != null) {
                 scheduleAtFixedRate(messageType);
@@ -38,6 +46,15 @@ public class ScheduleService implements AutoCloseable {
 //        executor.schedule(getTask(MessageType.AVAIL_WORK_FULL_REPORT_PROJECT, chatInfo), 1, TimeUnit.SECONDS);
 //        executor.schedule(getTask(MessageType.ZI_WORK_REPORT, chatInfo), 60, TimeUnit.MILLISECONDS);
 //        executor.schedule(getTask(MessageType.ZI_WORK_REPORT_PROJECT, chatInfo), 100, TimeUnit.SECONDS);
+    }
+
+    public static volatile boolean flagStartService = false;
+
+    public void sendMes() {
+        if (!flagStartService) {
+            executor.schedule(tasks.sendMessage(), 120, TimeUnit.SECONDS);
+            flagStartService = true;
+        }
     }
 
     private void scheduleAtFixedRate(MessageType messageType) {

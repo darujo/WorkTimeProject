@@ -33,6 +33,7 @@ public class HtmlService {
         sb.append("<td class=\"table_head2\" rowspan=\"5\">Код Зи</td>");
         sb.append("<td class=\"sticky-col first-col table_head1\" rowspan=\"5\"> Наименование </td>");
         sb.append("<td class=\"table_head2\" rowspan=\"5\">Проект</td>");
+        sb.append("<td class=\"table_head2\" rowspan=\"5\">Оценено</td>");
         sb.append("<td class=\"table_col1\" rowspan=\"5\">");
         sb.append("№ релиза");
         sb.append("</td>");
@@ -134,6 +135,13 @@ public class HtmlService {
                 sb.append(printNotNull(workRepProjectDto.getProjectCode() + " " + workRepProjectDto.getProjectName()));
                 sb.append("</td>");
                 sb.append(getTegStart("td"));
+                sb.append(getTegStart("label for=\"RatedTd\""));
+                sb.append("</label>");
+                sb.append(getTegStart("input id=\"RatedTd\" disabled type=\"checkbox\" " + (workRepProjectDto.getRated() != null && workRepProjectDto.getRated() ? "checked" : ""), "vvod check_box_td_23"));
+                sb.append("</input>");
+                sb.append("</td>");
+
+                sb.append(getTegStart("td"));
                 sb.append(printNotNull(workRepProjectDto.getRelease()));
                 sb.append("</td>");
                 sb.append(getTegStart("td"));
@@ -190,7 +198,7 @@ public class HtmlService {
                 sb.append(getTegStart("td", "table_col1"));
                 sb.append(printNotNull(workRepProjectDto.getIssuingReleasePlanStr()));
                 sb.append("</td>");
-                sb.append(getTegStart("td", "table_col1", workRepProjectDto.getIssuingReleasePlan(), workRepProjectDto.getIssuingReleaseFact() ));
+                sb.append(getTegStart("td", "table_col1", workRepProjectDto.getIssuingReleasePlan(), workRepProjectDto.getIssuingReleaseFact()));
                 sb.append(printNotNull(workRepProjectDto.getIssuingReleaseFactStr()));
                 sb.append("</td>");
                 sb.append(getTegStart("td"));
@@ -266,6 +274,7 @@ public class HtmlService {
     private String getTegStart(String teg, String textClass, Timestamp plan, Timestamp fact) {
         return getTegStart(teg, textClass, plan != null && fact != null && plan.before(fact));
     }
+
     private String getTegStart(String teg, boolean flag) {
         return String.format("<%s class=\"%s\">", teg, flag ? "table_row_bed" : rowClass);
     }
@@ -273,6 +282,7 @@ public class HtmlService {
     private String getTegStart(String teg, String textClass) {
         return String.format("<%s class=\"%s %s\">", teg, textClass, rowClass);
     }
+
     private String getTegStart(String teg, String textClass, boolean flag) {
         return String.format("<%s class=\"%s %s\">", teg, textClass, flag ? "table_row_bed" : rowClass);
     }

@@ -295,9 +295,11 @@ public class UserService {
     }
 
     public UserInfoTypeDto getUserInfoTypes(Long userId) {
-        User user = null;
+        User user;
         if (userId != null) {
             user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + userId + " не найден"));
+        } else {
+            user = null;
         }
         linkService.clearMapCode(null, null);
         Map<String, UserInfoTypeActiveDto> userInfoActiveDtoMap = new HashMap<>();
@@ -322,6 +324,7 @@ public class UserService {
             }
             userInfoTypeService
                     .getInfoTypes(user)
+                    .stream().filter(userInfoType -> userInfoType.getProjectId() == null || userInfoType.getProjectId().equals(user.getCurrentProject().getId()))
                     .forEach(userInfoType -> {
                         UserInfoTypeActiveDto userInfo;
                         if (userInfoType.getProjectId() == null) {

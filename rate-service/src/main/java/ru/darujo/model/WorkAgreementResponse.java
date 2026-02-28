@@ -27,7 +27,7 @@ public class WorkAgreementResponse {
     private String status;
     @Column(name = "work_id")
     private Long workId;
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "request_id")
     private WorkAgreementRequest request;
 }

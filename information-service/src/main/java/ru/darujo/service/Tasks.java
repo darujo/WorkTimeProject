@@ -147,7 +147,15 @@ public class Tasks {
     }
 
     public RunnableNotException sendMessage() {
-        return new RunnableNotException(() -> messageInformationService.init()) {
+        return new RunnableNotException(() -> {
+            log.info("Send message start");
+            if (!messageInformationService.sendMesNotSend()) {
+                ScheduleService.flagStartService = false;
+                ScheduleService.getINSTANCE().sendMes();
+            } else {
+                ScheduleService.flagStartService = false;
+            }
+        }) {
         };
     }
 
