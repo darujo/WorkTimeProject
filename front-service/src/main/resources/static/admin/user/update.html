@@ -29,6 +29,7 @@
         </div>
         <div class="horiz">
             <label for="file1">Выберите файл:</label>
+            <div><p>{{uploadProgress}}</p></div>
             <div class="block-list">
                 <input type="file" id="file1" class="file-input" accept=".7z, .7z.*" file-model="FormFile.files[0]"/>
                 <input type="file" id="file2" class="file-input" accept=".7z, .7z.*" file-model="FormFile.files[1]"
@@ -52,6 +53,7 @@
                 <input type="file" id="file11" class="file-input" accept=".7z, .7z.*" file-model="FormFile.files[10]"
                        ng-if="FormFile.files[9]"/>
             </div>
+
         </div>
     </form>
 </div>
