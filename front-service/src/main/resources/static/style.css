@@ -541,3 +541,23 @@ TD {
 .dropzone.dropped {
     background: #ddffdd;
 }
+
+.div_process {
+    width: auto;
+    height: 21px;
+    box-shadow: 1px 2px 5px light-dark(rgba(16, 112, 177, 0.2), white);
+    border-radius: 10px;
+    margin: 10px;
+    padding: 1px;
+}
+
+.div_percent {
+    border-radius: 10px;
+    background: blue;
+    text-align: center;
+    padding: 1px;
+}
+
+.div_process_text {
+    display: contents;
+}

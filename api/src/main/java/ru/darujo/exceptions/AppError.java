@@ -1,15 +1,20 @@
 package ru.darujo.exceptions;
 
-public class AppError {
-    private final int statusCode;
-    private final String message;
+import java.io.Serializable;
 
-    public AppError(int statusCode, String message) {
+public class AppError implements Serializable {
+    public AppError() {
+    }
+
+    private Integer statusCode;
+    private String message;
+
+    public AppError(Integer statusCode, String message) {
         this.statusCode = statusCode;
         this.message = message;
     }
 
-    public int getStatusCode() {
+    public Integer getStatusCode() {
         return statusCode;
     }
 

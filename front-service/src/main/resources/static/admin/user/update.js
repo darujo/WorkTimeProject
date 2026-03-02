@@ -18,7 +18,6 @@ updateApp.directive('fileModel', ['$parse', function ($parse) {
 }]);
 
 updateApp.controller('updateController', function ($scope, $http, $location) {
-
         const constPatchUpdate = window.location.origin + '/update-service/v1/update';
         $scope.FormFile = {
             desc: "",
@@ -28,7 +27,7 @@ updateApp.controller('updateController', function ($scope, $http, $location) {
         }
         $scope.InfoTypes = null;
         $scope.Message = {};
-        let sendMessageForAll = false;
+    $scope.sendMessageForAll = false;
         // $scope.onFileSelected = function(event) {
         //     console.log(event)
         //     this.fileToUpload = event.item(0);
@@ -44,10 +43,10 @@ updateApp.controller('updateController', function ($scope, $http, $location) {
                 formData.append("file", $scope.FormFile.files[i]);
             }
             console.log("SendMessage");
-            if (!sendMessageForAll) {
-                sendMessageForAll = true;
+            if (!$scope.sendMessageForAll) {
+                $scope.sendMessageForAll = true;
 
-                $http.post(constPatchUpdate,formData,
+                $http.post(constPatchUpdate, formData,
                     {
                         // url: constPatchUpdate,
                         // method: "post",
@@ -64,10 +63,11 @@ updateApp.controller('updateController', function ($scope, $http, $location) {
                             'Content-Type': undefined
                         },
                         uploadEventHandlers: {
-                            progress: function(event) {
+                            progress: function (event) {
                                 if (event.lengthComputable) {
+                                    console.log(event);
                                     let progressPercentage = Math.round((event.loaded / event.total) * 100);
-                                    $scope.uploadProgress =   progressPercentage;
+                                    $scope.uploadProgress = progressPercentage;
                                     console.log('Upload Progress: ' + progressPercentage + '%');
                                 }
                             }
@@ -79,15 +79,18 @@ updateApp.controller('updateController', function ($scope, $http, $location) {
                     .then(function (response) {
                         console.log("Send Update")
                         console.log(response);
-                        sendMessageForAll = false;
+                        $scope.sendMessageForAll = false;
                         alert("Обновление успешно отправлено");
                     }, function errorCallback(response) {
-                        sendMessageForAll = false;
-                        console.log(response.data);
+                        $scope.sendMessageForAll = false;
+                        console.log(response);
+                        alert(response.data.Message)
+                        console.log(response.data.message)
                         if ($location.checkAuthorized(response)) {
-
-                            alert(response.data.message);
+                            console.log(1)
+                            alert(response.message);
                         } else {
+                            console.log(2)
                             alert(response.data);
                         }
                     });
@@ -120,5 +123,8 @@ updateApp.controller('updateController', function ($scope, $http, $location) {
         console.log("Start");
 
         // $scope.loadInfoType();
+    $scope.getProcess = function () {
+        return {width: $scope.uploadProgress + "%"}
+    }
     }
 )
