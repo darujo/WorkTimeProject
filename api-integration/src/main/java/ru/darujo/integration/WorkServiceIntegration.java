@@ -149,13 +149,13 @@ public class WorkServiceIntegration extends ServiceIntegration {
         }
     }
 
-    public List<WorkUserTime> getWorkUserTime(boolean ziSplit, Long projectId, Timestamp date) {
+    public List<WorkUserTime> getWorkUserTime(boolean ziSplit, Long projectId, Timestamp dateStart, Timestamp dateEnd) {
         return getWorkUserTime(ziSplit,
                 null,
                 true,
-                null,
-                date,
-                date,
+                false,
+                dateStart,
+                dateEnd,
                 null,
                 projectId,
                 null,

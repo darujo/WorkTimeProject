@@ -320,20 +320,21 @@ public class Tasks {
 
     private String getReportWork(boolean ziSplit, Long projectId, String headText) {
         List<AttrDto<Integer>> taskListType = taskServiceIntegration.getTaskTypes();
-        Timestamp date = calendarServiceIntegration.getLastWorkDay(null, null, 1, true);
-        List<WorkUserTime> weekWorkList = workServiceIntegration.getWorkUserTime(ziSplit, projectId, date);
+        Timestamp date = new Timestamp(System.currentTimeMillis() - 6 * 24 * 60 * 60 * 1000);
+//                calendarServiceIntegration.getLastWorkDay(null, null, 1, true);
+        List<WorkUserTime> weekWorkList = workServiceIntegration.getWorkUserTime(ziSplit, projectId, date, new Timestamp(System.currentTimeMillis()));
         return htmlService.getWeekWork(headText, ziSplit, true, true, true, taskListType, weekWorkList);
     }
 
     public RunnableNotException getWeekWork(MessageType messageType, ChatInfo chatInfo) {
         return new RunnableNotException(() -> {
             log.info("getWeekWork");
-            String report = getReportWork(false, null, "Факт загрузки за предыдущую неделю");
+            String report = getReportWork(false, null, "Факт загрузки за последние 7 дней");
             messageInformationService.sendFile(new MessageInfoDto(
                     chatInfo == null ? null : chatInfo.getAuthor(),
                     getUserInfoDto(chatInfo),
-                    messageType, "Факт загрузки за предыдущую неделю"
-            ), "Факт_загрузки_за_предыдущую_неделю_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
+                    messageType, "Факт загрузки за последние 7 дней"
+            ), "Факт_загрузки_за_последние_7_дней_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
         });
     }
 
