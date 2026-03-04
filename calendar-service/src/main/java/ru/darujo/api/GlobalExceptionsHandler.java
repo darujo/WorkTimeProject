@@ -11,7 +11,7 @@ import ru.darujo.exceptions.ResourceNotFoundRunTime;
 @ControllerAdvice
 public class GlobalExceptionsHandler {
     @ExceptionHandler
-    public ResponseEntity<@NonNull AppError> catchResourceNotFoundException(ResourceNotFoundRunTime e) {
+    public ResponseEntity<@NonNull AppError> catchResourceNotFoundRunTime(ResourceNotFoundRunTime e) {
         return new ResponseEntity<>(new AppError(HttpStatus.NOT_FOUND.value() ,e.getMessage()),HttpStatus.NOT_FOUND);
     }
 

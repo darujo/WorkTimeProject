@@ -96,7 +96,7 @@ public class WorkService {
         }
         return projectDto;
     }
-    @PostConstruct
+//    @PostConstruct
     public void init() {
         try {
             userServiceIntegration.getProjects(null, null).forEach(projectDto ->

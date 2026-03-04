@@ -58,7 +58,8 @@ updateApp.controller('updateController', function ($scope, $http, $location) {
                         // reportProgress: true, // Без observe: 'events' не работает
                         // observe: 'events', // без reportProgress: true только HttpEventType.Sent и HttpEventType.Response
                         transformRequest: angular.identity,
-                        transformResponse: angular.identity,
+                        // блокирут преобразование ответа в объект а мы этого не хотим
+                        // transformResponse: angular.identity ,
                         headers: {
                             'Content-Type': undefined
                         },
@@ -84,11 +85,15 @@ updateApp.controller('updateController', function ($scope, $http, $location) {
                     }, function errorCallback(response) {
                         $scope.sendMessageForAll = false;
                         console.log(response);
-                        alert(response.data.Message)
+
                         console.log(response.data.message)
                         if ($location.checkAuthorized(response)) {
                             console.log(1)
-                            alert(response.message);
+                            if(response.data.message === undefined ){
+                                alert(response.data);
+                            } else {
+                                alert(response.data.message);
+                            }
                         } else {
                             console.log(2)
                             alert(response.data);
