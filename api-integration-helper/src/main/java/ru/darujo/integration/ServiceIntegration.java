@@ -30,7 +30,7 @@ public abstract class ServiceIntegration {
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Проверка не прошла "))
                     .bodyToMono(Void.class)
-                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .doOnError(throwable -> log.error(throwable.getMessage(), throwable))
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundRunTime("Проверка не прошла или обратитесь к администратору " + ex.getMessage());
@@ -48,7 +48,7 @@ public abstract class ServiceIntegration {
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Проверка не прошла "))
                     .bodyToMono(Void.class)
-                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .doOnError(throwable -> log.error(throwable.getMessage(), throwable))
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundRunTime("Проверка не прошла или обратитесь к администратору " + ex.getMessage());

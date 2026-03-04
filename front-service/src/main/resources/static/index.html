@@ -2,6 +2,7 @@
 <html ng-app="workTimeService" lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="color-scheme" content="dark light">
     <script src="angular/jquery.min.js"></script>
 
     <script src="angular/angular.min.js"></script>
@@ -9,15 +10,15 @@
     <script src="angular/angular-route.min.js"></script>
     <script src="angular/ocLazyLoad.min.js"></script>
     <script src="angular/angular-dnd.js"></script>
-    <script src="app_index/app.module.js"></script>
-    <script src="app_index/app.config.js"></script>
-    <script src="app_index/app.routes.js"></script>
+    <script src="app_index/app.module.js?ver=3.1"></script>
+    <script src="app_index/app.config.js?ver=3.1"></script>
+    <script src="app_index/app.routes.js?ver=3.1"></script>
 
-    <script src="index.js?ver=2.0"></script>
+    <script src="index.js?ver=3.0"></script>
 
 
     <title>Работы</title>
-    <link rel="stylesheet" href="style.css?ver=1.1">
+    <link rel="stylesheet" href="style.css?ver=2.0">
 </head>
 <body>
 <div class="container horiz" ng-controller="indexController">
@@ -44,7 +45,7 @@
                             <a class="nav-link" href="#!/worktime">Все работы</a>
                         </div>
                         <div class="nav-item">
-                            <a class="nav-link" href="#!/worktimerep">Статус задач</a>
+                            <a class="nav-link" href="#!/worktimerep">Статус ЗИ</a>
                         </div>
                         <div class="nav-item">
                             <a class="nav-link" href="#!/work/fact">Факт затрат ЗИ</a>

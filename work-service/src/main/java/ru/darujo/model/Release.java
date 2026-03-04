@@ -30,6 +30,11 @@ public class Release {
     @Column(name = "sort")
     private Float sort;
 
-    @Column(name = "project_id")
+    @Column(name = "project_id", nullable = false)
     private Long projectId;
+
+    public Release(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

@@ -46,6 +46,51 @@
         </tr>
         </tbody>
     </table>
+
+    <h1>Список типов уведомлений пользователя по текущему проекту</h1>
+
+    <table>
+        <tr>
+            <td class="table_head2">Код</td>
+            <td class="table_head2">Название</td>
+            <td class="table_head2"></td>
+            <td class="table_head2">id чата</td>
+            <td class="table_head2">Номер канала в чате</td>
+            <td class="table_head2"></td>
+            <td class="table_head2"></td>
+            <td class="table_head2"></td>
+
+            <!--            <td class="table_head2"></td>-->
+
+        </tr>
+        <tbody>
+        <tr ng-repeat="infoType in User.infoProjectTypes">
+
+            <td>{{infoType.code}}</td>
+            <td>{{infoType.name}}</td>
+            <td>
+                <label for="RoleActiveProject"></label>
+                <input id="RoleActiveProject" class="vvod check_box_td" type="checkbox" ng-model="infoType.active"/>
+            </td>
+            <td>{{infoType.telegramId}}</td>
+            <td>{{infoType.threadId}}</td>
+            <td><p ng-if="infoType.message.ok">Для получения уведомлений перейдите <a
+                    href="http://{{infoType.message.link}}" target="_blank">Бот</a>.
+                И отправьте команду /link. На запрос кода введите:<b>{{infoType.message.code}}</b>.
+                Внимание Код действует <b>{{infoType.message.time}}</b> минут. После авторизации в боте
+                нажмите кнопку: </p>
+                <br></td>
+            <td>
+                <button type="button" class="head_button" ng-click="link(User.nikName,infoType)">Связать</button>
+            </td>
+            <td>
+                <button type="button" class="head_button" ng-click="delLink(User.nikName,infoType)">Отвязать</button>
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+
     <div class="wait_1_2">
         <img ng-if="load" src="../../gif/wait1_2.gif" alt="Лучше ждите" width="300" height="300"/>
     </div>

@@ -42,6 +42,42 @@ public class ProjectService {
     }
 
     public Project saveProject(Project project) {
+        if (!project.getStage4Name().isBlank()) {
+            project.setStageEnd(5);
+        } else if (!project.getStage3Name().isBlank()) {
+            project.setStageEnd(4);
+        } else if (!project.getStage2Name().isBlank()) {
+            project.setStageEnd(3);
+        } else if (!project.getStage1Name().isBlank()) {
+            project.setStageEnd(2);
+        } else if (!project.getStage0Name().isBlank()) {
+            project.setStageEnd(1);
+        }
+
+        if (project.getStageEnd() == null) {
+            project.setStageEnd(5);
+        } else if (project.getStageEnd() < 1) {
+            project.setStageEnd(1);
+        } else if (project.getStageEnd() > 5) {
+            project.setStageEnd(5);
+        }
+
+        if (project.getStageEnd() > 0 && project.getStage0Name().isBlank()) {
+            project.setStage0Name("Анализ");
+        }
+        if (project.getStageEnd() > 1 && project.getStage1Name().isBlank()) {
+            project.setStage1Name("Разработка прототипа");
+        }
+        if (project.getStageEnd() > 2 && project.getStage2Name().isBlank()) {
+            project.setStage2Name("Стабилизация прототипа");
+        }
+        if (project.getStageEnd() > 3 && project.getStage3Name().isBlank()) {
+            project.setStage3Name("Стабилизация релиза");
+        }
+        if (project.getStageEnd() > 4 && project.getStage4Name().isBlank()) {
+            project.setStage4Name("ОПЭ");
+        }
+
         return projectRepository.save(project);
     }
 

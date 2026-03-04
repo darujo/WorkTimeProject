@@ -25,6 +25,7 @@
 		<module>information-service</module>
 		<module>telegram-service</module>
         <module>update-service</module>
+        <module>docx</module>
 
 
 	</modules>

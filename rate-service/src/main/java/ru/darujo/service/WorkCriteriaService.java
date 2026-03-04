@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
+import ru.darujo.integration.WorkServiceIntegration;
 import ru.darujo.model.WorkCriteria;
 import ru.darujo.repository.WorkCriteriaRepository;
 import ru.darujo.specifications.Specifications;
@@ -18,6 +19,7 @@ import java.util.Optional;
 @Primary
 public class WorkCriteriaService {
     private WorkCriteriaRepository workCriteriaRepository;
+    private WorkServiceIntegration workServiceIntegration;
 
     @Autowired
     public void setWorkCriteriaRepository(WorkCriteriaRepository workCriteriaRepository) {
@@ -37,6 +39,7 @@ public class WorkCriteriaService {
         }
         Specification<@NonNull WorkCriteria> specification = Specification.where(Specifications.eq(null, "workId", workCriteria.getWorkId()));
         specification = Specifications.eq(specification, "criteria", workCriteria.getCriteria());
+        specification = Specifications.eq(specification, "projectId", workCriteria.getProjectId());
         specification = Specifications.ne(specification, "id", workCriteria.getId());
         WorkCriteria workCriteriaFind = workCriteriaRepository.findOne(specification).orElse(null);
         if (workCriteriaFind != null) {
@@ -47,6 +50,7 @@ public class WorkCriteriaService {
 
     public WorkCriteria saveWorkCriteria(WorkCriteria workCriteria) {
         validWorkCriteria(workCriteria);
+        workServiceIntegration.addProject(workCriteria.getWorkId(), workCriteria.getProjectId());
         return workCriteriaRepository.save(workCriteria);
     }
 
@@ -55,9 +59,14 @@ public class WorkCriteriaService {
     }
 
 
-    public List<WorkCriteria> findWorkCriteria(Long workId) {
+    public List<WorkCriteria> findWorkCriteria(Long workId, Long projectId) {
         Specification<@NonNull WorkCriteria> specification = Specification.where(Specifications.eq(null, "workId", workId));
+        specification = Specifications.eq(specification, "projectId", projectId);
         return workCriteriaRepository.findAll(specification, Sort.by("workId").and(Sort.by("criteria")));
     }
 
+    @Autowired
+    public void setWorkServiceIntegration(WorkServiceIntegration workServiceIntegration) {
+        this.workServiceIntegration = workServiceIntegration;
+    }
 }

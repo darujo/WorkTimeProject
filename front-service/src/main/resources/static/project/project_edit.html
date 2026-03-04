@@ -13,6 +13,49 @@
                    ng-model="Project.name"/>
             <br>
         </div>
+
+        <div class="horiz">
+            <label for="StageSize" class="p-head">Количество этапов</label>
+            <select class="vvod20" name="StageSizeSelect" id="StageSize" ng-model="Project.stageEnd">
+                <option ng-value="1" value="1" selected>1</option>
+                <option ng-value="2" value="2">2</option>
+                <option ng-value="3" value="3">3</option>
+                <option ng-value="4" value="4">4</option>
+                <option ng-value="5" value="5">5</option>
+                <option ng-value="" value=""></option>
+            </select>
+        </div>
+        <div class="horiz">
+            <label for="Stage0NaneEdit" class="form_label">"Этап 0":</label>
+            <input class="vvod80mar10" type="text" id="Stage0NaneEdit" step="any"
+                   ng-model="Project.stage0Name"/>
+            <br>
+        </div>
+        <div class="horiz">
+            <label for="Stage1NaneEdit" class="form_label">"Этап 1":</label>
+            <input class="vvod80mar10" type="text" id="Stage1NaneEdit" step="any"
+                   ng-model="Project.stage1Name"/>
+            <br>
+        </div>
+        <div class="horiz">
+            <label for="Stage2NaneEdit" class="form_label">"Этап 2":</label>
+            <input class="vvod80mar10" type="text" id="Stage2NaneEdit" step="any"
+                   ng-model="Project.stage2Name"/>
+            <br>
+        </div>
+        <div class="horiz">
+            <label for="Stage3NaneEdit" class="form_label">"Этап 3":</label>
+            <input class="vvod80mar10" type="text" id="Stage3NaneEdit" step="any"
+                   ng-model="Project.stage3Name"/>
+            <br>
+        </div>
+        <div class="horiz">
+            <label for="Stage4NaneEdit" class="form_label">"Этап 4":</label>
+            <input class="vvod80mar10" type="text" id="Stage4NaneEdit" step="any"
+                   ng-model="Project.stage4Name"/>
+            <br>
+        </div>
+
         <button type="submit" class="button" id="ButtonSaveDown">Сохранить</button>
         <button type="button" ng-click="backProject()" class="button">Вернуться к списку</button>
 

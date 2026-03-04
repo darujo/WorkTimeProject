@@ -12,10 +12,7 @@ import ru.darujo.dto.user.UserInfoDto;
 import ru.darujo.dto.workperiod.WorkUserFactPlan;
 import ru.darujo.dto.workperiod.WorkUserTime;
 import ru.darujo.exceptions.ResourceNotFoundException;
-import ru.darujo.integration.CalendarServiceIntegration;
-import ru.darujo.integration.TaskServiceIntegration;
-import ru.darujo.integration.WorkServiceIntegration;
-import ru.darujo.integration.WorkTimeServiceIntegration;
+import ru.darujo.integration.*;
 import ru.darujo.model.ChatInfo;
 import ru.darujo.url.UrlWorkTime;
 
@@ -68,6 +65,12 @@ public class Tasks {
         this.htmlService = htmlService;
     }
 
+    private UserServiceIntegration userServiceIntegration;
+
+    @Autowired
+    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+        this.userServiceIntegration = userServiceIntegration;
+    }
 
     private final Float PERCENT_WORK_TIME = 0.9f;
 
@@ -144,7 +147,15 @@ public class Tasks {
     }
 
     public RunnableNotException sendMessage() {
-        return new RunnableNotException(() -> messageInformationService.init()) {
+        return new RunnableNotException(() -> {
+            log.info("Send message start");
+            if (!messageInformationService.sendMesNotSend()) {
+                ScheduleService.flagStartService = false;
+                ScheduleService.getINSTANCE().sendMes();
+            } else {
+                ScheduleService.flagStartService = false;
+            }
+        }) {
         };
     }
 
@@ -159,14 +170,34 @@ public class Tasks {
         return new RunnableNotException(() -> {
             log.info("sendReportWorkFull");
             LinkedList<String> sort = new LinkedList<>();
-            sort.add("release.sort");
-            String report = htmlService.printRep(workServiceIntegration.getTimeWork(null, true, null, null, sort));
+            sort.add("name");
+            String report = htmlService.printRep(workServiceIntegration.getTimeWork(null, true, null, null, null, sort, true), "Статус_ЗИ");
             messageInformationService.sendFile(new MessageInfoDto(
                     chatInfo == null ? null : chatInfo.getAuthor(),
                     getUserInfoDto(chatInfo),
                     messageType, "Рассылка отчете статус ЗИ"
-            ), "Zi_Report_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
+            ), "Статус_ЗИ_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
 
+        });
+    }
+
+    public RunnableNotException sendReportWorkFullProject(MessageType messageType, ChatInfo chatInfo) {
+        return new RunnableNotException(() -> {
+            log.info("sendReportWorkFullProject");
+            LinkedList<String> sort = new LinkedList<>();
+            sort.add("release.sort");
+            userServiceIntegration.getProjects(null, null).forEach(projectDto -> {
+                String report = htmlService.printRep(workServiceIntegration.getTimeWork(null, true, null, null, projectDto.getId(), sort, true), "Статус ЗИ по проекту " + projectDto.getName());
+                messageInformationService.sendFile(
+                        new MessageInfoDto(
+                                chatInfo == null ? null : chatInfo.getAuthor(),
+                                getUserInfoDto(chatInfo),
+                                messageType, "Рассылка отчете статус ЗИ по проекту " + projectDto.getName()
+                        ),
+                        projectDto.getId(),
+                        "Статус_ЗИ_" + projectDto.getName() + "_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html",
+                        report);
+            });
         });
     }
 
@@ -259,31 +290,51 @@ public class Tasks {
     public RunnableNotException getZiWork(MessageType messageType, ChatInfo chatInfo) {
         return new RunnableNotException(() -> {
             log.info("getZiWork");
-            String report = getReportWork(true);
+            String report = getReportWork(true, null, "Факт загрузки по ЗИ");
             messageInformationService.sendFile(new MessageInfoDto(
                     chatInfo == null ? null : chatInfo.getAuthor(),
                     getUserInfoDto(chatInfo),
                     messageType, "Факт загрузки по ЗИ"
-            ), "ZI_Work_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
+            ), "Факт_загрузки_по_ЗИ_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
         });
     }
 
-    private String getReportWork(boolean ziSplit) {
+    public RunnableNotException getZiWorkProject(MessageType messageType, ChatInfo chatInfo) {
+        return new RunnableNotException(() -> {
+            log.info("getZiWorkProject");
+            userServiceIntegration.getProjects(null, null).forEach(projectDto -> {
+                String report = getReportWork(true, projectDto.getId(), "Факт загрузки по ЗИ проект " + projectDto.getName());
+                messageInformationService.sendFile(
+                        new MessageInfoDto(
+                                chatInfo == null ? null : chatInfo.getAuthor(),
+                                getUserInfoDto(chatInfo),
+                                messageType,
+                                "Факт загрузки по ЗИ проект " + projectDto.getName()
+                        ),
+                        projectDto.getId(),
+                        "Факт_загрузки_по_ЗИ_" + projectDto.getName() + "_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html",
+                        report);
+            });
+        });
+    }
+
+    private String getReportWork(boolean ziSplit, Long projectId, String headText) {
         List<AttrDto<Integer>> taskListType = taskServiceIntegration.getTaskTypes();
-        Timestamp date = calendarServiceIntegration.getLastWorkDay(null, null, 1, true);
-        List<WorkUserTime> weekWorkList = workServiceIntegration.getWorkUserTime(ziSplit, date);
-        return htmlService.getWeekWork(ziSplit, true, true, true, taskListType, weekWorkList);
+        Timestamp date = new Timestamp(System.currentTimeMillis() - 6 * 24 * 60 * 60 * 1000);
+//                calendarServiceIntegration.getLastWorkDay(null, null, 1, true);
+        List<WorkUserTime> weekWorkList = workServiceIntegration.getWorkUserTime(ziSplit, projectId, date, new Timestamp(System.currentTimeMillis()));
+        return htmlService.getWeekWork(headText, ziSplit, true, true, true, taskListType, weekWorkList);
     }
 
     public RunnableNotException getWeekWork(MessageType messageType, ChatInfo chatInfo) {
         return new RunnableNotException(() -> {
             log.info("getWeekWork");
-            String report = getReportWork(false);
+            String report = getReportWork(false, null, "Факт загрузки за последние 7 дней");
             messageInformationService.sendFile(new MessageInfoDto(
                     chatInfo == null ? null : chatInfo.getAuthor(),
                     getUserInfoDto(chatInfo),
-                    messageType, "Факт загрузки за предыдущую неделю"
-            ), "Week_Work_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
+                    messageType, "Факт загрузки за последние 7 дней"
+            ), "Факт_загрузки_за_последние_7_дней_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
         });
     }
 

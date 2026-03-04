@@ -69,7 +69,7 @@ public class ServiceStatusService {
             telegramServiceIntegration.sendMessageForAdmin(allServiceOk ? "Все сервисы доступны" :
                     String.format("Не доступные сервисы %s", serviceTypeList));
         } catch (ResourceNotFoundRunTime ex) {
-            log.error(ex.getMessage());
+            log.error(ex.getMessage(), ex);
         }
         serviceStatusRepository.save(new ServiceStatus(serviceModels));
     }

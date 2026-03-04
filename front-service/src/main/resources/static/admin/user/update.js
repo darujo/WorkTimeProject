@@ -18,8 +18,7 @@ updateApp.directive('fileModel', ['$parse', function ($parse) {
 }]);
 
 updateApp.controller('updateController', function ($scope, $http, $location) {
-
-    const constPatchUpdate = window.location.origin + '/update-service/v1/update';
+        const constPatchUpdate = window.location.origin + '/update-service/v1/update';
         $scope.FormFile = {
             desc: "",
             files: [],
@@ -28,11 +27,12 @@ updateApp.controller('updateController', function ($scope, $http, $location) {
         }
         $scope.InfoTypes = null;
         $scope.Message = {};
-        let sendMessageForAll = false;
+    $scope.sendMessageForAll = false;
         // $scope.onFileSelected = function(event) {
         //     console.log(event)
         //     this.fileToUpload = event.item(0);
         // }
+
         $scope.sendMessage = function () {
             const formData = new FormData();
             // formData.append('file', $scope.uploadedFile);
@@ -43,24 +43,35 @@ updateApp.controller('updateController', function ($scope, $http, $location) {
                 formData.append("file", $scope.FormFile.files[i]);
             }
             console.log("SendMessage");
-            if (!sendMessageForAll) {
-                sendMessageForAll = true;
+            if (!$scope.sendMessageForAll) {
+                $scope.sendMessageForAll = true;
 
-                $http(
+                $http.post(constPatchUpdate, formData,
                     {
-                        url: constPatchUpdate,
-                        method: "post",
+                        // url: constPatchUpdate,
+                        // method: "post",
                         params: {
                             dateUpdate: $scope.FormFile.dateUpdate,
                             type: $scope.FormFile.type
                         },
-                        data: formData,
+                        // data: formData,
                         // reportProgress: true, // Без observe: 'events' не работает
                         // observe: 'events', // без reportProgress: true только HttpEventType.Sent и HttpEventType.Response
                         transformRequest: angular.identity,
-                        transformResponse: angular.identity,
+                        // блокирут преобразование ответа в объект а мы этого не хотим
+                        // transformResponse: angular.identity ,
                         headers: {
                             'Content-Type': undefined
+                        },
+                        uploadEventHandlers: {
+                            progress: function (event) {
+                                if (event.lengthComputable) {
+                                    console.log(event);
+                                    let progressPercentage = Math.round((event.loaded / event.total) * 100);
+                                    $scope.uploadProgress = progressPercentage;
+                                    console.log('Upload Progress: ' + progressPercentage + '%');
+                                }
+                            }
                         }
 
                         // , formData, config
@@ -69,15 +80,22 @@ updateApp.controller('updateController', function ($scope, $http, $location) {
                     .then(function (response) {
                         console.log("Send Update")
                         console.log(response);
-                        sendMessageForAll = false;
+                        $scope.sendMessageForAll = false;
                         alert("Обновление успешно отправлено");
                     }, function errorCallback(response) {
-                        sendMessageForAll = false;
-                        console.log(response.data);
-                        if ($location.checkAuthorized(response)) {
+                        $scope.sendMessageForAll = false;
+                        console.log(response);
 
-                            alert(response.data.message);
+                        console.log(response.data.message)
+                        if ($location.checkAuthorized(response)) {
+                            console.log(1)
+                            if(response.data.message === undefined ){
+                                alert(response.data);
+                            } else {
+                                alert(response.data.message);
+                            }
                         } else {
+                            console.log(2)
                             alert(response.data);
                         }
                     });
@@ -86,23 +104,23 @@ updateApp.controller('updateController', function ($scope, $http, $location) {
             }
 
         }
-    let getService = function () {
-        console.log("edit");
-        $http.get(constPatchUpdate + "/services")
-            .then(function (response) {
-                $scope.UpdateTypes = response.data;
-                console.log($scope.UpdateTypes);
+        let getService = function () {
+            console.log("edit");
+            $http.get(constPatchUpdate + "/services")
+                .then(function (response) {
+                    $scope.UpdateTypes = response.data;
+                    console.log($scope.UpdateTypes);
 
 
-            }, function errorCallback(response) {
-                console.log(response)
-                if ($location.checkAuthorized(response)) {
-                    //     alert(response.data.message);
-                }
-            });
-    };
-    getService();
-    console.log("$scope.FormFile.type", $scope.FormFile.type, $scope.FormFile.type === "null");
+                }, function errorCallback(response) {
+                    console.log(response)
+                    if ($location.checkAuthorized(response)) {
+                        //     alert(response.data.message);
+                    }
+                });
+        };
+        getService();
+        console.log("$scope.FormFile.type", $scope.FormFile.type, $scope.FormFile.type === "null");
         $scope.backUser = function () {
             $location.path('/');
 
@@ -110,5 +128,8 @@ updateApp.controller('updateController', function ($scope, $http, $location) {
         console.log("Start");
 
         // $scope.loadInfoType();
+    $scope.getProcess = function () {
+        return {width: $scope.uploadProgress + "%"}
+    }
     }
 )

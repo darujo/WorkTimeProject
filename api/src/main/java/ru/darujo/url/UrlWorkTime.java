@@ -10,6 +10,10 @@ public class UrlWorkTime {
     }
 
     public static String getUrlRate(Long workId, String name) {
+        return getUrl(URL + "/work_rate?view=current&workId=" + workId, name);
+    }
+
+    public static String getUrlRateAll(Long workId, String name) {
         return getUrl(URL + "/rate?workId=" + workId, name);
     }
     public static String getUrlWorkSap(Long codeSap, String name) {

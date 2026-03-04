@@ -21,7 +21,7 @@
                         <div class="horiz">
                             <label for="BtsFilter" class="p-head">BTS:</label>
                             <input class="vvod20" type="text" id="BtsFilter" step="any" ng-model="Filt.bts"/>
-                            <label for="DevboFilter" class="p-head">DEVBO :</label>
+                            <label for="DevboFilter" class="p-head">Код :</label>
                             <input class="vvod20" type="text" id="DevboFilter" step="any" ng-model="Filt.devbo"/>
                         </div>
                         <div class="horiz">
@@ -68,7 +68,7 @@
         <tr>
             <td class="table_head2">Автор</td>
             <td class="table_head2">№ запроса (BTS)</td>
-            <td class="table_head2">№ внутренней задачи (DEVBO)</td>
+            <td class="table_head2">№ внутренней задачи</td>
             <td class="table_head2">Краткое описание</td>
             <td class="table_head2">Тип задачи</td>
             <td class="table_head2">№ ЗИ (ZI)</td>
@@ -123,12 +123,12 @@
                ng-model="Task.id"/>
         <!--        <br>-->
         <label for="CodeBTS">№ запроса (BTS) :</label>
-        <input class="vvod" type="text" id="CodeBTS" placeholder="Ведите наименование"
+        <input class="vvod" type="text" id="CodeBTS" placeholder="Ведите код запроса"
                                                               ng-model="Task.codeBTS"/>
 
         <br>
-        <label for="CodeDEVBO">№ внутренней задачи (DEVBO) : </label>
-        <input class="vvod" type="text" id="CodeDEVBO" placeholder="Ведите наименование"
+        <label for="CodeDEVBO">№ внутренней задачи : </label>
+        <input class="vvod" type="text" id="CodeDEVBO" placeholder="Ведите внутрений код задачи"
                                                                             ng-model="Task.codeDEVBO"/>
 
         <br>

@@ -27,8 +27,14 @@
             <p><textarea id="UpdateText" class="vvod check_box_td" ng-model="FormFile.desc"
                          placeholder="Введите сообщение"></textarea></p>
         </div>
+        <div ng-if="sendMessageForAll" class="div_process">
+            <div class="div_percent" ng-style="getProcess()">
+                <p class="div_process_text">{{uploadProgress}}</p>
+            </div>
+        </div>
         <div class="horiz">
             <label for="file1">Выберите файл:</label>
+
             <div class="block-list">
                 <input type="file" id="file1" class="file-input" accept=".7z, .7z.*" file-model="FormFile.files[0]"/>
                 <input type="file" id="file2" class="file-input" accept=".7z, .7z.*" file-model="FormFile.files[1]"
@@ -43,7 +49,16 @@
                        ng-if="FormFile.files[4]"/>
                 <input type="file" id="file7" class="file-input" accept=".7z, .7z.*" file-model="FormFile.files[6]"
                        ng-if="FormFile.files[5]"/>
+                <input type="file" id="file8" class="file-input" accept=".7z, .7z.*" file-model="FormFile.files[7]"
+                       ng-if="FormFile.files[6]"/>
+                <input type="file" id="file9" class="file-input" accept=".7z, .7z.*" file-model="FormFile.files[8]"
+                       ng-if="FormFile.files[7]"/>
+                <input type="file" id="file10" class="file-input" accept=".7z, .7z.*" file-model="FormFile.files[9]"
+                       ng-if="FormFile.files[8]"/>
+                <input type="file" id="file11" class="file-input" accept=".7z, .7z.*" file-model="FormFile.files[10]"
+                       ng-if="FormFile.files[9]"/>
             </div>
+
         </div>
     </form>
 </div>

@@ -3,6 +3,7 @@ package ru.darujo.dto.user;
 import ru.darujo.dto.information.CodeTelegramMes;
 
 public class UserInfoTypeActiveDto extends InfoTypeDto{
+    private Long projectId;
     private Boolean active;
     private Long telegramId;
     private Integer threadId;
@@ -12,8 +13,9 @@ public class UserInfoTypeActiveDto extends InfoTypeDto{
     public UserInfoTypeActiveDto() {
     }
 
-    public UserInfoTypeActiveDto(String code, String name, Boolean active) {
+    public UserInfoTypeActiveDto(Long projectId, String code, String name, Boolean active) {
         super( code, name);
+        this.projectId = projectId;
         this.active = active;
     }
 
@@ -50,5 +52,10 @@ public class UserInfoTypeActiveDto extends InfoTypeDto{
 
     public CodeTelegramMes getMessage() {
         return message;
+    }
+
+    @SuppressWarnings("unused")
+    public Long getProjectId() {
+        return projectId;
     }
 }

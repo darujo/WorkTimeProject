@@ -152,8 +152,23 @@ public class Specifications {
         return specification;
     }
 
+    public static <T> Specification<@NonNull T> isNull(Specification<@NonNull T> specification, String field) {
+        if (specification == null) {
+            specification = isNull(field);
+        } else {
+            specification = specification.and(isNull(field));
+        }
+
+        return specification;
+    }
+
     private static <T> Specification<@NonNull T> isNotNull(String field) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.isNotNull(root.get(field)));
+
+    }
+
+    private static <T> Specification<@NonNull T> isNull(String field) {
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.isNull(root.get(field)));
 
     }
 

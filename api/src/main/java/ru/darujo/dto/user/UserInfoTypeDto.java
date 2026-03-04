@@ -10,13 +10,19 @@ public class UserInfoTypeDto extends UserDto implements Serializable {
     }
 
     private Collection<UserInfoTypeActiveDto> infoTypes = null;
+    private Collection<UserInfoTypeActiveDto> infoProjectTypes = null;
 
-    public UserInfoTypeDto(Long id, String nikName, String firstName, String lastName, String patronymic, Collection<UserInfoTypeActiveDto> roles) {
+    public UserInfoTypeDto(Long id, String nikName, String firstName, String lastName, String patronymic, Collection<UserInfoTypeActiveDto> infoTypes, Collection<UserInfoTypeActiveDto> infoProjectTypes) {
         super(id, nikName, firstName, lastName, patronymic, false);
-        this.infoTypes = roles;
+        this.infoTypes = infoTypes;
+        this.infoProjectTypes = infoProjectTypes;
     }
 
     public Collection<UserInfoTypeActiveDto> getInfoTypes() {
         return infoTypes;
+    }
+
+    public Collection<UserInfoTypeActiveDto> getInfoProjectTypes() {
+        return infoProjectTypes;
     }
 }

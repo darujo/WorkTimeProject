@@ -17,9 +17,9 @@
 
     </div>
     <div>
-        <label ng-if="!ziEdit" for="FavoritTask" class="p-head">Показать факт</label>
+        <label ng-if="!ziEdit" for="FavoriteTask" class="p-head">Показать факт</label>
         <input ng-if="!ziEdit" type="checkbox"
-               id="FavoritTask"
+               id="FavoriteTask"
                ng-model="Filter.viewFact"/>
     </div>
     <table>
@@ -29,14 +29,14 @@
             <td class="table_head1">Вид работ</td>
             <td ng-if="ziEdit || Filter.viewFact" class="table_head2">0 факт</td>
             <td class="table_head2">0 этап</td>
-            <td ng-if="ziEdit || Filter.viewFact" class="table_head1">I факт</td>
-            <td class="table_head2">I этап</td>
-            <td ng-if="ziEdit || Filter.viewFact" class="table_head2">II факт</td>
-            <td class="table_head2">II этап</td>
-            <td ng-if="ziEdit || Filter.viewFact" class="table_head1">III факт</td>
-            <td class="table_head1">III этап</td>
-            <td ng-if="ziEdit || Filter.viewFact" class="table_head2">IV факт</td>
-            <td class="table_head2">IV этап</td>
+            <td ng-if="(ziEdit || Filter.viewFact) && Project.stageEnd > 1" class="table_head1">I факт</td>
+            <td class="table_head2" ng-if="Project.stageEnd > 1">I этап</td>
+            <td ng-if="(ziEdit || Filter.viewFact) && Project.stageEnd > 2" class="table_head2">II факт</td>
+            <td class="table_head2" ng-if="Project.stageEnd > 2">II этап</td>
+            <td ng-if="(ziEdit || Filter.viewFact) && Project.stageEnd > 3" class="table_head1">III факт</td>
+            <td class="table_head1" ng-if="Project.stageEnd > 3">III этап</td>
+            <td ng-if="(ziEdit || Filter.viewFact) && Project.stageEnd > 4" class="table_head2">IV факт</td>
+            <td class="table_head2" ng-if="Project.stageEnd > 4">IV этап</td>
             <td ng-if="ziEdit || Filter.viewFact" class="table_head2">V факт</td>
             <td class="table_head1">Итого, ч/часов</td>
             <td class="table_head2" ng-if="stageEdit && !ZI.rated"></td>
@@ -54,14 +54,14 @@
             <td>{{work.roleStr}}</td>
             <td ng-if="ziEdit || Filter.viewFact">{{work.stage0Fact}}</td>
             <td>{{work.stage0}}</td>
-            <td ng-if="ziEdit || Filter.viewFact">{{work.stage1Fact}}</td>
-            <td>{{work.stage1}}</td>
-            <td ng-if="ziEdit || Filter.viewFact">{{work.stage2Fact}}</td>
-            <td>{{work.stage2}}</td>
-            <td ng-if="ziEdit || Filter.viewFact">{{work.stage3Fact}}</td>
-            <td>{{work.stage3}}</td>
-            <td ng-if="ziEdit || Filter.viewFact">{{work.stage4Fact}}</td>
-            <td>{{work.stage4}}</td>
+            <td ng-if="(ziEdit || Filter.viewFact) && Project.stageEnd > 1">{{work.stage1Fact}}</td>
+            <td ng-if="Project.stageEnd > 1">{{work.stage1}}</td>
+            <td ng-if="(ziEdit || Filter.viewFact) && Project.stageEnd > 2">{{work.stage2Fact}}</td>
+            <td ng-if="Project.stageEnd > 2">{{work.stage2}}</td>
+            <td ng-if="(ziEdit || Filter.viewFact) && Project.stageEnd > 3">{{work.stage3Fact}}</td>
+            <td ng-if="Project.stageEnd > 3">{{work.stage3}}</td>
+            <td ng-if="(ziEdit || Filter.viewFact) && Project.stageEnd > 4">{{work.stage4Fact}}</td>
+            <td ng-if="Project.stageEnd > 4">{{work.stage4}}</td>
             <td ng-if="ziEdit || Filter.viewFact">{{work.stage5Fact}}</td>
             <td>{{work.stageAll}}</td>
             <td ng-if="stageEdit && !ZI.rated">
@@ -74,7 +74,7 @@
         </tbody>
     </table>
     <div>
-        <img ng-if="load1" src="../gif/wait1.gif" alt="wait1" width="900" height="506"/>
+        <img ng-if="load1" src="../gif/wait1_2.gif" alt="wait1" width="300" height="300"/>
     </div>
     <div id="WorkStageAdd">
         <button ng-if="stageCreate && !ZI.rated" type="button" class="head_button" id="AddWorkStage"
@@ -106,25 +106,25 @@
                        ng-model="WorkStage.stage0"/>
 
             </div>
-            <div class="filter_block mar5">
+            <div class="filter_block mar5" ng-if="Project.stageEnd > 1">
                 <label for="Stage1" class="p-form">Этап 1</label>
                 <input class="vvod" type="number" inputmode="numeric" id="Stage1" step="any"
                        ng-model="WorkStage.stage1"/>
 
             </div>
-            <div class="filter_block mar5">
+            <div class="filter_block mar5" ng-if="Project.stageEnd > 2">
                 <label for="Stage2" class="p-form">Этап 2</label>
                 <input class="vvod" type="number" inputmode="numeric" id="Stage2" step="any"
                        ng-model="WorkStage.stage2"/>
 
             </div>
-            <div class="filter_block mar5">
+            <div class="filter_block mar5" ng-if="Project.stageEnd > 3">
                 <label for="Stage3" class="p-form">Этап 3</label>
                 <input class="vvod" type="number" inputmode="numeric" id="Stage3" step="any"
                        ng-model="WorkStage.stage3"/>
 
             </div>
-            <div class="filter_block mar5">
+            <div class="filter_block mar5" ng-if="Project.stageEnd > 4">
                 <label for="Stage4" class="p-form">Этап 4</label>
                 <input class="vvod" type="number" inputmode="numeric" id="Stage4" step="any"
                        ng-model="WorkStage.stage4"/>

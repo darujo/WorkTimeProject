@@ -25,5 +25,7 @@ public class WorkCriteria {
     private Float develop100;
     @Column(name = "work_id")
     private Long workId;
+    @Column(name = "project_id")
+    private Long projectId;
 
 }

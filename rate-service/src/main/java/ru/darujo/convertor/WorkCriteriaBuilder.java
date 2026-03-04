@@ -14,6 +14,7 @@ public class WorkCriteriaBuilder {
     private Float develop50;
     private Float develop100;
     private Long workId;
+    private Long projectId;
 
     public WorkCriteriaBuilder setId(Long id) {
         this.id = id;
@@ -46,11 +47,17 @@ public class WorkCriteriaBuilder {
         return this;
     }
 
-    public WorkCriteriaDto getWorkCriteriaDto() {
-        return new WorkCriteriaDto(id, criteria, develop10, develop50, develop100, workId);
+    public WorkCriteriaBuilder setProjectId(Long projectId) {
+        this.projectId = projectId;
+        return this;
     }
 
+    public WorkCriteriaDto getWorkCriteriaDto() {
+        return new WorkCriteriaDto(id, criteria, develop10, develop50, develop100, workId, projectId);
+    }
+
+
     public WorkCriteria getWorkCriteria() {
-        return new WorkCriteria(id, criteria, develop10, develop50, develop100, workId);
+        return new WorkCriteria(id, criteria, develop10, develop50, develop100, workId, projectId);
     }
 }

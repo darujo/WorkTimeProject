@@ -136,7 +136,7 @@ public class TaskService {
         Task task = findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Отмеченная работа не найден"));
         task.setRefresh(new Timestamp(System.currentTimeMillis()));
         taskRepository.save(task);
-        boolean ok = workServiceIntegration.setWorkDate(task.getWorkId(), date);
+        boolean ok = workServiceIntegration.setWorkDate(task.getWorkId(), task.getProjectId(), date);
         log.info("Обновили даты в ЗИ? {}", ok);
         return true;
     }

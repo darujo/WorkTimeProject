@@ -1,6 +1,7 @@
 package ru.darujo.service;
 
 import jakarta.annotation.PostConstruct;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,14 +25,35 @@ public class ScheduleService implements AutoCloseable {
     }
 
     ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
+    @Getter
+    public static ScheduleService INSTANCE;
+
+    public ScheduleService() {
+        INSTANCE = this;
+    }
 
     @PostConstruct
     private void init() {
-        executor.scheduleAtFixedRate(tasks.sendMessage(), 0, 60, TimeUnit.SECONDS);
+
+        sendMes();
         for (MessageType messageType : MessageType.values()) {
             if (messageType.getPeriod() != null) {
                 scheduleAtFixedRate(messageType);
             }
+        }
+//        ChatInfo chatInfo = new ChatInfo(null, 496071536L, null, null);
+//        executor.schedule(getTask(MessageType.AVAIL_WORK_FULL_REPORT, chatInfo), 10, TimeUnit.SECONDS);
+//        executor.schedule(getTask(MessageType.AVAIL_WORK_FULL_REPORT_PROJECT, chatInfo), 1, TimeUnit.SECONDS);
+//        executor.schedule(getTask(MessageType.ZI_WORK_REPORT, chatInfo), 60, TimeUnit.MILLISECONDS);
+//        executor.schedule(getTask(MessageType.ZI_WORK_REPORT_PROJECT, chatInfo), 100, TimeUnit.SECONDS);
+    }
+
+    public static volatile boolean flagStartService = false;
+
+    public void sendMes() {
+        if (!flagStartService) {
+            executor.schedule(tasks.sendMessage(), 120, TimeUnit.SECONDS);
+            flagStartService = true;
         }
     }
 
@@ -48,8 +70,12 @@ public class ScheduleService implements AutoCloseable {
             messageType = MessageType.WEEK_WORK_REPORT;
         } else if (reportTypeDto.equals(ReportTypeDto.ZI_STATUS.toString())) {
             messageType = MessageType.AVAIL_WORK_FULL_REPORT;
+        } else if (reportTypeDto.equals(ReportTypeDto.ZI_STATUS_PROJECT.toString())) {
+            messageType = MessageType.AVAIL_WORK_FULL_REPORT_PROJECT;
         } else if (reportTypeDto.equals(ReportTypeDto.ZI_WORK.toString())) {
             messageType = MessageType.ZI_WORK_REPORT;
+        } else if (reportTypeDto.equals(ReportTypeDto.ZI_WORK_PROJECT.toString())) {
+            messageType = MessageType.ZI_WORK_REPORT_PROJECT;
         } else {
             throw new ResourceNotFoundRunTime("Нет такого типа отчета");
 
@@ -61,15 +87,15 @@ public class ScheduleService implements AutoCloseable {
     public void close() {
         // Корректное завершение
 //        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            executor.shutdown();
-            try {
-                while (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
-                    log.error("sto1");
-                    executor.shutdownNow();
-                }
-            } catch (InterruptedException e) {
+        executor.shutdown();
+        try {
+            while (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                log.error("sto1");
                 executor.shutdownNow();
             }
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
+        }
 //        }));
     }
 
@@ -84,6 +110,8 @@ public class ScheduleService implements AutoCloseable {
             return tasks.getAddWorkAvailLastWeek(messageType);
         } else if (messageType.equals(MessageType.AVAIL_WORK_FULL_REPORT)) {
             return tasks.sendReportWorkFull(messageType, chatInfo);
+        } else if (messageType.equals(MessageType.AVAIL_WORK_FULL_REPORT_PROJECT)) {
+            return tasks.sendReportWorkFullProject(messageType, chatInfo);
         } else if (messageType.equals(MessageType.VACATION_MY_START)) {
             return tasks.getMyVacationStart(messageType);
         } else if (messageType.equals(MessageType.VACATION_MY_END)) {
@@ -92,6 +120,8 @@ public class ScheduleService implements AutoCloseable {
             return tasks.getVacationStart(messageType);
         } else if (messageType.equals(MessageType.ZI_WORK_REPORT)) {
             return tasks.getZiWork(messageType, chatInfo);
+        } else if (messageType.equals(MessageType.ZI_WORK_REPORT_PROJECT)) {
+            return tasks.getZiWorkProject(messageType, chatInfo);
         } else if (messageType.equals(MessageType.WEEK_WORK_REPORT)) {
             return tasks.getWeekWork(messageType, chatInfo);
         } else {

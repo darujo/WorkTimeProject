@@ -105,15 +105,19 @@ public class VacationReportService {
         LocalDate localDate = getLocalDate(dateStart);
         if (lastWeek) {
             localDate = localDate.minusDays(localDate.getDayOfWeek().getValue());
-        }
-        if (dayMinus != null && username != null) {
-            int day = 0;
-            while (day < dayMinus) {
-                localDate = localDate.minusDays(1);
-                if (isWorkDayUser(localDate, username)) {
-                    day++;
-                }
+        } else if (dayMinus != null) {
+            if (username == null) {
+                localDate = localDate.minusDays(dayMinus);
+            } else {
+                int day = 0;
+                while (day < dayMinus) {
+                    localDate = localDate.minusDays(1);
 
+                    if (isWorkDayUser(localDate, username)) {
+                        day++;
+                    }
+
+                }
             }
         }
         return Timestamp.valueOf(localDate.atStartOfDay());

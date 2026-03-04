@@ -7,6 +7,7 @@ import java.util.Date;
 public class WorkDto implements Serializable, WorkPlanTime {
 
     private Long id;
+    private Long projectId;
     // Код SAP
     private Long codeSap;
     // Код Зи
@@ -57,6 +58,7 @@ public class WorkDto implements Serializable, WorkPlanTime {
     }
 
     public WorkDto(Long id,
+                   Long projectId,
                    Long codeSap,
                    String codeZI,
                    String name,
@@ -93,13 +95,17 @@ public class WorkDto implements Serializable, WorkPlanTime {
         this.release = release;
         this.issuingReleasePlan = issuingReleasePlan;
         this.issuingReleaseFact = issuingReleaseFact;
-        this.rated              = rated;
+        this.rated = rated;
+        this.projectId = projectId;
     }
 
     public Long getId() {
         return id;
     }
-    public String getName() {return name; }
+
+    public String getName() {
+        return name;
+    }
 
     public String getTask() {
         return task;
@@ -182,6 +188,7 @@ public class WorkDto implements Serializable, WorkPlanTime {
     public String getIssuingReleaseFact() {
         return dateToText(issuingReleaseFact);
     }
+
     @SuppressWarnings("unused")
     public WorkDto() {
     }
@@ -206,8 +213,9 @@ public class WorkDto implements Serializable, WorkPlanTime {
     }
 
     SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-    private String dateToText(Date date){
-        if (date == null){
+
+    private String dateToText(Date date) {
+        if (date == null) {
             return null;
         }
         return sdf.format(date);
@@ -234,4 +242,13 @@ public class WorkDto implements Serializable, WorkPlanTime {
         this.laborOPE = laborOPE;
     }
 
+    @Override
+    public Long getWorkId() {
+        return id;
+    }
+
+    @Override
+    public Long getProjectId() {
+        return projectId;
+    }
 }

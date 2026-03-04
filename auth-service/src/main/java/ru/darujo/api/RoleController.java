@@ -24,7 +24,7 @@ public class RoleController {
     public List<RoleDto> getRoleList(@RequestParam(required = false) String code,
                                      @RequestParam(required = false) String name,
                                      @RequestParam("system_project") Long projectId) {
-        return roleService.getRoleList(code, name, projectId).stream().map(RoleConvertor::getRoleDto).collect(Collectors.toList());
+        return roleService.getRoleList(code, name, projectId, null).stream().map(RoleConvertor::getRoleDto).collect(Collectors.toList());
     }
 
 }

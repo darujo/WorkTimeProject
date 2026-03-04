@@ -17,6 +17,8 @@ public class UserInfoType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+    @Column(name = "project_id")
+    private Long projectId;
     @Column(name = "code")
     private String code;
     @Column(name = "telegram_id")
@@ -31,7 +33,8 @@ public class UserInfoType {
     private User user;
 
 
-    public UserInfoType( String code, User user) {
+    public UserInfoType(Long projectId, String code, User user) {
+        this.projectId = projectId;
         this.code = code;
         this.user =user;
     }

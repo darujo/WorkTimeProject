@@ -21,7 +21,7 @@ public class ServiceStatus {
     private Long id;
     @Column(name = "time_create")
     private Timestamp timeCreate;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "status_service_servicce",
             joinColumns = @JoinColumn(name = "status_id"),
             inverseJoinColumns = @JoinColumn(name = "service_id"))

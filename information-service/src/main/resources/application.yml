@@ -13,10 +13,11 @@ spring:
 
 
   jpa:
-    database: postgresql
     show-sql: true
     hibernate:
       ddl-auto: validate
+    open-in-view: false
 
   jackson:
     default-property-inclusion: non_absent
+

@@ -167,7 +167,7 @@ public class MonitorService {
                 serviceIntegrationObject.getServiceIntegration().shutDown(token);
                 log.info("Команда остановки успешно отправлена сервису {}", serviceIntegrationObject.getServiceType());
             } catch (RuntimeException ex) {
-                log.error("Сервис {} {}", serviceIntegrationObject.getServiceType(), ex.getMessage());
+                log.error("Сервис {} {}", serviceIntegrationObject.getServiceType(), ex.getMessage(), ex);
             }
 
         });

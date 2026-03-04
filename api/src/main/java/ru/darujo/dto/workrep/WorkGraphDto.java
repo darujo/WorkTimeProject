@@ -2,18 +2,20 @@ package ru.darujo.dto.workrep;
 
 import ru.darujo.dto.work.WorkLittleDto;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class WorkGraphDto{
+public class WorkGraphDto implements Serializable {
+    @SuppressWarnings("unused")
+    public WorkGraphDto() {
+    }
 
-    WorkLittleDto workLittleDto;
-    List<WorkPeriodColorDto> workPeriodColorPlanDTOs;
-    List<WorkPeriodColorDto> workPeriodColorFactDTOs;
+    private WorkLittleDto workLittleDto;
+    private List<ProjectGraphDto> projectGraphList;
 
-    public WorkGraphDto(WorkLittleDto workLittleDto, List<WorkPeriodColorDto> workPeriodColorPlanDTOs, List<WorkPeriodColorDto> workPeriodColorFactDTOs) {
+    public WorkGraphDto(WorkLittleDto workLittleDto, List<ProjectGraphDto> projectGraphList) {
         this.workLittleDto = workLittleDto;
-        this.workPeriodColorPlanDTOs = workPeriodColorPlanDTOs;
-        this.workPeriodColorFactDTOs = workPeriodColorFactDTOs;
+        this.projectGraphList = projectGraphList;
     }
 
     @SuppressWarnings("unused")
@@ -22,11 +24,7 @@ public class WorkGraphDto{
     }
 
     @SuppressWarnings("unused")
-    public List<WorkPeriodColorDto> getWorkPeriodColorPlanDTOs() {
-        return workPeriodColorPlanDTOs;
-    }
-    @SuppressWarnings("unused")
-    public List<WorkPeriodColorDto> getWorkPeriodColorFactDTOs() {
-        return workPeriodColorFactDTOs;
+    public List<ProjectGraphDto> getProjectGraphList() {
+        return projectGraphList;
     }
 }

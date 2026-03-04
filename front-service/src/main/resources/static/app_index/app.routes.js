@@ -1,5 +1,5 @@
 angular.module('workTimeService').config(function ($routeProvider) {
-    let ver = "2.0";
+    let ver = "3.1";
     console.log(ver);
     $routeProvider
         .when('/', {
@@ -68,7 +68,7 @@ angular.module('workTimeService').config(function ($routeProvider) {
                 }]
             }
         })
-        .when('/rate', {
+        .when('/work_rate', {
             templateUrl: 'workRate/workRate.html?ver='.toLowerCase() + ver,
             controller: 'workRateController',
             resolve: {
@@ -263,6 +263,15 @@ angular.module('workTimeService').config(function ($routeProvider) {
             resolve: {
                 LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
                     return $ocLazyLoad.load('project_edit'); // Resolve promise and load before view
+                }]
+            }
+        })
+        .when('/rate', {
+            templateUrl: 'workRate/rate.html?ver='.toLowerCase() + ver,
+            controller: 'rateController',
+            resolve: {
+                LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load('rate'); // Resolve promise and load before view
                 }]
             }
         })
