@@ -82,12 +82,7 @@ public abstract class ServiceIntegration {
     protected void addTeg(StringBuilder stringBuilder, String str, Date value) {
         addTeg(stringBuilder, str, dateToText(value));
     }
-    @SuppressWarnings("SameParameterValue")
-    protected void addTegListStr(StringBuilder stringBuilder, String str, List<String> valueList) {
-        if (valueList != null){
-            valueList.forEach(value -> addTeg(stringBuilder,str,value));
-        }
-    }
+
     protected void addTeg(StringBuilder stringBuilder, String str, String value) {
         if (value != null && !value.isEmpty()) {
             if (!stringBuilder.isEmpty()) {
@@ -109,8 +104,7 @@ public abstract class ServiceIntegration {
             stringBuilder.append(str).append("=").append(value);
         }
     }
-    @SuppressWarnings("SameParameterValue")
-    protected void addTeg(StringBuilder stringBuilder, String str, List<Long> valueList) {
+    protected void addTeg(StringBuilder stringBuilder, String str, List<?> valueList) {
         if(valueList != null) {
             valueList.forEach(value -> addTeg(stringBuilder, str, value));
         }

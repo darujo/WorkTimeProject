@@ -131,7 +131,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "addMedium", addMedium);
 
 
-        addTegListStr(stringBuilder, "sort", sort);
+        addTeg(stringBuilder, "sort", sort);
         try {
             return webClient.get().uri("/rep" + stringBuilder)
                     .retrieve()
