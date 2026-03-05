@@ -92,8 +92,8 @@ public class WorkTimeService {
         workTimeRepository.deleteById(id);
     }
 
-    public Page<@NonNull WorkTime> findWorkTime(Long[] taskId, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, String comment, Long projectId, Integer page, Integer size) {
-        Specification<@NonNull WorkTime> specification = (root, query, criteriaBuilder) -> null;
+    public Page<@NonNull WorkTime> findWorkTime(Long[] taskId, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, List<Integer> type, String comment, Long projectId, Integer page, Integer size) {
+        Specification<@NonNull WorkTime> specification = Specification.unrestricted();
         Sort sort = null;
         if (taskId != null) {
             specification = Specifications.in(specification, "taskId", taskId);
@@ -121,23 +121,26 @@ public class WorkTimeService {
         specification = Specifications.le(specification, "workDate", dateLe);
         specification = Specifications.ge(specification, "workDate", dateGE);
         specification = Specifications.gt(specification, "workDate", dateGT);
-        specification = Specifications.eq(specification, "type", type);
+        specification = Specifications.in(specification, "type", type);
         specification = Specifications.like(specification, "comment", comment);
         specification = Specifications.eq(specification, "projectId", projectId);
+//        specification = Specifications.eq(specification, "id", 4149L);
         if (sort == null)
             sort = Sort.by(Sort.Direction.DESC, "workDate");
         else {
             sort = sort.and(Sort.by(Sort.Direction.DESC, "workDate"));
         }
+        Page<@NonNull WorkTime> workTimePage;
         if (page == null) {
-            return new PageImpl<>(workTimeRepository.findAll(specification, sort));
+            workTimePage = new PageImpl<>(workTimeRepository.findAll(specification, sort));
 
         } else {
-            return workTimeRepository.findAll(specification, PageRequest.of(page - 1, size, sort));
+            workTimePage = workTimeRepository.findAll(specification, PageRequest.of(page - 1, size, sort));
         }
+        return workTimePage;
     }
 
-    public Page<@NonNull WorkTime> findWorkTimeTask(String taskDEVBO, String taskBts, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, Integer type, String comment, Long projectId, Integer page, Integer size) {
+    public Page<@NonNull WorkTime> findWorkTimeTask(String taskDEVBO, String taskBts, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, List<Integer> type, String comment, Long projectId, Integer page, Integer size) {
         Page<@NonNull WorkTime> workTimes;
         List<Long> taskIdList = taskServiceIntegration.getTaskList(taskDEVBO, taskBts);
         if (taskIdList == null || taskIdList.isEmpty()) {

@@ -23,10 +23,9 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
         super.setWebClient(webClientWorkTime);
     }
 
-    public Float getTimeTask(Long taskId, String nikName, Date dateLE, Date dateGT, String type) {
+    public Float getTimeTask(List<Long> taskIdList, String nikName, Date dateLE, Date dateGT, String type) {
         StringBuilder stringBuilder = new StringBuilder();
-
-        addTeg(stringBuilder, "taskId", taskId);
+        addTeg(stringBuilder, "taskId", taskIdList);
         addTeg(stringBuilder, "nikName", nikName);
         addTeg(stringBuilder, "type", type);
         addTeg(stringBuilder, "dateLe", dateLE);
@@ -86,14 +85,14 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
             Date dateStart,
             Date dateEnd) {
         StringBuilder stringBuilder = new StringBuilder();
-        taskIds.forEach(taskId -> addTeg(stringBuilder, "taskId", taskId));
+        addTeg(stringBuilder, "taskId", taskIds);
 
         addTeg(stringBuilder, "nikName", nikName);
-        if(stringBuilder.isEmpty()){
+        if (stringBuilder.isEmpty()) {
             log.error("нет тасков");
             return null;
-
-        }addTeg(stringBuilder, "addTotal", addTotal);
+        }
+        addTeg(stringBuilder, "addTotal", addTotal);
         addTeg(stringBuilder, "weekSplit", weekSplit);
         addTeg(stringBuilder, "dateStart", dateStart);
         addTeg(stringBuilder, "dateEnd", dateEnd);
@@ -113,7 +112,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
         }
     }
 
-    public List<UserWorkFormDto> getWorkUserOrZiBig(Long taskId,
+    public List<UserWorkFormDto> getWorkUserOrZiBig(List<Long> taskIdList,
                                                     String nikName,
                                                     Boolean addTotal,
                                                     Boolean weekSplit,
@@ -121,7 +120,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                                                     Date dateEnd) {
         StringBuilder stringBuilder = new StringBuilder();
 
-        addTeg(stringBuilder, "taskId", taskId);
+        addTeg(stringBuilder, "taskId", taskIdList);
         addTeg(stringBuilder, "nikName", nikName);
         addTeg(stringBuilder, "addTotal", addTotal);
         addTeg(stringBuilder, "weekSplit", weekSplit);
@@ -145,7 +144,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
     public Timestamp getLastTime(List<Long> taskIds, Timestamp dateLe, Timestamp dateGe) {
         StringBuilder stringBuilder = new StringBuilder();
         try {
-            taskIds.forEach(taskId -> addTeg(stringBuilder, "taskId", taskId));
+            addTeg(stringBuilder, "taskId", taskIds);
             addTeg(stringBuilder, "dateLe", dateLe);
             addTeg(stringBuilder, "dateGe", dateGe);
 

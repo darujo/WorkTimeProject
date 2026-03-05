@@ -11,6 +11,7 @@ import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 public abstract class ServiceIntegration {
@@ -73,6 +74,7 @@ public abstract class ServiceIntegration {
                 );
     }
 
+    @SuppressWarnings("SameParameterValue")
     protected void addTeg(StringBuilder stringBuilder, String str, Enum<?> value) {
         addTeg(stringBuilder, str, value.toString());
     }
@@ -80,7 +82,12 @@ public abstract class ServiceIntegration {
     protected void addTeg(StringBuilder stringBuilder, String str, Date value) {
         addTeg(stringBuilder, str, dateToText(value));
     }
-
+    @SuppressWarnings("SameParameterValue")
+    protected void addTegListStr(StringBuilder stringBuilder, String str, List<String> valueList) {
+        if (valueList != null){
+            valueList.forEach(value -> addTeg(stringBuilder,str,value));
+        }
+    }
     protected void addTeg(StringBuilder stringBuilder, String str, String value) {
         if (value != null && !value.isEmpty()) {
             if (!stringBuilder.isEmpty()) {
@@ -102,7 +109,12 @@ public abstract class ServiceIntegration {
             stringBuilder.append(str).append("=").append(value);
         }
     }
-
+    @SuppressWarnings("SameParameterValue")
+    protected void addTeg(StringBuilder stringBuilder, String str, List<Long> valueList) {
+        if(valueList != null) {
+            valueList.forEach(value -> addTeg(stringBuilder, str, value));
+        }
+    }
     protected void addTeg(StringBuilder stringBuilder, String str, Long value) {
         if (value != null) {
             if (!stringBuilder.isEmpty()) {

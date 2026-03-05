@@ -52,11 +52,11 @@ public class TaskRepService {
             Date dateLe,
             Date dateGt,
             String type) {
-        return ((List<Task>) taskService.findTask(null, codeBTS, codeDEVBO, description, workId, null, projectId, null, null))
+        List<Long> taskIdList = ((List<Task>) taskService.findTask(null, codeBTS, codeDEVBO, description, workId, null, projectId, null, null))
                 .stream()
-                .map(task -> workTimeServiceIntegration.getTimeTask(task.getId(), nikName, dateLe, dateGt, type))
-                .reduce(Float::sum)
-                .orElse(0f);
+                .map(Task::getId).toList();
+        return workTimeServiceIntegration.getTimeTask(taskIdList, nikName, dateLe, dateGt, type);
+
     }
 
     public ListString getFactUsers(Long workId, Long projectId, Date dateLe) {

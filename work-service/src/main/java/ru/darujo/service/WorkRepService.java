@@ -330,7 +330,7 @@ public class WorkRepService {
                     projectStageEnd != null && projectStageEnd == 1 ? workProject.getAnaliseEndFact() : getTimeDevelop(workProject),
                     "analise");
         }
-        if (stage == 1 && (projectStageEnd == null || projectStageEnd > 1)) {
+        else if (stage == 1 && (projectStageEnd == null || projectStageEnd > 1)) {
             return taskServiceIntegration.getTimeWork(
                     workProject.getWork().getId(),
                     workProject.getProjectId(),
@@ -339,7 +339,7 @@ public class WorkRepService {
                     getTimeDevelop(workProject),
                     "develop");
         }
-        if (stage == 2 && (projectStageEnd == null || projectStageEnd > 2)) {
+        else if (stage == 2 && (projectStageEnd == null || projectStageEnd > 2)) {
             return taskServiceIntegration.getTimeWork(
                     workProject.getWork().getId(),
                     workProject.getProjectId(),
@@ -347,7 +347,7 @@ public class WorkRepService {
                     getTimeDevelop(workProject),
                     workProject.getDebugEndFact());
         }
-        if (stage == 3 && (projectStageEnd == null || projectStageEnd > 3)) {
+        else if (stage == 3 && (projectStageEnd == null || projectStageEnd > 3)) {
             return taskServiceIntegration.getTimeWork(
                     workProject.getWork().getId(),
                     workProject.getProjectId(),
@@ -355,7 +355,7 @@ public class WorkRepService {
                     workProject.getDebugEndFact(),
                     workProject.getReleaseEndFact());
         }
-        if (stage == 4 && (projectStageEnd == null || projectStageEnd > 4)) {
+        else if (stage == 4 && (projectStageEnd == null || projectStageEnd > 4)) {
             return taskServiceIntegration.getTimeWork(
                     workProject.getWork().getId(),
                     workProject.getProjectId(),
@@ -363,7 +363,7 @@ public class WorkRepService {
                     workProject.getReleaseEndFact(),
                     workProject.getOpeEndFact());
         }
-        if (stage == 5) {
+        else if (stage == 5) {
             Timestamp timestamp = null;
             if (projectStageEnd == null) {
                 timestamp = workProject.getOpeEndFact();
@@ -380,14 +380,15 @@ public class WorkRepService {
             }
 
 
-            taskServiceIntegration.getTimeWork(
+            return taskServiceIntegration.getTimeWork(
                     workProject.getWork().getId(),
                     workProject.getProjectId(),
                     nikName,
                     timestamp,
                     null);
+        } else {
+            return 0f;
         }
-        return 0f;
     }
 
     private Timestamp getTimeDevelop(WorkProject work) {
