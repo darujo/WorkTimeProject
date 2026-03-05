@@ -6,7 +6,7 @@ public enum ReportTypeDto implements Serializable,TypeEnum {
 
     ZI_WORK("Работы по ЗИ"),
     ZI_WORK_PROJECT("Работы по ЗИ по проектам"),
-    USER_WORK("Работы сотрудников за предыдущую неделю"),
+    USER_WORK("Работы сотрудников за последние 7 дней"),
     ZI_STATUS("Статус ЗИ"),
     ZI_STATUS_PROJECT("Статус ЗИ по проектам");
 

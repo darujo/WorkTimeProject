@@ -13,7 +13,7 @@ public enum MessageType implements TypeEnum {
     CHANGE_STAGE_WORK("Смена изменение ЗИ (статус или релиз) "),
     UPDATE_INFO("Список исправлений в новой версии"),
     AVAIL_WORK_LAST_DAY("Работы отмеченные вами за предыдущий рабочий день. Рассылается по рабочим дням", 11),
-    AVAIL_WORK_LAST_WEEK("Работы отмеченные вами за предыдущую неделю. Рассылается на второй рабочий день.", 12),
+    AVAIL_WORK_LAST_WEEK("Работы отмеченные вами за последние 7 дней. Рассылается на второй рабочий день.", 12),
     AVAIL_WORK_FULL_REPORT("Статус ЗИ.", false, DayOfWeek.TUESDAY, 20),
     AVAIL_WORK_FULL_REPORT_PROJECT("Статус ЗИ по проектам.", true, DayOfWeek.TUESDAY, 20, 10),
 

@@ -119,6 +119,18 @@ public class WorkController {
         return (workService.findWorkLittle(page, size, name, sort, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), null, null, null, null, projectId)).map(WorkConvertor::getWorkLittleDto);
     }
 
+    @GetMapping("/obj/little/id")
+    public List<Long> workLittleIdList(@RequestParam(required = false) String name,
+                                       @RequestParam(required = false) Integer stageZi,
+                                       @RequestParam(required = false) Long projectId,
+                                       @RequestParam(required = false) Long codeSap,
+                                       @RequestParam(required = false) String task,
+                                       @RequestParam(required = false) String codeZi) {
+        StageZiFind stageZiFind = new StageZiFind(stageZi);
+
+        return workService.findWorkLittle(null, null, name, null, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, null, projectId).getContent().stream().map(workLittleFull -> workLittleFull.getWork().getId()).toList();
+    }
+
     @GetMapping("/obj/little/{id}")
     public WorkLittleDto workLittleDto(@PathVariable long id,
                                        @RequestParam(name = "system_project", required = false) Long projectId) {

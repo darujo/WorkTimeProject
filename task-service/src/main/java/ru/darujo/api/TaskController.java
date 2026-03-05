@@ -1,10 +1,8 @@
 package ru.darujo.api;
 
 import lombok.extern.log4j.Log4j2;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.assistant.helper.DateHelper;
@@ -116,36 +114,21 @@ public class TaskController {
             listTaskId = Arrays.asList(arrTaskId);
 
         }
-        if (workId == null && ziName != null) {
-            return findTasks(nikName, codeBTS, codeDEVBO, description, ziName, null, type, listTaskId, projectId);
-        }
-
-        return findTasks(nikName, codeBTS, codeDEVBO, description, workId, type, page, size, listTaskId, projectId);
-    }
-
-
-    public Page<@NonNull TaskDto> findTasks(String userName,
-                                            String codeBTS,
-                                            String codeDEVBO,
-                                            String description,
-                                            Long workId,
-                                            Integer type,
-                                            Integer page,
-                                            Integer size,
-                                            List<Long> listTaskId,
-                                            Long projectId) {
         clearCash();
-        return ((Page<@NonNull Task>) taskService.findTask(userName,
+        return taskService.findTask(nikName,
                 codeBTS,
                 codeDEVBO,
                 description,
+                ziName,
                 workId,
                 type,
                 listTaskId,
                 projectId,
                 page,
-                size)).map(this::taskAddValue);
+                size).map(this::taskAddValue);
+
     }
+
 
     @GetMapping("/list/id")
     public Iterable<Long> findTasks(@RequestParam(required = false) String nikName,
@@ -194,37 +177,5 @@ public class TaskController {
         userServiceIntegration.updFio(taskDto);
         return taskDto;
     }
-
-    public Page<TaskDto> findTasks(String userName,
-                                   String codeBTS,
-                                   String codeDEVBO,
-                                   String description,
-                                   String ziName,
-                                   Long workId,
-                                   Integer type,
-                                   List<Long> listTaskId,
-                                   Long projectId) {
-        clearCash();
-        List<TaskDto> taskDtoList = new ArrayList<>();
-        taskService.findTask(userName,
-                codeBTS,
-                codeDEVBO,
-                description,
-                workId,
-                type,
-                listTaskId,
-                projectId,
-                null,
-                null).forEach(task ->
-        {
-            TaskDto taskDto = taskAddValue(task);
-            if (ziName == null || ziName.isEmpty() || (taskDto.getNameZi() != null && taskDto.getNameZi().matches(".*" + ziName + "*"))) {
-                taskDtoList.add(taskDto);
-            }
-
-        });
-        return new PageImpl<>(taskDtoList);
-    }
-
 
 }

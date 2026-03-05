@@ -39,11 +39,40 @@ public class WorkServiceIntegration extends ServiceIntegration {
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
-            log.error("/obj/little/{}", workId);
-            log.error(ex.getMessage());
+            log.error("/obj/little/{}", workId, ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
+
+    public List<Long> workLittleIdList(String name,
+                                       Integer stageZi,
+                                       Long projectId,
+                                       Long codeSap,
+                                       String task,
+                                       String codeZi) {
+        StringBuilder sb = new StringBuilder();
+        addTeg(sb, "name", name);
+        addTeg(sb, "stageZi", stageZi);
+        addTeg(sb, "projectId", projectId);
+        addTeg(sb, "codeSap", codeSap);
+        addTeg(sb, "task", task);
+        addTeg(sb, "codeZi", codeZi);
+        try {
+            return webClient.get().uri("/obj/little/id" + sb)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
+                            ,
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ "))
+                    .bodyToFlux(Long.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .collectList().block();
+        } catch (RuntimeException ex) {
+            log.error("/obj/little/id{}", sb, ex);
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
+
+    }
+
 
     public MapStringFloat getWorkTimeStageFact(Long workId, Long projectId, Integer stage) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -216,4 +245,5 @@ public class WorkServiceIntegration extends ServiceIntegration {
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
+
 }
