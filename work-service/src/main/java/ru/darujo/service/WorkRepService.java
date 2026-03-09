@@ -199,7 +199,7 @@ public class WorkRepService {
         return workRepDTOs;
     }
 
-
+    @Transactional
     public PageDto<WorkFactDto> getWorkFactRep(Integer page,
                                                Integer size,
                                                String userName,
