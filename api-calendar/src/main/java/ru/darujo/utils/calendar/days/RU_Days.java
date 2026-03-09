@@ -54,7 +54,7 @@ public class RU_Days extends DefaultDays {
 
         add("2026-01-09", DayType.WEEK_END,"с субботы 3 января на пятницу 9 января");
         add("2026-03-09", DayType.WEEK_END, "В связи с Международный женским денём");
-        add("2026-05-11", DayType.WEEK_END, "В связи с Международный женским денём");
+        add("2026-05-11", DayType.WEEK_END, "В связи с Днём победы");
         add("2026-12-31", DayType.WEEK_END,"с воскресенья 4 января на четверг 31 декабря");
 
 
