@@ -40,7 +40,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .bodyToMono(Float.class)
                     .block();
         } catch (RuntimeException ex) {
-            log.error("/rep/fact/time{}", stringBuilder);
+            log.error("/rep/fact/time{}", stringBuilder, ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -59,7 +59,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .bodyToMono(ListString.class)
                     .block();
         } catch (RuntimeException ex) {
-            log.error("/rep/fact/user{}", stringBuilder);
+            log.error("/rep/fact/user{}", stringBuilder, ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -89,7 +89,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
 
         addTeg(stringBuilder, "nikName", nikName);
         if (stringBuilder.isEmpty()) {
-            log.error("нет тасков");
+            log.info("нет тасков");
             return null;
         }
         addTeg(stringBuilder, "addTotal", addTotal);
@@ -98,7 +98,6 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "dateEnd", dateEnd);
 
         try {
-            log.info("/rep/fact/week{}", stringBuilder);
             return webClient.get().uri("/rep/fact/week" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
@@ -107,7 +106,8 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .collectList()
                     .block();
         } catch (RuntimeException ex) {
-            log.error("/rep/fact/week{}", stringBuilder);
+            String text = "get Work User Or Zi /rep/fact/week" + stringBuilder;
+            log.error(text, ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -136,7 +136,8 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .collectList()
                     .block();
         } catch (RuntimeException ex) {
-            log.error("getWorkUserOrZiBig /rep/fact/week{}", stringBuilder);
+            String text = "get Work User Or Zi Big /rep/fact/week" + stringBuilder;
+            log.error(text, ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -155,8 +156,8 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .bodyToMono(Timestamp.class)
                     .block();
         } catch (RuntimeException ex) {
-            log.error("/rep/fact/lastTime{}", stringBuilder);
-            log.error(ex.getMessage());
+            String text = "/rep/fact/lastTime" + stringBuilder;
+            log.error(text, ex);
             return null;
         }
 
@@ -177,8 +178,8 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .bodyToMono(WorkUserFactPlan.class)
                     .block();
         } catch (RuntimeException ex) {
-            log.error("rep/fact/user/work/only{}", stringBuilder);
-            log.error(ex.getMessage());
+            String text = "rep/fact/user/work/only" + stringBuilder;
+            log.error(text, ex);
             return null;
         }
 

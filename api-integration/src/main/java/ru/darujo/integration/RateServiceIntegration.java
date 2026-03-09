@@ -9,6 +9,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import ru.darujo.dto.ratestage.WorkStageDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
+import java.util.List;
+
 @Slf4j
 @Component
 @ConditionalOnMissingClass
@@ -19,7 +21,7 @@ public class RateServiceIntegration extends ServiceIntegration {
     }
 
 
-    public WorkStageDto getTimePlan(Long workId, Long projectId) {
+    public WorkStageDto getTimePlan(List<Long> workId, Long projectId) {
         if (workId == null) {
             throw new ResourceNotFoundRunTime("Не задана workId для получения плановых затрат");
         }

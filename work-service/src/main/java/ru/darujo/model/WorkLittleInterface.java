@@ -1,6 +1,7 @@
 package ru.darujo.model;
 
 public interface WorkLittleInterface {
+    Release getRelease();
 
     Long getCodeSap();
 

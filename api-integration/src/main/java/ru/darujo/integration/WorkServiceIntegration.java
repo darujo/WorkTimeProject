@@ -29,17 +29,18 @@ public class WorkServiceIntegration extends ServiceIntegration {
         if (workId == null) {
             return new WorkLittleDto();
         }
+        String uri = "/obj/little/" + workId;
         try {
-            return webClient.get().uri("/obj/little/" + workId)
+            return webClient.get().uri(uri)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ с ID = " + workId))
                     .bodyToMono(WorkLittleDto.class)
-                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .doOnError(throwable -> log.error(uri, throwable))
                     .block();
         } catch (RuntimeException ex) {
-            log.error("/obj/little/{}", workId, ex);
+            log.error(uri, ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -57,41 +58,41 @@ public class WorkServiceIntegration extends ServiceIntegration {
         addTeg(sb, "codeSap", codeSap);
         addTeg(sb, "task", task);
         addTeg(sb, "codeZi", codeZi);
+        String uri = "/obj/little/id" + sb;
         try {
-            return webClient.get().uri("/obj/little/id" + sb)
+            return webClient.get().uri(uri)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
-                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ "))
+                            cR -> getMessage(cR, uri + " Что-то пошло не так не удалось получить данные по ЗИ "))
                     .bodyToFlux(Long.class)
-                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .doOnError(throwable -> log.error(uri, throwable))
                     .collectList().block();
         } catch (RuntimeException ex) {
-            log.error("/obj/little/id{}", sb, ex);
+            log.error(uri, ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
 
     }
 
 
-    public MapStringFloat getWorkTimeStageFact(Long workId, Long projectId, Integer stage) {
+    public MapStringFloat getWorkTimeStageFact(List<Long> workId, Long projectId, Integer stage) {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "workId", workId);
         addTeg(stringBuilder, "stage", stage);
         addTeg(stringBuilder, "projectId", projectId);
-
+        String uri = "/rep/time/fact/stage" + stringBuilder;
         try {
-            return webClient.get().uri("/rep/time/fact/stage" + stringBuilder)
+            return webClient.get().uri(uri)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
-                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ с ID = " + workId))
+                            cR -> getMessage(cR, uri + " Что-то пошло не так не удалось получить данные по ЗИ с ID = " + workId))
                     .bodyToMono(MapStringFloat.class)
-                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .doOnError(throwable -> log.error(uri, throwable))
                     .block();
         } catch (RuntimeException ex) {
-            log.error("/rep/time/fact/stage0{}", stringBuilder);
-            log.error(ex.getMessage());
+            log.error(uri, ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -101,28 +102,31 @@ public class WorkServiceIntegration extends ServiceIntegration {
             StringBuilder stringBuilder = new StringBuilder();
             addTeg(stringBuilder, "date", dateWork);
             addTeg(stringBuilder, "projectId", projectId);
+            String uri = "/refresh/" + workId + stringBuilder;
             return webClient.get().uri("/refresh/" + workId + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, "ЗИ c id = " + workId + " не найдена"))
+                            cR -> getMessage(cR, uri + " ЗИ c id = " + workId + " не найдена"))
                     .bodyToMono(Boolean.class)
-                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .doOnError(throwable -> log.error(uri, throwable))
                     .block();
         }
         return false;
     }
 
-    public Boolean getRate(Long workId, Long projectId) {
+    public Boolean getRate(List<Long> workIdList, Long projectId) {
         Boolean flag = false;
-        if (workId != null && projectId != null) {
+        if (workIdList != null && !workIdList.isEmpty() && projectId != null) {
             StringBuilder stringBuilder = new StringBuilder();
             addTeg(stringBuilder, "projectId", projectId);
-            flag = webClient.get().uri("/rate/" + workId + stringBuilder)
+            addTeg(stringBuilder, "workId", workIdList);
+            String uri = "/rate" + stringBuilder;
+            flag = webClient.get().uri(uri)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, "ЗИ c id = " + workId + " не найдена"))
+                            cR -> getMessage(cR, "ЗИ c id = " + workIdList + " не найдена"))
                     .bodyToMono(Boolean.class)
-                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .doOnError(throwable -> log.error(uri, throwable))
                     .block();
         }
         return flag;
@@ -132,12 +136,13 @@ public class WorkServiceIntegration extends ServiceIntegration {
         if (workId != null && projectId != null) {
             StringBuilder stringBuilder = new StringBuilder();
             addTeg(stringBuilder, "projectId", projectId);
-            webClient.get().uri("/project/add/" + workId + stringBuilder)
+            String uri = "/project/add/" + workId + stringBuilder;
+            webClient.get().uri(uri)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "ЗИ c id = " + workId + " не найдена"))
                     .bodyToMono(Void.class)
-                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .doOnError(throwable -> log.error(uri, throwable))
                     .block();
         }
 
@@ -161,19 +166,19 @@ public class WorkServiceIntegration extends ServiceIntegration {
 
 
         addTeg(stringBuilder, "sort", sort);
+        String uri = "/rep" + stringBuilder;
         try {
-            return webClient.get().uri("/rep" + stringBuilder)
+            return webClient.get().uri(uri)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ"))
                     .bodyToFlux(WorkRepDto.class)
                     .collectList()
-                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .doOnError(throwable -> log.error(uri, throwable))
                     .block();
         } catch (RuntimeException ex) {
-            log.error("/rep{}", stringBuilder);
-            log.error(ex.getMessage());
+            log.error(uri, ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -229,19 +234,19 @@ public class WorkServiceIntegration extends ServiceIntegration {
         addTeg(stringBuilder, "task", task);
         addTeg(stringBuilder, "releaseId", releaseId);
         addTeg(stringBuilder, "sort", sort);
-
+        String uri = "/rep/fact/week" + stringBuilder;
         try {
-            return webClient.get().uri("/rep/fact/week" + stringBuilder)
+            return webClient.get().uri(uri)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ"))
                     .bodyToFlux(WorkUserTime.class)
                     .collectList()
-                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .doOnError(throwable -> log.error(uri, throwable))
                     .block();
         } catch (RuntimeException ex) {
-            log.error("/rep/fact/week{}", stringBuilder);
+            log.error(uri, ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }

@@ -31,18 +31,38 @@ public class Work implements WorkLittleInterface {
     @Column(name = "project_list")
     private List<Long> projectList;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "release_id")
+    private Release release;
+
+    @OneToMany(mappedBy = "workParent", fetch = FetchType.LAZY)
+    private List<WorkLittle> childWork;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private WorkLittle workParent;
+
     public Work(Long id,
                 Long codeSap,
                 String codeZi,
                 String name,
                 String description,
-                List<Long> projectList) {
+                List<Long> projectList,
+                Release release,
+                WorkLittle workParent,
+                List<WorkLittle> childWork) {
         this.id = id;
         this.codeSap = codeSap;
         this.codeZi = codeZi;
         this.name = name;
         this.description = description;
         this.projectList = projectList;
+        this.release = release;
+        this.workParent = workParent;
+        this.childWork = childWork;
     }
 
+    public List<Long> getChildIdList() {
+        return childWork == null || childWork.isEmpty() ? null : childWork.stream().map(WorkLittle::getId).toList();
+    }
 }

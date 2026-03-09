@@ -75,7 +75,7 @@ public class WorkRepController {
 //    }
 
     @GetMapping("/time/fact/stage")
-    public MapStringFloat getFactWork(@RequestParam Long workId,
+    public MapStringFloat getFactWork(@RequestParam List<Long> workId,
                                       @RequestParam(required = false) String nikName,
                                       @RequestParam(defaultValue = "0") Integer stage,
                                       @RequestParam Long projectId) {

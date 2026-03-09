@@ -1,9 +1,39 @@
 <div id="WorkStageList" class="head_text_elem">
-    <h1>{{WorkRate.sap}} </h1>
-    <h1>{{WorkRate.code}} {{WorkRate.name}} </h1>
+    <h1>{{WorkRate.work.sap}} </h1>
     <button type="button" class="head_button mar5" id="WorkPage" ng-click="workPage()">Назад</button>
-</div>
+    <h1>{{WorkRate.work.code}} {{WorkRate.work.name}} </h1>
+    <label ng-if="WorkRate.work.childWork.length > 0" for="FilterChild" class="p-head">Отображать:</label>
+    <select ng-if="WorkRate.work.childWork.length > 0" id="FilterChild" class="p-head" ng-model="Child"
+            ng-change="loadRate()">
+        <option value="true" selected>Потомки</option>
+        <option value="false">Это ЗИ</option>
+        <option value="null">Это ЗИ и потомки</option>
+    </select>
 
+</div>
+<div id="ChildWork" ng-if="WorkRate.work.childWork.length > 0">
+    <details>
+        <summary class="p-head">Потомки</summary>
+        <table>
+
+            <tr>
+                <td class="table_head2" rowspan="3"> Код SAP</td>
+                <td class="table_head2" rowspan="3"> Код Зи</td>
+                <td class="table_head2" rowspan="3"> Наименование</td>
+                <td class="table_head2" rowspan="3"> Этап</td>
+            </tr>
+            <tbody>
+            <tr ng-repeat="work in WorkRate.work.childWork">
+                <td>{{work.codeSap}}</td>
+                <td>{{work.codeZI}}</td>
+                <td>{{work.name}}</td>
+                <td>{{work.stageZI}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+    </details>
+</div>
 <div>
     <img ng-if="load" src="../gif/wait1.gif" alt="wait1" width="900" height="506"/>
 </div>
@@ -59,15 +89,30 @@
                 </td>
 
                 <td>{{work.roleStr}}</td>
-                <td ng-if="Filter.viewFact" ng-style="getStyle(work.stage0Fact > work.stage0)">{{work.stage0Fact}}</td>
+                <td ng-if="Filter.viewFact"
+                    ng-style="getStyle((!work.stage0 && work.stage0Fact) || work.stage0Fact > work.stage0)">
+                    {{work.stage0Fact}}
+                </td>
                 <td>{{work.stage0}}</td>
-                <td ng-if="Filter.viewFact" ng-style="getStyle(work.stage1Fact > work.stage1 )">{{work.stage1Fact}}</td>
+                <td ng-if="Filter.viewFact"
+                    ng-style="getStyle((!work.stage1 && work.stage1Fact) || work.stage1Fact > work.stage1)">
+                    {{work.stage1Fact}}
+                </td>
                 <td>{{work.stage1}}</td>
-                <td ng-if="Filter.viewFact" ng-style="getStyle(work.stage2Fact > work.stage2 )">{{work.stage2Fact}}</td>
+                <td ng-if="Filter.viewFact"
+                    ng-style="getStyle((!work.stage2 && work.stage2Fact) ||work.stage2Fact > work.stage2 )">
+                    {{work.stage2Fact}}
+                </td>
                 <td>{{work.stage2}}</td>
-                <td ng-if="Filter.viewFact" ng-style="getStyle(work.stage3Fact , work.stage3 )">{{work.stage3Fact}}</td>
+                <td ng-if="Filter.viewFact"
+                    ng-style="getStyle((!work.stage3 && work.stage3Fact) ||work.stage3Fact > work.stage3 )">
+                    {{work.stage3Fact}}
+                </td>
                 <td>{{work.stage3}}</td>
-                <td ng-if="Filter.viewFact" ng-style="getStyle(work.stage4Fact > work.stage4 )">{{work.stage4Fact}}</td>
+                <td ng-if="Filter.viewFact"
+                    ng-style="getStyle((!work.stage4 && work.stage4Fact) ||work.stage4Fact > work.stage4 )">
+                    {{work.stage4Fact}}
+                </td>
                 <td>{{work.stage4}}</td>
                 <td ng-if="Filter.viewFact">{{work.stage5Fact}}</td>
                 <td ng-if="Filter.viewFact" ng-style="getStyle(work.stageAllFact > work.stageAll )">

@@ -1,13 +1,15 @@
 package ru.darujo.utils;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.darujo.model.User;
 import ru.darujo.service.RoleService;
 
+import javax.crypto.SecretKey;
 import java.util.*;
 
 
@@ -51,12 +53,17 @@ public class JwtTokenUtils {
         Date issuedDate = new Date();
         Date expiredDate = new Date(issuedDate.getTime() + lifeTimeToken);
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(userDetails.getNikName())
-                .setExpiration(expiredDate)
-                .setIssuedAt(issuedDate)
-
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .subject(userDetails.getNikName())
+                .issuedAt(issuedDate)
+                .expiration(expiredDate)
+                .claims(claims)
+                .signWith(key(), Jwts.SIG.HS256)
                 .compact();
+    }
+
+    private SecretKey key() {
+        return Keys.hmacShaKeyFor(
+                Decoders.BASE64.decode(secretKey)
+        );
     }
 }

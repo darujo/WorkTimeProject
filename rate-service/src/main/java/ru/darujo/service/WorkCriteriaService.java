@@ -59,8 +59,8 @@ public class WorkCriteriaService {
     }
 
 
-    public List<WorkCriteria> findWorkCriteria(Long workId, Long projectId) {
-        Specification<@NonNull WorkCriteria> specification = Specification.where(Specifications.eq(null, "workId", workId));
+    public List<WorkCriteria> findWorkCriteria(List<Long> workId, Long projectId) {
+        Specification<@NonNull WorkCriteria> specification = Specification.where(Specifications.in(null, "workId", workId));
         specification = Specifications.eq(specification, "projectId", projectId);
         return workCriteriaRepository.findAll(specification, Sort.by("workId").and(Sort.by("criteria")));
     }

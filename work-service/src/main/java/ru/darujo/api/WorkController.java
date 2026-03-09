@@ -1,5 +1,6 @@
 package ru.darujo.api;
 
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import ru.darujo.service.WorkService;
 
 import java.sql.Timestamp;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -49,11 +51,15 @@ public class WorkController {
 
 
     @GetMapping("/{id}")
+    @Transactional
     public WorkEditDto workEdit(@PathVariable long id,
                                 @RequestParam("system_project") Long projectId) {
         WorkFull work = workService.findById(id, projectId);
         WorkEditDto workEditDto = WorkConvertor.getWorkEditDto(work);
-        workService.updWorkPlanTime(workEditDto);
+        List<Long> workIdList = new ArrayList<>();
+        workIdList.add(workEditDto.getWorkId());
+        workIdList.addAll(workEditDto.getChildWork().stream().map(WorkLittleDto::getId).toList());
+        workService.updWorkPlanTime(workIdList, workEditDto);
         return workEditDto;
     }
 
@@ -83,6 +89,7 @@ public class WorkController {
     }
 
     @GetMapping("")
+    @Transactional
     public PagedModel<?> workPage(@RequestParam(defaultValue = "1") int page,
                                   @RequestParam(defaultValue = "10") int size,
                                   @RequestParam(required = false) String name,
@@ -100,14 +107,15 @@ public class WorkController {
         long curTime = System.nanoTime();
         Page<@NonNull WorkDto> workDTOs = workService.findWorks(page, size, name, sort, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, projectId)
                 .map(WorkConvertor::getWorkDto);
-        workDTOs.forEach(workService::updWorkPlanTime);
-        float time_last = (curTime - System.nanoTime()) * 0.000000001f;
+        workDTOs.forEach(workDto -> workService.updWorkPlanTime(workDto));
+        float time_last = (System.nanoTime() - curTime) * 0.000000001f;
         log.info("Время выполнения WorkPage {}", time_last);
         return pagedAssembler.toModel(workDTOs);
     }
 
 
     @GetMapping("/obj/little")
+    @Transactional
     public Page<@NonNull WorkLittleDto> workLittlePage(@RequestParam(defaultValue = "1") int page,
                                                        @RequestParam(defaultValue = "10") int size,
                                                        @RequestParam(required = false) String name,
@@ -125,13 +133,15 @@ public class WorkController {
                                        @RequestParam(required = false) Long projectId,
                                        @RequestParam(required = false) Long codeSap,
                                        @RequestParam(required = false) String task,
-                                       @RequestParam(required = false) String codeZi) {
+                                       @RequestParam(required = false) String codeZi
+    ) {
         StageZiFind stageZiFind = new StageZiFind(stageZi);
 
         return workService.findWorkLittle(null, null, name, null, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, null, projectId).getContent().stream().map(workLittleFull -> workLittleFull.getWork().getId()).toList();
     }
 
     @GetMapping("/obj/little/{id}")
+    @Transactional
     public WorkLittleDto workLittleDto(@PathVariable long id,
                                        @RequestParam(name = "system_project", required = false) Long projectId) {
         return WorkConvertor.getWorkLittleDto(workService.findLittleById(id, projectId));
@@ -147,11 +157,11 @@ public class WorkController {
 
     }
 
-    @GetMapping("/rate/{id}")
-    public boolean getRate(@PathVariable long id,
+    @GetMapping("/rate")
+    public boolean getRate(@RequestParam List<Long> workId,
                            @RequestParam Long projectId
     ) {
-        return workService.getRate(id, projectId);
+        return workService.getRate(workId, projectId);
     }
 
     @GetMapping("/project/add/{id}")
@@ -162,6 +172,7 @@ public class WorkController {
     }
 
     @GetMapping("/change/{id}/rated")
+    @Transactional
     public WorkLittleDto ChangeRated(@RequestHeader String username,
                                      @PathVariable long id,
                                      @RequestParam(required = false, name = "rated") Boolean rated,

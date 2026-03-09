@@ -1,7 +1,6 @@
 angular.module('workTimeService').controller('rateController', function ($scope, $http, $location) {
 
     const constPatchWorkRate = window.location.origin + '/rate-service/v1';
-    const constPatchWork = window.location.origin + '/work-service/v1';
     $scope.work = {
         roleStr: null,
         stage0Fact: 0,
@@ -18,20 +17,6 @@ angular.module('workTimeService').controller('rateController', function ($scope,
 
     let WorkId;
 
-    let loadWork = function () {
-        console.log("loadWork");
-        $http({
-            url: constPatchWork + "/works/obj/little/" + WorkId,
-            method: "get"
-        }).then(function (response) {
-            console.log(response.data);
-            $scope.ZI = response.data;
-        }, function errorCallback(response) {
-            console.log(response)
-            if ($location.checkAuthorized(response)) {
-            }
-        });
-    };
     $scope.getStyle = function (flag) {
         if (flag) {
             return {
@@ -42,20 +27,23 @@ angular.module('workTimeService').controller('rateController', function ($scope,
             return {};
         }
     };
-
-    let loadRate = function () {
+    $scope.Child = "null";
+    $scope.loadRate = function () {
         console.log("loadWorkStage");
         if ($scope.load1) {
             alert("Подождите обрабатывается предыдущий запрос")
         } else {
             $scope.loadRateWait = true;
             $scope.WorkStageList = null;
+
             $http({
                 url: constPatchWorkRate + "/rate",
                 method: "get",
                 params: {
                     workId: WorkId,
-                    loadFact: true
+                    loadFact: true,
+                    child: $scope.Child === "null" ? null : $scope.Child
+
 
                 }
             }).then(function (response) {
@@ -103,6 +91,5 @@ angular.module('workTimeService').controller('rateController', function ($scope,
         console.log("result UserList");
         console.log(result);
     });
-    loadWork();
-    loadRate();
+    $scope.loadRate();
 })

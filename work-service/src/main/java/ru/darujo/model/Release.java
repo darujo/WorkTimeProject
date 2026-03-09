@@ -23,15 +23,10 @@ public class Release {
     // Выдача релиза даты План
     @Column(name = "issuing_release_plan")
     private Timestamp issuingReleasePlan;
-    // Выдача релиза дата факт
-    @Column(name = "issuing_release_fact")
-    private Timestamp issuingReleaseFact;
 
     @Column(name = "sort")
     private Float sort;
 
-    @Column(name = "project_id", nullable = false)
-    private Long projectId;
 
     public Release(Long id, String name) {
         this.id = id;

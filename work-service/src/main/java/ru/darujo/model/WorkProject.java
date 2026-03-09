@@ -22,10 +22,10 @@ public class WorkProject implements WorkProjectInter {
     @ManyToOne
     @JoinColumn(name = "work_id")
     private Work work;
-    // ВЕНДЕРКА Факт
+    // Анализ Факт
     @Column(name = "analise_end_fact")
     private Timestamp analiseEndFact;
-    // ВЕНДЕРКА Факт
+    // Анализ Факт
     @Column(name = "analise_end_plan")
     private Timestamp analiseEndPlan;
     @Column(name = "develop_end_fact")
@@ -57,7 +57,7 @@ public class WorkProject implements WorkProjectInter {
     // ОПЭ релиза Факт
     @Column(name = "ope_end_plan")
     private Timestamp opeEndPlan;
-    // ВЕНДЕРКА Факт
+    // Анализ Факт
     @Column(name = "analise_start_fact")
     private Timestamp analiseStartFact;
     @Column(name = "develop_start_fact")
@@ -72,26 +72,23 @@ public class WorkProject implements WorkProjectInter {
     @Column(name = "ope_start_fact")
     private Timestamp opeStartFact;
 
-    // ВЕНДЕРКА Факт
+    // Анализ план
     @Column(name = "analise_start_plan")
     private Timestamp analiseStartPlan;
     //начало разработки план
     @Column(name = "develop_start_plan")
     private Timestamp developStartPlan;
-    // Стабилизация релиза Факт
+    // Стабилизация релиза план
     @Column(name = "debug_start_plan")
     private Timestamp debugStartPlan;
-    // Стабилизация релиза plan
+    // Стабилизация релиза план
     @Column(name = "release_start_plan")
     private Timestamp releaseStartPlan;
-    // ОПЭ релиза Факт
+    // ОПЭ релиза план
     @Column(name = "ope_start_plan")
     private Timestamp opeStartPlan;
     @Column(name = "rated")
     private Boolean rated;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "release_id")
-    private Release release;
     // Дата начала доработки План
     @Column(name = "start_task_plan")
     private Timestamp startTaskPlan;

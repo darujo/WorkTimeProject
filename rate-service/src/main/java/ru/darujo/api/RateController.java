@@ -10,6 +10,8 @@ import ru.darujo.dto.ratestage.WorkRateDto;
 import ru.darujo.dto.ratestage.WorkStageDto;
 import ru.darujo.service.RateService;
 
+import java.util.List;
+
 
 @RestController()
 @RequestMapping("/v1/rate")
@@ -22,25 +24,25 @@ public class RateController {
     }
 
     @GetMapping("/compare/sc")
-    public AttrDto<Float> ComparisonStageCriteria(@RequestParam Long workId,
+    public AttrDto<Float> ComparisonStageCriteria(@RequestParam List<Long> workId,
                                                   @RequestParam("system_project") Long projectId) {
         return rateService.comparisonStageCriteria(workId, projectId);
     }
 
     @GetMapping("/compare/st")
-    public AttrDto<Float> ComparisonStageType(@RequestParam Long workId,
+    public AttrDto<Float> ComparisonStageType(@RequestParam List<Long> workId,
                                               @RequestParam("system_project") Long projectId) {
         return rateService.comparisonStageType(workId, projectId);
     }
 
     @GetMapping("/compare/ct")
-    public AttrDto<Float> ComparisonCriteriaType(@RequestParam Long workId,
+    public AttrDto<Float> ComparisonCriteriaType(@RequestParam List<Long> workId,
                                                  @RequestParam("system_project") Long projectId) {
         return rateService.comparisonCriteriaType(workId, projectId);
     }
 
     @GetMapping("/time/all")
-    public WorkStageDto AllTime(@RequestParam Long workId,
+    public WorkStageDto AllTime(@RequestParam List<Long> workId,
                                 @RequestParam(defaultValue = "false") boolean loadFact,
                                 @RequestParam(required = false) Long projectId
     ) {
@@ -48,8 +50,9 @@ public class RateController {
     }
 
     @GetMapping("")
-    public WorkRateDto getRate(@RequestParam Long workId) {
-        return rateService.getRate(workId);
+    public WorkRateDto getRate(@RequestParam Long workId,
+                               @RequestParam(required = false) Boolean child) {
+        return rateService.getRate(workId, child);
     }
 
 }

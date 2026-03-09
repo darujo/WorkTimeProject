@@ -6,6 +6,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
         document.getElementById("FormEdit").style.display = "none";
     };
     let showFormEdit = function () {
+        $scope.pageParent = 1;
         console.log("showFormEdit");
         console.log($scope.Work)
 
@@ -352,4 +353,91 @@ angular.module('workTimeService').controller('workController', function ($scope,
     console.log("workFilter");
     console.log($scope.Filt);
     $scope.loadWork();
+    $scope.findWork = function () {
+        $scope.findParent = true;
+    }
+    $scope.findWork = function () {
+        $scope.findParent = true;
+    }
+    $scope.setParent = function (workId) {
+        $scope.Work.parentWork = {id: workId}
+        $scope.findNameWork(workId)
+
+    }
+    $scope.findNameWork = function (workId) {
+        console.log("findNameWork")
+        console.log(typeof workId);
+        console.log(typeof workId === "undefined");
+        if (typeof workId !== "undefined") {
+            $http({
+                url: constPatchWork + "/works/obj/little/" + workId,
+                method: "get"
+
+            }).then(function (response) {
+                console.log(response.data);
+                $scope.Work.parentWork = {id: workId, name: response.data.name}
+                $scope.findParent = false;
+            }, function errorCallback(response) {
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                    console.log("status");
+                    console.log(response.status);
+                    if (response.status !== 404) {
+                        alert(response.data.message);
+                    }
+
+                }
+            });
+        }
+    }
+    $scope.findWork = function () {
+        $scope.findParent = true;
+        $scope.loadWorkParent(0);
+
+    }
+
+    $scope.clearWork = function () {
+        $scope.Work.parentWork = null;
+
+    }
+
+    $scope.loadWorkParent = function (diffPage) {
+        console.log("loadWork")
+        let page = parseInt($scope.pageParent) + diffPage;
+        if (page < 1) {
+            page = 1;
+        }
+        $scope.pageParent = page;
+        console.log("page");
+        console.log(page);
+        console.log(diffPage);
+        let FilterWork;
+        FilterWork = $scope.FiltWork;
+
+        $http({
+            url: constPatchWork + "/works/obj/little",
+            method: "get",
+            params: {
+                page: page,
+                size: FilterWork ? FilterWork.size : null,
+                name: FilterWork ? FilterWork.name : null
+
+            }
+        }).then(function (response) {
+            console.log("response :");
+            console.log(response);
+            console.log("response,data :");
+            console.log(response.data);
+            $scope.WorkListParent = response.data.content;
+
+        }, function errorCallback(response) {
+            console.log(response)
+            if ($location.checkAuthorized(response)) {
+                //     alert(response.data.message);
+            }
+
+            // showFindTask();
+        });
+
+    }
 })

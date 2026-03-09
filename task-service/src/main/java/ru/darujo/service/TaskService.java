@@ -84,20 +84,20 @@ public class TaskService {
     }
 
     public Page<Task> findTask(String nikName,
-                                   String codeBTS,
-                                   String code,
-                                   String description,
-                                   Long workId,
-                                   Integer type,
-                                   Long projectId,
-                                   Integer page,
-                                   Integer size) {
+                               String codeBTS,
+                               String code,
+                               String description,
+                               List<Long> workIdList,
+                               Integer type,
+                               Long projectId,
+                               Integer page,
+                               Integer size) {
         return findTask(nikName,
                 codeBTS,
                 code,
                 description,
                 null,
-                workId,
+                workIdList,
                 type,
                 null,
                 projectId,
@@ -106,33 +106,33 @@ public class TaskService {
     }
 
     public Page<Task> findTask(String nikName,
-                                   String codeBTS,
-                                   String code,
-                                   String description,
+                               String codeBTS,
+                               String code,
+                               String description,
                                String ziName,
-                                   Long workId,
-                                   Integer type,
-                                   List<Long> listTaskId,
-                                   Long projectId,
-                                   Integer page,
-                                   Integer size) {
+                               List<Long> workId,
+                               Integer type,
+                               List<Long> listTaskId,
+                               Long projectId,
+                               Integer page,
+                               Integer size) {
         Specification<@NonNull Task> specification = Specification.where(Specifications.queryDistinctTrue());
         if (ziName != null) {
             List<Long> workIdList = workServiceIntegration.workLittleIdList(ziName, null, projectId, null, null, null);
             if (workIdList.isEmpty()) {
                 return new PageImpl<>(new ArrayList<>());
             }
-            if (workId == null) {
+            if (workId == null || workId.isEmpty()) {
                 specification = Specifications.in(specification, "workId", workIdList);
             } else {
-                if (workIdList.contains(workId)) {
-                    specification = Specifications.eq(specification, "workId", workId);
+                if (workIdList.retainAll(workId)) {
+                    specification = Specifications.in(specification, "workId", workIdList);
                 } else {
                     return new PageImpl<>(new ArrayList<>());
                 }
             }
         } else {
-            specification = Specifications.eq(specification, "workId", workId);
+            specification = Specifications.in(specification, "workId", workId);
         }
 
         specification = Specifications.in(specification, "id", listTaskId);

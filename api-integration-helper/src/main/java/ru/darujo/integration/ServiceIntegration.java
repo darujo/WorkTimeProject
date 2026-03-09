@@ -11,7 +11,6 @@ import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 @Slf4j
 public abstract class ServiceIntegration {
@@ -23,7 +22,7 @@ public abstract class ServiceIntegration {
 
     public Void test() {
         if (webClient == null) {
-            throw new RuntimeException("Сервис не подерживает тест соединение");
+            throw new RuntimeException("Сервис не поддерживает тест соединение");
         }
         try {
             return webClient.get().uri("/test")
@@ -40,7 +39,7 @@ public abstract class ServiceIntegration {
 
     public void shutDown(String token) {
         if (webClient == null) {
-            throw new RuntimeException("Сервис не подерживает тест соединение");
+            throw new RuntimeException("Сервис не поддерживает тест соединение");
         }
         try {
             webClient.post().uri("/shutdownContext")
@@ -104,7 +103,8 @@ public abstract class ServiceIntegration {
             stringBuilder.append(str).append("=").append(value);
         }
     }
-    protected void addTeg(StringBuilder stringBuilder, String str, List<?> valueList) {
+
+    protected void addTeg(StringBuilder stringBuilder, String str, Iterable<?> valueList) {
         if(valueList != null) {
             valueList.forEach(value -> addTeg(stringBuilder, str, value));
         }

@@ -27,13 +27,14 @@ public class TaskServiceIntegration extends ServiceIntegration {
         super.setWebClient(webClientTask);
     }
 
-    public Float getTimeWork(Long workId, Long projectId, String nikName, Date dateGt, Date dateLe) {
-        return getTimeWork(workId, projectId, nikName, dateGt, dateLe, null);
+    public Float getTimeWork(Long workId, List<Long> childIdList, Long projectId, String nikName, Date dateGt, Date dateLe) {
+        return getTimeWork(workId, childIdList, projectId, nikName, dateGt, dateLe, null);
     }
 
-    public Float getTimeWork(Long workId, Long projectId, String nikName, Date dateGt, Date dateLe, String type) {
+    public Float getTimeWork(Long workId, List<Long> childIdList, Long projectId, String nikName, Date dateGt, Date dateLe, String type) {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "workId", workId);
+        addTeg(stringBuilder, "workId", childIdList);
         addTeg(stringBuilder, "nikName", nikName);
         addTeg(stringBuilder, "dateLe", dateLe);
         addTeg(stringBuilder, "dateGt", dateGt);
@@ -99,12 +100,14 @@ public class TaskServiceIntegration extends ServiceIntegration {
                 .block();
     }
 
-    public Boolean availWorkTime(Long id, Long projectId) {
+    public Boolean availWorkTime(Long id, List<Long> workIdList, Long projectId) {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "projectId", projectId);
+        addTeg(stringBuilder, "workId", id);
+        addTeg(stringBuilder, "workId", workIdList);
 
         try {
-            return webClient.get().uri("/rep/fact/avail/" + id + stringBuilder)
+            return webClient.get().uri("/rep/fact/avail" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Задача c id = " + id + " не найдена"))

@@ -43,7 +43,7 @@ public class WorkCriteriaController {
     }
 
     @GetMapping("")
-    public List<WorkCriteriaDto> WorkCriteriaList(@RequestParam Long workId,
+    public List<WorkCriteriaDto> WorkCriteriaList(@RequestParam List<Long> workId,
                                                   @RequestParam("system_project") Long projectId) {
         return workCriteriaService.findWorkCriteria(workId,projectId).stream().map(WorkCriteriaConvertor::getWorkCriteriaDto).collect(Collectors.toList());
     }

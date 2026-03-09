@@ -42,7 +42,7 @@ public class VacationController {
     }
 
     @GetMapping("")
-    public Page<@NonNull VacationDto> VacationPage(@RequestHeader String username,
+    public Page<@NonNull VacationDto> VacationPage(@RequestHeader(required = false) String username,
                                                    @RequestParam(required = false) String nikName,
                                                    @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
                                                    @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr,

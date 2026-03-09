@@ -13,9 +13,9 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
     private String codeZI;
     // Разработка прототипа
     private String name;
-    // ВЕНДЕРКА
+    // Анализ факт
     private Timestamp analiseEndFact;
-    // ВЕНДЕРКА План
+    // Анализ План
     private Timestamp analiseEndPlan;
     //конец разработки факт
     private Timestamp developEndFact;
@@ -67,7 +67,7 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
     // Выдача релиза дата факт
     private Timestamp issuingReleaseFact;
 
-    // ВЕНДЕРКА Факт
+    // Анализ Факт
     private Timestamp analiseStartFact;
     private Timestamp developStartFact;
     // Стабилизация прототипа Факт
@@ -77,20 +77,23 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
     // ОПЭ релиза Факт
     private Timestamp opeStartFact;
 
-    // ВЕНДЕРКА Факт
+    // Анализ план
     private Timestamp analiseStartPlan;
     //начало разработки план
     private Timestamp developStartPlan;
-    // Стабилизация релиза Факт
+    // Стабилизация релиза план
     private Timestamp debugStartPlan;
-    // Стабилизация релиза plan
+    // Стабилизация релиза план
     private Timestamp releaseStartPlan;
-    // ОПЭ релиза Факт
+    // ОПЭ релиза план
     private Timestamp opeStartPlan;
 
     private Boolean rated;
     private Long projectId;
     private List<Long> projectList;
+
+    private WorkLittleDto parentWork;
+    private List<WorkLittleDto> childWork;
 
 
     public WorkEditDto(Long id,
@@ -131,7 +134,10 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
                        Timestamp opeStartPlan,
                        Boolean rated,
                        Long projectId,
-                       List<Long> projectList) {
+                       List<Long> projectList,
+                       WorkLittleDto parentWork,
+                       List<WorkLittleDto> childWork
+    ) {
         this.id = id;
         this.workProjectId = workProjectId;
         this.codeSap = codeSap;
@@ -171,6 +177,8 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
         this.rated = rated;
         this.projectId = projectId;
         this.projectList = projectList;
+        this.parentWork = parentWork;
+        this.childWork = childWork;
     }
 
     public Long getId() {
@@ -390,5 +398,18 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
     @SuppressWarnings("unused")
     public Long getWorkProjectId() {
         return workProjectId;
+    }
+
+    public WorkLittleDto getParentWork() {
+        return parentWork;
+    }
+
+    public List<WorkLittleDto> getChildWork() {
+        return childWork;
+    }
+
+    @Override
+    public List<Long> getChildId() {
+        return childWork == null || childWork.isEmpty() ? null : childWork.stream().map(WorkLittleDto::getId).toList();
     }
 }

@@ -102,7 +102,7 @@ public class TaskController {
                                    @RequestParam(required = false) String codeBTS,
                                    @RequestParam(required = false) String codeDEVBO,
                                    @RequestParam(required = false) String description,
-                                   @RequestParam(required = false) Long workId,
+                                   @RequestParam(required = false) List<Long> workId,
                                    @RequestParam(required = false) String ziName,
                                    @RequestParam(required = false) Integer type,
                                    @RequestParam(defaultValue = "1") Integer page,
@@ -135,7 +135,7 @@ public class TaskController {
                                     @RequestParam(required = false) String codeBTS,
                                     @RequestParam(required = false) String codeDEVBO,
                                     @RequestParam(required = false) String description,
-                                    @RequestParam(required = false) Long workId,
+                                    @RequestParam(required = false) List<Long> workId,
                                     @RequestParam(required = false) Long projectId) {
         Set<Long> listId = new HashSet<>();
         taskService.findTask(nikName,
