@@ -26,9 +26,10 @@
 		<module>telegram-service</module>
         <module>update-service</module>
         <module>docx</module>
+        <module>api-file</module>
 
 
-	</modules>
+    </modules>
 	<groupId>ru.darujo</groupId>
 	<artifactId>WorkTimeProject</artifactId>
 	<version>0.0.1-SNAPSHOT</version>

@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.3</version>
+        <version>4.0.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -18,7 +18,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.24</version>
+            <version>1.18.44</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -31,18 +31,19 @@
 <!--            <artifactId>telegrambots-abilities</artifactId>-->
 <!--            <version>9.2.0</version>-->
 <!--        </dependency>-->
-        <!-- https://mvnrepository.com/artifact/org.telegram/telegrambots -->
+        <!-- Source: https://mvnrepository.com/artifact/org.telegram/telegrambots-springboot-longpolling-starter -->
         <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots-springboot-longpolling-starter</artifactId>
-            <version>9.2.0</version>
+            <version>9.5.0</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.telegram/telegrambots-client -->
         <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots-client</artifactId>
-            <version>9.2.0</version>
+            <version>9.5.0</version>
         </dependency>
         <dependency>
             <groupId>ru.darujo</groupId>
@@ -58,6 +59,12 @@
         </dependency>
         <dependency>
             <groupId>ru.darujo</groupId>
+            <artifactId>api-file</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>ru.darujo</groupId>
             <artifactId>api-repository</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
@@ -66,7 +73,7 @@
         <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots-meta</artifactId>
-            <version>9.2.0</version>
+            <version>9.5.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

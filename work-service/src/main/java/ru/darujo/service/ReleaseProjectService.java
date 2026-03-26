@@ -25,8 +25,12 @@ public class ReleaseProjectService {
         this.releaseProjectRepository = releaseProjectRepository;
     }
 
-    public ReleaseProject save(ReleaseProject release) {
-        return releaseProjectRepository.save(release);
+    public ReleaseProject save(ReleaseProject releaseProject) {
+        ReleaseProject save = findReleaseProject(releaseProject.getRelease(), releaseProject.getProjectId());
+        if (save != null) {
+            releaseProject.setId(save.getId());
+        }
+        return releaseProjectRepository.save(releaseProject);
     }
 
     public ReleaseProject findReleaseProject(Release release, Long projectId) {

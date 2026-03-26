@@ -28,13 +28,19 @@ public class MessageInformation {
     @Column(name = "date_time")
     private Timestamp dateTime;
 
-    public MessageInformation(Long id, String author, String type, String text, boolean isSend, Timestamp dateTime) {
+    @Column(name = "file_for_disk")
+    private String fileForDisk;
+
+    @Column(name = "project_id")
+    private Long projectId;
+
+    public MessageInformation(Long id, String author, String type, String text, boolean isSend, Timestamp dateTime, Long projectId) {
         this.id = id;
         this.author = author;
         this.type = type;
         this.text = text;
         this.isSend = isSend;
         this.dateTime = dateTime == null ? new Timestamp(System.currentTimeMillis()) : dateTime;
-
+        this.projectId = projectId;
     }
 }

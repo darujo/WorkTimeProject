@@ -17,18 +17,19 @@ public class WorkConvertor {
                 .setName(work.getName())
                 .setDescription(work.getDescription())
                 .setWorkParentDto(getWorkLittleDto(work.getWorkParent()))
-                .setChildWorkDto(work.getChildWork().stream().map(WorkConvertor::getWorkLittleDto).toList());
+                .setChildWorkDto(work.getChildWork() == null ? null : work.getChildWork().stream().map(WorkConvertor::getWorkLittleDto).toList());
         if (work.getRelease() != null) {
             workBuilder
                     .setReleaseId(work.getRelease().getId())
                     .setRelease(work.getRelease().getName())
                     .setIssuingReleasePlan(work.getRelease().getIssuingReleasePlan());
-
-            ReleaseProject releaseProject = ReleaseProjectService.getINSTANCE().findReleaseProject(work.getRelease(), workProject.getProjectId());
-            if (releaseProject != null) {
-                workBuilder.setIssuingReleaseFact(releaseProject.getIssuingReleaseFact());
+            if (workProject != null && workProject.getProjectId() != null) {
+                ReleaseProject releaseProject = ReleaseProjectService.getINSTANCE().findReleaseProject(work.getRelease(),
+                        workProject.getProjectId());
+                if (releaseProject != null) {
+                    workBuilder.setIssuingReleaseFact(releaseProject.getIssuingReleaseFact());
+                }
             }
-
         }
         if (workProject != null) {
             if (work.getRelease() != null) {
@@ -92,7 +93,7 @@ public class WorkConvertor {
         WorkProject workProject = WorkBuilder
                 .createWork()
                 .setWorkParent(getWorkLittle(workDto.getParentWork()))
-                .setChildWork(workDto.getChildWork().stream().map(WorkConvertor::getWorkLittle).toList())
+                .setChildWork(workDto.getChildWork() == null ? null : workDto.getChildWork().stream().map(WorkConvertor::getWorkLittle).toList())
 
                 .setId(workDto.getId())
                 .setWorkProjectId(workDto.getWorkProjectId())

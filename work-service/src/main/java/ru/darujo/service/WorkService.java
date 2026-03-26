@@ -126,7 +126,7 @@ public class WorkService {
     }
 
     public void checkWork(Work work, WorkProject workProject) {
-        if (!work.getChildWork().isEmpty() && work.getWorkParent() != null) {
+        if (work.getChildWork() != null && !work.getChildWork().isEmpty() && work.getWorkParent() != null) {
             throw new ResourceNotFoundRunTime("У ЗИ может быть родитель или потомки");
         }
         Release release;

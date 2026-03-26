@@ -25,6 +25,7 @@ public class CodeService {
         code.put(5, new TaskType("Запросы по ЗИ",true));
         code.put(4, new TaskType("Изменение по ТЗ",true));
         code.put(2, new TaskType("Вендорные запросы",false));
+        code.put(6, new TaskType("Улучшение", false));
         code.put(3, new TaskType("Админ",false));
         return code;
     }

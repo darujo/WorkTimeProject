@@ -170,6 +170,7 @@ public class Tasks {
         return new RunnableNotException(() -> {
             log.info("sendReportWorkFull");
             LinkedList<String> sort = new LinkedList<>();
+            sort.add("release.sort");
             sort.add("name");
             String report = htmlService.printRep(workServiceIntegration.getTimeWork(null, true, null, null, null, sort, true), "Статус_ЗИ");
             messageInformationService.sendFile(new MessageInfoDto(

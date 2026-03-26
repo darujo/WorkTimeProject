@@ -101,9 +101,6 @@ public class WorkRepController {
                                           @RequestParam(required = false) String task,
                                           @RequestParam(required = false) List<Long> releaseId,
                                           @RequestParam(defaultValue = "release.sort") String sort) {
-        if (projectId == null) {
-            sort = "name";
-        }
         Timestamp dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ", true);
         Timestamp dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ", true);
         StageZiFind stageZiFind = new StageZiFind(stageZi);

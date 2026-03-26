@@ -1,5 +1,6 @@
 package ru.darujo.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.dto.workperiod.WorkUserTime;
@@ -15,8 +16,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
+@Slf4j
 @Service
 public class HtmlService {
     public String printRep(List<WorkRepDto> works, String headText) {
@@ -338,22 +339,21 @@ public class HtmlService {
         });
 
         sb.append("</tr>");
-        AtomicReference<Integer> i = new AtomicReference<>(0);
+        AtomicInteger i = new AtomicInteger(0);
         sb.append("<tbody >");
         AtomicInteger rowI = new AtomicInteger();
         weekWorkList.forEach(work_zi -> {
             nextRow(rowI.getAndIncrement());
-            i.getAndSet(i.get() + 1);
-            AtomicReference<Integer> j = new AtomicReference<>(0);
+            i.incrementAndGet();
+            AtomicInteger j = new AtomicInteger(0);
             work_zi.getUserWorkFormDTOs().forEach(work -> {
-                j.getAndSet(j.get() + 1);
                 sb.append("<tr>");
                 sb.append(getTegStart("td"));
                 sb.append("<div class=\"horiz\">");
                 if (ziSplit) {
                     sb.append("<p>").append(i).append(".</p>");
                 }
-                sb.append("<p>").append(j).append("</p>");
+                sb.append("<p>").append(j.incrementAndGet()).append("</p>");
                 sb.append("</div>");
                 sb.append("</td>");
                 if (ziSplit && work.getUserCol() != null) {
@@ -361,6 +361,7 @@ public class HtmlService {
                     sb.append(printNotNull(work_zi.getName()));
                     sb.append("</td>");
                 }
+//                log.info(work.getDateStartStr() + " - " + work.getDateEndStr());
                 if (!ziSplit && work.getUserCol() != null) {
                     sb.append(getTegStart("td rowspan=\"" + work.getUserCol() + "\""));
                     sb.append(printNotNull(work.getDateStartStr()));
