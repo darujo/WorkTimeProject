@@ -46,7 +46,6 @@ public class WorkController {
         float time_last = (System.nanoTime() - curTime) * 0.000000001f;
         log.info("Время выполнения workList {}", time_last);
         return works;
-
     }
 
 
@@ -98,7 +97,7 @@ public class WorkController {
                                   @RequestParam(required = false) String codeZi,
                                   @RequestParam(required = false) String task,
                                   @RequestParam(required = false) Long releaseId,
-                                  @RequestParam(defaultValue = "release.sort") String sort,
+                                  @RequestParam(defaultValue = "release.sort,name") List<String> sort,
                                   @RequestParam("system_project") Long projectId,
                                   PagedResourcesAssembler<WorkDto> pagedAssembler
 
@@ -120,7 +119,7 @@ public class WorkController {
                                                        @RequestParam(defaultValue = "10") int size,
                                                        @RequestParam(required = false) String name,
                                                        @RequestParam(defaultValue = "15") Integer stageZi,
-                                                       @RequestParam(required = false) String sort,
+                                                       @RequestParam(required = false) List<String> sort,
                                                        @RequestParam("system_project") Long projectId) {
         StageZiFind stageZiFind = new StageZiFind(stageZi);
 
@@ -154,7 +153,6 @@ public class WorkController {
     ) {
         Timestamp date = DateHelper.DTZToDate(dateStr, "date", false);
         return workService.setWorkDate(id, projectId, date);
-
     }
 
     @GetMapping("/rate")
@@ -179,6 +177,5 @@ public class WorkController {
                                      @RequestParam("system_project") Long projectId
     ) {
         return WorkConvertor.getWorkLittleDto(workService.setRated(username, id, projectId, rated));
-
     }
 }

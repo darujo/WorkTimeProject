@@ -40,13 +40,13 @@ public class JwtTokenUtils {
                     .forEach(right -> rightList.add(
                             right.getName()));
         }
-
-        roleService.getRoleList(null, null, userDetails.getCurrentProject().getId(), userDetails)
-                .forEach(role ->
-                        role.getRights().forEach(right -> rightList.add(
-                                right.getName()))
-                );
-
+        if (userDetails.getCurrentProject() != null) {
+            roleService.getRoleList(null, null, userDetails.getCurrentProject().getId(), userDetails)
+                    .forEach(role ->
+                            role.getRights().forEach(right -> rightList.add(
+                                    right.getName()))
+                    );
+        }
         if (!rightList.isEmpty()) {
             claims.put("authorities", rightList);
         }

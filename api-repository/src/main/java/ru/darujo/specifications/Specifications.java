@@ -1,7 +1,12 @@
 package ru.darujo.specifications;
 
 import org.jspecify.annotations.NonNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -9,6 +14,40 @@ import java.util.List;
 
 
 public class Specifications {
+    public static <T> Page<T> findAll(JpaSpecificationExecutor<T> repository, Integer page, Integer size, Specification<T> specification, String sortStr) {
+        Sort sort = null;
+        if (sortStr != null && !sortStr.isBlank()) {
+            sort = Sort.by(sortStr);
+        }
+        return findAll(repository, page, size, specification, sort);
+    }
+
+    public static <T> Page<T> findAll(JpaSpecificationExecutor<T> repository, Integer page, Integer size, Specification<T> specification, List<String> sortStr) {
+        Sort sort = null;
+        if (sortStr != null) {
+            for (String sortField : sortStr) {
+                sort = sort == null ? Sort.by(sortField) : sort.and(Sort.by(sortField));
+            }
+        }
+        return findAll(repository, page, size, specification, sort);
+    }
+
+    public static <T> Page<T> findAll(JpaSpecificationExecutor<T> repository, Integer page, Integer size, Specification<T> specification, Sort sort) {
+        if (sort == null) {
+            if (page != null && size != null) {
+                return repository.findAll(specification, PageRequest.of(page - 1, size));
+            } else {
+                return new PageImpl<>(repository.findAll(specification));
+            }
+        } else {
+            if (page != null && size != null) {
+                return repository.findAll(specification, PageRequest.of(page - 1, size, sort));
+            } else {
+                return new PageImpl<>(repository.findAll(specification, sort));
+            }
+        }
+
+    }
 
     public static <T> Specification<@NonNull T> ge(Specification<@NonNull T> specification, String field, Integer value) {
         if (value != null) {

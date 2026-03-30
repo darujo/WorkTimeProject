@@ -4,9 +4,6 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.exceptions.ResourceNotFoundException;
@@ -142,7 +139,13 @@ public class WorkProjectService {
     }
 
 
-    public Page<@NonNull WorkFull> getWorkFull(Integer page, Integer size, String sort, Integer stageZiGe, Integer stageZiLe, String task, Long projectId, List<Work> workList) {
+    public Page<@NonNull WorkFull> getWorkFull(Integer page, Integer size, List<String> sort, Integer stageZiGe, Integer stageZiLe, String task, Long projectId, List<Work> workList) {
+        Specification<@NonNull WorkProject> specification = getWorkProjectSpecification(stageZiGe, stageZiLe, task, projectId, workList);
+        Page<@NonNull WorkProject> workPage = Specifications.findAll(workProjectRepository, page, size, specification, sort);
+        return workPage.map(workProject -> new WorkFull(workProject.getWork(), workProject));
+    }
+
+    private static Specification<@NonNull WorkProject> getWorkProjectSpecification(Integer stageZiGe, Integer stageZiLe, String task, Long projectId, List<Work> workList) {
         Specification<@NonNull WorkProject> specification = Specification.unrestricted();
         specification = Specifications.in(specification, "work", workList);
         specification = Specifications.like(specification, "task", task);
@@ -154,34 +157,11 @@ public class WorkProjectService {
             specification = Specifications.le(specification, "stageZi", stageZiLe);
             specification = Specifications.ge(specification, "stageZi", stageZiGe);
         }
-
-        Page<@NonNull WorkProject> workPage;
-        if (sort == null) {
-            if (page != null && size != null) {
-                workPage = workProjectRepository.findAll(specification, PageRequest.of(page - 1, size));
-            } else {
-                workPage = new PageImpl<>(workProjectRepository.findAll(specification));
-            }
-
-        } else {
-            if (page != null && size != null) {
-                workPage = workProjectRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.by(sort)));
-            } else {
-                workPage = new PageImpl<>(workProjectRepository.findAll(specification, Sort.by(sort)));
-            }
-        }
-        return workPage.map(workProject -> new WorkFull(workProject.getWork(), workProject));
+        return specification;
     }
 
     public List<WorkProject> getWorkProjectList(Integer stageZiGe, Integer stageZiLe) {
-        Specification<WorkProject> specification = Specification.unrestricted();
-        if (stageZiLe != null && stageZiLe.equals(stageZiGe)) {
-            specification = Specifications.eq(specification, "stageZi", stageZiLe);
-
-        } else {
-            specification = Specifications.le(specification, "stageZi", stageZiLe);
-            specification = Specifications.ge(specification, "stageZi", stageZiGe);
-        }
+        Specification<WorkProject> specification = getWorkProjectSpecification(stageZiGe, stageZiLe, null, null, null);
 
         return workProjectRepository.findAll(specification);
     }

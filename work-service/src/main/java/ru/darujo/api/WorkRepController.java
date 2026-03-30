@@ -1,6 +1,5 @@
 package ru.darujo.api;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +22,6 @@ import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.List;
 
-
 @RestController()
 @RequestMapping("/v1/works/rep")
 public class WorkRepController {
@@ -34,14 +32,13 @@ public class WorkRepController {
         this.workRepService = workRepService;
     }
 
-
     @GetMapping("")
     public List<WorkRepDto> getTimeWork(@RequestParam(required = false) String ziName,
                                         @RequestParam(required = false) Boolean availWork,
                                         @RequestParam(defaultValue = "15") Integer stageZi,
                                         @RequestParam(required = false) Long releaseId,
                                         @RequestParam(required = false) Long projectId,
-                                        @RequestParam(required = false) String[] sort,
+                                        @RequestParam(required = false) List<String> sort,
                                         @RequestParam(defaultValue = "true") Boolean addMedium) {
         StageZiFind stageZiFind = new StageZiFind(stageZi);
         return workRepService.getWorkRep(ziName, availWork, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), releaseId, projectId, sort, addMedium);
@@ -57,7 +54,7 @@ public class WorkRepController {
                                             @RequestParam(required = false) String codeZi,
                                             @RequestParam(required = false) String task,
                                             @RequestParam(required = false) Long releaseId,
-                                            @RequestParam(defaultValue = "release.sort") String sort,
+                                            @RequestParam(defaultValue = "release.sort,name") List<String> sort,
                                             @RequestParam(defaultValue = "true") boolean hideNotTime) {
         if (nikName != null && nikName.isEmpty()) {
             nikName = null;
@@ -65,14 +62,6 @@ public class WorkRepController {
         StageZiFind stageZiFind = new StageZiFind(stageZi);
         return workRepService.getWorkFactRep(page, size, nikName, name, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, sort, hideNotTime);
     }
-
-//    @GetMapping("/time/fact")
-//    public Float getFactWork(@RequestParam Long workId,
-//                             @RequestParam Integer stage,
-//                             @RequestParam(required = false) String nikName
-//    ) {
-//        return workRepService.getFactWork(workId, stage, nikName);
-//    }
 
     @GetMapping("/time/fact/stage")
     public MapStringFloat getFactWork(@RequestParam List<Long> workId,
@@ -100,7 +89,7 @@ public class WorkRepController {
                                           @RequestParam(required = false) String codeZi,
                                           @RequestParam(required = false) String task,
                                           @RequestParam(required = false) List<Long> releaseId,
-                                          @RequestParam(defaultValue = "release.sort") String sort) {
+                                          @RequestParam(defaultValue = "release.sort,name") List<String> sort) {
         Timestamp dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ", true);
         Timestamp dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ", true);
         StageZiFind stageZiFind = new StageZiFind(stageZi);
@@ -118,7 +107,7 @@ public class WorkRepController {
                                                      @RequestParam(required = false) String codeZi,
                                                      @RequestParam(required = false) String task,
                                                      @RequestParam(required = false) Long releaseId,
-                                                     @RequestParam(required = false) String sort,
+                                                     @RequestParam(required = false) List<String> sort,
                                                      @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
                                                      @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr,
                                                      @RequestParam(required = false) String period) {
@@ -139,6 +128,4 @@ public class WorkRepController {
 
         return workRepService.getWorkGraphRep(page, size, nameZi, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, sort, dateStart, dateEnd, period);
     }
-
-
 }

@@ -7,6 +7,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
     };
     let showFormEdit = function () {
         $scope.pageParent = 1;
+        $scope.sizeParent = 10;
         console.log("showFormEdit");
         console.log($scope.Work)
 
@@ -19,7 +20,8 @@ angular.module('workTimeService').controller('workController', function ($scope,
 
     };
     $scope.rightObj = {Edit: false, Create: false};
-
+    $scope._embedded = {workDtoList: null}
+    $scope.FiltWorkParent = {};
     let checkRight = function (right, message) {
         document.getElementById("ButtonSaveDown").style.display = "none";
         document.getElementById("ButtonSaveUp").style.display = "none";
@@ -411,16 +413,16 @@ angular.module('workTimeService').controller('workController', function ($scope,
         console.log("page");
         console.log(page);
         console.log(diffPage);
-        let FilterWork;
-        FilterWork = $scope.FiltWork;
+        let FilterWorkParent;
+        FilterWorkParent = $scope.FiltWorkParent;
 
         $http({
             url: constPatchWork + "/works/obj/little",
             method: "get",
             params: {
                 page: page,
-                size: FilterWork ? FilterWork.size : null,
-                name: FilterWork ? FilterWork.name : null
+                size: FilterWorkParent ? FilterWorkParent.size : null,
+                name: FilterWorkParent ? FilterWorkParent.name : null
 
             }
         }).then(function (response) {

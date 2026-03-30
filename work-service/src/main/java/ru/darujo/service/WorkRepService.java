@@ -75,7 +75,7 @@ public class WorkRepService {
     }
 
     @Transactional
-    public List<WorkRepDto> getWorkRep(String name, Boolean availWork, Integer stageZiGe, Integer stageZiLe, Long releaseId, Long projectIdPar, String[] sort, Boolean addMedium) {
+    public List<WorkRepDto> getWorkRep(String name, Boolean availWork, Integer stageZiGe, Integer stageZiLe, Long releaseId, Long projectIdPar, List<String> sort, Boolean addMedium) {
         workService.init();
         List<WorkRepDto> workRepDTOs = new ArrayList<>();
         List<Work> works;
@@ -210,7 +210,7 @@ public class WorkRepService {
                                                String codeZiSearch,
                                                String task,
                                                Long releaseId,
-                                               String sort,
+                                               List<String> sort,
                                                boolean hideNotTime) {
         AtomicInteger num = new AtomicInteger();
         List<WorkFactDto> workFactDTOs = new ArrayList<>();
@@ -420,7 +420,7 @@ public class WorkRepService {
 
 
     public List<WorkUserTime> getWeekWork(boolean ziSplit, Boolean addTotal, String nikName, Boolean weekSplit, Timestamp dateStart, Timestamp dateEnd,
-                                          Integer page, Integer size, String name, Long projectId, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, List<Long> releaseIdList, String sort) {
+                                          Integer page, Integer size, String name, Long projectId, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, List<Long> releaseIdList, List<String> sort) {
         List<WorkUserTime> workUserTimes = new ArrayList<>();
         if (ziSplit) {
             Page<@NonNull WorkLittleFull> works = workService.findWorkLittle(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseIdList, projectId);
@@ -460,7 +460,7 @@ public class WorkRepService {
                                                      String codeZiSearch,
                                                      String task,
                                                      Long releaseId,
-                                                     String sort,
+                                                     List<String> sort,
                                                      Timestamp dateStart,
                                                      Timestamp dateEnd,
                                                      String period) {

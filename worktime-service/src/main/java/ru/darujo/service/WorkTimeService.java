@@ -83,8 +83,9 @@ public class WorkTimeService {
             ok = taskServiceIntegration.setTaskRefreshTime(workTime.getTaskId());
 
         }
-        log.info("обновили время у задачи {}", ok);
-
+        if (!ok) {
+            log.error("Не обновили время у задачи {} {} {}", workTime.getTaskId(), workTime.getType(), workTime.getWorkDate());
+        }
         return workTimeRepository.save(workTime);
     }
 

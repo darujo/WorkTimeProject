@@ -26,7 +26,7 @@ public class ReleaseStageService {
     }
 
     @Transactional
-    public List<@NonNull ReleaseStageDto> getReleaseStage(String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, List<Long> releaseIdList, Long projectId) {
+    public List<@NonNull ReleaseStageDto> getReleaseStage(String name, List<String> sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, List<Long> releaseIdList, Long projectId) {
         Map<Long, ReleaseStageDto> releaseStageDtoMap = new LinkedHashMap<>();
         if (releaseIdList != null && !releaseIdList.isEmpty()) {
             releaseService.findAll(releaseIdList, null).forEach(releaseFull -> releaseStageDtoMap.put(releaseFull.getRelease().getId(), getReleaseStageDto(releaseFull.getRelease())));

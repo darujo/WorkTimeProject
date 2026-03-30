@@ -227,22 +227,22 @@
                     <form novalidate class="filter">
                         <label for="Name" class="p-head"> Наименование </label>
                         <input class="vvod80" inputmode="text" id="Name"
-                               ng-model="FiltWork.name"/>
+                               ng-model="FiltWorkParent.name"/>
                         <br>
-                        <button type="button" ng-click="filterWork()" class="head_button">Применить</button>
+                        <button type="button" ng-click="loadWorkParent(0)" class="head_button">Применить</button>
 
                     </form>
                 </div>
             </details>
             <div class="filter">
-                <button type="button" class="head_button" ng-click="loadWork(-1)">PrevPage</button>
+                <button type="button" class="head_button" ng-click="loadWorkParent(-1)">PrevPage</button>
                 <label for="PageParent"></label>
                 <input class="vvod" type="number" id="PageParent" value="1" ng-model="pageParent"/>
-                <button type="button" class="head_button" ng-click="loadWork(1)">NextPage</button>
+                <button type="button" class="head_button" ng-click="loadWorkParent(1)">NextPage</button>
                 <p class="p-head">Количество элементов</p>
                 <label for="WorkSizeParent" class="p-head">Количество элементов</label>
-                <select class="vvod20" name="WorkSizeFilterTaskSelect" id="WorkSizeParent" ng-model="FiltWork.size"
-                        ng-change="filterWork()">
+                <select class="vvod20" name="WorkSizeFilterTaskSelect" id="WorkSizeParent" ng-model="sizeParent"
+                        ng-change="loadWorkParent(0)">
                     <option ng-value="10" value="10" selected>10</option>
                     <option ng-value="25" value="25">25</option>
                     <option ng-value="50" value="50">50</option>
