@@ -107,7 +107,7 @@ public class TaskService {
                 }
                 boolean flagOk = false;
                 while (!flagOk) {
-                    flagOk = monitorService.allServiceOk();
+                    flagOk = monitorService.allServiceOk(serviceTypeList);
                 }
                 try {
                     if (textUpdates != null) {

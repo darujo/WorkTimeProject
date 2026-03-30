@@ -159,7 +159,9 @@ public class TaskService {
         task.setRefresh(new Timestamp(System.currentTimeMillis()));
         taskRepository.save(task);
         boolean ok = workServiceIntegration.setWorkDate(task.getWorkId(), task.getProjectId(), date);
-        log.info("Обновили даты в ЗИ? {}", ok);
+        if (!ok) {
+            log.info("Обновили даты в ЗИ? {} {} {}", task.getWorkId(), task.getProjectId(), date);
+        }
         return true;
     }
 

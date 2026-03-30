@@ -5,10 +5,8 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.darujo.dto.information.MessageInfoDto;
@@ -281,6 +279,31 @@ public class WorkService {
 
     public Page<@NonNull WorkFull> findAll(Integer page, Integer size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId, Long projectId) {
         Specification<@NonNull Work> specification;
+        specification = getWorkSpecification(name, sort, codeSap, codeZi, releaseId, null);
+
+        if (projectId != null
+                && (stageZiGe != null
+                || (stageZiLe != null && stageZiLe != 9) || task != null)
+                && (sort == null || sort.startsWith("stageZi") || sort.equals("task"))) {
+            List<Work> workList = null;
+            if (name != null || codeSap != null || codeZi != null) {
+                workList = workRepository.findAll(specification);
+                if (workList.isEmpty()) {
+                    return new PageImpl<>(new ArrayList<>());
+                }
+            }
+            return workProjectService.getWorkFull(page, size, sort, stageZiGe, stageZiLe, task, projectId, workList);
+        }
+
+        specification = Specifications.in(specification, "id", workProjectLittleService.getListWorkId(task, stageZiLe, stageZiGe));
+
+        Page<@NonNull Work> workPage;
+        workPage = Specifications.findAll(workRepository, page, size, specification, sort);
+        return workPage.map(work -> new WorkFull(work, projectId == null ? null : workProjectService.getWorkProject(work, projectId)));
+    }
+
+    private <T> Specification<@NonNull T> getWorkSpecification(String name, String sort, Long codeSap, String codeZi, Long releaseId, List<Long> releaseIdArray) {
+        Specification<@NonNull T> specification;
         if (sort != null) {
             specification = Specification.unrestricted();
         } else {
@@ -294,54 +317,22 @@ public class WorkService {
             Release release = releaseService.findOptionalById(releaseId).orElse(null);
             specification = Specifications.eq(specification, "release", release);
         }
-        if (projectId != null
-                && (stageZiGe != null || (stageZiLe != null && stageZiLe != 9) || task != null)
-                && (sort == null || !sort.startsWith("release"))) {
-            List<Work> workList = null;
-            if (name != null || codeSap != null || codeZi != null) {
-                workList = workRepository.findAll(specification);
-                if (workList.isEmpty()) {
-                    return new PageImpl<>(new ArrayList<>());
-                }
+        if (releaseIdArray != null && !releaseIdArray.isEmpty()) {
+            List<Object> releases = new ArrayList<>();
+            for (Long releaseIdIn : releaseIdArray) {
+                Release release = releaseService.findOptionalById(releaseIdIn).orElse(null);
+                releases.add(release);
+
             }
-            return workProjectService.getWorkFull(page, size, sort, stageZiGe, stageZiLe, task, projectId, workList);
+            specification = Specifications.inO(specification, "release", releases);
         }
 
-        specification = Specifications.in(specification, "id", workProjectLittleService.getListWorkId(task, releaseId, stageZiLe, stageZiGe, null));
-
-        Page<@NonNull Work> workPage;
-        workPage = findAll(page, size, sort, specification, workRepository);
-        return workPage.map(work -> new WorkFull(work, projectId == null ? null : workProjectService.getWorkProject(work, projectId)));
-    }
-
-    private <T> Page<T> findAll(Integer page, Integer size, String sort, Specification<T> specification, JpaSpecificationExecutor<T> repository) {
-        if (sort == null) {
-            if (page != null && size != null) {
-                return repository.findAll(specification, PageRequest.of(page - 1, size));
-            } else {
-                return new PageImpl<>(repository.findAll(specification));
-            }
-
-        } else {
-            if (page != null && size != null) {
-                return repository.findAll(specification, PageRequest.of(page - 1, size, Sort.Direction.ASC, sort));
-            } else {
-                return new PageImpl<>(repository.findAll(specification, Sort.by(sort)));
-            }
-        }
+        return specification;
     }
 
     public Page<@NonNull WorkLittleFull> findWorkLittle(Integer page, Integer size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, List<Long> releaseIdArray, Long projectId) {
-        Specification<@NonNull WorkLittle> specification;
-        if (sort != null && sort.length() > 8 && sort.startsWith("release.")) {
-            specification = Specification.unrestricted();
-        } else {
-            specification = Specification.where(Specifications.queryDistinctTrue());
-        }
-        specification = Specifications.eq(specification, "codeSap", codeSap);
-        specification = Specifications.like(specification, "codeZi", codeZi);
-        specification = Specifications.like(specification, "name", name);
-        if (projectId != null && (sort == null || !sort.startsWith("release."))) {
+        Specification<@NonNull WorkLittle> specification = getWorkSpecification(name, sort, codeSap, codeZi, null, releaseIdArray);
+        if (projectId != null && (sort == null || sort.startsWith("stageZi") || sort.equals("task"))) {
             List<WorkLittle> workLittleList = null;
             if (codeSap != null || codeZi != null || name != null) {
                 workLittleList = workLittleRepository.findAll(specification);
@@ -349,12 +340,10 @@ public class WorkService {
                     return new PageImpl<>(new ArrayList<>());
                 }
             }
-            return workProjectLittleService.getWorkFull(page, size, sort, stageZiGe, stageZiLe, task, releaseIdArray, projectId, null, workLittleList);
+            return workProjectLittleService.getWorkFull(page, size, sort, stageZiGe, stageZiLe, task, projectId, workLittleList);
         }
-        specification = Specifications.in(specification, "id", workProjectLittleService.getListWorkId(task, null, stageZiLe, stageZiGe, releaseIdArray));
-
-
-        Page<@NonNull WorkLittle> workPage = findAll(page, size, sort, specification, workLittleRepository);
+        specification = Specifications.in(specification, "id", workProjectLittleService.getListWorkId(task, stageZiLe, stageZiGe));
+        Page<@NonNull WorkLittle> workPage = Specifications.findAll(workLittleRepository, page, size, specification, sort);
         return workPage.map(workLittle -> new WorkLittleFull(workLittle, projectId == null ? null : workProjectLittleService.getWorkProject(workLittle, projectId)));
     }
 

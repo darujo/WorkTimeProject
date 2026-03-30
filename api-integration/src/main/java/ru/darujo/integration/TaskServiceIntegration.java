@@ -89,14 +89,13 @@ public class TaskServiceIntegration extends ServiceIntegration {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "codeDEVBO", taskDEVBO);
         addTeg(stringBuilder, "codeBTS", taskBts);
-        log.info("/list/id{}", stringBuilder);
-
-        return webClient.get().uri("/list/id" + stringBuilder)
+        String url = "/list/id" + stringBuilder;
+        return webClient.get().uri(url)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                         cR -> getMessage(cR, "Задачи не найдены"))
                 .bodyToFlux(Long.class).collectList()
-                .doOnError(throwable -> log.error(throwable.getMessage()))
+                .doOnError(throwable -> log.error(url, throwable))
                 .block();
     }
 
