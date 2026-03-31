@@ -3,8 +3,10 @@ package ru.darujo.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.ratestage.AttrDto;
+import ru.darujo.dto.workperiod.UserWorkFormDto;
 import ru.darujo.dto.workperiod.WorkUserTime;
 import ru.darujo.dto.workrep.WorkRepDto;
+import ru.darujo.dto.workrep.WorkRepProjectDto;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -119,128 +121,10 @@ public class HtmlService {
         works.forEach(workRepDto -> {
             nextRow(i.getAndIncrement());
             AtomicBoolean first = new AtomicBoolean(true);
-            workRepDto.getWorkRepProjectDtoList().forEach(workRepProjectDto -> {
-                sb.append("<tr>");
-                if (first.getAndSet(false)) {
-                    sb.append(getTegStart("td rowspan=\"" + workRepDto.getWorkRepProjectDtoList().size() + "\""));
-                    sb.append(printNotNull(workRepDto.getId()));
-                    sb.append("</td>");
-                    sb.append(getTegStart("td rowspan=\"" + workRepDto.getWorkRepProjectDtoList().size() + "\"", "text_not_wrap"));
-                    sb.append(printNotNull(workRepDto.getCodeZI()));
-                    sb.append("</td>");
-                    sb.append(getTegStart("td rowspan=\"" + workRepDto.getWorkRepProjectDtoList().size() + "\"", "sticky-col first-col"));
-                    sb.append(printNotNull(workRepDto.getName()));
-                    sb.append("</td>");
-                }
-                sb.append(getTegStart("td"));
-                sb.append(printNotNull(workRepProjectDto.getProjectCode() + " " + workRepProjectDto.getProjectName()));
-                sb.append("</td>");
-                sb.append(getTegStart("td"));
-                sb.append(getTegStart("label for=\"RatedTd\""));
-                sb.append("</label>");
-                sb.append(getTegStart("input id=\"RatedTd\" disabled type=\"checkbox\" " + (workRepProjectDto.getRated() != null && workRepProjectDto.getRated() ? "checked" : ""), "vvod check_box_td_23"));
-                sb.append("</input>");
-                sb.append("</td>");
-
-                sb.append(getTegStart("td"));
-                sb.append(printNotNull(workRepProjectDto.getRelease()));
-                sb.append("</td>");
-                sb.append(getTegStart("td"));
-                sb.append(printNotNull(workRepProjectDto.getAnaliseEndPlanStr()));
-                sb.append("</td>");
-                sb.append(getTegStart("td", workRepProjectDto.getAnaliseEndPlan(), workRepProjectDto.getAnaliseEndFact()));
-                sb.append(printNotNull(workRepProjectDto.getAnaliseEndFactStr()));
-                sb.append("</td>");
-                sb.append(getTegStart("td"));
-                sb.append(printNotNull(workRepProjectDto.getLaborAnalise()));
-                sb.append("</td>");
-                sb.append(getTegStart("td", workRepProjectDto.getLaborAnalise(), workRepProjectDto.getTimeAnalise()));
-                sb.append(printNotNull(workRepProjectDto.getTimeAnalise()));
-                sb.append("</td>");
-                sb.append(getTegStart("td"));
-                sb.append(printNotNull(workRepProjectDto.getStartTaskPlanStr()));
-                sb.append("</td>");
-                sb.append(getTegStart("td", workRepProjectDto.getStartTaskPlan(), workRepProjectDto.getStartTaskFact()));
-                sb.append(printNotNull(workRepProjectDto.getStartTaskFactStr()));
-                sb.append("</td>");
-
-                sb.append(getTegStart("td"));
-                sb.append(printNotNull(workRepProjectDto.getLaborDevelop()));
-                sb.append("</td>");
-                sb.append(getTegStart("td", workRepProjectDto.getLaborDevelop(), workRepProjectDto.getTimeDevelop()));
-                sb.append(printNotNull(workRepProjectDto.getTimeDevelop()));
-                sb.append("</td>");
-                sb.append(getTegStart("td"));
-                sb.append(printNotNull(workRepProjectDto.getDevelopEndPlanStr()));
-                sb.append("</td>");
-                sb.append(getTegStart("td", workRepProjectDto.getDevelopEndPlan(), workRepProjectDto.getDevelopEndFact()));
-                sb.append(printNotNull(workRepProjectDto.getDevelopEndFactStr()));
-                sb.append("</td>");
-                sb.append(getTegStart("td", "table_col2"));
-                sb.append(printNotNull(workRepProjectDto.getIssuePrototypePlanStr()));
-                sb.append("</td>");
-                sb.append(getTegStart("td", "table_col2", workRepProjectDto.getIssuePrototypePlan(), workRepProjectDto.getIssuePrototypeFact()));
-                sb.append(printNotNull(workRepProjectDto.getIssuePrototypeFactStr()));
-                sb.append("</td>");
-
-                sb.append(getTegStart("td"));
-                sb.append(printNotNull(workRepProjectDto.getDebugEndPlanStr()));
-                sb.append("</td>");
-                sb.append(getTegStart("td", workRepProjectDto.getDebugEndPlan(), workRepProjectDto.getDebugEndFact()));
-                sb.append(printNotNull(workRepProjectDto.getDebugEndFactStr()));
-                sb.append("</td>");
-
-                sb.append(getTegStart("td"));
-                sb.append(printNotNull(workRepProjectDto.getLaborDebug()));
-                sb.append("</td>");
-                sb.append(getTegStart("td", workRepProjectDto.getLaborDebug(), workRepProjectDto.getTimeDebug()));
-                sb.append(printNotNull(workRepProjectDto.getTimeDebug()));
-                sb.append("</td>");
-                sb.append(getTegStart("td", "table_col1"));
-                sb.append(printNotNull(workRepProjectDto.getIssuingReleasePlanStr()));
-                sb.append("</td>");
-                sb.append(getTegStart("td", "table_col1", workRepProjectDto.getIssuingReleasePlan(), workRepProjectDto.getIssuingReleaseFact()));
-                sb.append(printNotNull(workRepProjectDto.getIssuingReleaseFactStr()));
-                sb.append("</td>");
-                sb.append(getTegStart("td"));
-                sb.append(printNotNull(workRepProjectDto.getReleaseEndPlanStr()));
-                sb.append("</td>");
-                sb.append(getTegStart("td", workRepProjectDto.getReleaseEndPlan(), workRepProjectDto.getReleaseEndFact()));
-                sb.append(printNotNull(workRepProjectDto.getReleaseEndFactStr()));
-                sb.append("</td>");
-
-                sb.append(getTegStart("td"));
-                sb.append(printNotNull(workRepProjectDto.getLaborRelease()));
-                sb.append("</td>");
-                sb.append(getTegStart("td", workRepProjectDto.getLaborRelease(), workRepProjectDto.getTimeRelease()));
-                sb.append(printNotNull(workRepProjectDto.getTimeRelease()));
-                sb.append("</td>");
-                sb.append(getTegStart("td"));
-                sb.append(printNotNull(workRepProjectDto.getOpeEndPlanStr()));
-                sb.append("</td>");
-                sb.append(getTegStart("td", workRepProjectDto.getOpeEndPlan(), workRepProjectDto.getOpeEndFact()));
-                sb.append(printNotNull(workRepProjectDto.getOpeEndFactStr()));
-                sb.append("</td>");
-                sb.append(getTegStart("td"));
-                sb.append(printNotNull(workRepProjectDto.getLaborOPE()));
-                sb.append("</td>");
-                sb.append(getTegStart("td", workRepProjectDto.getLaborOPE(), workRepProjectDto.getTimeOPE()));
-                sb.append(printNotNull(workRepProjectDto.getTimeOPE()));
-                sb.append("</td>");
-                sb.append(getTegStart("td"));
-                sb.append(printNotNull(workRepProjectDto.getTimePlan()));
-                sb.append("</td>");
-                sb.append(getTegStart("td", workRepProjectDto.getTimePlan(), workRepProjectDto.getTimeFact()));
-                sb.append(printNotNull(workRepProjectDto.getTimeFact()));
-                sb.append("</td>");
-
-                sb.append(getTegStart("td"));
-                sb.append(printNotNull(workRepProjectDto.getTimeWender()));
-                sb.append("</td>");
-
-
-                sb.append("</tr>");
-            });
+            if (workRepDto.getWorkRepProjectDtoList().isEmpty()) {
+                printWorkRep(workRepDto, new WorkRepProjectDto(), sb, first);
+            }
+            workRepDto.getWorkRepProjectDtoList().forEach(workRepProjectDto -> printWorkRep(workRepDto, workRepProjectDto, sb, first));
         });
         sb.append("</tbody>");
         sb.append("</table>");
@@ -252,6 +136,129 @@ public class HtmlService {
         sb.append("</head>");
         return sb.toString();
 
+    }
+
+    private void printWorkRep(WorkRepDto workRepDto, WorkRepProjectDto workRepProjectDto, StringBuilder sb, AtomicBoolean first) {
+        sb.append("<tr>");
+        if (first.getAndSet(false)) {
+            sb.append(getTegStart("td rowspan=\"" + workRepDto.getWorkRepProjectDtoList().size() + "\""));
+            sb.append(printNotNull(workRepDto.getId()));
+            sb.append("</td>");
+            sb.append(getTegStart("td rowspan=\"" + workRepDto.getWorkRepProjectDtoList().size() + "\"", "text_not_wrap"));
+            sb.append(printNotNull(workRepDto.getCodeZI()));
+            sb.append("</td>");
+            sb.append(getTegStart("td rowspan=\"" + workRepDto.getWorkRepProjectDtoList().size() + "\"", "sticky-col first-col"));
+            sb.append(printNotNull(workRepDto.getName()));
+            sb.append("</td>");
+        }
+        sb.append(getTegStart("td"));
+        sb.append(printNotNull(workRepProjectDto.getProjectCode() + " " + workRepProjectDto.getProjectName()));
+        sb.append("</td>");
+        sb.append(getTegStart("td"));
+        sb.append(getTegStart("label for=\"RatedTd\""));
+        sb.append("</label>");
+        sb.append(getTegStart("input id=\"RatedTd\" disabled type=\"checkbox\" " + (workRepProjectDto.getRated() != null && workRepProjectDto.getRated() ? "checked" : ""), "vvod check_box_td_23"));
+        sb.append("</input>");
+        sb.append("</td>");
+
+        sb.append(getTegStart("td"));
+        sb.append(printNotNull(workRepProjectDto.getRelease()));
+        sb.append("</td>");
+        sb.append(getTegStart("td"));
+        sb.append(printNotNull(workRepProjectDto.getAnaliseEndPlanStr()));
+        sb.append("</td>");
+        sb.append(getTegStart("td", workRepProjectDto.getAnaliseEndPlan(), workRepProjectDto.getAnaliseEndFact()));
+        sb.append(printNotNull(workRepProjectDto.getAnaliseEndFactStr()));
+        sb.append("</td>");
+        sb.append(getTegStart("td"));
+        sb.append(printNotNull(workRepProjectDto.getLaborAnalise()));
+        sb.append("</td>");
+        sb.append(getTegStart("td", workRepProjectDto.getLaborAnalise(), workRepProjectDto.getTimeAnalise()));
+        sb.append(printNotNull(workRepProjectDto.getTimeAnalise()));
+        sb.append("</td>");
+        sb.append(getTegStart("td"));
+        sb.append(printNotNull(workRepProjectDto.getStartTaskPlanStr()));
+        sb.append("</td>");
+        sb.append(getTegStart("td", workRepProjectDto.getStartTaskPlan(), workRepProjectDto.getStartTaskFact()));
+        sb.append(printNotNull(workRepProjectDto.getStartTaskFactStr()));
+        sb.append("</td>");
+
+        sb.append(getTegStart("td"));
+        sb.append(printNotNull(workRepProjectDto.getLaborDevelop()));
+        sb.append("</td>");
+        sb.append(getTegStart("td", workRepProjectDto.getLaborDevelop(), workRepProjectDto.getTimeDevelop()));
+        sb.append(printNotNull(workRepProjectDto.getTimeDevelop()));
+        sb.append("</td>");
+        sb.append(getTegStart("td"));
+        sb.append(printNotNull(workRepProjectDto.getDevelopEndPlanStr()));
+        sb.append("</td>");
+        sb.append(getTegStart("td", workRepProjectDto.getDevelopEndPlan(), workRepProjectDto.getDevelopEndFact()));
+        sb.append(printNotNull(workRepProjectDto.getDevelopEndFactStr()));
+        sb.append("</td>");
+        sb.append(getTegStart("td", "table_col2"));
+        sb.append(printNotNull(workRepProjectDto.getIssuePrototypePlanStr()));
+        sb.append("</td>");
+        sb.append(getTegStart("td", "table_col2", workRepProjectDto.getIssuePrototypePlan(), workRepProjectDto.getIssuePrototypeFact()));
+        sb.append(printNotNull(workRepProjectDto.getIssuePrototypeFactStr()));
+        sb.append("</td>");
+
+        sb.append(getTegStart("td"));
+        sb.append(printNotNull(workRepProjectDto.getDebugEndPlanStr()));
+        sb.append("</td>");
+        sb.append(getTegStart("td", workRepProjectDto.getDebugEndPlan(), workRepProjectDto.getDebugEndFact()));
+        sb.append(printNotNull(workRepProjectDto.getDebugEndFactStr()));
+        sb.append("</td>");
+
+        sb.append(getTegStart("td"));
+        sb.append(printNotNull(workRepProjectDto.getLaborDebug()));
+        sb.append("</td>");
+        sb.append(getTegStart("td", workRepProjectDto.getLaborDebug(), workRepProjectDto.getTimeDebug()));
+        sb.append(printNotNull(workRepProjectDto.getTimeDebug()));
+        sb.append("</td>");
+        sb.append(getTegStart("td", "table_col1"));
+        sb.append(printNotNull(workRepProjectDto.getIssuingReleasePlanStr()));
+        sb.append("</td>");
+        sb.append(getTegStart("td", "table_col1", workRepProjectDto.getIssuingReleasePlan(), workRepProjectDto.getIssuingReleaseFact()));
+        sb.append(printNotNull(workRepProjectDto.getIssuingReleaseFactStr()));
+        sb.append("</td>");
+        sb.append(getTegStart("td"));
+        sb.append(printNotNull(workRepProjectDto.getReleaseEndPlanStr()));
+        sb.append("</td>");
+        sb.append(getTegStart("td", workRepProjectDto.getReleaseEndPlan(), workRepProjectDto.getReleaseEndFact()));
+        sb.append(printNotNull(workRepProjectDto.getReleaseEndFactStr()));
+        sb.append("</td>");
+
+        sb.append(getTegStart("td"));
+        sb.append(printNotNull(workRepProjectDto.getLaborRelease()));
+        sb.append("</td>");
+        sb.append(getTegStart("td", workRepProjectDto.getLaborRelease(), workRepProjectDto.getTimeRelease()));
+        sb.append(printNotNull(workRepProjectDto.getTimeRelease()));
+        sb.append("</td>");
+        sb.append(getTegStart("td"));
+        sb.append(printNotNull(workRepProjectDto.getOpeEndPlanStr()));
+        sb.append("</td>");
+        sb.append(getTegStart("td", workRepProjectDto.getOpeEndPlan(), workRepProjectDto.getOpeEndFact()));
+        sb.append(printNotNull(workRepProjectDto.getOpeEndFactStr()));
+        sb.append("</td>");
+        sb.append(getTegStart("td"));
+        sb.append(printNotNull(workRepProjectDto.getLaborOPE()));
+        sb.append("</td>");
+        sb.append(getTegStart("td", workRepProjectDto.getLaborOPE(), workRepProjectDto.getTimeOPE()));
+        sb.append(printNotNull(workRepProjectDto.getTimeOPE()));
+        sb.append("</td>");
+        sb.append(getTegStart("td"));
+        sb.append(printNotNull(workRepProjectDto.getTimePlan()));
+        sb.append("</td>");
+        sb.append(getTegStart("td", workRepProjectDto.getTimePlan(), workRepProjectDto.getTimeFact()));
+        sb.append(printNotNull(workRepProjectDto.getTimeFact()));
+        sb.append("</td>");
+
+        sb.append(getTegStart("td"));
+        sb.append(printNotNull(workRepProjectDto.getTimeWender()));
+        sb.append("</td>");
+
+
+        sb.append("</tr>");
     }
 
     private String rowClass;
@@ -346,78 +353,13 @@ public class HtmlService {
             nextRow(rowI.getAndIncrement());
             i.incrementAndGet();
             AtomicInteger j = new AtomicInteger(0);
-            work_zi.getUserWorkFormDTOs().forEach(work -> {
-                sb.append("<tr>");
-                sb.append(getTegStart("td"));
-                sb.append("<div class=\"horiz\">");
-                if (ziSplit) {
-                    sb.append("<p>").append(i).append(".</p>");
-                }
-                sb.append("<p>").append(j.incrementAndGet()).append("</p>");
-                sb.append("</div>");
-                sb.append("</td>");
-                if (ziSplit && work.getUserCol() != null) {
-                    sb.append(getTegStart("td rowspan=\"" + work.getUserCol() + "\""));
-                    sb.append(printNotNull(work_zi.getName()));
-                    sb.append("</td>");
-                }
-//                log.info(work.getDateStartStr() + " - " + work.getDateEndStr());
-                if (!ziSplit && work.getUserCol() != null) {
-                    sb.append(getTegStart("td rowspan=\"" + work.getUserCol() + "\""));
-                    sb.append(printNotNull(work.getDateStartStr()));
-                    sb.append("-");
-                    sb.append(printNotNull(work.getDateEndStr()));
-                    sb.append("</td>");
-                }
-                if (work.getAuthorFirstName() == null) {
-                    sb.append(getTegStart("td")).append(work.getNikName() == null ? "" : printNotNull(work.getNikName())).append("</td>");
-                } else
-                    sb.append(getTegStart("td "))
-                            .append(printNotNull(work.getAuthorLastName()))
-                            .append(" ")
-                            .append(printNotNull(work.getAuthorFirstName()))
-                            .append(" ")
-                            .append(printNotNull(work.getAuthorPatronymic()))
-                            .append("</td>");
-
-                taskListType.forEach(taskType -> {
-                    sb.append(getTegStart("td"));
-                    sb.append("<div class=\"horiz\">");
-                    if (workTask) {
-                        sb.append("<div class=\"div-type\" >");
-                        sb.append("<button class=\"p-td\" ng-click=\" openTask(work.workTask, taskType.codeInt)\">");
-                        sb.append(printNotNull(searchJson(work.getWorkTaskColAttr(), taskType.getCodeT())));
-                        sb.append("</button>");
-                        sb.append("</div>");
-                    }
-                    if (workTime) {
-                        sb.append("<div class=\"div-type\">");
-                        sb.append("<button class=\"p-td\" ng-click=\" openWorkTime(work.nikName, work.workTask, taskType.codeInt, work.dateStart, work.dateEnd)\">");
-                        sb.append(printNotNull(searchJson(work.getWorkTimeAttr(), taskType.getCodeT())));
-                        sb.append("</button>");
-                        sb.append("</div>");
-                    }
-                    if (workPercent) {
-                        sb.append("<div class=\"div-type\" >");
-                        sb.append("<p class=\"p-td\">");
-                        sb.append(printNotNull(searchJson(work.getWorkPercent(), taskType.getCodeT())));
-                        sb.append("</p>");
-                        sb.append("</div>");
-                    }
-                    sb.append("</div>");
-                    sb.append("</td>");
-                });
-
-                if (!ziSplit && work.getUserCol() != null) {
-                    sb.append(getTegStart("<td rowspan=\"" + printNotNull(work.getUserCol()) + "\""))
-                            .append(printNotNull(work.getWorkPlan()))
-                            .append("</td>");
-                }
-                sb.append(getTegStart("td"))
-                        .append(printNotNull(work.getWorkAllFact()))
-                        .append("</td>");
-                sb.append("</tr>");
-            });
+            if (work_zi.getUserWorkFormDTOs().isEmpty()) {
+                UserWorkFormDto userWorkFormDto = new UserWorkFormDto();
+                userWorkFormDto.setUserCol(1);
+                userWorkFormDto.setFirstName("Итого");
+                printUserWork(ziSplit, workTask, workTime, workPercent, taskListType, work_zi, userWorkFormDto, sb, i.get(), j.incrementAndGet());
+            }
+            work_zi.getUserWorkFormDTOs().forEach(work -> printUserWork(ziSplit, workTask, workTime, workPercent, taskListType, work_zi, work, sb, i.get(), j.incrementAndGet()));
         });
         sb.append("</tbody>");
         sb.append("</table>");
@@ -426,6 +368,79 @@ public class HtmlService {
         sb.append("</head>");
         return sb.toString();
 
+    }
+
+    private void printUserWork(boolean ziSplit, boolean workTask, boolean workTime, boolean workPercent, List<AttrDto<Integer>> taskListType, WorkUserTime work_zi, UserWorkFormDto work, StringBuilder sb, Integer i, Integer j) {
+        sb.append("<tr>");
+        sb.append(getTegStart("td"));
+        sb.append("<div class=\"horiz\">");
+        if (ziSplit) {
+            sb.append("<p>").append(i).append(".</p>");
+        }
+        sb.append("<p>").append(j).append("</p>");
+        sb.append("</div>");
+        sb.append("</td>");
+        if (ziSplit && work.getUserCol() != null) {
+            sb.append(getTegStart("td rowspan=\"" + work.getUserCol() + "\""));
+            sb.append(printNotNull(work_zi.getName()));
+            sb.append("</td>");
+        }
+//                log.info(work.getDateStartStr() + " - " + work.getDateEndStr());
+        if (!ziSplit && work.getUserCol() != null) {
+            sb.append(getTegStart("td rowspan=\"" + work.getUserCol() + "\""));
+            sb.append(printNotNull(work.getDateStartStr()));
+            sb.append("-");
+            sb.append(printNotNull(work.getDateEndStr()));
+            sb.append("</td>");
+        }
+        if (work.getAuthorFirstName() == null) {
+            sb.append(getTegStart("td")).append(work.getNikName() == null ? "" : printNotNull(work.getNikName())).append("</td>");
+        } else
+            sb.append(getTegStart("td "))
+                    .append(printNotNull(work.getAuthorLastName()))
+                    .append(" ")
+                    .append(printNotNull(work.getAuthorFirstName()))
+                    .append(" ")
+                    .append(printNotNull(work.getAuthorPatronymic()))
+                    .append("</td>");
+
+        taskListType.forEach(taskType -> {
+            sb.append(getTegStart("td"));
+            sb.append("<div class=\"horiz\">");
+            if (workTask) {
+                sb.append("<div class=\"div-type\" >");
+                sb.append("<button class=\"p-td\" >");
+                sb.append(printNotNull(searchJson(work.getWorkTaskColAttr(), taskType.getCodeT())));
+                sb.append("</button>");
+                sb.append("</div>");
+            }
+            if (workTime) {
+                sb.append("<div class=\"div-type\">");
+                sb.append("<button class=\"p-td\" >");
+                sb.append(printNotNull(searchJson(work.getWorkTimeAttr(), taskType.getCodeT())));
+                sb.append("</button>");
+                sb.append("</div>");
+            }
+            if (workPercent) {
+                sb.append("<div class=\"div-type\" >");
+                sb.append("<p class=\"p-td\">");
+                sb.append(printNotNull(searchJson(work.getWorkPercent(), taskType.getCodeT())));
+                sb.append("</p>");
+                sb.append("</div>");
+            }
+            sb.append("</div>");
+            sb.append("</td>");
+        });
+
+        if (!ziSplit && work.getUserCol() != null) {
+            sb.append(getTegStart("<td rowspan=\"" + printNotNull(work.getUserCol()) + "\""))
+                    .append(printNotNull(work.getWorkPlan()))
+                    .append("</td>");
+        }
+        sb.append(getTegStart("td"))
+                .append(printNotNull(work.getWorkAllFact()))
+                .append("</td>");
+        sb.append("</tr>");
     }
 
     private String printNotNull(Object objects) {

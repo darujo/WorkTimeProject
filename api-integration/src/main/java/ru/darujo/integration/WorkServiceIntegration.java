@@ -216,7 +216,7 @@ public class WorkServiceIntegration extends ServiceIntegration {
                                               String task,
                                               Long releaseId,
 
-                                              String sort) {
+                                              List<String> sort) {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "ziSplit", ziSplit);
         addTeg(stringBuilder, "nikName", nikName);
