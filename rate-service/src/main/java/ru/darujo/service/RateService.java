@@ -55,10 +55,10 @@ public class RateService {
         this.workTypeService = workTypeService;
     }
 
-    public Float getTimeStageNotAnalise(Long workId, Long projectId) {
+    public Float getTimeStageNotAnalise(List<Long> workIdList, Long projectId) {
         AtomicReference<Float> timeStage = new AtomicReference<>();
         timeStage.set(0f);
-        List<WorkStage> workStageList = workStageService.findWorkStage(workId, projectId);
+        List<WorkStage> workStageList = workStageService.findWorkStage(workIdList, projectId);
         workStageList.forEach(
                 workStage -> timeStage.set(timeStage.get()
                         + getTime(workStage.getStage0())
@@ -71,12 +71,12 @@ public class RateService {
     }
 
 
-    public Float getTimeCriteria(Long workId, Long projectId) {
+    public Float getTimeCriteria(List<Long> workIdList, Long projectId) {
         AtomicReference<Float> timeCriteria = new AtomicReference<>();
 
         timeCriteria.set(0f);
 
-        List<WorkCriteria> workCriteriaList = workCriteriaService.findWorkCriteria(workId, projectId);
+        List<WorkCriteria> workCriteriaList = workCriteriaService.findWorkCriteria(workIdList, projectId);
         workCriteriaList.forEach(
                 workCriteria -> timeCriteria.set(
                         timeCriteria.get() + getTime(workCriteria.getDevelop10()) + getTime(workCriteria.getDevelop50()) + getTime(workCriteria.getDevelop100())));
@@ -84,12 +84,12 @@ public class RateService {
 
     }
 
-    public Float getTimeType(Long workId, Long projectId) {
+    public Float getTimeType(List<Long> workIdList, Long projectId) {
         AtomicReference<Float> timeType = new AtomicReference<>();
 
         timeType.set(0f);
 
-        List<WorkType> workTypeList = workTypeService.findWorkCriteria(workId, projectId);
+        List<WorkType> workTypeList = workTypeService.findWorkCriteria(workIdList, projectId);
         workTypeList.forEach(
                 workType -> timeType.set(
                         timeType.get() + getTime(workType.getTime())));
@@ -97,7 +97,7 @@ public class RateService {
 
     }
 
-    public AttrDto<Float> comparisonStageCriteria(Long workId, Long projectId) {
+    public AttrDto<Float> comparisonStageCriteria(List<Long> workId, Long projectId) {
         Float timeStage = getTimeStageNotAnalise(workId, projectId);
         Float timeCriteria = getTimeCriteria(workId, projectId);
         float time = timeCriteria - timeStage;
@@ -110,9 +110,9 @@ public class RateService {
         return new AttrDto<>(time, "Критериев больше чем плановой оценки на " + time);
     }
 
-    public AttrDto<Float> comparisonCriteriaType(Long workId, Long projectId) {
-        Float timeType = getTimeType(workId, projectId);
-        Float timeCriteria = getTimeCriteria(workId, projectId);
+    public AttrDto<Float> comparisonCriteriaType(List<Long> workIdList, Long projectId) {
+        Float timeType = getTimeType(workIdList, projectId);
+        Float timeCriteria = getTimeCriteria(workIdList, projectId);
         float time = timeCriteria - timeType;
         if (time == 0 || timeType == 0 || timeCriteria == 0) {
             return new AttrDto<>(time, "");
@@ -123,9 +123,9 @@ public class RateService {
         return new AttrDto<>(time, "Критериев больше чем работ на " + time);
     }
 
-    public AttrDto<Float> comparisonStageType(Long workId, Long projectId) {
-        Float timeStage = getTimeStageNotAnalise(workId, projectId);
-        Float timeType = getTimeType(workId, projectId);
+    public AttrDto<Float> comparisonStageType(List<Long> workIdList, Long projectId) {
+        Float timeStage = getTimeStageNotAnalise(workIdList, projectId);
+        Float timeType = getTimeType(workIdList, projectId);
         float time = timeType - timeStage;
         if (time == 0 || timeStage == 0 || timeType == 0) {
             return new AttrDto<>(time, "");
@@ -144,7 +144,7 @@ public class RateService {
         return time;
     }
 
-    public WorkStageDto AllTime(Long workId, Long projectId, boolean loadFact) {
+    public WorkStageDto AllTime(List<Long> workIdList, Long projectId, boolean loadFact) {
         if (loadFact) {
             throw new ResourceNotFoundRunTime("Загрузка с фактом не поддерживается");
         }
@@ -155,7 +155,7 @@ public class RateService {
         stage[3] = 0f;
         stage[4] = 0f;
 
-        workStageService.findWorkStage(workId, projectId).forEach(workStage -> {
+        workStageService.findWorkStage(workIdList, projectId).forEach(workStage -> {
             stage[0] = stage[0] + getTime(workStage.getStage0());
             stage[1] = stage[1] + getTime(workStage.getStage1());
             stage[2] = stage[2] + getTime(workStage.getStage2());
@@ -172,40 +172,64 @@ public class RateService {
                 stage[2],
                 stage[3],
                 stage[4],
-                workId,
+                // toDo список ЗИ
+                null,
                 projectId);
     }
 
-    public WorkRateDto getRate(Long workId) {
+    public WorkRateDto getRate(Long workId, Boolean child) {
         WorkLittleDto workLittleDto = workServiceIntegration.getWorEditDto(workId);
         List<RateDto> rateDtoList = new ArrayList<>();
         List<WorkStageDto> workStageDtoListTotal = new ArrayList<>();
+        List<Long> workIDList;
+        if (child == null) {
+            workIDList = new ArrayList<>();
+            workIDList.add(workId);
+            if (workLittleDto.getChildWork() != null && !workLittleDto.getChildWork().isEmpty()) {
+                workIDList.addAll(workLittleDto.getChildId());
+            }
+        } else if (child && workLittleDto.getChildWork() != null && !workLittleDto.getChildWork().isEmpty()) {
+            workIDList = workLittleDto.getChildId();
+        } else {
+            workIDList = new ArrayList<>();
+            workIDList.add(workId);
+        }
         workLittleDto.getProjectList().forEach(projectId -> {
             List<WorkStageDto> workStageList = new ArrayList<>();
-            workStageService.findWorkStage(workId, projectId).forEach(workStage -> workStageList.add(WorkStageConvertor.getWorkStageDto(workStage)));
-            workStageService.updWorkStage(workId, workStageList, projectId);
+            workStageService.findWorkStage(workIDList, projectId).forEach(workStage -> workStageList.add(WorkStageConvertor.getWorkStageDto(workStage)));
+            workStageService.updWorkStage(workIDList, workStageList, projectId);
             workStageList.forEach(workStageDto -> workStageService.updFio(workStageDto));
             WorkStageDto workStageDto = getTotal(workStageList);
 
             workStageList.add(workStageDto);
             workStageDtoListTotal.add(workStageDto);
             RateDto rateDto = new RateDto(projectId,
-                    workServiceIntegration.getRate(workId, projectId),
+                    workServiceIntegration.getRate(workIDList, projectId),
                     workStageList,
-                    workCriteriaService.findWorkCriteria(workId, projectId).stream().map(WorkCriteriaConvertor::getWorkCriteriaDto).toList(),
-                    workTypeService.findWorkCriteria(workId, projectId).stream().map(WorkTypeConvertor::getWorkTypeDto).toList(),
-                    comparisonStageCriteria(workId, projectId),
-                    comparisonStageType(workId, projectId),
-                    comparisonCriteriaType(workId, projectId)
+                    workCriteriaService.findWorkCriteria(workIDList, projectId).stream().map(WorkCriteriaConvertor::getWorkCriteriaDto).toList(),
+                    workTypeService.findWorkCriteria(workIDList, projectId).stream().map(WorkTypeConvertor::getWorkTypeDto).toList(),
+                    comparisonStageCriteria(workIDList, projectId),
+                    comparisonStageType(workIDList, projectId),
+                    comparisonCriteriaType(workIDList, projectId)
             );
             updateProject(rateDto);
             rateDtoList.add(rateDto);
         });
-        return new WorkRateDto(workLittleDto.getName(), workLittleDto.getCodeSap(), workLittleDto.getCodeZI(), rateDtoList, getTotal(workStageDtoListTotal));
+        return new WorkRateDto(workLittleDto, rateDtoList, getTotal(workStageDtoListTotal));
     }
 
     private WorkStageDto getTotal(List<WorkStageDto> workStageDtoList) {
-        WorkStageDto workStageDtoTotal = new WorkStageDto(null, "Итого", null, 0f, 0f, 0f, 0f, 0f, null, null);
+        WorkStageDto workStageDtoTotal = new WorkStageDto(
+                null,
+                "Итого",
+                null,
+                0f,
+                0f,
+                0f,
+                0f,
+                0f,
+                /* toDo список ЗИ */  null,
+                null);
         workStageDtoTotal.setStage0Fact(0f);
         workStageDtoTotal.setStage1Fact(0f);
         workStageDtoTotal.setStage2Fact(0f);
@@ -234,12 +258,14 @@ public class RateService {
                 + workStageDtoTotal.getStage4());
         return workStageDtoTotal;
     }
-    private Float floatNotNull(Float time){
-        if (time == null){
+
+    private Float floatNotNull(Float time) {
+        if (time == null) {
             return 0f;
         }
         return time;
     }
+
     private static final Map<Long, ProjectDto> projectDtoMap = new HashMap<>();
 
     public void init() {

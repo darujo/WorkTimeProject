@@ -1,13 +1,12 @@
 package ru.darujo.service;
 
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-
-
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -18,17 +17,34 @@ public class FileService {
     private final Map<String, File> files = new HashMap<>();
 
     public String addFile(String name, String body) {
+        return addFile(name, null, body);
+    }
+
+    public void saveFile(String name, String body) {
+        addFile(name, name, body);
+    }
+
+    public String addFile(String name, String fileName, String body) {
         try {
-            File file = File.createTempFile(String.valueOf(Objects.requireNonNull(body).hashCode()), ".tmp");
+            File file;
+            if (fileName == null) {
+                file = File.createTempFile(String.valueOf(Objects.requireNonNull(body).hashCode()), ".tmp");
+                file.deleteOnExit();
+            } else {
+                file = new File(fileName);
+            }
+
+            log.info(name);
+            log.info(fileName);
             log.info(file.getAbsolutePath());
-            file.deleteOnExit();
+
 
             try (PrintWriter out = new PrintWriter(file, StandardCharsets.UTF_8)) {
                 out.println(body);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            files.put(name, file);
+            addFile(name, file);
             return name;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -36,8 +52,27 @@ public class FileService {
 
     }
 
+    public void addFile(String name, File file) {
+        files.put(name, file);
+    }
+
     public File getFile(String name) {
-        return files.get(name);
+
+        File file = files.get(name);
+        if (file == null) {
+            file = new File(name);
+            addFile(name, file);
+        }
+        return file;
+    }
+
+    public String getFileBody(String path) {
+        try {
+            return Files.readString(Path.of(path));
+        } catch (IOException e) {
+            log.info(e.getMessage(), e);
+            return null;
+        }
     }
 
     public void delFile(String name) {
@@ -51,12 +86,6 @@ public class FileService {
 
     }
 
-    @PostConstruct
-    private void init() {
-
-        files.put("hi", resourceToFile("hi.jpg"));
-        files.put("menu", resourceToFile("menu.jpg"));
-    }
 
     public File resourceToFile(String fileName) {
 
@@ -79,4 +108,5 @@ public class FileService {
             return null;
         }
     }
+
 }

@@ -6,6 +6,7 @@ import ru.darujo.dto.work.WorkEditDto;
 import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.model.Release;
 import ru.darujo.model.Work;
+import ru.darujo.model.WorkLittle;
 import ru.darujo.model.WorkProject;
 
 import java.sql.Timestamp;
@@ -29,7 +30,7 @@ public class WorkBuilder {
     private Timestamp releaseEndFact;
     // ОПЭ релиза
     private Timestamp opeEndFact;
-    // ВЕНДЕРКА
+    // Анализ
     private Timestamp analiseEndFact;
     // Разработка прототипа
     private Timestamp issuePrototypePlan;
@@ -39,7 +40,7 @@ public class WorkBuilder {
     private Timestamp releaseEndPlan;
     // ОПЭ релиза
     private Timestamp opeEndPlan;
-    // ВЕНДЕРКА
+    // Анализ
     private Timestamp analiseEndPlan;
     // № внутренней задачи (D E V B O)
     private String task;
@@ -58,7 +59,7 @@ public class WorkBuilder {
     private Timestamp issuingReleasePlan;
     // Выдача релиза дата факт
     private Timestamp issuingReleaseFact;
-    // ВЕНДЕРКА Факт
+    // Анализ Факт
     private Timestamp analiseStartFact;
     private Timestamp developStartFact;
     // Стабилизация прототипа Факт
@@ -68,15 +69,15 @@ public class WorkBuilder {
     // ОПЭ релиза Факт
     private Timestamp opeStartFact;
 
-    // ВЕНДЕРКА Факт
+    // Анализ план
     private Timestamp analiseStartPlan;
     //начало разработки план
     private Timestamp developStartPlan;
-    // Стабилизация релиза Факт
+    // Стабилизация релиза план
     private Timestamp debugStartPlan;
-    // Стабилизация релиза plan
+    // Стабилизация релиза план
     private Timestamp releaseStartPlan;
-    // ОПЭ релиза Факт
+    // ОПЭ релиза план
     private Timestamp opeStartPlan;
 
     private Timestamp developEndFact;
@@ -85,6 +86,31 @@ public class WorkBuilder {
     private Boolean rated;
     private List<Long> projectList;
     private Long projectId;
+    private WorkLittleDto workParentDto;
+    private List<WorkLittleDto> childWorkDto;
+
+    private WorkLittle workParent;
+    private List<WorkLittle> childWork;
+
+    public WorkBuilder setWorkParentDto(WorkLittleDto workParentDto) {
+        this.workParentDto = workParentDto;
+        return this;
+    }
+
+    public WorkBuilder setChildWorkDto(List<WorkLittleDto> childWorkDto) {
+        this.childWorkDto = childWorkDto;
+        return this;
+    }
+
+    public WorkBuilder setWorkParent(WorkLittle workParent) {
+        this.workParent = workParent;
+        return this;
+    }
+
+    public WorkBuilder setChildWork(List<WorkLittle> childWork) {
+        this.childWork = childWork;
+        return this;
+    }
 
     public WorkBuilder setRated(Boolean rated) {
         this.rated = rated;
@@ -302,7 +328,8 @@ public class WorkBuilder {
                 release,
                 issuingReleasePlan,
                 issuingReleaseFact,
-                rated);
+                rated,
+                childWork == null || childWork.isEmpty() ? null : childWork.stream().map(WorkLittle::getId).toList());
     }
 
     public WorkEditDto getWorkEditDto() {
@@ -345,7 +372,9 @@ public class WorkBuilder {
                 opeStartPlan,
                 rated,
                 projectId,
-                projectList);
+                projectList,
+                workParentDto,
+                childWorkDto);
     }
 
     private Work getWork() {
@@ -367,11 +396,18 @@ public class WorkBuilder {
                 codeZI,
                 name,
                 description,
-                projectList);
+                projectList,
+                releaseId == null ? null : new Release(releaseId, release),
+                workParent,
+                childWork);
     }
 
     public WorkLittleDto getWorkLittleDto() {
-        return new WorkLittleDto(id, codeSap, codeZI, name, stageZI, rated, projectList);
+        return new WorkLittleDto(id, codeSap, codeZI, name, stageZI, rated, projectList, workParentDto, childWorkDto);
+    }
+
+    public WorkLittle getWorkParent() {
+        return new WorkLittle(id, codeSap, codeZI, name, projectList, releaseId == null ? null : new Release(releaseId, release), null, null);
     }
 
     public Timestamp dateToStartTime(Timestamp timestamp) {
@@ -443,7 +479,6 @@ public class WorkBuilder {
                 releaseStartPlan,
                 opeStartPlan,
                 rated,
-                releaseId == null ? null : new Release(releaseId, release),
                 startTaskPlan,
                 startTaskFact,
                 task,

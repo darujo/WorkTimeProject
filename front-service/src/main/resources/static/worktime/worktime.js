@@ -502,10 +502,13 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
             console.log($scope.Filter);
             $scope.filterWorkTime();
         } else {
+
             console.log($scope.Filter);
-            $scope.Filter["size"] = $scope.Filter.size ? $scope.Filter.size : 10;
-            $scope.Filter["currentUser"] = $scope.Filter.currentUser ? $scope.Filter.currentUser : true;
-            console.log($scope.Filter);
+            if ($scope.Filter) {
+                $scope.Filter["size"] = $scope.Filter.size ? $scope.Filter.size : 10;
+                $scope.Filter["currentUser"] = $scope.Filter.currentUser ? $scope.Filter.currentUser : true;
+                console.log($scope.Filter);
+            }
         }
     }
     $scope.clearFilterTask = function (load) {

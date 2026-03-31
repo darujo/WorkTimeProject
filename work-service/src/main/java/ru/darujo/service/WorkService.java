@@ -1,12 +1,10 @@
 package ru.darujo.service;
 
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -32,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @Service
@@ -39,6 +38,7 @@ public class WorkService {
 
     private WorkRepository workRepository;
     private WorkProjectLittleService workProjectLittleService;
+    private ReleaseProjectService releaseProjectService;
 
     @Autowired
     public void setWorkRepository(WorkRepository workRepository) {
@@ -96,7 +96,8 @@ public class WorkService {
         }
         return projectDto;
     }
-//    @PostConstruct
+
+    //    @PostConstruct
     public void init() {
         try {
             userServiceIntegration.getProjects(null, null).forEach(projectDto ->
@@ -107,8 +108,12 @@ public class WorkService {
 
     }
 
+    public Work findById(long id) {
+        return workRepository.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Задача не найден"));
+    }
+
     public WorkFull findById(long id, long projectId) {
-        Work work = workRepository.findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Задача не найден"));
+        Work work = findById(id);
         WorkProject workProject = workProjectService.getWorkProject(work, projectId);
         return new WorkFull(work, workProject);
     }
@@ -119,34 +124,46 @@ public class WorkService {
     }
 
     public void checkWork(Work work, WorkProject workProject) {
+        if (work.getChildWork() != null && !work.getChildWork().isEmpty() && work.getWorkParent() != null) {
+            throw new ResourceNotFoundRunTime("У ЗИ может быть родитель или потомки");
+        }
         Release release;
+        ReleaseProject releaseProject;
         if (work.getId() != null) {
-            release = workProjectService.getWorkProjectOrEmpty(work, workProject.getProjectId()).getRelease();
+            release = findById(work.getId()).getRelease();
+
             if (release != null) {
-                if (release.getIssuingReleaseFact() != null) {
-                    if (workProject.getRelease() == null || !workProject.getRelease().getId().equals(release.getId())) {
+                releaseProject = releaseProjectService.findReleaseProject(release, workProject.getProjectId());
+                if (releaseProject.getIssuingReleaseFact() != null) {
+                    if (work.getRelease() == null || !work.getRelease().getId().equals(release.getId())) {
                         throw new ResourceNotFoundRunTime("Нельзя исключать ЗИ из релиза. Релиз выпущен.");
                     }
                 } else {
-                    if (workProject.getRelease() != null && !workProject.getRelease().getId().equals(release.getId())) {
-                        release = releaseService.findById(workProject.getRelease().getId());
-                        if (release.getIssuingReleaseFact() != null) {
+                    if (work.getRelease() != null && !work.getRelease().getId().equals(release.getId())) {
+                        release = releaseService.findById(work.getRelease().getId());
+                        releaseProject = releaseProjectService.findReleaseProject(release, workProject.getProjectId());
+
+                        if (releaseProject.getIssuingReleaseFact() != null) {
                             throw new ResourceNotFoundRunTime("Нельзя включать ЗИ в выпущенный релиз");
                         }
                     }
                 }
             } else {
-                if (workProject.getRelease() != null && workProject.getRelease().getId() != null) {
-                    release = releaseService.findById(workProject.getRelease().getId());
-                    if (release.getIssuingReleaseFact() != null) {
-                        throw new ResourceNotFoundRunTime("Нельзя включать ЗИ в выпущенный релиз");
+                if (work.getRelease() != null && work.getRelease().getId() != null) {
+                    release = releaseService.findById(work.getRelease().getId());
+                    releaseProject = releaseProjectService.findReleaseProject(release, workProject.getProjectId());
+
+                    if (releaseProject.getIssuingReleaseFact() != null) {
+                        throw new ResourceNotFoundRunTime("Нельзя исключать ЗИ из выпущенного релиза");
                     }
                 }
             }
         } else {
-            if (workProject.getRelease() != null && workProject.getRelease().getId() != null) {
-                release = releaseService.findById(workProject.getRelease().getId());
-                if (release.getIssuingReleaseFact() != null) {
+            if (work.getRelease() != null && work.getRelease().getId() != null) {
+                release = releaseService.findById(work.getRelease().getId());
+                releaseProject = releaseProjectService.findReleaseProject(release, workProject.getProjectId());
+
+                if (releaseProject.getIssuingReleaseFact() != null) {
                     throw new ResourceNotFoundRunTime("Нельзя включать ЗИ в выпущенный релиз");
                 }
             }
@@ -190,12 +207,15 @@ public class WorkService {
         Integer stageOld = null;
         String releaseNameOld = null;
         if (workFull.getWork().getId() != null) {
-            WorkProject workSave = workProjectService.getWorkProject(workFull.getWork(), workFull.getWorkProject().getProjectId());
-            if (workSave != null) {
-                ratedOld = workSave.getRated();
-                stageOld = workSave.getStageZi();
-                releaseNameOld = workSave.getRelease() != null ? workSave.getRelease().getName() : null;
+            Work workSave = findById(workFull.getWork().getId());
+            releaseNameOld = workSave.getRelease() != null ? workSave.getRelease().getName() : null;
+            WorkProject workProjectSave = workProjectService.getWorkProject(workFull.getWork(), workFull.getWorkProject().getProjectId());
+            if (workProjectSave != null) {
+                ratedOld = workProjectSave.getRated();
+                stageOld = workProjectSave.getStageZi();
+
             }
+
         }
         if (workFull.getWork().getProjectList() == null) {
             workFull.getWork().setProjectList(new ArrayList<>());
@@ -247,33 +267,24 @@ public class WorkService {
         workLittleRepository.deleteById(id);
     }
 
-    public Page<@NonNull Work> findWorks(int page, int size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId) {
+    public Page<@NonNull Work> findWorks(int page, int size, String name, List<String> sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId) {
         return findAll(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId, null).map(WorkFull::getWork);
     }
 
     @Transactional
-    public Page<@NonNull WorkFull> findWorks(int page, int size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId, Long projectId) {
+    public Page<@NonNull WorkFull> findWorks(int page, int size, String name, List<String> sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId, Long projectId) {
         return findAll(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseId, projectId);
     }
 
 
-    public Page<@NonNull WorkFull> findAll(Integer page, Integer size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId, Long projectId) {
+    public Page<@NonNull WorkFull> findAll(Integer page, Integer size, String name, List<String> sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, Long releaseId, Long projectId) {
         Specification<@NonNull Work> specification;
-        if (sort != null && sort.length() > 8 && sort.startsWith("release.")) {
-            if (projectId == null) {
-                log.error("Сортировка по релизу не возможна без выбора проекта");
-                sort = null;
-            }
-            specification = Specification.unrestricted();
-        } else {
-            specification = Specification.where(Specifications.queryDistinctTrue());
-        }
+        specification = getWorkSpecification(name, sort, codeSap, codeZi, releaseId, null);
 
-        specification = Specifications.like(specification, "name", name);
-        specification = Specifications.like(specification, "codeZi", codeZi);
-        specification = Specifications.eq(specification, "codeSap", codeSap);
         if (projectId != null
-                && (stageZiGe != null || (stageZiLe != null && stageZiLe != 9) || task != null || releaseId != null)) {
+                && (stageZiGe != null
+                || (stageZiLe != null && stageZiLe != 9) || task != null)
+                && (sort == null || sort.contains("stageZi") || sort.contains("task"))) {
             List<Work> workList = null;
             if (name != null || codeSap != null || codeZi != null) {
                 workList = workRepository.findAll(specification);
@@ -281,48 +292,47 @@ public class WorkService {
                     return new PageImpl<>(new ArrayList<>());
                 }
             }
-            return workProjectService.getWorkFull(page, size, sort, stageZiGe, stageZiLe, task, releaseId, projectId, workList);
-        }
-        if (sort != null && sort.length() > 8 && sort.startsWith("release.")) {
-            log.error("Сортировка по релизу не возможна без выбора проекта");
-            sort = null;
+            return workProjectService.getWorkFull(page, size, sort, stageZiGe, stageZiLe, task, projectId, workList);
         }
 
-        specification = Specifications.in(specification, "id", workProjectLittleService.getListWorkId(task, releaseId, stageZiLe, stageZiGe, null));
+        specification = Specifications.in(specification, "id", workProjectLittleService.getListWorkId(task, stageZiLe, stageZiGe));
 
         Page<@NonNull Work> workPage;
-        if (sort == null) {
-            if (page != null && size != null) {
-                workPage = workRepository.findAll(specification, PageRequest.of(page - 1, size));
-            } else {
-                workPage = new PageImpl<>(workRepository.findAll(specification));
-            }
-
-        } else {
-            if (page != null && size != null) {
-                workPage = workRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.Direction.ASC, sort));
-            } else {
-                workPage = new PageImpl<>(workRepository.findAll(specification, Sort.by(sort)));
-            }
-        }
-        return workPage.map(work -> new WorkFull(work, null));
+        workPage = Specifications.findAll(workRepository, page, size, specification, sort);
+        return workPage.map(work -> new WorkFull(work, projectId == null ? null : workProjectService.getWorkProject(work, projectId)));
     }
 
-    public Page<@NonNull WorkLittleFull> findWorkLittle(Integer page, Integer size, String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, List<Long> releaseIdArray, Long projectId) {
-        Specification<@NonNull WorkLittle> specification;
-        if (sort != null && sort.length() > 8 && sort.startsWith("release.")) {
-            if (projectId == null) {
-                sort = null;
-                log.error("Little не возможна сортировка по релизу без проекта");
-            }
+    private <T> Specification<@NonNull T> getWorkSpecification(String name, List<String> sort, Long codeSap, String codeZi, Long releaseId, List<Long> releaseIdArray) {
+        Specification<@NonNull T> specification;
+        if (sort != null && !sort.isEmpty()) {
             specification = Specification.unrestricted();
         } else {
             specification = Specification.where(Specifications.queryDistinctTrue());
         }
-        specification = Specifications.eq(specification, "codeSap", codeSap);
-        specification = Specifications.like(specification, "codeZi", codeZi);
+
         specification = Specifications.like(specification, "name", name);
-        if (projectId != null) {
+        specification = Specifications.like(specification, "codeZi", codeZi);
+        specification = Specifications.eq(specification, "codeSap", codeSap);
+        if (releaseId != null) {
+            Release release = releaseService.findOptionalById(releaseId).orElse(null);
+            specification = Specifications.eq(specification, "release", release);
+        }
+        if (releaseIdArray != null && !releaseIdArray.isEmpty()) {
+            List<Object> releases = new ArrayList<>();
+            for (Long releaseIdIn : releaseIdArray) {
+                Release release = releaseService.findOptionalById(releaseIdIn).orElse(null);
+                releases.add(release);
+
+            }
+            specification = Specifications.inO(specification, "release", releases);
+        }
+
+        return specification;
+    }
+
+    public Page<@NonNull WorkLittleFull> findWorkLittle(Integer page, Integer size, String name, List<String> sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, List<Long> releaseIdArray, Long projectId) {
+        Specification<@NonNull WorkLittle> specification = getWorkSpecification(name, sort, codeSap, codeZi, null, releaseIdArray);
+        if (projectId != null && (sort == null || sort.contains("stageZi") || sort.contains("task"))) {
             List<WorkLittle> workLittleList = null;
             if (codeSap != null || codeZi != null || name != null) {
                 workLittleList = workLittleRepository.findAll(specification);
@@ -330,37 +340,24 @@ public class WorkService {
                     return new PageImpl<>(new ArrayList<>());
                 }
             }
-            return workProjectLittleService.getWorkFull(page, size, sort, stageZiGe, stageZiLe, task, releaseIdArray, projectId, null, workLittleList);
+            return workProjectLittleService.getWorkFull(page, size, sort, stageZiGe, stageZiLe, task, projectId, workLittleList);
         }
-        specification = Specifications.in(specification, "id", workProjectLittleService.getListWorkId(task, null, stageZiLe, stageZiGe, releaseIdArray));
-
-
-        Page<@NonNull WorkLittle> workPage;
-        if (page == null) {
-            if (sort == null) {
-                workPage = new PageImpl<>(workLittleRepository.findAll(specification));
-            } else {
-                workPage = new PageImpl<>(workLittleRepository.findAll(specification, Sort.by(sort)));
-            }
-        } else if (sort == null) {
-            workPage = workLittleRepository.findAll(specification, PageRequest.of(page - 1, size));
-        } else {
-            workPage = workLittleRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.by(sort)));
-        }
-        return workPage.map(workLittle -> new WorkLittleFull(workLittle, null));
+        specification = Specifications.in(specification, "id", workProjectLittleService.getListWorkId(task, stageZiLe, stageZiGe));
+        Page<@NonNull WorkLittle> workPage = Specifications.findAll(workLittleRepository, page, size, specification, sort);
+        return workPage.map(workLittle -> new WorkLittleFull(workLittle, projectId == null ? null : workProjectLittleService.getWorkProject(workLittle, projectId)));
     }
 
-    public List<Work> getWorkList(String name, Integer stageZiGe, Integer stageZiLe, Long releaseId, Long projectId, String[] sort) {
-        return findAll(null, null, name, sort[0], stageZiGe, stageZiLe, null, null, null, releaseId, projectId).map(WorkFull::getWork).getContent();
+    public List<Work> getWorkList(String name, Integer stageZiGe, Integer stageZiLe, Long releaseId, Long projectId, List<String> sort) {
+        return findAll(null, null, name, sort, stageZiGe, stageZiLe, null, null, null, releaseId, projectId).map(WorkFull::getWork).getContent();
     }
 
-    public List<Work> getWorkList(String name, Integer stageZiGe, Integer stageZiLe, Long releaseId, String[] sort) {
-        List<Work> works;
+    public List<Work> getWorkList(String name, Integer stageZiGe, Integer stageZiLe, Long releaseId, List<String> sort) {
+        Page<Work> works;
         Specification<@NonNull Work> specification = Specification.unrestricted();
         Sort sortWork = null;
         if (sort != null) {
             for (String sortField : sort) {
-                if (sortField.equals("codeZI") || sortField.equals("name")) {
+                if (sortField.equals("codeZI") || sortField.equals("name") || sortField.startsWith("release")) {
                     sortWork = sortWork == null ? Sort.by(sortField) : sortWork.and(Sort.by(sortField));
                 } else {
                     log.error("Сортировка по полю {} не возможна", sortField);
@@ -368,21 +365,33 @@ public class WorkService {
             }
         }
         specification = Specifications.like(specification, "name", name);
-        specification = Specifications.in(specification, "id", workProjectService.getWorkIdList(releaseId, stageZiGe, stageZiLe));
-
-        if (sortWork == null) {
-            works = workRepository.findAll(specification);
-        } else {
-            works = workRepository.findAll(specification, sortWork);
+        if (releaseId != null) {
+            Release release = releaseService.findOptionalById(releaseId).orElse(null);
+            specification = Specifications.eq(specification, "release", release);
         }
-        return works;
+        specification = Specifications.in(specification, "id", workProjectService.getWorkIdList(stageZiGe, stageZiLe));
+        works = Specifications.findAll(workRepository, null, null, specification, sortWork);
+        return works.getContent();
     }
 
     public void updWorkPlanTime(WorkPlanTime workPlanTime) {
+        updWorkPlanTime(null, workPlanTime);
+    }
+
+    public void updWorkPlanTime(List<Long> childIdList, WorkPlanTime workPlanTime) {
         if (workPlanTime.getProjectId() == null) {
             return;
         }
-        WorkStageDto workStageDto = rateServiceIntegration.getTimePlan(workPlanTime.getWorkId(), workPlanTime.getProjectId());
+        List<Long> workIdList;
+        if (childIdList != null) {
+            workIdList = childIdList;
+        } else if (workPlanTime.getChildId() == null) {
+            workIdList = new ArrayList<>();
+            workIdList.add(workPlanTime.getWorkId());
+        } else {
+            workIdList = workPlanTime.getChildId();
+        }
+        WorkStageDto workStageDto = rateServiceIntegration.getTimePlan(workIdList, workPlanTime.getProjectId());
         workPlanTime.setLaborAnalise(workStageDto.getStage0());
         workPlanTime.setLaborDevelop(workStageDto.getStage1());
         workPlanTime.setLaborDebug(workStageDto.getStage2());
@@ -436,17 +445,17 @@ public class WorkService {
         WorkProjectLittle workProjectLittle = workProjectLittleService.getWorkProjectOrEmpty(workLittle, projectId);
         Boolean ratedOld = workProjectLittle.getRated();
         Integer stageOld = workProjectLittle.getStageZi();
-        String releaseNameOld = workProjectLittle.getRelease() != null ? workProjectLittle.getRelease().getName() : null;
+        String releaseNameOld = workLittle.getRelease() != null ? workLittle.getRelease().getName() : null;
         workProjectLittle.setStageZi(stageZI);
-        workProjectLittle.setRelease(release);
-
+        workLittle.setRelease(release);
+        workLittleRepository.save(workLittle);
         workProjectLittle = workProjectLittleService.save(workProjectLittle);
         changeWork(login, workLittle, workProjectLittle, stageOld, releaseNameOld, ratedOld);
     }
 
     private void changeWork(String login, WorkLittleInterface workLittle, WorkProjectInter workProject, Integer stageOld, String releaseNameOld, Boolean ratedOld) {
         init();
-        String releaseNameNew = workProject.getRelease() != null ? workProject.getRelease().getName() : null;
+        String releaseNameNew = workLittle.getRelease() != null ? workLittle.getRelease().getName() : null;
         StringBuilder workEditText = new StringBuilder();
         workEditText.append(ChangeObj("этап ЗИ", stageOld, workProject.getStageZi()));
         if (!ChangeObj("релиз", releaseNameOld, releaseNameNew).isEmpty()) {
@@ -507,11 +516,23 @@ public class WorkService {
         }
     }
 
-    public Boolean getRate(Long id, Long projectId) {
-        WorkProjectLittle workProject = findLittleById(id, projectId).getWorkProject();
-        if (workProject != null && workProject.getRated() != null) {
-            return workProject.getRated();
-        }
+    public Boolean getRate(List<Long> workIdList, Long projectId) {
+        AtomicReference<Boolean> rated = new AtomicReference<>();
+        workIdList.forEach(workId -> {
+            WorkProjectLittle workProject = findLittleById(workId, projectId).getWorkProject();
+            if (workProject != null && workProject.getRated() != null) {
+                if (rated.get() == null || rated.get()) {
+                    rated.set(workProject.getRated());
+                }
+            } else {
+                rated.set(false);
+            }
+        });
         return false;
+    }
+
+    @Autowired
+    public void setReleaseProjectService(ReleaseProjectService releaseProjectService) {
+        this.releaseProjectService = releaseProjectService;
     }
 }

@@ -51,14 +51,11 @@ public class WorkTimeRepService {
         List<Integer> types = getTypeForWork(typeStr);
 
         AtomicReference<Float> time = new AtomicReference<>((float) 0);
-        for (Integer type : types) {
 
-            workTimeService.findWorkTime(taskId, nikName, null, dateLe, dateGt, null, type, null, null, null, null).
-
-                    forEach(workTime ->
-                            time.set(time.get() + workTime.getWorkTime())
-                    );
-        }
+        workTimeService.findWorkTime(taskId, nikName, null, dateLe, dateGt, null, types, null, null, null, null)
+                .forEach(workTime ->
+                        time.set(time.get() + workTime.getWorkTime())
+                );
         return time.get();
     }
 
@@ -73,20 +70,20 @@ public class WorkTimeRepService {
         } else {
             types = WorkTimeTypeService.getTypes(null);
         }
-        List<Integer> types2 = new ArrayList<>();
-        if (typeStr != null && typeStr.equals("analise")) {
-            types2.add(2);
-            types2.add(3);
-            types2.add(5);
-            types2.add(6);
-
-        } else if (typeStr != null && typeStr.equals("develop")) {
-            types2.add(1);
-            types2.add(4);
-        } else {
-            types2.add(null);
-
-        }
+//        List<Integer> types2 = new ArrayList<>();
+//        if (typeStr != null && typeStr.equals("analise")) {
+//            types2.add(2);
+//            types2.add(3);
+//            types2.add(5);
+//            types2.add(6);
+//
+//        } else if (typeStr != null && typeStr.equals("develop")) {
+//            types2.add(1);
+//            types2.add(4);
+//        } else {
+//            types2.add(null);
+//
+//        }
         return types;
     }
 

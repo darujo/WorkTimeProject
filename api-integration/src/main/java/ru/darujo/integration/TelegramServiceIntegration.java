@@ -46,7 +46,7 @@ public class TelegramServiceIntegration extends ServiceIntegration {
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-Telegram) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime("(Api-Telegram) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 
@@ -101,6 +101,35 @@ public class TelegramServiceIntegration extends ServiceIntegration {
             webClient.post().uri("/" + chatId + "/file" + sb)
                     .header("username", author)
                     .bodyValue(text)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса telegram"))
+                    .bodyToMono(Void.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-Telegram) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
+    }
+
+    public void sendFile(
+            String author,
+            String chatId,
+            Integer threadId,
+            Integer originMessageId,
+            String fileName,
+
+            String text,
+            String body) {
+        try {
+            StringBuilder sb = new StringBuilder();
+            addTeg(sb, "fileName", fileName);
+            addTeg(sb, "threadId", threadId);
+            addTeg(sb, "originMessageId", originMessageId);
+            addTeg(sb, "message", text);
+            webClient.post().uri("/" + chatId + "/file/fast" + sb)
+                    .header("username", author)
+                    .bodyValue(body)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса telegram"))

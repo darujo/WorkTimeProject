@@ -47,21 +47,21 @@ public class TaskRepService {
             String codeBTS,
             String codeDEVBO,
             String description,
-            Long workId,
+            List<Long> workIdList,
             Long projectId,
             Date dateLe,
             Date dateGt,
             String type) {
-        return ((List<Task>) taskService.findTask(null, codeBTS, codeDEVBO, description, workId, null, projectId, null, null))
+        List<Long> taskIdList = taskService.findTask(null, codeBTS, codeDEVBO, description, workIdList, null, projectId, null, null).getContent()
                 .stream()
-                .map(task -> workTimeServiceIntegration.getTimeTask(task.getId(), nikName, dateLe, dateGt, type))
-                .reduce(Float::sum)
-                .orElse(0f);
+                .map(Task::getId).toList();
+        return workTimeServiceIntegration.getTimeTask(taskIdList, nikName, dateLe, dateGt, type);
+
     }
 
-    public ListString getFactUsers(Long workId, Long projectId, Date dateLe) {
+    public ListString getFactUsers(List<Long> workIdList, Long projectId, Date dateLe) {
         ListString users = new ListString();
-        ((List<Task>) taskService.findTask(null, null, null, null, workId, null, projectId, null, null))
+        taskService.findTask(null, null, null, null, workIdList, null, projectId, null, null)
                 .stream().map(task ->
                         workTimeServiceIntegration
                                 .getUsers(task.getId(), dateLe))
@@ -70,9 +70,9 @@ public class TaskRepService {
         return users;
     }
 
-    public Boolean getAvailTime(long workId, Long projectId) {
+    public Boolean getAvailTime(List<Long> workIdList, Long projectId) {
         Specification<@NonNull Task> specification = Specification.unrestricted();
-        specification = Specifications.eq(specification, "workId", workId);
+        specification = Specifications.in(specification, "workId", workIdList);
         specification = Specifications.eq(specification, "projectId", projectId);
         List<Task> tasks = taskRepository.findAll(specification);
         if (tasks.isEmpty()) {
@@ -82,15 +82,17 @@ public class TaskRepService {
 
     }
 
-    public List<UserWorkDto> getWeekWork(Long workId, Long projectId, String nikName, Boolean addTotal) {
-        List<Task> tasks = (List<Task>) taskService.findTask(null, null, null, null, workId, null, projectId, null, null);
-
+    public List<UserWorkDto> getWeekWork(List<Long> workIdList, Long projectId, String nikName, Boolean addTotal) {
+        List<Task> tasks = taskService.findTask(null, null, null, null, workIdList, null, projectId, null, null).getContent();
+        if (tasks.isEmpty()) {
+            return null;
+        }
         return workTimeServiceIntegration.getWorkUserOrZi(tasks.stream().map(Task::getId).collect(Collectors.toList()), nikName, addTotal, false, null, null);
 
     }
 
-    public Timestamp getLastTime(long workId, Timestamp dateLe, Timestamp dateGe) {
-        List<Task> tasks = (List<Task>) taskService.findTask(null, null, null, null, workId, null, null, null, null);
+    public Timestamp getLastTime(List<Long> workId, Timestamp dateLe, Timestamp dateGe) {
+        List<Task> tasks = taskService.findTask(null, null, null, null, workId, null, null, null, null).getContent();
 
         return workTimeServiceIntegration.getLastTime(tasks.stream().map(Task::getId).collect(Collectors.toList()), dateLe, dateGe);
     }

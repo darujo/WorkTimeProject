@@ -23,10 +23,9 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
         super.setWebClient(webClientWorkTime);
     }
 
-    public Float getTimeTask(Long taskId, String nikName, Date dateLE, Date dateGT, String type) {
+    public Float getTimeTask(List<Long> taskIdList, String nikName, Date dateLE, Date dateGT, String type) {
         StringBuilder stringBuilder = new StringBuilder();
-
-        addTeg(stringBuilder, "taskId", taskId);
+        addTeg(stringBuilder, "taskId", taskIdList);
         addTeg(stringBuilder, "nikName", nikName);
         addTeg(stringBuilder, "type", type);
         addTeg(stringBuilder, "dateLe", dateLE);
@@ -41,7 +40,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .bodyToMono(Float.class)
                     .block();
         } catch (RuntimeException ex) {
-            log.error("/rep/fact/time{}", stringBuilder);
+            log.error("/rep/fact/time{}", stringBuilder, ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -60,7 +59,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .bodyToMono(ListString.class)
                     .block();
         } catch (RuntimeException ex) {
-            log.error("/rep/fact/user{}", stringBuilder);
+            log.error("/rep/fact/user{}", stringBuilder, ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -86,20 +85,19 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
             Date dateStart,
             Date dateEnd) {
         StringBuilder stringBuilder = new StringBuilder();
-        taskIds.forEach(taskId -> addTeg(stringBuilder, "taskId", taskId));
+        addTeg(stringBuilder, "taskId", taskIds);
 
         addTeg(stringBuilder, "nikName", nikName);
-        if(stringBuilder.isEmpty()){
-            log.error("нет тасков");
+        if (stringBuilder.isEmpty()) {
+            log.info("нет тасков");
             return null;
-
-        }addTeg(stringBuilder, "addTotal", addTotal);
+        }
+        addTeg(stringBuilder, "addTotal", addTotal);
         addTeg(stringBuilder, "weekSplit", weekSplit);
         addTeg(stringBuilder, "dateStart", dateStart);
         addTeg(stringBuilder, "dateEnd", dateEnd);
 
         try {
-            log.info("/rep/fact/week{}", stringBuilder);
             return webClient.get().uri("/rep/fact/week" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
@@ -108,12 +106,13 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .collectList()
                     .block();
         } catch (RuntimeException ex) {
-            log.error("/rep/fact/week{}", stringBuilder);
+            String text = "get Work User Or Zi /rep/fact/week" + stringBuilder;
+            log.error(text, ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 
-    public List<UserWorkFormDto> getWorkUserOrZiBig(Long taskId,
+    public List<UserWorkFormDto> getWorkUserOrZiBig(List<Long> taskIdList,
                                                     String nikName,
                                                     Boolean addTotal,
                                                     Boolean weekSplit,
@@ -121,7 +120,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                                                     Date dateEnd) {
         StringBuilder stringBuilder = new StringBuilder();
 
-        addTeg(stringBuilder, "taskId", taskId);
+        addTeg(stringBuilder, "taskId", taskIdList);
         addTeg(stringBuilder, "nikName", nikName);
         addTeg(stringBuilder, "addTotal", addTotal);
         addTeg(stringBuilder, "weekSplit", weekSplit);
@@ -137,7 +136,8 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .collectList()
                     .block();
         } catch (RuntimeException ex) {
-            log.error("getWorkUserOrZiBig /rep/fact/week{}", stringBuilder);
+            String text = "get Work User Or Zi Big /rep/fact/week" + stringBuilder;
+            log.error(text, ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -145,7 +145,7 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
     public Timestamp getLastTime(List<Long> taskIds, Timestamp dateLe, Timestamp dateGe) {
         StringBuilder stringBuilder = new StringBuilder();
         try {
-            taskIds.forEach(taskId -> addTeg(stringBuilder, "taskId", taskId));
+            addTeg(stringBuilder, "taskId", taskIds);
             addTeg(stringBuilder, "dateLe", dateLe);
             addTeg(stringBuilder, "dateGe", dateGe);
 
@@ -156,8 +156,8 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .bodyToMono(Timestamp.class)
                     .block();
         } catch (RuntimeException ex) {
-            log.error("/rep/fact/lastTime{}", stringBuilder);
-            log.error(ex.getMessage());
+            String text = "/rep/fact/lastTime" + stringBuilder;
+            log.error(text, ex);
             return null;
         }
 
@@ -178,8 +178,8 @@ public class WorkTimeServiceIntegration extends ServiceIntegration {
                     .bodyToMono(WorkUserFactPlan.class)
                     .block();
         } catch (RuntimeException ex) {
-            log.error("rep/fact/user/work/only{}", stringBuilder);
-            log.error(ex.getMessage());
+            String text = "rep/fact/user/work/only" + stringBuilder;
+            log.error(text, ex);
             return null;
         }
 

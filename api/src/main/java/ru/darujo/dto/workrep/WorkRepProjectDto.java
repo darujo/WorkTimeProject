@@ -4,6 +4,7 @@ import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.work.WorkPlanTime;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 public class WorkRepProjectDto implements WorkPlanTime, ProjectUpdateInter {
     @SuppressWarnings("unused")
@@ -22,11 +23,11 @@ public class WorkRepProjectDto implements WorkPlanTime, ProjectUpdateInter {
     private Timestamp startTaskFact;
     @SuppressWarnings("unused")
     private String startTaskFactStr;
-    // ВЕНДЕРКА План
+    // Анализ План
     private Timestamp analiseEndPlan;
     @SuppressWarnings("unused")
     private String analiseEndPlanStr;
-    // ВЕНДЕРКА
+    // Анализ
     private Timestamp analiseEndFact;
     @SuppressWarnings("unused")
     private String analiseEndFactStr;
@@ -96,7 +97,7 @@ public class WorkRepProjectDto implements WorkPlanTime, ProjectUpdateInter {
     private Float timeRelease;
     // ОПЭ релиза
     private Float timeOPE;
-    // ВЕНДЕРКА
+    // Анализ
     private Float timeWender;
     private Timestamp issuePrototypePlan;
     @SuppressWarnings("unused")
@@ -106,6 +107,7 @@ public class WorkRepProjectDto implements WorkPlanTime, ProjectUpdateInter {
     private String issuePrototypeFactStr;
     @SuppressWarnings("unused")
     private Boolean rated;
+    private List<Long> childId;
 
     public WorkRepProjectDto(Long workId,
                              Long projectId,
@@ -132,7 +134,8 @@ public class WorkRepProjectDto implements WorkPlanTime, ProjectUpdateInter {
                              Float timeWender,
                              Timestamp issuePrototypePlan,
                              Timestamp issuePrototypeFact,
-                             Boolean rated) {
+                             Boolean rated,
+                             List<Long> childId) {
         this.workId = workId;
         this.projectId = projectId;
         this.startTaskPlan = startTaskPlan;
@@ -160,6 +163,7 @@ public class WorkRepProjectDto implements WorkPlanTime, ProjectUpdateInter {
         this.issuePrototypePlan = issuePrototypePlan;
         this.issuePrototypeFact = issuePrototypeFact;
         this.rated = rated;
+        this.childId = childId;
         addTimeFact(timeAnalise);
         addTimeFact(timeDevelop);
         addTimeFact(timeDebug);
@@ -434,6 +438,10 @@ public class WorkRepProjectDto implements WorkPlanTime, ProjectUpdateInter {
     @SuppressWarnings("unused")
     public Timestamp getIssuePrototypeFact() {
         return issuePrototypeFact;
+    }
+
+    public List<Long> getChildId() {
+        return childId;
     }
 
     @Override

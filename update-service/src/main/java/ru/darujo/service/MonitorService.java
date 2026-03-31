@@ -90,7 +90,7 @@ public class MonitorService {
     }
 
     public void availService() {
-        Map<ServiceType, Integer> serviceIntegrationsError = getServiceErrorTypes(true);
+        Map<ServiceType, Integer> serviceIntegrationsError = getServiceErrorTypes(null, true);
         AtomicBoolean flagError = new AtomicBoolean(false);
         serviceIntegrationsError.forEach((serviceType, count) -> {
             if (count > 2) {
@@ -102,21 +102,23 @@ public class MonitorService {
         }
     }
 
-    public boolean allServiceOk() {
-        Map<ServiceType, Integer> serviceIntegrationsError = getServiceErrorTypes(false);
+    public boolean allServiceOk(List<ServiceType> serviceTypeList) {
+        Map<ServiceType, Integer> serviceIntegrationsError = getServiceErrorTypes(serviceTypeList, false);
 
         return serviceIntegrationsError.isEmpty();
     }
 
     Map<ServiceType, Integer> serviceIntegrationsError = Collections.synchronizedMap(new HashMap<>());
 
-    private @NonNull Map<ServiceType, Integer> getServiceErrorTypes(boolean addCount) {
+    private @NonNull Map<ServiceType, Integer> getServiceErrorTypes(List<ServiceType> serviceTypeList, boolean addCount) {
         for (ServiceType serviceType : ServiceType.values()) {
-            serviceIntegrationsError.putIfAbsent(serviceType, 0);
+            if (serviceTypeList == null || serviceTypeList.contains(serviceType)) {
+                serviceIntegrationsError.putIfAbsent(serviceType, 0);
+            }
         }
         Set<ServiceType> serviceOk = Collections.synchronizedSet(new HashSet<>());
 
-        availService(serviceIntegrations, serviceOk::add);
+        availService(serviceIntegrations, serviceTypeList, serviceOk::add);
         serviceOk.forEach(serviceType -> serviceIntegrationsError.remove(serviceType));
         if (addCount) {
             serviceIntegrationsError.forEach((serviceType, count) -> serviceIntegrationsError.put(serviceType, count + 1));
@@ -124,9 +126,14 @@ public class MonitorService {
         return serviceIntegrationsError;
     }
 
-    public void availService(PriorityQueue<ServiceIntegrationObject> serviceIntegrations, Consumer<ServiceType> addService) {
+    public void availService(PriorityQueue<ServiceIntegrationObject> serviceIntegrations,
+                             List<ServiceType> serviceTypeList,
+                             Consumer<ServiceType> addService) {
 
-        serviceIntegrations.forEach((serviceIntegrationObj) -> {
+        serviceIntegrations
+                .stream()
+                .filter(serviceIntegrationObject -> serviceTypeList == null || serviceTypeList.contains(serviceIntegrationObject.getServiceType()))
+                .forEach((serviceIntegrationObj) -> {
             try {
 
                 serviceIntegrationObj.getServiceIntegration().test();

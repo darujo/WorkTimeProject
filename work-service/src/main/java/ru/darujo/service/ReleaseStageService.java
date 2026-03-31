@@ -1,5 +1,6 @@
 package ru.darujo.service;
 
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,7 @@ import ru.darujo.convertor.WorkConvertor;
 import ru.darujo.dto.work.ReleaseStageDto;
 import ru.darujo.model.Release;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,20 +25,21 @@ public class ReleaseStageService {
         this.workService = workService;
     }
 
-    public List<@NonNull ReleaseStageDto> getReleaseStage(String name, String sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, List<Long> releaseIdList, Long projectId) {
-        Map<Long, ReleaseStageDto> releaseStageDtoMap = new HashMap<>();
+    @Transactional
+    public List<@NonNull ReleaseStageDto> getReleaseStage(String name, List<String> sort, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, List<Long> releaseIdList, Long projectId) {
+        Map<Long, ReleaseStageDto> releaseStageDtoMap = new LinkedHashMap<>();
         if (releaseIdList != null && !releaseIdList.isEmpty()) {
-            releaseService.findAll(releaseIdList, projectId).forEach(release -> releaseStageDtoMap.put(release.getId(), getReleaseStageDto(release)));
+            releaseService.findAll(releaseIdList, null).forEach(releaseFull -> releaseStageDtoMap.put(releaseFull.getRelease().getId(), getReleaseStageDto(releaseFull.getRelease())));
         }
         workService.findWorkLittle(null, null, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseIdList, projectId)
                 .forEach(workLittleFull -> {
                     ReleaseStageDto releaseStageDto = releaseStageDtoMap.computeIfAbsent(
-                            workLittleFull.getWorkProject().getRelease() == null ? 0 : workLittleFull.getWorkProject().getRelease().getId(),
-                            k -> workLittleFull.getWorkProject().getRelease() == null ?
+                            workLittleFull.getWork().getRelease() == null ? 0 : workLittleFull.getWork().getRelease().getId(),
+                            k -> workLittleFull.getWork().getRelease() == null ?
                                     new ReleaseStageDto(0L,
                                             "Без релиза",
                                             -1F)
-                                    : getReleaseStageDto(workLittleFull.getWorkProject().getRelease())
+                                    : getReleaseStageDto(workLittleFull.getWork().getRelease())
                     );
 
                     releaseStageDto.getWorks()[workLittleFull.getWorkProject().getStageZi()].add(WorkConvertor.getWorkLittleDto(workLittleFull));

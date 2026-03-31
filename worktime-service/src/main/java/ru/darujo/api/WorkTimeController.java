@@ -75,7 +75,7 @@ public class WorkTimeController {
                                                    @RequestParam(required = false) String taskDEVBO,
                                                    @RequestParam(required = false) String taskBTS,
                                                    @RequestParam(required = false) String nikName,
-                                                   @RequestParam(required = false) Integer type,
+                                                   @RequestParam(required = false) List<Integer> type,
                                                    @RequestParam(required = false) String comment,
                                                    @RequestParam("system_project") Long projectId,
                                                    @RequestParam(defaultValue = "false") boolean currentUser,

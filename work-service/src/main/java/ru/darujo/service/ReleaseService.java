@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.Release;
+import ru.darujo.model.ReleaseFull;
 import ru.darujo.repository.ReleaseRepository;
 import ru.darujo.specifications.Specifications;
 
@@ -17,6 +18,7 @@ import java.util.Optional;
 public class ReleaseService {
 
     private ReleaseRepository releaseRepository;
+    private ReleaseProjectService releaseProjectService;
 
     @Autowired
     public void setReleaseRepository(ReleaseRepository releaseRepository) {
@@ -37,6 +39,11 @@ public class ReleaseService {
         return findOptionalById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Релиз с id " + id + " не найден."));
     }
 
+    public ReleaseFull getReleaseFull(Long id, Long projectId) {
+        Release release = findById(id);
+        return new ReleaseFull(release, releaseProjectService.findReleaseProject(release, projectId));
+    }
+
     public Release saveRelease(Release release) {
         return releaseRepository.save(release);
     }
@@ -45,10 +52,16 @@ public class ReleaseService {
         releaseRepository.deleteById(id);
     }
 
-    public List<Release> findAll(List<Long> releaseIdList, Long projectId) {
+    public List<ReleaseFull> findAll(List<Long> releaseIdList, Long projectId) {
         Specification<@NonNull Release> specification = Specification.unrestricted();
         specification = Specifications.in(specification, "id", releaseIdList);
-        specification = Specifications.eq(specification, "projectId", projectId);
-        return releaseRepository.findAll(specification, Sort.by("sort").and(Sort.by("name")));
+        return releaseRepository.findAll(specification, Sort.by("sort").and(Sort.by("name")))
+                .stream().map(release -> new ReleaseFull(release, projectId == null ? null : releaseProjectService.findReleaseProject(release, projectId)))
+                .toList();
+    }
+
+    @Autowired
+    public void setReleaseProjectService(ReleaseProjectService releaseProjectService) {
+        this.releaseProjectService = releaseProjectService;
     }
 }

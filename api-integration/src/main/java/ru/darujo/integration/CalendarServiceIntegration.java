@@ -28,16 +28,17 @@ public class CalendarServiceIntegration extends ServiceIntegration {
     }
 
     public List<WeekWorkDto> getWeekTime(Timestamp dateStart, Timestamp dateEnd) {
-        return getPeriodTime(dateStart,dateEnd, null);
+        return getPeriodTime(dateStart, dateEnd, null);
     }
-    public List<WeekWorkDto> getPeriodTime(Timestamp dateStart, Timestamp dateEnd,String period) {
+
+    public List<WeekWorkDto> getPeriodTime(Timestamp dateStart, Timestamp dateEnd, String period) {
         StringBuilder stringBuilder = getDateTeg(dateStart, dateEnd);
-        addTeg(stringBuilder,"period",period);
+        addTeg(stringBuilder, "period", period);
         try {
             return webClient.get().uri("/calendar/period/time" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR,"Что-то пошло не так не удалось получить работы за период"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить работы за период"))
                     .bodyToFlux(WeekWorkDto.class).collectList()
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -53,7 +54,7 @@ public class CalendarServiceIntegration extends ServiceIntegration {
             return webClient.get().uri("/calendar/work/time" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить отпуск за период"))
                     .bodyToMono(Float.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -64,85 +65,96 @@ public class CalendarServiceIntegration extends ServiceIntegration {
 
     public List<VacationDto> getVacation(String nikName, Timestamp dateStart, Timestamp dateEnd) {
         StringBuilder stringBuilder = getDateTeg(dateStart, dateEnd);
-        addTeg(stringBuilder,"nikName",nikName);
+        addTeg(stringBuilder, "nikName", nikName);
 
         try {
             return Objects.requireNonNull(webClient.get().uri("/vacation" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить отпуск за период"))
                     .bodyToMono(new ParameterizedTypeReference<@NonNull CustomPageImpl<VacationDto>>() {
                     })
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block()).getContent();
         } catch (RuntimeException ex) {
+            String text = "/vacation" + stringBuilder;
+            log.error(text, ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календарь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
+
     public Timestamp getLastWorkDay(String username, Timestamp dateStart, Integer dayMinus, Boolean lastWeek) {
 
         StringBuilder stringBuilder = new StringBuilder();
-        addTeg(stringBuilder,"username",username);
-        addTeg(stringBuilder,"dateStart",dateStart);
-        addTeg(stringBuilder,"dayMinus",dayMinus);
-        addTeg(stringBuilder,"lastWeek",lastWeek);
+        addTeg(stringBuilder, "username", username);
+        addTeg(stringBuilder, "dateStart", dateStart);
+        addTeg(stringBuilder, "dayMinus", dayMinus);
+        addTeg(stringBuilder, "lastWeek", lastWeek);
 
         try {
             return webClient.get().uri("/vacation/report/user/work/day/last" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить отпуск за период httpStatus "))
                     .bodyToMono(Timestamp.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
+            String text = "/vacation/report/user/work/day/last" + stringBuilder;
+            log.error(text, ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календарь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
+
     public Boolean isWorkDayUser(String username, Timestamp date) throws ResourceNotFoundException {
 
         StringBuilder stringBuilder = new StringBuilder();
-        addTeg(stringBuilder,"username",username);
-        addTeg(stringBuilder,"date",date);
+        addTeg(stringBuilder, "username", username);
+        addTeg(stringBuilder, "date", date);
 
         try {
             return webClient.get().uri("/vacation/report/user/work/day" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить отпуск за период httpStatus "))
                     .bodyToMono(Boolean.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
+            String text = "/vacation/report/user/work/day" + stringBuilder;
+            log.error(text, ex);
             throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календарь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
+
     public Boolean isDayAfterWeek(Timestamp date, Integer dayMinus) throws ResourceNotFoundException {
 
         StringBuilder stringBuilder = new StringBuilder();
-        addTeg(stringBuilder,"date",date);
-        addTeg(stringBuilder,"dayMinus",dayMinus);
+        addTeg(stringBuilder, "date", date);
+        addTeg(stringBuilder, "dayMinus", dayMinus);
 
         try {
             return webClient.get().uri("/vacation/report/work/day/after/week" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить отпуск за период httpStatus "))
                     .bodyToMono(Boolean.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
+            String text = "/vacation/report/work/day/after/week" + stringBuilder;
+            log.error(text, ex);
             throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календарь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 
     private StringBuilder getDateTeg(Timestamp dateStart, Timestamp dateEnd) {
-        if(dateStart == null || dateEnd ==null){
-            throw new ResourceNotFoundRunTime("Что-то пошло не так для получения календаря должны быть заданы даты начала и конца"  );
+        if (dateStart == null || dateEnd == null) {
+            throw new ResourceNotFoundRunTime("Что-то пошло не так для получения календаря должны быть заданы даты начала и конца");
         }
         StringBuilder stringBuilder = new StringBuilder();
-        addTeg(stringBuilder,"dateStart", dateStart);
-        addTeg(stringBuilder,"dateEnd", dateEnd);
+        addTeg(stringBuilder, "dateStart", dateStart);
+        addTeg(stringBuilder, "dateEnd", dateEnd);
         return stringBuilder;
     }
 
@@ -150,56 +162,63 @@ public class CalendarServiceIntegration extends ServiceIntegration {
                                    Integer day) throws ResourceNotFoundException {
 
         StringBuilder stringBuilder = new StringBuilder();
-        addTeg(stringBuilder,"nikName",nikName);
-        addTeg(stringBuilder,"day",day);
+        addTeg(stringBuilder, "nikName", nikName);
+        addTeg(stringBuilder, "day", day);
 
         try {
             return webClient.get().uri("/vacation/inform/day/begin" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить отпуск за период httpStatus "))
                     .bodyToMono(Boolean.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
+            String text = "/vacation/inform/day/begin" + stringBuilder;
+            log.error(text, ex);
             throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календарь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
+
     public Boolean isVacationEnd(String nikName) throws ResourceNotFoundException {
 
         StringBuilder stringBuilder = new StringBuilder();
-        addTeg(stringBuilder,"nikName",nikName);
+        addTeg(stringBuilder, "nikName", nikName);
 
         try {
             return webClient.get().uri("/vacation/inform/day/end" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить отпуск за период httpStatus "))
                     .bodyToMono(Boolean.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
+            String text = "/vacation/inform/day/end" + stringBuilder;
+            log.error(text, ex);
             throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календарь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 
     public List<VacationDto> userVacationStart(String nikName,
-                                           Integer day) throws ResourceNotFoundException {
+                                               Integer day) throws ResourceNotFoundException {
 
         StringBuilder stringBuilder = new StringBuilder();
-        addTeg(stringBuilder,"nikName",nikName);
-        addTeg(stringBuilder,"day",day);
+        addTeg(stringBuilder, "nikName", nikName);
+        addTeg(stringBuilder, "day", day);
 
         try {
             return webClient.get().uri("/vacation/inform/user/day/begin" + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR,"Что-то пошло не так не удалось получить отпуск за период httpStatus "))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить отпуск за период httpStatus "))
                     .bodyToFlux(VacationDto.class)
                     .collectList()
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
+            String text = "/vacation/inform/user/day/begin" + stringBuilder;
+            log.error(text, ex);
             throw new ResourceNotFoundException("Что-то пошло не так не удалось получить Календарь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }

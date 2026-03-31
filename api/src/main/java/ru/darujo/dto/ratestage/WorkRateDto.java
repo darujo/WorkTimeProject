@@ -1,5 +1,7 @@
 package ru.darujo.dto.ratestage;
 
+import ru.darujo.dto.work.WorkLittleDto;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -8,33 +10,19 @@ public class WorkRateDto implements Serializable {
     public WorkRateDto() {
     }
 
-    private String name;
-    private Long sap;
-    private String code;
+    private WorkLittleDto work;
     private List<RateDto> rateList;
     private WorkStageDto stageTotal;
 
-    public WorkRateDto(String name, Long sap, String code, List<RateDto> rateList, WorkStageDto stageTotal) {
-        this.name = name;
-        this.sap = sap;
-        this.code = code;
+    public WorkRateDto(WorkLittleDto work, List<RateDto> rateList, WorkStageDto stageTotal) {
+        this.work = work;
         this.rateList = rateList;
         this.stageTotal = stageTotal;
     }
 
     @SuppressWarnings("unused")
-    public String getName() {
-        return name;
-    }
-
-    @SuppressWarnings("unused")
-    public Long getSap() {
-        return sap;
-    }
-
-    @SuppressWarnings("unused")
-    public String getCode() {
-        return code;
+    public WorkLittleDto getWork() {
+        return work;
     }
 
     @SuppressWarnings("unused")

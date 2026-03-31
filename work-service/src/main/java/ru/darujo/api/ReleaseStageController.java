@@ -29,7 +29,7 @@ public class ReleaseStageController {
                                                       @RequestParam(required = false) String task,
                                                       @RequestParam(name = "system_project", required = false) Long projectId,
                                                       @RequestParam(required = false) List<String> releaseId,
-                                                      @RequestParam(defaultValue = "release.name") String sort) {
+                                                      @RequestParam(defaultValue = "release.sort") List<String> sort) {
         Integer stageZiGe = null;
         Integer stageZiLe = null;
         if (stageZi != null) {

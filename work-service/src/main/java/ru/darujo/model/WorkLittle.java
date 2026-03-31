@@ -26,9 +26,18 @@ public class WorkLittle implements WorkLittleInterface {
     // Наименование Зи
     @Column(name = "name")
     private String name;
-    @Column(name = "task")
-    private String task;
     @Column(name = "project_list")
     private List<Long> projectList;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "release_id")
+    private Release release;
+
+    @OneToMany(mappedBy = "workParent", fetch = FetchType.LAZY)
+    private List<WorkLittle> childWork;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private WorkLittle workParent;
+
 
 }

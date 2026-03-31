@@ -4,6 +4,7 @@ import ru.darujo.dto.work.WorkDto;
 import ru.darujo.dto.work.WorkEditDto;
 import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.model.*;
+import ru.darujo.service.ReleaseProjectService;
 
 public class WorkConvertor {
 
@@ -14,8 +15,29 @@ public class WorkConvertor {
                 .setCodeSap(work.getCodeSap())
                 .setCodeZI(work.getCodeZi())
                 .setName(work.getName())
-                .setDescription(work.getDescription());
+                .setDescription(work.getDescription())
+                .setWorkParentDto(getWorkLittleDto(work.getWorkParent()))
+                .setChildWorkDto(work.getChildWork() == null ? null : work.getChildWork().stream().map(WorkConvertor::getWorkLittleDto).toList());
+        if (work.getRelease() != null) {
+            workBuilder
+                    .setReleaseId(work.getRelease().getId())
+                    .setRelease(work.getRelease().getName())
+                    .setIssuingReleasePlan(work.getRelease().getIssuingReleasePlan());
+            if (workProject != null && workProject.getProjectId() != null) {
+                ReleaseProject releaseProject = ReleaseProjectService.getINSTANCE().findReleaseProject(work.getRelease(),
+                        workProject.getProjectId());
+                if (releaseProject != null) {
+                    workBuilder.setIssuingReleaseFact(releaseProject.getIssuingReleaseFact());
+                }
+            }
+        }
         if (workProject != null) {
+            if (work.getRelease() != null) {
+                ReleaseProject releaseProject = ReleaseProjectService.getINSTANCE().findReleaseProject(work.getRelease(), workProject.getProjectId());
+                if (releaseProject != null) {
+                    workBuilder.setIssuingReleaseFact(releaseProject.getIssuingReleaseFact());
+                }
+            }
             workBuilder
                     .setWorkProjectId(workProject.getId())
                     .setDebugEndFact(workProject.getDebugEndFact())
@@ -31,20 +53,14 @@ public class WorkConvertor {
                     .setStartTaskFact(workProject.getStartTaskFact())
                     .setStageZI(workProject.getStageZi())
                     .setProjectId(workProject.getProjectId());
-
-            if (workProject.getRelease() != null) {
-                workBuilder
-                        .setReleaseId(workProject.getRelease().getId())
-                        .setRelease(workProject.getRelease().getName())
-                        .setIssuingReleaseFact(workProject.getRelease().getIssuingReleaseFact())
-                        .setIssuingReleasePlan(workProject.getRelease().getIssuingReleasePlan());
-            }
         }
+
         return workBuilder;
     }
 
     public static WorkDto getWorkDto(WorkFull workFull) {
         return setWorkBuilderBase(workFull.getWork(), workFull.getWorkProject())
+                .setChildWork(workFull.getWork().getChildWork())
                 .getWorkDto();
     }
 
@@ -76,6 +92,9 @@ public class WorkConvertor {
     public static WorkFull getWork(WorkEditDto workDto, Long projectId) {
         WorkProject workProject = WorkBuilder
                 .createWork()
+                .setWorkParent(getWorkLittle(workDto.getParentWork()))
+                .setChildWork(workDto.getChildWork() == null ? null : workDto.getChildWork().stream().map(WorkConvertor::getWorkLittle).toList())
+
                 .setId(workDto.getId())
                 .setWorkProjectId(workDto.getWorkProjectId())
                 .setCodeSap(workDto.getCodeSap())
@@ -120,9 +139,18 @@ public class WorkConvertor {
     }
 
     public static WorkLittleDto getWorkLittleDto(WorkLittleFull workLittleFull) {
-        WorkLittle work = workLittleFull.getWork();
-        WorkProjectLittle workProjectLittle = workLittleFull.getWorkProject();
-        return WorkBuilder
+        return getWorkLittleDto(workLittleFull.getWork(), workLittleFull.getWorkProject(), true);
+    }
+
+    public static WorkLittleDto getWorkLittleDto(WorkLittle work) {
+        if (work == null) {
+            return null;
+        }
+        return getWorkLittleDto(work, null, false);
+    }
+
+    public static WorkLittleDto getWorkLittleDto(WorkLittle work, WorkProjectLittle workProjectLittle, boolean loadAll) {
+        WorkBuilder workBuilder = WorkBuilder
                 .createWork()
                 .setId(work.getId())
                 .setWorkProjectId(workProjectLittle == null ? null : workProjectLittle.getId())
@@ -131,21 +159,49 @@ public class WorkConvertor {
                 .setStageZI(workProjectLittle == null ? null : workProjectLittle.getStageZi())
                 .setName(work.getName())
                 .setRated(workProjectLittle == null ? null : workProjectLittle.getRated())
-                .setProjectList(work.getProjectList())
-                .getWorkLittleDto();
+                .setProjectList(work.getProjectList());
+        if (loadAll) {
+            workBuilder.setWorkParentDto(getWorkLittleDto(work.getWorkParent()))
+                    .setChildWorkDto(work.getChildWork() == null ? null : work.getChildWork().stream().map(WorkConvertor::getWorkLittleDto).toList());
+        }
+        return workBuilder.getWorkLittleDto();
 
 
     }
 
+
     public static WorkLittleDto getWorkLittleDto(Work work) {
-        return WorkBuilder
+        return getWorkLittleDto(work, true);
+
+
+    }
+
+    public static WorkLittleDto getWorkLittleDto(Work work, boolean loadAll) {
+        WorkBuilder workBuilder = WorkBuilder
                 .createWork()
                 .setId(work.getId())
                 .setCodeSap(work.getCodeSap())
                 .setCodeZI(work.getCodeZi())
                 .setName(work.getName())
+                .setProjectList(work.getProjectList());
+        if (loadAll) {
+            workBuilder.setWorkParentDto(getWorkLittleDto(work.getWorkParent()))
+                    .setChildWorkDto(work.getChildWork() == null ? null : work.getChildWork().stream().map(WorkConvertor::getWorkLittleDto).toList());
+        }
+        return workBuilder.getWorkLittleDto();
+    }
+
+    public static WorkLittle getWorkLittle(WorkLittleDto work) {
+        if (work == null) {
+            return null;
+        }
+        return WorkBuilder
+                .createWork()
+                .setId(work.getId())
+                .setCodeSap(work.getCodeSap())
+                .setName(work.getName())
                 .setProjectList(work.getProjectList())
-                .getWorkLittleDto();
+                .getWorkParent();
 
 
     }

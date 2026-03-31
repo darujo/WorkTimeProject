@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,12 @@ public class MessageInformationService {
     private MessageInformationRepository messageInformationRepository;
     private UserSendRepository userSendRepository;
     private TelegramServiceIntegration telegramServiceIntegration;
+    private FileService fileService;
+
+    @Autowired
+    public void setFileService(FileService fileService) {
+        this.fileService = fileService;
+    }
 
     @Autowired
     public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
@@ -58,6 +65,7 @@ public class MessageInformationService {
 
     Map<MessageType, List<UserInfoDto>> messageTypeListMap = null;
     private Timestamp lastInitMesType;
+
     @Transactional
     public void initMesType() {
         log.info("init mess");
@@ -105,16 +113,16 @@ public class MessageInformationService {
             return false;
         }
         if (messageInfoDto.getUserInfoDto() != null) {
-            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true, messageInfoDto.getDataTime()));
+            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true, messageInfoDto.getDataTime(), null));
             saveUserSend(new UserSend(
                     messageInfoDto.getUserInfoDto().getTelegramId(),
                     messageInfoDto.getUserInfoDto().getThreadId(),
                     messageInfoDto.getUserInfoDto().getOriginMessageId(),
                     messageInformation));
         } else if (messageTypeListMap == null) {
-            saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), false, messageInfoDto.getDataTime()));
+            saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), false, messageInfoDto.getDataTime(), null));
         } else {
-            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true, messageInfoDto.getDataTime()));
+            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true, messageInfoDto.getDataTime(), null));
             messageTypeListMap.get(messageInfoDto.getType()).forEach(userTelegramDto -> saveUserSend(new UserSend(userTelegramDto.getTelegramId(), userTelegramDto.getThreadId(), null, messageInformation)));
         }
         if (sendAllNotSendMessage()) {
@@ -136,7 +144,16 @@ public class MessageInformationService {
         messageInformationRepository
                 .findAll(specification)
                 .forEach(messageInformation -> {
-                    messageTypeListMap.get(MessageType.valueOf(messageInformation.getType())).forEach(userInfoDto -> saveUserSend(new UserSend(
+                    messageTypeListMap.get(MessageType.valueOf(messageInformation.getType()))
+                            .stream().filter(userInfoDto ->
+                                    (messageInformation.getProjectId() == null
+                                            && userInfoDto.getProjectId() == null)
+                                            ||
+                                            (messageInformation.getProjectId() != null
+                                                    && (messageInformation.getProjectId().equals(userInfoDto.getProjectId())
+                                                    || userInfoDto.getProjectId() == null)))
+
+                            .forEach(userInfoDto -> saveUserSend(new UserSend(
                             userInfoDto.getTelegramId(),
                             userInfoDto.getThreadId(),
                             userInfoDto.getOriginMessageId(),
@@ -168,7 +185,25 @@ public class MessageInformationService {
         userSendRepository.findAll(specification).forEach(
                 userSend -> {
                     try {
-                        telegramServiceIntegration.sendMessage(userSend.getMessageInformation().getAuthor(), userSend.getChatId(), userSend.getThreadId(), userSend.getMessageInformation().getText());
+                        if (userSend.getMessageInformation().getFileForDisk() != null) {
+                            String body = fileService.getFileBody(pathSave + userSend.getMessageInformation().getFileForDisk());
+                            if (body != null && !body.isBlank()) {
+                                telegramServiceIntegration.sendFile(
+                                        userSend.getMessageInformation().getAuthor(),
+                                        userSend.getChatId(),
+                                        userSend.getThreadId(),
+                                        userSend.getOriginMessageId(),
+                                        userSend.getMessageInformation().getFileForDisk(),
+                                        userSend.getMessageInformation().getText(),
+                                        body);
+                            }
+                        } else {
+                            telegramServiceIntegration.sendMessage(
+                                    userSend.getMessageInformation().getAuthor(),
+                                    userSend.getChatId(),
+                                    userSend.getThreadId(),
+                                    userSend.getMessageInformation().getText());
+                        }
                         userSend.setSend(true);
                         userSendRepository.save(userSend);
                     } catch (ResourceNotFoundRunTime exception) {
@@ -203,31 +238,22 @@ public class MessageInformationService {
             log.error("Нет списка получателей");
             return false;
         } else {
-            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true, messageInfoDto.getDataTime()));
+            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), false, messageInfoDto.getDataTime(), projectId));
             if (messageInfoDto.getUserInfoDto() != null) {
                 saveUserSend(new UserSend(
                         messageInfoDto.getUserInfoDto().getTelegramId(),
                         messageInfoDto.getUserInfoDto().getThreadId(),
                         messageInfoDto.getUserInfoDto().getOriginMessageId(),
                         messageInformation));
+                messageInformation.setSend(true);
+                saveMessageInformation(messageInformation);
             } else {
-                messageTypeListMap
-                        .get(messageInfoDto.getType())
-                        .stream().filter(userInfoDto ->
-                                (projectId == null
-                                        && userInfoDto.getProjectId() == null)
-                                        ||
-                                        (projectId != null
-                                                && (projectId.equals(userInfoDto.getProjectId())
-                                                || userInfoDto.getProjectId() == null)))
-                        .forEach(userInfoDto -> saveUserSend(new UserSend(
-                                userInfoDto.getTelegramId(),
-                                userInfoDto.getThreadId(),
-                                userInfoDto.getOriginMessageId(),
-                                messageInformation)));
+                updateAllNoAddUser();
             }
+            boolean flagSendFile = false;
             try {
                 telegramServiceIntegration.addFile(fileName, fileBody);
+                flagSendFile = true;
                 AtomicReference<Boolean> flagError = new AtomicReference<>(false);
                 userSendRepository.findAll(
                                 Specifications.eq(null, "messageInformation", messageInformation)
@@ -243,18 +269,19 @@ public class MessageInformationService {
                             }
                         });
                 if (flagError.get()) {
-                    messageInformation.setText("Не удалось доставить до вас файл ранее. " + messageInformation.getText());
-                    messageInformationRepository.save(messageInformation);
+                    saveFile(messageInformation, fileName, fileBody);
                 }
             } catch (ResourceNotFoundRunTime ex) {
-                messageInformation.setText("Не удалось доставить до вас файл ранее. " + messageInformation.getText());
+                saveFile(messageInformation, fileName, fileBody);
                 log.error("Сбой при отправке файла {} {}", fileName, ex.getMessage());
                 return false;
             } finally {
-                try {
-                    telegramServiceIntegration.deleteFile(fileName);
-                } catch (ResourceNotFoundRunTime ex) {
-                    log.error("Сбой при удаление файл из сервиса {} {}", fileName, ex.getMessage(), ex);
+                if (flagSendFile) {
+                    try {
+                        telegramServiceIntegration.deleteFile(fileName);
+                    } catch (ResourceNotFoundRunTime ex) {
+                        log.error("Сбой при удаление файл из сервиса {} {}", fileName, ex.getMessage(), ex);
+                    }
                 }
             }
 
@@ -264,5 +291,16 @@ public class MessageInformationService {
         }
         return true;
 
+    }
+
+    @Value("${file.save-into}")
+    private String pathSave;
+
+    private void saveFile(MessageInformation messageInformation, String file, String body) {
+        fileService.saveFile(pathSave + file, body);
+        messageInformation.setText("Не удалось доставить до вас файл ранее. " + messageInformation.getText());
+        messageInformation.setFileForDisk(file);
+        messageInformationRepository.save(messageInformation);
+        ScheduleService.getINSTANCE().sendMes();
     }
 }

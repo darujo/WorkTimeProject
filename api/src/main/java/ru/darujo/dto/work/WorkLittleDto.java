@@ -17,8 +17,10 @@ public class WorkLittleDto implements Serializable {
     private Integer stageZI;
     private Boolean rated;
     private List<Long> projectList;
+    private WorkLittleDto parentWork;
+    private List<WorkLittleDto> childWork;
 
-    public WorkLittleDto(Long id, Long codeSap, String codeZI, String name, Integer stageZI, Boolean rated, List<Long> projectList) {
+    public WorkLittleDto(Long id, Long codeSap, String codeZI, String name, Integer stageZI, Boolean rated, List<Long> projectList, WorkLittleDto parentWork, List<WorkLittleDto> childWork) {
         this.id = id;
         this.codeSap = codeSap;
         this.codeZI = codeZI;
@@ -26,6 +28,8 @@ public class WorkLittleDto implements Serializable {
         this.stageZI = stageZI;
         this.rated = rated;
         this.projectList = projectList;
+        this.parentWork = parentWork;
+        this.childWork = childWork;
     }
 
     @SuppressWarnings("unused")
@@ -57,5 +61,19 @@ public class WorkLittleDto implements Serializable {
     @SuppressWarnings("unused")
     public List<Long> getProjectList() {
         return projectList;
+    }
+
+    @SuppressWarnings("unused")
+    public WorkLittleDto getParentWork() {
+        return parentWork;
+    }
+
+    @SuppressWarnings("unused")
+    public List<WorkLittleDto> getChildWork() {
+        return childWork;
+    }
+
+    public List<Long> getChildId() {
+        return childWork == null || childWork.isEmpty() ? null : childWork.stream().map(WorkLittleDto::getId).toList();
     }
 }

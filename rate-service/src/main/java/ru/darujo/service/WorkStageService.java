@@ -91,8 +91,8 @@ public class WorkStageService {
     }
 
 
-    public List<WorkStage> findWorkStage(Long workId, Integer role, Long projectId) {
-        Specification<@NonNull WorkStage> specification = Specification.where(Specifications.eq(null, "workId", workId));
+    public List<WorkStage> findWorkStage(List<Long> workId, Integer role, Long projectId) {
+        Specification<@NonNull WorkStage> specification = Specification.where(Specifications.in(null, "workId", workId));
         specification = Specifications.eq(specification, "role", role);
         specification = Specifications.eq(specification, "projectId", projectId);
         return workStageRepository.findAll(specification);
@@ -103,17 +103,17 @@ public class WorkStageService {
         userServiceIntegration.updFio(userFio);
     }
 
-    private MapStringFloat getWorkTimeFact(Long workId, Long projectId, Integer stage) {
+    private MapStringFloat getWorkTimeFact(List<Long> workIdList, Long projectId, Integer stage) {
         try {
-            return workServiceIntegration.getWorkTimeStageFact(workId, projectId, stage);
+            return workServiceIntegration.getWorkTimeStageFact(workIdList, projectId, stage);
         } catch (RuntimeException ex) {
             return null;
         }
     }
 
-    public void updWorkStage(Long workId, List<WorkStageDto> workStages, Long projectId) {
+    public void updWorkStage(List<Long> workIdList, List<WorkStageDto> workStages, Long projectId) {
         for (int stage = 0; stage < 6; stage++) {
-            MapStringFloat mapStringFloat = getWorkTimeFact(workId, projectId, stage);
+            MapStringFloat mapStringFloat = getWorkTimeFact(workIdList, projectId, stage);
             if (mapStringFloat != null && !mapStringFloat.getList().isEmpty()) {
                 Map<String, WorkStageDto> workStageMap = new HashMap<>();
                 workStages.forEach(workStage -> workStageMap.put(workStage.getNikName(), workStage));
@@ -121,7 +121,7 @@ public class WorkStageService {
                 mapStringFloat.getList().forEach((nikName, time) -> {
                     WorkStageDto workStage = workStageMap.get(nikName);
                     if (workStage == null) {
-                        workStage = new WorkStageDto(-1L, nikName, -1, null, null, null, null, null, workId, projectId);
+                        workStage = new WorkStageDto(-1L, nikName, -1, null, null, null, null, null, null, projectId);
                         updFio(workStage);
                         workStages.add(workStage);
                     }
@@ -131,7 +131,7 @@ public class WorkStageService {
         }
     }
 
-    public List<WorkStage> findWorkStage(Long workId, Long projectId) {
-        return findWorkStage(workId, null, projectId);
+    public List<WorkStage> findWorkStage(List<Long> workIdList, Long projectId) {
+        return findWorkStage(workIdList, null, projectId);
     }
 }

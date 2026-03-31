@@ -535,11 +535,11 @@ TD {
 }
 
 .dropzone.active {
-    background: #67AFAC;
+    background: light-dark(#67AFAC, #232323);
 }
 
 .dropzone.dropped {
-    background: #ddffdd;
+    background: light-dark(#ddffdd, #484848);
 }
 
 .div_process {

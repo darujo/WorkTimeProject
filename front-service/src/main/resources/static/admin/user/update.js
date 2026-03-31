@@ -84,9 +84,9 @@ updateApp.controller('updateController', function ($scope, $http, $location) {
                         alert("Обновление успешно отправлено");
                     }, function errorCallback(response) {
                         $scope.sendMessageForAll = false;
+                        console.log("----error---");
                         console.log(response);
 
-                        console.log(response.data.message)
                         if ($location.checkAuthorized(response)) {
                             console.log(1)
                             if(response.data.message === undefined ){

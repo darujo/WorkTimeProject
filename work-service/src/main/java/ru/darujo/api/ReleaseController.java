@@ -5,6 +5,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.ReleaseConvertor;
 import ru.darujo.dto.work.ReleaseEditDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
+import ru.darujo.model.Release;
+import ru.darujo.model.ReleaseFull;
+import ru.darujo.model.ReleaseProject;
+import ru.darujo.service.ReleaseProjectService;
 import ru.darujo.service.ReleaseService;
 
 import java.util.List;
@@ -14,6 +18,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/v1/release")
 public class ReleaseController {
     private ReleaseService releaseService;
+    private ReleaseProjectService releaseProjectService;
 
     @Autowired
     public void setReleaseService(ReleaseService releaseService) {
@@ -21,9 +26,10 @@ public class ReleaseController {
     }
 
     @GetMapping("/{id}")
-    public ReleaseEditDto releaseEdit(@PathVariable long id
+    public ReleaseEditDto releaseEdit(@PathVariable long id,
+                                      @RequestParam(name = "system_project") Long projectId
     ) {
-        return ReleaseConvertor.getReleaseDto(releaseService.findById(id));
+        return ReleaseConvertor.getReleaseDto(releaseService.getReleaseFull(id, projectId));
     }
 
     @PostMapping("")
@@ -34,7 +40,11 @@ public class ReleaseController {
         if (system_right == null || !system_right.contains("ZI_EDIT")) {
             throw new ResourceNotFoundRunTime("У вас нет права ZI_EDIT");
         }
-        return ReleaseConvertor.getReleaseDto(releaseService.saveRelease(ReleaseConvertor.getRelease(projectId, releaseEditDto)));
+        ReleaseProject releaseProject = ReleaseConvertor.getRelease(projectId, releaseEditDto);
+        Release release = releaseService.saveRelease(releaseProject.getRelease());
+        releaseProject = releaseProjectService.save(releaseProject);
+        ReleaseFull releaseFull = new ReleaseFull(release, releaseProject);
+        return ReleaseConvertor.getReleaseDto(releaseFull);
     }
 
     @DeleteMapping("/{id}")
@@ -48,5 +58,10 @@ public class ReleaseController {
             @RequestParam(name = "system_project", required = false) Long projectId
     ) {
         return releaseService.findAll(null, projectId).stream().map(ReleaseConvertor::getReleaseDto).collect(Collectors.toList());
+    }
+
+    @Autowired
+    public void setReleaseProjectService(ReleaseProjectService releaseProjectService) {
+        this.releaseProjectService = releaseProjectService;
     }
 }

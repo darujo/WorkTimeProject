@@ -22,7 +22,7 @@ public abstract class ServiceIntegration {
 
     public Void test() {
         if (webClient == null) {
-            throw new RuntimeException("Сервис не подерживает тест соединение");
+            throw new RuntimeException("Сервис не поддерживает тест соединение");
         }
         try {
             return webClient.get().uri("/test")
@@ -39,7 +39,7 @@ public abstract class ServiceIntegration {
 
     public void shutDown(String token) {
         if (webClient == null) {
-            throw new RuntimeException("Сервис не подерживает тест соединение");
+            throw new RuntimeException("Сервис не поддерживает тест соединение");
         }
         try {
             webClient.post().uri("/shutdownContext")
@@ -73,6 +73,7 @@ public abstract class ServiceIntegration {
                 );
     }
 
+    @SuppressWarnings("SameParameterValue")
     protected void addTeg(StringBuilder stringBuilder, String str, Enum<?> value) {
         addTeg(stringBuilder, str, value.toString());
     }
@@ -103,6 +104,11 @@ public abstract class ServiceIntegration {
         }
     }
 
+    protected void addTeg(StringBuilder stringBuilder, String str, Iterable<?> valueList) {
+        if(valueList != null) {
+            valueList.forEach(value -> addTeg(stringBuilder, str, value));
+        }
+    }
     protected void addTeg(StringBuilder stringBuilder, String str, Long value) {
         if (value != null) {
             if (!stringBuilder.isEmpty()) {

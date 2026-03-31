@@ -10,8 +10,8 @@
             <form novalidate ng-submit="filterWork()" class="filter">
                 <div class="filter_block">
                     <div class="horiz">
-                        <label for="Name" class="p-head"> Наименование </label>
-                        <input class="vvod80" inputmode="text" id="Name"
+                        <label for="FilterName" class="p-head"> Наименование </label>
+                        <input class="vvod80" inputmode="text" id="FilterName"
                                ng-model="Filt.name"/>
                         <br>
                     </div>
@@ -212,6 +212,68 @@
         <p class="p-form">{{Resp.message}}</p>
         <button type="submit" class="button" id="ButtonSaveUp">Сохранить</button>
         <button type="button" ng-click="loadWork()" class="button">Вернуться к списку</button>
+        <div class="horiz" ng-if="!findParent && !Work.childWork.length > 0">
+            <label for="WorkNameParent"></label>
+            <input type="text" id="WorkNameParent" class="vvod80" readonly ng-model="Work.parentWork.name">
+
+            <button type="button" ng-click="findWork()" class="head_button">Найти</button>
+            <button type="button" ng-click="clearWork()" class="head_button">Убрать</button>
+        </div>
+        <div id="FindWork" ng-if="findParent">
+            <details class="details_block">
+                <summary class="p-head">Фильтр</summary>
+
+                <div>
+                    <form novalidate class="filter">
+                        <label for="Name" class="p-head"> Наименование </label>
+                        <input class="vvod80" inputmode="text" id="Name"
+                               ng-model="FiltWorkParent.name"/>
+                        <br>
+                        <button type="button" ng-click="loadWorkParent(0)" class="head_button">Применить</button>
+
+                    </form>
+                </div>
+            </details>
+            <div class="filter">
+                <button type="button" class="head_button" ng-click="loadWorkParent(-1)">PrevPage</button>
+                <label for="PageParent"></label>
+                <input class="vvod" type="number" id="PageParent" value="1" ng-model="pageParent"/>
+                <button type="button" class="head_button" ng-click="loadWorkParent(1)">NextPage</button>
+                <p class="p-head">Количество элементов</p>
+                <label for="WorkSizeParent" class="p-head">Количество элементов</label>
+                <select class="vvod20" name="WorkSizeFilterTaskSelect" id="WorkSizeParent" ng-model="sizeParent"
+                        ng-change="loadWorkParent(0)">
+                    <option ng-value="10" value="10" selected>10</option>
+                    <option ng-value="25" value="25">25</option>
+                    <option ng-value="50" value="50">50</option>
+                    <option ng-value="100" value="100">100</option>
+                    <option ng-value="500" value="500">500</option>
+                    <option ng-value="1000" value="1000">1000</option>
+                    <option ng-value="10000" value="10000">10000</option>
+                </select>
+            </div>
+            <table>
+
+                <tr>
+                    <td class="table_head2" rowspan="3"> Код SAP</td>
+                    <td class="table_head2" rowspan="3"> Код Зи</td>
+                    <td class="table_head2" rowspan="3"> Наименование</td>
+                    <td class="table_head2" rowspan="3"> Этап</td>
+                </tr>
+                <tbody>
+                <tr ng-repeat="work in WorkListParent">
+                    <td>{{work.codeSap}}</td>
+                    <td>{{work.codeZI}}</td>
+                    <td>
+                        <button type="button" ng-click="setParent(work.id)">{{work.name}}</button>
+                    </td>
+                    <td>{{work.stageZI}}</td>
+                </tr>
+                </tbody>
+            </table>
+
+
+        </div>
         <div class="horiz">
             <label for="CodeSap" class="p-form"> Код SAP : </label>
             <input class="vvod40" type="number" inputmode="decimal" id="CodeSap"
@@ -539,7 +601,7 @@
                ng-model="Work.task"/>
         <br>
 
-        <label for="Description">Краткое описание внутренней задачи :</label>
+        <label for="Description">Краткое описание внутренней задачи:</label>
         <input class="vvod" type="text" id="Description"
                placeholder="Ведите описание"
                ng-model="Work.description"/>
@@ -641,7 +703,30 @@
                 </option>
             </select>
         </div>
-        <button type="submit" class="button" id="ButtonSaveDown">Сохранить</button>
+        <div id="ChildWork" ng-if="Work.childWork.length > 0">
+            <table>
+
+                <tr>
+                    <td class="table_head2" rowspan="3"> Код SAP</td>
+                    <td class="table_head2" rowspan="3"> Код Зи</td>
+                    <td class="table_head2" rowspan="3"> Наименование</td>
+                    <td class="table_head2" rowspan="3"> Этап</td>
+                </tr>
+                <tbody>
+                <tr ng-repeat="work in Work.childWork">
+                    <td>{{work.codeSap}}</td>
+                    <td>{{work.codeZI}}</td>
+                    <td>
+                        <button ng-click="setWork(work.id)">{{work.name}}</button>
+                    </td>
+                    <td>{{work.stageZI}}</td>
+                </tr>
+                </tbody>
+            </table>
+
+
+        </div>
+        <button type="button" ng-click="saveWork()" class="button" id="ButtonSaveDown">Сохранить</button>
         <button type="button" ng-click="loadWork()" class="button">Вернуться к списку</button>
     </form>
 

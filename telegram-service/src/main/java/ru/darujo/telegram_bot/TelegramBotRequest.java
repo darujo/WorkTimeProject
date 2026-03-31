@@ -55,8 +55,12 @@ public class TelegramBotRequest implements SpringLongPollingBot, LongPollingUpda
 
     @PostConstruct
     public void init() {
+        fileService.addFile("hi", fileService.resourceToFile("hi.jpg"));
+        fileService.addFile("menu", fileService.resourceToFile("menu.jpg"));
+
         botName = telegramBotSend.getName();
         messageForAdmin("Бот @" + botName + " запущен");
+
     }
 
     @Autowired

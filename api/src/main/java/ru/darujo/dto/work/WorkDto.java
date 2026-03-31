@@ -1,8 +1,10 @@
 package ru.darujo.dto.work;
 
+import ru.darujo.assistant.helper.DateHelper;
+
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class WorkDto implements Serializable, WorkPlanTime {
 
@@ -51,6 +53,7 @@ public class WorkDto implements Serializable, WorkPlanTime {
     // Выдача релиза дата факт
     private Date issuingReleaseFact;
     private Boolean rated;
+    private List<Long> childId;
 
     @SuppressWarnings("unused")
     public String getAnaliseEndPlan() {
@@ -76,7 +79,8 @@ public class WorkDto implements Serializable, WorkPlanTime {
                    String release,
                    Date issuingReleasePlan,
                    Date issuingReleaseFact,
-                   Boolean rated) {
+                   Boolean rated,
+                   List<Long> childId) {
         this.id = id;
         this.codeSap = codeSap;
         this.codeZI = codeZI;
@@ -97,6 +101,7 @@ public class WorkDto implements Serializable, WorkPlanTime {
         this.issuingReleaseFact = issuingReleaseFact;
         this.rated = rated;
         this.projectId = projectId;
+        this.childId = childId;
     }
 
     public Long getId() {
@@ -212,13 +217,16 @@ public class WorkDto implements Serializable, WorkPlanTime {
         return rated;
     }
 
-    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-
     private String dateToText(Date date) {
         if (date == null) {
             return null;
         }
-        return sdf.format(date);
+        return DateHelper.dateToDDMMYYYY(date);
+    }
+
+    @SuppressWarnings("unused")
+    public List<Long> getChildId() {
+        return childId;
     }
 
     @Override

@@ -6,6 +6,7 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -18,6 +19,7 @@ import ru.darujo.repository.TaskRepository;
 import ru.darujo.specifications.Specifications;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -81,20 +83,21 @@ public class TaskService {
         taskRepository.deleteById(id);
     }
 
-    public Iterable<Task> findTask(String nikName,
-                                   String codeBTS,
-                                   String code,
-                                   String description,
-                                   Long workId,
-                                   Integer type,
-                                   Long projectId,
-                                   Integer page,
-                                   Integer size) {
+    public Page<Task> findTask(String nikName,
+                               String codeBTS,
+                               String code,
+                               String description,
+                               List<Long> workIdList,
+                               Integer type,
+                               Long projectId,
+                               Integer page,
+                               Integer size) {
         return findTask(nikName,
                 codeBTS,
                 code,
                 description,
-                workId,
+                null,
+                workIdList,
                 type,
                 null,
                 projectId,
@@ -102,29 +105,48 @@ public class TaskService {
                 size);
     }
 
-    public Iterable<Task> findTask(String nikName,
-                                   String codeBTS,
-                                   String code,
-                                   String description,
-                                   Long workId,
-                                   Integer type,
-                                   List<Long> listTaskId,
-                                   Long projectId,
-                                   Integer page,
-                                   Integer size) {
+    public Page<Task> findTask(String nikName,
+                               String codeBTS,
+                               String code,
+                               String description,
+                               String ziName,
+                               List<Long> workId,
+                               Integer type,
+                               List<Long> listTaskId,
+                               Long projectId,
+                               Integer page,
+                               Integer size) {
         Specification<@NonNull Task> specification = Specification.where(Specifications.queryDistinctTrue());
+        if (ziName != null) {
+            List<Long> workIdList = workServiceIntegration.workLittleIdList(ziName, null, projectId, null, null, null);
+            if (workIdList.isEmpty()) {
+                return new PageImpl<>(new ArrayList<>());
+            }
+            if (workId == null || workId.isEmpty()) {
+                specification = Specifications.in(specification, "workId", workIdList);
+            } else {
+                if (workIdList.retainAll(workId)) {
+                    specification = Specifications.in(specification, "workId", workIdList);
+                } else {
+                    return new PageImpl<>(new ArrayList<>());
+                }
+            }
+        } else {
+            specification = Specifications.in(specification, "workId", workId);
+        }
+
         specification = Specifications.in(specification, "id", listTaskId);
         specification = Specifications.like(specification, "nikName", nikName);
         specification = Specifications.like(specification, "codeBTS", codeBTS);
         specification = Specifications.like(specification, "code", code);
         specification = Specifications.like(specification, "description", description);
         specification = Specifications.eq(specification, "type", type);
-        specification = Specifications.eq(specification, "workId", workId);
+
         specification = Specifications.eq(specification, "projectId", projectId);
         if (page != null) {
             return taskRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "refresh")));
         } else {
-            return taskRepository.findAll(specification);
+            return new PageImpl<>(taskRepository.findAll(specification));
         }
 
     }
@@ -137,7 +159,9 @@ public class TaskService {
         task.setRefresh(new Timestamp(System.currentTimeMillis()));
         taskRepository.save(task);
         boolean ok = workServiceIntegration.setWorkDate(task.getWorkId(), task.getProjectId(), date);
-        log.info("Обновили даты в ЗИ? {}", ok);
+        if (!ok) {
+            log.info("Обновили даты в ЗИ? {} {} {}", task.getWorkId(), task.getProjectId(), date);
+        }
         return true;
     }
 

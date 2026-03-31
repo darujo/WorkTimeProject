@@ -45,7 +45,7 @@ public class WorkStageController {
     }
 
     @GetMapping("")
-    public List<WorkStageDto> workStageList(@RequestParam Long workId,
+    public List<WorkStageDto> workStageList(@RequestParam List<Long> workId,
                                             @RequestParam(defaultValue = "false") boolean loadFact,
                                             @RequestParam("system_project") Long projectId) {
         List<WorkStageDto> workStageDTOs = new ArrayList<>();
