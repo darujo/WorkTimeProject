@@ -6,12 +6,12 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.user.UserInfoTypeActiveDto;
 import ru.darujo.model.User;
 import ru.darujo.model.UserInfoType;
 import ru.darujo.repository.UserInfoTypeRepository;
 import ru.darujo.specifications.Specifications;
+import ru.darujo.type.MessageType;
 
 import java.util.Collection;
 import java.util.List;
@@ -73,20 +73,20 @@ public class UserInfoTypeService {
 
     public List<UserInfoType> getInfoTypes(User user) {
 
-        return getInfoTypes(user, null, null, null);
+        return getInfoTypes(user, null, null, null, null);
     }
 
     public List<UserInfoType> getInfoTypes(MessageType messageType) {
-        return getInfoTypes(null, null, null, messageType.toString());
+        return getInfoTypes(null, null, null, null, messageType.toString());
     }
 
-    public List<UserInfoType> getInfoTypes(User user, Long telegramId, Integer threadId, String messageType) {
-        Specification<@NonNull UserInfoType> specification = getUserInfoTypeSpecification(user, telegramId, threadId, messageType);
+    public List<UserInfoType> getInfoTypes(User user, String senderType, String telegramId, Integer threadId, String messageType) {
+        Specification<@NonNull UserInfoType> specification = getUserInfoTypeSpecification(user, senderType, telegramId, threadId, messageType);
         return userInfoTypeRepository.findAll(specification);
     }
 
-    public Optional<UserInfoType> getInfoTypeForUser(User user, Long projectId, Long telegramId, Integer threadId, String messageType) {
-        Specification<@NonNull UserInfoType> specification = getUserInfoTypeSpecification(user, telegramId, threadId, messageType);
+    public Optional<UserInfoType> getInfoTypeForUser(User user, String senderType, Long projectId, String telegramId, Integer threadId, String messageType) {
+        Specification<@NonNull UserInfoType> specification = getUserInfoTypeSpecification(user, senderType, telegramId, threadId, messageType);
         if (projectId == null) {
             specification = Specifications.isNull(specification, "projectId");
         } else {
@@ -95,9 +95,10 @@ public class UserInfoTypeService {
         return userInfoTypeRepository.findOne(specification);
     }
 
-    private static Specification<@NonNull UserInfoType> getUserInfoTypeSpecification(User user, Long telegramId, Integer threadId, String messageType) {
+    private static Specification<@NonNull UserInfoType> getUserInfoTypeSpecification(User user, String senderType, String telegramId, Integer threadId, String messageType) {
         Specification<@NonNull UserInfoType> specification = Specification.unrestricted();
         specification = Specifications.eq(specification, "user", user);
+        specification = Specifications.eq(specification, "typeSender", senderType);
         specification = Specifications.eq(specification, "telegramId", telegramId);
         specification = Specifications.eq(specification, "threadId", threadId);
         specification = Specifications.eq(specification, "code", messageType);
@@ -117,8 +118,8 @@ public class UserInfoTypeService {
         log.info(userInfoType.toString());
     }
 
-    public boolean exists(Long telegramId) {
-        Specification<@NonNull UserInfoType> specification = getUserInfoTypeSpecification(null, telegramId, null, null);
+    public boolean exists(String senderType, String telegramId) {
+        Specification<@NonNull UserInfoType> specification = getUserInfoTypeSpecification(null, senderType, telegramId, null, null);
         return userInfoTypeRepository.exists(specification);
 
     }

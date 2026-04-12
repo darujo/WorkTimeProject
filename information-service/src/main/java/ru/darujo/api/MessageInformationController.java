@@ -7,6 +7,7 @@ import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.model.ChatInfo;
 import ru.darujo.service.MessageInformationService;
 import ru.darujo.service.ScheduleService;
+import ru.darujo.type.MessageSenderType;
 
 import java.sql.Timestamp;
 
@@ -49,8 +50,9 @@ public class MessageInformationController {
                            @RequestParam String author,
                            @RequestParam(required = false) String chatId,
                            @RequestParam(required = false) Integer threadId,
-                           @RequestParam(required = false) Integer originMessageId) {
-        scheduleService.sendReport(reportType, new ChatInfo(author, chatId, threadId, originMessageId));
+                           @RequestParam(required = false) Integer originMessageId,
+                           @RequestParam(required = false) String senderType) {
+        scheduleService.sendReport(reportType, new ChatInfo(author, senderType == null ? null : MessageSenderType.valueOf(senderType), chatId, threadId, originMessageId));
     }
 
 }

@@ -12,6 +12,7 @@ import ru.darujo.integration.InfoServiceIntegration;
 import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.model.ChatInfo;
 import ru.darujo.telegram_bot.TelegramBotSend;
+import ru.darujo.type.MessageSenderType;
 import ru.darujo.type.ReportTypeDto;
 import ru.darujo.type.TypeEnum;
 
@@ -168,9 +169,9 @@ public class MenuService {
                 Message message = telegramBotSend.sendMessage(chatInfo, "Отчет \"" + reportType.getName() + "\" будет доставлен в ближайшее время");
                 chatInfo.setOriginMessageId(message.getMessageId());
                 if (sendMe) {
-                    infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), Long.parseLong(chatInfo.getChatId()), chatInfo.getThreadId(), chatInfo.getOriginMessageId());
+                    infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), MessageSenderType.Telegram, chatInfo.getChatId(), chatInfo.getThreadId(), chatInfo.getOriginMessageId());
                 } else {
-                    infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), null, null, null);
+                    infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), null, null, null, null);
                 }
             } else {
                 telegramBotSend.sendMessage(chatInfo, resultMes.getMessage());

@@ -9,7 +9,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.darujo.dto.information.MessageInfoDto;
-import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.project.ProjectDto;
 import ru.darujo.dto.ratestage.WorkStageDto;
 import ru.darujo.dto.work.WorkPlanTime;
@@ -22,6 +21,7 @@ import ru.darujo.model.*;
 import ru.darujo.repository.WorkLittleRepository;
 import ru.darujo.repository.WorkRepository;
 import ru.darujo.specifications.Specifications;
+import ru.darujo.type.MessageType;
 import ru.darujo.url.UrlWorkTime;
 
 import java.sql.Timestamp;

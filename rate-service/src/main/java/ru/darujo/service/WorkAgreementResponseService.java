@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import ru.darujo.assistant.helper.CompareHelper;
 import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.information.MessageInfoDto;
-import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.ratestage.StatusResponse;
 import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
@@ -23,6 +22,7 @@ import ru.darujo.model.WorkAgreementRequest;
 import ru.darujo.model.WorkAgreementResponse;
 import ru.darujo.repository.WorkAgreementResponseRepository;
 import ru.darujo.specifications.Specifications;
+import ru.darujo.type.MessageType;
 import ru.darujo.url.UrlWorkTime;
 
 import java.util.Arrays;

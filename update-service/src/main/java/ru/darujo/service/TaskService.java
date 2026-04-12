@@ -6,12 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.darujo.dto.information.MessageInfoDto;
-import ru.darujo.dto.information.MessageType;
 import ru.darujo.integration.InfoServiceIntegration;
 import ru.darujo.integration.ServiceIntegration;
 import ru.darujo.model.RunnableNotException;
 import ru.darujo.model.ServiceType;
 import ru.darujo.object.ServiceIntegrationObject;
+import ru.darujo.type.MessageType;
 
 import java.io.BufferedInputStream;
 import java.io.File;

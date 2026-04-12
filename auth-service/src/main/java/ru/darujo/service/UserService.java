@@ -15,7 +15,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.darujo.convertor.RoleConvertor;
 import ru.darujo.dto.information.MapUserInfoDto;
-import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.user.*;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.InfoServiceIntegration;
@@ -24,6 +23,8 @@ import ru.darujo.model.Right;
 import ru.darujo.model.User;
 import ru.darujo.repository.UserRepository;
 import ru.darujo.specifications.Specifications;
+import ru.darujo.type.MessageSenderType;
+import ru.darujo.type.MessageType;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -183,7 +184,7 @@ public class UserService {
                                            String lastName,
                                            String firstName,
                                            String patronymic,
-                                           Long telegramId,
+                                           String telegramId,
                                            Boolean telegramIsNotNull,
                                            Long projectId) {
         Specification<@NonNull User> specification = getUserSpecification(role, nikName, lastName, firstName, patronymic, telegramId, telegramIsNotNull, projectId);
@@ -201,7 +202,7 @@ public class UserService {
         return userPage;
     }
 
-    private Specification<@NonNull User> getUserSpecification(String role, String nikName, String lastName, String firstName, String patronymic, Long telegramId, Boolean telegramIsNotNull, Long projectId) {
+    private Specification<@NonNull User> getUserSpecification(String role, String nikName, String lastName, String firstName, String patronymic, String telegramId, Boolean telegramIsNotNull, Long projectId) {
         Specification<@NonNull User> specification = Specification.unrestricted();
         if (role != null && !role.isEmpty()) {
             specification = Specifications.in(specification, "r", roleService.findByName(projectId, role).orElseThrow(() -> new UsernameNotFoundException("Роль не найдена " + role))
@@ -271,25 +272,35 @@ public class UserService {
     }
 
     public MapUserInfoDto getUserMessageDTOs() {
-        Map<MessageType, List<UserInfoDto>> messageTypeListMap = new HashMap<>();
+        Map<MessageType, Map<MessageSenderType, List<UserInfoDto>>> messageTypeListMap = new HashMap<>();
         for (MessageType type : MessageType.values()) {
-//            List<UserInfoDto> userDTOs = getUserList(null, null, null, null, null, null, null, null, true).getContent().stream().map(UserConvertor::getUserInfoDto).toList();
-            List<UserInfoDto> userDTOs = userInfoTypeService
+            Map<MessageSenderType, List<UserInfoDto>> senderTypeListMap = new HashMap<>();
+            messageTypeListMap.put(type, senderTypeListMap);
+
+            userInfoTypeService
                     .getInfoTypes(type)
                     .stream()
                     .filter(userInfoType ->
                             userInfoType.getUser().getTelegramId() != null
                                     && userInfoType.getIsActive() != null
                                     && userInfoType.getIsActive())
-                    .map(
-                            userInfoType -> new UserInfoDto(
-                                    userInfoType.getUser().getId(),
-                                    userInfoType.getUser().getNikName(),
-                                    userInfoType.getProjectId(),
-                                    userInfoType.getTelegramId() == null ? Long.toString(userInfoType.getUser().getTelegramId()) : Long.toString(userInfoType.getTelegramId()),
-                                    userInfoType.getThreadId(),
-                                    null)).toList();
-            messageTypeListMap.put(type, userDTOs);
+                    .forEach(
+                            userInfoType -> {
+
+                                List<UserInfoDto> userInfoDTOs = senderTypeListMap.computeIfAbsent(MessageSenderType.valueOf(userInfoType.getSenderType()), k -> new ArrayList<>());
+                                userInfoDTOs.add(new UserInfoDto(
+                                        userInfoType.getSenderType(),
+                                        userInfoType.getUser().getId(),
+                                        userInfoType.getUser().getNikName(),
+                                        userInfoType.getProjectId(),
+                                        userInfoType.getTelegramId() == null ? userInfoType.getUser().getTelegramId() : userInfoType.getTelegramId(),
+                                        userInfoType.getThreadId(),
+                                        null));
+
+                            }
+                    );
+
+
         }
         return new MapUserInfoDto(messageTypeListMap);
     }
@@ -361,7 +372,7 @@ public class UserService {
         }
     }
 
-    public boolean exists(Long chatId) {
+    public boolean exists(String chatId) {
         return userRepository.exists(getUserSpecification(null, null, null, null, null, chatId, null, null));
     }
 

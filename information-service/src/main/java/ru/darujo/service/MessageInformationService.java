@@ -11,7 +11,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.MessageInfoDto;
-import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.user.UserInfoDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.TelegramServiceIntegration;
@@ -21,8 +20,12 @@ import ru.darujo.model.UserSend;
 import ru.darujo.repository.MessageInformationRepository;
 import ru.darujo.repository.UserSendRepository;
 import ru.darujo.specifications.Specifications;
+import ru.darujo.type.MessageSenderType;
+import ru.darujo.type.MessageType;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -63,7 +66,7 @@ public class MessageInformationService {
         this.telegramServiceIntegration = telegramServiceIntegration;
     }
 
-    Map<MessageType, List<UserInfoDto>> messageTypeListMap = null;
+    Map<MessageType, Map<MessageSenderType, List<UserInfoDto>>> messageTypeListMap = null;
     private Timestamp lastInitMesType;
 
     @Transactional
@@ -104,17 +107,32 @@ public class MessageInformationService {
     public void setMessageTypeListMap(MapUserInfoDto messageTypeListMap) {
         this.messageTypeListMap = messageTypeListMap.getMessageTypeListMap();
     }
-
     @Transactional
     public Boolean addMessage(MessageInfoDto messageInfoDto) {
+        return addMessage(messageInfoDto, null);
+    }
+
+    @Transactional
+    public Boolean addMessage(MessageInfoDto messageInfoDto, List<UserInfoDto> userSendList) {
         initMesType();
 
         if (messageInfoDto.getText().isBlank()) {
             return false;
         }
-        if (messageInfoDto.getUserInfoDto() != null) {
+        if (userSendList != null) {
+            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true, messageInfoDto.getDataTime(), null));
+            userSendList.forEach(userInfoDto ->
+                    saveUserSend(new UserSend(
+                            userInfoDto.getSenderType(),
+                            userInfoDto.getTelegramId(),
+                            userInfoDto.getThreadId(),
+                            userInfoDto.getOriginMessageId(),
+                            messageInformation))
+            );
+        } else if (messageInfoDto.getUserInfoDto() != null) {
             MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true, messageInfoDto.getDataTime(), null));
             saveUserSend(new UserSend(
+                    messageInfoDto.getUserInfoDto().getSenderType(),
                     messageInfoDto.getUserInfoDto().getTelegramId(),
                     messageInfoDto.getUserInfoDto().getThreadId(),
                     messageInfoDto.getUserInfoDto().getOriginMessageId(),
@@ -123,7 +141,9 @@ public class MessageInformationService {
             saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), false, messageInfoDto.getDataTime(), null));
         } else {
             MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true, messageInfoDto.getDataTime(), null));
-            messageTypeListMap.get(messageInfoDto.getType()).forEach(userTelegramDto -> saveUserSend(new UserSend(userTelegramDto.getTelegramId(), userTelegramDto.getThreadId(), null, messageInformation)));
+            messageTypeListMap.get(messageInfoDto.getType()).forEach((senderType, userInfoDTOList) ->
+                    userInfoDTOList.forEach(userInfoDto ->
+                            saveUserSend(new UserSend(userInfoDto.getSenderType(), userInfoDto.getTelegramId(), userInfoDto.getThreadId(), null, messageInformation))));
         }
         if (sendAllNotSendMessage()) {
             ScheduleService.getINSTANCE().sendMes();
@@ -145,19 +165,21 @@ public class MessageInformationService {
                 .findAll(specification)
                 .forEach(messageInformation -> {
                     messageTypeListMap.get(MessageType.valueOf(messageInformation.getType()))
-                            .stream().filter(userInfoDto ->
-                                    (messageInformation.getProjectId() == null
-                                            && userInfoDto.getProjectId() == null)
-                                            ||
-                                            (messageInformation.getProjectId() != null
-                                                    && (messageInformation.getProjectId().equals(userInfoDto.getProjectId())
-                                                    || userInfoDto.getProjectId() == null)))
+                            .forEach((senderType, userInfoDTOs) ->
 
-                            .forEach(userInfoDto -> saveUserSend(new UserSend(
-                            userInfoDto.getTelegramId(),
-                            userInfoDto.getThreadId(),
-                            userInfoDto.getOriginMessageId(),
-                            messageInformation)));
+                                    userInfoDTOs.stream().filter(userInfoDto ->
+                                                    (messageInformation.getProjectId() == null
+                                                            && userInfoDto.getProjectId() == null)
+                                                            ||
+                                                            (messageInformation.getProjectId() != null
+                                                                    && (messageInformation.getProjectId().equals(userInfoDto.getProjectId())
+                                                                    || userInfoDto.getProjectId() == null)))
+
+                                            .forEach(userInfoDto -> saveUserSend(new UserSend(senderType.toString(),
+                                                    userInfoDto.getTelegramId(),
+                                                    userInfoDto.getThreadId(),
+                                                    userInfoDto.getOriginMessageId(),
+                                                    messageInformation))));
                     messageInformation.setSend(true);
                     saveMessageInformation(messageInformation);
                 });
@@ -216,9 +238,17 @@ public class MessageInformationService {
     }
 
 
-    public List<UserInfoDto> getUsersForMesType(MessageType type) {
+    public Map<String, List<UserInfoDto>> getUsersForMesType(MessageType type) {
         if (messageTypeListMap != null) {
-            return messageTypeListMap.get(type);
+            Map<String, List<UserInfoDto>> userMap = new HashMap<>();
+
+            messageTypeListMap
+                    .get(type)
+                    .forEach((senderType, userInfoDTOs) ->
+                            userInfoDTOs.forEach(userInfoDto -> {
+                                List<UserInfoDto> userList = userMap.computeIfAbsent(userInfoDto.getNikName(), s -> new ArrayList<>());
+                                userList.add(userInfoDto);
+                            }));
         }
         return null;
 
@@ -241,6 +271,7 @@ public class MessageInformationService {
             MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), false, messageInfoDto.getDataTime(), projectId));
             if (messageInfoDto.getUserInfoDto() != null) {
                 saveUserSend(new UserSend(
+                        messageInfoDto.getUserInfoDto().getSenderType(),
                         messageInfoDto.getUserInfoDto().getTelegramId(),
                         messageInfoDto.getUserInfoDto().getThreadId(),
                         messageInfoDto.getUserInfoDto().getOriginMessageId(),

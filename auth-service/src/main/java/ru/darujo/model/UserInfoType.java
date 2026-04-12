@@ -22,11 +22,13 @@ public class UserInfoType {
     @Column(name = "code")
     private String code;
     @Column(name = "telegram_id")
-    private Long telegramId;
+    private String telegramId;
     @Column(name = "thread_id")
     private Integer threadId;
     @Column(name = "is_active")
     private Boolean isActive;
+    @Column(name = "sender_type", nullable = false)
+    private String senderType;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

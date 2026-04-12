@@ -32,7 +32,6 @@ import ru.darujo.service.MessageSendService;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -92,8 +91,7 @@ public class TelegramBotSend {
             User user = tgClient.execute(getMyName);
             return user.getUserName();
         } catch (TelegramApiException e) {
-            log.error(e.getMessage());
-            log.error(Arrays.toString(e.getStackTrace()));
+            log.error(e.getMessage(), e);
             return null;
         }
 
@@ -198,7 +196,7 @@ public class TelegramBotSend {
         try {
             return tgClient.execute(sendChatAction);
         } catch (TelegramApiException e) {
-            log.error("{} \n {}", e.getMessage(), Arrays.toString(e.getStackTrace()));
+            log.error(e.getMessage(), e);
         }
         return false;
     }

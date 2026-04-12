@@ -75,7 +75,9 @@ public abstract class ServiceIntegration {
 
     @SuppressWarnings("SameParameterValue")
     protected void addTeg(StringBuilder stringBuilder, String str, Enum<?> value) {
-        addTeg(stringBuilder, str, value.toString());
+        if (value != null) {
+            addTeg(stringBuilder, str, value.toString());
+        }
     }
 
     protected void addTeg(StringBuilder stringBuilder, String str, Date value) {

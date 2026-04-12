@@ -7,11 +7,9 @@ import ru.darujo.dto.workperiod.UserWorkFormDto;
 import ru.darujo.dto.workperiod.WorkUserTime;
 import ru.darujo.dto.workrep.WorkRepDto;
 import ru.darujo.dto.workrep.WorkRepProjectDto;
+import uk.co.certait.htmlexporter.writer.excel.ExcelExporter;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.List;
@@ -22,98 +20,96 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @Service
 public class HtmlService {
-    public String printRep(List<WorkRepDto> works, String headText) {
 
+    public String printRep(List<WorkRepDto> works, String headText) {
+        boolean excel = true;
         StringBuilder sb = new StringBuilder();
         getHead(sb);
         sb.append("<h1>").append(headText).append("</h1>");
         sb.append("<body>");
-        sb.append("<div  class=\"wrapper\">");
-        sb.append("<table>");
+        sb.append(getTegStart("div", "wrapper", null));
+        sb.append(getTableStart(excel, "Статус ЗИ"));
 
         sb.append("<tr>");
-        sb.append("<td class=\"table_head1\" rowspan=\"5\"> № п/п</td>");
-        sb.append("<td class=\"table_head2\" rowspan=\"5\">Код Зи</td>");
-        sb.append("<td class=\"sticky-col first-col table_head1\" rowspan=\"5\"> Наименование </td>");
-        sb.append("<td class=\"table_head2\" rowspan=\"5\">Проект</td>");
-        sb.append("<td class=\"table_head2\" rowspan=\"5\">Оценено</td>");
-        sb.append("<td class=\"table_col1\" rowspan=\"5\">");
-        sb.append("№ релиза");
-        sb.append("</td>");
+        sb.append(getTegText(excel, "td", "rowspan=\"5\"", "table_head2", null, "ПН"));
 
-        sb.append("<td class=\"table_head2\" colspan=\"4\"> 0 этап</td>");
-        sb.append("<td class=\"table_head2\" colspan=\"2\" rowspan=\"4\"> Дата начала доработки</td>");
-        sb.append("<td class=\"table_head1\" colspan=\"6\"> I этап</td>");
-        sb.append("<td class=\"table_head2\" colspan=\"4\"> II этап</td>");
-        sb.append("<td class=\"table_col1\" colspan = \"2\" rowspan = \"3\" > Выдача релиза </td >");
-        sb.append("<td class=\"table_head1\" colspan = \"4\" > III этап </td >");
-        sb.append("<td class=\"table_head2\" colspan = \"4\" > IV этап </td >");
-        sb.append("<td class=\"table_head1\" colspan = \"2\" rowspan = \"4\" > Общие трудозатраты на доработку по ЗИ </td >");
-        sb.append("<td rowspan = \"5\" > Вендерка </td >");
+        sb.append(getTegText(excel, "td", "rowspan=\"5\"", "table_head2", null, "Код Зи"));
+        sb.append(getTegText(excel, "td", "rowspan=\"5\"", "sticky-col first-col table_head1", null, "Наименование"));
+        sb.append(getTegFix(excel, "td", "rowspan=\"5\"", "table_head2", "Проект"));
+        sb.append(getTegText(excel, "td", "rowspan=\"5\"", "table_head2", null, "Оценено"));
+        sb.append(getTegText(excel, "td", "rowspan=\"5\"", "table_head1", null, "№ релиза"));
 
-        sb.append("</tr >");
-        sb.append("<tr >");
-        sb.append("<td class=\"table_head2\" colspan = \"4\" > Согласование требований к доработке </td >");
-        sb.append("<td class=\"table_head1\" colspan = \"6\" > Разработка прототипа </td >");
-        sb.append("<td class=\"table_head2\" colspan = \"4\" > Стабилизация прототипа(30дней) </td >");
-        sb.append("<td class=\"table_head1\" colspan = \"4\" > Стабилизация релиза(30дней) </td >");
-        sb.append("<td class=\"table_head2\" colspan = \"4\" > ОПЭ релиза(30дней) </td >");
-
-        sb.append("</tr >");
-        sb.append("<tr > ");
-        sb.append("<td class=\"table_head2\" colspan = \"4\" > Результат:внутреннее согласование ТЗ </td >");
-        sb.append("<td class=\"table_head1\" colspan = \"6\" > Результат:выдача прототипа в соответствии с ТЗ</td >");
-        sb.append("<td class=\"table_head2\" colspan = \"4\" > Результат:тестирования ЦК Рязань завершено</td >");
-        sb.append("<td class=\"table_head1\" colspan = \"4\" > Результат:регресс тестирование ЦК Рязань завершено </td >");
-        sb.append("<td class=\"table_head2\" colspan = \"4\" > Результат:завершение ОПЭ</td >");
+        sb.append(getTegText(excel, "td", "colspan=\"4\"", "table_head2", null, "0 этап"));
+        sb.append(getTegText(excel, "td", "colspan=\"2\" rowspan=\"4\"", "table_head2", null, "Дата начала доработки"));
+        sb.append(getTegText(excel, "td", "colspan=\"6\"", "table_head1", null, "I этап"));
+        sb.append(getTegText(excel, "td", "colspan=\"4\"", "table_head2", null, "II этап"));
+        sb.append(getTegText(excel, "td", "colspan=\"2\" rowspan=\"3\"", "table_col1", null, "Выдача релиза"));
+        sb.append(getTegText(excel, "td", "colspan=\"4\"", "table_head1", null, "III этап"));
+        sb.append(getTegText(excel, "td", "colspan=\"4\"", "table_head2", null, "IV этап"));
+        sb.append(getTegText(excel, "td", "colspan=\"2\" rowspan=\"4\"", "table_head1", null, "Общие трудозатраты на доработку по ЗИ"));
+        sb.append(getTegText(excel, "td", "rowspan=\"5\"", "table_head2", null, "Вендерка"));
 
         sb.append("</tr >");
         sb.append("<tr >");
-        sb.append("<td class=\"table_head2\" colspan = \"2\" > Дата передачи ТЗ в работу</td >");
-        sb.append("<td class=\"table_head2\" colspan = \"2\" > Трудозатраты, чел / час </td >");
-        sb.append("<td class=\"table_head1\" colspan = \"2\" > Трудозатраты, чел / час </td >");
-        sb.append("<td class=\"table_head1\" colspan = \"2\" > Дата окончания разработки</td >");
-        sb.append("<td class=\"table_head1\" colspan = \"2\" > Дата выдачи прототипа</td >");
-        sb.append("<td class=\"table_head2\" colspan = \"2\" > Дата </td >");
-        sb.append("<td class=\"table_head2\" colspan = \"2\" > Трудозатраты, чел / час </td >");
-        sb.append("<td class=\"table_col1\" colspan = \"2\" > Дата </td >");
-        sb.append("<td class=\"table_head1\" colspan = \"2\" > Дата </td >");
-        sb.append("<td class=\"table_head1\" colspan = \"2\" > Трудозатраты, чел / час </td >");
-        sb.append("<td class=\"table_head2\" colspan = \"2\" > Дата </td >");
-        sb.append("<td class=\"table_head2\" colspan = \"2\" > Трудозатраты, чел / час </td >");
+        sb.append(getTegText(excel, "td", "colspan=\"4\"", "table_head2", null, "Согласование требований к доработке"));
+        sb.append(getTegText(excel, "td", "colspan=\"6\"", "table_head1", null, "Разработка прототипа"));
+        sb.append(getTegText(excel, "td", "colspan=\"4\"", "table_head2", null, "Стабилизация прототипа(30дней)"));
+        sb.append(getTegText(excel, "td", "colspan=\"4\"", "table_head1", null, "Стабилизация релиза(30дней)"));
+        sb.append(getTegText(excel, "td", "colspan=\"4\"", "table_head2", null, "ОПЭ релиза(30дней)"));
 
         sb.append("</tr >");
         sb.append("<tr > ");
-        sb.append("<td class=\"table_head2\" > План </td >");
-        sb.append("<td class=\"table_head2\" > Факт </td >");
-        sb.append("<td class=\"table_head2\" > План </td >");
-        sb.append("<td class=\"table_head2\" > Факт </td >");
-        sb.append("<td class=\"table_head2\" > План </td >");
-        sb.append("<td class=\"table_head2\" > Факт </td >");
-        sb.append("<td class=\"table_head2\" >");
-        sb.append("План</td >");
-        sb.append("<td class=\"table_head2\" >");
-        sb.append(" Факт </td >");
-        sb.append("<td class=\"table_head1\" > План </td >");
-        sb.append("<td class=\"table_head1\" > Факт </td >");
-        sb.append("<td class=\"table_col2\" > План </td >");
-        sb.append("<td class=\"table_col2\" > Факт </td >");
-        sb.append("<td class=\"table_head2\" > План </td >");
-        sb.append("<td class=\"table_head2\" > Факт </td >");
-        sb.append("<td class=\"table_head2\" > План </td >");
-        sb.append("<td class=\"table_head2\" > Факт </td >");
-        sb.append("<td class=\"table_col1\" > План </td >");
-        sb.append("<td class=\"table_col1\" > Факт </td >");
-        sb.append("<td class=\"table_head1\" > План </td >");
-        sb.append("<td class=\"table_head1\" > Факт </td >");
-        sb.append("<td class=\"table_head1\" > План </td >");
-        sb.append("<td class=\"table_head1\" > Факт </td >");
-        sb.append("<td class=\"table_head2\" > План </td >");
-        sb.append("<td class=\"table_head2\" > Факт </td >");
-        sb.append("<td class=\"table_head2\" > План </td >");
-        sb.append("<td class=\"table_head2\" > Факт </td >");
-        sb.append("<td class=\"table_head1\" > План </td >");
-        sb.append("<td class=\"table_head1\" > Факт </td >");
+        sb.append(getTegText(excel, "td", "colspan=\"4\"", "table_head2", null, "Результат:внутреннее согласование ТЗ"));
+        sb.append(getTegText(excel, "td", "colspan=\"6\"", "table_head1", null, "Результат:выдача прототипа в соответствии с ТЗ"));
+        sb.append(getTegText(excel, "td", "colspan=\"4\"", "table_head2", null, "Результат:тестирования ЦК Рязань завершено"));
+        sb.append(getTegText(excel, "td", "colspan=\"4\"", "table_head1", null, "Результат:регресс тестирование ЦК Рязань завершено"));
+        sb.append(getTegText(excel, "td", "colspan=\"4\"", "table_head2", null, "Результат:завершение ОПЭ"));
+
+        sb.append("</tr >");
+        sb.append("<tr >");
+        sb.append(getTegText(excel, "td", "colspan=\"2\"", "table_head2", null, "Дата передачи ТЗ в работу"));
+        sb.append(getTegText(excel, "td", "colspan=\"2\"", "table_head2", null, "Трудозатраты, чел / час"));
+        sb.append(getTegText(excel, "td", "colspan=\"2\"", "table_head1", null, "Трудозатраты, чел / час"));
+        sb.append(getTegText(excel, "td", "colspan=\"2\"", "table_head1", null, "Дата окончания разработки"));
+        sb.append(getTegText(excel, "td", "colspan=\"2\"", "table_head1", null, "Дата выдачи прототипа"));
+        sb.append(getTegText(excel, "td", "colspan=\"2\"", "table_head2", null, "Дата"));
+        sb.append(getTegText(excel, "td", "colspan=\"2\"", "table_head2", null, "Трудозатраты, чел / час"));
+        sb.append(getTegText(excel, "td", "colspan=\"2\"", "table_col1", null, "Дата"));
+        sb.append(getTegText(excel, "td", "colspan=\"2\"", "table_head1", null, "Дата"));
+        sb.append(getTegText(excel, "td", "colspan=\"2\"", "table_head1", null, "Трудозатраты, чел / час"));
+        sb.append(getTegText(excel, "td", "colspan=\"2\"", "table_head2", null, "Дата"));
+        sb.append(getTegText(excel, "td", "colspan=\"2\"", "table_head2", null, "Трудозатраты, чел / час"));
+
+        sb.append("</tr >");
+        sb.append("<tr > ");
+        sb.append(getTegText(excel, "td", null, "table_head2", "", "План"));
+        sb.append(getTegText(excel, "td", null, "table_head2", "", "Факт"));
+        sb.append(getTegText(excel, "td", null, "table_head2", "", "План"));
+        sb.append(getTegText(excel, "td", null, "table_head2", "", "Факт"));
+        sb.append(getTegText(excel, "td", null, "table_head2", "", "План"));
+        sb.append(getTegText(excel, "td", null, "table_head2", "", "Факт"));
+        sb.append(getTegText(excel, "td", null, "table_head2", "", "План"));
+        sb.append(getTegText(excel, "td", null, "table_head2", "", "Факт"));
+        sb.append(getTegText(excel, "td", null, "table_head1", "", "План"));
+        sb.append(getTegText(excel, "td", null, "table_head1", "", "Факт"));
+        sb.append(getTegText(excel, "td", null, "table_col2", "", "План"));
+        sb.append(getTegText(excel, "td", null, "table_col2", "", "Факт"));
+        sb.append(getTegText(excel, "td", null, "table_head2", "", "План"));
+        sb.append(getTegText(excel, "td", null, "table_head2", "", "Факт"));
+        sb.append(getTegText(excel, "td", null, "table_head2", "", "План"));
+        sb.append(getTegText(excel, "td", null, "table_head2", "", "Факт"));
+        sb.append(getTegText(excel, "td", null, "table_col1", "", "План"));
+        sb.append(getTegText(excel, "td", null, "table_col1", "", "Факт"));
+        sb.append(getTegText(excel, "td", null, "table_head1", "", "План"));
+        sb.append(getTegText(excel, "td", null, "table_head1", "", "Факт"));
+        sb.append(getTegText(excel, "td", null, "table_head1", "", "План"));
+        sb.append(getTegText(excel, "td", null, "table_head1", "", "Факт"));
+        sb.append(getTegText(excel, "td", null, "table_head2", "", "План"));
+        sb.append(getTegText(excel, "td", null, "table_head2", "", "Факт"));
+        sb.append(getTegText(excel, "td", null, "table_head2", "", "План"));
+        sb.append(getTegText(excel, "td", null, "table_head2", "", "Факт"));
+        sb.append(getTegText(excel, "td", null, "table_head1", "", "План"));
+        sb.append(getTegText(excel, "td", null, "table_head1", "", "Факт"));
 
         sb.append("</tr >");
         sb.append("<tbody >");
@@ -122,177 +118,198 @@ public class HtmlService {
             nextRow(i.getAndIncrement());
             AtomicBoolean first = new AtomicBoolean(true);
             if (workRepDto.getWorkRepProjectDtoList().isEmpty()) {
-                printWorkRep(workRepDto, new WorkRepProjectDto(), sb, first);
+                printWorkRep(excel, workRepDto, new WorkRepProjectDto(), sb, first);
+            } else {
+                workRepDto.getWorkRepProjectDtoList().forEach(workRepProjectDto -> printWorkRep(excel, workRepDto, workRepProjectDto, sb, first));
             }
-            workRepDto.getWorkRepProjectDtoList().forEach(workRepProjectDto -> printWorkRep(workRepDto, workRepProjectDto, sb, first));
+
         });
+        if (excel) {
+            sb.append("<tr>");
+            rowClass.set("");
+            for (int j = 0; j < 35; j++) {
+                sb.append(getTegText(excel, "td", "style=\"color: #ffffff;\"", "__________"));
+            }
+            sb.append("</tr>");
+        }
         sb.append("</tbody>");
         sb.append("</table>");
         sb.append("</div>");
 
 
-        sb.append("</tbody>");
+//        sb.append("</tbody>");
         sb.append("</body>");
-        sb.append("</head>");
+//        sb.append("</head>");
+        try {
+            new ExcelExporter().exportHtml(sb.toString(), new File("report____.xlsx"));
+
+//or byte [] = new ExcelExporter().exportHtml(html);
+
+
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
         return sb.toString();
 
     }
 
-    private void printWorkRep(WorkRepDto workRepDto, WorkRepProjectDto workRepProjectDto, StringBuilder sb, AtomicBoolean first) {
+    private void printWorkRep(boolean excel, WorkRepDto workRepDto, WorkRepProjectDto workRepProjectDto, StringBuilder sb, AtomicBoolean first) {
         sb.append("<tr>");
         if (first.getAndSet(false)) {
-            sb.append(getTegStart("td rowspan=\"" + workRepDto.getWorkRepProjectDtoList().size() + "\""));
-            sb.append(printNotNull(workRepDto.getId()));
-            sb.append("</td>");
-            sb.append(getTegStart("td rowspan=\"" + workRepDto.getWorkRepProjectDtoList().size() + "\"", "text_not_wrap"));
-            sb.append(printNotNull(workRepDto.getCodeZI()));
-            sb.append("</td>");
-            sb.append(getTegStart("td rowspan=\"" + workRepDto.getWorkRepProjectDtoList().size() + "\"", "sticky-col first-col"));
-            sb.append(printNotNull(workRepDto.getName()));
-            sb.append("</td>");
+            sb.append(getTegText(excel, "td", "rowspan=\"" + workRepDto.getWorkRepProjectDtoList().size() + "\"", printNotNull(workRepDto.getId())));
+            sb.append(getTegText(excel, "td", "rowspan=\"" + workRepDto.getWorkRepProjectDtoList().size() + "\"", "text_not_wrap", printNotNull(workRepDto.getCodeZI())));
+            sb.append(getTegText(excel, "td", "rowspan=\"" + workRepDto.getWorkRepProjectDtoList().size() + "\"", "sticky-col first-col", printNotNull(workRepDto.getName())));
         }
-        sb.append(getTegStart("td"));
-        sb.append(printNotNull(workRepProjectDto.getProjectCode() + " " + workRepProjectDto.getProjectName()));
-        sb.append("</td>");
-        sb.append(getTegStart("td"));
-        sb.append(getTegStart("label for=\"RatedTd\""));
-        sb.append("</label>");
-        sb.append(getTegStart("input id=\"RatedTd\" disabled type=\"checkbox\" " + (workRepProjectDto.getRated() != null && workRepProjectDto.getRated() ? "checked" : ""), "vvod check_box_td_23"));
-        sb.append("</input>");
-        sb.append("</td>");
+        sb.append(getTegText(excel, "td", null, printNotNull(workRepProjectDto.getProjectCode() + " " + workRepProjectDto.getProjectName())));
+        if (!excel) {
 
-        sb.append(getTegStart("td"));
-        sb.append(printNotNull(workRepProjectDto.getRelease()));
-        sb.append("</td>");
-        sb.append(getTegStart("td"));
-        sb.append(printNotNull(workRepProjectDto.getAnaliseEndPlanStr()));
-        sb.append("</td>");
-        sb.append(getTegStart("td", workRepProjectDto.getAnaliseEndPlan(), workRepProjectDto.getAnaliseEndFact()));
-        sb.append(printNotNull(workRepProjectDto.getAnaliseEndFactStr()));
-        sb.append("</td>");
-        sb.append(getTegStart("td"));
-        sb.append(printNotNull(workRepProjectDto.getLaborAnalise()));
-        sb.append("</td>");
-        sb.append(getTegStart("td", workRepProjectDto.getLaborAnalise(), workRepProjectDto.getTimeAnalise()));
-        sb.append(printNotNull(workRepProjectDto.getTimeAnalise()));
-        sb.append("</td>");
-        sb.append(getTegStart("td"));
-        sb.append(printNotNull(workRepProjectDto.getStartTaskPlanStr()));
-        sb.append("</td>");
-        sb.append(getTegStart("td", workRepProjectDto.getStartTaskPlan(), workRepProjectDto.getStartTaskFact()));
-        sb.append(printNotNull(workRepProjectDto.getStartTaskFactStr()));
-        sb.append("</td>");
+            sb.append(getTegStartRow("td"));
+            sb.append(getTegText(false, "label", "for=\"RatedTd\"", ""));
+            sb.append(getTegText(false, "input", "id=\"RatedTd\" disabled type=\"checkbox\" " + (workRepProjectDto.getRated() != null && workRepProjectDto.getRated() ? "checked" : ""), "vvod check_box_td_23", ""));
+            sb.append("</td>");
+        } else {
+            sb.append(getTegText(true, "td", "", workRepProjectDto.getRated() != null && workRepProjectDto.getRated() ? "Да" : "Нет"));
+        }
 
-        sb.append(getTegStart("td"));
-        sb.append(printNotNull(workRepProjectDto.getLaborDevelop()));
-        sb.append("</td>");
-        sb.append(getTegStart("td", workRepProjectDto.getLaborDevelop(), workRepProjectDto.getTimeDevelop()));
-        sb.append(printNotNull(workRepProjectDto.getTimeDevelop()));
-        sb.append("</td>");
-        sb.append(getTegStart("td"));
-        sb.append(printNotNull(workRepProjectDto.getDevelopEndPlanStr()));
-        sb.append("</td>");
-        sb.append(getTegStart("td", workRepProjectDto.getDevelopEndPlan(), workRepProjectDto.getDevelopEndFact()));
-        sb.append(printNotNull(workRepProjectDto.getDevelopEndFactStr()));
-        sb.append("</td>");
-        sb.append(getTegStart("td", "table_col2"));
-        sb.append(printNotNull(workRepProjectDto.getIssuePrototypePlanStr()));
-        sb.append("</td>");
-        sb.append(getTegStart("td", "table_col2", workRepProjectDto.getIssuePrototypePlan(), workRepProjectDto.getIssuePrototypeFact()));
-        sb.append(printNotNull(workRepProjectDto.getIssuePrototypeFactStr()));
-        sb.append("</td>");
+        sb.append(getTegText(excel, "td", "", printNotNull(workRepProjectDto.getRelease())));
+        sb.append(getTegDate(excel, "td", null, workRepProjectDto.getAnaliseEndPlanStr()));
+        sb.append(getTegDate(excel, "td", workRepProjectDto.getAnaliseEndPlan(), workRepProjectDto.getAnaliseEndFact(), workRepProjectDto.getAnaliseEndFactStr()));
+        sb.append(getTegDec(excel, "td", workRepProjectDto.getLaborAnalise()));
+        sb.append(getTegDec(excel, "td", workRepProjectDto.getLaborAnalise(), workRepProjectDto.getTimeAnalise(), workRepProjectDto.getTimeAnalise()));
+        sb.append(getTegDate(excel, "td", workRepProjectDto.getStartTaskPlanStr()));
+        sb.append(getTegDate(excel, "td", workRepProjectDto.getStartTaskPlan(), workRepProjectDto.getStartTaskFact(), workRepProjectDto.getStartTaskFactStr()));
 
-        sb.append(getTegStart("td"));
-        sb.append(printNotNull(workRepProjectDto.getDebugEndPlanStr()));
-        sb.append("</td>");
-        sb.append(getTegStart("td", workRepProjectDto.getDebugEndPlan(), workRepProjectDto.getDebugEndFact()));
-        sb.append(printNotNull(workRepProjectDto.getDebugEndFactStr()));
-        sb.append("</td>");
+        sb.append(getTegDec(excel, "td", workRepProjectDto.getLaborDevelop()));
+        sb.append(getTegDec(excel, "td", workRepProjectDto.getLaborDevelop(), workRepProjectDto.getTimeDevelop(), workRepProjectDto.getTimeDevelop()));
+        sb.append(getTegDate(excel, "td", workRepProjectDto.getDevelopEndPlanStr()));
+        sb.append(getTegDate(excel, "td", workRepProjectDto.getDevelopEndPlan(), workRepProjectDto.getDevelopEndFact(), workRepProjectDto.getDevelopEndFactStr()));
+        sb.append(getTegDate(excel, "td", null, "table_col2", null, workRepProjectDto.getIssuePrototypePlanStr()));
+        sb.append(getTegDate(excel, "td", "table_col2", workRepProjectDto.getIssuePrototypePlan(), workRepProjectDto.getIssuePrototypeFact(), workRepProjectDto.getIssuePrototypeFactStr()));
 
-        sb.append(getTegStart("td"));
-        sb.append(printNotNull(workRepProjectDto.getLaborDebug()));
-        sb.append("</td>");
-        sb.append(getTegStart("td", workRepProjectDto.getLaborDebug(), workRepProjectDto.getTimeDebug()));
-        sb.append(printNotNull(workRepProjectDto.getTimeDebug()));
-        sb.append("</td>");
-        sb.append(getTegStart("td", "table_col1"));
-        sb.append(printNotNull(workRepProjectDto.getIssuingReleasePlanStr()));
-        sb.append("</td>");
-        sb.append(getTegStart("td", "table_col1", workRepProjectDto.getIssuingReleasePlan(), workRepProjectDto.getIssuingReleaseFact()));
-        sb.append(printNotNull(workRepProjectDto.getIssuingReleaseFactStr()));
-        sb.append("</td>");
-        sb.append(getTegStart("td"));
-        sb.append(printNotNull(workRepProjectDto.getReleaseEndPlanStr()));
-        sb.append("</td>");
-        sb.append(getTegStart("td", workRepProjectDto.getReleaseEndPlan(), workRepProjectDto.getReleaseEndFact()));
-        sb.append(printNotNull(workRepProjectDto.getReleaseEndFactStr()));
-        sb.append("</td>");
+        sb.append(getTegDate(excel, "td", workRepProjectDto.getDebugEndPlanStr()));
 
-        sb.append(getTegStart("td"));
-        sb.append(printNotNull(workRepProjectDto.getLaborRelease()));
-        sb.append("</td>");
-        sb.append(getTegStart("td", workRepProjectDto.getLaborRelease(), workRepProjectDto.getTimeRelease()));
-        sb.append(printNotNull(workRepProjectDto.getTimeRelease()));
-        sb.append("</td>");
-        sb.append(getTegStart("td"));
-        sb.append(printNotNull(workRepProjectDto.getOpeEndPlanStr()));
-        sb.append("</td>");
-        sb.append(getTegStart("td", workRepProjectDto.getOpeEndPlan(), workRepProjectDto.getOpeEndFact()));
-        sb.append(printNotNull(workRepProjectDto.getOpeEndFactStr()));
-        sb.append("</td>");
-        sb.append(getTegStart("td"));
-        sb.append(printNotNull(workRepProjectDto.getLaborOPE()));
-        sb.append("</td>");
-        sb.append(getTegStart("td", workRepProjectDto.getLaborOPE(), workRepProjectDto.getTimeOPE()));
-        sb.append(printNotNull(workRepProjectDto.getTimeOPE()));
-        sb.append("</td>");
-        sb.append(getTegStart("td"));
-        sb.append(printNotNull(workRepProjectDto.getTimePlan()));
-        sb.append("</td>");
-        sb.append(getTegStart("td", workRepProjectDto.getTimePlan(), workRepProjectDto.getTimeFact()));
-        sb.append(printNotNull(workRepProjectDto.getTimeFact()));
-        sb.append("</td>");
+        sb.append(getTegDate(excel, "td", workRepProjectDto.getDebugEndPlan(), workRepProjectDto.getDebugEndFact(), workRepProjectDto.getDebugEndFactStr()));
 
-        sb.append(getTegStart("td"));
-        sb.append(printNotNull(workRepProjectDto.getTimeWender()));
-        sb.append("</td>");
+        sb.append(getTegDec(excel, "td", workRepProjectDto.getLaborDebug()));
+        sb.append(getTegDec(excel, "td", workRepProjectDto.getLaborDebug(), workRepProjectDto.getTimeDebug(), workRepProjectDto.getTimeDebug()));
+        sb.append(getTegDate(excel, "td", "table_col1", workRepProjectDto.getIssuingReleasePlanStr()));
+        sb.append(getTegDate(excel, "td", "table_col1", workRepProjectDto.getIssuingReleasePlan(), workRepProjectDto.getIssuingReleaseFact(), workRepProjectDto.getIssuingReleaseFactStr()));
+        sb.append(getTegDate(excel, "td", workRepProjectDto.getReleaseEndPlanStr()));
+        sb.append(getTegDate(excel, "td", workRepProjectDto.getReleaseEndPlan(), workRepProjectDto.getReleaseEndFact(), workRepProjectDto.getReleaseEndFactStr()));
 
+        sb.append(getTegDec(excel, "td", workRepProjectDto.getLaborRelease()));
+        sb.append(getTegDec(excel, "td", workRepProjectDto.getLaborRelease(), workRepProjectDto.getTimeRelease(), workRepProjectDto.getTimeRelease()));
+        sb.append(getTegDate(excel, "td", workRepProjectDto.getOpeEndPlanStr()));
+        sb.append(getTegDate(excel, "td", workRepProjectDto.getOpeEndPlan(), workRepProjectDto.getOpeEndFact(), workRepProjectDto.getOpeEndFactStr()));
+        sb.append(getTegDec(excel, "td", workRepProjectDto.getLaborOPE()));
+        sb.append(getTegDec(excel, "td", workRepProjectDto.getLaborOPE(), workRepProjectDto.getTimeOPE(), workRepProjectDto.getTimeOPE()));
+        sb.append(getTegDec(excel, "td", workRepProjectDto.getTimePlan()));
+        sb.append(getTegDec(excel, "td", workRepProjectDto.getTimePlan(), workRepProjectDto.getTimeFact(), workRepProjectDto.getTimeFact()));
 
+        sb.append(getTegDec(excel, "td", workRepProjectDto.getTimeWender()));
         sb.append("</tr>");
     }
 
-    private String rowClass;
+    private final ThreadLocal<String> rowClass = new ThreadLocal<>();
 
     private void nextRow(Integer integer) {
-        rowClass = "table_row_" + (integer % 2 + 1);
+        rowClass.set("table_row_" + (integer % 2 + 1));
     }
 
-    private String getTegStart(String teg) {
-        return getTegStart(teg, "");
+    private String getTegStartRow(String teg) {
+        return getTegStartRow(teg, "");
     }
 
-    private String getTegStart(String teg, Float plan, Float fact) {
-        return getTegStart(teg, plan != null && fact != null && plan < fact);
+    private String getTegDec(boolean excel, String teg, Float plan, Float fact, Float value) {
+        return getTegDec(excel, teg, plan != null && fact != null && plan < fact, value);
     }
 
-    private String getTegStart(String teg, Timestamp plan, Timestamp fact) {
-        return getTegStart(teg, plan != null && fact != null && plan.before(fact));
+    private String getTegDec(boolean excel, String teg, boolean flag, Float value) {
+        return getTegDec(excel, teg, null, flag ? "table_row_bed" : rowClass.get(), value);
     }
 
-    private String getTegStart(String teg, String textClass, Timestamp plan, Timestamp fact) {
-        return getTegStart(teg, textClass, plan != null && fact != null && plan.before(fact));
+    private String getTegDec(boolean excel, String teg, String textClass, Float value) {
+        return getTegDec(excel, teg, null, textClass, value);
     }
 
-    private String getTegStart(String teg, boolean flag) {
-        return String.format("<%s class=\"%s\">", teg, flag ? "table_row_bed" : rowClass);
+    private String getTegDate(boolean excel, String teg, Timestamp plan, Timestamp fact, String value) {
+        return getTegDate(excel, teg, null, plan != null && fact != null && plan.before(fact), value);
     }
 
-    private String getTegStart(String teg, String textClass) {
-        return String.format("<%s class=\"%s %s\">", teg, textClass, rowClass);
+    private String getTegDate(boolean excel, String teg, String textClass, Timestamp plan, Timestamp fact, String value) {
+        return getTegDate(excel, teg, textClass, plan != null && fact != null && plan.before(fact), value);
     }
 
-    private String getTegStart(String teg, String textClass, boolean flag) {
-        return String.format("<%s class=\"%s %s\">", teg, textClass, flag ? "table_row_bed" : rowClass);
+    private String getTegDate(boolean excel, String teg, String textClass, boolean flag, String value) {
+        return getTegDate(excel, teg, null, textClass, flag ? "table_row_bed" : rowClass.get(), value);
+    }
+
+    private String getTegStartRow(String teg, String textClass) {
+        return getTegStart(teg, textClass, rowClass.get());
+    }
+
+    private String getTegStart(String teg, String textClass, String textClassTwo) {
+        return getTegStart(teg, null, textClass, textClassTwo);
+    }
+
+    private String getTegStartParam(String teg, String param) {
+        return getTegStart(teg, param, rowClass.get(), null);
+    }
+
+    private String getTegFix(boolean excel, String teg, String param, String textClass, String value) {
+        return getTegStart(teg, (excel ? "data-freeze-pane-cell=\"true\" " : "") + (param == null ? "" : param), textClass, null) + String.format("%s</%s>", value, teg);
+    }
+
+    private String getTegDate(boolean excel, String teg, String value) {
+        return getTegDate(excel, teg, null, value);
+    }
+
+    private String getTegDate(boolean excel, String teg, String param, String value) {
+        return getTegDate(excel, teg, param, null, value);
+    }
+
+    private String getTegDate(boolean excel, String teg, String param, String textClass, String value) {
+        return getTegDate(excel, teg, param, textClass, rowClass.get(), value);
+    }
+
+    private String getTegDate(boolean excel, String teg, String param, String textClass, String textClassTwo, String value) {
+        return getTegStart(teg, (excel && value != null ? "data-date-cell-format=\"dd.MM.yyyy\" " : "") + (param == null ? "" : param), textClass, textClassTwo) + String.format("%s</%s>", printNotNull(value), teg);
+    }
+
+    private String getTegText(boolean excel, String teg, String param, String value) {
+        return getTegText(excel, teg, param, null, value);
+    }
+
+    private String getTegText(boolean excel, String teg, String param, String textClass, String value) {
+        return getTegStart(teg, (excel ? "data-text-cell=\"true\" " : "") + (param == null ? "" : param), textClass, rowClass.get()) + String.format("%s</%s>", value, teg);
+    }
+
+    private String getTegText(boolean excel, String teg, String param, String textClass, String textClassTwo, String value) {
+        return getTegStart(teg, (excel ? "data-text-cell=\"true\" " : "") + (param == null ? "" : param), textClass, textClassTwo) + String.format("%s</%s>", value, teg);
+    }
+
+    private String getTegDec(boolean excel, String teg, Float value) {
+        return getTegDec(excel, teg, "", null, value);
+    }
+
+    private String getTegDec(boolean excel, String teg, String param, String textClass, Float value) {
+        return getTegStart(teg, (excel && value != null ? "data-numeric-cell-format=\"#,##\" " : "") + (param == null ? "" : param), textClass, null) + String.format("%s</%s>", printNotNull(value), teg);
+    }
+
+    private String getTableStart(boolean excel, String name) {
+        return getTableStart(excel, name, false);
+    }
+
+    private String getTableStart(boolean excel, String name, boolean newSheet) {
+        return getTegStartParam("table", excel ? ((newSheet ? "data-new-sheet=\"true\" " : "") + "data-sheet-name=\" " + name + "\"" + " style=\"width:100%;\"") : "");
+    }
+
+    private String getTegStart(String teg, String param, String textClass, String textClassTwo) {
+        if (textClass == null && textClassTwo == null) {
+            return String.format("<%s %s >", teg, param == null ? "" : param);
+        }
+        return String.format("<%s %s class=\"%s %s\">", teg, param == null ? "" : param, textClass == null ? "" : textClass, textClassTwo == null ? "" : textClassTwo);
+//        return String.format("<%s %s class=\"%s %s\">", teg, param == null ? "" : param, textClass == null ? "" : textClass, textClassTwo == null ? "" : textClassTwo);
     }
 
     private void getHead(StringBuilder sb) {
@@ -300,10 +317,41 @@ public class HtmlService {
 
         sb.append("<html>");
         sb.append("<head>");
-        sb.append("<meta charset=\"utf-8\">");
-        sb.append("<meta name=\"color-scheme\" content=\"dark light\">");
+        sb.append("<meta charset=\"utf-8\"/>");
+        sb.append("<meta name=\"color-scheme\" content=\"dark light\"/>");
         sb.append("<style type=\"text/css\">");
         addStyle(sb);
+
+
+//        sb.append("@page {");
+//        sb.append("    size: landscape;");
+//        sb.append("    margin: 2%;");
+//        sb.append(" }");
+//
+        sb.append("table {");
+        sb.append("border-collapse: collapse;");
+        sb.append(" border-spacing: 0;");
+        sb.append("}");
+//
+        sb.append("th, td{");
+//        sb.append("font-family: \"Courier New\";");
+        sb.append("font-family: \"Arial\";");
+        sb.append("border: thin solid #444444;");
+        sb.append("padding-left: 2px;");
+        sb.append("padding-right: 2px;");
+        sb.append("}");
+//
+        sb.append("        th{");
+        sb.append("background: #336699;");
+        sb.append("color: #eeeeee;");
+        sb.append("font-weight: bold;");
+        sb.append("font-size: 10px;");
+        sb.append("text-align:left;");
+        sb.append("}");
+//
+        sb.append("        td{");
+        sb.append("font-size:10px;");
+        sb.append("}");
         sb.append("</style>");
         sb.append("</head>");
     }
@@ -315,35 +363,29 @@ public class HtmlService {
                               boolean workPercent,
                               List<AttrDto<Integer>> taskListType,
                               List<WorkUserTime> weekWorkList) {
-
+        boolean excel = true;
         StringBuilder sb = new StringBuilder();
         getHead(sb);
         sb.append("<body>");
 
         sb.append("<h1>").append(headText).append("</h1>");
-        sb.append("<table>");
+        sb.append(getTableStart(excel, ziSplit ? "Статус ЗИ" : "Работы за период"));
         sb.append("<tr>");
-        sb.append("<td class=\"table_head1\" rowspan=\"2\">№ п/п</td>");
+        sb.append(getTegText(excel, "td", "rowspan=\"2\"", "table_head1", "№ п/п"));
         if (ziSplit) {
-            sb.append("<td class=\"table_head2 two_date\" rowspan=\"2\">ЗИ</td>");
+            sb.append(getTegFix(excel, "td", "rowspan=\"2\"", "table_head2 two_date", "ЗИ"));
         } else {
-            sb.append("<td class=\"table_head2 two_date \" rowspan=\" 2 \">Период</td>");
+            sb.append(getTegFix(excel, "td", "rowspan=\"2\"", "table_head2 two_date", "Период"));
         }
-        sb.append("<td class=\"table_head1 field_fio\" rowspan=\"2\">Исполнитель</td>");
-        sb.append("<td class=\"table_head2\" colspan=\"").append(taskListType.size()).append("\">Факт трудозатрат, чел/час</td>");
+        sb.append(getTegText(excel, "td", "rowspan=\"2\"", "table_head1 field_fio", "Исполнитель"));
+        sb.append(getTegText(excel, "td", "colspan=\"" + taskListType.size() + "\"", "table_head2", "Факт трудозатрат, чел/час"));
         if (!ziSplit) {
-            sb.append("<td class=\"table_head1 week_work_plan_time \" rowspan=\"2\">Плановые трудозатраты за период,");
-            sb.append("чел/час");
-            sb.append("</td>");
+            sb.append(getTegText(excel, "td", "rowspan=\"2\"", "table_head1 week_work_plan_time", "Плановые трудозатраты за период, чел/час"));
         }
-        sb.append("<td class=\"table_head2\"rowspan=\"2\">Итого за период</td>");
+        sb.append(getTegText(excel, "td", "rowspan=\"2\"", "table_head2", "Итого за период"));
         sb.append("</tr>");
         sb.append("<tr>");
-        taskListType.forEach(taskType -> {
-            sb.append("<td class=\" table_head2 week_work_plan_time\" >");
-            sb.append(printNotNull(taskType.getValue()));
-            sb.append("</td>");
-        });
+        taskListType.forEach(taskType -> sb.append(getTegText(excel, "td", null, " table_head2 week_work_plan_time", printNotNull(taskType.getValue()))));
 
         sb.append("</tr>");
         AtomicInteger i = new AtomicInteger(0);
@@ -357,89 +399,47 @@ public class HtmlService {
                 UserWorkFormDto userWorkFormDto = new UserWorkFormDto();
                 userWorkFormDto.setUserCol(1);
                 userWorkFormDto.setFirstName("Итого");
-                printUserWork(ziSplit, workTask, workTime, workPercent, taskListType, work_zi, userWorkFormDto, sb, i.get(), j.incrementAndGet());
+                printUserWork(excel, ziSplit, workTask, workTime, workPercent, taskListType, work_zi, userWorkFormDto, sb, i.get(), j.incrementAndGet());
             }
-            work_zi.getUserWorkFormDTOs().forEach(work -> printUserWork(ziSplit, workTask, workTime, workPercent, taskListType, work_zi, work, sb, i.get(), j.incrementAndGet()));
+            work_zi.getUserWorkFormDTOs().forEach(work -> printUserWork(excel, ziSplit, workTask, workTime, workPercent, taskListType, work_zi, work, sb, i.get(), j.incrementAndGet()));
         });
         sb.append("</tbody>");
         sb.append("</table>");
-        sb.append("</tbody>");
         sb.append("</body>");
-        sb.append("</head>");
         return sb.toString();
 
     }
 
-    private void printUserWork(boolean ziSplit, boolean workTask, boolean workTime, boolean workPercent, List<AttrDto<Integer>> taskListType, WorkUserTime work_zi, UserWorkFormDto work, StringBuilder sb, Integer i, Integer j) {
+    private void printUserWork(boolean excel, boolean ziSplit, boolean workTask, boolean workTime, boolean workPercent, List<AttrDto<Integer>> taskListType, WorkUserTime work_zi, UserWorkFormDto work, StringBuilder sb, Integer i, Integer j) {
         sb.append("<tr>");
-        sb.append(getTegStart("td"));
-        sb.append("<div class=\"horiz\">");
-        if (ziSplit) {
-            sb.append("<p>").append(i).append(".</p>");
-        }
-        sb.append("<p>").append(j).append("</p>");
-        sb.append("</div>");
+        sb.append(getTegText(excel, "td", null, (ziSplit ? i + "." + j : Integer.toString(j))));
         sb.append("</td>");
         if (ziSplit && work.getUserCol() != null) {
-            sb.append(getTegStart("td rowspan=\"" + work.getUserCol() + "\""));
-            sb.append(printNotNull(work_zi.getName()));
-            sb.append("</td>");
+            sb.append(getTegText(excel, "td", "rowspan=\"" + work.getUserCol() + "\"", printNotNull(work_zi.getName())));
         }
 //                log.info(work.getDateStartStr() + " - " + work.getDateEndStr());
         if (!ziSplit && work.getUserCol() != null) {
-            sb.append(getTegStart("td rowspan=\"" + work.getUserCol() + "\""));
-            sb.append(printNotNull(work.getDateStartStr()));
-            sb.append("-");
-            sb.append(printNotNull(work.getDateEndStr()));
-            sb.append("</td>");
+            sb.append(getTegText(excel, "td", "rowspan=\"" + work.getUserCol() + "\"", printNotNull(work.getDateStartStr()) + "-" + printNotNull(work.getDateEndStr())));
         }
         if (work.getAuthorFirstName() == null) {
-            sb.append(getTegStart("td")).append(work.getNikName() == null ? "" : printNotNull(work.getNikName())).append("</td>");
+            sb.append(getTegText(excel, "td", null, work.getNikName() == null ? "" : printNotNull(work.getNikName())));
         } else
-            sb.append(getTegStart("td "))
-                    .append(printNotNull(work.getAuthorLastName()))
-                    .append(" ")
-                    .append(printNotNull(work.getAuthorFirstName()))
-                    .append(" ")
-                    .append(printNotNull(work.getAuthorPatronymic()))
-                    .append("</td>");
+            sb.append(getTegText(excel, "td ", null,
+                    String.format("%s %s %s", printNotNull(work.getAuthorLastName()), printNotNull(work.getAuthorFirstName())
+                            , printNotNull(work.getAuthorPatronymic()))));
 
-        taskListType.forEach(taskType -> {
-            sb.append(getTegStart("td"));
-            sb.append("<div class=\"horiz\">");
-            if (workTask) {
-                sb.append("<div class=\"div-type\" >");
-                sb.append("<button class=\"p-td\" >");
-                sb.append(printNotNull(searchJson(work.getWorkTaskColAttr(), taskType.getCodeT())));
-                sb.append("</button>");
-                sb.append("</div>");
-            }
-            if (workTime) {
-                sb.append("<div class=\"div-type\">");
-                sb.append("<button class=\"p-td\" >");
-                sb.append(printNotNull(searchJson(work.getWorkTimeAttr(), taskType.getCodeT())));
-                sb.append("</button>");
-                sb.append("</div>");
-            }
-            if (workPercent) {
-                sb.append("<div class=\"div-type\" >");
-                sb.append("<p class=\"p-td\">");
-                sb.append(printNotNull(searchJson(work.getWorkPercent(), taskType.getCodeT())));
-                sb.append("</p>");
-                sb.append("</div>");
-            }
-            sb.append("</div>");
-            sb.append("</td>");
-        });
+
+        taskListType.forEach(taskType -> sb.append(getTegText(excel, "td",
+                null,
+                String.format("%s %s %s",
+                        workTask ? printNotNull(searchJson(work.getWorkTaskColAttr(), taskType.getCodeT())) : "",
+                        workTime ? printNotNull(searchJson(work.getWorkTimeAttr(), taskType.getCodeT())) : "",
+                        workPercent ? printNotNull(searchJson(work.getWorkPercent(), taskType.getCodeT())) : ""))));
 
         if (!ziSplit && work.getUserCol() != null) {
-            sb.append(getTegStart("<td rowspan=\"" + printNotNull(work.getUserCol()) + "\""))
-                    .append(printNotNull(work.getWorkPlan()))
-                    .append("</td>");
+            sb.append(getTegDec(excel, "td", "rowspan=\"" + printNotNull(work.getUserCol()) + "\"", work.getWorkPlan()));
         }
-        sb.append(getTegStart("td"))
-                .append(printNotNull(work.getWorkAllFact()))
-                .append("</td>");
+        sb.append(getTegDec(excel, "td", work.getWorkAllFact()));
         sb.append("</tr>");
     }
 
@@ -458,7 +458,7 @@ public class HtmlService {
     }
 
     private void addStyle(StringBuilder stringBuilder) {
-        try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("style.css")) {
+        try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("style2.css")) {
             InputStreamReader streamReader = new InputStreamReader(Objects.requireNonNull(inputStream), StandardCharsets.UTF_8);
             BufferedReader reader = new BufferedReader(streamReader);
             for (String line; (line = reader.readLine()) != null; ) {

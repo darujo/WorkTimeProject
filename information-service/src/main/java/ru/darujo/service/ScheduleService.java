@@ -5,9 +5,9 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.darujo.dto.information.MessageType;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.ChatInfo;
+import ru.darujo.type.MessageType;
 import ru.darujo.type.ReportTypeDto;
 
 import java.util.concurrent.Executors;

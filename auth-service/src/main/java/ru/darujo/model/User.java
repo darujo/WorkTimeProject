@@ -39,7 +39,7 @@ public class User {
     private String patronymic;
 
     @Column(name = "telegram_id")
-    private Long telegramId;
+    private String telegramId;
 
 
     @ManyToOne

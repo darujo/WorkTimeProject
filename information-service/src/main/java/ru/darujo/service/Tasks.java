@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.calendar.VacationDto;
 import ru.darujo.dto.information.MessageInfoDto;
-import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.dto.user.UserInfoDto;
 import ru.darujo.dto.workperiod.WorkUserFactPlan;
@@ -14,11 +13,13 @@ import ru.darujo.dto.workperiod.WorkUserTime;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.integration.*;
 import ru.darujo.model.ChatInfo;
+import ru.darujo.type.MessageType;
 import ru.darujo.url.UrlWorkTime;
 
 import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -79,29 +80,34 @@ public class Tasks {
                 () -> {
                     log.info("getAddWorkAvail");
 
-                    List<UserInfoDto> users = messageInformationService.getUsersForMesType(type);
+                    Map<String, List<UserInfoDto>> users = messageInformationService.getUsersForMesType(type);
                     if (users == null) {
                         return;
                     }
-                    users.forEach(userInfoDto -> {
+                    users.forEach((nikName, userInfoDTOs) ->
+                    {
                         try {
-                            if (calendarServiceIntegration.isWorkDayUser(userInfoDto.getNikName(), null)) {
+                            if (calendarServiceIntegration.isWorkDayUser(nikName, null)) {
 
 
-                                Timestamp date = calendarServiceIntegration.getLastWorkDay(userInfoDto.getNikName(),
+                                Timestamp date = calendarServiceIntegration.getLastWorkDay(nikName,
                                         null,
                                         2,
                                         false);
-                                WorkUserFactPlan workUserFactPlan = workTimeServiceIntegration.getUserWork(date, date, userInfoDto.getNikName(), "day");
+                                WorkUserFactPlan workUserFactPlan = workTimeServiceIntegration.getUserWork(date, date, nikName, "day");
                                 if (workUserFactPlan == null) {
                                     return;
                                 }
+
                                 if (workUserFactPlan.getTimeFact() < workUserFactPlan.getTimePlan() * PERCENT_WORK_TIME) {
                                     messageInformationService.addMessage(
                                             new MessageInfoDto(
-                                                    userInfoDto,
                                                     type,
-                                                    String.format("Вы не отметили работы за %S отмечено %S ч. по плану %S ч.", workUserFactPlan.getPeriodStr(), workUserFactPlan.getTimeFact(), workUserFactPlan.getTimePlan())));
+                                                    String.format("Вы не отметили работы за %S отмечено %S ч. по плану %S ч.",
+                                                            workUserFactPlan.getPeriodStr(),
+                                                            workUserFactPlan.getTimeFact(),
+                                                            workUserFactPlan.getTimePlan())),
+                                            userInfoDTOs);
                                 }
                             }
                         } catch (ResourceNotFoundException e) {
@@ -116,7 +122,7 @@ public class Tasks {
     public RunnableNotException getAddWorkAvailLastWeek(MessageType type) {
         return new RunnableNotException(() -> {
             log.info("getAddWorkAvailLastWeek");
-            List<UserInfoDto> users = messageInformationService.getUsersForMesType(type);
+            Map<String, List<UserInfoDto>> users = messageInformationService.getUsersForMesType(type);
             if (users == null) {
                 return;
             }
@@ -125,17 +131,17 @@ public class Tasks {
                     return;
                 }
 
-                users.forEach(userInfoDto -> {
+                users.forEach((nikName, userInfoDTos) -> {
                     Timestamp date;
-                    date = calendarServiceIntegration.getLastWorkDay(userInfoDto.getNikName(), null, 1, true);
+                    date = calendarServiceIntegration.getLastWorkDay(nikName, null, 1, true);
 
-                    WorkUserFactPlan workUserFactPlan = workTimeServiceIntegration.getUserWork(date, date, userInfoDto.getNikName(), "week");
+                    WorkUserFactPlan workUserFactPlan = workTimeServiceIntegration.getUserWork(date, date, nikName, "week");
                     if (workUserFactPlan.getTimeFact() < workUserFactPlan.getTimePlan() * PERCENT_WORK_TIME) {
                         messageInformationService.addMessage(
                                 new MessageInfoDto(
-                                        userInfoDto,
                                         type,
-                                        String.format("Вы не отметили работы за %S отмечено %S ч. по плану %S ч.", workUserFactPlan.getPeriodStr(), workUserFactPlan.getTimeFact(), workUserFactPlan.getTimePlan())));
+                                        String.format("Вы не отметили работы за %S отмечено %S ч. по плану %S ч.", workUserFactPlan.getPeriodStr(), workUserFactPlan.getTimeFact(), workUserFactPlan.getTimePlan())),
+                                userInfoDTos);
                     }
 
                 });
@@ -155,15 +161,14 @@ public class Tasks {
             } else {
                 ScheduleService.flagStartService = false;
             }
-        }) {
-        };
+        });
     }
 
     private UserInfoDto getUserInfoDto(ChatInfo chatInfo) {
         if (chatInfo == null || chatInfo.getChatId() == null) {
             return null;
         }
-        return new UserInfoDto(null, chatInfo.getAuthor(), chatInfo.getChatId(), chatInfo.getThreadId(), chatInfo.getOriginMessageId());
+        return new UserInfoDto(chatInfo.getSenderType().toString(), null, chatInfo.getAuthor(), chatInfo.getChatId(), chatInfo.getThreadId(), chatInfo.getOriginMessageId());
     }
 
     public RunnableNotException sendReportWorkFull(MessageType messageType, ChatInfo chatInfo) {
@@ -205,18 +210,18 @@ public class Tasks {
     public RunnableNotException getMyVacationStart(MessageType type) {
         return new RunnableNotException(() -> {
             log.info("getMyVacationStart");
-            List<UserInfoDto> users = messageInformationService.getUsersForMesType(type);
+            Map<String, List<UserInfoDto>> users = messageInformationService.getUsersForMesType(type);
             if (users == null) {
                 return;
             }
-            users.forEach(userInfoDto -> {
+            users.forEach((nikName, userInfoDTOs) -> {
                 try {
-                    if (calendarServiceIntegration.isVacationStart(userInfoDto.getNikName(), 1)) {
+                    if (calendarServiceIntegration.isVacationStart(nikName, 1)) {
                         messageInformationService.addMessage(
                                 new MessageInfoDto(
-                                        userInfoDto,
                                         type,
-                                        "Ура с завтрашнего дня вы находитесь в отпуске. Не забудьте отключить телефон и насладиться тишиной."));
+                                        "Ура с завтрашнего дня вы находитесь в отпуске. Не забудьте отключить телефон и насладиться тишиной."),
+                                userInfoDTOs);
                     }
                 } catch (ResourceNotFoundException e) {
                     log.error(e.getMessage());
@@ -230,18 +235,18 @@ public class Tasks {
     public RunnableNotException getMyVacationEnd(MessageType type) {
         return new RunnableNotException(() -> {
             log.info("getMyVacationEnd");
-            List<UserInfoDto> users = messageInformationService.getUsersForMesType(type);
+            Map<String, List<UserInfoDto>> users = messageInformationService.getUsersForMesType(type);
             if (users == null) {
                 return;
             }
-            users.forEach(userInfoDto -> {
+            users.forEach((nikName, userInfoDTOs) -> {
                 try {
-                    if (calendarServiceIntegration.isVacationEnd(userInfoDto.getNikName())) {
+                    if (calendarServiceIntegration.isVacationEnd(nikName)) {
                         messageInformationService.addMessage(
                                 new MessageInfoDto(
-                                        userInfoDto,
                                         type,
-                                        "К сожалению ваш отпуск подошел к концу и вам опять пора на работу. Не забудьте начать отмечать время прихода и ухода на работу"));
+                                        "К сожалению ваш отпуск подошел к концу и вам опять пора на работу. Не забудьте начать отмечать время прихода и ухода на работу"),
+                                userInfoDTOs);
                     }
                 } catch (ResourceNotFoundException e) {
                     log.error(e.getMessage());
@@ -262,7 +267,7 @@ public class Tasks {
                 return;
             }
             if (vacationDTOs == null) {
-                log.error("vacationDTOs == null");
+                log.error("Список отпусков пуст");
                 return;
             }
             vacationDTOs.stream()
@@ -281,7 +286,6 @@ public class Tasks {
             if (!vacationDTOs.isEmpty()) {
                 messageInformationService.addMessage(
                         new MessageInfoDto(
-
                                 messageType,
                                 vacationDTOs.get(0).getDateStartStr() + " начинается отпуск у сотрудников :\n" + users));
             }

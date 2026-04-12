@@ -6,11 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import ru.darujo.dto.information.CodeTelegramMes;
-import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.information.ResultMes;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.User;
 import ru.darujo.model.UserInfoType;
+import ru.darujo.type.MessageType;
 
 import java.sql.Timestamp;
 import java.util.Map;
@@ -87,7 +87,7 @@ public class LinkService {
     }
 
     @Transactional
-    public ResultMes linkCodeTelegram(Integer code, Long telegramId, Integer threadId) {
+    public ResultMes linkCodeTelegram(Integer code, String senderType, String telegramId, Integer threadId) {
 
         clearMapCode(null, null);
         SingleCode singleCode = mapCode.get(code);
@@ -104,7 +104,7 @@ public class LinkService {
             userService.saveUser(user);
         } else {
             UserInfoType userInfoType = userInfoTypeService
-                    .getInfoTypeForUser(user, singleCode.getProjectId(), null, null, singleCode.getMessageType())
+                    .getInfoTypeForUser(user, senderType, singleCode.getProjectId(), null, null, singleCode.getMessageType())
                     .orElse(new UserInfoType(singleCode.getProjectId(), singleCode.getMessageType(), user));
             userInfoType.setTelegramId(telegramId);
             userInfoType.setThreadId(threadId);
@@ -120,12 +120,12 @@ public class LinkService {
     }
 
     @Transactional
-    public void linkDeleteTelegram(Long telegramId, Integer threadId) {
+    public void linkDeleteTelegram(String senderType, String telegramId, Integer threadId) {
         if (threadId == null) {
             userService.getUserList(null, null, null, null, null, null, null, telegramId, null, null)
                     .forEach(user -> {
                         user.setTelegramId(null);
-                        userInfoTypeService.getInfoTypes(user, null, null, null)
+                        userInfoTypeService.getInfoTypes(user, null, null, null, null)
                                 .forEach(userInfoType -> {
                                     userInfoType.setTelegramId(null);
                                     userInfoType.setThreadId(null);
@@ -135,7 +135,7 @@ public class LinkService {
                     });
 
         }
-        userInfoTypeService.getInfoTypes(null, telegramId, threadId, null)
+        userInfoTypeService.getInfoTypes(null, senderType, telegramId, threadId, null)
                 .forEach(userInfoType -> {
                     userInfoType.setTelegramId(null);
                     userInfoType.setThreadId(null);
@@ -145,25 +145,25 @@ public class LinkService {
 
     }
 
-    public ResultMes checkUserTelegram(Long chatId) {
+    public ResultMes checkUserTelegram(String senderType, String chatId) {
         if (chatId == null) {
             return new ResultMes(false, "Нет ни одного пользователя с таким телеграмм");
         }
         boolean flag = userService.exists(chatId);
         if (!flag) {
-            flag = userInfoTypeService.exists(chatId);
+            flag = userInfoTypeService.exists(senderType, chatId);
         }
         return new ResultMes(flag, flag ? "" : "Нет ни одного пользователя с таким телеграмм");
     }
 
     @Transactional
-    public void linkDeleteTelegram(String nikName, String messageType) {
+    public void linkDeleteTelegram(String nikName, String senderType, String messageType) {
         User user = userService.findByNikName(nikName).orElseThrow(() -> new ResourceNotFoundRunTime("Не найден с логином " + nikName));
         if (messageType == null) {
             user.setTelegramId(null);
             userService.saveUser(user);
         }
-        userInfoTypeService.getInfoTypes(user, null, null, messageType)
+        userInfoTypeService.getInfoTypes(user, senderType, null, null, messageType)
                 .forEach(userInfoType -> {
                     userInfoType.setTelegramId(null);
                     userInfoType.setThreadId(null);

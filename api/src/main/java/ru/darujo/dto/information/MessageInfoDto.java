@@ -1,6 +1,7 @@
 package ru.darujo.dto.information;
 
 import ru.darujo.dto.user.UserInfoDto;
+import ru.darujo.type.MessageType;
 
 import java.io.Serializable;
 import java.sql.Timestamp;

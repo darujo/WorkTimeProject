@@ -1,6 +1,4 @@
-package ru.darujo.dto.information;
-
-import ru.darujo.type.TypeEnum;
+package ru.darujo.type;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
