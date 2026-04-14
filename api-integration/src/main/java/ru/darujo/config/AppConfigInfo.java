@@ -23,7 +23,7 @@ public class AppConfigInfo extends WebClientConfig{
     }
 
     @Bean("webClientInfo")
-    public WebClient webClientRate(){
+    public WebClient webClientInfo() {
         return webClient(infoServiceProperty);
     }
 

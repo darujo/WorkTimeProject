@@ -5,10 +5,10 @@ import java.time.LocalDate;
 import java.util.Calendar;
 
 public enum MessageType implements TypeEnum {
-    SYSTEM_INFO("Системные информационые сообщения"),
+    SYSTEM_INFO("Системные информационные сообщения"),
     ESTIMATION_WORK("Проведена оценка"),
     //todo Переименовать
-    CHANGE_STAGE_WORK("Смена изменение ЗИ (статус или релиз) "),
+    CHANGE_STAGE_WORK("Изменение ЗИ (статус или релиз) "),
     UPDATE_INFO("Список исправлений в новой версии"),
     AVAIL_WORK_LAST_DAY("Работы отмеченные вами за предыдущий рабочий день. Рассылается по рабочим дням", 11),
     AVAIL_WORK_LAST_WEEK("Работы отмеченные вами за последние 7 дней. Рассылается на второй рабочий день.", 12),

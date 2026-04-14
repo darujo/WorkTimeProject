@@ -1,9 +1,7 @@
 package ru.darujo.integration;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.darujo.dto.information.SendMessage;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
@@ -12,10 +10,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
-@Component
 public class TelegramServiceIntegration extends ServiceIntegration {
-    @Autowired
-    public void setWebClient(WebClient webClientTelegram) {
+
+    public TelegramServiceIntegration(WebClient webClientTelegram) {
         super.setWebClient(webClientTelegram);
     }
 
@@ -155,7 +152,7 @@ public class TelegramServiceIntegration extends ServiceIntegration {
                             sendFile(sendMessage.getAuthor(), userSend.getChatId(), userSend.getThreadId(), userSend.getOriginMessageId(), sendMessage.getFileName(), sendMessage.getText());
                             userSend.setSend();
                         } catch (ResourceNotFoundRunTime ex) {
-                            log.error(String.format("Сбой отправки файла пользователю с chatId %s", userSend.getChatId()), ex);
+                            log.error("Сбой отправки файла пользователю с chatId {}", userSend.getChatId(), ex);
                             flagError.set(true);
                         }
                     });
@@ -163,14 +160,14 @@ public class TelegramServiceIntegration extends ServiceIntegration {
             return !flagError.get();
 
         } catch (ResourceNotFoundRunTime ex) {
-            log.error(String.format("Сбой при отправке файла %s %s", sendMessage.getFileName(), ex.getMessage()), ex);
+            log.error("Сбой при отправке файла {} {}", sendMessage.getFileName(), ex.getMessage(), ex);
             return false;
         } finally {
             if (flagSendFile) {
                 try {
                     deleteFile(sendMessage.getFileName());
                 } catch (ResourceNotFoundRunTime ex) {
-                    log.error(String.format("Сбой при удаление файл из сервиса %s %s", sendMessage.getFileName(), ex.getMessage()), ex);
+                    log.error("Сбой при удаление файл из сервиса {} {}", sendMessage.getFileName(), ex.getMessage(), ex);
                 }
             }
 
