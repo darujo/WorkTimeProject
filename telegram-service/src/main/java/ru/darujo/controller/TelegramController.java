@@ -60,20 +60,6 @@ public class TelegramController {
         telegramBotSend.sendDocument(new ChatInfo(username, chatId, threadId, originMessageId), fileName, file, text);
     }
 
-    @PostMapping(value = "/{chatId}/file/fast")
-    public void sendFileFast(@RequestHeader String username,
-                             @PathVariable String chatId,
-                             @RequestParam(required = false) Integer threadId,
-                             @RequestParam(required = false) Integer originMessageId,
-                             @RequestParam String fileName,
-                             @RequestParam String text,
-                             @RequestBody String body) throws TelegramApiException {
-        fileService.addFile(fileName, body);
-        File file = fileService.getFile(fileName);
-        telegramBotSend.sendDocument(new ChatInfo(username, chatId, threadId, originMessageId), fileName, file, text);
-        fileService.delFile(fileName);
-    }
-
     @DeleteMapping(value = "/file")
     public void deleteFile(@RequestParam String fileName) {
         fileService.delFile(fileName);

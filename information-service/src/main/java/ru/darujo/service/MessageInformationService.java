@@ -5,7 +5,6 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -13,7 +12,6 @@ import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.dto.user.UserInfoDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
-import ru.darujo.integration.TelegramServiceIntegration;
 import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.model.MessageInformation;
 import ru.darujo.model.UserSend;
@@ -28,8 +26,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @Service
@@ -38,13 +34,7 @@ public class MessageInformationService {
     private UserServiceIntegration userServiceIntegration;
     private MessageInformationRepository messageInformationRepository;
     private UserSendRepository userSendRepository;
-    private TelegramServiceIntegration telegramServiceIntegration;
-    private FileService fileService;
-
-    @Autowired
-    public void setFileService(FileService fileService) {
-        this.fileService = fileService;
-    }
+    private SendService sendService;
 
     @Autowired
     public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
@@ -62,8 +52,8 @@ public class MessageInformationService {
     }
 
     @Autowired
-    public void setTelegramServiceIntegration(TelegramServiceIntegration telegramServiceIntegration) {
-        this.telegramServiceIntegration = telegramServiceIntegration;
+    public void setSendService(SendService sendService) {
+        this.sendService = sendService;
     }
 
     Map<MessageType, Map<MessageSenderType, List<UserInfoDto>>> messageTypeListMap = null;
@@ -97,7 +87,7 @@ public class MessageInformationService {
             flagOk = true;
         }
         if (availNotSendMessage()) {
-            if (!sendAllNotSendMessage()) {
+            if (sendService.sendAllNotSendMessage()) {
                 flagOk = false;
             }
         }
@@ -107,6 +97,7 @@ public class MessageInformationService {
     public void setMessageTypeListMap(MapUserInfoDto messageTypeListMap) {
         this.messageTypeListMap = messageTypeListMap.getMessageTypeListMap();
     }
+
     @Transactional
     public Boolean addMessage(MessageInfoDto messageInfoDto) {
         return addMessage(messageInfoDto, null);
@@ -145,7 +136,7 @@ public class MessageInformationService {
                     userInfoDTOList.forEach(userInfoDto ->
                             saveUserSend(new UserSend(userInfoDto.getSenderType(), userInfoDto.getTelegramId(), userInfoDto.getThreadId(), null, messageInformation))));
         }
-        if (sendAllNotSendMessage()) {
+        if (sendService.sendAllNotSendMessage()) {
             ScheduleService.getINSTANCE().sendMes();
         }
         return true;
@@ -200,43 +191,6 @@ public class MessageInformationService {
         return userSendRepository.exists(specification);
     }
 
-    @Transactional
-    public boolean sendAllNotSendMessage() {
-        Specification<@NonNull UserSend> specification = Specifications.ne(null, "send", true);
-        AtomicBoolean flagOk = new AtomicBoolean(true);
-        userSendRepository.findAll(specification).forEach(
-                userSend -> {
-                    try {
-                        if (userSend.getMessageInformation().getFileForDisk() != null) {
-                            String body = fileService.getFileBody(pathSave + userSend.getMessageInformation().getFileForDisk());
-                            if (body != null && !body.isBlank()) {
-                                telegramServiceIntegration.sendFile(
-                                        userSend.getMessageInformation().getAuthor(),
-                                        userSend.getChatId(),
-                                        userSend.getThreadId(),
-                                        userSend.getOriginMessageId(),
-                                        userSend.getMessageInformation().getFileForDisk(),
-                                        userSend.getMessageInformation().getText(),
-                                        body);
-                            }
-                        } else {
-                            telegramServiceIntegration.sendMessage(
-                                    userSend.getMessageInformation().getAuthor(),
-                                    userSend.getChatId(),
-                                    userSend.getThreadId(),
-                                    userSend.getMessageInformation().getText());
-                        }
-                        userSend.setSend(true);
-                        userSendRepository.save(userSend);
-                    } catch (ResourceNotFoundRunTime exception) {
-                        flagOk.set(false);
-                        log.error(exception.getMessage(), exception);
-                    }
-
-                });
-        return flagOk.get();
-    }
-
 
     public Map<String, List<UserInfoDto>> getUsersForMesType(MessageType type) {
         if (messageTypeListMap != null) {
@@ -255,18 +209,17 @@ public class MessageInformationService {
     }
 
     @Transactional
-    public Boolean sendFile(MessageInfoDto messageInfoDto, String fileName, String fileBody) {
-        return sendFile(messageInfoDto, null, fileName, fileBody);
+    public void sendFile(MessageInfoDto messageInfoDto, String fileName, String fileBody) {
+        sendFile(messageInfoDto, null, fileName, fileBody);
     }
 
     @Transactional
-    public Boolean sendFile(MessageInfoDto messageInfoDto, Long projectId, String fileName, String fileBody) {
+    public void sendFile(MessageInfoDto messageInfoDto, Long projectId, String fileName, String fileBody) {
         if (messageTypeListMap == null) {
             initMesType();
         }
         if (messageInfoDto.getUserInfoDto() != null && messageTypeListMap == null) {
             log.error("Нет списка получателей");
-            return false;
         } else {
             MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), false, messageInfoDto.getDataTime(), projectId));
             if (messageInfoDto.getUserInfoDto() != null) {
@@ -281,57 +234,11 @@ public class MessageInformationService {
             } else {
                 updateAllNoAddUser();
             }
-            boolean flagSendFile = false;
-            try {
-                telegramServiceIntegration.addFile(fileName, fileBody);
-                flagSendFile = true;
-                AtomicReference<Boolean> flagError = new AtomicReference<>(false);
-                userSendRepository.findAll(
-                                Specifications.eq(null, "messageInformation", messageInformation)
-                        )
-                        .forEach(userSend -> {
-                            try {
-                                telegramServiceIntegration.sendFile(userSend.getMessageInformation().getAuthor(), userSend.getChatId(), userSend.getThreadId(), userSend.getOriginMessageId(), fileName, userSend.getMessageInformation().getText());
-                                userSend.setSend(true);
-                                userSendRepository.save(userSend);
-                            } catch (ResourceNotFoundRunTime ex) {
-                                log.error("Сбой отправки файла пользователю с chatId {}", userSend.getChatId());
-                                flagError.set(true);
-                            }
-                        });
-                if (flagError.get()) {
-                    saveFile(messageInformation, fileName, fileBody);
-                }
-            } catch (ResourceNotFoundRunTime ex) {
-                saveFile(messageInformation, fileName, fileBody);
-                log.error("Сбой при отправке файла {} {}", fileName, ex.getMessage());
-                return false;
-            } finally {
-                if (flagSendFile) {
-                    try {
-                        telegramServiceIntegration.deleteFile(fileName);
-                    } catch (ResourceNotFoundRunTime ex) {
-                        log.error("Сбой при удаление файл из сервиса {} {}", fileName, ex.getMessage(), ex);
-                    }
-                }
-            }
+            sendService.fileSend(messageInformation, fileName, fileBody);
 
         }
-        if (sendAllNotSendMessage()) {
+        if (sendService.sendAllNotSendMessage()) {
             ScheduleService.getINSTANCE().sendMes();
         }
-        return true;
-
-    }
-
-    @Value("${file.save-into}")
-    private String pathSave;
-
-    private void saveFile(MessageInformation messageInformation, String file, String body) {
-        fileService.saveFile(pathSave + file, body);
-        messageInformation.setText("Не удалось доставить до вас файл ранее. " + messageInformation.getText());
-        messageInformation.setFileForDisk(file);
-        messageInformationRepository.save(messageInformation);
-        ScheduleService.getINSTANCE().sendMes();
     }
 }
