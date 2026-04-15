@@ -96,7 +96,7 @@ public class AppConfig extends WebClientConfig {
         return new FrontServiceIntegration(webClient(frontServiceProperty));
     }
 
-    //Gate way
+    //gateway
     @Bean
     @ConditionalOnBooleanProperty(prefix = "integration.gate-way-service", name = "enable")
     public ServiceIntegration gateWayServiceIntegration(GateWayServiceProperty gateWayServiceProperty, SslContext sslContext) {
@@ -108,7 +108,7 @@ public class AppConfig extends WebClientConfig {
     public SslContext sslContext() throws SSLException {
         return SslContextBuilder.forClient()
                 .trustManager(InsecureTrustManagerFactory.INSTANCE)
-                // modify as you wish, e. g. trust a self-signed cert
+                // modify as you wish, e.g. trust a self-signed cert
                 .build();
     }
 }
