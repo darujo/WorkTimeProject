@@ -22,4 +22,16 @@ spring:
     default-property-inclusion: non_absent
 file:
   save-into: "C:/daru/worktime/mes/"
-
+integration:
+  user-service:
+    enable: true
+  telegram-service:
+    enable: true
+  calendar-service:
+    enable: true
+  work-time-service:
+    enable: true
+  task-service:
+    enable: true
+  work-service:
+    enable: true

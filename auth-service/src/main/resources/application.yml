@@ -1,3 +1,7 @@
+integration:
+  information-service:
+    enable: true
+
 server:
   port: 8183
   servlet:
@@ -27,3 +31,4 @@ spring:
   sql:
     init:
       mode: always
+

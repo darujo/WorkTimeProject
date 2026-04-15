@@ -20,5 +20,6 @@ spring:
 
   jackson:
     default-property-inclusion: non_absent
-
-
+integration:
+  user-service:
+    enable: true

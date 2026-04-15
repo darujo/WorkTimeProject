@@ -51,6 +51,7 @@ public class AppConfig extends WebClientConfig {
     @Bean
     @ConditionalOnBooleanProperty(prefix = "integration.information-service", name = "enable")
     public InfoServiceIntegration infoServiceIntegration(InfoServiceProperty infoServiceProperty) {
+        System.out.println("sssdaf");
         return new InfoServiceIntegration(webClient(infoServiceProperty));
     }
 
@@ -92,8 +93,8 @@ public class AppConfig extends WebClientConfig {
     //Front
     @Bean
     @ConditionalOnBooleanProperty(prefix = "integration.front-service", name = "enable")
-    public FrontServiceIntegration frontServiceIntegration(FrontServiceProperty frontServiceProperty) {
-        return new FrontServiceIntegration(webClient(frontServiceProperty));
+    public ServiceIntegration frontServiceIntegration(FrontServiceProperty frontServiceProperty) {
+        return new ServiceIntegration(webClient(frontServiceProperty));
     }
 
     //gateway

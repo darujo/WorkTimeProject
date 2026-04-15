@@ -37,3 +37,25 @@ update:
   unpack-command:
     command: "C:/daru/build/7z.exe"
     param: "x %s -o%s -y"
+
+integration:
+  information-service:
+    enable: true
+  telegram-service:
+    enable: true
+  work-service:
+    enable: true
+  task-service:
+    enable: true
+  work-time-service:
+    enable: true
+  calendar-service:
+    enable: true
+  rate-service:
+    enable: true
+  user-service:
+    enable: true
+  front-service:
+    enable: true
+  gate-way-service:
+    enable: true

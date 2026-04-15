@@ -68,12 +68,12 @@ public class MonitorService {
     }
 
     @Autowired
-    public void setFrontServiceIntegration(FrontServiceIntegration frontServiceIntegration) {
+    public void setFrontServiceIntegration(ServiceIntegration frontServiceIntegration) {
         addServiceIntegration(ServiceType.FRONT, frontServiceIntegration);
     }
 
     @Autowired
-    public void setGateWayServiceIntegration(GateWayServiceIntegration gateWayServiceIntegration) {
+    public void setGateWayServiceIntegration(ServiceIntegration gateWayServiceIntegration) {
         addServiceIntegration(ServiceType.GATE_WAY, gateWayServiceIntegration);
     }
 
