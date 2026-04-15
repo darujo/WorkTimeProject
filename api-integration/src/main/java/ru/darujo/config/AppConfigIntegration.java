@@ -32,7 +32,7 @@ import javax.net.ssl.SSLException;
 
 )
 
-public class AppConfig extends WebClientConfig {
+public class AppConfigIntegration extends WebClientConfig {
     // Telegram
     @Bean
     @ConditionalOnBooleanProperty(prefix = "integration.telegram-service", name = "enable")
@@ -51,7 +51,6 @@ public class AppConfig extends WebClientConfig {
     @Bean
     @ConditionalOnBooleanProperty(prefix = "integration.information-service", name = "enable")
     public InfoServiceIntegration infoServiceIntegration(InfoServiceProperty infoServiceProperty) {
-        System.out.println("sssdaf");
         return new InfoServiceIntegration(webClient(infoServiceProperty));
     }
 
