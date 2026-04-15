@@ -1,0 +1,54 @@
+{
+  "properties": [
+    {
+      "name": "integration.telegram-service.enable",
+      "type": "java.lang.Boolean",
+      "description": "Enable bean Telegram Service Integration."
+    },
+    {
+      "name": "integration.calendar-service.enable",
+      "type": "java.lang.Boolean",
+      "description": "Enable bean Calendar Service Integration."
+    },
+    {
+      "name": "integration.information-service.enable",
+      "type": "java.lang.Boolean",
+      "description": "Enable bean Information Service Integration."
+    },
+    {
+      "name": "integration.rate-service.enable",
+      "type": "java.lang.Boolean",
+      "description": "Enable bean Rate Service Integration."
+    },
+    {
+      "name": "integration.task-service.enable",
+      "type": "java.lang.Boolean",
+      "description": "Enable bean Task Service Integration."
+    },
+    {
+      "name": "integration.user-service.enable",
+      "type": "java.lang.Boolean",
+      "description": "Enable bean User Service Integration."
+    },
+    {
+      "name": "integration.work-service.enable",
+      "type": "java.lang.Boolean",
+      "description": "Enable bean Work Service Integration."
+    },
+    {
+      "name": "integration.work-time-service.enable",
+      "type": "java.lang.Boolean",
+      "description": "Enable bean Work Time Service Integration."
+    },
+    {
+      "name": "integration.front-service.enable",
+      "type": "java.lang.Boolean",
+      "description": "Enable bean Front Service Integration."
+    },
+    {
+      "name": "integration.gate-way-service.enable",
+      "type": "java.lang.Boolean",
+      "description": "Enable bean Gate Way Service Integration."
+    }
+  ]
+}

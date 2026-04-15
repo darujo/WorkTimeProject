@@ -1,9 +1,7 @@
 package ru.darujo.integration;
 
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.workperiod.UserWorkDto;
@@ -16,10 +14,8 @@ import java.util.Date;
 import java.util.List;
 
 @Log4j2
-@Component
 public class WorkTimeServiceIntegration extends ServiceIntegration {
-    @Autowired
-    public void setWebClient(WebClient webClientWorkTime) {
+    public WorkTimeServiceIntegration(WebClient webClientWorkTime) {
         super.setWebClient(webClientWorkTime);
     }
 

@@ -437,7 +437,6 @@ public class WorkRepService {
             );
 
         } else {
-
             workUserTimes.add(new WorkUserTime(
                     null,
                     null,
@@ -445,8 +444,6 @@ public class WorkRepService {
                     "Без ЗИ",
                     workTimeServiceIntegration.getWorkUserOrZiBig(null, nikName, addTotal, weekSplit, dateStart, dateEnd))
             );
-
-
         }
         return workUserTimes;
     }

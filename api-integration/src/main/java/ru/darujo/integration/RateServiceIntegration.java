@@ -1,10 +1,7 @@
 package ru.darujo.integration;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.darujo.dto.ratestage.WorkStageDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
@@ -12,14 +9,10 @@ import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import java.util.List;
 
 @Slf4j
-@Component
-@ConditionalOnMissingClass
 public class RateServiceIntegration extends ServiceIntegration {
-    @Autowired
-    public void setWebClient(WebClient webClientRate) {
+    public RateServiceIntegration(WebClient webClientRate) {
         super.setWebClient(webClientRate);
     }
-
 
     public WorkStageDto getTimePlan(List<Long> workId, Long projectId) {
         if (workId == null) {

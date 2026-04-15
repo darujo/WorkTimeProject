@@ -2,9 +2,7 @@ package ru.darujo.integration;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.MessageInfoDto;
@@ -13,13 +11,10 @@ import ru.darujo.type.MessageSenderType;
 import ru.darujo.type.ReportTypeDto;
 
 @Slf4j
-@Component
 public class InfoServiceIntegration extends ServiceIntegration {
-    @Autowired
-    public void setWebClient(WebClient webClientInfo) {
+    public InfoServiceIntegration(WebClient webClientInfo) {
         super.setWebClient(webClientInfo);
     }
-
 
     public void setMessageTypeListMap(MapUserInfoDto mapUserInfoDto) {
         try {

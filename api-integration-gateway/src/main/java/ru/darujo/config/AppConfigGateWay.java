@@ -30,6 +30,7 @@ public class AppConfigGateWay extends WebClientConfig {
 
     @Bean
     public WebClient webClientGateWay(SslContext sslContext) {
+
         return webClient(gateWayServiceProperty, sslContext);
     }
 

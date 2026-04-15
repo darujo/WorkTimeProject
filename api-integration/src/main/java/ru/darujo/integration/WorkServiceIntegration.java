@@ -1,9 +1,7 @@
 package ru.darujo.integration;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.darujo.dto.MapStringFloat;
 import ru.darujo.dto.work.WorkLittleDto;
@@ -18,10 +16,8 @@ import java.util.List;
 
 
 @Slf4j
-@Component
 public class WorkServiceIntegration extends ServiceIntegration {
-    @Autowired
-    public void setWebClient(WebClient webClientWork) {
+    public WorkServiceIntegration(WebClient webClientWork) {
         super.setWebClient(webClientWork);
     }
 

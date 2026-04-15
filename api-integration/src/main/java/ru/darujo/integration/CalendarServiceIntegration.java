@@ -2,11 +2,8 @@ package ru.darujo.integration;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.darujo.dto.CustomPageImpl;
 import ru.darujo.dto.calendar.VacationDto;
@@ -19,11 +16,9 @@ import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-@Component
-@ConditionalOnMissingClass
 public class CalendarServiceIntegration extends ServiceIntegration {
-    @Autowired
-    public void setWebClient(WebClient webClientCalendar) {
+
+    public CalendarServiceIntegration(WebClient webClientCalendar) {
         super.setWebClient(webClientCalendar);
     }
 

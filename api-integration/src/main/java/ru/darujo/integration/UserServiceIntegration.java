@@ -3,10 +3,8 @@ package ru.darujo.integration;
 import jakarta.annotation.PostConstruct;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.darujo.dto.CustomPageImpl;
 import ru.darujo.dto.information.MapUserInfoDto;
@@ -24,12 +22,12 @@ import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
-@Component
+
 public class UserServiceIntegration extends ServiceIntegration {
-    @Autowired
-    public void setWebClient(WebClient webClientUser) {
+    public UserServiceIntegration(WebClient webClientUser) {
         super.setWebClient(webClientUser);
     }
+
     private static UserServiceIntegration INSTANCE;
     public static UserServiceIntegration getInstance(){
         return INSTANCE;
@@ -173,7 +171,7 @@ public class UserServiceIntegration extends ServiceIntegration {
             return webClient.get().uri("/users/user/telegram/get/" + chatId)
                     .retrieve()
 //                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-//                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить данные пользователю" + clientResponse.bodyToMono(String.class).flatMap(s -> {log.error(s);
+//                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Не удалось получить данные пользователю" + clientResponse.bodyToMono(String.class).flatMap(s -> {log.error(s);
 //                                return Mono.just(s);}))))
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             clientResponse -> getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю :")

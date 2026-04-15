@@ -13,8 +13,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Slf4j
-public abstract class ServiceIntegration {
+public class ServiceIntegration {
     protected WebClient webClient;
+
+    public ServiceIntegration(WebClient webClient) {
+        this.webClient = webClient;
+    }
+
+    public ServiceIntegration() {
+    }
 
     protected void setWebClient(WebClient webClient) {
         this.webClient = webClient;

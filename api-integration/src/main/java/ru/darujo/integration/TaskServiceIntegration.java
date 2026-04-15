@@ -2,10 +2,8 @@ package ru.darujo.integration;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.TaskDto;
@@ -20,10 +18,8 @@ import java.util.List;
 
 
 @Slf4j
-@Component
 public class TaskServiceIntegration extends ServiceIntegration {
-    @Autowired
-    public void setWebClient(WebClient webClientTask) {
+    public TaskServiceIntegration(WebClient webClientTask) {
         super.setWebClient(webClientTask);
     }
 
