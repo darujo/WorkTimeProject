@@ -4,13 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.darujo.dto.information.SendMessage;
+import ru.darujo.dto.information.SendServiceInt;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
-public class TelegramServiceIntegration extends ServiceIntegration {
+public class TelegramServiceIntegration extends ServiceIntegration implements SendServiceInt {
 
     public TelegramServiceIntegration(WebClient webClientTelegram) {
         super.setWebClient(webClientTelegram);
