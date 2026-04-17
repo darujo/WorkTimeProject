@@ -13,7 +13,7 @@ import ru.darujo.integration.UserServiceIntegration;
 import ru.darujo.model.ChatInfo;
 import ru.darujo.telegram_bot.TelegramBotSend;
 import ru.darujo.type.MessageSenderType;
-import ru.darujo.type.ReportTypeDto;
+import ru.darujo.type.ReportType;
 import ru.darujo.type.TypeEnum;
 
 import java.io.File;
@@ -98,7 +98,7 @@ public class MenuService {
             }
             try {
 
-                menuParam.setReportTypeDto(ReportTypeDto.valueOf(command));
+                menuParam.setReportType(ReportType.valueOf(command));
                 telegramBotSend.EditPhoto(chatInfo, "Кому разослать результат по отчету " + command + "?", getMenuWorkStatus(), file);
             } catch (IllegalArgumentException illegalArgumentException) {
                 reOpenMainMenu(chatInfo);
@@ -131,10 +131,10 @@ public class MenuService {
             }
         }
         if (command.equals(CommandType.SEND_ME)) {
-            sendReport(Objects.requireNonNull(menuParam).getReportTypeDto(), chatInfo, true);
+            sendReport(Objects.requireNonNull(menuParam).getReportType(), chatInfo, true);
         }
         if (command.equals(CommandType.SEND_ALL)) {
-            sendReport(Objects.requireNonNull(menuParam).getReportTypeDto(), chatInfo, false);
+            sendReport(Objects.requireNonNull(menuParam).getReportType(), chatInfo, false);
         }
         if (command.equals(CommandType.CANCEL)) {
             deleteMessage(chatInfo);
@@ -161,7 +161,7 @@ public class MenuService {
         openMainMenu(chatInfo);
     }
 
-    private void sendReport(ReportTypeDto reportType, ChatInfo chatInfo, boolean sendMe) throws TelegramApiException {
+    private void sendReport(ReportType reportType, ChatInfo chatInfo, boolean sendMe) throws TelegramApiException {
         deleteMessage(chatInfo);
         try {
             ResultMes resultMes = userServiceIntegration.checkUserTelegram(Long.parseLong(chatInfo.getChatId()));
@@ -196,7 +196,7 @@ public class MenuService {
 
     private InlineKeyboardMarkup getMenuReport() {
         List<InlineKeyboardRow> rows = new LinkedList<>();
-        for (ReportTypeDto typeDto : ReportTypeDto.values()) {
+        for (ReportType typeDto : ReportType.values()) {
             List<TypeEnum> row = new LinkedList<>();
             row.add(typeDto);
             rows.add(createRow(row));

@@ -2,7 +2,9 @@ package ru.darujo.type;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public enum MessageType implements TypeEnum {
     SYSTEM_INFO("Системные информационные сообщения"),
@@ -12,12 +14,12 @@ public enum MessageType implements TypeEnum {
     UPDATE_INFO("Список исправлений в новой версии"),
     AVAIL_WORK_LAST_DAY("Работы отмеченные вами за предыдущий рабочий день. Рассылается по рабочим дням", 11),
     AVAIL_WORK_LAST_WEEK("Работы отмеченные вами за последние 7 дней. Рассылается на второй рабочий день.", 12),
-    AVAIL_WORK_FULL_REPORT("Статус ЗИ.", false, DayOfWeek.TUESDAY, 20),
-    AVAIL_WORK_FULL_REPORT_PROJECT("Статус ЗИ по проектам.", true, DayOfWeek.TUESDAY, 20, 10),
+    AVAIL_WORK_FULL_REPORT("Статус ЗИ", ReportType.ZI_STATUS, false, DayOfWeek.TUESDAY, 20),
+    AVAIL_WORK_FULL_REPORT_PROJECT("Статус ЗИ по проектам.", ReportType.ZI_STATUS_PROJECT, true, DayOfWeek.TUESDAY, 20, 10),
 
-    WEEK_WORK_REPORT("Факт загрузки за предыдущую неделю.", false, DayOfWeek.TUESDAY, 20),
-    ZI_WORK_REPORT("Факт загрузки по ЗИ.", false, DayOfWeek.TUESDAY, 20),
-    ZI_WORK_REPORT_PROJECT("Факт загрузки по ЗИ по проектам.", true, DayOfWeek.TUESDAY, 20, 10),
+    WEEK_WORK_REPORT("Факт загрузки за предыдущую неделю.", ReportType.USER_WORK, false, DayOfWeek.TUESDAY, 20),
+    ZI_WORK_REPORT("Факт загрузки по ЗИ.", ReportType.ZI_WORK, false, DayOfWeek.TUESDAY, 20),
+    ZI_WORK_REPORT_PROJECT("Факт загрузки по ЗИ по проектам.", ReportType.ZI_WORK_PROJECT, true, DayOfWeek.TUESDAY, 20, 10),
 
     VACATION_MY_START("Начало вашего отпуска в день перед отпуском", 20),
     VACATION_MY_END("Конец Вашего отпуска в последний день отпуска", 14),
@@ -31,6 +33,7 @@ public enum MessageType implements TypeEnum {
     private final Integer minute;
     private final Integer period;
     private final boolean project;
+    private List<ReportType> reportTypeList;
 
     // Уведомления без периода
     MessageType(String name) {
@@ -43,12 +46,19 @@ public enum MessageType implements TypeEnum {
     }
 
     // Еженедельные
-    MessageType(String name, Boolean project, DayOfWeek dayOfWeek, Integer hour) {
-        this(name, project, dayOfWeek, hour, null);
+    MessageType(String name, ReportType reportType, Boolean project, DayOfWeek dayOfWeek, Integer hour) {
+        this(name, reportType, project, dayOfWeek, hour, null);
     }
 
-    MessageType(String name, Boolean project, DayOfWeek dayOfWeek, Integer hour, Integer minute) {
+    MessageType(String name, ReportType reportType, Boolean project, DayOfWeek dayOfWeek, Integer hour, Integer minute) {
         this(name, project, dayOfWeek, hour, minute, 7);
+
+        if (reportType != null) {
+            reportTypeList = new ArrayList<>();
+            reportTypeList.add(reportType);
+        }
+
+
     }
 
 
@@ -59,6 +69,7 @@ public enum MessageType implements TypeEnum {
         this.hour = hour;
         this.minute = minute;
         this.period = periodDay == null ? null : (86400 * periodDay);
+//        this.reportTypeList = reportTypeList;
     }
 
     private String getTime(Integer hour, Integer minute) {
@@ -159,7 +170,12 @@ public enum MessageType implements TypeEnum {
         return startTime;
     }
 
-    public Boolean getProject() {
+    public boolean isProject() {
         return project;
     }
+
+    public List<ReportType> getReportTypeList() {
+        return reportTypeList;
+    }
+
 }

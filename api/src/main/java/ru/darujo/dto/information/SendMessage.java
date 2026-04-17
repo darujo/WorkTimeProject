@@ -9,7 +9,8 @@ public interface SendMessage {
     String getText();
     boolean isAttachFile();
     String getFileName();
-    String getFileBody();
+
+    byte[] getFileBody();
     Collection<? extends UserSendMessage> getUserSendMessages();
 
 }

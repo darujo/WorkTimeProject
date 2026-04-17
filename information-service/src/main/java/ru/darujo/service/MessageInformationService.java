@@ -209,12 +209,7 @@ public class MessageInformationService {
     }
 
     @Transactional
-    public void sendFile(MessageInfoDto messageInfoDto, String fileName, String fileBody) {
-        sendFile(messageInfoDto, null, fileName, fileBody);
-    }
-
-    @Transactional
-    public void sendFile(MessageInfoDto messageInfoDto, Long projectId, String fileName, String fileBody) {
+    public void sendFile(MessageInfoDto messageInfoDto, Long projectId, String fileName, byte[] fileBody) {
         if (messageTypeListMap == null) {
             initMesType();
         }

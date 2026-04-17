@@ -7,9 +7,11 @@ import ru.darujo.dto.workperiod.UserWorkFormDto;
 import ru.darujo.dto.workperiod.WorkUserTime;
 import ru.darujo.dto.workrep.WorkRepDto;
 import ru.darujo.dto.workrep.WorkRepProjectDto;
-import uk.co.certait.htmlexporter.writer.excel.ExcelExporter;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.List;
@@ -21,14 +23,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 public class HtmlService {
 
-    public String printRep(List<WorkRepDto> works, String headText) {
-        boolean excel = true;
+    public String getFooter() {
+        return "</body>";
+    }
+
+    public String printRep(List<WorkRepDto> works, String headText, boolean excel) {
         StringBuilder sb = new StringBuilder();
-        getHead(sb);
         sb.append("<h1>").append(headText).append("</h1>");
-        sb.append("<body>");
         sb.append(getTegStart("div", "wrapper", null));
-        sb.append(getTableStart(excel, "Статус ЗИ"));
+        sb.append(getTableStart(excel, headText));
 
         sb.append("<tr>");
         sb.append(getTegText(excel, "td", "rowspan=\"5\"", "table_head2", null, "ПН"));
@@ -135,22 +138,7 @@ public class HtmlService {
         sb.append("</tbody>");
         sb.append("</table>");
         sb.append("</div>");
-
-
-//        sb.append("</tbody>");
-        sb.append("</body>");
-//        sb.append("</head>");
-        try {
-            new ExcelExporter().exportHtml(sb.toString(), new File("report____.xlsx"));
-
-//or byte [] = new ExcelExporter().exportHtml(html);
-
-
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
         return sb.toString();
-
     }
 
     private void printWorkRep(boolean excel, WorkRepDto workRepDto, WorkRepProjectDto workRepProjectDto, StringBuilder sb, AtomicBoolean first) {
@@ -332,7 +320,7 @@ public class HtmlService {
         sb.append("border-collapse: collapse;");
         sb.append(" border-spacing: 0;");
         sb.append("}");
-//
+
         sb.append("th, td{");
 //        sb.append("font-family: \"Courier New\";");
         sb.append("font-family: \"Arial\";");
@@ -340,7 +328,7 @@ public class HtmlService {
         sb.append("padding-left: 2px;");
         sb.append("padding-right: 2px;");
         sb.append("}");
-//
+
         sb.append("        th{");
         sb.append("background: #336699;");
         sb.append("color: #eeeeee;");
@@ -356,20 +344,11 @@ public class HtmlService {
         sb.append("</head>");
     }
 
-    public String getWeekWork(String headText,
-                              boolean ziSplit,
-                              boolean workTask,
-                              boolean workTime,
-                              boolean workPercent,
-                              List<AttrDto<Integer>> taskListType,
-                              List<WorkUserTime> weekWorkList) {
-        boolean excel = true;
-        StringBuilder sb = new StringBuilder();
-        getHead(sb);
-        sb.append("<body>");
 
+    public String getWeekWork(String headText, boolean ziSplit, boolean workTask, boolean workTime, boolean workPercent, List<AttrDto<Integer>> taskListType, List<WorkUserTime> weekWorkList, boolean excel) {
+        StringBuilder sb = new StringBuilder();
         sb.append("<h1>").append(headText).append("</h1>");
-        sb.append(getTableStart(excel, ziSplit ? "Статус ЗИ" : "Работы за период"));
+        sb.append(getTableStart(excel, headText));
         sb.append("<tr>");
         sb.append(getTegText(excel, "td", "rowspan=\"2\"", "table_head1", "№ п/п"));
         if (ziSplit) {
@@ -405,9 +384,15 @@ public class HtmlService {
         });
         sb.append("</tbody>");
         sb.append("</table>");
-        sb.append("</body>");
         return sb.toString();
+    }
 
+    public String getHead() {
+        StringBuilder sb = new StringBuilder();
+        getHead(sb);
+        sb.append("<body>");
+
+        return sb.toString();
     }
 
     private void printUserWork(boolean excel, boolean ziSplit, boolean workTask, boolean workTime, boolean workPercent, List<AttrDto<Integer>> taskListType, WorkUserTime work_zi, UserWorkFormDto work, StringBuilder sb, Integer i, Integer j) {

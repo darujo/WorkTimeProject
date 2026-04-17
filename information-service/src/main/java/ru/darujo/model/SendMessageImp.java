@@ -10,9 +10,9 @@ public class SendMessageImp implements SendMessage {
     MessageInformation messageInformation;
     Collection<UserSend> userSendList;
     String fileName;
-    String fileBody;
+    byte[] fileBody;
 
-    public SendMessageImp(MessageInformation messageInformation, Collection<UserSend> userSendList, String fileName, String fileBody) {
+    public SendMessageImp(MessageInformation messageInformation, Collection<UserSend> userSendList, String fileName, byte[] fileBody) {
         this.messageInformation = messageInformation;
         this.userSendList = userSendList;
         this.fileName = fileName;
@@ -36,7 +36,7 @@ public class SendMessageImp implements SendMessage {
 
     @Override
     public boolean isAttachFile() {
-        return fileBody != null && !fileBody.isEmpty();
+        return fileBody.length > 0;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class SendMessageImp implements SendMessage {
     }
 
     @Override
-    public String getFileBody() {
+    public byte[] getFileBody() {
         return fileBody;
     }
 

@@ -3,8 +3,10 @@ package ru.darujo.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -16,19 +18,19 @@ import java.util.Objects;
 public class FileService {
     private final Map<String, File> files = new HashMap<>();
 
-    public String addFile(String name, String body) {
+    public String addFile(String name, byte[] body) {
         return addFile(name, null, body);
     }
 
-    public void saveFile(String name, String body) {
+    public void saveFile(String name, byte[] body) {
         addFile(name, name, body);
     }
 
-    public String addFile(String name, String fileName, String body) {
+    public String addFile(String name, String fileName, byte[] body) {
         try {
             File file;
             if (fileName == null) {
-                file = File.createTempFile(String.valueOf(Objects.requireNonNull(body).hashCode()), ".tmp");
+                file = File.createTempFile(String.valueOf(Objects.requireNonNull(name).hashCode()), ".tmp");
                 file.deleteOnExit();
             } else {
                 file = new File(fileName);
@@ -38,11 +40,10 @@ public class FileService {
             log.info(fileName);
             log.info(file.getAbsolutePath());
 
+            String filePath = "file.txt";
 
-            try (PrintWriter out = new PrintWriter(file, StandardCharsets.UTF_8)) {
-                out.println(body);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            try (FileOutputStream fos = new FileOutputStream(filePath)) {
+                fos.write(body);
             }
             addFile(name, file);
             return name;
@@ -66,9 +67,9 @@ public class FileService {
         return file;
     }
 
-    public String getFileBody(String path) {
+    public byte[] getFileBody(String path) {
         try {
-            return Files.readString(Path.of(path));
+            return Files.readAllBytes(Path.of(path));
         } catch (IOException e) {
             log.info(e.getMessage(), e);
             return null;

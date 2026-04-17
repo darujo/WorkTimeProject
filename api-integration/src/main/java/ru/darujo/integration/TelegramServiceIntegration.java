@@ -62,7 +62,7 @@ public class TelegramServiceIntegration extends ServiceIntegration implements Se
 
     private void addFile(
             String fileName,
-            String textFile) {
+            byte[] textFile) {
         try {
             StringBuilder sb = new StringBuilder();
             addTeg(sb, "fileName", fileName);

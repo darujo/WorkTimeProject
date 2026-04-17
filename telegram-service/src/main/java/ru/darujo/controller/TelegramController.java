@@ -45,7 +45,7 @@ public class TelegramController {
 
     @PostMapping(value = "/file", consumes = MediaType.TEXT_PLAIN_VALUE)
     public String addFile(@RequestParam String fileName,
-                          @RequestBody String body) {
+                          @RequestBody byte[] body) {
         return fileService.addFile(fileName, body);
     }
 

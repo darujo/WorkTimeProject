@@ -8,7 +8,7 @@ import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.type.MessageSenderType;
-import ru.darujo.type.ReportTypeDto;
+import ru.darujo.type.ReportType;
 
 @Slf4j
 public class InfoServiceIntegration extends ServiceIntegration {
@@ -46,7 +46,7 @@ public class InfoServiceIntegration extends ServiceIntegration {
         }
     }
 
-    public void sendReport(@NonNull ReportTypeDto reportType, @NonNull String author, MessageSenderType senderType, String chatId, Integer threadId, Integer originMessageId) {
+    public void sendReport(@NonNull ReportType reportType, @NonNull String author, MessageSenderType senderType, String chatId, Integer threadId, Integer originMessageId) {
         try {
             StringBuilder sb = new StringBuilder();
             addTeg(sb, "reportType", reportType);

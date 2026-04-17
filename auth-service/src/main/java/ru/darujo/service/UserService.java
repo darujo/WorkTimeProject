@@ -325,7 +325,7 @@ public class UserService {
         if (userId != null) {
             Map<String, UserInfoTypeActiveDto> userInfoActiveCurrentProjectDtoMap = new HashMap<>();
             for (MessageType type : MessageType.values()) {
-                if (type.getProject()) {
+                if (type.isProject()) {
                     UserInfoTypeActiveDto userInfoTypeActiveDto = new UserInfoTypeActiveDto(user.getCurrentProject().getId(), type.toString(), type.getName(), false);
 
                     userInfoTypeActiveDto.setMessage(linkService.getCode(user.getNikName(), type.toString()));

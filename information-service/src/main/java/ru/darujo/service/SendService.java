@@ -60,8 +60,8 @@ public class SendService {
 
     public boolean sendMessage(MessageInformation messageInformation) {
         if (messageInformation.getFileForDisk() != null) {
-            String body = fileService.getFileBody(pathSave + messageInformation.getFileForDisk());
-            if (body != null && !body.isBlank()) {
+            byte[] body = fileService.getFileBody(pathSave + messageInformation.getFileForDisk());
+            if (body.length > 0) {
                 return fileSend(messageInformation, messageInformation.getFileForDisk(), body);
             } else {
                 return fileSend(messageInformation, null, null);
@@ -72,7 +72,7 @@ public class SendService {
 
     }
 
-    public boolean fileSend(MessageInformation messageInformation, String fileName, String fileBody) {
+    public boolean fileSend(MessageInformation messageInformation, String fileName, byte[] fileBody) {
         AtomicBoolean flagOk = new AtomicBoolean(true);
         senderList.forEach((senderType, sendServiceInt) -> {
             Specification<UserSend> sp = Specification.unrestricted();
@@ -96,7 +96,7 @@ public class SendService {
         return flagOk.get();
     }
 
-    private void saveFile(MessageInformation messageInformation, String file, String body) {
+    private void saveFile(MessageInformation messageInformation, String file, byte[] body) {
         fileService.saveFile(pathSave + file, body);
         messageInformation.setText("Не удалось доставить до вас файл ранее. " + messageInformation.getText());
         messageInformation.setFileForDisk(file);
