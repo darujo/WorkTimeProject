@@ -61,7 +61,7 @@ public class SendService {
     public boolean sendMessage(MessageInformation messageInformation) {
         if (messageInformation.getFileForDisk() != null) {
             byte[] body = fileService.getFileBody(pathSave + messageInformation.getFileForDisk());
-            if (body.length > 0) {
+            if (body != null && body.length > 0) {
                 return fileSend(messageInformation, messageInformation.getFileForDisk(), body);
             } else {
                 return fileSend(messageInformation, null, null);

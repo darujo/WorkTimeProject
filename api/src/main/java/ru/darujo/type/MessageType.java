@@ -2,7 +2,6 @@ package ru.darujo.type;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -14,30 +13,40 @@ public enum MessageType implements TypeEnum {
     UPDATE_INFO("Список исправлений в новой версии"),
     AVAIL_WORK_LAST_DAY("Работы отмеченные вами за предыдущий рабочий день. Рассылается по рабочим дням", 11),
     AVAIL_WORK_LAST_WEEK("Работы отмеченные вами за последние 7 дней. Рассылается на второй рабочий день.", 12),
-    AVAIL_WORK_FULL_REPORT("Статус ЗИ", ReportType.ZI_STATUS, false, DayOfWeek.TUESDAY, 20),
-    AVAIL_WORK_FULL_REPORT_PROJECT("Статус ЗИ по проектам.", ReportType.ZI_STATUS_PROJECT, true, DayOfWeek.TUESDAY, 20, 10),
+    AVAIL_WORK_FULL_REPORT("Статус ЗИ", false, DayOfWeek.TUESDAY, 20, ReportType.ZI_STATUS),
+    AVAIL_WORK_FULL_REPORT_PROJECT("Статус ЗИ по проектам.", true, DayOfWeek.TUESDAY, 20, 10, ReportType.ZI_STATUS_PROJECT),
 
-    WEEK_WORK_REPORT("Факт загрузки за предыдущую неделю.", ReportType.USER_WORK, false, DayOfWeek.TUESDAY, 20),
-    ZI_WORK_REPORT("Факт загрузки по ЗИ.", ReportType.ZI_WORK, false, DayOfWeek.TUESDAY, 20),
-    ZI_WORK_REPORT_PROJECT("Факт загрузки по ЗИ по проектам.", ReportType.ZI_WORK_PROJECT, true, DayOfWeek.TUESDAY, 20, 10),
+    WEEK_WORK_REPORT("Факт загрузки за предыдущую неделю.", false, DayOfWeek.TUESDAY, 20, ReportType.USER_WORK),
+    ZI_WORK_REPORT("Факт загрузки по ЗИ.", false, DayOfWeek.TUESDAY, 20, ReportType.ZI_WORK),
+    ZI_WORK_REPORT_PROJECT("Факт загрузки по ЗИ по проектам.", true, DayOfWeek.TUESDAY, 20, 10, ReportType.ZI_WORK_PROJECT),
 
     VACATION_MY_START("Начало вашего отпуска в день перед отпуском", 20),
     VACATION_MY_END("Конец Вашего отпуска в последний день отпуска", 14),
     VACATION_USER_START("Список отпусков ежедневно", 12),
     EDIT_WORK_REQUEST("Добавлен/изменен запрос на согласование ТЗ"),
-    EDIT_WORK_RESPONSE("Добавлено/изменено согласование ТЗ");
+    EDIT_WORK_RESPONSE("Добавлено/изменено согласование ТЗ"),
+    REPORT_STATUS(
+            "Еженедельные отчеты",
+            false,
+            DayOfWeek.TUESDAY,
+            20,
+            20,
+            ReportType.USER_WORK,
+            ReportType.ZI_STATUS,
+            ReportType.ZI_WORK);
 
-    private final String name;
+    private final String nameOrigin;
+    private final String periodStr;
     private final DayOfWeek dayOfWeek;
     private final Integer hour;
     private final Integer minute;
     private final Integer period;
     private final boolean project;
-    private List<ReportType> reportTypeList;
+    private final List<ReportType> reportTypeList;
 
     // Уведомления без периода
     MessageType(String name) {
-        this(name, false, null, null, null, null);
+        this(name, false, null, null, null, null, (ReportType[]) null);
     }
 
     // Ежедневные
@@ -46,29 +55,26 @@ public enum MessageType implements TypeEnum {
     }
 
     // Еженедельные
-    MessageType(String name, ReportType reportType, Boolean project, DayOfWeek dayOfWeek, Integer hour) {
-        this(name, reportType, project, dayOfWeek, hour, null);
+    MessageType(String name, Boolean project, DayOfWeek dayOfWeek, Integer hour, ReportType reportType) {
+        this(name, project, dayOfWeek, hour, null, reportType);
     }
 
-    MessageType(String name, ReportType reportType, Boolean project, DayOfWeek dayOfWeek, Integer hour, Integer minute) {
-        this(name, project, dayOfWeek, hour, minute, 7);
-
-        if (reportType != null) {
-            reportTypeList = new ArrayList<>();
-            reportTypeList.add(reportType);
-        }
+    MessageType(String name, Boolean project, DayOfWeek dayOfWeek, Integer hour, Integer minute, ReportType... reportType) {
+        this(name, project, dayOfWeek, hour, minute, 7, reportType);
 
 
     }
 
-
-    MessageType(String name, Boolean project, DayOfWeek dayOfWeek, Integer hour, Integer minute, Integer periodDay) {
-        this.name = name + getDay(dayOfWeek) + getTime(hour, minute);
+    MessageType(String name, Boolean project, DayOfWeek dayOfWeek, Integer hour, Integer minute, Integer periodDay, ReportType... reportType) {
+        this.nameOrigin = name;
+        this.periodStr = getDay(dayOfWeek) + getTime(hour, minute);
         this.project = project;
         this.dayOfWeek = dayOfWeek;
         this.hour = hour;
         this.minute = minute;
         this.period = periodDay == null ? null : (86400 * periodDay);
+
+        this.reportTypeList = reportType == null || reportType.length == 0 ? null : List.of(reportType);
 //        this.reportTypeList = reportTypeList;
     }
 
@@ -102,7 +108,15 @@ public enum MessageType implements TypeEnum {
 
     @Override
     public String getName() {
-        return name;
+        return getNameOrigin() + getPeriodStr();
+    }
+
+    public String getNameOrigin() {
+        return nameOrigin;
+    }
+
+    public String getPeriodStr() {
+        return periodStr;
     }
 
     public Integer getPeriod() {

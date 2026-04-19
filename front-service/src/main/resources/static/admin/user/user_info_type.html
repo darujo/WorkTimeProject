@@ -3,6 +3,15 @@
     <div class="horiz">
         <button ng-if="User" type="button" class="head_button" ng-click="saveUserinfoType()">Сохранить</button>
         <button type="button" class="head_button" ng-click="loadInfoType()">Обновить</button>
+        <div class="horiz">
+            <label for="UserInfoType" class="p-head">Проект</label>
+            <select class="vvod80mar10" name="UserInfoType" id="UserInfoType"
+                    ng-model="Filter.infoType" multiple required>
+                <option ng-repeat="type in InfoTypes" ng-value="project.id" value="project.id">
+                    {{project.code}} {{project.name}}
+                </option>
+            </select>
+        </div>
     </div>
 
     <table>
@@ -31,7 +40,7 @@
             <td>{{infoType.telegramId}}</td>
             <td>{{infoType.threadId}}</td>
             <td><p ng-if="infoType.message.ok">Для получения уведомлений перейдите <a
-                    href="http://{{infoType.message.link}}" target="_blank">Бот</a>.
+                    href="https://{{infoType.message.link}}" target="_blank">Бот</a>.
                 И отправьте команду /link. На запрос кода введите:<b>{{infoType.message.code}}</b>.
                 Внимание Код действует <b>{{infoType.message.time}}</b> минут. После авторизации в боте
                 нажмите кнопку: </p>
@@ -75,7 +84,7 @@
             <td>{{infoType.telegramId}}</td>
             <td>{{infoType.threadId}}</td>
             <td><p ng-if="infoType.message.ok">Для получения уведомлений перейдите <a
-                    href="http://{{infoType.message.link}}" target="_blank">Бот</a>.
+                    href="https://{{infoType.message.link}}" target="_blank">Бот</a>.
                 И отправьте команду /link. На запрос кода введите:<b>{{infoType.message.code}}</b>.
                 Внимание Код действует <b>{{infoType.message.time}}</b> минут. После авторизации в боте
                 нажмите кнопку: </p>

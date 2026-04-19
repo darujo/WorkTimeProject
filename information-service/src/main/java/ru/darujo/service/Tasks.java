@@ -237,12 +237,12 @@ public class Tasks {
     }
 
     public RunnableNotException getSendReport(MessageType messageType, ChatInfo chatInfo) {
-        return getSendReport(messageType, chatInfo, false);
+        return getSendReport(messageType, chatInfo, true);
     }
 
     public RunnableNotException getSendReport(MessageType messageType, ChatInfo chatInfo, boolean excel) {
         return new RunnableNotException(() -> {
-            log.info("getSendReport {} {}", messageType, messageType.getName());
+            log.info("getSendReport {} {}", messageType, messageType.getNameOrigin());
 
             sendFile(messageType, chatInfo, excel);
 
@@ -250,7 +250,7 @@ public class Tasks {
     }
 
     private void sendFile(MessageType messageType, ChatInfo chatInfo, boolean excel) {
-        String fileName = messageType.getName().replace(" ", "_");
+        String fileName = messageType.getNameOrigin().replace(" ", "_");
         if (!messageType.isProject()) {
             sendFile(messageType,
                     chatInfo,
@@ -259,8 +259,9 @@ public class Tasks {
                             messageType,
                             null,
                             excel),
-                    "Рассылка отчете \"" + messageType.getName() + "\" ",
-                    fileName);
+                    "Рассылка отчете \"" + messageType.getNameOrigin() + "\" ",
+                    fileName,
+                    (excel ? "xlsx" : "html"));
 
         } else {
             userServiceIntegration
@@ -273,13 +274,14 @@ public class Tasks {
                                             messageType,
                                             projectDto,
                                             excel),
-                                    "Рассылка отчете \"" + messageType.getName() + "\" " + projectDto.getName(),
-                                    fileName)
+                                    "Рассылка отчете \"" + messageType.getNameOrigin() + "\" " + projectDto.getName(),
+                                    fileName,
+                                    excel ? "xlsx" : "html")
                     );
         }
     }
 
-    private void sendFile(MessageType messageType, ChatInfo chatInfo, ProjectDto projectDto, byte[] report, String message, String fileName) {
+    private void sendFile(MessageType messageType, ChatInfo chatInfo, ProjectDto projectDto, byte[] report, String message, String fileName, String fileType) {
         messageInformationService.sendFile(
                 new MessageInfoDto(
                         chatInfo == null ? null : chatInfo.getAuthor(),
@@ -288,7 +290,7 @@ public class Tasks {
                         message
                 ),
                 projectDto == null ? null : projectDto.getId(),
-                fileName + "_" + (projectDto == null ? "" : (projectDto.getName() + "_")) + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html",
+                fileName + "_" + (projectDto == null ? "" : (projectDto.getName() + "_")) + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + "." + fileType,
                 report);
     }
 

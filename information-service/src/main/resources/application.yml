@@ -22,11 +22,11 @@ spring:
     default-property-inclusion: non_absent
 
   mail:
-    host: smtp.rambler.ru
+    host: smtp.mail.ru
     port: 465
     #    port: 587
-    username: radies@rambler.ru
-    password: +!@
+    username: rubanda@internet.ru
+    password: ptSBPlO9BcIlugK9hSbV
     properties:
       mail:
         smtp:

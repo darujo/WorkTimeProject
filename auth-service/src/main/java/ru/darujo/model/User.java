@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 
@@ -67,7 +68,36 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "right_id"))
     private Collection<Right> rights;
 
-    public User(Long id, String nikName, String password, String firstName, String lastName, String patronymic, Boolean passwordChange, List<Project> projects, boolean block) {
+
+    @Column(name = "code_email")
+    private String codeEmail;
+
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "email_new", nullable = false)
+    private String newEmail;
+
+    @Column(name = "send_code")
+    private Timestamp sendCode;
+
+    @Column(name = "recovery")
+    private Boolean recovery;
+
+    public User(Long id,
+                String nikName,
+                String password,
+                String firstName,
+                String lastName,
+                String patronymic,
+                Boolean passwordChange,
+                List<Project> projects,
+                boolean block,
+                String codeEmail,
+                String email,
+                String newEmail,
+                Timestamp sendCode,
+                Boolean recovery) {
         this.id = id;
         this.nikName = nikName;
         this.password = password;
@@ -77,6 +107,11 @@ public class User {
         this.passwordChange = passwordChange;
         this.projects = projects;
         this.block = block;
+        this.codeEmail = codeEmail;
+        this.email = email;
+        this.newEmail = newEmail;
+        this.sendCode = sendCode;
+        this.recovery = recovery;
     }
 
     public Project getCurrentProject() {

@@ -28,14 +28,14 @@ public class UserInfoTypeService {
     }
 
     @Transactional
-    public void setUserInfoTypes(User user, Collection<UserInfoTypeActiveDto> userInfoTypeDto, Collection<UserInfoTypeActiveDto> userInfoTypeProjectDto) {
-        setUserInfoTypes(user, userInfoTypeDto);
-        setUserInfoTypes(user, userInfoTypeProjectDto);
+    public void setUserInfoTypes(User user, String senderType, Collection<UserInfoTypeActiveDto> userInfoTypeDto, Collection<UserInfoTypeActiveDto> userInfoTypeProjectDto) {
+        setUserInfoTypes(user, senderType, userInfoTypeDto);
+        setUserInfoTypes(user, senderType, userInfoTypeProjectDto);
     }
 
 
-    private void setUserInfoTypes(User user, Collection<UserInfoTypeActiveDto> userInfoTypeDto) {
-        getInfoTypes(user).forEach(userInfoType ->
+    private void setUserInfoTypes(User user, String senderType, Collection<UserInfoTypeActiveDto> userInfoTypeDto) {
+        getInfoTypes(user, senderType).forEach(userInfoType ->
         {
             if (userInfoTypeDto
                     .stream()
@@ -71,9 +71,9 @@ public class UserInfoTypeService {
         });
     }
 
-    public List<UserInfoType> getInfoTypes(User user) {
+    public List<UserInfoType> getInfoTypes(User user, String senderType) {
 
-        return getInfoTypes(user, null, null, null, null);
+        return getInfoTypes(user, senderType, null, null, null);
     }
 
     public List<UserInfoType> getInfoTypes(MessageType messageType) {
@@ -107,7 +107,7 @@ public class UserInfoTypeService {
 
     public void save(UserInfoType userInfoType) {
         if ((userInfoType.getIsActive() != null && userInfoType.getIsActive())
-                || userInfoType.getTelegramId() != null
+                || userInfoType.getChatId() != null
                 || userInfoType.getThreadId() != null) {
             userInfoTypeRepository.save(userInfoType);
         } else {

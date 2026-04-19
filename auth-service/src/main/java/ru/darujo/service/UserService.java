@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -15,8 +16,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.darujo.convertor.RoleConvertor;
 import ru.darujo.dto.information.MapUserInfoDto;
+import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.dto.user.*;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
+import ru.darujo.hash.HashService;
 import ru.darujo.integration.InfoServiceIntegration;
 import ru.darujo.model.Project;
 import ru.darujo.model.Right;
@@ -26,12 +29,15 @@ import ru.darujo.specifications.Specifications;
 import ru.darujo.type.MessageSenderType;
 import ru.darujo.type.MessageType;
 
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class UserService {
+    @Value("${mail.secret}")
+    private String codePas;
     @Getter
     private static UserService INSTANCE;
     private ProjectService projectService;
@@ -103,6 +109,7 @@ public class UserService {
 
     @Transactional
     public User saveUser(User user, String textPassword, Boolean isAdmin) {
+        boolean newEmail = false;
         checkNull(user.getNikName(), "логин");
         checkNull(user.getFirstName(), "имя");
         checkNull(user.getLastName(), "фамилия");
@@ -118,7 +125,8 @@ public class UserService {
             if (userRepository.findByNikNameIgnoreCaseAndIdIsNot(user.getNikName(), user.getId()).isPresent()) {
                 throw new ResourceNotFoundRunTime("Уже есть пользователь с таким ником");
             }
-            User saveUser = userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + user.getId() + " не найден"));
+            User finalUser = user;
+            User saveUser = userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + finalUser.getId() + " не найден"));
             user.setRights(saveUser.getRights());
 //            user.setRoles(saveUser.getRoles());
             if (user.getCurrentProject() == null) {
@@ -126,10 +134,21 @@ public class UserService {
             }
 //            user.setProjects(saveUser.getProjects());
             user.setTelegramId(saveUser.getTelegramId());
+            user.setEmail(saveUser.getEmail());
+            if (user.getNewEmail() != null && !user.getNewEmail().equals(saveUser.getNewEmail())) {
+                setNewEmailCode(user);
+                newEmail = true;
+            } else {
+                user.setCodeEmail(saveUser.getCodeEmail());
+                user.setSendCode(saveUser.getSendCode());
+                user.setRecovery(saveUser.getRecovery());
+            }
         } else {
             if (userRepository.findByNikNameIgnoreCase(user.getNikName()).isPresent()) {
                 throw new ResourceNotFoundRunTime("Уже есть пользователь с таким ником");
             }
+            setNewEmailCode(user);
+            newEmail = true;
         }
         if (textPassword != null && !textPassword.isEmpty()) {
             if (user.getPassword() == null || user.getPassword().isEmpty()) {
@@ -157,7 +176,11 @@ public class UserService {
                 }
             }
         }
-        return userRepository.save(user);
+        user = userRepository.save(user);
+        if (newEmail) {
+            infoServiceIntegration.addMessage(new MessageInfoDto(new UserInfoDto(MessageSenderType.Email.toString(), user.getId(), user.getNikName(), user.getNewEmail(), null, null), "Подтверждение почты", "Для подтверждения почты перейдите по ссылке" + UrlService.getUrlNewUser(user.getNikName(), getHash(user))));
+        }
+        return user;
     }
 
     @Transactional
@@ -167,7 +190,7 @@ public class UserService {
             User user = new User(-1L, nikName, hashPassword(
                     "Приносить пользу миру — это единственный способ стать счастливым."),
 
-                    null, null, null, false, null, false);
+                    null, null, null, false, null, false, null, null, null, null, null);
             List<Right> right = new ArrayList<>();
             right.add(new Right(-1L, "STOP_SERVICE", "право на стоп"));
             user.setRights(right);
@@ -202,7 +225,8 @@ public class UserService {
         return userPage;
     }
 
-    private Specification<@NonNull User> getUserSpecification(String role, String nikName, String lastName, String firstName, String patronymic, String telegramId, Boolean telegramIsNotNull, Long projectId) {
+    private Specification<@NonNull User> getUserSpecification(String role, String nikName, String lastName, String
+            firstName, String patronymic, String telegramId, Boolean telegramIsNotNull, Long projectId) {
         Specification<@NonNull User> specification = Specification.unrestricted();
         if (role != null && !role.isEmpty()) {
             specification = Specifications.in(specification, "r", roleService.findByName(projectId, role).orElseThrow(() -> new UsernameNotFoundException("Роль не найдена " + role))
@@ -281,22 +305,22 @@ public class UserService {
                     .getInfoTypes(type)
                     .stream()
                     .filter(userInfoType ->
-                            userInfoType.getUser().getTelegramId() != null
-                                    && userInfoType.getIsActive() != null
+                            userInfoType.getIsActive() != null
                                     && userInfoType.getIsActive())
                     .forEach(
                             userInfoType -> {
-
-                                List<UserInfoDto> userInfoDTOs = senderTypeListMap.computeIfAbsent(MessageSenderType.valueOf(userInfoType.getSenderType()), k -> new ArrayList<>());
-                                userInfoDTOs.add(new UserInfoDto(
-                                        userInfoType.getSenderType(),
-                                        userInfoType.getUser().getId(),
-                                        userInfoType.getUser().getNikName(),
-                                        userInfoType.getProjectId(),
-                                        userInfoType.getTelegramId() == null ? userInfoType.getUser().getTelegramId() : userInfoType.getTelegramId(),
-                                        userInfoType.getThreadId(),
-                                        null));
-
+                                MessageSenderType senderType = MessageSenderType.valueOf(userInfoType.getSenderType());
+                                if (getMainChatId(senderType, userInfoType.getUser()) != null) {
+                                    List<UserInfoDto> userInfoDTOs = senderTypeListMap.computeIfAbsent(senderType, k -> new ArrayList<>());
+                                    userInfoDTOs.add(new UserInfoDto(
+                                            userInfoType.getSenderType(),
+                                            userInfoType.getUser().getId(),
+                                            userInfoType.getUser().getNikName(),
+                                            userInfoType.getProjectId(),
+                                            userInfoType.getChatId() == null ? getMainChatId(senderType, userInfoType.getUser()) : userInfoType.getChatId(),
+                                            userInfoType.getThreadId(),
+                                            null));
+                                }
                             }
                     );
 
@@ -305,7 +329,18 @@ public class UserService {
         return new MapUserInfoDto(messageTypeListMap);
     }
 
-    public UserInfoTypeDto getUserInfoTypes(Long userId) {
+    private static String getMainChatId(MessageSenderType senderType, User user) {
+        if (senderType.equals(MessageSenderType.Telegram)) {
+            return user.getTelegramId();
+        } else if (senderType.equals(MessageSenderType.Email)) {
+            return user.getEmail();
+        } else {
+            return null;
+        }
+
+    }
+
+    public UserInfoTypeDto getUserInfoTypes(Long userId, String senderType) {
         User user;
         if (userId != null) {
             user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + userId + " не найден"));
@@ -334,7 +369,7 @@ public class UserService {
                 }
             }
             userInfoTypeService
-                    .getInfoTypes(user)
+                    .getInfoTypes(user, senderType)
                     .stream().filter(userInfoType -> userInfoType.getProjectId() == null || userInfoType.getProjectId().equals(user.getCurrentProject().getId()))
                     .forEach(userInfoType -> {
                         UserInfoTypeActiveDto userInfo;
@@ -344,7 +379,7 @@ public class UserService {
                             userInfo = userInfoActiveCurrentProjectDtoMap.get(userInfoType.getCode());
                         }
                         userInfo.setActive(userInfoType.getIsActive());
-                        userInfo.setTelegramId(userInfoType.getTelegramId());
+                        userInfo.setTelegramId(userInfoType.getChatId());
                         userInfo.setThreadId(userInfoType.getThreadId());
                     });
 
@@ -355,11 +390,11 @@ public class UserService {
 
     }
 
-    public UserInfoTypeDto setUserInfoTypes(UserInfoTypeDto userInfoTypeDto) {
+    public UserInfoTypeDto setUserInfoTypes(String senderType, UserInfoTypeDto userInfoTypeDto) {
         User user = userRepository.findById(userInfoTypeDto.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь не найден"));
-        userInfoTypeService.setUserInfoTypes(user, userInfoTypeDto.getInfoTypes(), userInfoTypeDto.getInfoProjectTypes());
+        userInfoTypeService.setUserInfoTypes(user, senderType, userInfoTypeDto.getInfoTypes(), userInfoTypeDto.getInfoProjectTypes());
         setMessageTypeListMap();
-        return getUserInfoTypes(user.getId());
+        return getUserInfoTypes(user.getId(), senderType);
     }
 
     public boolean setMessageTypeListMap() {
@@ -376,9 +411,70 @@ public class UserService {
         return userRepository.exists(getUserSpecification(null, null, null, null, null, chatId, null, null));
     }
 
+    private static void setNewEmailCode(User user) {
+        int code = (int) ((99999999 * Math.random()));
+        user.setCodeEmail(Integer.toString(code));
+        user.setSendCode(new Timestamp(System.currentTimeMillis()));
+//        user.setEmail(user.getNewEmail());
+        user.setRecovery(false);
+    }
+
+    @Transactional
+    public boolean confirmEmail(String nikName, String code) {
+        User user = loadUserByNikName(nikName);
+        if (code.equals(getHash(user))) {
+            user.setCodeEmail(null);
+            user.setEmail(user.getNewEmail());
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    @Transactional
+    public void getRestorePassword(String nikName, String email) {
+        User user = loadUserByNikName(nikName);
+        if (email != null && email.equals(user.getEmail())) {
+            setNewEmailCode(user);
+            userRepository.save(user);
+            infoServiceIntegration.addMessage(new MessageInfoDto(new UserInfoDto(MessageSenderType.Email.toString(), user.getId(), user.getNikName(), user.getEmail(), null, null), "Восстановление доступа", "Для восстановления пароля перейдите по ссылке" + UrlService.getUrlRecovery(user.getNikName(), getHash(user))));
+
+        } else {
+            throw new ResourceNotFoundRunTime("Почта не совпадает");
+        }
+
+    }
+
+    @Transactional
+    public boolean restorePassword(String nikName, String code) {
+        User user = loadUserByNikName(nikName);
+        if (code.equals(getHash(user))) {
+            user.setCodeEmail(null);
+            user.setPasswordChange(true);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    public String getHash(User user) {
+        return HashService.getSHA256(user.hashCode() + ":" + codePas);
+    }
+
 
     @Autowired
     public void setProjectService(ProjectService projectService) {
         this.projectService = projectService;
+    }
+
+    public List<MessageSenderType> getUserSenderTypes(Long userId) {
+        List<MessageSenderType> senderTypes = new ArrayList<>();
+        User user = findById(userId);
+        for (MessageSenderType value : MessageSenderType.values()) {
+            if (getMainChatId(value, user) != null) {
+                senderTypes.add(value);
+            }
+        }
+        return senderTypes;
     }
 }

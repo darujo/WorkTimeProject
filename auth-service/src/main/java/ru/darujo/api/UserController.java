@@ -9,10 +9,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.UserConvertor;
 import ru.darujo.dto.information.MapUserInfoDto;
+import ru.darujo.dto.jwt.JwtResponse;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.user.UserInfoTypeDto;
 import ru.darujo.dto.user.UserPasswordChangeDto;
+import ru.darujo.service.AuthService;
 import ru.darujo.service.UserService;
+import ru.darujo.type.MessageSenderType;
+
+import java.util.List;
 
 
 @RestController
@@ -20,6 +25,7 @@ import ru.darujo.service.UserService;
 @RequestMapping("/users")
 public class UserController {
     private UserService userService;
+    private AuthService authService;
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -73,20 +79,49 @@ public class UserController {
 
     @GetMapping("/user/info/types")
     public UserInfoTypeDto getUserInfoTypes() {
-        return userService.getUserInfoTypes(null);
+        return userService.getUserInfoTypes(null, null);
 
     }
 
+    @GetMapping("/user/sender/type/{userId}")
+    public List<MessageSenderType> getUserSenderTypes(@PathVariable Long userId) {
+        return userService.getUserSenderTypes(userId);
+
+    }
     @GetMapping("/user/info/type/{userId}")
-    public UserInfoTypeDto getUserInfoTypes(@PathVariable Long userId) {
-        return userService.getUserInfoTypes(userId);
+    public UserInfoTypeDto getUserInfoTypes(@PathVariable Long userId,
+                                            @RequestParam String senderType) {
+        return userService.getUserInfoTypes(userId, senderType);
 
     }
 
     @PostMapping("/user/info/type")
-    public UserInfoTypeDto getUserInfoTypes(@RequestBody UserInfoTypeDto userInfoTypeDto) {
-        return userService.setUserInfoTypes(userInfoTypeDto);
+    public UserInfoTypeDto getUserInfoTypes(@RequestParam String senderType,
+                                            @RequestBody UserInfoTypeDto userInfoTypeDto) {
+        return userService.setUserInfoTypes(senderType, userInfoTypeDto);
 
     }
 
+    @GetMapping("/user/password/recovery")
+    public void getPasswordRecovery(@RequestParam String nikName,
+                                    @RequestParam String email) {
+        userService.getRestorePassword(nikName, email);
+    }
+
+    @GetMapping("/user/password/restore")
+    public JwtResponse getPasswordRestore(@RequestParam String nikName,
+                                          @RequestParam String code) {
+        return authService.restorePassword(nikName, code);
+    }
+
+    @GetMapping("/user/Email/confirm")
+    public boolean confirmEmail(String nikName, String code) {
+        return userService.confirmEmail(nikName, code);
+    }
+
+    @Autowired
+    public void setAuthService(AuthService authService) {
+        this.authService = authService;
+    }
 }
+

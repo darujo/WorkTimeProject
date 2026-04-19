@@ -23,8 +23,9 @@ public class UserEditDto implements Serializable {
     private List<Long> projects;
     private Boolean block;
     private Boolean admin;
+    private String email;
 
-    public UserEditDto(Long id, String nikName, String firstName, String lastName, String patronymic, String userPassword, Boolean passwordChange, List<Long> projects, Boolean block, Boolean admin) {
+    public UserEditDto(Long id, String nikName, String firstName, String lastName, String patronymic, String userPassword, Boolean passwordChange, List<Long> projects, Boolean block, Boolean admin, String email) {
         this.id = id;
         this.nikName = nikName;
         this.firstName = firstName;
@@ -35,6 +36,7 @@ public class UserEditDto implements Serializable {
         this.projects = projects;
         this.block = block;
         this.admin = admin;
+        this.email = email;
     }
 
     public Long getId() {
@@ -79,5 +81,10 @@ public class UserEditDto implements Serializable {
 
     public Boolean isAdmin() {
         return admin;
+    }
+
+    @SuppressWarnings("unused")
+    public String getEmail() {
+        return email;
     }
 }

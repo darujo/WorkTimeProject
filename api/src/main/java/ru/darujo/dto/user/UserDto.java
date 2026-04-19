@@ -24,7 +24,16 @@ public class UserDto implements Serializable {
     private List<ProjectDto> projects;
     private boolean block;
 
-    public UserDto(Long id, String nikName, String firstName, String lastName, String patronymic, Boolean passwordChange, Boolean telegramAdd, Long projectId, List<ProjectDto> projects, boolean block) {
+    public UserDto(Long id,
+                   String nikName,
+                   String firstName,
+                   String lastName,
+                   String patronymic,
+                   Boolean passwordChange,
+                   Boolean telegramAdd,
+                   Long projectId,
+                   List<ProjectDto> projects,
+                   boolean block) {
         this.id = id;
         this.nikName = nikName;
         this.firstName = firstName;

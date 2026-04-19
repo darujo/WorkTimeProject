@@ -24,6 +24,10 @@ import java.util.List;
 public abstract class JwtRightFilter extends AbstractGatewayFilterFactory<JwtRightFilter.Config> {
     protected abstract List<String> getRight();
 
+    protected boolean isCheckToken() {
+        return true;
+    }
+
     protected JwtUtil jwtUtil;
 
     @Autowired
@@ -40,11 +44,14 @@ public abstract class JwtRightFilter extends AbstractGatewayFilterFactory<JwtRig
     public @NonNull GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
-
-            if (!isAuthMissing(request)) {
-                final String token = getAuthHeaders(request);
-                if (jwtUtil.isInvalid(token)) {
-                    return this.onError(exchange, "Токен просрочен.", HttpStatus.UNAUTHORIZED);
+            boolean checkToken = isCheckToken();
+            if (!checkToken || !isAuthMissing(request)) {
+                String token = null;
+                if (checkToken) {
+                    token = getAuthHeaders(request);
+                    if (jwtUtil.isInvalid(token)) {
+                        return this.onError(exchange, "Токен просрочен.", HttpStatus.UNAUTHORIZED);
+                    }
                 }
                 try {
                     exchange = populateRequestHeader(exchange, token);
@@ -64,32 +71,42 @@ public abstract class JwtRightFilter extends AbstractGatewayFilterFactory<JwtRig
 
     private ServerWebExchange populateRequestHeader(ServerWebExchange exchange, String token) {
 
-        Claims claims = jwtUtil.getAllClamsForToken(token);
-        ArrayList<String> authorities = claims.get("authorities", ArrayList.class);
-        if (getRight() != null) {
-            if (authorities == null || authorities.stream().noneMatch(s -> getRight().contains(s))) {
-                throw new RuntimeException("У вас недостаточно прав (" + getRight() + ")");
+        if (exchange.getRequest().getHeaders().get("username") != null) {
+            throw new RuntimeException("Не допустимый заголовок username");
+        }
+        List<String> authorities = null;
+        Claims claims = null;
+        if (token != null) {
+            claims = jwtUtil.getAllClamsForToken(token);
+            authorities = claims.get("authorities", ArrayList.class);
+            if (getRight() != null) {
+                if (authorities == null || authorities.stream().noneMatch(s -> getRight().contains(s))) {
+                    throw new RuntimeException("У вас недостаточно прав (" + getRight() + ")");
+                }
             }
         }
-
         ServerHttpRequest.Builder builder =
-                exchange.getRequest().mutate()
-                        .header("username", claims.getSubject());
+                exchange.getRequest().mutate();
 
+        if (token != null) {
+            builder.header("username", claims.getSubject());
+        }
         if (authorities != null) {
             authorities.forEach(s -> builder.header(s, "true"));
         }
         ServerHttpRequest serverHttpRequest = new ServerHttpRequestImpl(builder.build());
         MultiValueMap<String, String> params = serverHttpRequest.getQueryParams();
-        try {
-            params.add("system_project", Long.toString(claims.get("project", Long.class)));
-        } catch (RuntimeException ignored) {
+        if (token != null) {
+            try {
+                params.add("system_project", Long.toString(claims.get("project", Long.class)));
+            } catch (RuntimeException ignored) {
 
-        }
-        try {
-            params.add("system_project_code", claims.get("project_code", String.class));
-        } catch (RuntimeException ignored) {
+            }
+            try {
+                params.add("system_project_code", claims.get("project_code", String.class));
+            } catch (RuntimeException ignored) {
 
+            }
         }
         if (authorities != null) {
             authorities.forEach(s -> params.add("system_right", s));

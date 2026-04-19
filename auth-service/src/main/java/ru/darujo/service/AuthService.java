@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import ru.darujo.dto.jwt.JwtResponse;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.Project;
 import ru.darujo.model.User;
@@ -82,5 +83,13 @@ public class AuthService implements UserDetailsService {
         User user = getUser(userName, projectId);
         return jwtTokenUtils.generateToken(user);
 
+    }
+
+    @Transactional
+    public JwtResponse restorePassword(String nikName, String code) {
+        if (userService.restorePassword(nikName, code)) {
+            return new JwtResponse(createAuthToken(nikName));
+        }
+        throw new ResourceNotFoundRunTime("Ссылка не просрочена");
     }
 }

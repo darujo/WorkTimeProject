@@ -22,7 +22,7 @@ public class UserInfoType {
     @Column(name = "code")
     private String code;
     @Column(name = "telegram_id")
-    private String telegramId;
+    private String chatId;
     @Column(name = "thread_id")
     private Integer threadId;
     @Column(name = "is_active")

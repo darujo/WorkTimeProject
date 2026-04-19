@@ -14,6 +14,7 @@ public class MessageInfoDto implements Serializable {
     private Timestamp dataTime;
     private String author;
     private MessageType type;
+    private String title;
     private String text;
     private UserInfoDto userInfoDto;
 
@@ -35,6 +36,14 @@ public class MessageInfoDto implements Serializable {
         this.dataTime = new Timestamp(System.currentTimeMillis());
         this.author = "Scheduler";
         this.type = type;
+        this.text = text;
+        this.userInfoDto = userInfoDto;
+    }
+
+    public MessageInfoDto(UserInfoDto userInfoDto, String title, String text) {
+        this.dataTime = new Timestamp(System.currentTimeMillis());
+        this.author = "I";
+        this.title = title;
         this.text = text;
         this.userInfoDto = userInfoDto;
     }
@@ -74,5 +83,10 @@ public class MessageInfoDto implements Serializable {
 
     public UserInfoDto getUserInfoDto() {
         return userInfoDto;
+    }
+
+    @SuppressWarnings("unused")
+    public String getTitle() {
+        return title;
     }
 }

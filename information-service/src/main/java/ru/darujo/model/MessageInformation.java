@@ -34,10 +34,21 @@ public class MessageInformation {
     @Column(name = "project_id")
     private Long projectId;
 
-    public MessageInformation(Long id, String author, String type, String text, boolean isSend, Timestamp dateTime, Long projectId) {
+    @Column(name = "title")
+    private String title;
+
+    public MessageInformation(Long id,
+                              String author,
+                              String type,
+                              String title,
+                              String text,
+                              boolean isSend,
+                              Timestamp dateTime,
+                              Long projectId) {
         this.id = id;
         this.author = author;
         this.type = type;
+        this.title = title;
         this.text = text;
         this.isSend = isSend;
         this.dateTime = dateTime == null ? new Timestamp(System.currentTimeMillis()) : dateTime;

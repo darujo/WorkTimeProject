@@ -129,7 +129,7 @@
             <input class="vvod20" type="checkbox"
                    id="BlockUser"
                    ng-model="User.block"/>
-            <label for="BlockUser" class="form_label">Редактирование в любом проекте</label>
+            <label for="AdminUser" class="form_label">Редактирование в любом проекте</label>
             <input class="vvod20" type="checkbox"
                    id="AdminUser"
                    ng-model="User.admin"/>
@@ -144,6 +144,12 @@
             <label for="Patronymic" class="form_label">Отчество:</label>
             <input class="vvod80mar10" type="text" id="Patronymic" step="any"
                    ng-model="User.patronymic"/>
+            <br>
+        </div>
+        <div class="horiz">
+            <label for="Email" class="form_label">почта:</label>
+            <input class="vvod80mar10" type="email" id="Email" step="any"
+                   ng-model="User.email"/>
             <br>
         </div>
         <div class="horiz">

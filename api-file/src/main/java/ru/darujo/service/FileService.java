@@ -40,9 +40,7 @@ public class FileService {
             log.info(fileName);
             log.info(file.getAbsolutePath());
 
-            String filePath = "file.txt";
-
-            try (FileOutputStream fos = new FileOutputStream(filePath)) {
+            try (FileOutputStream fos = new FileOutputStream(file)) {
                 fos.write(body);
             }
             addFile(name, file);

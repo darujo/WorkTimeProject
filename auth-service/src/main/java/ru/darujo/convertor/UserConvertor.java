@@ -31,7 +31,8 @@ public class UserConvertor {
                 user.getPasswordChange(),
                 user.getProjects().stream().map(Project::getId).toList(),
                 user.isBlock(),
-                user.getRights() == null ? null : user.getRights().stream().anyMatch(right -> right.getName().equals("ADMIN_USER")));
+                user.getRights() == null ? null : user.getRights().stream().anyMatch(right -> right.getName().equals("ADMIN_USER")),
+                user.getEmail());
     }
 
     public static User getUser(UserEditDto user) {
@@ -43,7 +44,13 @@ public class UserConvertor {
                 user.getPatronymic(),
                 user.getPasswordChange(),
                 user.getProjects() == null ? null : user.getProjects().stream().map(ProjectService.getInstance()::findById).toList(),
-                user.isBlock() != null && user.isBlock());
+                user.isBlock() != null && user.isBlock(),
+                null,
+                null,
+                user.getEmail(),
+                null,
+                null
+        );
     }
 
 }

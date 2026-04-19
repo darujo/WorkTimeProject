@@ -106,7 +106,7 @@ public class LinkService {
             UserInfoType userInfoType = userInfoTypeService
                     .getInfoTypeForUser(user, senderType, singleCode.getProjectId(), null, null, singleCode.getMessageType())
                     .orElse(new UserInfoType(singleCode.getProjectId(), singleCode.getMessageType(), user));
-            userInfoType.setTelegramId(telegramId);
+            userInfoType.setChatId(telegramId);
             userInfoType.setThreadId(threadId);
             userInfoTypeService.save(userInfoType);
 
@@ -127,7 +127,7 @@ public class LinkService {
                         user.setTelegramId(null);
                         userInfoTypeService.getInfoTypes(user, null, null, null, null)
                                 .forEach(userInfoType -> {
-                                    userInfoType.setTelegramId(null);
+                                    userInfoType.setChatId(null);
                                     userInfoType.setThreadId(null);
                                     userInfoTypeService.save(userInfoType);
                                 });
@@ -137,7 +137,7 @@ public class LinkService {
         }
         userInfoTypeService.getInfoTypes(null, senderType, telegramId, threadId, null)
                 .forEach(userInfoType -> {
-                    userInfoType.setTelegramId(null);
+                    userInfoType.setChatId(null);
                     userInfoType.setThreadId(null);
                     userInfoTypeService.save(userInfoType);
                 });
@@ -165,7 +165,7 @@ public class LinkService {
         }
         userInfoTypeService.getInfoTypes(user, senderType, null, null, messageType)
                 .forEach(userInfoType -> {
-                    userInfoType.setTelegramId(null);
+                    userInfoType.setChatId(null);
                     userInfoType.setThreadId(null);
                     userInfoTypeService.save(userInfoType);
                 });

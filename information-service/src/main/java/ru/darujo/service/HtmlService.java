@@ -281,11 +281,11 @@ public class HtmlService {
     }
 
     private String getTegDec(boolean excel, String teg, String param, String textClass, Float value) {
-        return getTegStart(teg, (excel && value != null ? "data-numeric-cell-format=\"#,##\" " : "") + (param == null ? "" : param), textClass, null) + String.format("%s</%s>", printNotNull(value), teg);
+        return getTegStart(teg, (excel && value != null ? "data-numeric-cell-format=\"#,##\" " : "") + (param == null ? "" : param), textClass, rowClass.get()) + String.format("%s</%s>", printNotNull(value), teg);
     }
 
     private String getTableStart(boolean excel, String name) {
-        return getTableStart(excel, name, false);
+        return getTableStart(excel, name, true);
     }
 
     private String getTableStart(boolean excel, String name, boolean newSheet) {
@@ -352,12 +352,12 @@ public class HtmlService {
         sb.append("<tr>");
         sb.append(getTegText(excel, "td", "rowspan=\"2\"", "table_head1", "№ п/п"));
         if (ziSplit) {
-            sb.append(getTegFix(excel, "td", "rowspan=\"2\"", "table_head2 two_date", "ЗИ"));
+            sb.append(getTegText(excel, "td", "rowspan=\"2\"", "table_head2 two_date", "ЗИ"));
         } else {
-            sb.append(getTegFix(excel, "td", "rowspan=\"2\"", "table_head2 two_date", "Период"));
+            sb.append(getTegText(excel, "td", "rowspan=\"2\"", "table_head2 two_date", "Период"));
         }
         sb.append(getTegText(excel, "td", "rowspan=\"2\"", "table_head1 field_fio", "Исполнитель"));
-        sb.append(getTegText(excel, "td", "colspan=\"" + taskListType.size() + "\"", "table_head2", "Факт трудозатрат, чел/час"));
+        sb.append(getTegFix(excel, "td", "colspan=\"" + taskListType.size() + "\"", "table_head2", "Факт трудозатрат, чел/час"));
         if (!ziSplit) {
             sb.append(getTegText(excel, "td", "rowspan=\"2\"", "table_head1 week_work_plan_time", "Плановые трудозатраты за период, чел/час"));
         }
@@ -416,7 +416,7 @@ public class HtmlService {
 
         taskListType.forEach(taskType -> sb.append(getTegText(excel, "td",
                 null,
-                String.format("%s %s %s",
+                String.format("Задач: %s, Часов: %s, Проценты: %s",
                         workTask ? printNotNull(searchJson(work.getWorkTaskColAttr(), taskType.getCodeT())) : "",
                         workTime ? printNotNull(searchJson(work.getWorkTimeAttr(), taskType.getCodeT())) : "",
                         workPercent ? printNotNull(searchJson(work.getWorkPercent(), taskType.getCodeT())) : ""))));

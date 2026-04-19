@@ -26,7 +26,11 @@ public class SendMessageImp implements SendMessage {
 
     @Override
     public String getTitle() {
-        return MessageType.valueOf(messageInformation.getType()).getName();
+        return messageInformation.getTitle() != null
+                ?
+                messageInformation.getTitle()
+                :
+                MessageType.valueOf(messageInformation.getType()).getName();
     }
 
     @Override
@@ -36,7 +40,7 @@ public class SendMessageImp implements SendMessage {
 
     @Override
     public boolean isAttachFile() {
-        return fileBody.length > 0;
+        return fileBody != null && fileBody.length > 0;
     }
 
     @Override

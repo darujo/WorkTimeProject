@@ -31,4 +31,5 @@ spring:
   sql:
     init:
       mode: always
-
+mail:
+  secret: "sf3dfv3fdbDw3cbt7dg5jndvs9ncnsoo9n3ngfi54i3wnvoo83nvo49j9hhg78rf"

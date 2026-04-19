@@ -111,7 +111,7 @@ public class MessageInformationService {
             return false;
         }
         if (userSendList != null) {
-            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true, messageInfoDto.getDataTime(), null));
+            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getTitle(), messageInfoDto.getText(), true, messageInfoDto.getDataTime(), null));
             userSendList.forEach(userInfoDto ->
                     saveUserSend(new UserSend(
                             userInfoDto.getSenderType(),
@@ -121,7 +121,16 @@ public class MessageInformationService {
                             messageInformation))
             );
         } else if (messageInfoDto.getUserInfoDto() != null) {
-            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true, messageInfoDto.getDataTime(), null));
+            MessageInformation messageInformation = saveMessageInformation(
+                    new MessageInformation(
+                            null,
+                            messageInfoDto.getAuthor(),
+                            messageInfoDto.getType() == null ? null : messageInfoDto.getType().toString(),
+                            messageInfoDto.getTitle(),
+                            messageInfoDto.getText(),
+                            true,
+                            messageInfoDto.getDataTime(),
+                            null));
             saveUserSend(new UserSend(
                     messageInfoDto.getUserInfoDto().getSenderType(),
                     messageInfoDto.getUserInfoDto().getTelegramId(),
@@ -129,9 +138,9 @@ public class MessageInformationService {
                     messageInfoDto.getUserInfoDto().getOriginMessageId(),
                     messageInformation));
         } else if (messageTypeListMap == null) {
-            saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), false, messageInfoDto.getDataTime(), null));
+            saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getTitle(), messageInfoDto.getText(), false, messageInfoDto.getDataTime(), null));
         } else {
-            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), true, messageInfoDto.getDataTime(), null));
+            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getTitle(), messageInfoDto.getText(), true, messageInfoDto.getDataTime(), null));
             messageTypeListMap.get(messageInfoDto.getType()).forEach((senderType, userInfoDTOList) ->
                     userInfoDTOList.forEach(userInfoDto ->
                             saveUserSend(new UserSend(userInfoDto.getSenderType(), userInfoDto.getTelegramId(), userInfoDto.getThreadId(), null, messageInformation))));
@@ -216,7 +225,7 @@ public class MessageInformationService {
         if (messageInfoDto.getUserInfoDto() != null && messageTypeListMap == null) {
             log.error("Нет списка получателей");
         } else {
-            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getText(), false, messageInfoDto.getDataTime(), projectId));
+            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getTitle(), messageInfoDto.getText(), false, messageInfoDto.getDataTime(), projectId));
             if (messageInfoDto.getUserInfoDto() != null) {
                 saveUserSend(new UserSend(
                         messageInfoDto.getUserInfoDto().getSenderType(),
