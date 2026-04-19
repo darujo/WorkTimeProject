@@ -6,6 +6,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     const constPatchCode = window.location.origin + '/task-service/v1/';
     const constPatchRelease = window.location.origin + '/work-service/v1/release';
     const constPatchWorkTime = window.location.origin + '/worktime-service/v1/code';
+    const techUrl = "/user_tech/"
     $scope.loadFilter = null;
     $scope.tryToAuth = function () {
         $http.post(constPatchAuth + '/auth', $scope.user)
@@ -114,11 +115,13 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         $http.defaults.headers.common.Authorization = '';
     };
 
-    $scope.isUserLoggedIn = function () {
-        if ($localStorage.authUser) {
+    $scope.isUserLoggedIn = function (reg) {
+        if ($localStorage.authUser || (reg && (location.hash.startsWith(techUrl, 3) || location.hash === techUrl))) {
             return true;
         } else {
+            if ((location.hash.substring(2) !== techUrl && location.hash !== techUrl)) {
             $location.path('/').search({});
+            }
             return false;
         }
     };

@@ -111,7 +111,7 @@
 
                     </details>
                 </div>
-                <div class="nav-item" ng-show="!isUserLoggedIn()">
+                <div class="nav-item" ng-show="!isUserLoggedIn(true)">
                     <form class="" ng-submit="tryToAuth()">
                         <div class="input-group input-group-sm" style="padding: 4px;">
                             <label for="navLoginField">Логин:</label>
@@ -142,7 +142,7 @@
     <div class="nav-item" ng-show="isUserLoggedIn()" style="padding: 4px;">
         <button class="head_button" ng-click="tryToLogout()">Выйти</button>
     </div>
-    <div class="nav-item" ng-show="isUserLoggedIn()" style="padding: 4px;">
+    <div class="nav-item" ng-show="isUserLoggedInAndPasOk()" style="padding: 4px;">
         <div class="user_view">
             <p class="p-form">
                 {{UserLogin.lastName}} {{UserLogin.firstName}} {{UserLogin.patronymic}}</p>
@@ -152,7 +152,7 @@
         <!--           type="readonly"-->
         <!--    >-->
     </div>
-    <div class="nav-item" ng-show="isUserLoggedIn()">
+    <div class="nav-item" ng-show="isUserLoggedInAndPasOk()">
         <label for="UserProject" class="p-head"></label>
         <select class="vvod" name="UserProject" id="UserProject"
                 ng-model="UserLogin.projectId" ng-change="changeProject(UserLogin.projectId)">
