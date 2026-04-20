@@ -90,6 +90,9 @@ angular.module('workTimeService').config(["$ocLazyLoadProvider", function ($ocLa
         }, {
             name: 'rate', // module
             files: ['workRate/rate.js?ver='.toLowerCase() + ver]
+        }, {
+            name: 'confirm_email', // module
+            files: ['user/confirm_email.js?ver='.toLowerCase() + ver]
         }
         ]
     });

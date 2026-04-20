@@ -4,11 +4,11 @@
         <button ng-if="User" type="button" class="head_button" ng-click="saveUserinfoType()">Сохранить</button>
         <button type="button" class="head_button" ng-click="loadInfoType()">Обновить</button>
         <div class="horiz">
-            <label for="UserInfoType" class="p-head">Проект</label>
+            <label for="UserInfoType" class="p-head">Тип уведомлений</label>
             <select class="vvod80mar10" name="UserInfoType" id="UserInfoType"
-                    ng-model="Filter.infoType" multiple required>
-                <option ng-repeat="type in InfoTypes" ng-value="project.id" value="project.id">
-                    {{project.code}} {{project.name}}
+                    ng-model="Filter.infoType" ng-change="loadInfoType()" required>
+                <option ng-repeat="type in InfoTypes" ng-value="type.code" value="type.code">
+                    {{type.value}}
                 </option>
             </select>
         </div>
@@ -19,11 +19,11 @@
             <td class="table_head2">Код</td>
             <td class="table_head2">Название</td>
             <td class="table_head2"></td>
-            <td class="table_head2">id чата</td>
-            <td class="table_head2">Номер канала в чате</td>
-            <td class="table_head2"></td>
-            <td class="table_head2"></td>
-            <td class="table_head2"></td>
+            <td class="table_head2" ng-if="Filter.viewLink">id чата</td>
+            <td class="table_head2" ng-if="Filter.viewLink">Номер канала в чате</td>
+            <td class="table_head2" ng-if="Filter.viewLink"></td>
+            <td class="table_head2" ng-if="Filter.viewLink"></td>
+            <td class="table_head2" ng-if="Filter.viewLink"></td>
 
             <!--            <td class="table_head2"></td>-->
 
@@ -37,18 +37,18 @@
                 <label for="RoleActive"></label>
                 <input id="RoleActive" class="vvod check_box_td" type="checkbox" ng-model="infoType.active"/>
             </td>
-            <td>{{infoType.telegramId}}</td>
-            <td>{{infoType.threadId}}</td>
-            <td><p ng-if="infoType.message.ok">Для получения уведомлений перейдите <a
+            <td ng-if="Filter.viewLink">{{infoType.telegramId}}</td>
+            <td ng-if="Filter.viewLink">{{infoType.threadId}}</td>
+            <td ng-if="Filter.viewLink"><p ng-if="infoType.message.ok">Для получения уведомлений перейдите <a
                     href="https://{{infoType.message.link}}" target="_blank">Бот</a>.
                 И отправьте команду /link. На запрос кода введите:<b>{{infoType.message.code}}</b>.
                 Внимание Код действует <b>{{infoType.message.time}}</b> минут. После авторизации в боте
                 нажмите кнопку: </p>
                 <br></td>
-            <td>
+            <td ng-if="Filter.viewLink">
                 <button type="button" class="head_button" ng-click="link(User.nikName,infoType)">Связать</button>
             </td>
-            <td>
+            <td ng-if="Filter.viewLink">
                 <button type="button" class="head_button" ng-click="delLink(User.nikName,infoType)">Отвязать</button>
             </td>
 
@@ -63,11 +63,11 @@
             <td class="table_head2">Код</td>
             <td class="table_head2">Название</td>
             <td class="table_head2"></td>
-            <td class="table_head2">id чата</td>
-            <td class="table_head2">Номер канала в чате</td>
-            <td class="table_head2"></td>
-            <td class="table_head2"></td>
-            <td class="table_head2"></td>
+            <td class="table_head2" ng-if="Filter.viewLink">id чата</td>
+            <td class="table_head2" ng-if="Filter.viewLink">Номер канала в чате</td>
+            <td class="table_head2" ng-if="Filter.viewLink"></td>
+            <td class="table_head2" ng-if="Filter.viewLink"></td>
+            <td class="table_head2" ng-if="Filter.viewLink"></td>
 
             <!--            <td class="table_head2"></td>-->
 
@@ -81,18 +81,18 @@
                 <label for="RoleActiveProject"></label>
                 <input id="RoleActiveProject" class="vvod check_box_td" type="checkbox" ng-model="infoType.active"/>
             </td>
-            <td>{{infoType.telegramId}}</td>
-            <td>{{infoType.threadId}}</td>
-            <td><p ng-if="infoType.message.ok">Для получения уведомлений перейдите <a
+            <td ng-if="Filter.viewLink">{{infoType.telegramId}}</td>
+            <td ng-if="Filter.viewLink">{{infoType.threadId}}</td>
+            <td ng-if="Filter.viewLink"><p ng-if="infoType.message.ok">Для получения уведомлений перейдите <a
                     href="https://{{infoType.message.link}}" target="_blank">Бот</a>.
                 И отправьте команду /link. На запрос кода введите:<b>{{infoType.message.code}}</b>.
                 Внимание Код действует <b>{{infoType.message.time}}</b> минут. После авторизации в боте
                 нажмите кнопку: </p>
                 <br></td>
-            <td>
+            <td ng-if="Filter.viewLink">
                 <button type="button" class="head_button" ng-click="link(User.nikName,infoType)">Связать</button>
             </td>
-            <td>
+            <td ng-if="Filter.viewLink">
                 <button type="button" class="head_button" ng-click="delLink(User.nikName,infoType)">Отвязать</button>
             </td>
 

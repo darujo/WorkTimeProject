@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.ChatInfo;
-import ru.darujo.type.MessageSenderType;
 import ru.darujo.type.MessageType;
 import ru.darujo.type.ReportType;
 
@@ -43,14 +42,15 @@ public class ScheduleService implements AutoCloseable {
             }
         }
 //        ChatInfo chatInfo = new ChatInfo(null, MessageSenderType.Telegram,"496071536", null, null);
-        ChatInfo chatInfo = new ChatInfo(null, MessageSenderType.Email, "radies@rambler.ru", null, null);
+//        ChatInfo chatInfo = new ChatInfo(null, MessageSenderType.Email, "radies@rambler.ru", null, null);
 
 //        executor.schedule(getTask(MessageType.AVAIL_WORK_FULL_REPORT, chatInfo), 10, TimeUnit.SECONDS);
 //        executor.schedule(getTask(MessageType.AVAIL_WORK_FULL_REPORT_PROJECT, chatInfo), 1, TimeUnit.SECONDS);
 //        executor.schedule(getTask(MessageType.ZI_WORK_REPORT, chatInfo), 60, TimeUnit.MILLISECONDS);
 //        executor.schedule(getTask(MessageType.ZI_WORK_REPORT_PROJECT, chatInfo), 100, TimeUnit.SECONDS);
 //        executor.schedule(getTask(MessageType.WEEK_WORK_REPORT, null), 10, TimeUnit.SECONDS);
-        executor.schedule(getTask(MessageType.REPORT_STATUS, chatInfo), 10, TimeUnit.SECONDS);
+//        chatInfo = null;
+//        executor.schedule(getTask(MessageType.REPORT_STATUS, chatInfo), 10, TimeUnit.SECONDS);
     }
 
     public static volatile boolean flagStartService = false;

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.UserConvertor;
 import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.jwt.JwtResponse;
+import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.user.UserInfoTypeDto;
 import ru.darujo.dto.user.UserPasswordChangeDto;
@@ -84,8 +85,8 @@ public class UserController {
     }
 
     @GetMapping("/user/sender/type/{userId}")
-    public List<MessageSenderType> getUserSenderTypes(@PathVariable Long userId) {
-        return userService.getUserSenderTypes(userId);
+    public List<AttrDto<MessageSenderType>> getUserSenderTypes(@PathVariable Long userId) {
+        return userService.getUserSenderTypes(userId).stream().map(senderType -> new AttrDto<>(senderType, senderType.getName())).toList();
 
     }
     @GetMapping("/user/info/type/{userId}")
@@ -102,19 +103,19 @@ public class UserController {
 
     }
 
-    @GetMapping("/user/password/recovery")
+    @GetMapping("/system/user/password/recovery")
     public void getPasswordRecovery(@RequestParam String nikName,
                                     @RequestParam String email) {
         userService.getRestorePassword(nikName, email);
     }
 
-    @GetMapping("/user/password/restore")
+    @GetMapping("/system/user/password/restore")
     public JwtResponse getPasswordRestore(@RequestParam String nikName,
                                           @RequestParam String code) {
         return authService.restorePassword(nikName, code);
     }
 
-    @GetMapping("/user/Email/confirm")
+    @GetMapping("/system/user/email/confirm")
     public boolean confirmEmail(String nikName, String code) {
         return userService.confirmEmail(nikName, code);
     }

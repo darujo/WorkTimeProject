@@ -62,6 +62,7 @@ public class UserInfoTypeService {
                     userInfoType = new UserInfoType(userInfoTypeActiveDto.getProjectId(),
                             userInfoTypeActiveDto.getCode(),
                             user);
+                    userInfoType.setSenderType(senderType);
 
                 }
                 userInfoType.setIsActive(true);
@@ -98,7 +99,7 @@ public class UserInfoTypeService {
     private static Specification<@NonNull UserInfoType> getUserInfoTypeSpecification(User user, String senderType, String telegramId, Integer threadId, String messageType) {
         Specification<@NonNull UserInfoType> specification = Specification.unrestricted();
         specification = Specifications.eq(specification, "user", user);
-        specification = Specifications.eq(specification, "typeSender", senderType);
+        specification = Specifications.eq(specification, "senderType", senderType);
         specification = Specifications.eq(specification, "telegramId", telegramId);
         specification = Specifications.eq(specification, "threadId", threadId);
         specification = Specifications.eq(specification, "code", messageType);

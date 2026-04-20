@@ -275,6 +275,17 @@ angular.module('workTimeService').config(function ($routeProvider) {
                 }]
             }
         })
+        .when('/sys/email_confirm', {
+            templateUrl: 'user/confirm_email.html?ver='.toLowerCase() + ver,
+            controller: 'emailConfirmController',
+            resolve: {
+                LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load('confirm_email'); // Resolve promise and load before view
+                }]
+            }
+        })
+
+
         .otherwise({
             redirectTo: '/'
         });

@@ -6,7 +6,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     const constPatchCode = window.location.origin + '/task-service/v1/';
     const constPatchRelease = window.location.origin + '/work-service/v1/release';
     const constPatchWorkTime = window.location.origin + '/worktime-service/v1/code';
-    const techUrl = "/user_tech/"
+    const techUrl = "/sys/"
     $scope.loadFilter = null;
     $scope.tryToAuth = function () {
         $http.post(constPatchAuth + '/auth', $scope.user)
