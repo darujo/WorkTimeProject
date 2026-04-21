@@ -26,7 +26,17 @@ public class UrlWorkTime {
     public static String getUrlAgreement(Long workId, String name) {
         return getUrl(URL + "/rate?workId=" + workId, name);
     }
+
     public static String getUrlAgreement(WorkLittleDto workLittleDto) {
         return getUrlAgreement(workLittleDto.getId(),workLittleDto.getName());
     }
+
+    public static String getUrlNewEmail(String nikName, String code) {
+        return getUrl(URL + "/sys/email_confirm?code=" + code + "&nikName=" + nikName, "подтвердить почту");
+    }
+
+    public static String getUrlRecovery(String nikName, String code) {
+        return getUrl(URL + "/sys/recovery_password?code=" + code + "&nikName=" + nikName, "восстановить пароль");
+    }
+
 }

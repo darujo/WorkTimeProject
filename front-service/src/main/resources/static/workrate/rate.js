@@ -27,7 +27,7 @@ angular.module('workTimeService').controller('rateController', function ($scope,
             return {};
         }
     };
-    $scope.Child = "null";
+    $scope.FilterCh = {Child: 2};
     $scope.loadRate = function () {
         console.log("loadWorkStage");
         if ($scope.load1) {
@@ -35,15 +35,15 @@ angular.module('workTimeService').controller('rateController', function ($scope,
         } else {
             $scope.loadRateWait = true;
             $scope.WorkStageList = null;
-
+            console.log("$scope.Child")
+            console.log($scope.FilterCh.Child)
             $http({
                 url: constPatchWorkRate + "/rate",
                 method: "get",
                 params: {
                     workId: WorkId,
                     loadFact: true,
-                    child: $scope.Child === "null" ? null : $scope.Child
-
+                    child: $scope.FilterCh.Child === 1 ? true : ($scope.FilterCh.Child === 2 ? false : null)
 
                 }
             }).then(function (response) {

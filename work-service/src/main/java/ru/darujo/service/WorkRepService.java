@@ -260,12 +260,12 @@ public class WorkRepService {
                                     userDto.getFirstName(),
                                     userDto.getLastName(),
                                     userDto.getPatronymic(),
-                                    getFactWork(workProject, projectDto.getStageEnd(), 0, user),
-                                    getFactWork(workProject, projectDto.getStageEnd(), 1, user),
-                                    getFactWork(workProject, projectDto.getStageEnd(), 2, user),
-                                    getFactWork(workProject, projectDto.getStageEnd(), 3, user),
-                                    getFactWork(workProject, projectDto.getStageEnd(), 4, user),
-                                    getFactWork(workProject, projectDto.getStageEnd(), 5, user)
+                                    getFactWork(workProject, projectDto.getStageEnd(), 0, user, true),
+                                    getFactWork(workProject, projectDto.getStageEnd(), 1, user, true),
+                                    getFactWork(workProject, projectDto.getStageEnd(), 2, user, true),
+                                    getFactWork(workProject, projectDto.getStageEnd(), 3, user, true),
+                                    getFactWork(workProject, projectDto.getStageEnd(), 4, user, true),
+                                    getFactWork(workProject, projectDto.getStageEnd(), 5, user, true)
                             );
                             workFactDTOs.add(workFactDto);
 
@@ -320,9 +320,11 @@ public class WorkRepService {
             }
             ProjectDto projectDto = WorkService.getProjectDto(projectId);
             users.forEach(user -> {
-                Float time = getFactWork(workFull.getWorkProject(), projectDto.getStageEnd(), stage, user);
+                Float time = getFactWork(workFull.getWorkProject(), projectDto.getStageEnd(), stage, user, false);
                 if (time > 0) {
-                    usersTime.put(user, time);
+
+                    usersTime.compute(user, (k, savaTime) -> (savaTime == null ? 0 : savaTime) + time);
+
                 }
             });
         });
@@ -330,14 +332,20 @@ public class WorkRepService {
     }
 
     private Float getFactWork(WorkProject workProject, Integer stageEnd, Integer stage) {
-        return getFactWork(workProject, stageEnd, stage, null);
+        return getFactWork(workProject, stageEnd, stage, null, true);
     }
 
-    public Float getFactWork(WorkProject workProject, Integer projectStageEnd, Integer stage, String nikName) {
+    public Float getFactWork(WorkProject workProject, Integer projectStageEnd, Integer stage, String nikName, boolean addChild) {
+        List<Long> childList;
+        if (addChild) {
+            childList = workProject.getWork().getChildIdList();
+        } else {
+            childList = null;
+        }
         if (stage == 0) {
             return taskServiceIntegration.getTimeWork(
                     workProject.getWork().getId(),
-                    workProject.getWork().getChildIdList(),
+                    childList,
                     workProject.getProjectId(),
                     nikName,
                     null,
@@ -346,7 +354,7 @@ public class WorkRepService {
         } else if (stage == 1 && (projectStageEnd == null || projectStageEnd > 1)) {
             return taskServiceIntegration.getTimeWork(
                     workProject.getWork().getId(),
-                    workProject.getWork().getChildIdList(),
+                    childList,
                     workProject.getProjectId(),
                     nikName,
                     null,
@@ -355,7 +363,7 @@ public class WorkRepService {
         } else if (stage == 2 && (projectStageEnd == null || projectStageEnd > 2)) {
             return taskServiceIntegration.getTimeWork(
                     workProject.getWork().getId(),
-                    workProject.getWork().getChildIdList(),
+                    childList,
                     workProject.getProjectId(),
                     nikName,
                     getTimeDevelop(workProject),
@@ -363,7 +371,7 @@ public class WorkRepService {
         } else if (stage == 3 && (projectStageEnd == null || projectStageEnd > 3)) {
             return taskServiceIntegration.getTimeWork(
                     workProject.getWork().getId(),
-                    workProject.getWork().getChildIdList(),
+                    childList,
                     workProject.getProjectId(),
                     nikName,
                     workProject.getDebugEndFact(),
@@ -371,7 +379,7 @@ public class WorkRepService {
         } else if (stage == 4 && (projectStageEnd == null || projectStageEnd > 4)) {
             return taskServiceIntegration.getTimeWork(
                     workProject.getWork().getId(),
-                    workProject.getWork().getChildIdList(),
+                    childList,
                     workProject.getProjectId(),
                     nikName,
                     workProject.getReleaseEndFact(),
@@ -395,7 +403,7 @@ public class WorkRepService {
 
             return taskServiceIntegration.getTimeWork(
                     workProject.getWork().getId(),
-                    workProject.getWork().getChildIdList(),
+                    childList,
                     workProject.getProjectId(),
                     nikName,
                     timestamp,

@@ -23,18 +23,22 @@ spring:
 
   mail:
     host: smtp.mail.ru
-    port: 465
+    #    port: 465
     #    port: 587
+    port: 2525
     username: rubanda@internet.ru
-    password: ptSBPlO9BcIlugK9hSbV
+    password: ptSBPlO9BcIlugK9hSbVAA
+    #    mR9TbsObjlcvckLINYrHAA
     properties:
       mail:
         smtp:
+          connectiontimeout: 1000
           auth: true
-          ssl:
+          #          ssl:
+          #            enable: true
+
+          starttls:
             enable: true
-  #           starttls:
-  #              enable: true
 
 
 file:

@@ -28,6 +28,7 @@ import ru.darujo.repository.UserRepository;
 import ru.darujo.specifications.Specifications;
 import ru.darujo.type.MessageSenderType;
 import ru.darujo.type.MessageType;
+import ru.darujo.url.UrlWorkTime;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -178,7 +179,7 @@ public class UserService {
         }
         user = userRepository.save(user);
         if (newEmail) {
-            infoServiceIntegration.addMessage(new MessageInfoDto(new UserInfoDto(MessageSenderType.Email.toString(), user.getId(), user.getNikName(), user.getNewEmail(), null, null), "Подтверждение почты", "Для подтверждения почты перейдите по ссылке " + UrlService.getUrlNewEmail(user.getNikName(), getHash(user))));
+            infoServiceIntegration.addMessage(new MessageInfoDto(new UserInfoDto(MessageSenderType.Email.toString(), user.getId(), user.getNikName(), user.getNewEmail(), null, null), "Подтверждение почты", "Для подтверждения почты перейдите по ссылке " + UrlWorkTime.getUrlNewEmail(user.getNikName(), getHash(user))));
         }
         return user;
     }
@@ -437,7 +438,7 @@ public class UserService {
         if (email != null && email.equals(user.getEmail())) {
             setNewEmailCode(user);
             userRepository.save(user);
-            infoServiceIntegration.addMessage(new MessageInfoDto(new UserInfoDto(MessageSenderType.Email.toString(), user.getId(), user.getNikName(), user.getEmail(), null, null), "Восстановление доступа", "Для восстановления пароля перейдите по ссылке " + UrlService.getUrlRecovery(user.getNikName(), getHash(user))));
+            infoServiceIntegration.addMessage(new MessageInfoDto(new UserInfoDto(MessageSenderType.Email.toString(), user.getId(), user.getNikName(), user.getEmail(), null, null), "Восстановление доступа", "Для восстановления пароля перейдите по ссылке " + UrlWorkTime.getUrlRecovery(user.getNikName(), getHash(user))));
 
         } else {
             throw new ResourceNotFoundRunTime("Почта не совпадает");

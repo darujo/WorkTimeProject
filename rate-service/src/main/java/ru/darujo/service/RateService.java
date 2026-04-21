@@ -196,7 +196,23 @@ public class RateService {
         }
         workLittleDto.getProjectList().forEach(projectId -> {
             List<WorkStageDto> workStageList = new ArrayList<>();
-            workStageService.findWorkStage(workIDList, projectId).forEach(workStage -> workStageList.add(WorkStageConvertor.getWorkStageDto(workStage)));
+            Map<String, WorkStage> mapWorkStage = new HashMap<>();
+            workStageService.findWorkStage(workIDList, projectId).forEach(workStage ->
+            {
+                WorkStage workStageInMap = mapWorkStage.get(workStage.getNikName());
+                if (workStageInMap == null) {
+                    mapWorkStage.put(workStage.getNikName(), workStage);
+                } else {
+                    workStageInMap.setStage0(plusFloat(workStageInMap.getStage0(), workStage.getStage0()));
+                    workStageInMap.setStage1(plusFloat(workStageInMap.getStage1(), workStage.getStage1()));
+                    workStageInMap.setStage2(plusFloat(workStageInMap.getStage2(), workStage.getStage2()));
+                    workStageInMap.setStage3(plusFloat(workStageInMap.getStage3(), workStage.getStage3()));
+                    workStageInMap.setStage4(plusFloat(workStageInMap.getStage4(), workStage.getStage4()));
+                }
+            });
+
+            mapWorkStage.values().forEach(workStage -> workStageList.add(WorkStageConvertor.getWorkStageDto(workStage)));
+
             workStageService.updWorkStage(workIDList, workStageList, projectId);
             workStageList.forEach(workStageDto -> workStageService.updFio(workStageDto));
             WorkStageDto workStageDto = getTotal(workStageList);
@@ -216,6 +232,16 @@ public class RateService {
             rateDtoList.add(rateDto);
         });
         return new WorkRateDto(workLittleDto, rateDtoList, getTotal(workStageDtoListTotal));
+    }
+
+    private Float plusFloat(Float stage, Float stagePlus) {
+        if (stage == null) {
+            return stagePlus;
+        } else if (stagePlus == null) {
+            return stage;
+        } else {
+            return stage + stagePlus;
+        }
     }
 
     private WorkStageDto getTotal(List<WorkStageDto> workStageDtoList) {

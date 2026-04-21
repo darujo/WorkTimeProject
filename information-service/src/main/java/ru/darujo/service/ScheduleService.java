@@ -49,8 +49,8 @@ public class ScheduleService implements AutoCloseable {
 //        executor.schedule(getTask(MessageType.ZI_WORK_REPORT, chatInfo), 60, TimeUnit.MILLISECONDS);
 //        executor.schedule(getTask(MessageType.ZI_WORK_REPORT_PROJECT, chatInfo), 100, TimeUnit.SECONDS);
 //        executor.schedule(getTask(MessageType.WEEK_WORK_REPORT, null), 10, TimeUnit.SECONDS);
-//        chatInfo = null;
-//        executor.schedule(getTask(MessageType.REPORT_STATUS, chatInfo), 10, TimeUnit.SECONDS);
+        ChatInfo chatInfo = null;
+        executor.schedule(getTask(MessageType.REPORT_STATUS, chatInfo), 10, TimeUnit.SECONDS);
     }
 
     public static volatile boolean flagStartService = false;
