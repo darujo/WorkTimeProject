@@ -5,12 +5,14 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.mail.javamail.JavaMailSender;
 import ru.darujo.dto.information.SendServiceInt;
 import ru.darujo.service.DefaultEmailService;
 
 @Configuration
 @Slf4j
+@Import(AppConfigIntegration.class)
 public class AppConfig {
 
     @ConditionalOnMissingBean(name = "telegramServiceIntegration")

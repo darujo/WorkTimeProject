@@ -14,8 +14,8 @@ import java.util.Date;
 import java.util.List;
 
 @Log4j2
-public class WorkTimeServiceIntegration extends ServiceIntegration {
-    public WorkTimeServiceIntegration(WebClient webClientWorkTime) {
+public class WorkTimeServiceIntegrationImp extends ServiceIntegrationImp {
+    public WorkTimeServiceIntegrationImp(WebClient webClientWorkTime) {
         super.setWebClient(webClientWorkTime);
     }
 

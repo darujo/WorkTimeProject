@@ -15,7 +15,7 @@ import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.darujo.dto.information.ResultMes;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
-import ru.darujo.integration.UserServiceIntegration;
+import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.model.ChatInfo;
 import ru.darujo.model.MessageReceive;
 import ru.darujo.service.CommandType;
@@ -40,10 +40,10 @@ public class TelegramBotRequest implements SpringLongPollingBot, LongPollingUpda
         return this;
     }
 
-    private UserServiceIntegration userServiceIntegration;
+    private UserServiceIntegrationImp userServiceIntegration;
 
     @Autowired
-    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+    public void setUserServiceIntegration(UserServiceIntegrationImp userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
 

@@ -18,10 +18,10 @@ import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.workperiod.WorkUserTime;
 import ru.darujo.dto.workrep.*;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
-import ru.darujo.integration.CalendarServiceIntegration;
-import ru.darujo.integration.TaskServiceIntegration;
-import ru.darujo.integration.UserServiceIntegration;
-import ru.darujo.integration.WorkTimeServiceIntegration;
+import ru.darujo.integration.CalendarServiceIntegrationImp;
+import ru.darujo.integration.TaskServiceIntegrationImp;
+import ru.darujo.integration.UserServiceIntegrationImp;
+import ru.darujo.integration.WorkTimeServiceIntegrationImp;
 import ru.darujo.model.*;
 
 import java.sql.Timestamp;
@@ -31,25 +31,25 @@ import java.util.stream.Collectors;
 
 @Service
 public class WorkRepService {
-    private TaskServiceIntegration taskServiceIntegration;
+    private TaskServiceIntegrationImp taskServiceIntegration;
     private ReleaseProjectService releaseProjectService;
 
     @Autowired
-    public void setTaskServiceIntegration(TaskServiceIntegration taskServiceIntegration) {
+    public void setTaskServiceIntegration(TaskServiceIntegrationImp taskServiceIntegration) {
         this.taskServiceIntegration = taskServiceIntegration;
     }
 
-    private WorkTimeServiceIntegration workTimeServiceIntegration;
+    private WorkTimeServiceIntegrationImp workTimeServiceIntegration;
 
     @Autowired
-    public void setWorkTimeServiceIntegration(WorkTimeServiceIntegration workTimeServiceIntegration) {
+    public void setWorkTimeServiceIntegration(WorkTimeServiceIntegrationImp workTimeServiceIntegration) {
         this.workTimeServiceIntegration = workTimeServiceIntegration;
     }
 
-    private UserServiceIntegration userServiceIntegration;
+    private UserServiceIntegrationImp userServiceIntegration;
 
     @Autowired
-    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+    public void setUserServiceIntegration(UserServiceIntegrationImp userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
 
@@ -60,10 +60,10 @@ public class WorkRepService {
         this.workService = workService;
     }
 
-    private CalendarServiceIntegration calendarServiceIntegration;
+    private CalendarServiceIntegrationImp calendarServiceIntegration;
 
     @Autowired
-    public void setCalendarServiceIntegration(CalendarServiceIntegration calendarServiceIntegration) {
+    public void setCalendarServiceIntegration(CalendarServiceIntegrationImp calendarServiceIntegration) {
         this.calendarServiceIntegration = calendarServiceIntegration;
     }
 

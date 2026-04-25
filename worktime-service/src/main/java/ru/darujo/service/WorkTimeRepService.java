@@ -14,8 +14,8 @@ import ru.darujo.dto.workperiod.UserWorkDto;
 import ru.darujo.dto.workperiod.WorkUserFactPlan;
 import ru.darujo.dto.workrep.UserWorkPeriodDto;
 import ru.darujo.dto.workrep.WorkPeriodDto;
-import ru.darujo.integration.CalendarServiceIntegration;
-import ru.darujo.integration.TaskServiceIntegration;
+import ru.darujo.integration.CalendarServiceIntegrationImp;
+import ru.darujo.integration.TaskServiceIntegrationImp;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -26,10 +26,10 @@ import java.util.stream.Collectors;
 @Service
 @Primary
 public class WorkTimeRepService {
-    private TaskServiceIntegration taskServiceIntegration;
+    private TaskServiceIntegrationImp taskServiceIntegration;
 
     @Autowired
-    public void setWorkServiceIntegration(TaskServiceIntegration taskServiceIntegration) {
+    public void setWorkServiceIntegration(TaskServiceIntegrationImp taskServiceIntegration) {
         this.taskServiceIntegration = taskServiceIntegration;
     }
 
@@ -40,10 +40,10 @@ public class WorkTimeRepService {
         this.workTimeService = workTimeService;
     }
 
-    CalendarServiceIntegration calendarServiceIntegration;
+    CalendarServiceIntegrationImp calendarServiceIntegration;
 
     @Autowired
-    public void setCalendarServiceIntegration(CalendarServiceIntegration calendarServiceIntegration) {
+    public void setCalendarServiceIntegration(CalendarServiceIntegrationImp calendarServiceIntegration) {
         this.calendarServiceIntegration = calendarServiceIntegration;
     }
 

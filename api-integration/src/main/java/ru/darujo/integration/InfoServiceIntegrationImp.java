@@ -11,8 +11,8 @@ import ru.darujo.type.MessageSenderType;
 import ru.darujo.type.ReportType;
 
 @Slf4j
-public class InfoServiceIntegration extends ServiceIntegration {
-    public InfoServiceIntegration(WebClient webClientInfo) {
+public class InfoServiceIntegrationImp extends ServiceIntegrationImp {
+    public InfoServiceIntegrationImp(WebClient webClientInfo) {
         super.setWebClient(webClientInfo);
     }
 

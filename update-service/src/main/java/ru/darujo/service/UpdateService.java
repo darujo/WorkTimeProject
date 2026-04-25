@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
-import ru.darujo.integration.InfoServiceIntegration;
+import ru.darujo.integration.InfoServiceIntegrationImp;
 import ru.darujo.model.ServiceType;
 import ru.darujo.type.MessageType;
 
@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class UpdateService {
     private ScheduleService scheduleService;
     private MonitorService monitorService;
-    private InfoServiceIntegration infoServiceIntegration;
+    private InfoServiceIntegrationImp infoServiceIntegration;
     @Getter
     private static UpdateService INSTANCE;
 
@@ -36,7 +36,7 @@ public class UpdateService {
     }
 
     @Autowired
-    public void setInfoServiceIntegration(InfoServiceIntegration infoServiceIntegration) {
+    public void setInfoServiceIntegration(InfoServiceIntegrationImp infoServiceIntegration) {
         this.infoServiceIntegration = infoServiceIntegration;
     }
 

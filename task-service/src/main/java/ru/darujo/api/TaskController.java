@@ -11,8 +11,8 @@ import ru.darujo.dto.TaskDto;
 import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
-import ru.darujo.integration.UserServiceIntegration;
-import ru.darujo.integration.WorkServiceIntegration;
+import ru.darujo.integration.UserServiceIntegrationImp;
+import ru.darujo.integration.WorkServiceIntegrationImp;
 import ru.darujo.model.Task;
 import ru.darujo.service.TaskService;
 
@@ -31,17 +31,17 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    private WorkServiceIntegration workServiceIntegration;
+    private WorkServiceIntegrationImp workServiceIntegration;
 
     @Autowired
-    public void setWorkServiceIntegration(WorkServiceIntegration workServiceIntegration) {
+    public void setWorkServiceIntegration(WorkServiceIntegrationImp workServiceIntegration) {
         this.workServiceIntegration = workServiceIntegration;
     }
 
-    UserServiceIntegration userServiceIntegration;
+    UserServiceIntegrationImp userServiceIntegration;
 
     @Autowired
-    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+    public void setUserServiceIntegration(UserServiceIntegrationImp userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
 

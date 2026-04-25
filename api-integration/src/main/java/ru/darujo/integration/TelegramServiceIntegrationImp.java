@@ -11,9 +11,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
-public class TelegramServiceIntegration extends ServiceIntegration implements SendServiceInt {
+public class TelegramServiceIntegrationImp extends ServiceIntegrationImp implements SendServiceInt, AdminInfoService {
 
-    public TelegramServiceIntegration(WebClient webClientTelegram) {
+    public TelegramServiceIntegrationImp(WebClient webClientTelegram) {
         super.setWebClient(webClientTelegram);
     }
 

@@ -13,7 +13,7 @@ spring:
 
 
   jpa:
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: validate
     open-in-view: false
@@ -27,8 +27,8 @@ spring:
     #    port: 587
     port: 2525
     username: rubanda@internet.ru
-    password: ptSBPlO9BcIlugK9hSbVAA
-    #    mR9TbsObjlcvckLINYrHAA
+    password: ptSBPlO9BcIlugK9hSbV
+    #    mR9TbsObjlcvckLINYrH
     properties:
       mail:
         smtp:

@@ -6,7 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.darujo.integration.*;
+import ru.darujo.integration.ServiceIntegration;
+import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.model.ServiceType;
 import ru.darujo.object.ServiceIntegrationObject;
 
@@ -28,42 +29,42 @@ public class MonitorService {
     }
 
     @Autowired
-    public void setCalendarServiceIntegration(CalendarServiceIntegration calendarServiceIntegration) {
+    public void setCalendarServiceIntegration(ServiceIntegration calendarServiceIntegration) {
         addServiceIntegration(ServiceType.CALENDAR, calendarServiceIntegration);
     }
 
     @Autowired
-    public void setInfoServiceIntegration(InfoServiceIntegration infoServiceIntegration) {
+    public void setInfoServiceIntegration(ServiceIntegration infoServiceIntegration) {
         addServiceIntegration(ServiceType.INFORMATION, infoServiceIntegration);
     }
 
     @Autowired
-    public void setRateServiceIntegration(RateServiceIntegration rateServiceIntegration) {
+    public void setRateServiceIntegration(ServiceIntegration rateServiceIntegration) {
         addServiceIntegration(ServiceType.RATE, rateServiceIntegration);
     }
 
     @Autowired
-    public void setTaskServiceIntegration(TaskServiceIntegration taskServiceIntegration) {
+    public void setTaskServiceIntegration(ServiceIntegration taskServiceIntegration) {
         addServiceIntegration(ServiceType.TASK, taskServiceIntegration);
     }
 
     @Autowired
-    public void setTelegramServiceIntegration(TelegramServiceIntegration telegramServiceIntegration) {
+    public void setTelegramServiceIntegration(ServiceIntegration telegramServiceIntegration) {
         addServiceIntegration(ServiceType.TELEGRAM, telegramServiceIntegration);
     }
 
     @Autowired
-    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+    public void setUserServiceIntegration(ServiceIntegration userServiceIntegration) {
         addServiceIntegration(ServiceType.USER, userServiceIntegration);
     }
 
     @Autowired
-    public void setWorkServiceIntegration(WorkServiceIntegration workServiceIntegration) {
+    public void setWorkServiceIntegration(ServiceIntegration workServiceIntegration) {
         addServiceIntegration(ServiceType.WORK, workServiceIntegration);
     }
 
     @Autowired
-    public void setWorkTimeServiceIntegration(WorkTimeServiceIntegration workTimeServiceIntegration) {
+    public void setWorkTimeServiceIntegration(ServiceIntegration workTimeServiceIntegration) {
         addServiceIntegration(ServiceType.WORK_TIME, workTimeServiceIntegration);
     }
 
@@ -160,7 +161,7 @@ public class MonitorService {
         try {
 
 
-        return ((UserServiceIntegration) serviceIntegrations.stream().filter(serviceIntegrationObject -> serviceIntegrationObject.getServiceType().equals(ServiceType.USER)).findAny().orElseThrow(() -> new RuntimeException("")).getServiceIntegration()
+            return ((UserServiceIntegrationImp) serviceIntegrations.stream().filter(serviceIntegrationObject -> serviceIntegrationObject.getServiceType().equals(ServiceType.USER)).findAny().orElseThrow(() -> new RuntimeException("")).getServiceIntegration()
         ).getToken("system_user_update", "Приносить пользу миру — это единственный способ стать счастливым.").getToken();
         } catch (RuntimeException ex) {
             return "";

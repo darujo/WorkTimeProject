@@ -18,9 +18,9 @@ import ru.darujo.dto.WorkTimeDto;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.user.UserFio;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
-import ru.darujo.integration.CalendarServiceIntegration;
-import ru.darujo.integration.TaskServiceIntegration;
-import ru.darujo.integration.UserServiceIntegration;
+import ru.darujo.integration.CalendarServiceIntegrationImp;
+import ru.darujo.integration.TaskServiceIntegrationImp;
+import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.model.WorkTime;
 import ru.darujo.repository.WorkTimeRepository;
 import ru.darujo.specifications.Specifications;
@@ -33,24 +33,24 @@ import java.util.stream.Collectors;
 @Service
 @Primary
 public class WorkTimeService {
-    private TaskServiceIntegration taskServiceIntegration;
+    private TaskServiceIntegrationImp taskServiceIntegration;
 
     @Autowired
-    public void setWorkServiceIntegration(TaskServiceIntegration taskServiceIntegration) {
+    public void setWorkServiceIntegration(TaskServiceIntegrationImp taskServiceIntegration) {
         this.taskServiceIntegration = taskServiceIntegration;
     }
 
-    UserServiceIntegration userServiceIntegration;
+    UserServiceIntegrationImp userServiceIntegration;
 
     @Autowired
-    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+    public void setUserServiceIntegration(UserServiceIntegrationImp userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
 
-    CalendarServiceIntegration calendarServiceIntegration;
+    CalendarServiceIntegrationImp calendarServiceIntegration;
 
     @Autowired
-    public void setCalendarServiceIntegration(CalendarServiceIntegration calendarServiceIntegration) {
+    public void setCalendarServiceIntegration(CalendarServiceIntegrationImp calendarServiceIntegration) {
         this.calendarServiceIntegration = calendarServiceIntegration;
     }
 

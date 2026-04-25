@@ -7,9 +7,9 @@ import ru.darujo.dto.project.ProjectDto;
 import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.dto.workperiod.WorkUserTime;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
-import ru.darujo.integration.TaskServiceIntegration;
-import ru.darujo.integration.UserServiceIntegration;
-import ru.darujo.integration.WorkServiceIntegration;
+import ru.darujo.integration.TaskServiceIntegrationImp;
+import ru.darujo.integration.UserServiceIntegrationImp;
+import ru.darujo.integration.WorkServiceIntegrationImp;
 import ru.darujo.type.MessageType;
 import ru.darujo.type.ReportType;
 import uk.co.certait.htmlexporter.writer.excel.ExcelExporter;
@@ -22,23 +22,23 @@ import java.util.List;
 @Service
 @Slf4j
 public class ReportService {
-    private WorkServiceIntegration workServiceIntegration;
-    private TaskServiceIntegration taskServiceIntegration;
+    private WorkServiceIntegrationImp workServiceIntegration;
+    private TaskServiceIntegrationImp taskServiceIntegration;
     private HtmlService htmlService;
-    private UserServiceIntegration userServiceIntegration;
+    private UserServiceIntegrationImp userServiceIntegration;
 
     @Autowired
-    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+    public void setUserServiceIntegration(UserServiceIntegrationImp userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
 
     @Autowired
-    public void setTaskServiceIntegration(TaskServiceIntegration taskServiceIntegration) {
+    public void setTaskServiceIntegration(TaskServiceIntegrationImp taskServiceIntegration) {
         this.taskServiceIntegration = taskServiceIntegration;
     }
 
     @Autowired
-    public void setWorkServiceIntegration(WorkServiceIntegration workServiceIntegration) {
+    public void setWorkServiceIntegration(WorkServiceIntegrationImp workServiceIntegration) {
         this.workServiceIntegration = workServiceIntegration;
     }
 

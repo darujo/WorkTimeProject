@@ -16,9 +16,9 @@ import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-public class CalendarServiceIntegration extends ServiceIntegration {
+public class CalendarServiceIntegrationImp extends ServiceIntegrationImp {
 
-    public CalendarServiceIntegration(WebClient webClientCalendar) {
+    public CalendarServiceIntegrationImp(WebClient webClientCalendar) {
         super.setWebClient(webClientCalendar);
     }
 

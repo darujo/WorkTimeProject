@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.exceptions.ResourceNotFoundException;
-import ru.darujo.integration.TaskServiceIntegration;
+import ru.darujo.integration.TaskServiceIntegrationImp;
 import ru.darujo.model.SaveDateDevelopEndFact;
 import ru.darujo.model.Work;
 import ru.darujo.model.WorkFull;
@@ -28,10 +28,10 @@ public class WorkProjectService {
         this.workProjectRepository = workProjectRepository;
     }
 
-    TaskServiceIntegration taskServiceIntegration;
+    TaskServiceIntegrationImp taskServiceIntegration;
 
     @Autowired
-    public void setTaskServiceIntegration(TaskServiceIntegration taskServiceIntegration) {
+    public void setTaskServiceIntegration(TaskServiceIntegrationImp taskServiceIntegration) {
         this.taskServiceIntegration = taskServiceIntegration;
     }
 

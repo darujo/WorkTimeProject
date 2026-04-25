@@ -8,7 +8,7 @@ import ru.darujo.dto.calendar.UserVacation;
 import ru.darujo.dto.calendar.UserVacationsDto;
 import ru.darujo.dto.calendar.WeekWorkDto;
 import ru.darujo.dto.user.UserDto;
-import ru.darujo.integration.UserServiceIntegration;
+import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.model.Vacation;
 
 import java.sql.Timestamp;
@@ -35,10 +35,10 @@ public class VacationReportService {
         this.calendarService = calendarService;
     }
 
-    UserServiceIntegration userServiceIntegration;
+    UserServiceIntegrationImp userServiceIntegration;
 
     @Autowired
-    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+    public void setUserServiceIntegration(UserServiceIntegrationImp userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
 

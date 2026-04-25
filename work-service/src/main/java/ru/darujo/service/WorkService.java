@@ -14,9 +14,9 @@ import ru.darujo.dto.ratestage.WorkStageDto;
 import ru.darujo.dto.work.WorkPlanTime;
 import ru.darujo.dto.workrep.ProjectUpdateInter;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
-import ru.darujo.integration.InfoServiceIntegration;
-import ru.darujo.integration.RateServiceIntegration;
-import ru.darujo.integration.UserServiceIntegration;
+import ru.darujo.integration.InfoServiceIntegrationImp;
+import ru.darujo.integration.RateServiceIntegrationImp;
+import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.model.*;
 import ru.darujo.repository.WorkLittleRepository;
 import ru.darujo.repository.WorkRepository;
@@ -51,10 +51,10 @@ public class WorkService {
         this.workLittleRepository = workLittleRepository;
     }
 
-    private RateServiceIntegration rateServiceIntegration;
+    private RateServiceIntegrationImp rateServiceIntegration;
 
     @Autowired
-    public void setRateServiceIntegration(RateServiceIntegration rateServiceIntegration) {
+    public void setRateServiceIntegration(RateServiceIntegrationImp rateServiceIntegration) {
         this.rateServiceIntegration = rateServiceIntegration;
     }
 
@@ -65,10 +65,10 @@ public class WorkService {
         this.releaseService = releaseService;
     }
 
-    InfoServiceIntegration infoServiceIntegration;
+    InfoServiceIntegrationImp infoServiceIntegration;
 
     @Autowired
-    public void setInfoServiceIntegration(InfoServiceIntegration infoServiceIntegration) {
+    public void setInfoServiceIntegration(InfoServiceIntegrationImp infoServiceIntegration) {
         this.infoServiceIntegration = infoServiceIntegration;
     }
 
@@ -79,10 +79,10 @@ public class WorkService {
         this.workProjectService = workProjectService;
     }
 
-    private static UserServiceIntegration userServiceIntegration;
+    private static UserServiceIntegrationImp userServiceIntegration;
 
     @Autowired
-    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+    public void setUserServiceIntegration(UserServiceIntegrationImp userServiceIntegration) {
         WorkService.userServiceIntegration = userServiceIntegration;
     }
 

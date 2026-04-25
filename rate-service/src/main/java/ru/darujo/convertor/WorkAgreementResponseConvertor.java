@@ -1,7 +1,7 @@
 package ru.darujo.convertor;
 
 import ru.darujo.dto.ratestage.WorkAgreementResponseDto;
-import ru.darujo.integration.UserServiceIntegration;
+import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.model.WorkAgreementResponse;
 
 public class WorkAgreementResponseConvertor {
@@ -16,7 +16,7 @@ public class WorkAgreementResponseConvertor {
                 .setRequest(workAgreementResponse.getRequest())
                 .setStatus(workAgreementResponse.getStatus())
                 .getWorkAgreementResponseDTO();
-        UserServiceIntegration.getInstance().updFio(workAgreementResponseDto);
+        UserServiceIntegrationImp.getInstance().updFio(workAgreementResponseDto);
         return workAgreementResponseDto;
     }
     public static WorkAgreementResponse getWorkAgreementResponse(WorkAgreementResponseDto workAgreementResponse){

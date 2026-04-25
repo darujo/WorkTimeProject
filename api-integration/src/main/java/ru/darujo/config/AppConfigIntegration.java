@@ -8,6 +8,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 import ru.darujo.integration.*;
 import ru.darujo.properties.*;
 
@@ -32,78 +33,80 @@ import javax.net.ssl.SSLException;
 
 )
 
+@Component
 public class AppConfigIntegration extends WebClientConfig {
     // Telegram
-    @Bean
+    @Bean(name = "telegramServiceIntegration")
+
     @ConditionalOnBooleanProperty(prefix = "integration.telegram-service", name = "enable")
-    public TelegramServiceIntegration telegramServiceIntegration(TelegramServiceProperty telegramServiceProperty) {
-        return new TelegramServiceIntegration(webClient(telegramServiceProperty));
+    public TelegramServiceIntegrationImp telegramServiceIntegration(TelegramServiceProperty telegramServiceProperty) {
+        return new TelegramServiceIntegrationImp(webClient(telegramServiceProperty));
     }
 
     // Calendar
-    @Bean
+    @Bean(name = "calendarServiceIntegration")
     @ConditionalOnBooleanProperty(prefix = "integration.calendar-service", name = "enable")
-    public CalendarServiceIntegration calendarServiceIntegration(CalendarServiceProperty calendarServiceProperty) {
-        return new CalendarServiceIntegration(webClient(calendarServiceProperty));
+    public CalendarServiceIntegrationImp calendarServiceIntegration(CalendarServiceProperty calendarServiceProperty) {
+        return new CalendarServiceIntegrationImp(webClient(calendarServiceProperty));
     }
 
     //Information
-    @Bean
+    @Bean(name = "infoServiceIntegration")
     @ConditionalOnBooleanProperty(prefix = "integration.information-service", name = "enable")
-    public InfoServiceIntegration infoServiceIntegration(InfoServiceProperty infoServiceProperty) {
-        return new InfoServiceIntegration(webClient(infoServiceProperty));
+    public InfoServiceIntegrationImp infoServiceIntegration(InfoServiceProperty infoServiceProperty) {
+        return new InfoServiceIntegrationImp(webClient(infoServiceProperty));
     }
 
     //Rate
-    @Bean
+    @Bean(name = "rateServiceIntegration")
     @ConditionalOnBooleanProperty(prefix = "integration.rate-service", name = "enable")
-    public RateServiceIntegration rateServiceIntegration(RateServiceProperty rateServiceProperty) {
-        return new RateServiceIntegration(webClient(rateServiceProperty));
+    public RateServiceIntegrationImp rateServiceIntegration(RateServiceProperty rateServiceProperty) {
+        return new RateServiceIntegrationImp(webClient(rateServiceProperty));
     }
 
     //Task
-    @Bean
+    @Bean(name = "taskServiceIntegration")
     @ConditionalOnBooleanProperty(prefix = "integration.task-service", name = "enable")
-    public TaskServiceIntegration taskServiceIntegration(TaskServiceProperty taskServiceProperty) {
-        return new TaskServiceIntegration(webClient(taskServiceProperty));
+    public TaskServiceIntegrationImp taskServiceIntegration(TaskServiceProperty taskServiceProperty) {
+        return new TaskServiceIntegrationImp(webClient(taskServiceProperty));
     }
 
     //User
-    @Bean
+    @Bean(name = "userServiceIntegration")
     @ConditionalOnBooleanProperty(prefix = "integration.user-service", name = "enable")
-    public UserServiceIntegration userServiceIntegration(UserServiceProperty userServiceProperty) {
-        return new UserServiceIntegration(webClient(userServiceProperty));
+    public UserServiceIntegrationImp userServiceIntegration(UserServiceProperty userServiceProperty) {
+        return new UserServiceIntegrationImp(webClient(userServiceProperty));
     }
 
     //Work
-    @Bean
+    @Bean(name = "workServiceIntegration")
     @ConditionalOnBooleanProperty(prefix = "integration.work-service", name = "enable")
-    public WorkServiceIntegration workServiceIntegration(WorkServiceProperty workServiceProperty) {
-        return new WorkServiceIntegration(webClient(workServiceProperty));
+    public WorkServiceIntegrationImp workServiceIntegration(WorkServiceProperty workServiceProperty) {
+        return new WorkServiceIntegrationImp(webClient(workServiceProperty));
     }
 
     //WorkTime
-    @Bean
+    @Bean(name = "workTimeServiceIntegration")
     @ConditionalOnBooleanProperty(prefix = "integration.work-time-service", name = "enable")
-    public WorkTimeServiceIntegration workTimeServiceIntegration(WorkTimeServiceProperty workTimeServiceProperty) {
-        return new WorkTimeServiceIntegration(webClient(workTimeServiceProperty));
+    public WorkTimeServiceIntegrationImp workTimeServiceIntegration(WorkTimeServiceProperty workTimeServiceProperty) {
+        return new WorkTimeServiceIntegrationImp(webClient(workTimeServiceProperty));
     }
 
     //Front
-    @Bean
+    @Bean(name = "frontServiceIntegration")
     @ConditionalOnBooleanProperty(prefix = "integration.front-service", name = "enable")
-    public ServiceIntegration frontServiceIntegration(FrontServiceProperty frontServiceProperty) {
-        return new ServiceIntegration(webClient(frontServiceProperty));
+    public ServiceIntegrationImp frontServiceIntegration(FrontServiceProperty frontServiceProperty) {
+        return new ServiceIntegrationImp(webClient(frontServiceProperty));
     }
 
     //gateway
-    @Bean
+    @Bean(name = "gateWayServiceIntegration")
     @ConditionalOnBooleanProperty(prefix = "integration.gate-way-service", name = "enable")
-    public ServiceIntegration gateWayServiceIntegration(GateWayServiceProperty gateWayServiceProperty, SslContext sslContext) {
-        return new ServiceIntegration(webClient(gateWayServiceProperty, sslContext));
+    public ServiceIntegrationImp gateWayServiceIntegration(GateWayServiceProperty gateWayServiceProperty, SslContext sslContext) {
+        return new ServiceIntegrationImp(webClient(gateWayServiceProperty, sslContext));
     }
 
-    @Bean
+    @Bean("sslContext")
     @ConditionalOnBooleanProperty(prefix = "integration.gate-way-service", name = "enable")
     public SslContext sslContext() throws SSLException {
         return SslContextBuilder.forClient()

@@ -18,8 +18,8 @@ import java.util.List;
 
 
 @Slf4j
-public class TaskServiceIntegration extends ServiceIntegration {
-    public TaskServiceIntegration(WebClient webClientTask) {
+public class TaskServiceIntegrationImp extends ServiceIntegrationImp {
+    public TaskServiceIntegrationImp(WebClient webClientTask) {
         super.setWebClient(webClientTask);
     }
 

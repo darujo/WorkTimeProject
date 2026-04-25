@@ -7,7 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
-import ru.darujo.integration.WorkServiceIntegration;
+import ru.darujo.integration.WorkServiceIntegrationImp;
 import ru.darujo.model.WorkCriteria;
 import ru.darujo.repository.WorkCriteriaRepository;
 import ru.darujo.specifications.Specifications;
@@ -19,7 +19,7 @@ import java.util.Optional;
 @Primary
 public class WorkCriteriaService {
     private WorkCriteriaRepository workCriteriaRepository;
-    private WorkServiceIntegration workServiceIntegration;
+    private WorkServiceIntegrationImp workServiceIntegration;
 
     @Autowired
     public void setWorkCriteriaRepository(WorkCriteriaRepository workCriteriaRepository) {
@@ -66,7 +66,7 @@ public class WorkCriteriaService {
     }
 
     @Autowired
-    public void setWorkServiceIntegration(WorkServiceIntegration workServiceIntegration) {
+    public void setWorkServiceIntegration(WorkServiceIntegrationImp workServiceIntegration) {
         this.workServiceIntegration = workServiceIntegration;
     }
 }

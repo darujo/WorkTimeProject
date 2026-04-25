@@ -16,7 +16,7 @@ import ru.darujo.dto.calendar.VacationDto;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.user.UserFio;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
-import ru.darujo.integration.UserServiceIntegration;
+import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.model.Vacation;
 import ru.darujo.repository.VacationRepository;
 import ru.darujo.specifications.Specifications;
@@ -40,10 +40,10 @@ public class VacationService {
         this.vacationRepository = vacationRepository;
     }
 
-    UserServiceIntegration userServiceIntegration;
+    UserServiceIntegrationImp userServiceIntegration;
 
     @Autowired
-    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+    public void setUserServiceIntegration(UserServiceIntegrationImp userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
 

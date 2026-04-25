@@ -12,7 +12,7 @@ import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.dto.user.UserInfoDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
-import ru.darujo.integration.UserServiceIntegration;
+import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.model.MessageInformation;
 import ru.darujo.model.UserSend;
 import ru.darujo.repository.MessageInformationRepository;
@@ -31,13 +31,13 @@ import java.util.Map;
 @Service
 @Primary
 public class MessageInformationService {
-    private UserServiceIntegration userServiceIntegration;
+    private UserServiceIntegrationImp userServiceIntegration;
     private MessageInformationRepository messageInformationRepository;
     private UserSendRepository userSendRepository;
     private SendService sendService;
 
     @Autowired
-    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+    public void setUserServiceIntegration(UserServiceIntegrationImp userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
 

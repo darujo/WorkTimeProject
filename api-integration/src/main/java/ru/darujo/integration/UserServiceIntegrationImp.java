@@ -23,13 +23,14 @@ import java.util.Objects;
 
 @Slf4j
 
-public class UserServiceIntegration extends ServiceIntegration {
-    public UserServiceIntegration(WebClient webClientUser) {
+public class UserServiceIntegrationImp extends ServiceIntegrationImp {
+    public UserServiceIntegrationImp(WebClient webClientUser) {
         super.setWebClient(webClientUser);
     }
 
-    private static UserServiceIntegration INSTANCE;
-    public static UserServiceIntegration getInstance(){
+    private static UserServiceIntegrationImp INSTANCE;
+
+    public static UserServiceIntegrationImp getInstance() {
         return INSTANCE;
     }
     @PostConstruct

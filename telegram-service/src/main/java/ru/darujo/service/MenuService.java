@@ -8,8 +8,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.darujo.dto.information.ResultMes;
-import ru.darujo.integration.InfoServiceIntegration;
-import ru.darujo.integration.UserServiceIntegration;
+import ru.darujo.integration.InfoServiceIntegrationImp;
+import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.model.ChatInfo;
 import ru.darujo.telegram_bot.TelegramBotSend;
 import ru.darujo.type.MessageSenderType;
@@ -28,17 +28,17 @@ public class MenuService {
         this.telegramBotSend = telegramBotSend;
     }
 
-    private InfoServiceIntegration infoServiceIntegration;
+    private InfoServiceIntegrationImp infoServiceIntegration;
 
     @Autowired
-    public void setInfoServiceIntegration(InfoServiceIntegration infoServiceIntegration) {
+    public void setInfoServiceIntegration(InfoServiceIntegrationImp infoServiceIntegration) {
         this.infoServiceIntegration = infoServiceIntegration;
     }
 
-    private UserServiceIntegration userServiceIntegration;
+    private UserServiceIntegrationImp userServiceIntegration;
 
     @Autowired
-    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+    public void setUserServiceIntegration(UserServiceIntegrationImp userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
 

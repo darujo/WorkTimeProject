@@ -20,7 +20,7 @@ import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.dto.user.*;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.hash.HashService;
-import ru.darujo.integration.InfoServiceIntegration;
+import ru.darujo.integration.InfoServiceIntegrationImp;
 import ru.darujo.model.Project;
 import ru.darujo.model.Right;
 import ru.darujo.model.User;
@@ -75,10 +75,10 @@ public class UserService {
         this.rightService = rightService;
     }
 
-    private InfoServiceIntegration infoServiceIntegration;
+    private InfoServiceIntegrationImp infoServiceIntegration;
 
     @Autowired
-    public void setInfoServiceIntegration(InfoServiceIntegration infoServiceIntegration) {
+    public void setInfoServiceIntegration(InfoServiceIntegrationImp infoServiceIntegration) {
         this.infoServiceIntegration = infoServiceIntegration;
     }
 

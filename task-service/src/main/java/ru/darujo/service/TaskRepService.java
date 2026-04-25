@@ -7,7 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.workperiod.UserWorkDto;
-import ru.darujo.integration.WorkTimeServiceIntegration;
+import ru.darujo.integration.WorkTimeServiceIntegrationImp;
 import ru.darujo.model.Task;
 import ru.darujo.repository.TaskRepository;
 import ru.darujo.specifications.Specifications;
@@ -28,10 +28,10 @@ public class TaskRepService {
         this.taskRepository = taskRepository;
     }
 
-    private WorkTimeServiceIntegration workTimeServiceIntegration;
+    private WorkTimeServiceIntegrationImp workTimeServiceIntegration;
 
     @Autowired
-    public void setWorkTimeServiceIntegration(WorkTimeServiceIntegration workTimeServiceIntegration) {
+    public void setWorkTimeServiceIntegration(WorkTimeServiceIntegrationImp workTimeServiceIntegration) {
         this.workTimeServiceIntegration = workTimeServiceIntegration;
     }
 

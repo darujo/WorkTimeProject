@@ -10,9 +10,9 @@ import ru.darujo.dto.project.ProjectDto;
 import ru.darujo.dto.user.UserInfoDto;
 import ru.darujo.dto.workperiod.WorkUserFactPlan;
 import ru.darujo.exceptions.ResourceNotFoundException;
-import ru.darujo.integration.CalendarServiceIntegration;
-import ru.darujo.integration.UserServiceIntegration;
-import ru.darujo.integration.WorkTimeServiceIntegration;
+import ru.darujo.integration.CalendarServiceIntegrationImp;
+import ru.darujo.integration.UserServiceIntegrationImp;
+import ru.darujo.integration.WorkTimeServiceIntegrationImp;
 import ru.darujo.model.ChatInfo;
 import ru.darujo.type.MessageType;
 import ru.darujo.url.UrlWorkTime;
@@ -32,24 +32,24 @@ public class Tasks {
         this.messageInformationService = messageInformationService;
     }
 
-    private CalendarServiceIntegration calendarServiceIntegration;
+    private CalendarServiceIntegrationImp calendarServiceIntegration;
 
     @Autowired
-    public void setCalendarServiceIntegration(CalendarServiceIntegration calendarServiceIntegration) {
+    public void setCalendarServiceIntegration(CalendarServiceIntegrationImp calendarServiceIntegration) {
         this.calendarServiceIntegration = calendarServiceIntegration;
     }
 
-    private WorkTimeServiceIntegration workTimeServiceIntegration;
+    private WorkTimeServiceIntegrationImp workTimeServiceIntegration;
 
     @Autowired
-    public void setWorkTimeServiceIntegration(WorkTimeServiceIntegration workTimeServiceIntegration) {
+    public void setWorkTimeServiceIntegration(WorkTimeServiceIntegrationImp workTimeServiceIntegration) {
         this.workTimeServiceIntegration = workTimeServiceIntegration;
     }
 
-    private UserServiceIntegration userServiceIntegration;
+    private UserServiceIntegrationImp userServiceIntegration;
 
     @Autowired
-    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+    public void setUserServiceIntegration(UserServiceIntegrationImp userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
 

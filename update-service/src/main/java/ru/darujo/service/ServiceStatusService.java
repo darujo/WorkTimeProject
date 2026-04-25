@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
-import ru.darujo.integration.TelegramServiceIntegration;
+import ru.darujo.integration.AdminInfoService;
 import ru.darujo.model.ServiceModel;
 import ru.darujo.model.ServiceStatus;
 import ru.darujo.model.ServiceType;
@@ -19,11 +19,11 @@ import java.util.Set;
 public class ServiceStatusService {
     private ServiceStatusRepository serviceStatusRepository;
     private ServiceModelService serviceModelService;
-    private TelegramServiceIntegration telegramServiceIntegration;
+    private AdminInfoService adminInfoService;
 
     @Autowired
-    public void setTelegramServiceIntegration(TelegramServiceIntegration telegramServiceIntegration) {
-        this.telegramServiceIntegration = telegramServiceIntegration;
+    public void setAdminInfoService(AdminInfoService adminInfoService) {
+        this.adminInfoService = adminInfoService;
     }
 
     @Autowired
@@ -66,7 +66,7 @@ public class ServiceStatusService {
         Set<ServiceModel> serviceModels = new HashSet<>();
         serviceTypeList.forEach(serviceType -> serviceModels.add(serviceModelService.getServiceModel(serviceType.name())));
         try {
-            telegramServiceIntegration.sendMessageForAdmin(allServiceOk ? "Все сервисы доступны" :
+            adminInfoService.sendMessageForAdmin(allServiceOk ? "Все сервисы доступны" :
                     String.format("Не доступные сервисы %s", serviceTypeList));
         } catch (ResourceNotFoundRunTime ex) {
             log.error(ex.getMessage(), ex);

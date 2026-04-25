@@ -14,8 +14,8 @@ import ru.darujo.dto.ratestage.WorkStageDto;
 import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.dto.workrep.ProjectUpdateInter;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
-import ru.darujo.integration.UserServiceIntegration;
-import ru.darujo.integration.WorkServiceIntegration;
+import ru.darujo.integration.UserServiceIntegrationImp;
+import ru.darujo.integration.WorkServiceIntegrationImp;
 import ru.darujo.model.WorkCriteria;
 import ru.darujo.model.WorkStage;
 import ru.darujo.model.WorkType;
@@ -29,14 +29,14 @@ import java.util.concurrent.atomic.AtomicReference;
 @Service
 @Primary
 public class RateService {
-    private UserServiceIntegration userServiceIntegration;
+    private UserServiceIntegrationImp userServiceIntegration;
     private WorkStageService workStageService;
     private WorkCriteriaService workCriteriaService;
     private WorkTypeService workTypeService;
-    private WorkServiceIntegration workServiceIntegration;
+    private WorkServiceIntegrationImp workServiceIntegration;
 
     @Autowired
-    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+    public void setUserServiceIntegration(UserServiceIntegrationImp userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
 
@@ -317,7 +317,7 @@ public class RateService {
     }
 
     @Autowired
-    public void setWorkServiceIntegration(WorkServiceIntegration workServiceIntegration) {
+    public void setWorkServiceIntegration(WorkServiceIntegrationImp workServiceIntegration) {
         this.workServiceIntegration = workServiceIntegration;
     }
 }

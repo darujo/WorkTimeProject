@@ -13,7 +13,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.TaskDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
-import ru.darujo.integration.WorkServiceIntegration;
+import ru.darujo.integration.WorkServiceIntegrationImp;
 import ru.darujo.model.Task;
 import ru.darujo.repository.TaskRepository;
 import ru.darujo.specifications.Specifications;
@@ -37,10 +37,10 @@ public class TaskService {
     }
 
 
-    private WorkServiceIntegration workServiceIntegration;
+    private WorkServiceIntegrationImp workServiceIntegration;
 
     @Autowired
-    public void setWorkServiceIntegration(WorkServiceIntegration workServiceIntegration) {
+    public void setWorkServiceIntegration(WorkServiceIntegrationImp workServiceIntegration) {
         this.workServiceIntegration = workServiceIntegration;
     }
 

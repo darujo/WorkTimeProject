@@ -14,9 +14,9 @@ import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.dto.ratestage.StatusRequest;
 import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
-import ru.darujo.integration.InfoServiceIntegration;
-import ru.darujo.integration.UserServiceIntegration;
-import ru.darujo.integration.WorkServiceIntegration;
+import ru.darujo.integration.InfoServiceIntegrationImp;
+import ru.darujo.integration.UserServiceIntegrationImp;
+import ru.darujo.integration.WorkServiceIntegrationImp;
 import ru.darujo.model.WorkAgreementRequest;
 import ru.darujo.repository.WorkAgreementRequestRepository;
 import ru.darujo.specifications.Specifications;
@@ -29,10 +29,10 @@ import java.util.Optional;
 @Service
 @Primary
 public class WorkAgreementRequestService {
-    private InfoServiceIntegration infoServiceIntegration;
+    private InfoServiceIntegrationImp infoServiceIntegration;
 
     @Autowired
-    public void setInfoServiceIntegration(InfoServiceIntegration infoServiceIntegration) {
+    public void setInfoServiceIntegration(InfoServiceIntegrationImp infoServiceIntegration) {
         this.infoServiceIntegration = infoServiceIntegration;
     }
 
@@ -53,10 +53,10 @@ public class WorkAgreementRequestService {
         this.workAgreementResponseService = workAgreementResponseService;
     }
 
-    private WorkServiceIntegration workServiceIntegration;
+    private WorkServiceIntegrationImp workServiceIntegration;
 
     @Autowired
-    public void setWorkServiceIntegration(WorkServiceIntegration workServiceIntegration) {
+    public void setWorkServiceIntegration(WorkServiceIntegrationImp workServiceIntegration) {
         this.workServiceIntegration = workServiceIntegration;
     }
 
@@ -147,7 +147,7 @@ public class WorkAgreementRequestService {
             return toString(newObj);
         }
         return
-                compareField("Пользователь", UserServiceIntegration.getInstance().getFio(oldObj.getNikName()), UserServiceIntegration.getInstance().getFio(newObj.getNikName())) +
+                compareField("Пользователь", UserServiceIntegrationImp.getInstance().getFio(oldObj.getNikName()), UserServiceIntegrationImp.getInstance().getFio(newObj.getNikName())) +
                         compareField("Время", DateHelper.dateTimeToStr(oldObj.getTimestamp()), DateHelper.dateTimeToStr(newObj.getTimestamp())) +
                         compareField("Версия ТЗ", oldObj.getVersion(), newObj.getVersion()) +
                         compareField("Комментарий", oldObj.getComment(), newObj.getComment()) +
@@ -161,7 +161,7 @@ public class WorkAgreementRequestService {
 
     public String toString(@NonNull WorkAgreementRequest newObj) {
         return
-                "Пользователь: " + UserServiceIntegration.getInstance().getFio(newObj.getNikName()) + "\n" +
+                "Пользователь: " + UserServiceIntegrationImp.getInstance().getFio(newObj.getNikName()) + "\n" +
                         "Время: " + DateHelper.dateTimeToStr(newObj.getTimestamp()) + "\n" +
                         (newObj.getVersion() != null ? ("Версия ТЗ: " + newObj.getVersion() + "\n") : "") +
                         (newObj.getComment() != null && !newObj.getComment().isBlank() ? ("Комментарий: " + newObj.getVersion() + "\n") : "") +

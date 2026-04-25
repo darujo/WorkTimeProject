@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.darujo.dto.information.MessageInfoDto;
-import ru.darujo.integration.InfoServiceIntegration;
+import ru.darujo.integration.InfoServiceIntegrationImp;
 import ru.darujo.integration.ServiceIntegration;
 import ru.darujo.model.RunnableNotException;
 import ru.darujo.model.ServiceType;
@@ -26,10 +26,10 @@ import java.util.List;
 @Component
 public class TaskService {
     private MonitorService monitorService;
-    private InfoServiceIntegration infoServiceIntegration;
+    private InfoServiceIntegrationImp infoServiceIntegration;
 
     @Autowired
-    public void setInfoServiceIntegration(InfoServiceIntegration infoServiceIntegration) {
+    public void setInfoServiceIntegration(InfoServiceIntegrationImp infoServiceIntegration) {
         this.infoServiceIntegration = infoServiceIntegration;
     }
 
@@ -64,7 +64,7 @@ public class TaskService {
         return new RunnableNotException(() ->
         {
             try {
-                infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.SYSTEM_INFO, "Запущено обновление. Сервис может быть недоступен. Приносим извинения за предоставленые неудобства"));
+                infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.SYSTEM_INFO, "Запущено обновление. Сервис может быть недоступен. Приносим извинения за предоставленные неудобства"));
             } catch (RuntimeException ex) {
                 log.error(ex.getMessage(), ex);
             }

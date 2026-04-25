@@ -3,7 +3,7 @@ package ru.darujo.convertor;
 import ru.darujo.dto.ratestage.StatusRequest;
 import ru.darujo.dto.ratestage.WorkAgreementRequestDto;
 import ru.darujo.dto.ratestage.WorkAgreementRequestEditDto;
-import ru.darujo.integration.UserServiceIntegration;
+import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.model.WorkAgreementRequest;
 import ru.darujo.service.WorkAgreementResponseService;
 
@@ -93,7 +93,7 @@ public class WorkAgreementRequestBuilder {
                         .map(WorkAgreementResponseConvertor::getWorkAgreementResponseDTO)
                         .toList()
         );
-        UserServiceIntegration.getInstance().updFio(workAgreementRequestDto);
+        UserServiceIntegrationImp.getInstance().updFio(workAgreementRequestDto);
         return workAgreementRequestDto;
     }
 }
