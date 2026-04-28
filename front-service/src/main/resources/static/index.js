@@ -7,20 +7,21 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     const constPatchRelease = window.location.origin + '/work-service/v1/release';
     const constPatchWorkTime = window.location.origin + '/worktime-service/v1/code';
     const techUrl = "/sys/"
+    let myHash;
+    let myPath = null;
     $scope.loadFilter = null;
     $scope.tryToAuth = function () {
         $http.post(constPatchAuth + '/auth', $scope.user)
             .then(function successCallback(response) {
                 if (response.data.token) {
-                    $http.defaults.headers.common.Authorization = 'Bearer ' + response.data.token;
-                    $localStorage.authUser = {username: $scope.user.username, token: response.data.token};
-                    init();
+                    $location.setToken($scope.user.username, response.data.token)
 
                     $scope.user = {
                         username: null,
                         password: null
                     };
                     // $location.path('/').search({});
+                    console.log("-----1----", myHash)
                     $location.path(myHash).search(myFilter);
                     document.getElementById("DetailPrim").open = true;
                 }
@@ -29,11 +30,19 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                 alert("Не удалось авторизоваться")
             });
     };
+    $location.setToken = function (username, token) {
+        $http.defaults.headers.common.Authorization = 'Bearer ' + token;
+        $localStorage.authUser = {username: username, token: token};
+        init();
+    }
+
     $location.backPage = function () {
         $scope.getUser();
         if (myHash === "userPassword".toLowerCase()) {
+            console.log("-----2----")
             $location.path("").search({});
         } else {
+            console.log("-----3----", myHash)
             $location.path(myHash).search(myFilter);
         }
     }
@@ -53,6 +62,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                     $location.UserLogin = $scope.UserLogin;
                     LoadCurrentUser = true;
                     if ($scope.UserLogin.passwordChange) {
+                        console.log("-----4----")
                         $location.path('/userPassword'.toLowerCase()).search({});
 
                     }
@@ -107,6 +117,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         // if ($scope.user.password) {
         //     $scope.user.password = null;
         // }
+        console.log("-----------------ssss------------------")
         $location.path('/').search({});
     };
 
@@ -116,14 +127,27 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     };
 
     $scope.isUserLoggedIn = function (reg) {
-        if ($localStorage.authUser || (reg && (location.hash.startsWith(techUrl, 3) || location.hash === techUrl))) {
+        console.log(reg)
+        console.log(location.hash)
+        console.log(myPath)
+
+        if ($localStorage.authUser || (reg && (location.hash.startsWith(techUrl, 2) || location.hash === techUrl))) {
             return true;
         } else {
-            if ((location.hash.substring(2) !== techUrl && location.hash !== techUrl)) {
-            $location.path('/').search({});
+            if (location.hash.startsWith(myPath, 2)) {
+                myPath = null;
+            } else if (myPath !== null && (!myPath.startsWith(techUrl) && myPath !== techUrl)) {
+                console.log("-----5---- 111")
+                $location.path('/').search({});
+            }
+            if (myPath === null && (!location.hash.startsWith(techUrl, 2) && location.hash !== techUrl)) {
+                console.log("-----5----222")
+                $location.path('/').search({});
             }
             return false;
         }
+
+
     };
 
     $scope.isUserLoggedInAndPasOk = function () {
@@ -192,6 +216,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             localPath = url.substring(url.indexOf("/"), url.indexOf("?"));
         }
         console.log(localPath);
+        console.log("-----6----", localPath)
         $location.path(localPath).search(filter);
         console.log(location.href)
         navigator.clipboard.writeText(location.href)
@@ -201,6 +226,17 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             .catch(err => {
                 console.log('Something went wrong', err);
             });
+    }
+
+    $scope.openPath = function (path, param) {
+        console.log(path)
+        myPath = path;
+        if (param) {
+            $location.path(path).search(param);
+        } else {
+            $location.path(path).search({});
+        }
+
     }
 
     $location.getCode = function (code, callBack) {
@@ -252,7 +288,8 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         return {};
 
     }
-    let myHash;
+
+
     let myFilter = {};
     $location.parserFilter = function (filter) {
         console.log("parserFilter");
@@ -574,4 +611,6 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     }
 
     console.log("loan index.js end");
+
+
 })

@@ -9,12 +9,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.UserConvertor;
 import ru.darujo.dto.information.MapUserInfoDto;
-import ru.darujo.dto.jwt.JwtResponse;
 import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.user.UserInfoTypeDto;
 import ru.darujo.dto.user.UserPasswordChangeDto;
-import ru.darujo.service.AuthService;
 import ru.darujo.service.UserService;
 import ru.darujo.type.MessageSenderType;
 
@@ -26,12 +24,6 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
     private UserService userService;
-    private AuthService authService;
-
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping("/user")
     public ResponseEntity<?> getUserDto(@RequestParam(required = false) String nikName) {
@@ -89,6 +81,7 @@ public class UserController {
         return userService.getUserSenderTypes(userId).stream().map(senderType -> new AttrDto<>(senderType, senderType.getName())).toList();
 
     }
+
     @GetMapping("/user/info/type/{userId}")
     public UserInfoTypeDto getUserInfoTypes(@PathVariable Long userId,
                                             @RequestParam String senderType) {
@@ -103,26 +96,24 @@ public class UserController {
 
     }
 
-    @GetMapping("/system/user/password/recovery")
-    public void getPasswordRecovery(@RequestParam String nikName,
+    @GetMapping("/user/email/change")
+    public boolean getUserInfoTypes(@RequestHeader String username,
                                     @RequestParam String email) {
-        userService.getRestorePassword(nikName, email);
+        return userService.changeEmail(username, email);
+
     }
 
-    @GetMapping("/system/user/password/restore")
-    public JwtResponse getPasswordRestore(@RequestParam String nikName,
-                                          @RequestParam String code) {
-        return authService.restorePassword(nikName, code);
-    }
+    @GetMapping("/user/password/recovery")
+    public boolean passwordRecovery(@RequestHeader String username,
+                                    @RequestParam String code,
+                                    @RequestParam String email) {
+        return userService.recoveryPassword(username, code, email);
 
-    @GetMapping("/system/user/email/confirm")
-    public boolean confirmEmail(String nikName, String code) {
-        return userService.confirmEmail(nikName, code);
     }
-
     @Autowired
-    public void setAuthService(AuthService authService) {
-        this.authService = authService;
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
+
 }
 

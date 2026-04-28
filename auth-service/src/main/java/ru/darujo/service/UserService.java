@@ -15,6 +15,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.darujo.convertor.RoleConvertor;
+import ru.darujo.convertor.UserConvertor;
 import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.dto.user.*;
@@ -278,12 +279,7 @@ public class UserService {
     }
 
     @Transactional
-    public boolean changePassword(String username, String passwordOld, String passwordNew) {
-        User user = userRepository.findByNikNameIgnoreCase(username).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь не найден"));
-        if (!checkPassword(passwordOld, user.getPassword())) {
-            throw new ResourceNotFoundRunTime("Старый пароль не действителен");
-        }
-
+    public boolean changePassword(User user, String passwordNew) {
         if (passwordNew == null || passwordNew.isEmpty()) {
             throw new ResourceNotFoundRunTime("Новый пароль не должен быть пустым");
         }
@@ -294,6 +290,24 @@ public class UserService {
         user.setPasswordChange(false);
         user = saveUser(user);
         return user != null;
+    }
+
+    @Transactional
+    public boolean changePassword(String username, String passwordOld, String passwordNew) {
+        User user = userRepository.findByNikNameIgnoreCase(username).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь не найден"));
+        if (!checkPassword(passwordOld, user.getPassword())) {
+            throw new ResourceNotFoundRunTime("Старый пароль не действителен");
+        }
+        return changePassword(user, passwordNew);
+    }
+
+    @Transactional
+    public boolean recoveryPassword(String username, String code, String passwordNew) {
+        User user = userRepository.findByNikNameIgnoreCase(username).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь не найден"));
+        if (!code.equals(getHash(user))) {
+            throw new ResourceNotFoundRunTime("Код не действителен.");
+        }
+        return changePassword(user, passwordNew);
     }
 
     public MapUserInfoDto getUserMessageDTOs() {
@@ -420,6 +434,16 @@ public class UserService {
         user.setRecovery(false);
     }
 
+    @Transactional
+    public boolean changeEmail(String nikName, String email) {
+        User user = UserConvertor.getUserCopyEmpty(loadUserByNikName(nikName));
+        if (!email.isEmpty()) {
+            user.setNewEmail(email);
+            saveUser(user);
+            return true;
+        }
+        return false;
+    }
     @Transactional
     public boolean confirmEmail(String nikName, String code) {
         User user = loadUserByNikName(nikName);

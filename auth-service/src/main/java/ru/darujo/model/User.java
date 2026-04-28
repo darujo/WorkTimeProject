@@ -75,7 +75,7 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "email_new", nullable = false)
+    @Column(name = "email_new")
     private String newEmail;
 
     @Column(name = "send_code")

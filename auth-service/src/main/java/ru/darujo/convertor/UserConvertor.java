@@ -53,4 +53,22 @@ public class UserConvertor {
         );
     }
 
+    public static User getUserCopyEmpty(User user) {
+        return new User(user.getId(),
+                user.getNikName(),
+                user.getPassword(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getPatronymic(),
+                user.getPasswordChange(),
+                user.getProjects(),
+                user.isBlock(),
+                null,
+                null,
+                user.getEmail(),
+                null,
+                null
+        );
+    }
+
 }

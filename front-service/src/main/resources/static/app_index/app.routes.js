@@ -276,7 +276,7 @@ angular.module('workTimeService').config(function ($routeProvider) {
             }
         })
         .when('/sys/email_confirm', {
-            templateUrl: 'user/confirm_email.html?ver='.toLowerCase() + ver,
+            templateUrl: 'welcome/welcome.html?ver='.toLowerCase() + ver,
             controller: 'emailConfirmController',
             resolve: {
                 LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
@@ -284,7 +284,42 @@ angular.module('workTimeService').config(function ($routeProvider) {
                 }]
             }
         })
-
+        .when('/email_change', {
+            templateUrl: 'user/change_email.html?ver='.toLowerCase() + ver,
+            controller: 'emailChangeController',
+            resolve: {
+                LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load('change_email'); // Resolve promise and load before view
+                }]
+            }
+        })
+        .when('/sys/recovery_password', {
+            templateUrl: 'welcome/welcome.html?ver='.toLowerCase() + ver,
+            controller: 'recoveryPasswordConfirmController',
+            resolve: {
+                LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load('recovery_password'); // Resolve promise and load before view
+                }]
+            }
+        })
+        .when('/recovery_pass', {
+            templateUrl: 'user/recovery_pass.html?ver='.toLowerCase() + ver,
+            controller: 'recoveryPassController',
+            resolve: {
+                LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load('recovery_pass'); // Resolve promise and load before view
+                }]
+            }
+        })
+        .when('/sys/request_pass', {
+            templateUrl: 'user/request_pass.html?ver='.toLowerCase() + ver,
+            controller: 'requestPassController',
+            resolve: {
+                LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load('request_pass'); // Resolve promise and load before view
+                }]
+            }
+        })
 
         .otherwise({
             redirectTo: '/'
