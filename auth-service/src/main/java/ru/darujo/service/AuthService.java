@@ -90,6 +90,6 @@ public class AuthService implements UserDetailsService {
         if (userService.restorePassword(nikName, code)) {
             return new JwtResponse(createAuthToken(nikName));
         }
-        throw new ResourceNotFoundRunTime("Ссылка не просрочена");
+        throw new ResourceNotFoundRunTime("Ссылка просрочена");
     }
 }

@@ -5,6 +5,12 @@ angular.module('workTimeService').controller('recoveryPassController', function 
         passwordNew: null,
         passwordNew2: null
     }
+    let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
+    let code = paramsStr.get('code');
+
+    if (code === null) {
+        $location.openPath("/")
+    }
     let sendSave = false;
     $scope.recoveryPass = function () {
         console.log("recoveryPass");
@@ -15,8 +21,7 @@ angular.module('workTimeService').controller('recoveryPassController', function 
             alert("Новые пароли должны совпадать");
             return;
         }
-        let paramsStr = new URLSearchParams(location.href.substring(location.href.indexOf("?")));
-        let code = paramsStr.get('code');
+
 
         if (!sendSave) {
             sendSave = true;
@@ -32,7 +37,7 @@ angular.module('workTimeService').controller('recoveryPassController', function 
                 console.log(response);
                 sendSave = false;
                 alert("Пароль успешно изменен.");
-                $scope.backButton();
+                $scope.back();
             }, function errorCallback(response) {
                 sendSave = false;
                 console.log(response.data);
@@ -44,10 +49,9 @@ angular.module('workTimeService').controller('recoveryPassController', function 
         }
     }
     $scope.back = function () {
-        $location.path('/');
+        $location.openPath('/');
 
     }
-    console.log("Start");
 
 
 })

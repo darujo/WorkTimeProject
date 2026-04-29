@@ -137,7 +137,7 @@ public class UserService {
 //            user.setProjects(saveUser.getProjects());
             user.setTelegramId(saveUser.getTelegramId());
             user.setEmail(saveUser.getEmail());
-            if (user.getNewEmail() != null && !user.getNewEmail().equals(saveUser.getNewEmail())) {
+            if (user.getNewEmail() != null && !user.getNewEmail().equals(saveUser.getEmail())) {
                 setNewEmailCode(user);
                 newEmail = true;
             } else {

@@ -8,7 +8,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     const constPatchWorkTime = window.location.origin + '/worktime-service/v1/code';
     const techUrl = "/sys/"
     let myHash;
-    let myPath = null;
+    let myPath = undefined;
     $scope.loadFilter = null;
     $scope.tryToAuth = function () {
         $http.post(constPatchAuth + '/auth', $scope.user)
@@ -20,9 +20,9 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                         username: null,
                         password: null
                     };
-                    // $location.path('/').search({});
+
                     console.log("-----1----", myHash)
-                    $location.path(myHash).search(myFilter);
+                    $location.openPath(myHash, myFilter);
                     document.getElementById("DetailPrim").open = true;
                 }
             }, function errorCallback(response) {
@@ -43,7 +43,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             $location.path("").search({});
         } else {
             console.log("-----3----", myHash)
-            $location.path(myHash).search(myFilter);
+            $location.openPath(myHash, myFilter);
         }
     }
     let LoadCurrentUser = false;
@@ -61,9 +61,9 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                     $scope.UserLogin = response.data;
                     $location.UserLogin = $scope.UserLogin;
                     LoadCurrentUser = true;
-                    if ($scope.UserLogin.passwordChange) {
+                    if ($scope.UserLogin.passwordChange && myPath !== undefined && !myPath.startsWith("/recovery_pass")) {
                         console.log("-----4----")
-                        $location.path('/userPassword'.toLowerCase()).search({});
+                        $location.openPath('/userPassword'.toLowerCase());
 
                     }
 
@@ -100,7 +100,8 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         if (window.location.hash === "#!/workTime".toLowerCase()) {
             $location.openEdit().search({});
         } else {
-            $location.path('/workTime'.toLowerCase()).search({});
+            $location.openPath('/workTime'.toLowerCase())
+
         }
     };
 
@@ -118,7 +119,9 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         //     $scope.user.password = null;
         // }
         console.log("-----------------ssss------------------")
-        $location.path('/').search({});
+        if (myPath !== undefined && !myPath.startsWith(techUrl)) {
+            $location.openPath('/')
+        }
     };
 
     $scope.clearUser = function () {
@@ -135,14 +138,14 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             return true;
         } else {
             if (location.hash.startsWith(myPath, 2)) {
-                myPath = null;
-            } else if (myPath !== null && (!myPath.startsWith(techUrl) && myPath !== techUrl)) {
+                myPath = undefined;
+            } else if (myPath !== undefined && (!myPath.startsWith(techUrl) && myPath !== techUrl)) {
                 console.log("-----5---- 111")
-                $location.path('/').search({});
+                $location.openPath('/');
             }
-            if (myPath === null && (!location.hash.startsWith(techUrl, 2) && location.hash !== techUrl)) {
+            if (myPath === undefined && (!location.hash.startsWith(techUrl, 2) && location.hash !== techUrl)) {
                 console.log("-----5----222")
-                $location.path('/').search({});
+                $location.openPath('/');
             }
             return false;
         }
@@ -175,7 +178,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     };
 
     $scope.deleteTelegram = function () {
-        console.log("getUser")
+        console.log("deleteTelegram")
         // document.getElementById("UserName").value = nikName;
 
         $http.get(constPatchAuth + '/users/user/telegram/delete/type')
@@ -217,7 +220,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         }
         console.log(localPath);
         console.log("-----6----", localPath)
-        $location.path(localPath).search(filter);
+        $location.openPath(localPath, filter);
         console.log(location.href)
         navigator.clipboard.writeText(location.href)
             .then(() => {
@@ -228,7 +231,11 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             });
     }
 
-    $scope.openPath = function (path, param) {
+    $scope.request_pass = function () {
+        $location.openPath('/sys/request_pass')
+    }
+    $location.openPath = function (path, param) {
+        console.log("установим страницу")
         console.log(path)
         myPath = path;
         if (param) {
@@ -518,7 +525,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     }
 
     function wait() {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             setTimeout(() => {
                 resolve('Timeout resolved');
             }, 10);
