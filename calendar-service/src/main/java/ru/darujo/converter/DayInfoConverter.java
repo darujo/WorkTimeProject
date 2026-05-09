@@ -11,6 +11,9 @@ public class DayInfoConverter {
     }
 
     public static DateInfo getDateInfo(DayInfo dayInfo) {
+        if (dayInfo == null) {
+            return null;
+        }
         return new DateInfo(dayInfo.getDate(), DayType.valueOf(dayInfo.getType()), dayInfo.getTitle());
     }
 }

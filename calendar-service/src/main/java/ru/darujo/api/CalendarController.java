@@ -67,8 +67,9 @@ public class CalendarController {
 
     @GetMapping("/day")
     public DateInfo getDayInfo(@RequestParam(required = false, name = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime zDateTime) {
-        LocalDate date = zDateTime.toLocalDate();
-        return DayInfoConverter.getDateInfo(dayInfoService.getDayInfo(date));
+        LocalDate date = DateHelper.DTZToLocalDate(zDateTime, "date = ");
+
+        return calendarService.getDateInfo(date);
     }
 
     @PostMapping("/day")

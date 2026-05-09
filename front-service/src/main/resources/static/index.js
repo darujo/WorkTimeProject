@@ -130,10 +130,6 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     };
 
     $scope.isUserLoggedIn = function (reg) {
-        console.log(reg)
-        console.log(location.hash)
-        console.log(myPath)
-
         if ($localStorage.authUser || (reg && (location.hash.startsWith(techUrl, 2) || location.hash === techUrl))) {
             return true;
         } else {

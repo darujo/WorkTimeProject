@@ -4,6 +4,7 @@ import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -31,24 +32,37 @@ public class DateHelper {
         return sdfDM.format(date);
     }
 
-    public static Timestamp DTZToDate(ZonedDateTime dateStr, String text) {
-        return DTZToDate(dateStr, text, false);
+    public static LocalDate DTZToLocalDate(ZonedDateTime zonedDateTime, String text) {
+        return DTZToLocalDate(zonedDateTime, text, false);
     }
 
-    public static Timestamp DTZToDate(ZonedDateTime dateStr, String text, boolean checkNull) {
-        if (dateStr != null) {
-            return dateNoTime(Timestamp.from(dateStr.toInstant()));
+    public static LocalDate DTZToLocalDate(ZonedDateTime zonedDateTime, String text, boolean checkNull) {
+        if (zonedDateTime != null) {
+            return LocalDate.ofInstant(zonedDateTime.toInstant(), ZoneId.systemDefault());
         } else if (checkNull) {
             throw new ResourceNotFoundRunTime("Не передан обязательный параметр " + text + " null ");
         }
         return null;
     }
 
-    public static Timestamp dateNoTime(Timestamp dateStr) {
-        if (dateStr != null) {
+    public static Timestamp DTZToDate(ZonedDateTime zonedDateTime, String text) {
+        return DTZToDate(zonedDateTime, text, false);
+    }
+
+    public static Timestamp DTZToDate(ZonedDateTime zonedDateTime, String text, boolean checkNull) {
+        if (zonedDateTime != null) {
+            return dateNoTime(Timestamp.from(zonedDateTime.toInstant()));
+        } else if (checkNull) {
+            throw new ResourceNotFoundRunTime("Не передан обязательный параметр " + text + " null ");
+        }
+        return null;
+    }
+
+    public static Timestamp dateNoTime(Timestamp timestamp) {
+        if (timestamp != null) {
 
             Calendar c = Calendar.getInstance();
-            c.setTime(dateStr);
+            c.setTime(timestamp);
             c.set(Calendar.HOUR_OF_DAY, 0);
             c.set(Calendar.MINUTE, 0);
             c.set(Calendar.SECOND, 0);
@@ -78,12 +92,12 @@ public class DateHelper {
         return dateTimeFormatter;
     }
 
-    public static String dateTimeToStr(ZonedDateTime date) {
-        if (date == null) {
+    public static String dateTimeToStr(ZonedDateTime zonedDateTime) {
+        if (zonedDateTime == null) {
             return null;
         }
 
-        return date.format(getDateTimeFormatter());
+        return zonedDateTime.format(getDateTimeFormatter());
     }
 
     private static final SimpleDateFormat sdfDT = new SimpleDateFormat("dd.MM.yyyy HH:mm");

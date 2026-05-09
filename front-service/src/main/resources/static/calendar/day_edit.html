@@ -1,0 +1,31 @@
+<form novalidate ng-submit="saveDay()">
+    <div class="horiz">
+        <label for="Date" class="form_label">Дата:</label>
+        <input class="vvod40mar10" type="date" id="Date" step="any"
+               ng-change="getDateInfo()"
+               ng-model="Day.date"/>
+        <br>
+    </div>
+
+    <div class="horiz">
+        <label for="DayType" class="form_label">Тип:</label>
+        <select class="vvod40mar10" name="DayTypeSelect" id="DayType" ng-model="Day.type">
+            <option ng-repeat="day in DayTypeList"
+                    ng-value="day.code"
+                    value="day.code">
+                {{day.value}}
+            </option>
+        </select>
+
+    </div>
+    <div class="horiz">
+        <label for="Title" class="form_label">Комментарий:</label>
+        <input class="vvod40mar10"
+               type="text"
+               id="Title"/>
+        <br>
+    </div>
+    <button type="submit" class="button" id="ButtonSaveDown">Сохранить</button>
+    <button type="button" ng-click="back()" class="button">Вернуться к списку</button>
+
+</form>

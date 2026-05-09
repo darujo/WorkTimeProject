@@ -39,6 +39,6 @@ public enum DayTypeDto implements TypeEnum {
     }
 
     public static DayTypeDto[] getTypeDay() {
-        return (DayTypeDto[]) Arrays.stream(DayTypeDto.values()).filter(dayTypeDto -> !dayTypeDto.user).toArray();
+        return Arrays.stream(DayTypeDto.values()).filter(dayTypeDto -> !dayTypeDto.user).toArray(DayTypeDto[]::new);
     }
 }

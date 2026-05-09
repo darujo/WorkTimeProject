@@ -360,6 +360,9 @@ public class CalendarService {
         return productionCalendar.existWorkDay(dateStart, dateEnd);
     }
 
+    public DateInfo getDateInfo(LocalDate date) {
+        return productionCalendar.getDateInfo(date);
+    }
     @Autowired
     public void setProductionCalendar(@Qualifier("productionCalendar") ProductionCalendar productionCalendar) {
         this.productionCalendar = productionCalendar;

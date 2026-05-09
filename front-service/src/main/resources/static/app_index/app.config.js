@@ -40,6 +40,9 @@ angular.module('workTimeService').config(["$ocLazyLoadProvider", function ($ocLa
             name: 'calendar', // module
             files: ['calendar/calendar.js?ver=' + ver]
         }, {
+            name: 'calendar_day', // module
+            files: ['calendar/day_edit.js?ver=' + ver]
+        }, {
             name: 'weekWork', // module
             files: ['rep/weekWork/weekWork.js?ver='.toLowerCase() + ver]
         }, {

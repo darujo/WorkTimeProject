@@ -1,11 +1,12 @@
 package ru.darujo.utils.calendar.structure;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
  * Информация о дате
  */
-public class DateInfo {
+public class DateInfo implements Serializable {
     @SuppressWarnings("unused")
     public DateInfo() {
     }

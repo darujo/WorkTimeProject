@@ -113,6 +113,15 @@ angular.module('workTimeService').config(function ($routeProvider) {
                 }]
             }
         })
+        .when('/calendar/day', {
+            templateUrl: 'calendar/day_edit.html?ver=' + ver,
+            controller: 'calendarDayController',
+            resolve: {
+                LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load('calendar_day'); // Resolve promise and load before view
+                }]
+            }
+        })
         .when('/weekWork'.toLowerCase(), {
             templateUrl: 'rep/weekWork/weekWork.html?ver='.toLowerCase() + ver,
             controller: 'weekWorkController',
