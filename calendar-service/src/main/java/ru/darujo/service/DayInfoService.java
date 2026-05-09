@@ -80,6 +80,7 @@ public class DayInfoService extends DateInfoRepository {
         if (days == null) {
             days = getDateInfoYear(date.getYear());
         }
+
         return days.get(date);
 
     }
