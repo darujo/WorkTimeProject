@@ -456,6 +456,7 @@ public class WorkRepService {
         return workUserTimes;
     }
 
+    @Transactional
     public PageObjDto<WorkGraphsDto> getWorkGraphRep(Integer page,
                                                      Integer size,
                                                      String nameZi,
@@ -570,20 +571,20 @@ public class WorkRepService {
                 || (dayStart.compareTo(analiseEndFact) <= 0 && analiseEndFact.compareTo(dayEnd) <= 0);
     }
 
-    ColorRGB color;
+    private final ThreadLocal<ColorRGB> color = new ThreadLocal<>();
 
     private ColorDto getColor(List<String> types) {
         ColorDto colorDto = colorDtoMap.get(types.hashCode());
         if (colorDto != null) {
             return colorDto;
         }
-        color = null;
+        color.remove();
         types.forEach(type -> addColor(getColor(type)));
-        if (color == null) {
+        if (color.get() == null) {
             return null;
         }
-        color.save();
-        return color;
+        color.get().save();
+        return color.get();
 
     }
 
@@ -600,10 +601,10 @@ public class WorkRepService {
     }
 
     private void addColor(ColorRGB colorRGB) {
-        if (color == null) {
-            color = colorRGB;
+        if (color.get() == null) {
+            color.set(colorRGB);
         } else {
-            color.addColor(colorRGB);
+            color.get().addColor(colorRGB);
         }
     }
 

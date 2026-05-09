@@ -4,6 +4,7 @@ import ru.darujo.dto.work.WorkLittleDto;
 
 public class UrlWorkTime {
     private static final String URL = "https://178.20.40.174:5555/#!";
+//    private static final String URL = "https://localhost:5555/#!";
 
     public static String getUrl(String url, String name) {
         return String.format("<a href=\"%s\">%s</a>", url, name);

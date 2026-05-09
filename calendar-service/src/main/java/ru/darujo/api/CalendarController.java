@@ -2,15 +2,19 @@ package ru.darujo.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.darujo.assistant.helper.DateHelper;
+import ru.darujo.assistant.helper.EnumHelper;
+import ru.darujo.converter.DayInfoConverter;
+import ru.darujo.dto.calendar.DayTypeDto;
 import ru.darujo.dto.calendar.WeekDto;
 import ru.darujo.dto.calendar.WeekWorkDto;
+import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.service.CalendarService;
+import ru.darujo.service.DayInfoService;
+import ru.darujo.utils.calendar.structure.DateInfo;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
@@ -19,6 +23,7 @@ import java.util.List;
 @RequestMapping("/v1/calendar")
 public class CalendarController {
     private CalendarService calendarService;
+    private DayInfoService dayInfoService;
 
     @Autowired
     public void setCalendarService(CalendarService calendarService) {
@@ -53,5 +58,26 @@ public class CalendarController {
 
 
         return calendarService.getWorkTime(dateStart, dateEnd);
+    }
+
+    @GetMapping("/day/type")
+    public List<AttrDto<Enum<?>>> getDayTypeList() {
+        return EnumHelper.getList(DayTypeDto.getTypeDay());
+    }
+
+    @GetMapping("/day")
+    public DateInfo getDayInfo(@RequestParam(required = false, name = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime zDateTime) {
+        LocalDate date = zDateTime.toLocalDate();
+        return DayInfoConverter.getDateInfo(dayInfoService.getDayInfo(date));
+    }
+
+    @PostMapping("/day")
+    public void saveDayInfo(@RequestBody DateInfo dayInfoDto) {
+        dayInfoService.addNew(DayInfoConverter.getDayInfo(dayInfoDto));
+    }
+
+    @Autowired
+    public void setDayInfoService(DayInfoService dayInfoService) {
+        this.dayInfoService = dayInfoService;
     }
 }

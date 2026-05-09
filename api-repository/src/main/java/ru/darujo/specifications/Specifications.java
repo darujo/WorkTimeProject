@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -91,11 +92,26 @@ public class Specifications {
         return specification;
     }
 
-    private static <T> Specification<@NonNull T> ge(String field, Date value) {
+    public static <T> Specification<@NonNull T> ge(Specification<@NonNull T> specification, String field, LocalDate value) {
+        if (value != null) {
+            if (specification == null) {
+                specification = ge(field, value);
+            } else {
+                specification = specification.and(ge(field, value));
+            }
+        }
+        return specification;
+    }
+
+    private static <T> Specification<@NonNull T> ge(String field, LocalDate value) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get(field), value));
 
     }
 
+    private static <T> Specification<@NonNull T> ge(String field, Date value) {
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get(field), value));
+
+    }
     public static <T> Specification<@NonNull T> le(Specification<@NonNull T> specification, String field, Date value) {
         if (value != null) {
             if (specification == null) {
@@ -107,6 +123,20 @@ public class Specifications {
         return specification;
     }
 
+    public static <T> Specification<@NonNull T> le(Specification<@NonNull T> specification, String field, LocalDate value) {
+        if (value != null) {
+            if (specification == null) {
+                specification = le(field, value);
+            } else {
+                specification = specification.and(le(field, value));
+            }
+        }
+        return specification;
+    }
+
+    private static <T> Specification<@NonNull T> le(String field, LocalDate value) {
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get(field), value));
+    }
     private static <T> Specification<@NonNull T> le(String field, Date value) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get(field), value));
     }

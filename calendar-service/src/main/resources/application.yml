@@ -7,7 +7,7 @@ spring:
     banner-mode: off
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres?options=--search_path%3Duser_repo
+    url: jdbc:postgresql://localhost:5432/postgres?options=--search_path=user_repo
     username: postgres
     password: 5397
 
@@ -23,3 +23,6 @@ spring:
 integration:
   user-service:
     enable: true
+service:
+  calendar:
+    db: true

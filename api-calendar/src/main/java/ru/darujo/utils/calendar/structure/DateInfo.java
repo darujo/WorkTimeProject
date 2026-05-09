@@ -6,6 +6,9 @@ import java.time.LocalDate;
  * Информация о дате
  */
 public class DateInfo {
+    @SuppressWarnings("unused")
+    public DateInfo() {
+    }
 
     /**
      * Дата
@@ -37,7 +40,7 @@ public class DateInfo {
      * Конструктор
      * @param date LocalDate - дата
      * @param type Enum {@link DayType} - тип
-     * @param title String - наимеование праздничного дня
+     * @param title String - наименование праздничного дня
      */
     public DateInfo(LocalDate date, DayType type, String title) {
         this.date = date;
@@ -51,23 +54,12 @@ public class DateInfo {
         return date;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
     public DayType getType() {
         return type;
-    }
-
-    public void setType(DayType type) {
-        this.type = type;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
 }

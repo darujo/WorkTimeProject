@@ -1,5 +1,7 @@
 package ru.darujo.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.calendar.DayDto;
@@ -24,7 +26,7 @@ import java.util.List;
 @Service
 @Primary
 public class CalendarService {
-    ProductionCalendar productionCalendar = new ProductionCalendar();
+    private ProductionCalendar productionCalendar;
 
     public List<WeekDto> getWeekList(Integer month, Integer year) {
         if (month != null && (month < 1 || month > 12)) {
@@ -344,9 +346,6 @@ public class CalendarService {
     public boolean isHoliday(LocalDate date) {
         return productionCalendar.isHoliday(date);
     }
-    public boolean isWorkDay(Timestamp date) {
-        return  isWorkDay(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-    }
 
     public boolean isWorkDay(LocalDate date) {
         return productionCalendar.isWorkDay(date);
@@ -359,5 +358,10 @@ public class CalendarService {
 
     private boolean existWorkDay(LocalDate dateStart, LocalDate dateEnd) {
         return productionCalendar.existWorkDay(dateStart, dateEnd);
+    }
+
+    @Autowired
+    public void setProductionCalendar(@Qualifier("productionCalendar") ProductionCalendar productionCalendar) {
+        this.productionCalendar = productionCalendar;
     }
 }
