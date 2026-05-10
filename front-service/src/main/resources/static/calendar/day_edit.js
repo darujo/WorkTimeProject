@@ -8,7 +8,7 @@ angular.module('workTimeService').controller('calendarDayController', function (
         dateEndStr: null
     }
     $scope.Day = {
-        date: new Date("2026-05-09")
+        date: new Date()
     };
     $scope.editDay = function () {
         console.log("editDay");
@@ -30,9 +30,6 @@ angular.module('workTimeService').controller('calendarDayController', function (
         })
             .then(function (response) {
                 $scope.Day = response.data;
-                console.log("ffffff")
-                console.log(response)
-                console.log(response.data)
                 $scope.Day.date = new Date($scope.Day.date)
 
             }, function errorCallback(response) {
@@ -48,8 +45,6 @@ angular.module('workTimeService').controller('calendarDayController', function (
         $http.get(constPatchCalendar + "/day/type")
             .then(function (response) {
                 $scope.DayTypeList = response.data;
-
-
             }, function errorCallback(response) {
                 console.log(response)
                 if ($location.checkAuthorized(response)) {
@@ -76,7 +71,9 @@ angular.module('workTimeService').controller('calendarDayController', function (
                     console.log("Save response")
                     console.log(response);
                     sendSave = false;
-                    $scope.back();
+                    $scope.getDateInfo();
+                    alert("День сохранен.")
+                    // $scope.back();
                 }, function errorCallback(response) {
                     sendSave = false;
                     console.log(response.data);

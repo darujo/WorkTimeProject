@@ -42,6 +42,7 @@ public class DayInfoService extends DateInfoRepository {
         }
     }
 
+    @Transactional
     public synchronized void addNew(DayInfo dayInfo) {
         DayInfo daySave = dayInfoRepository.findFirstByDate(dayInfo.getDate());
         if (daySave == null) {
@@ -50,7 +51,8 @@ public class DayInfoService extends DateInfoRepository {
                 deleteMapDate(dayInfo.getDate());
             }
         } else {
-            if (isWeekEnd(dayInfo.getDate()) && dayInfo.getType().equals(DayType.WEEK_END.toString())) {
+            if ((isWeekEnd(dayInfo.getDate()) && dayInfo.getType().equals(DayType.WEEK_END.toString()))
+                    || (!isWeekEnd(dayInfo.getDate()) && dayInfo.getType().equals(DayType.WORKDAY.toString()))) {
                 dayInfoRepository.delete(daySave);
                 deleteMapDate(dayInfo.getDate());
             } else {
