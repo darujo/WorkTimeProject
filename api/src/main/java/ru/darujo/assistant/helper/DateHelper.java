@@ -32,23 +32,6 @@ public class DateHelper {
         return sdfDM.format(date);
     }
 
-    public static LocalDate DTZToLocalDate(ZonedDateTime zonedDateTime, String text) {
-        return DTZToLocalDate(zonedDateTime, text, false);
-    }
-
-    public static LocalDate DTZToLocalDate(ZonedDateTime zonedDateTime, String text, boolean checkNull) {
-        if (zonedDateTime != null) {
-            return LocalDate.ofInstant(zonedDateTime.toInstant(), ZoneId.systemDefault());
-        } else if (checkNull) {
-            throw new ResourceNotFoundRunTime("Не передан обязательный параметр " + text + " null ");
-        }
-        return null;
-    }
-
-    public static Timestamp DTZToDate(ZonedDateTime zonedDateTime, String text) {
-        return DTZToDate(zonedDateTime, text, false);
-    }
-
     public static Timestamp DTZToDate(ZonedDateTime zonedDateTime, String text, boolean checkNull) {
         if (zonedDateTime != null) {
             return dateNoTime(Timestamp.from(zonedDateTime.toInstant()));
@@ -56,6 +39,12 @@ public class DateHelper {
             throw new ResourceNotFoundRunTime("Не передан обязательный параметр " + text + " null ");
         }
         return null;
+    }
+
+    public static void checkNull(LocalDate localDate, String text) {
+        if (localDate == null) {
+            throw new ResourceNotFoundRunTime("Не передан обязательный параметр " + text + " null ");
+        }
     }
 
     public static Timestamp dateNoTime(Timestamp timestamp) {
@@ -128,6 +117,21 @@ public class DateHelper {
         }
 
         return list;
+    }
+
+    public static DateTimeFormatter getDateFormatter() {
+        if (dateTimeFormatter == null) {
+            dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy").withZone(ZoneId.systemDefault());
+        }
+        return dateTimeFormatter;
+    }
+
+    public static String dateToDDMMYYYY(LocalDate localDate) {
+        if (localDate == null) {
+            return null;
+        }
+
+        return localDate.format(getDateFormatter());
     }
 
 }

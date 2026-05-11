@@ -5,12 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.calendar.VacationDto;
 import ru.darujo.service.VacationService;
 
-import java.sql.Timestamp;
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 
 @RestController()
 @RequestMapping("/v1/vacation")
@@ -42,18 +40,24 @@ public class VacationController {
     }
 
     @GetMapping("")
-    public Page<@NonNull VacationDto> VacationPage(@RequestHeader(required = false) String username,
-                                                   @RequestParam(required = false) String nikName,
-                                                   @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
-                                                   @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr,
-                                                   @RequestParam(required = false) Integer page,
-                                                   @RequestParam(defaultValue = "10") Integer size) {
-        Timestamp dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ");
-        Timestamp dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ");
-        if (nikName != null && nikName.equals("current")){
+    public Page<@NonNull VacationDto> VacationPage(@RequestHeader(required = false)
+                                                   String username,
+                                                   @RequestParam(required = false)
+                                                   String nikName,
+                                                   @RequestParam(required = false)
+                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                   LocalDate dateStart,
+                                                   @RequestParam(required = false)
+                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                   LocalDate dateEnd,
+                                                   @RequestParam(required = false)
+                                                   Integer page,
+                                                   @RequestParam(defaultValue = "10")
+                                                   Integer size) {
+        if (nikName != null && nikName.equals("current")) {
             nikName = username;
         }
-        return vacationService.findAll(nikName,dateStart,dateEnd,page,size).map(vacationService::getVacationDtoAndAddFio);
+        return vacationService.findAll(nikName, dateStart, dateEnd, page, size).map(vacationService::getVacationDtoAndAddFio);
     }
 
 

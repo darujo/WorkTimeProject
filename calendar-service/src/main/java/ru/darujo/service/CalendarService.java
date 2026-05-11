@@ -1,5 +1,6 @@
 package ru.darujo.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
@@ -13,16 +14,14 @@ import ru.darujo.utils.calendar.ProductionCalendar;
 import ru.darujo.utils.calendar.structure.DateInfo;
 import ru.darujo.utils.calendar.structure.DayType;
 
-import java.sql.Timestamp;
 import java.time.DateTimeException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+@Slf4j
 @Service
 @Primary
 public class CalendarService {
@@ -138,7 +137,7 @@ public class CalendarService {
         return yearStart(date).plusYears(1).minusDays(1);
     }
 
-    public List<WeekWorkDto> getPeriodTime(Date dateStart, Date dateEnd, String periodSplit) {
+    public List<WeekWorkDto> getPeriodTime(LocalDate dateStart, LocalDate dateEnd, String periodSplit) {
         String period = null;
         String split = null;
 
@@ -192,7 +191,7 @@ public class CalendarService {
         return getPeriodTime(dateStart, dateEnd, period, split);
     }
 
-    public List<WeekWorkDto> getPeriodTime(Date dateStart, Date dateEnd, String period, String split) {
+    public List<WeekWorkDto> getPeriodTime(LocalDate dateStart, LocalDate dateEnd, String period, String split) {
         List<WeekWorkDto> weekWorkDTOs = new ArrayList<>();
         LocalDate dayStart;
         LocalDate dayEnd;
@@ -203,24 +202,24 @@ public class CalendarService {
 
         switch (period) {
             case "week" -> {
-                dayStart = weekStart(dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-                dayEnd = weekEnd(dateEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+                dayStart = weekStart(dateStart);
+                dayEnd = weekEnd(dateEnd);
             }
             case "day" -> {
-                dayStart = dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                dayEnd = dateEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                dayStart = dateStart;
+                dayEnd = dateEnd;
             }
             case "month" -> {
-                dayStart = monthStart(dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-                dayEnd = monthEnd(dateEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+                dayStart = monthStart(dateStart);
+                dayEnd = monthEnd(dateEnd);
             }
             case "month3" -> {
-                dayStart = monthStart(dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-                dayEnd = monthEnd(dateEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).plusMonths(2);
+                dayStart = monthStart(dateStart);
+                dayEnd = monthEnd(dateEnd).plusMonths(2);
             }
             case "year" -> {
-                dayStart = yearStart(dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-                dayEnd = yearEnd(dateEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+                dayStart = yearStart(dateStart);
+                dayEnd = yearEnd(dateEnd);
             }
             default -> throw new ResourceNotFoundRunTime("Не верный период " + period);
         }
@@ -246,18 +245,18 @@ public class CalendarService {
         LocalDate date = dayStart.minusDays(1);
 
         while (date.isBefore(dayEnd)) {
-            Timestamp periodStart = null;
-            Timestamp periodEnd = null;
+            LocalDate periodStart = null;
+            LocalDate periodEnd = null;
             float time = 0f;
             HashMap<DayTypeDto,Integer> dayTypes = new HashMap<>();
             for (int i = 0; i < periodDay; i++) {
 
                 date = date.plusDays(1);
                 if (i == 0) {
-                    periodStart = Timestamp.valueOf(date.atStartOfDay());
+                    periodStart = date;
                 }
                 if (i == periodDay - 1) {
-                    periodEnd = Timestamp.valueOf(date.atStartOfDay());
+                    periodEnd = date;
                 }
                 DateInfo dateInfo = productionCalendar.getDateInfo(date);
                 if(dateInfo.getType().equals(DayType.WEEK_END) ) {
@@ -301,9 +300,7 @@ public class CalendarService {
     }
 
 
-    public Float getWorkTime(Date dateStart, Date dateEnd) {
-        LocalDate dayStart = dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate dayEnd = dateEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    public Float getWorkTime(LocalDate dayStart, LocalDate dayEnd) {
         float time = 0f;
         for (LocalDate date = dayStart; !date.isAfter(dayEnd); date = date.plusDays(1)) {
             DateInfo dateInfo = productionCalendar.getDateInfo(date);
@@ -323,24 +320,12 @@ public class CalendarService {
         return 8.25f;
     }
 
-    public int getDayNotHoliday(Date dateStart, Date dateEnd) {
-        return getDayNotHoliday(dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
-                dateEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-    }
     public int getDayNotHoliday(LocalDate dateStart, LocalDate dateEnd) {
         return productionCalendar.iDaysNotHoliday(dateStart, dateEnd);
     }
 
-    public Timestamp getDateEndNotHoliday(Timestamp dateStart, Integer days) {
-        return Timestamp.valueOf(getDateEndNotHoliday(dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),days).atStartOfDay());
-    }
-
-    private LocalDate getDateEndNotHoliday(LocalDate dateStart, Integer days) {
+    public LocalDate getDateEndNotHoliday(LocalDate dateStart, Integer days) {
         return productionCalendar.getDateEndNotHoliday(dateStart, days);
-    }
-
-    public boolean isHoliday(Timestamp date) {
-        return  isHoliday(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
     }
 
     public boolean isHoliday(LocalDate date) {
@@ -351,12 +336,7 @@ public class CalendarService {
         return productionCalendar.isWorkDay(date);
     }
 
-    public boolean existWorkDay(Timestamp dateStart, Timestamp dateEnd) {
-        return existWorkDay(dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
-                dateEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-    }
-
-    private boolean existWorkDay(LocalDate dateStart, LocalDate dateEnd) {
+    public boolean existWorkDay(LocalDate dateStart, LocalDate dateEnd) {
         return productionCalendar.existWorkDay(dateStart, dateEnd);
     }
 

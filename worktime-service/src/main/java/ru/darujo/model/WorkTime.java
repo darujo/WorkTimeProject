@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,7 +20,7 @@ public class  WorkTime {
     @Column(name = "nik_name")
     private String nikName;
     @Column(name = "work_date")
-    private Timestamp workDate;
+    private LocalDate workDate;
     @Column(name = "work_time")
     private Float workTime;
     @Column(name = "task_id")

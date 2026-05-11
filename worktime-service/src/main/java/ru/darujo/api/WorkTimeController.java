@@ -5,15 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.convertor.WorkTimeConvertor;
 import ru.darujo.dto.WorkTimeDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.WorkTime;
 import ru.darujo.service.WorkTimeService;
 
-import java.time.ZonedDateTime;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController()
@@ -67,24 +65,37 @@ public class WorkTimeController {
 
     @GetMapping("")
     public Page<@NonNull WorkTimeDto> findWorkTime(@RequestHeader String username,
-                                                   @RequestParam(required = false, name = "dateLt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLtStr,
-                                                   @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
-                                                   @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
-                                                   @RequestParam(required = false, name = "dateGe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGeStr,
-                                                   @RequestParam(required = false) Long[] taskId,
-                                                   @RequestParam(required = false) String taskDEVBO,
-                                                   @RequestParam(required = false) String taskBTS,
-                                                   @RequestParam(required = false) String nikName,
-                                                   @RequestParam(required = false) List<Integer> type,
-                                                   @RequestParam(required = false) String comment,
-                                                   @RequestParam("system_project") Long projectId,
-                                                   @RequestParam(defaultValue = "false") boolean currentUser,
-                                                   @RequestParam(defaultValue = "1") Integer page,
-                                                   @RequestParam(defaultValue = "10") Integer size) {
-        Date dateLt = DateHelper.DTZToDate(dateLtStr, "dateLt = ");
-        Date dateLe = DateHelper.DTZToDate(dateLeStr, "dateLe = ", false);
-        Date dateGt = DateHelper.DTZToDate(dateGtStr, "dateGt = ", false);
-        Date dateGe = DateHelper.DTZToDate(dateGeStr, "dateGe = ");
+                                                   @RequestParam(required = false)
+                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                   LocalDate dateLt,
+                                                   @RequestParam(required = false)
+                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                       LocalDate dateLe,
+                                                   @RequestParam(required = false)
+                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                       LocalDate dateGt,
+                                                   @RequestParam(required = false)
+                                                       LocalDate dateGe,
+                                                   @RequestParam(required = false)
+                                                       Long[] taskId,
+                                                   @RequestParam(required = false)
+                                                       String taskDEVBO,
+                                                   @RequestParam(required = false)
+                                                       String taskBTS,
+                                                   @RequestParam(required = false)
+                                                       String nikName,
+                                                   @RequestParam(required = false)
+                                                       List<Integer> type,
+                                                   @RequestParam(required = false)
+                                                       String comment,
+                                                   @RequestParam("system_project")
+                                                       Long projectId,
+                                                   @RequestParam(defaultValue = "false")
+                                                       boolean currentUser,
+                                                   @RequestParam(defaultValue = "1")
+                                                       Integer page,
+                                                   @RequestParam(defaultValue = "10")
+                                                       Integer size) {
         if ((nikName == null || nikName.isEmpty()) && currentUser) {
             nikName = username;
         }

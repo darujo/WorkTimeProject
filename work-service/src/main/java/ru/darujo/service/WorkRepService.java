@@ -25,6 +25,7 @@ import ru.darujo.integration.WorkTimeServiceIntegrationImp;
 import ru.darujo.model.*;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -427,7 +428,7 @@ public class WorkRepService {
     }
 
 
-    public List<WorkUserTime> getWeekWork(boolean ziSplit, Boolean addTotal, String nikName, Boolean weekSplit, Timestamp dateStart, Timestamp dateEnd,
+    public List<WorkUserTime> getWeekWork(boolean ziSplit, Boolean addTotal, String nikName, Boolean weekSplit, LocalDate dateStart, LocalDate dateEnd,
                                           Integer page, Integer size, String name, Long projectId, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, List<Long> releaseIdList, List<String> sort) {
         List<WorkUserTime> workUserTimes = new ArrayList<>();
         if (ziSplit) {

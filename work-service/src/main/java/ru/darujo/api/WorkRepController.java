@@ -18,6 +18,7 @@ import ru.darujo.model.StageZiFind;
 import ru.darujo.service.WorkRepService;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.List;
@@ -77,8 +78,8 @@ public class WorkRepController {
                                           @RequestParam(required = false) Boolean addTotal,
                                           @RequestParam(required = false) Boolean weekSplit,
 
-                                          @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
-                                          @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr,
+                                          @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateStart,
+                                          @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateEnd,
 
                                           @RequestParam(required = false) Integer page,
                                           @RequestParam(required = false) Integer size,
@@ -90,8 +91,8 @@ public class WorkRepController {
                                           @RequestParam(required = false) String task,
                                           @RequestParam(required = false) List<Long> releaseId,
                                           @RequestParam(defaultValue = "release.sort,name") List<String> sort) {
-        Timestamp dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ", true);
-        Timestamp dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ", true);
+        DateHelper.checkNull(dateStart, "dateStart = ");
+        DateHelper.checkNull(dateEnd, "dateEnd = ");
         StageZiFind stageZiFind = new StageZiFind(stageZi);
 
         return workRepService.getWeekWork(ziSplit, addTotal, nikName, weekSplit, dateStart, dateEnd,

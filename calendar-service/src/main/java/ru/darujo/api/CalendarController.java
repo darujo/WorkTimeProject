@@ -3,7 +3,6 @@ package ru.darujo.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.assistant.helper.EnumHelper;
 import ru.darujo.converter.DayInfoConverter;
 import ru.darujo.dto.calendar.DayTypeDto;
@@ -15,8 +14,6 @@ import ru.darujo.service.DayInfoService;
 import ru.darujo.utils.calendar.structure.DateInfo;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.List;
 
 @RestController()
@@ -38,25 +35,21 @@ public class CalendarController {
     }
 
     @GetMapping("/period/time")
-    public List<WeekWorkDto> PeriodTimeList(@RequestParam(name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
-                                            @RequestParam(name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr,
+    public List<WeekWorkDto> PeriodTimeList(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateStart,
+                                            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateEnd,
                                             @RequestParam(required = false) String period
     ) {
-        Date dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ");
-        Date dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ");
-
-
         return calendarService.getPeriodTime(dateStart, dateEnd, period);
     }
 
     @GetMapping("/work/time")
-    public Float WorkTime(@RequestParam(name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
-                          @RequestParam(name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr
+    public Float WorkTime(@RequestParam
+                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                          LocalDate dateStart,
+                          @RequestParam
+                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                          LocalDate dateEnd
     ) {
-        Date dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ");
-        Date dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ");
-
-
         return calendarService.getWorkTime(dateStart, dateEnd);
     }
 
@@ -66,8 +59,9 @@ public class CalendarController {
     }
 
     @GetMapping("/day")
-    public DateInfo getDayInfo(@RequestParam(required = false, name = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime zDateTime) {
-        LocalDate date = DateHelper.DTZToLocalDate(zDateTime, "date = ");
+    public DateInfo getDayInfo(@RequestParam(required = false)
+                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                               LocalDate date) {
 
         return calendarService.getDateInfo(date);
     }

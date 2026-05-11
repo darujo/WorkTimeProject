@@ -116,7 +116,7 @@ public class UserInfoTypeService {
                 userInfoTypeRepository.delete(userInfoType);
             }
         }
-        log.info(userInfoType.toString());
+
     }
 
     public boolean exists(String senderType, String telegramId) {

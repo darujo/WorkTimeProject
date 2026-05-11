@@ -10,7 +10,7 @@ import ru.darujo.dto.workrep.WorkRepDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
 import java.sql.Timestamp;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -93,12 +93,13 @@ public class WorkServiceIntegrationImp extends ServiceIntegrationImp {
         }
     }
 
-    public Boolean setWorkDate(Long workId, Long projectId, Date dateWork) {
+    public Boolean setWorkDate(Long workId, Long projectId, LocalDateTime dateWork) {
         if (workId != null) {
             StringBuilder stringBuilder = new StringBuilder();
-            addTeg(stringBuilder, "date", dateWork);
+            addTeg(stringBuilder, "dateTime", dateWork);
             addTeg(stringBuilder, "projectId", projectId);
             String uri = "/refresh/" + workId + stringBuilder;
+            //TODO Проверить
             return webClient.get().uri("/refresh/" + workId + stringBuilder)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),

@@ -3,16 +3,13 @@ package ru.darujo.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.workperiod.UserWorkDto;
 import ru.darujo.dto.workperiod.WorkUserFactPlan;
 import ru.darujo.dto.workrep.UserWorkPeriodDto;
 import ru.darujo.service.WorkTimeRepService;
 
-import java.sql.Timestamp;
-import java.time.ZonedDateTime;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController()
@@ -29,11 +26,9 @@ public class WorkTimeRepController {
     @GetMapping("/time")
     public Float getTimeWork(@RequestParam(required = false) Long[] taskId,
                              @RequestParam(required = false) String nikName,
-                             @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
-                             @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
+                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateLe,
+                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateGt,
                              @RequestParam(required = false) String type) {
-        Date dateLe = DateHelper.DTZToDate(dateLeStr, "dateLe = ", false);
-        Date dateGt = DateHelper.DTZToDate(dateGtStr, "dateGt = ", false);
         if (dateLe == null && dateGt == null) {
             return 0f;
         }
@@ -42,35 +37,30 @@ public class WorkTimeRepController {
 
     @GetMapping("/user")
     public ListString getFactUser(@RequestParam(required = false) Long[] taskId,
-                                  @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr
+                                  @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateLe
     ) {
-        Date dateLe = DateHelper.DTZToDate(dateLeStr, "dateLe = ", false);
         return workTimeRepService.getFactUser(taskId, dateLe);
     }
 
     @GetMapping("/user/work")
     public List<UserWorkPeriodDto> getUserWork(@RequestParam(required = false) String nikName,
                                                @RequestParam(defaultValue = "week") String periodSplit,
-                                               @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
-                                               @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr,
+                                               @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateStart,
+                                               @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateEnd,
                                                @RequestHeader String username) {
         if (nikName == null || nikName.isEmpty()) {
             nikName = username;
         }
         periodSplit = periodConvert(periodSplit);
-        Timestamp dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ", true);
-        Timestamp dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ", true);
         return workTimeRepService.getUserWork(nikName, periodSplit, dateStart, dateEnd);
     }
 
     @GetMapping("/user/work/only")
     public WorkUserFactPlan getUserWorkOnly(@RequestParam(required = false) String nikName,
                                             @RequestParam(defaultValue = "week") String periodSplit,
-                                            @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
-                                            @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr) {
+                                            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateStart,
+                                            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateEnd) {
         periodSplit = periodConvert(periodSplit);
-        Timestamp dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ", true);
-        Timestamp dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ", true);
         return workTimeRepService.getUserWorkOnly(nikName, periodSplit, dateStart, dateEnd);
     }
 
@@ -94,10 +84,8 @@ public class WorkTimeRepController {
                                          @RequestParam(required = false) String nikName,
                                          @RequestParam(defaultValue = "false") Boolean addTotal,
                                          @RequestParam(defaultValue = "true") Boolean weekSplit,
-                                         @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
-                                         @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr) {
-        Timestamp dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ", false);
-        Timestamp dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ", false);
+                                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateStart,
+                                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateEnd) {
         return workTimeRepService.getWeekWork(taskId, nikName, addTotal, weekSplit, dateStart, dateEnd);
     }
 
@@ -109,11 +97,9 @@ public class WorkTimeRepController {
     }
 
     @GetMapping("/lastTime")
-    public Timestamp getLastTime(@RequestParam(required = false) Long[] taskId,
-                                 @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
-                                 @RequestParam(required = false, name = "dateGe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGeStr) {
-        Timestamp dateLe = DateHelper.DTZToDate(dateLeStr, "dateLe = ", false);
-        Timestamp dateGe = DateHelper.DTZToDate(dateGeStr, "dateGe = ", false);
+    public LocalDate getLastTime(@RequestParam(required = false) Long[] taskId,
+                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateLe,
+                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateGe) {
             return workTimeRepService.getLastTime(taskId, dateGe, dateLe);
         }
     }

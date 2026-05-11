@@ -10,6 +10,8 @@ import reactor.core.publisher.Mono;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Slf4j
@@ -111,6 +113,29 @@ public class ServiceIntegrationImp implements ServiceIntegration {
             } else {
                 stringBuilder.append("?");
             }
+            stringBuilder.append(str).append("=").append(value);
+        }
+    }
+
+    protected void addTeg(StringBuilder stringBuilder, String str, LocalDateTime value) {
+        if (value != null) {
+            if (!stringBuilder.isEmpty()) {
+                stringBuilder.append("&");
+            } else {
+                stringBuilder.append("?");
+            }
+            stringBuilder.append(str).append("=").append(value);
+        }
+    }
+
+    protected void addTeg(StringBuilder stringBuilder, String str, LocalDate value) {
+        if (value != null) {
+            if (!stringBuilder.isEmpty()) {
+                stringBuilder.append("&");
+            } else {
+                stringBuilder.append("?");
+            }
+
             stringBuilder.append(str).append("=").append(value);
         }
     }

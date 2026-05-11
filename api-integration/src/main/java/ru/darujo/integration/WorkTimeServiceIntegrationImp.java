@@ -9,8 +9,7 @@ import ru.darujo.dto.workperiod.UserWorkFormDto;
 import ru.darujo.dto.workperiod.WorkUserFactPlan;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
-import java.sql.Timestamp;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Log4j2
@@ -19,7 +18,7 @@ public class WorkTimeServiceIntegrationImp extends ServiceIntegrationImp {
         super.setWebClient(webClientWorkTime);
     }
 
-    public Float getTimeTask(List<Long> taskIdList, String nikName, Date dateLE, Date dateGT, String type) {
+    public Float getTimeTask(List<Long> taskIdList, String nikName, LocalDate dateLE, LocalDate dateGT, String type) {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "taskId", taskIdList);
         addTeg(stringBuilder, "nikName", nikName);
@@ -41,7 +40,7 @@ public class WorkTimeServiceIntegrationImp extends ServiceIntegrationImp {
         }
     }
 
-    public ListString getUsers(Long taskId, Date dateLe) {
+    public ListString getUsers(Long taskId, LocalDate dateLe) {
         StringBuilder stringBuilder = new StringBuilder();
 
         addTeg(stringBuilder, "taskId", taskId);
@@ -78,8 +77,8 @@ public class WorkTimeServiceIntegrationImp extends ServiceIntegrationImp {
             String nikName,
             Boolean addTotal,
             Boolean weekSplit,
-            Date dateStart,
-            Date dateEnd) {
+            LocalDate dateStart,
+            LocalDate dateEnd) {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "taskId", taskIds);
 
@@ -112,8 +111,8 @@ public class WorkTimeServiceIntegrationImp extends ServiceIntegrationImp {
                                                     String nikName,
                                                     Boolean addTotal,
                                                     Boolean weekSplit,
-                                                    Date dateStart,
-                                                    Date dateEnd) {
+                                                    LocalDate dateStart,
+                                                    LocalDate dateEnd) {
         StringBuilder stringBuilder = new StringBuilder();
 
         addTeg(stringBuilder, "taskId", taskIdList);
@@ -138,7 +137,7 @@ public class WorkTimeServiceIntegrationImp extends ServiceIntegrationImp {
         }
     }
 
-    public Timestamp getLastTime(List<Long> taskIds, Timestamp dateLe, Timestamp dateGe) {
+    public LocalDate getLastTime(List<Long> taskIds, LocalDate dateLe, LocalDate dateGe) {
         StringBuilder stringBuilder = new StringBuilder();
         try {
             addTeg(stringBuilder, "taskId", taskIds);
@@ -149,7 +148,7 @@ public class WorkTimeServiceIntegrationImp extends ServiceIntegrationImp {
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени. Статус "))
-                    .bodyToMono(Timestamp.class)
+                    .bodyToMono(LocalDate.class)
                     .block();
         } catch (RuntimeException ex) {
             String text = "/rep/fact/lastTime" + stringBuilder;
@@ -159,7 +158,7 @@ public class WorkTimeServiceIntegrationImp extends ServiceIntegrationImp {
 
     }
 
-    public WorkUserFactPlan getUserWork(Timestamp dateStart, Timestamp dateEnd, String nikName, String period) {
+    public WorkUserFactPlan getUserWork(LocalDate dateStart, LocalDate dateEnd, String nikName, String period) {
         StringBuilder stringBuilder = new StringBuilder();
         try {
             addTeg(stringBuilder, "dateStart", dateStart);

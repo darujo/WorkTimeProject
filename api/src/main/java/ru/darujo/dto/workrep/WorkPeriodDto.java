@@ -5,7 +5,7 @@ import ru.darujo.dto.calendar.DayTypeDto;
 import ru.darujo.dto.calendar.WeekWorkDto;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,10 +19,10 @@ public class WorkPeriodDto extends WeekWorkDto implements Serializable {
     }
 
     public WorkPeriodDto(WeekWorkDto weekWorkDto, List<WorkTimeDto> list) {
-        this(weekWorkDto.getDayStart(), weekWorkDto.getDayEnd(), weekWorkDto.getTime(),weekWorkDto.getDayTypes() , list);
+        this(weekWorkDto.getDayStartLocal(), weekWorkDto.getDayEndLocal(), weekWorkDto.getTime(), weekWorkDto.getDayTypes(), list);
     }
 
-    public WorkPeriodDto(Timestamp dayStart, Timestamp dayEnd, Float time, HashMap<DayTypeDto,Integer> dayTypes, List<WorkTimeDto> list) {
+    public WorkPeriodDto(LocalDate dayStart, LocalDate dayEnd, Float time, HashMap<DayTypeDto, Integer> dayTypes, List<WorkTimeDto> list) {
         super(dayStart, dayEnd, time,dayTypes);
         this.list = list;
     }

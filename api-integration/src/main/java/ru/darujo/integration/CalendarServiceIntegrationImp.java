@@ -12,6 +12,7 @@ import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,7 +23,7 @@ public class CalendarServiceIntegrationImp extends ServiceIntegrationImp {
         super.setWebClient(webClientCalendar);
     }
 
-    public List<WeekWorkDto> getWeekTime(Timestamp dateStart, Timestamp dateEnd) {
+    public List<WeekWorkDto> getWeekTime(LocalDate dateStart, LocalDate dateEnd) {
         return getPeriodTime(dateStart, dateEnd, null);
     }
 
@@ -42,7 +43,23 @@ public class CalendarServiceIntegrationImp extends ServiceIntegrationImp {
         }
     }
 
-    public Float getWorkTime(Timestamp dateStart, Timestamp dateEnd) {
+    public List<WeekWorkDto> getPeriodTime(LocalDate dateStart, LocalDate dateEnd, String period) {
+        StringBuilder stringBuilder = getDateTeg(dateStart, dateEnd);
+        addTeg(stringBuilder, "period", period);
+        try {
+            return webClient.get().uri("/calendar/period/time" + stringBuilder)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить работы за период"))
+                    .bodyToFlux(WeekWorkDto.class).collectList()
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календарь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
+    }
+
+    public Float getWorkTime(LocalDate dateStart, LocalDate dateEnd) {
         StringBuilder stringBuilder = getDateTeg(dateStart, dateEnd);
 
         try {
@@ -78,7 +95,7 @@ public class CalendarServiceIntegrationImp extends ServiceIntegrationImp {
         }
     }
 
-    public Timestamp getLastWorkDay(String username, Timestamp dateStart, Integer dayMinus, Boolean lastWeek) {
+    public LocalDate getLastWorkDay(String username, LocalDate dateStart, Integer dayMinus, Boolean lastWeek) {
 
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "username", username);
@@ -91,7 +108,7 @@ public class CalendarServiceIntegrationImp extends ServiceIntegrationImp {
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить отпуск за период httpStatus "))
-                    .bodyToMono(Timestamp.class)
+                    .bodyToMono(LocalDate.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
@@ -144,6 +161,16 @@ public class CalendarServiceIntegrationImp extends ServiceIntegrationImp {
     }
 
     private StringBuilder getDateTeg(Timestamp dateStart, Timestamp dateEnd) {
+        if (dateStart == null || dateEnd == null) {
+            throw new ResourceNotFoundRunTime("Что-то пошло не так для получения календаря должны быть заданы даты начала и конца");
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        addTeg(stringBuilder, "dateStart", dateStart);
+        addTeg(stringBuilder, "dateEnd", dateEnd);
+        return stringBuilder;
+    }
+
+    private StringBuilder getDateTeg(LocalDate dateStart, LocalDate dateEnd) {
         if (dateStart == null || dateEnd == null) {
             throw new ResourceNotFoundRunTime("Что-то пошло не так для получения календаря должны быть заданы даты начала и конца");
         }

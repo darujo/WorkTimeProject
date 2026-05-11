@@ -12,8 +12,7 @@ import ru.darujo.model.Task;
 import ru.darujo.repository.TaskRepository;
 import ru.darujo.specifications.Specifications;
 
-import java.sql.Timestamp;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,8 +48,8 @@ public class TaskRepService {
             String description,
             List<Long> workIdList,
             Long projectId,
-            Date dateLe,
-            Date dateGt,
+            LocalDate dateLe,
+            LocalDate dateGt,
             String type) {
         List<Long> taskIdList = taskService.findTask(null, codeBTS, codeDEVBO, description, workIdList, null, projectId, null, null).getContent()
                 .stream()
@@ -59,7 +58,7 @@ public class TaskRepService {
 
     }
 
-    public ListString getFactUsers(List<Long> workIdList, Long projectId, Date dateLe) {
+    public ListString getFactUsers(List<Long> workIdList, Long projectId, LocalDate dateLe) {
         ListString users = new ListString();
         taskService.findTask(null, null, null, null, workIdList, null, projectId, null, null)
                 .stream().map(task ->
@@ -91,7 +90,7 @@ public class TaskRepService {
 
     }
 
-    public Timestamp getLastTime(List<Long> workId, Timestamp dateLe, Timestamp dateGe) {
+    public LocalDate getLastTime(List<Long> workId, LocalDate dateLe, LocalDate dateGe) {
         List<Task> tasks = taskService.findTask(null, null, null, null, workId, null, null, null, null).getContent();
 
         return workTimeServiceIntegration.getLastTime(tasks.stream().map(Task::getId).collect(Collectors.toList()), dateLe, dateGe);

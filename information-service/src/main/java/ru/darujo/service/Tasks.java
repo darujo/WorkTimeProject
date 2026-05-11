@@ -18,6 +18,7 @@ import ru.darujo.type.MessageType;
 import ru.darujo.url.UrlWorkTime;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -70,7 +71,7 @@ public class Tasks {
                             if (calendarServiceIntegration.isWorkDayUser(nikName, null)) {
 
 
-                                Timestamp date = calendarServiceIntegration.getLastWorkDay(nikName,
+                                LocalDate date = calendarServiceIntegration.getLastWorkDay(nikName,
                                         null,
                                         2,
                                         false);
@@ -112,8 +113,7 @@ public class Tasks {
                 }
 
                 users.forEach((nikName, userInfoDTos) -> {
-                    Timestamp date;
-                    date = calendarServiceIntegration.getLastWorkDay(nikName, null, 1, true);
+                    LocalDate date = calendarServiceIntegration.getLastWorkDay(nikName, null, 1, true);
 
                     WorkUserFactPlan workUserFactPlan = workTimeServiceIntegration.getUserWork(date, date, nikName, "week");
                     if (workUserFactPlan.getTimeFact() < workUserFactPlan.getTimePlan() * PERCENT_WORK_TIME) {

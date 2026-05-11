@@ -6,15 +6,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.workperiod.UserWorkDto;
 import ru.darujo.service.TaskRepService;
 
-import java.sql.Timestamp;
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @RestController()
@@ -34,12 +31,10 @@ public class TaskRepController {
                              @RequestParam(required = false) String description,
                              @RequestParam(required = false) List<Long> workId,
                              @RequestParam(required = false) Long projectId,
-                             @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
-                             @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
+                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateLe,
+                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateGt,
                              @RequestParam(required = false) String type
     ) {
-        Date dateLe = DateHelper.DTZToDate(dateLeStr, "dateLe = ");
-        Date dateGt = DateHelper.DTZToDate(dateGtStr, "dateGt = ");
         return taskRepService.getTaskTime(
                 nikName,
                 codeBTS,
@@ -54,11 +49,9 @@ public class TaskRepController {
 
     @GetMapping("/user")
     public ListString getFactUsers(@RequestParam(required = false) List<Long> workId,
-                                   @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
+                                   @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateLe,
                                    @RequestParam(required = false) Long projectId
     ) {
-        Timestamp dateLe = DateHelper.DTZToDate(dateLeStr, "dateLe = ");
-
         return taskRepService.getFactUsers(
                 workId, projectId, dateLe);
     }
@@ -83,13 +76,11 @@ public class TaskRepController {
     }
 
     @GetMapping("/lastTime")
-    public Timestamp getLastTime(@RequestParam long workId,
-                                 @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
-                                 @RequestParam(required = false, name = "dateGe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGeStr
+    public LocalDate getLastTime(@RequestParam long workId,
+                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateLe,
+                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateGe
 
     ) {
-        Timestamp dateLe = DateHelper.DTZToDate(dateLeStr, "dateLe = ");
-        Timestamp dateGe = DateHelper.DTZToDate(dateGeStr, "dateGe = ");
         List<Long> workIDList = new ArrayList<>();
         workIDList.add(workId);
         return taskRepService.getLastTime(workIDList, dateLe, dateGe);

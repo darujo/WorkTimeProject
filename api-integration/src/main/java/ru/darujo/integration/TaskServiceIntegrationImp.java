@@ -13,6 +13,7 @@ import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -118,8 +119,9 @@ public class TaskServiceIntegrationImp extends ServiceIntegrationImp {
         return setTaskRefreshTime(taskId, null);
     }
 
-    public Boolean setTaskRefreshTime(Long taskId, Date dateWork) {
+    public Boolean setTaskRefreshTime(Long taskId, LocalDate dateWork) {
         StringBuilder stringBuilder = new StringBuilder();
+
         addTeg(stringBuilder, "date", dateWork);
         return webClient.get().uri("/refresh/" + taskId + stringBuilder)
                 .retrieve()
