@@ -12,6 +12,7 @@ import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Slf4j
@@ -124,7 +125,7 @@ public class ServiceIntegrationImp implements ServiceIntegration {
             } else {
                 stringBuilder.append("?");
             }
-            stringBuilder.append(str).append("=").append(value);
+            stringBuilder.append(str).append("=").append(value.format(DateTimeFormatter.ISO_DATE_TIME)).append("Z");
         }
     }
 

@@ -154,7 +154,7 @@ public class TaskService {
     @Transactional
     public boolean refreshTime(long id, LocalDateTime date) {
 
-        Task task = findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Отмеченная работа не найден"));
+        Task task = findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Задача не найден"));
         task.setRefresh(LocalDateTime.now());
         taskRepository.save(task);
         boolean ok = workServiceIntegration.setWorkDate(task.getWorkId(), task.getProjectId(), date);
