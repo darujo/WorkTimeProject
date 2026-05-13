@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import ru.darujo.assistant.color.ColorRGB;
 import ru.darujo.assistant.helper.ColorHelper;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.convertor.WorkConvertor;
 import ru.darujo.dto.ColorDto;
 import ru.darujo.dto.MapStringFloat;
@@ -24,7 +25,6 @@ import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.integration.WorkTimeServiceIntegrationImp;
 import ru.darujo.model.*;
 
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -114,29 +114,29 @@ public class WorkRepService {
                             }
                             WorkRepProjectDto workRepProjectDto = new WorkRepProjectDto(work.getId(),
                                     projectId,
-                                    workProject.getStartTaskPlan(),
-                                    workProject.getStartTaskFact(),
-                                    workProject.getAnaliseEndPlan(),
-                                    workProject.getAnaliseEndFact(),
-                                    workProject.getIssuePrototypePlan(),
-                                    workProject.getIssuePrototypeFact(),
-                                    workProject.getDebugEndPlan(),
-                                    workProject.getDebugEndFact(),
+                                    DateHelper.getZDT(workProject.getStartTaskPlan()),
+                                    DateHelper.getZDT(workProject.getStartTaskFact()),
+                                    DateHelper.getZDT(workProject.getAnaliseEndPlan()),
+                                    DateHelper.getZDT(workProject.getAnaliseEndFact()),
+                                    DateHelper.getZDT(workProject.getIssuePrototypePlan()),
+                                    DateHelper.getZDT(workProject.getIssuePrototypeFact()),
+                                    DateHelper.getZDT(workProject.getDebugEndPlan()),
+                                    DateHelper.getZDT(workProject.getDebugEndFact()),
                                     work.getRelease() != null ? work.getRelease().getName() : null,
-                                    work.getRelease() != null ? work.getRelease().getIssuingReleasePlan() : null,
-                                    releaseProject != null ? releaseProject.getIssuingReleaseFact() : null,
-                                    workProject.getReleaseEndPlan(),
-                                    workProject.getReleaseEndFact(),
-                                    workProject.getOpeEndPlan(),
-                                    workProject.getOpeEndFact(),
+                                    work.getRelease() != null ? DateHelper.getZDT(work.getRelease().getIssuingReleasePlan()) : null,
+                                    releaseProject != null ? DateHelper.getZDT(releaseProject.getIssuingReleaseFact()) : null,
+                                    DateHelper.getZDT(workProject.getReleaseEndPlan()),
+                                    DateHelper.getZDT(workProject.getReleaseEndFact()),
+                                    DateHelper.getZDT(workProject.getOpeEndPlan()),
+                                    DateHelper.getZDT(workProject.getOpeEndFact()),
                                     getFactWork(workProject, projectDto.getStageEnd(), 0),
                                     getFactWork(workProject, projectDto.getStageEnd(), 1),
                                     getFactWork(workProject, projectDto.getStageEnd(), 2),
                                     getFactWork(workProject, projectDto.getStageEnd(), 3),
                                     getFactWork(workProject, projectDto.getStageEnd(), 4),
                                     getFactWork(workProject, projectDto.getStageEnd(), 5),
-                                    workProject.getIssuePrototypePlan(),
-                                    workProject.getIssuePrototypeFact(),
+                                    DateHelper.getZDT(workProject.getIssuePrototypePlan()),
+                                    DateHelper.getZDT(workProject.getIssuePrototypeFact()),
                                     workProject.getRated(),
                                     work.getChildWork() == null || work.getChildWork().isEmpty() ? null : work.getChildWork().stream().map(WorkLittle::getId).toList()
 
@@ -386,7 +386,7 @@ public class WorkRepService {
                     workProject.getReleaseEndFact(),
                     workProject.getOpeEndFact());
         } else if (stage == 5) {
-            Timestamp timestamp = null;
+            LocalDate timestamp = null;
             if (projectStageEnd == null) {
                 timestamp = workProject.getOpeEndFact();
             } else if (projectStageEnd == 1) {
@@ -414,13 +414,13 @@ public class WorkRepService {
         }
     }
 
-    private Timestamp getTimeDevelop(WorkProject work) {
-        Timestamp timestampDevelop;
+    private LocalDate getTimeDevelop(WorkProject work) {
+        LocalDate timestampDevelop;
         if (work.getIssuePrototypeFact() == null
                 && work.getDebugEndFact() == null
                 && work.getReleaseEndFact() == null
                 && work.getOpeEndFact() == null) {
-            timestampDevelop = new Timestamp(new Date().getTime());
+            timestampDevelop = LocalDate.now();
         } else {
             timestampDevelop = work.getIssuePrototypeFact();
         }
@@ -468,8 +468,8 @@ public class WorkRepService {
                                                      String task,
                                                      Long releaseId,
                                                      List<String> sort,
-                                                     Timestamp dateStart,
-                                                     Timestamp dateEnd,
+                                                     LocalDate dateStart,
+                                                     LocalDate dateEnd,
                                                      String period) {
         workService.init();
         List<WeekWorkDto> weekWorkDTOs = calendarServiceIntegration.getPeriodTime(dateStart, dateEnd, period);
@@ -501,26 +501,23 @@ public class WorkRepService {
     private ColorDto getColor(WeekWorkDto weekWorkDto, WorkProject work, boolean plan) {
         List<String> colorTypes;
         if (plan) {
-            colorTypes = getPeriodPlanTypes(work, weekWorkDto.getDayStart(), weekWorkDto.getDayEnd());
+            colorTypes = getPeriodPlanTypes(work, DateHelper.zDTToLD(weekWorkDto.getDayStart()), DateHelper.zDTToLD(weekWorkDto.getDayEnd()));
         } else {
-            colorTypes = getPeriodFactTypes(work, weekWorkDto.getDayStart(), weekWorkDto.getDayEnd());
+            colorTypes = getPeriodFactTypes(work, DateHelper.zDTToLD(weekWorkDto.getDayStart()), DateHelper.zDTToLD(weekWorkDto.getDayEnd()));
         }
         return getColor(colorTypes);
 
     }
 
-    public Timestamp getDatePlusDay(Timestamp date, Integer day) {
+    public LocalDate getDatePlusDay(LocalDate date, Integer day) {
         if (date == null) {
             return null;
         }
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.add(Calendar.DATE, day);
-        return new Timestamp(cal.getTimeInMillis());
+        return date.plusDays(day);
 
     }
 
-    private List<String> getPeriodFactTypes(WorkProject work, Timestamp dayStart, Timestamp dayEnd) {
+    private List<String> getPeriodFactTypes(WorkProject work, LocalDate dayStart, LocalDate dayEnd) {
         List<String> colorTypes = new ArrayList<>();
         if (isPeriodIntersect(work.getAnaliseStartFact(), work.getAnaliseEndFact(), dayStart, dayEnd)) {
             colorTypes.add("analise");
@@ -540,7 +537,7 @@ public class WorkRepService {
         return colorTypes;
     }
 
-    private List<String> getPeriodPlanTypes(WorkProject work, Timestamp dayStart, Timestamp dayEnd) {
+    private List<String> getPeriodPlanTypes(WorkProject work, LocalDate dayStart, LocalDate dayEnd) {
         List<String> colorTypes = new ArrayList<>();
         if (isPeriodIntersect(work.getAnaliseStartPlan(), work.getAnaliseEndPlan(), dayStart, dayEnd)) {
             colorTypes.add("analise");
@@ -563,13 +560,13 @@ public class WorkRepService {
         return colorTypes;
     }
 
-    private boolean isPeriodIntersect(Timestamp analiseStartFact, Timestamp analiseEndFact, Timestamp dayStart, Timestamp dayEnd) {
+    private boolean isPeriodIntersect(LocalDate analiseStartFact, LocalDate analiseEndFact, LocalDate dayStart, LocalDate dayEnd) {
         if (analiseStartFact == null || analiseEndFact == null) {
             return false;
         }
-        return (analiseStartFact.compareTo(dayStart) <= 0 && dayStart.compareTo(analiseEndFact) <= 0)
-                || (analiseStartFact.compareTo(dayEnd) <= 0 && dayEnd.compareTo(analiseEndFact) <= 0)
-                || (dayStart.compareTo(analiseEndFact) <= 0 && analiseEndFact.compareTo(dayEnd) <= 0);
+        return (!analiseStartFact.isAfter(dayStart) && !dayStart.isAfter(analiseEndFact))
+                || (!analiseStartFact.isAfter(dayEnd) && !dayEnd.isAfter(analiseEndFact))
+                || (!dayStart.isAfter(analiseEndFact) && !analiseEndFact.isAfter(dayEnd));
     }
 
     private final ThreadLocal<ColorRGB> color = new ThreadLocal<>();

@@ -17,10 +17,8 @@ import ru.darujo.dto.workrep.WorkRepDto;
 import ru.darujo.model.StageZiFind;
 import ru.darujo.service.WorkRepService;
 
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.Calendar;
 import java.util.List;
 
 @RestController()
@@ -78,8 +76,8 @@ public class WorkRepController {
                                           @RequestParam(required = false) Boolean addTotal,
                                           @RequestParam(required = false) Boolean weekSplit,
 
-                                          @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateStart,
-                                          @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateEnd,
+                                          @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStart,
+                                          @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEnd,
 
                                           @RequestParam(required = false) Integer page,
                                           @RequestParam(required = false) Integer size,
@@ -91,11 +89,11 @@ public class WorkRepController {
                                           @RequestParam(required = false) String task,
                                           @RequestParam(required = false) List<Long> releaseId,
                                           @RequestParam(defaultValue = "release.sort,name") List<String> sort) {
-        DateHelper.checkNull(dateStart, "dateStart = ");
-        DateHelper.checkNull(dateEnd, "dateEnd = ");
+        LocalDate lDateStart = DateHelper.zDTToLD(dateStart, "dateStart = ");
+        LocalDate lDateEnd = DateHelper.zDTToLD(dateEnd, "dateEnd = ");
         StageZiFind stageZiFind = new StageZiFind(stageZi);
 
-        return workRepService.getWeekWork(ziSplit, addTotal, nikName, weekSplit, dateStart, dateEnd,
+        return workRepService.getWeekWork(ziSplit, addTotal, nikName, weekSplit, lDateStart, lDateEnd,
                 page, size, name, projectId, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, sort);
     }
 
@@ -109,24 +107,19 @@ public class WorkRepController {
                                                      @RequestParam(required = false) String task,
                                                      @RequestParam(required = false) Long releaseId,
                                                      @RequestParam(required = false) List<String> sort,
-                                                     @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
-                                                     @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr,
+                                                     @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStart,
+                                                     @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEnd,
                                                      @RequestParam(required = false) String period) {
-        Timestamp dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ", false);
-        Timestamp dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ", false);
         StageZiFind stageZiFind = new StageZiFind(stageZi);
-        if (dateStart == null) {
-            Calendar c = Calendar.getInstance();
-            c.add(Calendar.DATE, -100);
-            dateStart = new Timestamp(c.getTimeInMillis());
+        LocalDate lDateStart = DateHelper.zDTToLD(dateStart, "dateStart = ");
+        LocalDate lDateEnd = DateHelper.zDTToLD(dateEnd, "dateEnd = ");
+        if (lDateStart == null) {
+            lDateStart = LocalDate.now().minusDays(100);
         }
-        if (dateEnd == null) {
-            Calendar c = Calendar.getInstance();
-            c.add(Calendar.DATE, 100);
-
-            dateEnd = new Timestamp(c.getTimeInMillis());
+        if (lDateEnd == null) {
+            lDateEnd = LocalDate.now().plusDays(100);
         }
 
-        return workRepService.getWorkGraphRep(page, size, nameZi, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, sort, dateStart, dateEnd, period);
+        return workRepService.getWorkGraphRep(page, size, nameZi, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, sort, lDateStart, lDateEnd, period);
     }
 }

@@ -4,7 +4,7 @@ import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.user.UserFio;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.ZonedDateTime;
 
 public class WorkTimeDto implements Serializable, UserFio {
 
@@ -41,7 +41,7 @@ public class WorkTimeDto implements Serializable, UserFio {
         this.authorPatronymic = authorPatronymic;
     }
 
-    private LocalDate workDate;
+    private ZonedDateTime workDate;
     @SuppressWarnings("unused")
     private String workDateStr;
     private String comment;
@@ -101,7 +101,7 @@ public class WorkTimeDto implements Serializable, UserFio {
     public WorkTimeDto() {
     }
 
-    public WorkTimeDto(Long id, String nikName, LocalDate workDate, Float workTime, Long taskId, String comment, Integer type, String typeStr, String adminStr, Long projectId) {
+    public WorkTimeDto(Long id, String nikName, ZonedDateTime workDate, Float workTime, Long taskId, String comment, Integer type, String typeStr, String adminStr, Long projectId) {
         this.id = id;
         this.nikName = nikName;
         this.workDate = workDate;
@@ -129,7 +129,7 @@ public class WorkTimeDto implements Serializable, UserFio {
         }
     }
 
-    public LocalDate getWorkDate() {
+    public ZonedDateTime getWorkDate() {
         return workDate;
     }
 

@@ -9,8 +9,7 @@ import ru.darujo.model.Work;
 import ru.darujo.model.WorkLittle;
 import ru.darujo.model.WorkProject;
 
-import java.sql.Timestamp;
-import java.util.Calendar;
+import java.time.LocalDate;
 import java.util.List;
 
 public class WorkBuilder {
@@ -23,66 +22,66 @@ public class WorkBuilder {
     // Наименование
     private String name;
     // Разработка прототипа
-    private Timestamp issuePrototypeFact;
+    private LocalDate issuePrototypeFact;
     // Стабилизация прототипа
-    private Timestamp debugEndFact;
+    private LocalDate debugEndFact;
     // Стабилизация релиза
-    private Timestamp releaseEndFact;
+    private LocalDate releaseEndFact;
     // ОПЭ релиза
-    private Timestamp opeEndFact;
+    private LocalDate opeEndFact;
     // Анализ
-    private Timestamp analiseEndFact;
+    private LocalDate analiseEndFact;
     // Разработка прототипа
-    private Timestamp issuePrototypePlan;
+    private LocalDate issuePrototypePlan;
     // Стабилизация прототипа
-    private Timestamp debugEndPlan;
+    private LocalDate debugEndPlan;
     // Стабилизация релиза
-    private Timestamp releaseEndPlan;
+    private LocalDate releaseEndPlan;
     // ОПЭ релиза
-    private Timestamp opeEndPlan;
+    private LocalDate opeEndPlan;
     // Анализ
-    private Timestamp analiseEndPlan;
+    private LocalDate analiseEndPlan;
     // № внутренней задачи (D E V B O)
     private String task;
     // Краткое описание внутренней задачи
     private String description;
     // Дата начала доработки План
-    private Timestamp startTaskPlan;
+    private LocalDate startTaskPlan;
     // Дата начала доработки Факт
-    private Timestamp startTaskFact;
+    private LocalDate startTaskFact;
     // Текущий этап ЗИ
     private Integer stageZI;
     // Порядковый номер релиза
     private Long releaseId;
     private String release;
     // Выдача релиза даты План
-    private Timestamp issuingReleasePlan;
+    private LocalDate issuingReleasePlan;
     // Выдача релиза дата факт
-    private Timestamp issuingReleaseFact;
+    private LocalDate issuingReleaseFact;
     // Анализ Факт
-    private Timestamp analiseStartFact;
-    private Timestamp developStartFact;
+    private LocalDate analiseStartFact;
+    private LocalDate developStartFact;
     // Стабилизация прототипа Факт
-    private Timestamp debugStartFact;
+    private LocalDate debugStartFact;
     // Стабилизация релиза Факт
-    private Timestamp releaseStartFact;
+    private LocalDate releaseStartFact;
     // ОПЭ релиза Факт
-    private Timestamp opeStartFact;
+    private LocalDate opeStartFact;
 
     // Анализ план
-    private Timestamp analiseStartPlan;
+    private LocalDate analiseStartPlan;
     //начало разработки план
-    private Timestamp developStartPlan;
+    private LocalDate developStartPlan;
     // Стабилизация релиза план
-    private Timestamp debugStartPlan;
+    private LocalDate debugStartPlan;
     // Стабилизация релиза план
-    private Timestamp releaseStartPlan;
+    private LocalDate releaseStartPlan;
     // ОПЭ релиза план
-    private Timestamp opeStartPlan;
+    private LocalDate opeStartPlan;
 
-    private Timestamp developEndFact;
+    private LocalDate developEndFact;
     //начало разработки план
-    private Timestamp developEndPlan;
+    private LocalDate developEndPlan;
     private Boolean rated;
     private List<Long> projectList;
     private Long projectId;
@@ -127,12 +126,12 @@ public class WorkBuilder {
         return this;
     }
 
-    public WorkBuilder setStartTaskPlan(Timestamp startTaskPlan) {
+    public WorkBuilder setStartTaskPlan(LocalDate startTaskPlan) {
         this.startTaskPlan = dateToStartTime(startTaskPlan);
         return this;
     }
 
-    public WorkBuilder setStartTaskFact(Timestamp startTaskFact) {
+    public WorkBuilder setStartTaskFact(LocalDate startTaskFact) {
         this.startTaskFact = dateToStartTime(startTaskFact);
         return this;
     }
@@ -163,12 +162,12 @@ public class WorkBuilder {
         return this;
     }
 
-    public WorkBuilder setIssuingReleasePlan(Timestamp issuingReleasePlan) {
+    public WorkBuilder setIssuingReleasePlan(LocalDate issuingReleasePlan) {
         this.issuingReleasePlan = dateToStartTime(issuingReleasePlan);
         return this;
     }
 
-    public WorkBuilder setIssuingReleaseFact(Timestamp issuingReleaseFact) {
+    public WorkBuilder setIssuingReleaseFact(LocalDate issuingReleaseFact) {
         this.issuingReleaseFact = dateToStartTime(issuingReleaseFact);
         return this;
     }
@@ -193,112 +192,112 @@ public class WorkBuilder {
         return this;
     }
 
-    public WorkBuilder setDevelopEndFact(Timestamp developEndFact) {
+    public WorkBuilder setDevelopEndFact(LocalDate developEndFact) {
         this.developEndFact = dateToStartTime(developEndFact);
         return this;
     }
 
-    public WorkBuilder setIssuePrototypeFact(Timestamp issuePrototypeFact) {
+    public WorkBuilder setIssuePrototypeFact(LocalDate issuePrototypeFact) {
         this.issuePrototypeFact = dateToStartTime(issuePrototypeFact);
         return this;
     }
 
-    public WorkBuilder setDebugEndFact(Timestamp debugEndFact) {
+    public WorkBuilder setDebugEndFact(LocalDate debugEndFact) {
         this.debugEndFact = dateToStartTime(debugEndFact);
         return this;
     }
 
-    public WorkBuilder setReleaseEndFact(Timestamp releaseEndFact) {
+    public WorkBuilder setReleaseEndFact(LocalDate releaseEndFact) {
         this.releaseEndFact = dateToStartTime(releaseEndFact);
         return this;
     }
 
-    public WorkBuilder setOpeEndFact(Timestamp opeEndFact) {
+    public WorkBuilder setOpeEndFact(LocalDate opeEndFact) {
         this.opeEndFact = dateToStartTime(opeEndFact);
         return this;
     }
 
-    public WorkBuilder setAnaliseEndFact(Timestamp analiseEndFact) {
+    public WorkBuilder setAnaliseEndFact(LocalDate analiseEndFact) {
         this.analiseEndFact = dateToStartTime(analiseEndFact);
         return this;
     }
 
-    public WorkBuilder setDevelopEndPlan(Timestamp developEndPlan) {
+    public WorkBuilder setDevelopEndPlan(LocalDate developEndPlan) {
         this.developEndPlan = dateToStartTime(developEndPlan);
         return this;
     }
 
-    public WorkBuilder setIssuePrototypePlan(Timestamp issuePrototypePlan) {
+    public WorkBuilder setIssuePrototypePlan(LocalDate issuePrototypePlan) {
         this.issuePrototypePlan = dateToStartTime(issuePrototypePlan);
         return this;
     }
 
-    public WorkBuilder setDebugEndPlan(Timestamp debugEndPlan) {
+    public WorkBuilder setDebugEndPlan(LocalDate debugEndPlan) {
         this.debugEndPlan = dateToStartTime(debugEndPlan);
         return this;
     }
 
-    public WorkBuilder setReleaseEndPlan(Timestamp releaseEndPlan) {
+    public WorkBuilder setReleaseEndPlan(LocalDate releaseEndPlan) {
         this.releaseEndPlan = dateToStartTime(releaseEndPlan);
         return this;
     }
 
-    public WorkBuilder setOpeEndPlan(Timestamp opeEndPlan) {
+    public WorkBuilder setOpeEndPlan(LocalDate opeEndPlan) {
         this.opeEndPlan = dateToStartTime(opeEndPlan);
         return this;
     }
 
-    public WorkBuilder setAnaliseEndPlan(Timestamp analiseEndPlan) {
+    public WorkBuilder setAnaliseEndPlan(LocalDate analiseEndPlan) {
         this.analiseEndPlan = dateToStartTime(analiseEndPlan);
         return this;
     }
 
-    public WorkBuilder setAnaliseStartFact(Timestamp analiseStartFact) {
+    public WorkBuilder setAnaliseStartFact(LocalDate analiseStartFact) {
         this.analiseStartFact = analiseStartFact;
         return this;
     }
 
-    public WorkBuilder setDevelopStartFact(Timestamp developStartFact) {
+    public WorkBuilder setDevelopStartFact(LocalDate developStartFact) {
         this.developStartFact = developStartFact;
         return this;
     }
 
-    public WorkBuilder setDebugStartFact(Timestamp debugStartFact) {
+    public WorkBuilder setDebugStartFact(LocalDate debugStartFact) {
         this.debugStartFact = debugStartFact;
         return this;
     }
 
-    public WorkBuilder setReleaseStartFact(Timestamp releaseStartFact) {
+    public WorkBuilder setReleaseStartFact(LocalDate releaseStartFact) {
         this.releaseStartFact = releaseStartFact;
         return this;
     }
 
-    public WorkBuilder setOpeStartFact(Timestamp opeStartFact) {
+    public WorkBuilder setOpeStartFact(LocalDate opeStartFact) {
         this.opeStartFact = opeStartFact;
         return this;
     }
 
-    public WorkBuilder setAnaliseStartPlan(Timestamp analiseStartPlan) {
+    public WorkBuilder setAnaliseStartPlan(LocalDate analiseStartPlan) {
         this.analiseStartPlan = analiseStartPlan;
         return this;
     }
 
-    public WorkBuilder setDevelopStartPlan(Timestamp developStartPlan) {
+    public WorkBuilder setDevelopStartPlan(LocalDate developStartPlan) {
         this.developStartPlan = developStartPlan;
         return this;
     }
 
-    public WorkBuilder setDebugStartPlan(Timestamp debugStartPlan) {
+    public WorkBuilder setDebugStartPlan(LocalDate debugStartPlan) {
         this.debugStartPlan = debugStartPlan;
         return this;
     }
 
-    public WorkBuilder setReleaseStartPlan(Timestamp releaseStartPlan) {
+    public WorkBuilder setReleaseStartPlan(LocalDate releaseStartPlan) {
         this.releaseStartPlan = releaseStartPlan;
         return this;
     }
 
-    public WorkBuilder setOpeStartPlan(Timestamp opeStartPlan) {
+    public WorkBuilder setOpeStartPlan(LocalDate opeStartPlan) {
         this.opeStartPlan = opeStartPlan;
         return this;
     }
@@ -314,20 +313,20 @@ public class WorkBuilder {
                 codeSap,
                 codeZI,
                 name,
-                analiseEndPlan,
-                analiseEndFact,
-                issuePrototypeFact,
-                debugEndFact,
-                releaseEndFact,
-                opeEndFact,
+                DateHelper.getZDT(analiseEndPlan),
+                DateHelper.getZDT(analiseEndFact),
+                DateHelper.getZDT(issuePrototypeFact),
+                DateHelper.getZDT(debugEndFact),
+                DateHelper.getZDT(releaseEndFact),
+                DateHelper.getZDT(opeEndFact),
                 task,
                 description,
-                startTaskPlan,
-                startTaskFact,
+                DateHelper.getZDT(startTaskPlan),
+                DateHelper.getZDT(startTaskFact),
                 stageZI,
                 release,
-                issuingReleasePlan,
-                issuingReleaseFact,
+                DateHelper.getZDT(issuingReleasePlan),
+                DateHelper.getZDT(issuingReleaseFact),
                 rated,
                 childWork == null || childWork.isEmpty() ? null : childWork.stream().map(WorkLittle::getId).toList());
     }
@@ -339,37 +338,37 @@ public class WorkBuilder {
                 codeSap,
                 codeZI,
                 name,
-                analiseEndFact,
-                analiseEndPlan,
-                developEndFact,
-                developEndPlan,
-                issuePrototypeFact,
-                issuePrototypePlan,
-                debugEndFact,
-                debugEndPlan,
-                releaseEndFact,
-                releaseEndPlan,
-                opeEndFact,
-                opeEndPlan,
+                DateHelper.getZDT(analiseEndFact),
+                DateHelper.getZDT(analiseEndPlan),
+                DateHelper.getZDT(developEndFact),
+                DateHelper.getZDT(developEndPlan),
+                DateHelper.getZDT(issuePrototypeFact),
+                DateHelper.getZDT(issuePrototypePlan),
+                DateHelper.getZDT(debugEndFact),
+                DateHelper.getZDT(debugEndPlan),
+                DateHelper.getZDT(releaseEndFact),
+                DateHelper.getZDT(releaseEndPlan),
+                DateHelper.getZDT(opeEndFact),
+                DateHelper.getZDT(opeEndPlan),
                 task,
                 description,
-                startTaskPlan,
-                startTaskFact,
+                DateHelper.getZDT(startTaskPlan),
+                DateHelper.getZDT(startTaskFact),
                 stageZI,
                 releaseId,
                 release,
-                issuingReleasePlan,
-                issuingReleaseFact,
-                analiseStartFact,
-                developStartFact,
-                debugStartFact,
-                releaseStartFact,
-                opeStartFact,
-                analiseStartPlan,
-                developStartPlan,
-                debugStartPlan,
-                releaseStartPlan,
-                opeStartPlan,
+                DateHelper.getZDT(issuingReleasePlan),
+                DateHelper.getZDT(issuingReleaseFact),
+                DateHelper.getZDT(analiseStartFact),
+                DateHelper.getZDT(developStartFact),
+                DateHelper.getZDT(debugStartFact),
+                DateHelper.getZDT(releaseStartFact),
+                DateHelper.getZDT(opeStartFact),
+                DateHelper.getZDT(analiseStartPlan),
+                DateHelper.getZDT(developStartPlan),
+                DateHelper.getZDT(debugStartPlan),
+                DateHelper.getZDT(releaseStartPlan),
+                DateHelper.getZDT(opeStartPlan),
                 rated,
                 projectId,
                 projectList,
@@ -410,11 +409,8 @@ public class WorkBuilder {
         return new WorkLittle(id, codeSap, codeZI, name, projectList, releaseId == null ? null : new Release(releaseId, release), null, null);
     }
 
-    public Timestamp dateToStartTime(Timestamp timestamp) {
-        if (timestamp == null) {
-            return null;
-        }
-        return DateHelper.dateNoTime(timestamp);
+    public LocalDate dateToStartTime(LocalDate localDate) {
+        return localDate;
     }
 
     public WorkBuilder setReleaseId(Long releaseId) {
@@ -422,33 +418,27 @@ public class WorkBuilder {
         return this;
     }
 
-    public Timestamp getDate(Timestamp date, Timestamp dateMinus) {
+    public LocalDate getDate(LocalDate date, LocalDate dateMinus) {
         if (date != null) {
             return date;
         }
         if (dateMinus == null) {
             return null;
         }
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(dateMinus);
-        cal.add(Calendar.DATE, -1);
-        return new Timestamp(cal.getTimeInMillis());
+        return dateMinus.minusDays(1);
 
     }
 
-    public Timestamp getDateAddDay(Timestamp date, Timestamp datePlus) {
+    public LocalDate getDateAddDay(LocalDate date, LocalDate datePlus) {
 
         if (datePlus == null) {
             return date;
         } else {
-            if (date != null && date.after(datePlus)) {
+            if (date != null && date.isAfter(datePlus)) {
                 return date;
             }
         }
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(datePlus);
-        cal.add(Calendar.DATE, 1);
-        return new Timestamp(cal.getTimeInMillis());
+        return datePlus.plusDays(1);
 
     }
 

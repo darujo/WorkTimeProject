@@ -1,10 +1,12 @@
 package ru.darujo.api;
 
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.convertor.WorkTimeConvertor;
 import ru.darujo.dto.WorkTimeDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
@@ -12,8 +14,10 @@ import ru.darujo.model.WorkTime;
 import ru.darujo.service.WorkTimeService;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.List;
 
+@Slf4j
 @RestController()
 @RequestMapping("/v1/worktime")
 public class WorkTimeController {
@@ -67,15 +71,16 @@ public class WorkTimeController {
     public Page<@NonNull WorkTimeDto> findWorkTime(@RequestHeader String username,
                                                    @RequestParam(required = false)
                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                   LocalDate dateLt,
+                                                   ZonedDateTime dateLt,
                                                    @RequestParam(required = false)
                                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                       LocalDate dateLe,
+                                                       ZonedDateTime dateLe,
                                                    @RequestParam(required = false)
                                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                       LocalDate dateGt,
+                                                       ZonedDateTime dateGt,
                                                    @RequestParam(required = false)
-                                                       LocalDate dateGe,
+                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                       ZonedDateTime dateGe,
                                                    @RequestParam(required = false)
                                                        Long[] taskId,
                                                    @RequestParam(required = false)
@@ -99,15 +104,18 @@ public class WorkTimeController {
         if ((nikName == null || nikName.isEmpty()) && currentUser) {
             nikName = username;
         }
-
+        LocalDate lDateLt = DateHelper.zDTToLD(dateLt);
+        LocalDate lDateGt = DateHelper.zDTToLD(dateGt);
+        LocalDate lDateLe = DateHelper.zDTToLD(dateLe);
+        LocalDate lDateGe = DateHelper.zDTToLD(dateGe);
         workTimeService.clearCash();
         if ((taskBTS == null && taskDEVBO == null) || taskId != null) {
             return workTimeService.findWorkTime(taskId,
                     nikName,
-                    dateLt,
-                    dateLe,
-                    dateGt,
-                    dateGe,
+                    lDateLt,
+                    lDateLe,
+                    lDateGt,
+                    lDateGe,
                     type,
                     comment,
                     projectId,
@@ -118,10 +126,10 @@ public class WorkTimeController {
                     taskDEVBO,
                     taskBTS,
                     nikName,
-                    dateLt,
-                    dateLe,
-                    dateGt,
-                    dateGe,
+                    lDateLt,
+                    lDateLe,
+                    lDateGt,
+                    lDateGe,
                     type,
                     comment,
                     projectId,

@@ -4,14 +4,14 @@ import ru.darujo.dto.user.UserInfoDto;
 import ru.darujo.type.MessageType;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 
 public class MessageInfoDto implements Serializable {
     @SuppressWarnings("unused")
     public MessageInfoDto() {
     }
 
-    private Timestamp dataTime;
+    private ZonedDateTime dataTime;
     private String author;
     private MessageType type;
     private String title;
@@ -33,7 +33,7 @@ public class MessageInfoDto implements Serializable {
         this("",null ,type,text);
     }
     public MessageInfoDto(UserInfoDto userInfoDto, MessageType type, String text) {
-        this.dataTime = new Timestamp(System.currentTimeMillis());
+        this.dataTime = ZonedDateTime.now();
         this.author = "Scheduler";
         this.type = type;
         this.text = text;
@@ -41,14 +41,14 @@ public class MessageInfoDto implements Serializable {
     }
 
     public MessageInfoDto(UserInfoDto userInfoDto, String title, String text) {
-        this.dataTime = new Timestamp(System.currentTimeMillis());
+        this.dataTime = ZonedDateTime.now();
         this.author = "I";
         this.title = title;
         this.text = text;
         this.userInfoDto = userInfoDto;
     }
 
-    public MessageInfoDto(Timestamp dataTime, String author, MessageType type, String text) {
+    public MessageInfoDto(ZonedDateTime dataTime, String author, MessageType type, String text) {
         this.dataTime = dataTime;
         this.author = author;
         this.type = type;
@@ -69,11 +69,11 @@ public class MessageInfoDto implements Serializable {
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getDataTime() {
+    public ZonedDateTime getDataTime() {
         return dataTime;
     }
 
-    public void setDataTime(Timestamp dataTime) {
+    public void setDataTime(ZonedDateTime dataTime) {
         this.dataTime = dataTime;
     }
 

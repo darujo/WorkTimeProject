@@ -3,6 +3,7 @@ package ru.darujo.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.assistant.helper.EnumHelper;
 import ru.darujo.converter.DayInfoConverter;
 import ru.darujo.dto.calendar.DayTypeDto;
@@ -13,7 +14,7 @@ import ru.darujo.service.CalendarService;
 import ru.darujo.service.DayInfoService;
 import ru.darujo.utils.calendar.structure.DateInfo;
 
-import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @RestController()
@@ -35,22 +36,22 @@ public class CalendarController {
     }
 
     @GetMapping("/period/time")
-    public List<WeekWorkDto> PeriodTimeList(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateStart,
-                                            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateEnd,
+    public List<WeekWorkDto> PeriodTimeList(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStart,
+                                            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEnd,
                                             @RequestParam(required = false) String period
     ) {
-        return calendarService.getPeriodTime(dateStart, dateEnd, period);
+        return calendarService.getPeriodTime(DateHelper.zDTToLD(dateStart), DateHelper.zDTToLD(dateEnd), period);
     }
 
     @GetMapping("/work/time")
     public Float WorkTime(@RequestParam
                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                          LocalDate dateStart,
+                              ZonedDateTime dateStart,
                           @RequestParam
                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                          LocalDate dateEnd
+                              ZonedDateTime dateEnd
     ) {
-        return calendarService.getWorkTime(dateStart, dateEnd);
+        return calendarService.getWorkTime(DateHelper.zDTToLD(dateStart), DateHelper.zDTToLD(dateEnd));
     }
 
     @GetMapping("/day/type")
@@ -61,9 +62,9 @@ public class CalendarController {
     @GetMapping("/day")
     public DateInfo getDayInfo(@RequestParam(required = false)
                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                               LocalDate date) {
+                                   ZonedDateTime date) {
 
-        return calendarService.getDateInfo(date);
+        return calendarService.getDateInfo(DateHelper.zDTToLD(date));
     }
 
     @PostMapping("/day")

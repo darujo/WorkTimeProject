@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -220,12 +220,12 @@ public class HtmlService {
         return getTegDec(excel, teg, null, textClass, value);
     }
 
-    private String getTegDate(boolean excel, String teg, Timestamp plan, Timestamp fact, String value) {
-        return getTegDate(excel, teg, null, plan != null && fact != null && plan.before(fact), value);
+    private String getTegDate(boolean excel, String teg, ZonedDateTime plan, ZonedDateTime fact, String value) {
+        return getTegDate(excel, teg, null, plan != null && fact != null && plan.isBefore(fact), value);
     }
 
-    private String getTegDate(boolean excel, String teg, String textClass, Timestamp plan, Timestamp fact, String value) {
-        return getTegDate(excel, teg, textClass, plan != null && fact != null && plan.before(fact), value);
+    private String getTegDate(boolean excel, String teg, String textClass, ZonedDateTime plan, ZonedDateTime fact, String value) {
+        return getTegDate(excel, teg, textClass, plan != null && fact != null && plan.isBefore(fact), value);
     }
 
     private String getTegDate(boolean excel, String teg, String textClass, boolean flag, String value) {

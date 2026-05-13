@@ -11,8 +11,8 @@ import ru.darujo.dto.calendar.WeekWorkDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
-import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,22 +25,6 @@ public class CalendarServiceIntegrationImp extends ServiceIntegrationImp {
 
     public List<WeekWorkDto> getWeekTime(LocalDate dateStart, LocalDate dateEnd) {
         return getPeriodTime(dateStart, dateEnd, null);
-    }
-
-    public List<WeekWorkDto> getPeriodTime(Timestamp dateStart, Timestamp dateEnd, String period) {
-        StringBuilder stringBuilder = getDateTeg(dateStart, dateEnd);
-        addTeg(stringBuilder, "period", period);
-        try {
-            return webClient.get().uri("/calendar/period/time" + stringBuilder)
-                    .retrieve()
-                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить работы за период"))
-                    .bodyToFlux(WeekWorkDto.class).collectList()
-                    .doOnError(throwable -> log.error(throwable.getMessage()))
-                    .block();
-        } catch (RuntimeException ex) {
-            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календарь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
-        }
     }
 
     public List<WeekWorkDto> getPeriodTime(LocalDate dateStart, LocalDate dateEnd, String period) {
@@ -75,7 +59,7 @@ public class CalendarServiceIntegrationImp extends ServiceIntegrationImp {
         }
     }
 
-    public List<VacationDto> getVacation(String nikName, Timestamp dateStart, Timestamp dateEnd) {
+    public List<VacationDto> getVacation(String nikName, ZonedDateTime dateStart, ZonedDateTime dateEnd) {
         StringBuilder stringBuilder = getDateTeg(dateStart, dateEnd);
         addTeg(stringBuilder, "nikName", nikName);
 
@@ -118,7 +102,7 @@ public class CalendarServiceIntegrationImp extends ServiceIntegrationImp {
         }
     }
 
-    public Boolean isWorkDayUser(String username, Timestamp date) throws ResourceNotFoundException {
+    public Boolean isWorkDayUser(String username, LocalDate date) throws ResourceNotFoundException {
 
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "username", username);
@@ -139,7 +123,7 @@ public class CalendarServiceIntegrationImp extends ServiceIntegrationImp {
         }
     }
 
-    public Boolean isDayAfterWeek(Timestamp date, Integer dayMinus) throws ResourceNotFoundException {
+    public Boolean isDayAfterWeek(LocalDate date, Integer dayMinus) throws ResourceNotFoundException {
 
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "date", date);
@@ -160,7 +144,7 @@ public class CalendarServiceIntegrationImp extends ServiceIntegrationImp {
         }
     }
 
-    private StringBuilder getDateTeg(Timestamp dateStart, Timestamp dateEnd) {
+    private StringBuilder getDateTeg(LocalDate dateStart, LocalDate dateEnd) {
         if (dateStart == null || dateEnd == null) {
             throw new ResourceNotFoundRunTime("Что-то пошло не так для получения календаря должны быть заданы даты начала и конца");
         }
@@ -170,7 +154,7 @@ public class CalendarServiceIntegrationImp extends ServiceIntegrationImp {
         return stringBuilder;
     }
 
-    private StringBuilder getDateTeg(LocalDate dateStart, LocalDate dateEnd) {
+    private StringBuilder getDateTeg(ZonedDateTime dateStart, ZonedDateTime dateEnd) {
         if (dateStart == null || dateEnd == null) {
             throw new ResourceNotFoundRunTime("Что-то пошло не так для получения календаря должны быть заданы даты начала и конца");
         }

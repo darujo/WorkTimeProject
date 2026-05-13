@@ -17,8 +17,8 @@ import ru.darujo.model.ChatInfo;
 import ru.darujo.type.MessageType;
 import ru.darujo.url.UrlWorkTime;
 
-import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -290,7 +290,7 @@ public class Tasks {
                         message
                 ),
                 projectDto == null ? null : projectDto.getId(),
-                fileName + "_" + (projectDto == null ? "" : (projectDto.getName() + "_")) + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + "." + fileType,
+                fileName + "_" + (projectDto == null ? "" : (projectDto.getName() + "_")) + DateHelper.dateToISOStr(LocalDateTime.now()) + "." + fileType,
                 report);
     }
 

@@ -18,7 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -186,10 +186,10 @@ public class TaskService {
         }
     }
 
-    public RunnableNotException getTaskInfo(ZonedDateTime zonedDateTime, String text) {
+    public RunnableNotException getTaskInfo(LocalDateTime zonedDateTime, String text) {
         return new RunnableNotException(() -> {
             try {
-                long minutes = ChronoUnit.MINUTES.between(ZonedDateTime.now(), zonedDateTime);
+                long minutes = ChronoUnit.MINUTES.between(LocalDateTime.now(), zonedDateTime);
                 if (minutes > 0) {
                     infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.SYSTEM_INFO, String.format("Через %s будет %s", minutes, text)));
                 }

@@ -148,7 +148,7 @@ public class WorkAgreementRequestService {
         }
         return
                 compareField("Пользователь", UserServiceIntegrationImp.getInstance().getFio(oldObj.getNikName()), UserServiceIntegrationImp.getInstance().getFio(newObj.getNikName())) +
-                        compareField("Время", DateHelper.dateTimeToStr(oldObj.getTimestamp()), DateHelper.dateTimeToStr(newObj.getTimestamp())) +
+                        compareField("Время", DateHelper.dateTimeToStr(oldObj.getDateTime()), DateHelper.dateTimeToStr(newObj.getDateTime())) +
                         compareField("Версия ТЗ", oldObj.getVersion(), newObj.getVersion()) +
                         compareField("Комментарий", oldObj.getComment(), newObj.getComment()) +
                         compareField("Срок", DateHelper.dateToDDMMYYYY(oldObj.getTerm()), DateHelper.dateToDDMMYYYY(newObj.getTerm())) +
@@ -162,7 +162,7 @@ public class WorkAgreementRequestService {
     public String toString(@NonNull WorkAgreementRequest newObj) {
         return
                 "Пользователь: " + UserServiceIntegrationImp.getInstance().getFio(newObj.getNikName()) + "\n" +
-                        "Время: " + DateHelper.dateTimeToStr(newObj.getTimestamp()) + "\n" +
+                        "Время: " + DateHelper.dateTimeToStr(newObj.getDateTime()) + "\n" +
                         (newObj.getVersion() != null ? ("Версия ТЗ: " + newObj.getVersion() + "\n") : "") +
                         (newObj.getComment() != null && !newObj.getComment().isBlank() ? ("Комментарий: " + newObj.getVersion() + "\n") : "") +
                         (newObj.getTerm() != null ? ("Срок: " + DateHelper.dateToDDMMYYYY(newObj.getTerm()) + "\n") : "") +

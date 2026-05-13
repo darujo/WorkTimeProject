@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.darujo.model.ServiceType;
 
 import java.io.File;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -34,17 +34,17 @@ public class ScheduleService implements AutoCloseable {
     }
 
 
-    public void addUpdate(ZonedDateTime timestamp, List<ServiceType> serviceTypeList, List<File> fileNameUpdates, String textUpdates) {
-        executor.schedule(taskService.getTaskInfo(timestamp, " устнановлены обновления."), getStart(timestamp, 10L), TimeUnit.SECONDS);
+    public void addUpdate(LocalDateTime timestamp, List<ServiceType> serviceTypeList, List<File> fileNameUpdates, String textUpdates) {
+        executor.schedule(taskService.getTaskInfo(timestamp, " установлены обновления."), getStart(timestamp, 10L), TimeUnit.SECONDS);
         executor.schedule(taskService.getTask(fileNameUpdates, serviceTypeList, textUpdates), getStart(timestamp), TimeUnit.SECONDS);
     }
 
-    private long getStart(ZonedDateTime timestamp) {
+    private long getStart(LocalDateTime timestamp) {
         return getStart(timestamp, 0L);
     }
 
-    private long getStart(ZonedDateTime timestamp, Long minute) {
-        long second = ChronoUnit.SECONDS.between(ZonedDateTime.now(), timestamp.minusMinutes(minute));
+    private long getStart(LocalDateTime timestamp, Long minute) {
+        long second = ChronoUnit.SECONDS.between(LocalDateTime.now(), timestamp.minusMinutes(minute));
         return second < 0 ? 1L : second;
     }
 

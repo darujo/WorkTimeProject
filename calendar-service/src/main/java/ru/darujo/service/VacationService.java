@@ -194,7 +194,7 @@ public class VacationService {
 
     public VacationDto getVacationDtoAndAddDay(Vacation vacation) {
         VacationDto vacationDto = VacationConvertor.getVacationDto(vacation);
-        vacationDto.setDays(getDayNotHoliday(vacationDto.getDateStart(), vacationDto.getDateEnd()));
+        vacationDto.setDays(getDayNotHoliday(DateHelper.zDTToLD(vacationDto.getDateStart()), DateHelper.zDTToLD(vacationDto.getDateEnd())));
         return vacationDto;
     }
 
@@ -205,7 +205,7 @@ public class VacationService {
     }
 
     public Vacation getVacationUpdateAndConvert(VacationDto vacationDto) {
-        vacationDto.setDateEnd(getNewDate(vacationDto.getDateStart(), vacationDto.getDateEnd(), vacationDto.getDays()));
+        vacationDto.setDateEnd(DateHelper.getZDT(getNewDate(DateHelper.zDTToLD(vacationDto.getDateStart()), DateHelper.zDTToLD(vacationDto.getDateEnd()), vacationDto.getDays())));
         return VacationConvertor.getVacation(vacationDto);
     }
 

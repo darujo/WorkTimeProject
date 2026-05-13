@@ -12,9 +12,7 @@ import ru.darujo.dto.workperiod.UserWorkFormDto;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
-import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 
@@ -24,11 +22,11 @@ public class TaskServiceIntegrationImp extends ServiceIntegrationImp {
         super.setWebClient(webClientTask);
     }
 
-    public Float getTimeWork(Long workId, List<Long> childIdList, Long projectId, String nikName, Date dateGt, Date dateLe) {
+    public Float getTimeWork(Long workId, List<Long> childIdList, Long projectId, String nikName, LocalDate dateGt, LocalDate dateLe) {
         return getTimeWork(workId, childIdList, projectId, nikName, dateGt, dateLe, null);
     }
 
-    public Float getTimeWork(Long workId, List<Long> childIdList, Long projectId, String nikName, Date dateGt, Date dateLe, String type) {
+    public Float getTimeWork(Long workId, List<Long> childIdList, Long projectId, String nikName, LocalDate dateGt, LocalDate dateLe, String type) {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "workId", workId);
         addTeg(stringBuilder, "workId", childIdList);
@@ -51,7 +49,7 @@ public class TaskServiceIntegrationImp extends ServiceIntegrationImp {
         }
     }
 
-    public ListString getListUser(Long workID, Long projectId, Date dateLe) {
+    public ListString getListUser(Long workID, Long projectId, LocalDate dateLe) {
         StringBuilder stringBuilder = new StringBuilder();
         if (workID == null) {
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору не задан workId");
@@ -157,7 +155,7 @@ public class TaskServiceIntegrationImp extends ServiceIntegrationImp {
         }
     }
 
-    public Timestamp getLastTime(Long workId, Timestamp dateLe, Timestamp dateGe) throws ResourceNotFoundException {
+    public LocalDate getLastTime(Long workId, LocalDate dateLe, LocalDate dateGe) throws ResourceNotFoundException {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "workId", workId);
         addTeg(stringBuilder, "dateLe", dateLe);
@@ -167,7 +165,7 @@ public class TaskServiceIntegrationImp extends ServiceIntegrationImp {
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Задача c id = " + workId + " не найдена"))
-                    .bodyToMono(Timestamp.class)
+                    .bodyToMono(LocalDate.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {

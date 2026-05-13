@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.calendar.DayDto;
 import ru.darujo.dto.calendar.DayTypeDto;
 import ru.darujo.dto.calendar.WeekDto;
@@ -271,7 +272,7 @@ public class CalendarService {
                 time = time + getTimeDay(dateInfo);
             }
             WeekWorkDto weekWorkDto = new WeekWorkDto(
-                    periodStart, periodEnd, time, dayTypes);
+                    DateHelper.getZDT(periodStart), DateHelper.getZDT(periodEnd), time, dayTypes);
             weekWorkDTOs.add(weekWorkDto);
         }
 

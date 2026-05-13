@@ -3,7 +3,7 @@ package ru.darujo.dto.workrep;
 import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.work.WorkPlanTime;
 
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public class WorkRepProjectDto implements WorkPlanTime, ProjectUpdateInter {
@@ -16,19 +16,19 @@ public class WorkRepProjectDto implements WorkPlanTime, ProjectUpdateInter {
     private String projectCode;
     private String projectName;
     // Дата начала доработки План
-    private Timestamp startTaskPlan;
+    private ZonedDateTime startTaskPlan;
     @SuppressWarnings("unused")
     private String startTaskPlanStr;
     // Дата начала доработки Факт
-    private Timestamp startTaskFact;
+    private ZonedDateTime startTaskFact;
     @SuppressWarnings("unused")
     private String startTaskFactStr;
     // Анализ План
-    private Timestamp analiseEndPlan;
+    private ZonedDateTime analiseEndPlan;
     @SuppressWarnings("unused")
     private String analiseEndPlanStr;
     // Анализ
-    private Timestamp analiseEndFact;
+    private ZonedDateTime analiseEndFact;
     @SuppressWarnings("unused")
     private String analiseEndFactStr;
     // Плановые трудозатраты, чел/час анализ
@@ -36,19 +36,19 @@ public class WorkRepProjectDto implements WorkPlanTime, ProjectUpdateInter {
     // Плановые трудозатраты, чел/час разработки
     private Float laborDevelop;
     //начало разработки план
-    private Timestamp developEndPlan;
+    private ZonedDateTime developEndPlan;
     @SuppressWarnings("unused")
     private String developEndPlanStr;
     //начало разработки факт
-    private Timestamp developEndFact;
+    private ZonedDateTime developEndFact;
     @SuppressWarnings("unused")
     private String developEndFactStr;
     // Стабилизация прототипа план
-    private Timestamp debugEndPlan;
+    private ZonedDateTime debugEndPlan;
     @SuppressWarnings("unused")
     private String debugEndPlanStr;
     // Стабилизация прототипа факт
-    private Timestamp debugEndFact;
+    private ZonedDateTime debugEndFact;
     @SuppressWarnings("unused")
     private String debugEndFactStr;
     // Плановые трудозатраты, чел/час Стабилизация прототипа
@@ -56,29 +56,29 @@ public class WorkRepProjectDto implements WorkPlanTime, ProjectUpdateInter {
     // Порядковый номер релиза
     private String release;
     // Выдача релиза даты План
-    private Timestamp issuingReleasePlan;
+    private ZonedDateTime issuingReleasePlan;
     @SuppressWarnings("unused")
     private String issuingReleasePlanStr;
     // Выдача релиза дата факт
-    private Timestamp issuingReleaseFact;
+    private ZonedDateTime issuingReleaseFact;
     @SuppressWarnings("unused")
     private String issuingReleaseFactStr;
     // Стабилизация релиза
-    private Timestamp releaseEndPlan;
+    private ZonedDateTime releaseEndPlan;
     @SuppressWarnings("unused")
     private String releaseEndPlanStr;
     // Стабилизация релиза
-    private Timestamp releaseEndFact;
+    private ZonedDateTime releaseEndFact;
     @SuppressWarnings("unused")
     private String releaseEndFactStr;
     // Плановые трудозатраты, чел/час Стабилизация релиза
     private Float laborRelease;
     // ОПЭ релиза
-    private Timestamp opeEndPlan;
+    private ZonedDateTime opeEndPlan;
     @SuppressWarnings("unused")
     private String opeEndPlanStr;
     // ОПЭ релиза
-    private Timestamp opeEndFact;
+    private ZonedDateTime opeEndFact;
     @SuppressWarnings("unused")
     private String opeEndFactStr;
     // Плановые трудозатраты, чел/час ОПЭ
@@ -99,10 +99,10 @@ public class WorkRepProjectDto implements WorkPlanTime, ProjectUpdateInter {
     private Float timeOPE;
     // Анализ
     private Float timeWender;
-    private Timestamp issuePrototypePlan;
+    private ZonedDateTime issuePrototypePlan;
     @SuppressWarnings("unused")
     private String issuePrototypePlanStr;
-    private Timestamp issuePrototypeFact;
+    private ZonedDateTime issuePrototypeFact;
     @SuppressWarnings("unused")
     private String issuePrototypeFactStr;
     @SuppressWarnings("unused")
@@ -111,29 +111,29 @@ public class WorkRepProjectDto implements WorkPlanTime, ProjectUpdateInter {
 
     public WorkRepProjectDto(Long workId,
                              Long projectId,
-                             Timestamp startTaskPlan,
-                             Timestamp startTaskFact,
-                             Timestamp analiseEndPlan,
-                             Timestamp analiseEndFact,
-                             Timestamp developEndPlan,
-                             Timestamp developEndFact,
-                             Timestamp debugEndPlan,
-                             Timestamp debugEndFact,
+                             ZonedDateTime startTaskPlan,
+                             ZonedDateTime startTaskFact,
+                             ZonedDateTime analiseEndPlan,
+                             ZonedDateTime analiseEndFact,
+                             ZonedDateTime developEndPlan,
+                             ZonedDateTime developEndFact,
+                             ZonedDateTime debugEndPlan,
+                             ZonedDateTime debugEndFact,
                              String release,
-                             Timestamp issuingReleasePlan,
-                             Timestamp issuingReleaseFact,
-                             Timestamp releaseEndPlan,
-                             Timestamp releaseEndFact,
-                             Timestamp opeEndPlan,
-                             Timestamp opeEndFact,
+                             ZonedDateTime issuingReleasePlan,
+                             ZonedDateTime issuingReleaseFact,
+                             ZonedDateTime releaseEndPlan,
+                             ZonedDateTime releaseEndFact,
+                             ZonedDateTime opeEndPlan,
+                             ZonedDateTime opeEndFact,
                              Float timeAnalise,
                              Float timeDevelop,
                              Float timeDebug,
                              Float timeRelease,
                              Float timeOPE,
                              Float timeWender,
-                             Timestamp issuePrototypePlan,
-                             Timestamp issuePrototypeFact,
+                             ZonedDateTime issuePrototypePlan,
+                             ZonedDateTime issuePrototypeFact,
                              Boolean rated,
                              List<Long> childId) {
         this.workId = workId;
@@ -361,82 +361,82 @@ public class WorkRepProjectDto implements WorkPlanTime, ProjectUpdateInter {
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getStartTaskPlan() {
+    public ZonedDateTime getStartTaskPlan() {
         return startTaskPlan;
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getStartTaskFact() {
+    public ZonedDateTime getStartTaskFact() {
         return startTaskFact;
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getAnaliseEndPlan() {
+    public ZonedDateTime getAnaliseEndPlan() {
         return analiseEndPlan;
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getAnaliseEndFact() {
+    public ZonedDateTime getAnaliseEndFact() {
         return analiseEndFact;
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getDevelopEndPlan() {
+    public ZonedDateTime getDevelopEndPlan() {
         return developEndPlan;
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getDevelopEndFact() {
+    public ZonedDateTime getDevelopEndFact() {
         return developEndFact;
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getDebugEndPlan() {
+    public ZonedDateTime getDebugEndPlan() {
         return debugEndPlan;
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getDebugEndFact() {
+    public ZonedDateTime getDebugEndFact() {
         return debugEndFact;
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getIssuingReleasePlan() {
+    public ZonedDateTime getIssuingReleasePlan() {
         return issuingReleasePlan;
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getIssuingReleaseFact() {
+    public ZonedDateTime getIssuingReleaseFact() {
         return issuingReleaseFact;
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getReleaseEndPlan() {
+    public ZonedDateTime getReleaseEndPlan() {
         return releaseEndPlan;
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getReleaseEndFact() {
+    public ZonedDateTime getReleaseEndFact() {
         return releaseEndFact;
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getOpeEndPlan() {
+    public ZonedDateTime getOpeEndPlan() {
         return opeEndPlan;
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getOpeEndFact() {
+    public ZonedDateTime getOpeEndFact() {
         return opeEndFact;
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getIssuePrototypePlan() {
+    public ZonedDateTime getIssuePrototypePlan() {
         return issuePrototypePlan;
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getIssuePrototypeFact() {
+    public ZonedDateTime getIssuePrototypeFact() {
         return issuePrototypeFact;
     }
 

@@ -10,7 +10,7 @@ import ru.darujo.dto.workrep.WorkRepDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -93,10 +93,10 @@ public class WorkServiceIntegrationImp extends ServiceIntegrationImp {
         }
     }
 
-    public Boolean setWorkDate(Long workId, Long projectId, LocalDateTime dateWork) {
+    public Boolean setWorkDate(Long workId, Long projectId, LocalDate dateWork) {
         if (workId != null) {
             StringBuilder stringBuilder = new StringBuilder();
-            addTeg(stringBuilder, "dateTime", dateWork);
+            addTeg(stringBuilder, "date", dateWork);
             addTeg(stringBuilder, "projectId", projectId);
             String uri = "/refresh/" + workId + stringBuilder;
             //TODO Проверить

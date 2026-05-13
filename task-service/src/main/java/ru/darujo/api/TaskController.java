@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.convertor.TaskConvertor;
 import ru.darujo.dto.TaskDto;
 import ru.darujo.dto.ratestage.AttrDto;
@@ -15,7 +16,7 @@ import ru.darujo.integration.WorkServiceIntegrationImp;
 import ru.darujo.model.Task;
 import ru.darujo.service.TaskService;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Log4j2
@@ -53,9 +54,9 @@ public class TaskController {
                                long id,
                                @RequestParam(required = false)
                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                               LocalDateTime date
+                               ZonedDateTime date
     ) {
-        return taskService.refreshTime(id, date);
+        return taskService.refreshTime(id, DateHelper.zDTToLD(date));
 
     }
 

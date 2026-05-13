@@ -3,7 +3,7 @@ package ru.darujo.dto.work;
 import ru.darujo.assistant.helper.DateHelper;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public class WorkDto implements Serializable, WorkPlanTime {
@@ -17,23 +17,23 @@ public class WorkDto implements Serializable, WorkPlanTime {
     // Разработка прототипа
     private String name;
     // анализ
-    private Date analiseEndPlan;
-    private Date analiseEndFact;
-    private Date issuePrototypeFact;
+    private ZonedDateTime analiseEndPlan;
+    private ZonedDateTime analiseEndFact;
+    private ZonedDateTime issuePrototypeFact;
     // Стабилизация прототипа
-    private Date debugEndFact;
+    private ZonedDateTime debugEndFact;
     // Стабилизация релиза
-    private Date releaseEndFact;
+    private ZonedDateTime releaseEndFact;
     // ОПЭ релиза
-    private Date opeEndFact;
+    private ZonedDateTime opeEndFact;
     // № внутренней задачи (DEVBO)
     private String task;
     // Краткое описание внутренней задачи
     private String description;
     // Дата начала доработки План
-    private Date startTaskPlan;
+    private ZonedDateTime startTaskPlan;
     // Дата начала доработки Факт
-    private Date startTaskFact;
+    private ZonedDateTime startTaskFact;
     // Плановые трудозатраты, чел/час Анализ
     private Float laborAnalise;
     // Плановые трудозатраты, чел/час Разработка прототипа
@@ -49,9 +49,9 @@ public class WorkDto implements Serializable, WorkPlanTime {
     // Порядковый номер релиза
     private String release;
     // Выдача релиза даты План
-    private Date issuingReleasePlan;
+    private ZonedDateTime issuingReleasePlan;
     // Выдача релиза дата факт
-    private Date issuingReleaseFact;
+    private ZonedDateTime issuingReleaseFact;
     private Boolean rated;
     private List<Long> childId;
 
@@ -65,20 +65,20 @@ public class WorkDto implements Serializable, WorkPlanTime {
                    Long codeSap,
                    String codeZI,
                    String name,
-                   Date analiseEndPlan,
-                   Date analiseEndFact,
-                   Date developEndFact,
-                   Date debugEndFact,
-                   Date releaseEndFact,
-                   Date opeEndFact,
+                   ZonedDateTime analiseEndPlan,
+                   ZonedDateTime analiseEndFact,
+                   ZonedDateTime developEndFact,
+                   ZonedDateTime debugEndFact,
+                   ZonedDateTime releaseEndFact,
+                   ZonedDateTime opeEndFact,
                    String task,
                    String description,
-                   Date startTaskPlan,
-                   Date startTaskFact,
+                   ZonedDateTime startTaskPlan,
+                   ZonedDateTime startTaskFact,
                    Integer stageZI,
                    String release,
-                   Date issuingReleasePlan,
-                   Date issuingReleaseFact,
+                   ZonedDateTime issuingReleasePlan,
+                   ZonedDateTime issuingReleaseFact,
                    Boolean rated,
                    List<Long> childId) {
         this.id = id;
@@ -217,7 +217,7 @@ public class WorkDto implements Serializable, WorkPlanTime {
         return rated;
     }
 
-    private String dateToText(Date date) {
+    private String dateToText(ZonedDateTime date) {
         if (date == null) {
             return null;
         }

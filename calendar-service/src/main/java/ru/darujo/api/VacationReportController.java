@@ -11,6 +11,8 @@ import ru.darujo.dto.calendar.UserVacationsDto;
 import ru.darujo.service.VacationReportService;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
+
 
 @RestController()
 @RequestMapping("/v1/vacation/report")
@@ -27,16 +29,16 @@ public class VacationReportController {
                                         String nikName,
                                         @RequestParam(required = false)
                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                        LocalDate dateStart,
+                                        ZonedDateTime dateStart,
                                         @RequestParam(required = false)
                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                        LocalDate dateEnd,
+                                            ZonedDateTime dateEnd,
                                         @RequestParam(required = false)
                                         String periodSplit) {
-        DateHelper.checkNull(dateStart, "dateStart = ");
-        DateHelper.checkNull(dateEnd, "dateEnd = ");
+        LocalDate lDateStart = DateHelper.zDTToLD(dateStart, "dateStart = ");
+        LocalDate lDateEnd = DateHelper.zDTToLD(dateEnd, "dateEnd = ");
 
-        return vacationReportService.getUserVacations(nikName, dateStart, dateEnd, periodSplit);
+        return vacationReportService.getUserVacations(nikName, lDateStart, lDateEnd, periodSplit);
     }
 
     @GetMapping("/user/work/day/last")
@@ -44,16 +46,18 @@ public class VacationReportController {
                                     String username,
                                     @RequestParam(required = false)
                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                    LocalDate dateStart,
+                                    ZonedDateTime dateStart,
                                     @RequestParam(required = false)
                                     Integer dayMinus,
                                     @RequestParam(required = false)
                                     Boolean lastWeek) {
-
+        LocalDate lDateStart;
         if (dateStart == null) {
-            dateStart = LocalDate.now();
+            lDateStart = LocalDate.now();
+        } else {
+            lDateStart = DateHelper.zDTToLD(dateStart);
         }
-        return vacationReportService.getLastWorkDay(username, dateStart, dayMinus, lastWeek);
+        return vacationReportService.getLastWorkDay(username, lDateStart, dayMinus, lastWeek);
     }
 
     @GetMapping("/user/work/day")
@@ -61,24 +65,30 @@ public class VacationReportController {
                                  String username,
                                  @RequestParam(required = false)
                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                 LocalDate date
+                                 ZonedDateTime date
     ) {
+        LocalDate lDate;
         if (date == null) {
-            date = LocalDate.now();
+            lDate = LocalDate.now();
+        } else {
+            lDate = DateHelper.zDTToLD(date);
         }
-        return vacationReportService.isWorkDayUser(date, username);
+        return vacationReportService.isWorkDayUser(lDate, username);
     }
 
     @GetMapping("/work/day/after/week")
     public Boolean isDayAfterWeek(@RequestParam(required = false)
                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                  LocalDate date,
+                                      ZonedDateTime date,
                                   @RequestParam(required = false)
                                   Integer dayMinus) {
+        LocalDate lDate;
         if (date == null) {
-            date = LocalDate.now();
+            lDate = LocalDate.now();
+        } else {
+            lDate = DateHelper.zDTToLD(date);
         }
-        return vacationReportService.isDayAfterWeek(date, dayMinus);
+        return vacationReportService.isDayAfterWeek(lDate, dayMinus);
     }
 
 }

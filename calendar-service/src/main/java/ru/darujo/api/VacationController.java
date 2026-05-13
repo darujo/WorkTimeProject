@@ -5,10 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.calendar.VacationDto;
 import ru.darujo.service.VacationService;
 
-import java.time.LocalDate;
+import java.time.ZonedDateTime;
+
 
 @RestController()
 @RequestMapping("/v1/vacation")
@@ -46,10 +48,10 @@ public class VacationController {
                                                    String nikName,
                                                    @RequestParam(required = false)
                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                   LocalDate dateStart,
+                                                       ZonedDateTime dateStart,
                                                    @RequestParam(required = false)
                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                   LocalDate dateEnd,
+                                                       ZonedDateTime dateEnd,
                                                    @RequestParam(required = false)
                                                    Integer page,
                                                    @RequestParam(defaultValue = "10")
@@ -57,7 +59,7 @@ public class VacationController {
         if (nikName != null && nikName.equals("current")) {
             nikName = username;
         }
-        return vacationService.findAll(nikName, dateStart, dateEnd, page, size).map(vacationService::getVacationDtoAndAddFio);
+        return vacationService.findAll(nikName, DateHelper.zDTToLD(dateStart), DateHelper.zDTToLD(dateEnd), page, size).map(vacationService::getVacationDtoAndAddFio);
     }
 
 

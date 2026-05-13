@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.TaskDto;
 import ru.darujo.dto.WorkTimeDto;
@@ -18,6 +19,7 @@ import ru.darujo.integration.CalendarServiceIntegrationImp;
 import ru.darujo.integration.TaskServiceIntegrationImp;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -85,12 +87,12 @@ public class WorkTimeRepService {
         List<WeekWorkDto> weekWorkDTOs;
         if (taskId != null) {
             weekWorkDTOs = new ArrayList<>();
-            weekWorkDTOs.add(new WeekWorkDto((LocalDate) null, null, null, null));
+            weekWorkDTOs.add(new WeekWorkDto(null, null, null, null));
         } else if (weekSplit) {
             weekWorkDTOs = calendarServiceIntegration.getWeekTime(dateStart, dateEnd);
         } else {
             weekWorkDTOs = new ArrayList<>();
-            weekWorkDTOs.add(new WeekWorkDto(dateStart, dateEnd, calendarServiceIntegration.getWorkTime(dateStart, dateEnd), null));
+            weekWorkDTOs.add(new WeekWorkDto(DateHelper.getZDT(dateStart), DateHelper.getZDT(dateEnd), calendarServiceIntegration.getWorkTime(dateStart, dateEnd), null));
         }
         Map<Long, Integer> tasks = new HashMap<>();
         weekWorkDTOs
@@ -109,7 +111,7 @@ public class WorkTimeRepService {
                         userWorkDtoMap.put(userWorkDtoTotal.getNikName(), userWorkDtoTotal);
                     }
                     UserWorkDto finalUserWorkDtoTotal = userWorkDtoTotal;
-                    workTimeService.findWorkTime(taskId, nikName, null, weekWorkDto.getDayEndLocal(), null, weekWorkDto.getDayStartLocal(), null, null, null, null, null)
+                    workTimeService.findWorkTime(taskId, nikName, null, DateHelper.zDTToLD(weekWorkDto.getDayEnd()), null, DateHelper.zDTToLD(weekWorkDto.getDayStart()), null, null, null, null, null)
                             .forEach(workTime -> {
                                 Integer type = tasks.get(workTime.getTaskId());
                                 if (type == null) {
@@ -180,12 +182,12 @@ public class WorkTimeRepService {
             if (weekWorkDTOs.size() == 1) {
                 weekWorkDTO = weekWorkDTOs.get(0);
             } else {
-                weekWorkDTO = new WeekWorkDto(dateStart, dateEnd, 0f, null);
+                weekWorkDTO = new WeekWorkDto(DateHelper.getZDT(dateStart), DateHelper.getZDT(dateEnd), 0f, null);
             }
         } else {
-            weekWorkDTO = new WeekWorkDto(dateStart, dateEnd, calendarServiceIntegration.getWorkTime(dateStart, dateEnd), null);
+            weekWorkDTO = new WeekWorkDto(DateHelper.getZDT(dateStart), DateHelper.getZDT(dateEnd), calendarServiceIntegration.getWorkTime(dateStart, dateEnd), null);
         }
-        List<WorkTimeDto> workTimeDtoList = getWorkTimeDTOs(nikName, weekWorkDTO.getDayStartLocal(), weekWorkDTO.getDayEndLocal(), false);
+        List<WorkTimeDto> workTimeDtoList = getWorkTimeDTOs(nikName, weekWorkDTO.getDayStart(), weekWorkDTO.getDayEnd(), false);
         return new WorkUserFactPlan(
                 nikName,
                 weekWorkDTO.getDayStart(),
@@ -205,7 +207,7 @@ public class WorkTimeRepService {
             weekWorkDTOs = calendarServiceIntegration.getPeriodTime(dateStart, dateEnd, periodSplit);
         } else {
             weekWorkDTOs = new ArrayList<>();
-            weekWorkDTOs.add(new WeekWorkDto(dateStart, dateEnd, calendarServiceIntegration.getWorkTime(dateStart, dateEnd), null));
+            weekWorkDTOs.add(new WeekWorkDto(DateHelper.getZDT(dateStart), DateHelper.getZDT(dateEnd), calendarServiceIntegration.getWorkTime(dateStart, dateEnd), null));
         }
         List<UserDto> userDTOs;
 
@@ -227,7 +229,7 @@ public class WorkTimeRepService {
             AtomicReference<Float> timeFact = new AtomicReference<>(0f);
             weekWorkDTOs
                     .forEach(weekWorkDto -> {
-                        List<WorkTimeDto> workTimeDtoList = getWorkTimeDTOs(user.getNikName(), weekWorkDto.getDayStartLocal(), weekWorkDto.getDayEndLocal(), true);
+                        List<WorkTimeDto> workTimeDtoList = getWorkTimeDTOs(user.getNikName(), weekWorkDto.getDayStart(), weekWorkDto.getDayEnd(), true);
                         if (!workTimeDtoList.isEmpty()) {
                             timeFact.set(timeFact.get() + workTimeDtoList.get(0).getWorkTime());
                         }
@@ -254,8 +256,8 @@ public class WorkTimeRepService {
 
     private List<WorkTimeDto> getWorkTimeDTOs(
             String nikName,
-            LocalDate dateStart,
-            LocalDate dateEnd,
+            ZonedDateTime dateStart,
+            ZonedDateTime dateEnd,
             Boolean addTask
     ) {
         AtomicReference<Float> timeFactOne = new AtomicReference<>(0f);
@@ -268,9 +270,9 @@ public class WorkTimeRepService {
                         null,
                         nikName,
                         null,
-                        dateEnd,
+                        DateHelper.zDTToLD(dateEnd),
                         null,
-                        dateStart,
+                        DateHelper.zDTToLD(dateStart),
                         null,
                         null,
                         null,
@@ -296,7 +298,7 @@ public class WorkTimeRepService {
             if (vacationDTOs.isEmpty()) {
                 return;
             }
-            if (vacationDTOs.size() == 1 && !vacationDTOs.get(0).getDateStart().isAfter(workPeriodDto.getDayStartLocal()) && !vacationDTOs.get(0).getDateEnd().isBefore(workPeriodDto.getDayEndLocal())) {
+            if (vacationDTOs.size() == 1 && !vacationDTOs.get(0).getDateStart().isAfter(workPeriodDto.getDayStart()) && !vacationDTOs.get(0).getDateEnd().isBefore(workPeriodDto.getDayEnd())) {
                 workPeriodDto.setAllVacation(true);
 
             } else {

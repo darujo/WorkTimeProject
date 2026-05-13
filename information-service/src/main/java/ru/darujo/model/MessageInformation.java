@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Data
@@ -26,7 +26,7 @@ public class MessageInformation {
     private boolean isSend;
 
     @Column(name = "date_time")
-    private Timestamp dateTime;
+    private LocalDateTime dateTime;
 
     @Column(name = "file_for_disk")
     private String fileForDisk;
@@ -43,7 +43,7 @@ public class MessageInformation {
                               String title,
                               String text,
                               boolean isSend,
-                              Timestamp dateTime,
+                              LocalDateTime dateTime,
                               Long projectId) {
         this.id = id;
         this.author = author;
@@ -51,7 +51,7 @@ public class MessageInformation {
         this.title = title;
         this.text = text;
         this.isSend = isSend;
-        this.dateTime = dateTime == null ? new Timestamp(System.currentTimeMillis()) : dateTime;
+        this.dateTime = dateTime == null ? LocalDateTime.now() : dateTime;
         this.projectId = projectId;
     }
 }

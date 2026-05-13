@@ -7,12 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Slf4j
@@ -118,17 +117,6 @@ public class ServiceIntegrationImp implements ServiceIntegration {
         }
     }
 
-    protected void addTeg(StringBuilder stringBuilder, String str, LocalDateTime value) {
-        if (value != null) {
-            if (!stringBuilder.isEmpty()) {
-                stringBuilder.append("&");
-            } else {
-                stringBuilder.append("?");
-            }
-            stringBuilder.append(str).append("=").append(value.format(DateTimeFormatter.ISO_DATE_TIME)).append("Z");
-        }
-    }
-
     protected void addTeg(StringBuilder stringBuilder, String str, LocalDate value) {
         if (value != null) {
             if (!stringBuilder.isEmpty()) {
@@ -137,7 +125,7 @@ public class ServiceIntegrationImp implements ServiceIntegration {
                 stringBuilder.append("?");
             }
 
-            stringBuilder.append(str).append("=").append(value);
+            stringBuilder.append(str).append("=").append(DateHelper.getZDT(value));
         }
     }
 

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.dto.user.UserInfoDto;
@@ -21,7 +22,7 @@ import ru.darujo.specifications.Specifications;
 import ru.darujo.type.MessageSenderType;
 import ru.darujo.type.MessageType;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,15 +58,15 @@ public class MessageInformationService {
     }
 
     Map<MessageType, Map<MessageSenderType, List<UserInfoDto>>> messageTypeListMap = null;
-    private Timestamp lastInitMesType;
+    private LocalDateTime lastInitMesType;
 
     @Transactional
     public void initMesType() {
         log.info("init mess");
         if (messageTypeListMap == null
                 || lastInitMesType == null
-                || lastInitMesType.before(new Timestamp(System.currentTimeMillis()))) {
-            lastInitMesType = new Timestamp(System.currentTimeMillis() + 10 * 60 * 1000);
+                || lastInitMesType.isBefore(LocalDateTime.now())) {
+            lastInitMesType = LocalDateTime.now().plusMinutes(10);
             try {
                 messageTypeListMap = userServiceIntegration.getUserMessageDTOs().getMessageTypeListMap();
                 log.info("init mess ok");
@@ -111,7 +112,7 @@ public class MessageInformationService {
             return false;
         }
         if (userSendList != null) {
-            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getTitle(), messageInfoDto.getText(), true, messageInfoDto.getDataTime(), null));
+            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getTitle(), messageInfoDto.getText(), true, DateHelper.zDTToLDT(messageInfoDto.getDataTime()), null));
             userSendList.forEach(userInfoDto ->
                     saveUserSend(new UserSend(
                             userInfoDto.getSenderType(),
@@ -129,7 +130,7 @@ public class MessageInformationService {
                             messageInfoDto.getTitle(),
                             messageInfoDto.getText(),
                             true,
-                            messageInfoDto.getDataTime(),
+                            DateHelper.zDTToLDT(messageInfoDto.getDataTime()),
                             null));
             saveUserSend(new UserSend(
                     messageInfoDto.getUserInfoDto().getSenderType(),
@@ -138,9 +139,9 @@ public class MessageInformationService {
                     messageInfoDto.getUserInfoDto().getOriginMessageId(),
                     messageInformation));
         } else if (messageTypeListMap == null) {
-            saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getTitle(), messageInfoDto.getText(), false, messageInfoDto.getDataTime(), null));
+            saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getTitle(), messageInfoDto.getText(), false, DateHelper.zDTToLDT(messageInfoDto.getDataTime()), null));
         } else {
-            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getTitle(), messageInfoDto.getText(), true, messageInfoDto.getDataTime(), null));
+            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getTitle(), messageInfoDto.getText(), true, DateHelper.zDTToLDT(messageInfoDto.getDataTime()), null));
             messageTypeListMap.get(messageInfoDto.getType()).forEach((senderType, userInfoDTOList) ->
                     userInfoDTOList.forEach(userInfoDto ->
                             saveUserSend(new UserSend(userInfoDto.getSenderType(), userInfoDto.getTelegramId(), userInfoDto.getThreadId(), null, messageInformation))));
@@ -225,7 +226,7 @@ public class MessageInformationService {
         if (messageInfoDto.getUserInfoDto() != null && messageTypeListMap == null) {
             log.error("Нет списка получателей");
         } else {
-            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getTitle(), messageInfoDto.getText(), false, messageInfoDto.getDataTime(), projectId));
+            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getTitle(), messageInfoDto.getText(), false, DateHelper.zDTToLDT(messageInfoDto.getDataTime()), projectId));
             if (messageInfoDto.getUserInfoDto() != null) {
                 saveUserSend(new UserSend(
                         messageInfoDto.getUserInfoDto().getSenderType(),

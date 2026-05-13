@@ -4,7 +4,11 @@ import ru.darujo.dto.user.UserFio;
 import ru.darujo.service.CodeService;
 
 import java.io.Serializable;
-import java.util.*;
+import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class UserWorkDto implements UserFio, Serializable {
     public UserWorkDto() { }
@@ -13,14 +17,14 @@ public class UserWorkDto implements UserFio, Serializable {
     private String authorFirstName;
     private String authorLastName;
     private String authorPatronymic;
-    protected Date dateStart;
-    protected Date dateEnd;
+    protected ZonedDateTime dateStart;
+    protected ZonedDateTime dateEnd;
     private Float workPlan;
     private Float workAllFact;
     protected Map<Integer, Float> workTime = new LinkedHashMap<>();
     protected Map<Integer, Set<Long>> workTask = new LinkedHashMap<>();
 
-    public UserWorkDto(String nikName, String authorFirstName, String authorLastName, String authorPatronymic, Date dateStart, Date dateEnd, Float workPlan) {
+    public UserWorkDto(String nikName, String authorFirstName, String authorLastName, String authorPatronymic, ZonedDateTime dateStart, ZonedDateTime dateEnd, Float workPlan) {
         this.nikName = nikName;
         this.authorFirstName = authorFirstName;
         this.authorLastName = authorLastName;
@@ -106,11 +110,11 @@ public class UserWorkDto implements UserFio, Serializable {
 
     }
 
-    public Date getDateStart() {
+    public ZonedDateTime getDateStart() {
         return dateStart;
     }
 
-    public Date getDateEnd() {
+    public ZonedDateTime getDateEnd() {
         return dateEnd;
     }
 

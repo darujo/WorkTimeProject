@@ -6,10 +6,8 @@ import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.ColorDto;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.time.Duration;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 
 public class WeekWorkDto implements Serializable, Cloneable {
@@ -17,39 +15,23 @@ public class WeekWorkDto implements Serializable, Cloneable {
     }
 
 
-    private LocalDate dayStart;
-    private LocalDate dayEnd;
+    private ZonedDateTime dayStart;
+    private ZonedDateTime dayEnd;
     private Float time;
     private HashMap<DayTypeDto, Integer> dayTypes;
 
-
-    public WeekWorkDto(LocalDate dayStart, LocalDate dayEnd, Float time, HashMap<DayTypeDto, Integer> dayTypes) {
+    public WeekWorkDto(ZonedDateTime dayStart, ZonedDateTime dayEnd, Float time, HashMap<DayTypeDto, Integer> dayTypes) {
         this.dayStart = dayStart;
         this.dayEnd = dayEnd;
         this.time = time;
         this.dayTypes = dayTypes;
     }
 
-    public WeekWorkDto(Timestamp dayStart, Timestamp dayEnd, Float time, HashMap<DayTypeDto, Integer> dayTypes) {
-        this.dayStart = dayStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        this.dayEnd = dayEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        this.time = time;
-        this.dayTypes = dayTypes;
-    }
-
-    public Timestamp getDayStart() {
-        return Timestamp.valueOf(dayStart.atStartOfDay());
-    }
-
-    public Timestamp getDayEnd() {
-        return Timestamp.valueOf(dayEnd.atStartOfDay());
-    }
-
-    public LocalDate getDayStartLocal() {
+    public ZonedDateTime getDayStart() {
         return dayStart;
     }
 
-    public LocalDate getDayEndLocal() {
+    public ZonedDateTime getDayEnd() {
         return dayEnd;
     }
 
@@ -106,7 +88,7 @@ public class WeekWorkDto implements Serializable, Cloneable {
             }
         }
         if (colorRGB != null) {
-            long days = Duration.between(dayStart.atStartOfDay(), dayEnd.atStartOfDay()).toDays() + 1;
+            long days = Duration.between(dayStart, dayEnd).toDays() + 1;
             for (long i = 1; i < days - countColor; i++) {
                 colorRGB.addColor(ColorHelper.WHITE);
             }

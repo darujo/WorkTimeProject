@@ -1,5 +1,6 @@
 package ru.darujo.convertor;
 
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.WorkTimeDto;
 import ru.darujo.model.WorkTime;
 
@@ -23,7 +24,7 @@ public class WorkTimeConvertor {
                 .createWorkTime()
                 .setId(workTimeDto.getId())
                 .setTaskId(workTimeDto.getTaskId())
-                .setWorkDate(workTimeDto.getWorkDate())
+                .setWorkDate(DateHelper.zDTToLD(workTimeDto.getWorkDate()))
                 .setNikName(workTimeDto.getNikName())
                 .setWorkTime(workTimeDto.getWorkTime())
                 .setComment(workTimeDto.getComment())

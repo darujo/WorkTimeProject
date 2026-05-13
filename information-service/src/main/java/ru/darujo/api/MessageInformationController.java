@@ -9,7 +9,7 @@ import ru.darujo.service.MessageInformationService;
 import ru.darujo.service.ScheduleService;
 import ru.darujo.type.MessageSenderType;
 
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 
 @RestController()
 @RequestMapping("/v1/mes_info")
@@ -35,7 +35,7 @@ public class MessageInformationController {
             messageInfoDto.setAuthor(username);
         }
         if (messageInfoDto.getDataTime() == null) {
-            messageInfoDto.setDataTime(new Timestamp(System.currentTimeMillis()));
+            messageInfoDto.setDataTime(ZonedDateTime.now());
         }
         return messageInformationService.addMessage(messageInfoDto);
     }

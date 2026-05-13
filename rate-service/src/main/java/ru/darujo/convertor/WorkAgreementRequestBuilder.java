@@ -1,5 +1,6 @@
 package ru.darujo.convertor;
 
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.ratestage.StatusRequest;
 import ru.darujo.dto.ratestage.WorkAgreementRequestDto;
 import ru.darujo.dto.ratestage.WorkAgreementRequestEditDto;
@@ -7,7 +8,9 @@ import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.model.WorkAgreementRequest;
 import ru.darujo.service.WorkAgreementResponseService;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public class WorkAgreementRequestBuilder {
     public static WorkAgreementRequestBuilder createWorkAgreementRequest() {
@@ -16,10 +19,10 @@ public class WorkAgreementRequestBuilder {
 
     private Long id;
     private String nikName;
-    private Timestamp timestamp;
+    private LocalDateTime timestamp;
     private String version;
     private String comment;
-    private Timestamp term;
+    private LocalDate term;
     private String status;
     private Long workId;
 
@@ -39,8 +42,13 @@ public class WorkAgreementRequestBuilder {
         return this;
     }
 
-    public WorkAgreementRequestBuilder setTimestamp(Timestamp timestamp) {
+    public WorkAgreementRequestBuilder setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+        return this;
+    }
+
+    public WorkAgreementRequestBuilder setTimestamp(ZonedDateTime zonedDateTime) {
+        this.timestamp = DateHelper.zDTToLDT(zonedDateTime);
         return this;
     }
 
@@ -54,10 +62,16 @@ public class WorkAgreementRequestBuilder {
         return this;
     }
 
-    public WorkAgreementRequestBuilder setTerm(Timestamp term) {
+    public WorkAgreementRequestBuilder setTerm(LocalDate term) {
         this.term = term;
         return this;
     }
+
+    public WorkAgreementRequestBuilder setTerm(ZonedDateTime zonedDateTime) {
+        this.term = DateHelper.zDTToLD(zonedDateTime);
+        return this;
+    }
+
     public WorkAgreementRequestBuilder setStatus(StatusRequest status) {
         this.status = status.toString();
         return this;
@@ -68,7 +82,7 @@ public class WorkAgreementRequestBuilder {
     }
 
     public WorkAgreementRequestEditDto getWorkAgreementRequestEditDto() {
-        return new WorkAgreementRequestEditDto(id, nikName, timestamp, version, comment, term, StatusRequest.valueOf(status), workId);
+        return new WorkAgreementRequestEditDto(id, nikName, DateHelper.getZDT(timestamp), version, comment, DateHelper.getZDT(term), StatusRequest.valueOf(status), workId);
     }
 
     public WorkAgreementRequest getWorkAgreementRequest() {
@@ -79,10 +93,10 @@ public class WorkAgreementRequestBuilder {
         WorkAgreementRequestDto workAgreementRequestDto =new WorkAgreementRequestDto(
                 id,
                 nikName,
-                timestamp,
+                DateHelper.getZDT(timestamp),
                 version,
                 comment,
-                term,
+                DateHelper.getZDT(term),
                 StatusRequest.valueOf(status),
                 workId,
 

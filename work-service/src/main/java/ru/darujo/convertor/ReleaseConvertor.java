@@ -1,5 +1,6 @@
 package ru.darujo.convertor;
 
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.work.ReleaseEditDto;
 import ru.darujo.model.Release;
 import ru.darujo.model.ReleaseFull;
@@ -19,9 +20,9 @@ public class ReleaseConvertor {
         Release release = new Release(
                 releaseEditDto.getId(),
                 releaseEditDto.getName(),
-                releaseEditDto.getIssuingReleasePlan(),
+                DateHelper.zDTToLD(releaseEditDto.getIssuingReleasePlan()),
                 sort);
-        return new ReleaseProject(null, releaseEditDto.getIssuingReleaseFact(), release, projectId);
+        return new ReleaseProject(null, DateHelper.zDTToLD(releaseEditDto.getIssuingReleaseFact()), release, projectId);
     }
 
     public static ReleaseEditDto getReleaseDto(ReleaseFull releaseFull) {
@@ -31,8 +32,8 @@ public class ReleaseConvertor {
                 release.getId(),
                 release.getName(),
                 releaseProject == null ? null : releaseProject.getProjectId(),
-                release.getIssuingReleasePlan(),
-                releaseProject == null ? null : releaseProject.getIssuingReleaseFact(),
+                DateHelper.getZDT(release.getIssuingReleasePlan()),
+                releaseProject == null ? null : DateHelper.getZDT(releaseProject.getIssuingReleaseFact()),
                 release.getSort());
     }
 }

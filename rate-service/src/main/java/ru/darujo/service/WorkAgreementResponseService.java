@@ -143,13 +143,13 @@ public class WorkAgreementResponseService {
         Specification<@NonNull WorkAgreementResponse> specification = Specification.unrestricted();
         specification = Specification.where(Specifications.eq(specification, "workId", workId));
         specification = Specifications.eq(specification, "request", request);
-        return workAgreementResponseRepository.findAll(specification, Sort.by("workId").and(Sort.by("requestId").and(Sort.by("timestamp"))));
+        return workAgreementResponseRepository.findAll(specification, Sort.by("workId").and(Sort.by("requestId").and(Sort.by("dateTime"))));
     }
 
     public String toString(@NonNull WorkAgreementResponse newObj) {
         return
                 "Пользователь: " + UserServiceIntegrationImp.getInstance().getFio(newObj.getNikName()) + "\n" +
-                        "Время: " + DateHelper.dateTimeToStr(newObj.getTimestamp()) + "\n" +
+                        "Время: " + DateHelper.dateTimeToStr(newObj.getDateTime()) + "\n" +
                         (newObj.getComment() != null && !newObj.getComment().isBlank() ? ("Комментарий: " + newObj.getComment() + "\n") : "") +
                         "Статус: " + StatusResponse.valueOf(newObj.getStatus()).getName() + "\n";
 
@@ -161,7 +161,7 @@ public class WorkAgreementResponseService {
         }
         return
                 compareField("Пользователь", UserServiceIntegrationImp.getInstance().getFio(old.getNikName()), UserServiceIntegrationImp.getInstance().getFio(newObj.getNikName())) +
-                        compareField("Время", DateHelper.dateTimeToStr(old.getTimestamp()), DateHelper.dateTimeToStr(newObj.getTimestamp())) +
+                        compareField("Время", DateHelper.dateTimeToStr(old.getDateTime()), DateHelper.dateTimeToStr(newObj.getDateTime())) +
                         compareField("Комментарий", old.getComment(), newObj.getComment()) +
                         compareField("Статус", StatusResponse.valueOf(old.getStatus()).getName(), StatusResponse.valueOf(newObj.getStatus()).getName());
     }

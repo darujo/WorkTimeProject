@@ -18,7 +18,6 @@ import ru.darujo.model.StageZiFind;
 import ru.darujo.model.WorkFull;
 import ru.darujo.service.WorkService;
 
-import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -148,11 +147,10 @@ public class WorkController {
 
     @GetMapping("/refresh/{id}")
     public boolean taskRefresh(@PathVariable long id,
-                               @RequestParam(required = false, name = "dateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStr,
+                               @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateTime,
                                @RequestParam Long projectId
     ) {
-        Timestamp date = DateHelper.DTZToDate(dateStr, "date", false);
-        return workService.setWorkDate(id, projectId, date);
+        return workService.setWorkDate(id, projectId, DateHelper.zDTToLD(dateTime));
     }
 
     @GetMapping("/rate")

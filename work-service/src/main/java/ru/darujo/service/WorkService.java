@@ -24,7 +24,8 @@ import ru.darujo.specifications.Specifications;
 import ru.darujo.type.MessageType;
 import ru.darujo.url.UrlWorkTime;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -193,8 +194,8 @@ public class WorkService {
 
     }
 
-    public void checkDate(Timestamp dateStart, Timestamp dateEnd, String dateStartMes, String dateEndMes) {
-        if (dateStart != null && dateEnd != null && dateStart.compareTo(dateEnd) > 0) {
+    public void checkDate(LocalDate dateStart, LocalDate dateEnd, String dateStartMes, String dateEndMes) {
+        if (dateStart != null && dateEnd != null && dateStart.isAfter(dateEnd)) {
             throw new ResourceNotFoundRunTime("Дата " + dateEndMes + " не может быть раньше " + dateStartMes);
         }
     }
@@ -258,7 +259,7 @@ public class WorkService {
     }
 
     private void sendInform(String login, MessageType type, String text) {
-        infoServiceIntegration.addMessage(new MessageInfoDto(new Timestamp(System.currentTimeMillis()), login, type, text));
+        infoServiceIntegration.addMessage(new MessageInfoDto(ZonedDateTime.now(), login, type, text));
     }
 
 
@@ -487,7 +488,7 @@ public class WorkService {
         return work;
     }
 
-    public boolean setWorkDate(long workId, Long projectId, Timestamp date) {
+    public boolean setWorkDate(long workId, Long projectId, LocalDate date) {
         Work work = addProject(workId, projectId);
         return workProjectService.setWorkDate(work, projectId, date);
     }

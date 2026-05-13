@@ -2,12 +2,12 @@ package ru.darujo.model;
 
 import lombok.Getter;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 
 @Getter
 public class SaveDateDevelopEndFact {
     private boolean save;
-    private Timestamp date;
+    private LocalDate date;
 
 
     public SaveDateDevelopEndFact setSave(boolean save) {
@@ -15,7 +15,7 @@ public class SaveDateDevelopEndFact {
         return this;
     }
 
-    public SaveDateDevelopEndFact setDate(Timestamp date) {
+    public SaveDateDevelopEndFact setDate(LocalDate date) {
         this.date = date;
         return this;
     }

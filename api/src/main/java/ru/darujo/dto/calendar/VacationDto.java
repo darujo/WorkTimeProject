@@ -4,14 +4,15 @@ import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.user.UserFio;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.ZonedDateTime;
+
 
 public class VacationDto implements UserFio, Serializable {
     @SuppressWarnings("unused")
     public VacationDto() {
     }
 
-    public VacationDto(Long id, String nikName, LocalDate dateStart, LocalDate dateEnd) {
+    public VacationDto(Long id, String nikName, ZonedDateTime dateStart, ZonedDateTime dateEnd) {
         this.id = id;
         this.nikName = nikName;
         this.dateStart = dateStart;
@@ -25,8 +26,8 @@ public class VacationDto implements UserFio, Serializable {
     private String lastName;
 
     private String patronymic;
-    private LocalDate dateStart;
-    private LocalDate dateEnd;
+    private ZonedDateTime dateStart;
+    private ZonedDateTime dateEnd;
     private Integer days;
     public Long getId() {
         return id;
@@ -36,11 +37,11 @@ public class VacationDto implements UserFio, Serializable {
         return nikName;
     }
 
-    public LocalDate getDateStart() {
+    public ZonedDateTime getDateStart() {
         return dateStart;
     }
 
-    public LocalDate getDateEnd() {
+    public ZonedDateTime getDateEnd() {
         return dateEnd;
     }
 
@@ -93,7 +94,7 @@ public class VacationDto implements UserFio, Serializable {
         this.days = days;
     }
 
-    public void setDateEnd(LocalDate dateEnd) {
+    public void setDateEnd(ZonedDateTime dateEnd) {
         this.dateEnd = dateEnd;
     }
 }

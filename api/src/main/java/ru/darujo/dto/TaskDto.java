@@ -4,7 +4,7 @@ import ru.darujo.dto.user.UserFio;
 import ru.darujo.service.CodeService;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public class TaskDto implements Serializable, UserFio {
     private Long id;
@@ -41,7 +41,7 @@ public class TaskDto implements Serializable, UserFio {
 
     private String codeZi;
     private String nameZi;
-    private LocalDateTime timeCreate;
+    private ZonedDateTime timeCreate;
 
     public void setNikName(String nikName) {
         this.nikName = nikName;
@@ -114,7 +114,7 @@ public class TaskDto implements Serializable, UserFio {
                    String description,
                    Integer type,
                    Long workId,
-                   LocalDateTime timeCreate) {
+                   ZonedDateTime timeCreate) {
         this.id = id;
         this.nikName = nikName;
         this.authorFirstName = authorFirstName;
@@ -140,7 +140,7 @@ public class TaskDto implements Serializable, UserFio {
         this.authorPatronymic = authorPatronymic;
     }
 
-    public LocalDateTime getTimeCreate() {
+    public ZonedDateTime getTimeCreate() {
         return timeCreate;
     }
 }

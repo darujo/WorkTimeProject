@@ -3,7 +3,7 @@ package ru.darujo.dto.ratestage;
 import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.user.UserFio;
 
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public class WorkAgreementRequestDto implements UserFio {
@@ -17,12 +17,12 @@ public class WorkAgreementRequestDto implements UserFio {
 
     private Long id;
     private String nikName;
-    private Timestamp timestamp;
+    private ZonedDateTime timestamp;
     @SuppressWarnings("unused")
     private String timestampStr;
     private String version;
     private String comment;
-    private Timestamp term;
+    private ZonedDateTime term;
     @SuppressWarnings("unused")
     private String termStr;
     private StatusRequest status;
@@ -32,10 +32,10 @@ public class WorkAgreementRequestDto implements UserFio {
     public WorkAgreementRequestDto(
             Long id,
             String nikName,
-            Timestamp timestamp,
+            ZonedDateTime timestamp,
             String version,
             String comment,
-            Timestamp term,
+            ZonedDateTime term,
             StatusRequest status,
             Long workId,
             List<WorkAgreementResponseDto> listResponse) {
@@ -61,7 +61,7 @@ public class WorkAgreementRequestDto implements UserFio {
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getTimestamp() {
+    public ZonedDateTime getTimestamp() {
         return timestamp;
     }
 
@@ -76,7 +76,7 @@ public class WorkAgreementRequestDto implements UserFio {
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getTerm() {
+    public ZonedDateTime getTerm() {
         return term;
     }
 

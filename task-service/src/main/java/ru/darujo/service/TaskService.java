@@ -18,6 +18,7 @@ import ru.darujo.model.Task;
 import ru.darujo.repository.TaskRepository;
 import ru.darujo.specifications.Specifications;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -152,7 +153,7 @@ public class TaskService {
 
 
     @Transactional
-    public boolean refreshTime(long id, LocalDateTime date) {
+    public boolean refreshTime(long id, LocalDate date) {
 
         Task task = findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Задача не найден"));
         task.setRefresh(LocalDateTime.now());

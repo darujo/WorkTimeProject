@@ -15,7 +15,7 @@ import ru.darujo.model.WorkProject;
 import ru.darujo.repository.WorkProjectRepository;
 import ru.darujo.specifications.Specifications;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -64,11 +64,11 @@ public class WorkProjectService {
         )
                 ||
                 (workProject.getDevelopEndFact() == null
-                        || workProject.getDevelopEndFact().after(workProject.getIssuePrototypeFact()))
+                        || workProject.getDevelopEndFact().isAfter(workProject.getIssuePrototypeFact()))
         ) {
             SaveDateDevelopEndFact saveDateDevelopEndFact = checkSetDevelopEndDate(workProject, null);
             if (saveDateDevelopEndFact.isSave()) {
-                if (workProject.getDevelopEndFact().before(saveDateDevelopEndFact.getDate())) {
+                if (workProject.getDevelopEndFact().isBefore(saveDateDevelopEndFact.getDate())) {
                     saveDateDevelopEndFact.setDate(workProject.getDevelopEndFact());
                 }
 
@@ -78,7 +78,7 @@ public class WorkProjectService {
 
     }
 
-    public boolean setWorkDate(Work work, long projectId, Timestamp date) {
+    public boolean setWorkDate(Work work, long projectId, LocalDate date) {
         WorkProject workProject = getWorkProject(work, projectId);
         boolean save1 = checkSetDevelopStartDate(workProject, date);
         if (save1) {
@@ -95,20 +95,20 @@ public class WorkProjectService {
         return save1 || save2.isSave();
     }
 
-    private boolean checkSetDevelopStartDate(WorkProject workProject, Timestamp date) {
+    private boolean checkSetDevelopStartDate(WorkProject workProject, LocalDate date) {
         boolean save = false;
         if (date != null) {
-            if (workProject.getDevelopStartFact() == null || workProject.getDevelopStartFact().after(date)) {
+            if (workProject.getDevelopStartFact() == null || workProject.getDevelopStartFact().isAfter(date)) {
                 save = true;
             }
         }
         return save;
     }
 
-    public SaveDateDevelopEndFact checkSetDevelopEndDate(WorkProject work, Timestamp date) {
+    public SaveDateDevelopEndFact checkSetDevelopEndDate(WorkProject work, LocalDate date) {
         SaveDateDevelopEndFact save = new SaveDateDevelopEndFact();
         if (date != null) {
-            if ((work.getIssuePrototypeFact() == null || (work.getIssuePrototypeFact().after(date) || work.getIssuePrototypeFact().equals(date))) && work.getAnaliseEndFact() != null && (work.getAnaliseEndFact().equals(date) || work.getAnaliseEndFact().before(date)) && (work.getDevelopEndFact() == null || work.getDevelopEndFact().before(date))) {
+            if ((work.getIssuePrototypeFact() == null || (work.getIssuePrototypeFact().isAfter(date) || work.getIssuePrototypeFact().equals(date))) && work.getAnaliseEndFact() != null && (work.getAnaliseEndFact().equals(date) || work.getAnaliseEndFact().isBefore(date)) && (work.getDevelopEndFact() == null || work.getDevelopEndFact().isBefore(date))) {
                 save.setDate(date).setSave(true);
             }
         } else {
@@ -118,7 +118,7 @@ public class WorkProjectService {
                     if (date == null) {
                         return save;
                     }
-                    if (work.getAnaliseEndFact().equals(date) || work.getAnaliseEndFact().before(date)) {
+                    if (work.getAnaliseEndFact().equals(date) || work.getAnaliseEndFact().isBefore(date)) {
                         save.setSave(true).setDate(date);
                     }
                 } catch (ResourceNotFoundException ex) {
@@ -129,7 +129,7 @@ public class WorkProjectService {
         return save;
     }
 
-    private Timestamp getLastDateWorkBefore(Long workId, Timestamp date) throws ResourceNotFoundException {
+    private LocalDate getLastDateWorkBefore(Long workId, LocalDate date) throws ResourceNotFoundException {
         return taskServiceIntegration.getLastTime(workId, date, null);
 
     }

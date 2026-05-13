@@ -31,7 +31,7 @@ public class UpdateController {
                              @RequestParam(name = "type", required = false) List<String> types,
                              @RequestPart(required = false, name = "description") String description,
                              @RequestPart(required = false, name = "file") List<MultipartFile> multipartFiles) {
-        return updateService.loadUpdate(username, dateZoneUpdate, DateHelper.convertListNotNull(types), description, multipartFiles) ? "Success!" : "Failed!";
+        return updateService.loadUpdate(username, DateHelper.zDTToLDT(dateZoneUpdate), DateHelper.convertListNotNull(types), description, multipartFiles) ? "Success!" : "Failed!";
 
     }
 

@@ -3,6 +3,7 @@ package ru.darujo.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.workperiod.UserWorkDto;
 import ru.darujo.dto.workperiod.WorkUserFactPlan;
@@ -10,6 +11,7 @@ import ru.darujo.dto.workrep.UserWorkPeriodDto;
 import ru.darujo.service.WorkTimeRepService;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @RestController()
@@ -26,42 +28,51 @@ public class WorkTimeRepController {
     @GetMapping("/time")
     public Float getTimeWork(@RequestParam(required = false) Long[] taskId,
                              @RequestParam(required = false) String nikName,
-                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateLe,
-                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateGt,
+                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLe,
+                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGt,
                              @RequestParam(required = false) String type) {
-        if (dateLe == null && dateGt == null) {
+        LocalDate lDateGt = DateHelper.zDTToLD(dateGt);
+        LocalDate lDateLe = DateHelper.zDTToLD(dateLe);
+
+        if (lDateLe == null && lDateGt == null) {
             return 0f;
         }
-        return workTimeRepService.getTimeWork(taskId, nikName, dateGt, dateLe, type);
+        return workTimeRepService.getTimeWork(taskId, nikName, lDateGt, lDateLe, type);
     }
 
     @GetMapping("/user")
     public ListString getFactUser(@RequestParam(required = false) Long[] taskId,
-                                  @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateLe
+                                  @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLe
     ) {
-        return workTimeRepService.getFactUser(taskId, dateLe);
+        LocalDate lDateLe = DateHelper.zDTToLD(dateLe);
+        return workTimeRepService.getFactUser(taskId, lDateLe);
     }
 
     @GetMapping("/user/work")
     public List<UserWorkPeriodDto> getUserWork(@RequestParam(required = false) String nikName,
                                                @RequestParam(defaultValue = "week") String periodSplit,
-                                               @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateStart,
-                                               @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateEnd,
+                                               @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStart,
+                                               @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEnd,
                                                @RequestHeader String username) {
         if (nikName == null || nikName.isEmpty()) {
             nikName = username;
         }
         periodSplit = periodConvert(periodSplit);
-        return workTimeRepService.getUserWork(nikName, periodSplit, dateStart, dateEnd);
+        LocalDate lDateStart = DateHelper.zDTToLD(dateStart);
+        LocalDate lDateEnd = DateHelper.zDTToLD(dateEnd);
+
+        return workTimeRepService.getUserWork(nikName, periodSplit, lDateStart, lDateEnd);
     }
 
     @GetMapping("/user/work/only")
     public WorkUserFactPlan getUserWorkOnly(@RequestParam(required = false) String nikName,
                                             @RequestParam(defaultValue = "week") String periodSplit,
-                                            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateStart,
-                                            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateEnd) {
+                                            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStart,
+                                            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEnd) {
         periodSplit = periodConvert(periodSplit);
-        return workTimeRepService.getUserWorkOnly(nikName, periodSplit, dateStart, dateEnd);
+        LocalDate lDateStart = DateHelper.zDTToLD(dateStart);
+        LocalDate lDateEnd = DateHelper.zDTToLD(dateEnd);
+        return workTimeRepService.getUserWorkOnly(nikName, periodSplit, lDateStart, lDateEnd);
     }
 
     private String periodConvert(String periodSplit) {
@@ -84,9 +95,11 @@ public class WorkTimeRepController {
                                          @RequestParam(required = false) String nikName,
                                          @RequestParam(defaultValue = "false") Boolean addTotal,
                                          @RequestParam(defaultValue = "true") Boolean weekSplit,
-                                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateStart,
-                                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateEnd) {
-        return workTimeRepService.getWeekWork(taskId, nikName, addTotal, weekSplit, dateStart, dateEnd);
+                                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStart,
+                                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEnd) {
+        LocalDate lDateStart = DateHelper.zDTToLD(dateStart);
+        LocalDate lDateEnd = DateHelper.zDTToLD(dateEnd);
+        return workTimeRepService.getWeekWork(taskId, nikName, addTotal, weekSplit, lDateStart, lDateEnd);
     }
 
 
@@ -98,8 +111,10 @@ public class WorkTimeRepController {
 
     @GetMapping("/lastTime")
     public LocalDate getLastTime(@RequestParam(required = false) Long[] taskId,
-                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateLe,
-                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateGe) {
-            return workTimeRepService.getLastTime(taskId, dateGe, dateLe);
-        }
+                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLe,
+                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGe) {
+        LocalDate lDateLe = DateHelper.zDTToLD(dateLe);
+        LocalDate lDateGe = DateHelper.zDTToLD(dateGe);
+        return workTimeRepService.getLastTime(taskId, lDateGe, lDateLe);
     }
+}

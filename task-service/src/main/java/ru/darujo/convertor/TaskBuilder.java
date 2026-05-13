@@ -1,5 +1,6 @@
 package ru.darujo.convertor;
 
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.TaskDto;
 import ru.darujo.model.Task;
 
@@ -82,7 +83,7 @@ public class TaskBuilder {
                 description,
                 type,
                 workId,
-                timeCreate);
+                DateHelper.getZDT(timeCreate));
     }
 
     public Task getTask() {

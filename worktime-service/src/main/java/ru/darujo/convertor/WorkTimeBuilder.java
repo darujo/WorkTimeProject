@@ -1,5 +1,6 @@
 package ru.darujo.convertor;
 
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.WorkTimeDto;
 import ru.darujo.model.WorkTime;
 import ru.darujo.service.WorkTimeTypeService;
@@ -62,7 +63,7 @@ public class WorkTimeBuilder {
 
 
     public WorkTimeDto getWorkTimeDto() {
-        return new WorkTimeDto(id, nikName, workDate, workTime, taskId, comment, type, WorkTimeTypeService.getName(type), WorkTimeTypeService.getAdminName(), projectId);
+        return new WorkTimeDto(id, nikName, DateHelper.getZDT(workDate), workTime, taskId, comment, type, WorkTimeTypeService.getName(type), WorkTimeTypeService.getAdminName(), projectId);
     }
 
     public WorkTime getWorkTime() {

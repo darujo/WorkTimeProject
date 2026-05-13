@@ -3,6 +3,7 @@ package ru.darujo.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.calendar.DayTypeDto;
 import ru.darujo.dto.calendar.UserVacation;
 import ru.darujo.dto.calendar.UserVacationsDto;
@@ -64,8 +65,8 @@ public class VacationReportService {
             Vacation vacation = null;
             LocalDate dayEndVacation = null;
             for (WeekWorkDto weekWorkDto : weekWorkUserList) {
-                LocalDate day = weekWorkDto.getDayStartLocal().minusDays(1);
-                LocalDate dayEnd = weekWorkDto.getDayEndLocal();
+                LocalDate day = DateHelper.zDTToLD(weekWorkDto.getDayStart()).minusDays(1);
+                LocalDate dayEnd = DateHelper.zDTToLD(weekWorkDto.getDayEnd());
                 float timeAll;
                 boolean flagDay = weekWorkDto.getDayStart().equals(weekWorkDto.getDayEnd());
                 timeAll = weekWorkDto.getTime();
