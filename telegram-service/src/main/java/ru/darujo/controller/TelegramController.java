@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.darujo.dto.information.SendAdminMessage;
 import ru.darujo.model.ChatInfo;
 import ru.darujo.service.FileService;
 import ru.darujo.telegram_bot.TelegramBotSend;
@@ -39,8 +40,8 @@ public class TelegramController {
     }
 
     @PostMapping(value = "/send/admin", consumes = MediaType.TEXT_PLAIN_VALUE)
-    public void sendMessageToTelegram(@RequestBody String text) throws TelegramApiException {
-        telegramBotSend.sendMessageForAdmin(text);
+    public void sendMessageToTelegram(@RequestBody SendAdminMessage message) throws TelegramApiException {
+        telegramBotSend.sendMessageForAdmin(message);
     }
 
     @PostMapping(value = "/file", consumes = MediaType.TEXT_PLAIN_VALUE)

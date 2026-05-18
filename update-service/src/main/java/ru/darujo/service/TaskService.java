@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.integration.InfoServiceIntegrationImp;
 import ru.darujo.integration.ServiceIntegration;
+import ru.darujo.integration.ServiceType;
 import ru.darujo.model.RunnableNotException;
-import ru.darujo.model.ServiceType;
 import ru.darujo.object.ServiceIntegrationObject;
 import ru.darujo.type.MessageType;
 
@@ -157,7 +157,7 @@ public class TaskService {
 
     }
 
-    private void shutDownOneService(ServiceIntegration serviceIntegration, String token) {
+    private void shutDownOneService(ServiceIntegration<ServiceType> serviceIntegration, String token) {
         serviceIntegration.shutDown(token);
     }
 

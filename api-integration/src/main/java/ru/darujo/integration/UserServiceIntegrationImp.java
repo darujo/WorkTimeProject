@@ -23,7 +23,11 @@ import java.util.Objects;
 
 @Slf4j
 
-public class UserServiceIntegrationImp extends ServiceIntegrationImp {
+public class UserServiceIntegrationImp extends ServiceIntegrationImp<ServiceType> {
+    @Override
+    public ServiceType getServiceType() {
+        return ServiceType.USER;
+    }
     public UserServiceIntegrationImp(WebClient webClientUser) {
         super.setWebClient(webClientUser);
     }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.MessageInfoDto;
+import ru.darujo.dto.information.SendAdminMessage;
 import ru.darujo.dto.user.UserInfoDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.UserServiceIntegrationImp;
@@ -104,6 +105,17 @@ public class MessageInformationService {
         return addMessage(messageInfoDto, null);
     }
 
+    @Transactional
+    public Boolean sendAdminMessage(SendAdminMessage message) {
+        UserInfoDto userInfoDto = new UserInfoDto(MessageSenderType.Email.toString(), null, null, "radies@raambler.ru", null, null);
+        MessageInfoDto messageInfoDto = new MessageInfoDto(userInfoDto, message.getTitle(), message.getText());
+        if (message.isAttachFile()) {
+            sendFile(messageInfoDto, null, message.getFileName(), message.getFileBody());
+            return true;
+        } else {
+            return addMessage(messageInfoDto, null);
+        }
+    }
     @Transactional
     public Boolean addMessage(MessageInfoDto messageInfoDto, List<UserInfoDto> userSendList) {
         initMesType();
@@ -246,4 +258,6 @@ public class MessageInformationService {
             ScheduleService.getINSTANCE().sendMes();
         }
     }
+
+
 }

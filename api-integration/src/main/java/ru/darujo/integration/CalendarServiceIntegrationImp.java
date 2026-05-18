@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-public class CalendarServiceIntegrationImp extends ServiceIntegrationImp {
+public class CalendarServiceIntegrationImp extends ServiceIntegrationImp<ServiceType> {
 
     public CalendarServiceIntegrationImp(WebClient webClientCalendar) {
         super.setWebClient(webClientCalendar);
@@ -152,6 +152,11 @@ public class CalendarServiceIntegrationImp extends ServiceIntegrationImp {
         addTeg(stringBuilder, "dateStart", dateStart);
         addTeg(stringBuilder, "dateEnd", dateEnd);
         return stringBuilder;
+    }
+
+    @Override
+    public ServiceType getServiceType() {
+        return ServiceType.CALENDAR;
     }
 
     private StringBuilder getDateTeg(ZonedDateTime dateStart, ZonedDateTime dateEnd) {

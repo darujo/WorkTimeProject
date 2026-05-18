@@ -42,7 +42,7 @@ integration:
   information-service:
     enable: true
   telegram-service:
-    enable: true
+    enable: false
   work-service:
     enable: true
   task-service:

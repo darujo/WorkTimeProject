@@ -16,7 +16,11 @@ import java.util.List;
 
 
 @Slf4j
-public class WorkServiceIntegrationImp extends ServiceIntegrationImp {
+public class WorkServiceIntegrationImp extends ServiceIntegrationImp<ServiceType> {
+    @Override
+    public ServiceType getServiceType() {
+        return ServiceType.WORK;
+    }
     public WorkServiceIntegrationImp(WebClient webClientWork) {
         super.setWebClient(webClientWork);
     }

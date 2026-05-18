@@ -3,8 +3,8 @@ package ru.darujo.service;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.darujo.integration.ServiceType;
 import ru.darujo.model.ServiceModel;
-import ru.darujo.model.ServiceType;
 import ru.darujo.repository.ServiceModelRepository;
 
 @Service

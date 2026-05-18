@@ -4,14 +4,16 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.darujo.dto.information.SendAdminMessage;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.AdminInfoService;
+import ru.darujo.integration.ServiceType;
 import ru.darujo.model.ServiceModel;
 import ru.darujo.model.ServiceStatus;
-import ru.darujo.model.ServiceType;
 import ru.darujo.repository.ServiceStatusRepository;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Slf4j
@@ -19,11 +21,11 @@ import java.util.Set;
 public class ServiceStatusService {
     private ServiceStatusRepository serviceStatusRepository;
     private ServiceModelService serviceModelService;
-    private AdminInfoService adminInfoService;
+    private List<AdminInfoService> adminInfoServiceList;
 
     @Autowired
-    public void setAdminInfoService(AdminInfoService adminInfoService) {
-        this.adminInfoService = adminInfoService;
+    public void setAdminInfoServiceList(List<AdminInfoService> adminInfoServiceList) {
+        this.adminInfoServiceList = adminInfoServiceList;
     }
 
     @Autowired
@@ -65,9 +67,22 @@ public class ServiceStatusService {
         boolean allServiceOk = serviceTypeList.isEmpty();
         Set<ServiceModel> serviceModels = new HashSet<>();
         serviceTypeList.forEach(serviceType -> serviceModels.add(serviceModelService.getServiceModel(serviceType.name())));
+        SendAdminMessage message = new SendAdminMessage() {
+            @Override
+            public String getTitle() {
+                return allServiceOk ? "Все сервисы доступны" :
+                        "Не доступные сервисы";
+            }
+
+            @Override
+            public String getText() {
+                return allServiceOk ? "Все сервисы доступны" :
+                        String.format("Не доступные сервисы %s", serviceTypeList);
+            }
+
+        };
         try {
-            adminInfoService.sendMessageForAdmin(allServiceOk ? "Все сервисы доступны" :
-                    String.format("Не доступные сервисы %s", serviceTypeList));
+            adminInfoServiceList.forEach(adminInfoService -> adminInfoService.sendMessageForAdmin(message));
         } catch (ResourceNotFoundRunTime ex) {
             log.error(ex.getMessage(), ex);
         }

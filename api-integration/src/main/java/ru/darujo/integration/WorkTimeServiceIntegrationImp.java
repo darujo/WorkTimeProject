@@ -13,7 +13,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Log4j2
-public class WorkTimeServiceIntegrationImp extends ServiceIntegrationImp {
+public class WorkTimeServiceIntegrationImp extends ServiceIntegrationImp<ServiceType> {
+    @Override
+    public ServiceType getServiceType() {
+        return ServiceType.WORK_TIME;
+    }
+
     public WorkTimeServiceIntegrationImp(WebClient webClientWorkTime) {
         super.setWebClient(webClientWorkTime);
     }

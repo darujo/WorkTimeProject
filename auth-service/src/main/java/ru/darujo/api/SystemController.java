@@ -12,24 +12,24 @@ import ru.darujo.service.UserService;
 
 
 @RestController()
-@RequestMapping("/users")
+@RequestMapping("")
 public class SystemController extends TestAndShutdownController {
     private UserService userService;
     private AuthService authService;
 
-    @GetMapping("/system/user/password/request")
+    @GetMapping("/users/system/user/password/request")
     public void getPasswordRecovery(@RequestParam String nikName,
                                     @RequestParam String email) {
         userService.getRestorePassword(nikName, email);
     }
 
-    @GetMapping("/system/user/password/restore")
+    @GetMapping("/users/system/user/password/restore")
     public JwtResponse getPasswordRestore(@RequestParam String nikName,
                                           @RequestParam String code) {
         return authService.restorePassword(nikName, code);
     }
 
-    @GetMapping("/system/user/email/confirm")
+    @GetMapping("/users/system/user/email/confirm")
     public boolean confirmEmail(String nikName, String code) {
         return userService.confirmEmail(nikName, code);
     }

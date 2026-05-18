@@ -3,6 +3,7 @@ package ru.darujo.integration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.WebClient;
+import ru.darujo.dto.information.SendAdminMessage;
 import ru.darujo.dto.information.SendMessage;
 import ru.darujo.dto.information.SendServiceInt;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
@@ -11,7 +12,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
-public class TelegramServiceIntegrationImp extends ServiceIntegrationImp implements SendServiceInt, AdminInfoService {
+public class TelegramServiceIntegrationImp extends ServiceIntegrationImp<ServiceType> implements SendServiceInt, AdminInfoService {
+    @Override
+    public ServiceType getServiceType() {
+        return ServiceType.TELEGRAM;
+    }
 
     public TelegramServiceIntegrationImp(WebClient webClientTelegram) {
         super.setWebClient(webClientTelegram);
@@ -44,11 +49,10 @@ public class TelegramServiceIntegrationImp extends ServiceIntegrationImp impleme
         }
     }
 
-    public void sendMessageForAdmin(
-            String text) {
+    public void sendMessageForAdmin(SendAdminMessage message) {
         try {
             webClient.post().uri("/send/admin")
-                    .bodyValue(text)
+                    .bodyValue(message)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса telegram"))
@@ -131,7 +135,7 @@ public class TelegramServiceIntegrationImp extends ServiceIntegrationImp impleme
             sendMessage.getUserSendMessages().forEach(userSendMessage -> {
                 try {
                     sendMessage(sendMessage.getAuthor(), userSendMessage.getChatId(), userSendMessage.getThreadId(), userSendMessage.getOriginMessageId(), sendMessage.getText());
-                } catch (ResourceNotFoundRunTime ex){
+                } catch (ResourceNotFoundRunTime ex) {
                     flagOk.set(false);
                 }
             });

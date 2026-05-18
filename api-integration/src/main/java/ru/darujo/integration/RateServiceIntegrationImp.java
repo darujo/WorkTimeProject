@@ -9,7 +9,11 @@ import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import java.util.List;
 
 @Slf4j
-public class RateServiceIntegrationImp extends ServiceIntegrationImp {
+public class RateServiceIntegrationImp extends ServiceIntegrationImp<ServiceType> {
+    @Override
+    public ServiceType getServiceType() {
+        return ServiceType.RATE;
+    }
     public RateServiceIntegrationImp(WebClient webClientRate) {
         super.setWebClient(webClientRate);
     }

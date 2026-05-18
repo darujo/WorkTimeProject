@@ -7,8 +7,8 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.darujo.integration.ServiceIntegration;
+import ru.darujo.integration.ServiceType;
 import ru.darujo.integration.UserServiceIntegrationImp;
-import ru.darujo.model.ServiceType;
 import ru.darujo.object.ServiceIntegrationObject;
 
 import java.util.*;
@@ -21,6 +21,12 @@ public class MonitorService {
     @Getter
     private final PriorityQueue<ServiceIntegrationObject> serviceIntegrations = new PriorityQueue<>(Comparator.comparing(ServiceIntegrationObject::getSort));
 
+
+    @Autowired
+    public void setIntegrationObject(List<ServiceIntegration<ServiceType>> integrationObjectList) {
+        integrationObjectList.forEach(this::addServiceIntegration);
+    }
+
     private ServiceStatusService serviceStatusService;
 
     @Autowired
@@ -28,59 +34,10 @@ public class MonitorService {
         this.serviceStatusService = serviceStatusService;
     }
 
-    @Autowired
-    public void setCalendarServiceIntegration(ServiceIntegration calendarServiceIntegration) {
-        addServiceIntegration(ServiceType.CALENDAR, calendarServiceIntegration);
-    }
 
-    @Autowired
-    public void setInfoServiceIntegration(ServiceIntegration infoServiceIntegration) {
-        addServiceIntegration(ServiceType.INFORMATION, infoServiceIntegration);
-    }
-
-    @Autowired
-    public void setRateServiceIntegration(ServiceIntegration rateServiceIntegration) {
-        addServiceIntegration(ServiceType.RATE, rateServiceIntegration);
-    }
-
-    @Autowired
-    public void setTaskServiceIntegration(ServiceIntegration taskServiceIntegration) {
-        addServiceIntegration(ServiceType.TASK, taskServiceIntegration);
-    }
-
-    @Autowired
-    public void setTelegramServiceIntegration(ServiceIntegration telegramServiceIntegration) {
-        addServiceIntegration(ServiceType.TELEGRAM, telegramServiceIntegration);
-    }
-
-    @Autowired
-    public void setUserServiceIntegration(ServiceIntegration userServiceIntegration) {
-        addServiceIntegration(ServiceType.USER, userServiceIntegration);
-    }
-
-    @Autowired
-    public void setWorkServiceIntegration(ServiceIntegration workServiceIntegration) {
-        addServiceIntegration(ServiceType.WORK, workServiceIntegration);
-    }
-
-    @Autowired
-    public void setWorkTimeServiceIntegration(ServiceIntegration workTimeServiceIntegration) {
-        addServiceIntegration(ServiceType.WORK_TIME, workTimeServiceIntegration);
-    }
-
-    @Autowired
-    public void setFrontServiceIntegration(ServiceIntegration frontServiceIntegration) {
-        addServiceIntegration(ServiceType.FRONT, frontServiceIntegration);
-    }
-
-    @Autowired
-    public void setGateWayServiceIntegration(ServiceIntegration gateWayServiceIntegration) {
-        addServiceIntegration(ServiceType.GATE_WAY, gateWayServiceIntegration);
-    }
-
-    private void addServiceIntegration(ServiceType serviceType, ServiceIntegration serviceIntegration) {
-        log.info(serviceType.toString());
-        serviceIntegrations.add(new ServiceIntegrationObject(serviceType, serviceIntegration, serviceType.getPriorityStop(), null));
+    private void addServiceIntegration(ServiceIntegration<ServiceType> serviceIntegration) {
+        log.info(serviceIntegration.getServiceType().toString());
+        serviceIntegrations.add(new ServiceIntegrationObject(serviceIntegration));
     }
 
     @PostConstruct

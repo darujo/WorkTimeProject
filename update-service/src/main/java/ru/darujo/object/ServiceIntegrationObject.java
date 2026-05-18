@@ -1,17 +1,26 @@
 package ru.darujo.object;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import ru.darujo.integration.ServiceIntegration;
-import ru.darujo.model.ServiceType;
+import ru.darujo.integration.ServiceType;
 
-@AllArgsConstructor
+
 @Getter
 public class ServiceIntegrationObject {
-    private ServiceType serviceType;
-    private ServiceIntegration serviceIntegration;
-    private Integer sort;
+    private final ServiceIntegration<ServiceType> serviceIntegration;
     @Setter
     private Process process;
+
+    public ServiceIntegrationObject(ServiceIntegration<ServiceType> serviceIntegration) {
+        this.serviceIntegration = serviceIntegration;
+    }
+
+    public int getSort() {
+        return serviceIntegration.getServiceType().getPriorityStop();
+    }
+
+    public ServiceType getServiceType() {
+        return serviceIntegration.getServiceType();
+    }
 }

@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 import ru.darujo.integration.AdminInfoService;
-import ru.darujo.integration.ServiceIntegration;
 
 @Configuration
 @Component
@@ -23,21 +22,4 @@ public class AppConfig {
         };
     }
 
-    @ConditionalOnMissingBean(name = "telegramServiceIntegration")
-    @Bean("telegramServiceIntegration")
-    public ServiceIntegration telegramServiceIntegration() {
-        log.warn("Не подключен сервис {} все сообщения игнорируются", "telegram");
-        return new ServiceIntegration() {
-            @Override
-            public void test() {
-
-            }
-
-            @Override
-            public void shutDown(String token) {
-
-            }
-
-        };
-    }
 }

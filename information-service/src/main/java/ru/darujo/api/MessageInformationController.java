@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.MessageInfoDto;
+import ru.darujo.dto.information.SendAdminMessage;
 import ru.darujo.model.ChatInfo;
 import ru.darujo.service.MessageInformationService;
 import ru.darujo.service.ScheduleService;
@@ -53,6 +54,11 @@ public class MessageInformationController {
                            @RequestParam(required = false) Integer originMessageId,
                            @RequestParam(required = false) String senderType) {
         scheduleService.sendReport(reportType, new ChatInfo(author, senderType == null ? null : MessageSenderType.valueOf(senderType), chatId, threadId, originMessageId));
+    }
+
+    @PostMapping("/send/message/admin")
+    public Boolean sendAdminMessageInformation(@RequestBody SendAdminMessage message) {
+        return messageInformationService.sendAdminMessage(message);
     }
 
 }

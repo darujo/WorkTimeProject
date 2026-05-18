@@ -17,7 +17,11 @@ import java.util.List;
 
 
 @Slf4j
-public class TaskServiceIntegrationImp extends ServiceIntegrationImp {
+public class TaskServiceIntegrationImp extends ServiceIntegrationImp<ServiceType> {
+    @Override
+    public ServiceType getServiceType() {
+        return ServiceType.TASK;
+    }
     public TaskServiceIntegrationImp(WebClient webClientTask) {
         super.setWebClient(webClientTask);
     }

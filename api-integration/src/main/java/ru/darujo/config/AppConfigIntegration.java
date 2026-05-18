@@ -95,15 +95,25 @@ public class AppConfigIntegration extends WebClientConfig {
     //Front
     @Bean(name = "frontServiceIntegration")
     @ConditionalOnBooleanProperty(prefix = "integration.front-service", name = "enable")
-    public ServiceIntegrationImp frontServiceIntegration(FrontServiceProperty frontServiceProperty) {
-        return new ServiceIntegrationImp(webClient(frontServiceProperty));
+    public ServiceIntegrationImp<ServiceType> frontServiceIntegration(FrontServiceProperty frontServiceProperty) {
+        return new ServiceIntegrationImp<>(webClient(frontServiceProperty)) {
+            @Override
+            public ServiceType getServiceType() {
+                return ServiceType.FRONT;
+            }
+        };
     }
 
     //gateway
     @Bean(name = "gateWayServiceIntegration")
     @ConditionalOnBooleanProperty(prefix = "integration.gate-way-service", name = "enable")
-    public ServiceIntegrationImp gateWayServiceIntegration(GateWayServiceProperty gateWayServiceProperty, SslContext sslContext) {
-        return new ServiceIntegrationImp(webClient(gateWayServiceProperty, sslContext));
+    public ServiceIntegrationImp<ServiceType> gateWayServiceIntegration(GateWayServiceProperty gateWayServiceProperty, SslContext sslContext) {
+        return new ServiceIntegrationImp<>(webClient(gateWayServiceProperty, sslContext)) {
+            @Override
+            public ServiceType getServiceType() {
+                return ServiceType.GATE_WAY;
+            }
+        };
     }
 
     @Bean("sslContext")

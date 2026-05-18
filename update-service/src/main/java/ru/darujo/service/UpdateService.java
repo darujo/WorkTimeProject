@@ -10,7 +10,7 @@ import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.InfoServiceIntegrationImp;
-import ru.darujo.model.ServiceType;
+import ru.darujo.integration.ServiceType;
 import ru.darujo.type.MessageType;
 
 import java.io.File;

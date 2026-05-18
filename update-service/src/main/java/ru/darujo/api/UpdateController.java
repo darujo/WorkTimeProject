@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.assistant.helper.EnumHelper;
 import ru.darujo.dto.ratestage.AttrDto;
-import ru.darujo.model.ServiceType;
+import ru.darujo.integration.ServiceType;
 import ru.darujo.service.UpdateService;
 
 import java.time.ZonedDateTime;

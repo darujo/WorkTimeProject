@@ -4,7 +4,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.darujo.model.ServiceType;
+import ru.darujo.integration.ServiceType;
 
 import java.io.File;
 import java.time.LocalDateTime;

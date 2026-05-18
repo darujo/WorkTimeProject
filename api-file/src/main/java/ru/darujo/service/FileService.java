@@ -26,7 +26,7 @@ public class FileService {
         addFile(name, name, body);
     }
 
-    public String addFile(String name, String fileName, byte[] body) {
+    public static File getFile(String name, String fileName, byte[] body) {
         try {
             File file;
             if (fileName == null) {
@@ -36,18 +36,24 @@ public class FileService {
                 file = new File(fileName);
             }
 
-            log.info(name);
+
             log.info(fileName);
             log.info(file.getAbsolutePath());
 
             try (FileOutputStream fos = new FileOutputStream(file)) {
                 fos.write(body);
             }
-            addFile(name, file);
-            return name;
+            return file;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String addFile(String name, String fileName, byte[] body) {
+        log.info(name);
+        addFile(name, getFile(name, fileName, body));
+        return name;
+
 
     }
 

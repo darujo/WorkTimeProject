@@ -15,7 +15,7 @@ import java.time.LocalDate;
 import java.util.Date;
 
 @Slf4j
-public class ServiceIntegrationImp implements ServiceIntegration {
+public abstract class ServiceIntegrationImp<T extends Enum<?>> implements ServiceIntegration<T> {
     protected WebClient webClient;
 
     public ServiceIntegrationImp(WebClient webClient) {
@@ -28,6 +28,9 @@ public class ServiceIntegrationImp implements ServiceIntegration {
     protected void setWebClient(WebClient webClient) {
         this.webClient = webClient;
     }
+
+    @Override
+    public abstract T getServiceType();
 
     @Override
     public void test() {
