@@ -4,12 +4,12 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.integration.ServiceType;
 
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -29,40 +29,12 @@ public class ScheduleService implements AutoCloseable {
 
     @PostConstruct
     private void init() {
+        executor.schedule(taskService.getBackUpTask(), 10, TimeUnit.SECONDS);
         executor.scheduleAtFixedRate(taskService.getBackUpTask(), 24, 24L * 86400, TimeUnit.HOURS);
-        executor.scheduleAtFixedRate(taskService.getTaskAvailService(), getStartTime(23, 0), 2, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(taskService.getTaskAvailService(), DateHelper.getStartTime(23, 0), 2, TimeUnit.SECONDS);
 //        addUpdate(new ArrayList<>());
     }
 
-    private static Long getMilliSecondStartDay() {
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.HOUR_OF_DAY, 0);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND, 0);
-        return (System.currentTimeMillis() - c.getTimeInMillis());
-    }
-
-    private static final Long milliSecondStartDay = getMilliSecondStartDay();
-
-    private Long getStartTime(Integer hour, Integer minute) {
-        if (minute == null) {
-            minute = 0;
-        }
-        if (minute < 0 || minute > 59) {
-            throw new RuntimeException("Не верно заданы минуты");
-        }
-        if (hour < 0 || hour > 23) {
-            throw new RuntimeException("Не верно заданы часы");
-        }
-        int millisecond = ((hour * 60) + minute) * 60 * 1000;
-        long startTime = millisecond - milliSecondStartDay;
-        startTime = startTime / 1000;
-        if (startTime < 0) {
-            startTime = startTime + 24 * 60 * 60;
-        }
-        return startTime;
-    }
     public void addUpdate(LocalDateTime timestamp, List<ServiceType> serviceTypeList, List<File> fileNameUpdates, String textUpdates) {
         executor.schedule(taskService.getTaskInfo(timestamp, " установлены обновления."), getStart(timestamp, 10L), TimeUnit.SECONDS);
         executor.schedule(taskService.getTask(fileNameUpdates, serviceTypeList, textUpdates), getStart(timestamp), TimeUnit.SECONDS);

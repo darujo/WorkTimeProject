@@ -80,12 +80,12 @@ public class InfoServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
                     .bodyValue(message)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса telegram"))
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса inform"))
                     .bodyToMono(Void.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-Telegram) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-Inform) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 }

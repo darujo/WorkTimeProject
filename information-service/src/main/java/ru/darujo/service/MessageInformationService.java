@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,9 @@ import java.util.Map;
 @Service
 @Primary
 public class MessageInformationService {
+    @Value("${integration.admin.email}")
+    private String adminEmail;
+
     private UserServiceIntegrationImp userServiceIntegration;
     private MessageInformationRepository messageInformationRepository;
     private UserSendRepository userSendRepository;
@@ -107,7 +111,7 @@ public class MessageInformationService {
 
     @Transactional
     public Boolean sendAdminMessage(SendAdminMessage message) {
-        UserInfoDto userInfoDto = new UserInfoDto(MessageSenderType.Email.toString(), null, null, "radies@raambler.ru", null, null);
+        UserInfoDto userInfoDto = new UserInfoDto(MessageSenderType.Email.toString(), null, null, adminEmail, null, null);
         MessageInfoDto messageInfoDto = new MessageInfoDto(userInfoDto, message.getTitle(), message.getText());
         if (message.isAttachFile()) {
             sendFile(messageInfoDto, null, message.getFileName(), message.getFileBody());
@@ -116,6 +120,7 @@ public class MessageInformationService {
             return addMessage(messageInfoDto, null);
         }
     }
+
     @Transactional
     public Boolean addMessage(MessageInfoDto messageInfoDto, List<UserInfoDto> userSendList) {
         initMesType();
@@ -238,7 +243,7 @@ public class MessageInformationService {
         if (messageInfoDto.getUserInfoDto() != null && messageTypeListMap == null) {
             log.error("Нет списка получателей");
         } else {
-            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType().toString(), messageInfoDto.getTitle(), messageInfoDto.getText(), false, DateHelper.zDTToLDT(messageInfoDto.getDataTime()), projectId));
+            MessageInformation messageInformation = saveMessageInformation(new MessageInformation(null, messageInfoDto.getAuthor(), messageInfoDto.getType() == null ? null : messageInfoDto.getType().toString(), messageInfoDto.getTitle(), messageInfoDto.getText(), false, DateHelper.zDTToLDT(messageInfoDto.getDataTime()), projectId));
             if (messageInfoDto.getUserInfoDto() != null) {
                 saveUserSend(new UserSend(
                         messageInfoDto.getUserInfoDto().getSenderType(),

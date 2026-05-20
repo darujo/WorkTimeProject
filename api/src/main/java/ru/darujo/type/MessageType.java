@@ -1,8 +1,8 @@
 package ru.darujo.type;
 
+import ru.darujo.assistant.helper.DateHelper;
+
 import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.util.Calendar;
 import java.util.List;
 
 public enum MessageType implements TypeEnum {
@@ -124,64 +124,7 @@ public enum MessageType implements TypeEnum {
     }
 
     public Long getStartTime() {
-        return getStartTime(dayOfWeek, hour, minute);
-    }
-
-    private static final Long milliSecondStartDay = getMilliSecondStartDay();
-
-    private static Long getMilliSecondStartDay() {
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.HOUR_OF_DAY, 0);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND, 0);
-        return (System.currentTimeMillis() - c.getTimeInMillis());
-    }
-
-    private Long getStartTime(Integer hour, Integer minute) {
-        if (minute == null) {
-            minute = 0;
-        }
-        if (minute < 0 || minute > 59) {
-            throw new RuntimeException("Не верно заданы минуты");
-        }
-        if (hour < 0 || hour > 23) {
-            throw new RuntimeException("Не верно заданы часы");
-        }
-        int millisecond = ((hour * 60) + minute) * 60 * 1000;
-        long startTime = millisecond - milliSecondStartDay;
-        startTime = startTime / 1000;
-        if (startTime < 0) {
-            startTime = startTime + 24 * 60 * 60;
-        }
-        return startTime;
-    }
-
-    private Long getStartTime(DayOfWeek dayOfWeek, Integer hour, Integer minute) {
-        if (dayOfWeek == null) {
-            return getStartTime(hour, minute);
-        }
-        if (hour < 0 || hour > 23) {
-            throw new RuntimeException("Не верно заданы часы");
-        }
-        if (minute == null) {
-            minute = 0;
-        }
-        if (minute < 0 || minute > 59) {
-            throw new RuntimeException("Не верно заданы минуты");
-        }
-        int millisecond = ((hour * 60) + minute) * 60 * 1000;
-        long startTime = millisecond - milliSecondStartDay;
-        int days = dayOfWeek.getValue() - LocalDate.now().getDayOfWeek().getValue();
-        if (days < 0) {
-            days = days + 7;
-        }
-        startTime = startTime / 1000;
-        startTime = startTime + days * 86400L;
-        if (startTime < 0) {
-            startTime = startTime + 7 * 24 * 60 * 60;
-        }
-        return startTime;
+        return DateHelper.getStartTime(dayOfWeek, hour, minute);
     }
 
     public boolean isProject() {

@@ -1,11 +1,12 @@
 package ru.darujo.api;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.MessageInfoDto;
-import ru.darujo.dto.information.SendAdminMessage;
 import ru.darujo.model.ChatInfo;
+import ru.darujo.model.SendAdminMessageImp;
 import ru.darujo.service.MessageInformationService;
 import ru.darujo.service.ScheduleService;
 import ru.darujo.type.MessageSenderType;
@@ -14,6 +15,7 @@ import java.time.ZonedDateTime;
 
 @RestController()
 @RequestMapping("/v1/mes_info")
+@Slf4j
 public class MessageInformationController {
     private MessageInformationService messageInformationService;
 
@@ -57,7 +59,8 @@ public class MessageInformationController {
     }
 
     @PostMapping("/send/message/admin")
-    public Boolean sendAdminMessageInformation(@RequestBody SendAdminMessage message) {
+    public Boolean sendAdminMessageInformation(@RequestBody SendAdminMessageImp message) {
+        log.warn(message.toString());
         return messageInformationService.sendAdminMessage(message);
     }
 

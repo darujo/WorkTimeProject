@@ -68,7 +68,7 @@ public class TaskService {
 
     @PostConstruct
     public void init() {
-        log.warn(getProcessOutput(backUpService(pathFile + "/backup", String.format("worktime_%s.backup", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm"))))));
+//        log.warn(getProcessOutput(backUpService(pathFile + "/backup", String.format("worktime_%s.backup", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm"))))));
     }
 
     public RunnableNotException getTaskAvailService() {
@@ -175,7 +175,6 @@ public class TaskService {
     private Process backUpService(String dir, String fileName) {
         List<String> arr = new ArrayList<>(backUp);
         arr.add(fileName);
-        log.error(arr.toString());
         ProcessBuilder processBuilder = new ProcessBuilder(arr).directory(new File(dir));
         processBuilder.environment().put("PGPASSWORD", backUpPass);
 
