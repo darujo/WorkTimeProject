@@ -29,7 +29,7 @@ public class ScheduleService implements AutoCloseable {
 
     @PostConstruct
     private void init() {
-        executor.schedule(taskService.getBackUpTask(), 10, TimeUnit.SECONDS);
+//        executor.schedule(taskService.getBackUpTask(), 10, TimeUnit.SECONDS);
         executor.scheduleAtFixedRate(taskService.getBackUpTask(), DateHelper.getStartTime(23, 0), 24L * 86400, TimeUnit.SECONDS);
         executor.scheduleAtFixedRate(taskService.getTaskAvailService(), 5, 2, TimeUnit.MINUTES);
 //        addUpdate(new ArrayList<>());

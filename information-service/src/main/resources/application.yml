@@ -57,5 +57,5 @@ integration:
   work-service:
     enable: true
   admin:
-    email: "radies@rambler.ru"
+    email: "worktimebackup@internet.ru"
 
