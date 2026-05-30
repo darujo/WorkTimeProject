@@ -168,6 +168,9 @@ public class WorkService {
                 }
             }
         }
+        if (workRepository.exists(getWorkSpecification(null, null, work.getCodeSap(), null, null, null, null, work.getId()))) {
+            throw new ResourceNotFoundRunTime("Уже есть ЗИ с таким номером SAP");
+        }
         ProjectDto projectDto = getProjectDto(workProject.getProjectId());
         checkDate(workProject.getAnaliseStartFact(), workProject.getAnaliseEndFact(), "начала \"" + projectDto.getStage0Name() + "\" (факт)", "конца \"" + projectDto.getStage0Name() + "\" (факт)");
         checkDate(workProject.getDevelopStartFact(), workProject.getIssuePrototypeFact(), "начала \"" + projectDto.getStage1Name() + "\" (факт)", "конца \"" + projectDto.getStage1Name() + "\" (факт)");
@@ -303,10 +306,10 @@ public class WorkService {
     }
 
     private <T> Specification<@NonNull T> getWorkSpecification(String name, List<String> sort, Long codeSap, String codeZi, Long releaseId, List<Long> releaseIdArray) {
-        return getWorkSpecification(name, sort, codeSap, codeZi, releaseId, releaseIdArray, null);
+        return getWorkSpecification(name, sort, codeSap, codeZi, releaseId, releaseIdArray, null, null);
     }
 
-    private <T> Specification<@NonNull T> getWorkSpecification(String name, List<String> sort, Long codeSap, String codeZi, Long releaseId, List<Long> releaseIdArray, List<Long> idList) {
+    private <T> Specification<@NonNull T> getWorkSpecification(String name, List<String> sort, Long codeSap, String codeZi, Long releaseId, List<Long> releaseIdArray, List<Long> idList, Long notId) {
         Specification<@NonNull T> specification;
         if (sort != null && !sort.isEmpty()) {
             specification = Specification.unrestricted();
@@ -331,6 +334,8 @@ public class WorkService {
             specification = Specifications.inO(specification, "release", releases);
         }
         specification = Specifications.in(specification, "id", idList);
+        specification = Specifications.ne(specification, "id", notId);
+
         return specification;
     }
 
@@ -358,7 +363,7 @@ public class WorkService {
     public List<Work> getWorkList(String name, Integer stageZiGe, Integer stageZiLe, Long releaseId, List<String> sort) {
         Page<Work> works;
         Specification<@NonNull Work> specification =
-                getWorkSpecification(name, sort, null, null, releaseId, null, workProjectService.getWorkIdList(stageZiGe, stageZiLe));
+                getWorkSpecification(name, sort, null, null, releaseId, null, workProjectService.getWorkIdList(stageZiGe, stageZiLe), null);
 
         works = Specifications.findAll(workRepository, null, null, specification, sort);
         return works.getContent();

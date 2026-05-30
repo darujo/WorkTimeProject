@@ -37,6 +37,8 @@ update:
   unpack-command:
     command: "C:/daru/worktime/build/7z.exe"
     param: "x %s -o%s -y"
+  backup:
+    command: "\"C:/Program Files/PostgreSQL/17/bin/pg_dump.exe\",-U,postgres,-Fc,-f"
 
 integration:
   information-service:
