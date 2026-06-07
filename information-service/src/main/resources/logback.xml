@@ -11,7 +11,7 @@
         <rollingPolicy
                 class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
-            <fileNamePattern>logs/app-information.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/old/app-information.%d{yyyy-MM-dd}.log</fileNamePattern>
 
             <!-- Храним файлы логов 10 дней -->
             <maxHistory>10</maxHistory>
@@ -22,12 +22,12 @@
         </rollingPolicy>
 
         <encoder class="PatternLayoutEncoder">
-            <pattern>%date %level [%thread] %logger{10} [%file:%line] -%kvp- %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} %level [%thread] %logger{10} [%file:%line] -%kvp- %msg%n</pattern>
         </encoder>
     </appender>
     <appender name="STDOUT" class="ConsoleAppender">
         <encoder class="PatternLayoutEncoder">
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%kvp- %msg%n</pattern>
+            <pattern>%date [%thread] %-5level %logger{36} -%kvp- %msg%n</pattern>
         </encoder>
     </appender>
 

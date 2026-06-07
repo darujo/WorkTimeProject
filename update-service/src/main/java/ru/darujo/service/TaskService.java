@@ -177,7 +177,7 @@ public class TaskService {
         arr.add(fileName);
         ProcessBuilder processBuilder = new ProcessBuilder(arr).directory(new File(dir));
         processBuilder.environment().put("PGPASSWORD", backUpPass);
-
+        log.info(dir, "/", fileName);
         try {
             return processBuilder.start();
         } catch (IOException e) {
