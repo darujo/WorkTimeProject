@@ -28,12 +28,12 @@ public class ArchiveService {
                     new SevenZMethodConfiguration(SevenZMethod.LZMA2, lzma2Options);
             methods.add(lzmaConfig);
             out.setContentMethods(methods);
-            SevenZArchiveEntry entry = out.createArchiveEntry(new File("new"), "new");
+            SevenZArchiveEntry entry = out.createArchiveEntry(new File("new"), "./new");
             entry.setDirectory(true);
             out.putArchiveEntry(entry);
             out.closeArchiveEntry();
 
-            entry = out.createArchiveEntry(new File("new", "input.txt"), "input.txt");
+            entry = out.createArchiveEntry(new File("new", "input.txt"), "./new/input.txt");
 
             out.putArchiveEntry(entry);
             out.write("Текст файла".getBytes());
@@ -55,16 +55,18 @@ public class ArchiveService {
 
     private void unpackArh(String pas) {
         Path outputDir = Path.of(pathFile);
-        try (final SevenZFile sevenZFile = SevenZFile.builder().setFile(new File(pathFile + "/archive_new.7z")).setPassword(pas == null ? null : pas.getBytes(StandardCharsets.UTF_8)).get()) {
+        try (final SevenZFile sevenZFile = SevenZFile.builder().setFile(new File(pathFile + "/archive_new.7z")).setPassword(pas == null ? null : pas.getBytes(StandardCharsets.UTF_16LE)).get()) {
 // todo только 7 степень сжатия
             SevenZArchiveEntry sevenZArchiveEntry;
             sevenZArchiveEntry = sevenZFile.getNextEntry();
             while (sevenZArchiveEntry != null) {
+
                 Path entryPath = outputDir.resolve(sevenZArchiveEntry.getName());
                 if (sevenZArchiveEntry.isDirectory()) {
                     Files.createDirectories(entryPath);
                 } else {
-                    FileOutputStream out = new FileOutputStream(sevenZArchiveEntry.getName());
+
+                    FileOutputStream out = new FileOutputStream(sevenZArchiveEntry.resolveIn(outputDir).toFile());
                     byte[] content = new byte[(int) sevenZArchiveEntry.getSize()];
                     sevenZFile.read(content, 0, content.length);
                     out.write(content);
