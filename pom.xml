@@ -22,6 +22,7 @@
 		<module>gateway-service</module>
 		<module>information-service</module>
 		<module>telegram-service</module>
+		<module>max-service</module>
         <module>update-service</module>
         <module>docx</module>
         <module>api-file</module>

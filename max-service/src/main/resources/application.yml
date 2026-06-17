@@ -1,0 +1,42 @@
+server:
+  port: 8187
+  servlet:
+    context-path: /app
+spring:
+  main:
+    banner-mode: off
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres?options=--search_path%3Dtelegram_message
+    username: postgres
+    password: 5397
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  jackson:
+    default-property-inclusion: non_absent
+
+
+app:
+  http:
+    bot: bot
+telegram-bot:
+  token: "8503763341:DDHOsgfAMzDomSslCt9om_3iQG9LuxTRI8o"
+  admin-id: "@daru_kanal" # Имя канала или id чата
+
+max:
+  bot:
+    mode: webhook
+    webhook:
+    token: "your-bot-token"
+    url: "https://your-app.example.com/max-bot/webhook"
+    secret: "your-shared-secret"
+
+integration:
+  user-service:
+    enable: true
+  information-service:
+    enable: true
