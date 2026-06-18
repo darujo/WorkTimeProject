@@ -10,16 +10,24 @@ import ru.darujo.model.ChatInfo;
 import ru.darujo.model.MessageSend;
 import ru.darujo.service.FileService;
 import ru.darujo.service.MessageSendService;
-import ru.max.botapi.model.Message;
+import ru.max.botapi.client.MaxBotAPI;
+import ru.max.botapi.client.MaxUploadAPI;
+import ru.max.botapi.model.*;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.List;
 
 
 @Component
 @Slf4j
 public class MaxBotSend {
 //    private TelegramClient tgClient;
+private MaxBotAPI api;
+
+    @Autowired
+    public void setApi(MaxBotAPI api) {
+        this.api = api;
+    }
 
     private MessageSendService messageSendService;
 
@@ -28,13 +36,7 @@ public class MaxBotSend {
         this.messageSendService = messageSendService;
     }
 
-
-//    @Autowired
-//    public void setTelegramClient(TelegramClient telegramClient) {
-//        this.tgClient = telegramClient;
-//    }
-
-    public Message sendMessage(ChatInfo chatInfo, String text)  {
+    public SendMessageResult sendMessage(ChatInfo chatInfo, String text) {
         return sendMessage(chatInfo, text, null);
     }
 
@@ -48,7 +50,7 @@ public class MaxBotSend {
 //        List<BotCommand> botCommands = new ArrayList<>();
 //        botCommands.add(new BotCommand("/menu", "Открыть меню"));
 //        botCommands.add(new BotCommand("/stop", "Отвязать аккаунт от уведомлений"));
-//        botCommands.add(new BotCommand("/link", "Подписаться на уведомления от сервиса трудо затрат"));
+//        botCommands.add(new BotCommand("/link", "Подписаться на уведомления от сервиса трудозатрат"));
 //        SetMyCommands setMyCommands = new SetMyCommands(botCommands);
 //        setMyCommands.setScope(new BotCommandScopeAllPrivateChats());
 //        try {
@@ -79,8 +81,25 @@ public class MaxBotSend {
       return "name bot";
     }
 
-    public void sendPhoto(ChatInfo chatInfo, File file, String text, Object /*InlineKeyboardMarkup*/ menu)  {
-//        SendPhoto message = new SendPhoto(chatInfo.getChatId(), new InputFile(file));
+    public void sendPhoto(ChatInfo chatInfo, File file, String text, List<AttachmentRequest> menu) {
+        try (
+                MaxUploadAPI uploadApi = new MaxUploadAPI()) {
+            SendAction(chatInfo, SenderAction.SENDING_PHOTO);
+// Шаг 1: запросить endpoint для загрузки
+            UploadEndpoint endpoint = api.getUploadUrl(UploadType.IMAGE).execute();
+
+// Шаг 2: передать файл потоком (без буферизации в куче)
+            FileUploadedInfo info = uploadApi.uploadFile(endpoint, file.toPath(), file.getName());
+            AttachmentRequest attachmentRequest = new FileAttachmentRequest(new MediaRequestPayload(info.token()));
+            if (menu == null) {
+                menu = List.of(attachmentRequest);
+            } else {
+                menu.add(attachmentRequest);
+            }
+
+            sendMessage(chatInfo, text, menu);
+        }
+        //        SendPhoto message = new SendPhoto(chatInfo.getChatId(), new InputFile(file));
 //
 //        message.setMessageThreadId(chatInfo.getThreadId());
 //        if (!text.isEmpty()) {
@@ -95,7 +114,18 @@ public class MaxBotSend {
     }
 
     public void sendDocument(ChatInfo chatInfo, String fileName, File file, String text)  {
+        try (MaxUploadAPI uploadApi = new MaxUploadAPI()) {
+            SendAction(chatInfo, SenderAction.SENDING_FILE);
+// Шаг 1: запросить endpoint для загрузки
+            UploadEndpoint endpoint = api.getUploadUrl(UploadType.FILE).execute();
 
+// Шаг 2: передать файл потоком (без буферизации в куче)
+            FileUploadedInfo info = uploadApi.uploadFile(endpoint, file.toPath(), fileName);
+            AttachmentRequest attachmentRequest = new FileAttachmentRequest(new MediaRequestPayload(info.token()));
+
+
+            sendMessage(chatInfo, text, List.of(attachmentRequest));
+        }
 //        SendDocument message = new SendDocument(chatInfo.getChatId(), new InputFile(file, fileName));
 //        message.setMessageThreadId(chatInfo.getThreadId());
 //        message.setReplyToMessageId(chatInfo.getOriginMessageId());
@@ -109,8 +139,12 @@ public class MaxBotSend {
 //        }
     }
 
-    public Message sendMessage(ChatInfo chatInfo, String text, Object /*InlineKeyboardMarkup*/ menu) {
-//        SendMessage message = new SendMessage(chatInfo.getChatId(), text);
+    public SendMessageResult sendMessage(ChatInfo chatInfo, String text, List<AttachmentRequest> menu) {
+        SendMessageResult messageSend = api.sendMessage(new NewMessageBody(text, menu, null, null, null))
+                .chatId(Long.parseLong(chatInfo.getChatId()))
+                .execute();
+
+        //        SendMessage message = new SendMessage(chatInfo.getChatId(), text);
 //
 //        message.setMessageThreadId(chatInfo.getThreadId());
 //        message.enableHtml(true);
@@ -125,16 +159,16 @@ public class MaxBotSend {
 //        }
 //        message.setReplyMarkup(menu);
 //        Message messageSend = tgClient.execute(message);
-//        messageSendService.saveMessageSend(new MessageSend(chatInfo, text));
-//        return messageSend;
-        return null;
+        messageSendService.saveMessageSend(new MessageSend(chatInfo, text));
+        return messageSend;
+
     }
 
     @Value("${telegram-bot.admin-id}")
     private String adminId;
 
     public void sendMessageForAdmin(SendAdminMessage message) {
-        ChatInfo chatInfo = new ChatInfo(null, adminId, null, null);
+        ChatInfo chatInfo = new ChatInfo(null, adminId, null);
         if (message.isAttachFile()) {
             sendDocument(
                     chatInfo,
@@ -150,12 +184,15 @@ public class MaxBotSend {
         if (chatInfo.getOriginMessageId() == null) {
             return;
         }
+        api.deleteMessage(chatInfo.getOriginMessageId()).execute();
 //        DeleteMessage delete = new DeleteMessage(chatInfo.getChatId(), chatInfo.getOriginMessageId());
 //        chatInfo.setOriginMessageId(null);
 //        tgClient.execute(delete);
     }
 
-    public void editMessage(ChatInfo chatInfo, String newText, Object /*InlineKeyboardMarkup */ menu){
+    public void editMessage(ChatInfo chatInfo, String newText, List<AttachmentRequest> /*InlineKeyboardMarkup */ menu) {
+        SendAction(chatInfo, SenderAction.TYPING_ON);
+        api.editMessage(new NewMessageBody(newText, menu, null, null, null), chatInfo.getOriginMessageId()).execute();
 //        EditMessageText edit = new EditMessageText(newText);
 //        edit.setChatId(chatInfo.getChatId());
 //        edit.setMessageId(chatInfo.getOriginMessageId());
@@ -165,8 +202,27 @@ public class MaxBotSend {
 //        tgClient.execute(edit);
     }
 
-    public void EditPhoto(ChatInfo chatInfo, String newText, Object /*InlineKeyboardMarkup*/ menu, File file) {
-//        EditMessageMedia edit = new EditMessageMedia(new InputMediaPhoto(file, "menu.jpg"));
+    public void EditPhoto(ChatInfo chatInfo, String newText, List<AttachmentRequest> /*InlineKeyboardMarkup*/ menu, File file) {
+        SendAction(chatInfo, SenderAction.SENDING_PHOTO);
+        try (
+                MaxUploadAPI uploadApi = new MaxUploadAPI()) {
+
+// Шаг 1: запросить endpoint для загрузки
+            UploadEndpoint endpoint = api.getUploadUrl(UploadType.IMAGE).execute();
+
+// Шаг 2: передать файл потоком (без буферизации в куче)
+            FileUploadedInfo info = uploadApi.uploadFile(endpoint, file.toPath(), file.getName());
+            AttachmentRequest attachmentRequest = new FileAttachmentRequest(new MediaRequestPayload(info.token()));
+            if (menu == null) {
+                menu = List.of(attachmentRequest);
+            } else {
+                menu.add(attachmentRequest);
+            }
+
+            editMessage(chatInfo, newText, menu);
+        }
+
+        //        EditMessageMedia edit = new EditMessageMedia(new InputMediaPhoto(file, "menu.jpg"));
 //        edit.setChatId(chatInfo.getChatId());
 //        edit.setMessageId(chatInfo.getOriginMessageId());
 //        edit.getMedia().setCaption(newText);
@@ -177,12 +233,13 @@ public class MaxBotSend {
 
     public boolean SendAction(ChatInfo chatInfo) {
         //todo тип отправки
-        return SendAction(chatInfo, null /* ActionType.TYPING*/);
+        return SendAction(chatInfo, SenderAction.TYPING_ON);
 
     }
 
-    public boolean SendAction(ChatInfo chatInfo, Object /* ActionType */ actionType) {
-//        SendChatAction sendChatAction = new SendChatAction(chatInfo.getChatId(), actionType.toString());
+    public boolean SendAction(ChatInfo chatInfo, SenderAction actionType) {
+        api.sendAction(new ActionRequestBody(actionType), Long.parseLong(chatInfo.getChatId())).execute();
+        //        SendChatAction sendChatAction = new SendChatAction(chatInfo.getChatId(), actionType.toString());
 //        sendChatAction.setChatId(chatInfo.getChatId());
 //        sendChatAction.setMessageThreadId(chatInfo.getThreadId());
 //

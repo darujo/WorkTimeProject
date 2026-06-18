@@ -11,6 +11,7 @@ import ru.darujo.model.ChatInfo;
 import ru.darujo.service.FileService;
 import ru.darujo.service.MenuService;
 import ru.darujo.service.MessageReceiveService;
+import ru.max.botapi.core.UpdateHandler;
 import ru.max.botapi.model.*;
 
 import java.util.HashMap;
@@ -18,7 +19,7 @@ import java.util.Map;
 
 @Slf4j
 @Service
-public class MaxBotRequest implements AutoCloseable {
+public class MaxBotRequest implements UpdateHandler, AutoCloseable {
 
     private UserServiceIntegrationImp userServiceIntegration;
 
@@ -73,18 +74,16 @@ public class MaxBotRequest implements AutoCloseable {
     /**
      * Этот метод вызывается при получении обновлений через метод GetUpdates.
      *
-     * @param request Получено обновление
+     * @param update Получено обновление
      */
-    public void consume(MessageCreatedUpdate request) {
+    public void onUpdate(Update update) {
 
+        if (update instanceof MessageCreatedUpdate msg) {
+            log.info(msg.message().constructor().username());
+            log.info(String.valueOf(msg.message().recipient().chatId()));
+            String chatId = Long.toString(msg.message().recipient().chatId());
 
-        Message requestMessage = request.message();
-
-//        log.info(requestMessage.getChat().getUserName());
-//        log.info(String.valueOf(requestMessage.getChatId()));
-//        String chatId = Long.toString(requestMessage.getChatId());
-//        Integer threadId = requestMessage.getMessageThreadId();
-//        ChatInfo chatInfo = new ChatInfo(requestMessage.getFrom().getUserName(), chatId, threadId, requestMessage.getMessageId());
+            ChatInfo chatInfo = new ChatInfo(msg.message().constructor().username(), chatId, msg.message().body().mid());
 //        if (telegramBotSend.SendAction(chatInfo)) {
 //            log.error("Не удалось уведомить пользователя, что я что-то делаю.");
 //        }
@@ -105,6 +104,18 @@ public class MaxBotRequest implements AutoCloseable {
 //                        requestMessage.getChat().isUserChat(),
 //                        requestMessage.getChat().isGroupChat(),
 //                        requestMessage.getChat().isSuperGroupChat()));
+            onUpdate(msg);
+        } else if (update instanceof MessageCallbackUpdate msg) {
+            onUpdate(msg);
+        }
+    }
+
+    public void onUpdate(MessageCreatedUpdate request) {
+
+
+        Message requestMessage = request.message();
+
+
 //        try {
 //            if (request.hasMessage() && requestMessage.hasText()) {
 //                log.info("Working onUpdateReceived, request.message");
@@ -239,7 +250,8 @@ public class MaxBotRequest implements AutoCloseable {
 
     private void getStop(ChatInfo chatInfo) {
         try {
-            if (userServiceIntegration.linkDeleteTelegram(Long.parseLong(chatInfo.getChatId()), chatInfo.getThreadId())) {
+            // toDo заменить на max
+            if (userServiceIntegration.linkDeleteTelegram(Long.parseLong(chatInfo.getChatId()), null)) {
                 if (chatInfo.getOriginMessageId() == null) {
                     defaultMsg(chatInfo, "Что-то пошло не так как хотелось бы.");
                 } else {

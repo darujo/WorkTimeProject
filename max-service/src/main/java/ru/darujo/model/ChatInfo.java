@@ -13,8 +13,6 @@ public class ChatInfo {
     @Setter
     private String chatId;
     @Setter
-    private Integer threadId;
-    @Setter
-    private Integer originMessageId;
+    private String originMessageId;
 
 }
