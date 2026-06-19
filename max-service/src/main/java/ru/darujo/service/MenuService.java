@@ -6,11 +6,10 @@ import ru.darujo.dto.information.ResultMes;
 import ru.darujo.integration.InfoServiceIntegrationImp;
 import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.model.ChatInfo;
-import ru.darujo.telegram_bot.MaxBotSend;
+import ru.darujo.max_bot.MaxBotSend;
 import ru.darujo.type.MessageSenderType;
 import ru.darujo.type.ReportType;
-import ru.darujo.type.TypeEnum;
-import ru.max.botapi.model.Message;
+import ru.max.botapi.model.SendMessageResult;
 
 import java.io.File;
 import java.util.*;
@@ -81,7 +80,7 @@ public class MenuService {
         maxBotSend.sendPhoto(chatInfo, fileService.getFile("menu"), "Чего желаете?", /*getMainMenu()*/ null);
     }
 
-    Map<Integer, MenuParam> paramMap = new HashMap<>();
+    Map<String, MenuParam> paramMap = new HashMap<>();
 
     public void getMenu(ChatInfo chatInfo, String command, File file) {
         try {
@@ -164,13 +163,13 @@ public class MenuService {
         try {
             ResultMes resultMes = userServiceIntegration.checkUserTelegram(Long.parseLong(chatInfo.getChatId()));
             if (resultMes.isOk()) {
-                Message message = maxBotSend.sendMessage(chatInfo, "Отчет \"" + reportType.getName() + "\" будет доставлен в ближайшее время");
+                SendMessageResult message = maxBotSend.sendMessage(chatInfo, "Отчет \"" + reportType.getName() + "\" будет доставлен в ближайшее время");
  // todo на что заменить?
-                // chatInfo.setOriginMessageId(message.getMessageId());
+                chatInfo.setOriginMessageId(message.message().body().mid());
                 if (sendMe) {
-                    infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), MessageSenderType.Telegram, chatInfo.getChatId(), chatInfo.getThreadId(), chatInfo.getOriginMessageId());
+                    infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), MessageSenderType.Telegram, chatInfo.getChatId(), null, chatInfo.getOriginMessageId());
                 } else {
-                    infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), null, null, null, null);
+                    infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), null, null, null, (Integer) null);
                 }
             } else {
                 maxBotSend.sendMessage(chatInfo, resultMes.getMessage());

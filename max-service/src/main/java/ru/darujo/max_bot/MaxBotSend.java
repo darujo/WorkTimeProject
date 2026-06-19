@@ -1,4 +1,4 @@
-package ru.darujo.telegram_bot;
+package ru.darujo.max_bot;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;

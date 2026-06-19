@@ -130,6 +130,28 @@ public class UserServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
         }
 
     }
+    public ResultMes linkCodeMax(Integer code, String telegramId, Integer threadId) {
+        StringBuilder stringBuilder = new StringBuilder();
+        addTeg(stringBuilder, "code", code);
+        addTeg(stringBuilder, "telegramId", telegramId);
+        addTeg(stringBuilder, "threadId", threadId);
+        try {
+            return webClient.get().uri("/users/user/telegram/link" + stringBuilder)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            clientResponse -> getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
+                    .bodyToMono(ResultMes.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .block();
+        } catch (RuntimeException ex) {
+            if (ex instanceof ResourceNotFoundRunTime) {
+                throw ex;
+            } else {
+                throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить пользователя (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            }
+        }
+
+    }
 
     public Boolean linkDeleteTelegram(Long telegramId, Integer threadId) {
         StringBuilder stringBuilder = new StringBuilder();

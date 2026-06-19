@@ -171,7 +171,7 @@ public class MenuService {
                 if (sendMe) {
                     infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), MessageSenderType.Telegram, chatInfo.getChatId(), chatInfo.getThreadId(), chatInfo.getOriginMessageId());
                 } else {
-                    infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), null, null, null, null);
+                    infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), null, null, null, (Integer) null);
                 }
             } else {
                 telegramBotSend.sendMessage(chatInfo, resultMes.getMessage());
