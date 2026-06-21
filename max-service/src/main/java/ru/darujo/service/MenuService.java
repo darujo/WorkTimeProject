@@ -5,11 +5,12 @@ import org.springframework.stereotype.Service;
 import ru.darujo.dto.information.ResultMes;
 import ru.darujo.integration.InfoServiceIntegrationImp;
 import ru.darujo.integration.UserServiceIntegrationImp;
-import ru.darujo.model.ChatInfo;
 import ru.darujo.max_bot.MaxBotSend;
+import ru.darujo.model.ChatInfo;
 import ru.darujo.type.MessageSenderType;
 import ru.darujo.type.ReportType;
-import ru.max.botapi.model.SendMessageResult;
+import ru.darujo.type.TypeEnum;
+import ru.max.botapi.model.*;
 
 import java.io.File;
 import java.util.*;
@@ -44,40 +45,40 @@ public class MenuService {
         this.fileService = fileService;
     }
 
-//    private InlineKeyboardMarkup createMenu(List<InlineKeyboardRow> rows) {
-//        return new InlineKeyboardMarkup(rows);
-//    }
-//
-//    private InlineKeyboardRow createRow(List<TypeEnum> commands) {
-//        List<InlineKeyboardButton> buttons = new ArrayList<>();
-//
-//        commands.forEach((command) ->
-//                buttons.add(InlineKeyboardButton.builder()
-//                        .text(command.getName())
-//                        .callbackData(command.toString())
-//                        .build()));
-//        return new InlineKeyboardRow(buttons);
-//    }
-//
-//    public InlineKeyboardMarkup getMainMenu() {
-//        List<InlineKeyboardRow> rows = new LinkedList<>();
-//
-//        List<TypeEnum> row = new LinkedList<>();
-//        row.add(CommandType.LINK);
-//        row.add(CommandType.STOP);
-//        rows.add(createRow(row));
-//
-//        row = new LinkedList<>();
-//        row.add(CommandType.REPORT);
-//        rows.add(createRow(row));
-//        addRowCancel(rows);
-//        return createMenu(rows);
-//
-//    }
+    private InlineKeyboardAttachmentRequest createMenu(List<List<Button>> rows) {
+        InlineKeyboardAttachment.KeyboardPayload payload =
+                new InlineKeyboardAttachment.KeyboardPayload(rows);
+        return new InlineKeyboardAttachmentRequest(payload);
+    }
+
+    private List<Button> createRow(List<TypeEnum> commands) {
+        List<Button> buttons = new ArrayList<>();
+
+        commands.forEach((command) ->
+                buttons.add(new CallbackButton(command.getName(), command.toString(), ButtonIntent.POSITIVE)
+
+                ));
+        return buttons;
+    }
+
+    public InlineKeyboardAttachmentRequest getMainMenu() {
+        List<List<Button>> rows = new LinkedList<>();
+
+        List<TypeEnum> row = new LinkedList<>();
+        row.add(CommandType.LINK);
+        row.add(CommandType.STOP);
+        rows.add(createRow(row));
+
+        row = new LinkedList<>();
+        row.add(CommandType.REPORT);
+        rows.add(createRow(row));
+        addRowCancel(rows);
+        return createMenu(rows);
+
+    }
 
     public void openMainMenu(ChatInfo chatInfo) {
-//todo исправить меню
-        maxBotSend.sendPhoto(chatInfo, fileService.getFile("menu"), "Чего желаете?", /*getMainMenu()*/ null);
+        maxBotSend.sendPhoto(chatInfo, fileService.getFile("menu"), "Чего желаете?", List.of(getMainMenu()));
     }
 
     Map<String, MenuParam> paramMap = new HashMap<>();
@@ -94,8 +95,7 @@ public class MenuService {
             try {
 
                 menuParam.setReportType(ReportType.valueOf(command));
-                // todo меню рассылок
-                maxBotSend.EditPhoto(chatInfo, "Кому разослать результат по отчету " + command + "?", null/*getMenuWorkStatus()*/, file);
+                maxBotSend.EditPhoto(chatInfo, "Кому разослать результат по отчету " + command + "?", List.of(getMenuWorkStatus()), file);
             } catch (IllegalArgumentException illegalArgumentException) {
                 reOpenMainMenu(chatInfo);
             }
@@ -104,7 +104,7 @@ public class MenuService {
 
     }
 
-    public void getMenu(ChatInfo chatInfo, CommandType command, File file){
+    public void getMenu(ChatInfo chatInfo, CommandType command, File file) {
         MenuParam menuParam = null;
 
         if (command.getNewParam()) {
@@ -120,8 +120,7 @@ public class MenuService {
         if (command.equals(CommandType.REPORT)) {
             ResultMes resultMes = userServiceIntegration.checkUserTelegram(Long.parseLong(chatInfo.getChatId()));
             if (resultMes.isOk()) {
-                // todo меню отчетов
-                maxBotSend.EditPhoto(chatInfo, "Какой отчет вы хотите построить?", /*getMenuReport()*/ null, file);
+                maxBotSend.EditPhoto(chatInfo, "Какой отчет вы хотите построить?", List.of(getMenuReport()), file);
             } else {
                 maxBotSend.deleteMessage(chatInfo);
                 maxBotSend.sendMessage(chatInfo, resultMes.getMessage());
@@ -158,13 +157,13 @@ public class MenuService {
         openMainMenu(chatInfo);
     }
 
-    private void sendReport(ReportType reportType, ChatInfo chatInfo, boolean sendMe)  {
+    private void sendReport(ReportType reportType, ChatInfo chatInfo, boolean sendMe) {
         deleteMessage(chatInfo);
         try {
             ResultMes resultMes = userServiceIntegration.checkUserTelegram(Long.parseLong(chatInfo.getChatId()));
             if (resultMes.isOk()) {
                 SendMessageResult message = maxBotSend.sendMessage(chatInfo, "Отчет \"" + reportType.getName() + "\" будет доставлен в ближайшее время");
- // todo на что заменить?
+                // todo на что заменить?
                 chatInfo.setOriginMessageId(message.message().body().mid());
                 if (sendMe) {
                     infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), MessageSenderType.Telegram, chatInfo.getChatId(), null, chatInfo.getOriginMessageId());
@@ -180,52 +179,51 @@ public class MenuService {
         }
     }
 
-//    private InlineKeyboardMarkup getMenuWorkStatus() {
-//        List<InlineKeyboardRow> rows = new LinkedList<>();
-//
-//        List<TypeEnum> row = new LinkedList<>();
-//        row.add(CommandType.SEND_ME);
-//        row.add(CommandType.SEND_ALL);
-//        rows.add(createRow(row));
-//        addRowCancel(rows);
-//        return createMenu(rows);
-//
-//    }
-//
-//    private InlineKeyboardMarkup getMenuReport() {
-//        List<InlineKeyboardRow> rows = new LinkedList<>();
-//        for (ReportType typeDto : ReportType.values()) {
-//            List<TypeEnum> row = new LinkedList<>();
-//            row.add(typeDto);
-//            rows.add(createRow(row));
-//        }
-//        addRowCancel(rows);
-//        return createMenu(rows);
-//
-//    }
-//
-//    private InlineKeyboardMarkup getMenuCancel() {
-//        List<InlineKeyboardRow> rows = new LinkedList<>();
-//
-//        rows.add(createRowCancel());
-//
-//        return createMenu(rows);
-//
-//    }
+    private InlineKeyboardAttachmentRequest getMenuWorkStatus() {
+        List<List<Button>> rows = new LinkedList<>();
 
-    public void openCancel(ChatInfo chatInfo, String text)  {
-        // todo отмена
-        maxBotSend.sendMessage(chatInfo, text, /*getMenuCancel()*/ null);
+        List<TypeEnum> row = new LinkedList<>();
+        row.add(CommandType.SEND_ME);
+        row.add(CommandType.SEND_ALL);
+        rows.add(createRow(row));
+        addRowCancel(rows);
+        return createMenu(rows);
+
     }
 
-//    private InlineKeyboardRow createRowCancel() {
-//        List<TypeEnum> row = new LinkedList<>();
-//        row.add(CommandType.CANCEL);
-//        return createRow(row);
-//    }
-//
-//    private void addRowCancel(List<InlineKeyboardRow> rows) {
-//        rows.add(createRowCancel());
-//
-//    }
+    private InlineKeyboardAttachmentRequest getMenuReport() {
+        List<List<Button>> rows = new LinkedList<>();
+        for (ReportType typeDto : ReportType.values()) {
+            List<TypeEnum> row = new LinkedList<>();
+            row.add(typeDto);
+            rows.add(createRow(row));
+        }
+        addRowCancel(rows);
+        return createMenu(rows);
+
+    }
+
+    private InlineKeyboardAttachmentRequest getMenuCancel() {
+        List<List<Button>> rows = new LinkedList<>();
+
+        rows.add(createRowCancel());
+
+        return createMenu(rows);
+
+    }
+
+    public void openCancel(ChatInfo chatInfo, String text) {
+        maxBotSend.sendMessage(chatInfo, text, List.of(getMenuCancel()));
+    }
+
+    private List<Button> createRowCancel() {
+        List<TypeEnum> row = new LinkedList<>();
+        row.add(CommandType.CANCEL);
+        return createRow(row);
+    }
+
+    private void addRowCancel(List<List<Button>> rows) {
+        rows.add(createRowCancel());
+
+    }
 }

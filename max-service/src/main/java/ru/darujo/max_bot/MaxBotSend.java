@@ -99,18 +99,6 @@ private MaxBotAPI api;
 
             sendMessage(chatInfo, text, menu);
         }
-        //        SendPhoto message = new SendPhoto(chatInfo.getChatId(), new InputFile(file));
-//
-//        message.setMessageThreadId(chatInfo.getThreadId());
-//        if (!text.isEmpty()) {
-//            message.setCaption(text);
-//            message.setReplyMarkup(menu);
-//        }
-//        try {
-//            tgClient.execute(message);
-//        } catch (TelegramApiException e) {
-//            sendMessage(chatInfo, text);
-//        }
     }
 
     public void sendDocument(ChatInfo chatInfo, String fileName, File file, String text)  {
@@ -126,17 +114,6 @@ private MaxBotAPI api;
 
             sendMessage(chatInfo, text, List.of(attachmentRequest));
         }
-//        SendDocument message = new SendDocument(chatInfo.getChatId(), new InputFile(file, fileName));
-//        message.setMessageThreadId(chatInfo.getThreadId());
-//        message.setReplyToMessageId(chatInfo.getOriginMessageId());
-//        if (!text.isEmpty()) {
-//            message.setCaption(text);
-//        }
-//        try {
-//            tgClient.execute(message);
-//        } catch (TelegramApiException e) {
-//            sendMessage(chatInfo, text);
-//        }
     }
 
     public SendMessageResult sendMessage(ChatInfo chatInfo, String text, List<AttachmentRequest> menu) {
@@ -144,21 +121,6 @@ private MaxBotAPI api;
                 .chatId(Long.parseLong(chatInfo.getChatId()))
                 .execute();
 
-        //        SendMessage message = new SendMessage(chatInfo.getChatId(), text);
-//
-//        message.setMessageThreadId(chatInfo.getThreadId());
-//        message.enableHtml(true);
-////
-//        if (chatInfo.getOriginMessageId() != null) {
-//            message.setReplyParameters(
-//                    ReplyParameters
-//                            .builder()
-////                        .chatId(chatInfo.getChatId())
-//                            .messageId(chatInfo.getOriginMessageId())
-//                            .build());
-//        }
-//        message.setReplyMarkup(menu);
-//        Message messageSend = tgClient.execute(message);
         messageSendService.saveMessageSend(new MessageSend(chatInfo, text));
         return messageSend;
 
@@ -185,21 +147,11 @@ private MaxBotAPI api;
             return;
         }
         api.deleteMessage(chatInfo.getOriginMessageId()).execute();
-//        DeleteMessage delete = new DeleteMessage(chatInfo.getChatId(), chatInfo.getOriginMessageId());
-//        chatInfo.setOriginMessageId(null);
-//        tgClient.execute(delete);
     }
 
     public void editMessage(ChatInfo chatInfo, String newText, List<AttachmentRequest> /*InlineKeyboardMarkup */ menu) {
         SendAction(chatInfo, SenderAction.TYPING_ON);
         api.editMessage(new NewMessageBody(newText, menu, null, null, null), chatInfo.getOriginMessageId()).execute();
-//        EditMessageText edit = new EditMessageText(newText);
-//        edit.setChatId(chatInfo.getChatId());
-//        edit.setMessageId(chatInfo.getOriginMessageId());
-//        edit.setText(newText);
-//        edit.setReplyMarkup(menu);
-//
-//        tgClient.execute(edit);
     }
 
     public void EditPhoto(ChatInfo chatInfo, String newText, List<AttachmentRequest> /*InlineKeyboardMarkup*/ menu, File file) {
@@ -222,13 +174,6 @@ private MaxBotAPI api;
             editMessage(chatInfo, newText, menu);
         }
 
-        //        EditMessageMedia edit = new EditMessageMedia(new InputMediaPhoto(file, "menu.jpg"));
-//        edit.setChatId(chatInfo.getChatId());
-//        edit.setMessageId(chatInfo.getOriginMessageId());
-//        edit.getMedia().setCaption(newText);
-////        edit.(newText);
-//        edit.setReplyMarkup(menu);
-//        tgClient.execute(edit);
     }
 
     public boolean SendAction(ChatInfo chatInfo) {
@@ -239,15 +184,6 @@ private MaxBotAPI api;
 
     public boolean SendAction(ChatInfo chatInfo, SenderAction actionType) {
         api.sendAction(new ActionRequestBody(actionType), Long.parseLong(chatInfo.getChatId())).execute();
-        //        SendChatAction sendChatAction = new SendChatAction(chatInfo.getChatId(), actionType.toString());
-//        sendChatAction.setChatId(chatInfo.getChatId());
-//        sendChatAction.setMessageThreadId(chatInfo.getThreadId());
-//
-//        try {
-//            return tgClient.execute(sendChatAction);
-//        } catch (TelegramApiException e) {
-//            log.error(e.getMessage(), e);
-//        }
         return false;
     }
 }

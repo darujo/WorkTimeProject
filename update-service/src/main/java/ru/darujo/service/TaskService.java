@@ -39,6 +39,7 @@ public class TaskService {
     public void setAdminInfoServiceList(List<AdminInfoService> adminInfoServiceList) {
         this.adminInfoServiceList = adminInfoServiceList;
     }
+
     @Autowired
     public void setInfoServiceIntegration(InfoServiceIntegrationImp infoServiceIntegration) {
         this.infoServiceIntegration = infoServiceIntegration;
@@ -236,12 +237,12 @@ public class TaskService {
                 adminInfoServiceList.forEach(adminInfoService -> adminInfoService.sendMessageForAdmin(new SendAdminMessage() {
                     @Override
                     public String getTitle() {
-                        return "BackUp " + LocalDateTime.now();
+                        return "BackUp WorkTime";
                     }
 
                     @Override
                     public String getText() {
-                        return "BackUp выполнен;";
+                        return "BackUp выполнен;" + LocalDateTime.now();
                     }
 
                     @Override
