@@ -14,9 +14,9 @@ public class UserInfoDto implements Serializable {
     private String senderType;
     private String telegramId;
     private Integer threadId;
-    private Integer originMessageId;
+    private String originMessageId;
 
-    public UserInfoDto(String senderType, Long id, String nikName, String telegramId, Integer threadId, Integer originMessageId) {
+    public UserInfoDto(String senderType, Long id, String nikName, String telegramId, Integer threadId, String originMessageId) {
         this.id = id;
         this.nikName = nikName;
         this.telegramId = telegramId;
@@ -25,7 +25,7 @@ public class UserInfoDto implements Serializable {
         this.senderType = senderType;
     }
 
-    public UserInfoDto(String senderType, Long id, String nikName, Long projectId, String telegramId, Integer threadId, Integer originMessageId) {
+    public UserInfoDto(String senderType, Long id, String nikName, Long projectId, String telegramId, Integer threadId, String originMessageId) {
         this.id = id;
         this.nikName = nikName;
         this.projectId = projectId;
@@ -51,7 +51,7 @@ public class UserInfoDto implements Serializable {
         return threadId;
     }
 
-    public Integer getOriginMessageId() {
+    public String getOriginMessageId() {
         return originMessageId;
     }
 

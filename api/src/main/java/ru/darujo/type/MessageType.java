@@ -14,11 +14,11 @@ public enum MessageType implements TypeEnum {
     AVAIL_WORK_LAST_DAY("Работы отмеченные вами за предыдущий рабочий день. Рассылается по рабочим дням", 11),
     AVAIL_WORK_LAST_WEEK("Работы отмеченные вами за последние 7 дней. Рассылается на второй рабочий день.", 12),
     AVAIL_WORK_FULL_REPORT("Статус ЗИ", false, DayOfWeek.TUESDAY, 20, ReportType.ZI_STATUS),
-    AVAIL_WORK_FULL_REPORT_PROJECT("Статус ЗИ по проектам.", true, DayOfWeek.TUESDAY, 20, 10, ReportType.ZI_STATUS_PROJECT),
+    AVAIL_WORK_FULL_REPORT_PROJECT("Статус ЗИ по проектам.", true, DayOfWeek.TUESDAY, 20, 10, ReportType.ZI_STATUS),
 
     WEEK_WORK_REPORT("Факт загрузки за предыдущую неделю.", false, DayOfWeek.TUESDAY, 20, ReportType.USER_WORK),
     ZI_WORK_REPORT("Факт загрузки по ЗИ.", false, DayOfWeek.TUESDAY, 20, ReportType.ZI_WORK),
-    ZI_WORK_REPORT_PROJECT("Факт загрузки по ЗИ по проектам.", true, DayOfWeek.TUESDAY, 20, 10, ReportType.ZI_WORK_PROJECT),
+    ZI_WORK_REPORT_PROJECT("Факт загрузки по ЗИ по проектам.", true, DayOfWeek.TUESDAY, 20, 10, ReportType.ZI_WORK),
 
     VACATION_MY_START("Начало вашего отпуска в день перед отпуском", 20),
     VACATION_MY_END("Конец Вашего отпуска в последний день отпуска", 14),

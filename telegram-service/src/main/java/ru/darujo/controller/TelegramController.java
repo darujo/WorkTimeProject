@@ -39,12 +39,12 @@ public class TelegramController {
         telegramBotSend.sendMessage(new ChatInfo(username, chatId, threadId, originMessageId), text);
     }
 
-    @PostMapping(value = "/send/admin", consumes = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping(value = "/send/admin")
     public void sendMessageToTelegram(@RequestBody SendAdminMessage message) throws TelegramApiException {
         telegramBotSend.sendMessageForAdmin(message);
     }
 
-    @PostMapping(value = "/file", consumes = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping(value = "/file")
     public String addFile(@RequestParam String fileName,
                           @RequestBody byte[] body) {
         return fileService.addFile(fileName, body);

@@ -7,7 +7,7 @@ public interface UserSendMessage {
 
     Integer getThreadId();
 
-    Integer getOriginMessageId();
+    String getOriginMessageId();
 
     void setSend();
 }

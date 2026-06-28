@@ -30,7 +30,7 @@ public class FileService {
         try {
             File file;
             if (fileName == null) {
-                file = File.createTempFile(String.valueOf(Objects.requireNonNull(name).hashCode()), ".tmp");
+                file = File.createTempFile(String.valueOf(Objects.requireNonNull(name).hashCode()), ".jpg");
                 file.deleteOnExit();
             } else {
                 file = new File(fileName);
@@ -95,7 +95,7 @@ public class FileService {
     public File resourceToFile(String fileName) {
 
         try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName)) {
-            File f = File.createTempFile(String.valueOf(Objects.requireNonNull(in).hashCode()), ".tmp");
+            File f = File.createTempFile(String.valueOf(Objects.requireNonNull(in).hashCode()), ".jpg");
             log.info(f.getAbsolutePath());
             f.deleteOnExit();
 

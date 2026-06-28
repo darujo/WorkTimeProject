@@ -4,7 +4,7 @@ angular.module('workTimeService').controller('userInfoTypeController', function 
     const constPatchLink = window.location.origin + '/users/user/telegram';
     $scope.User = {infoTypes: null};
     $scope.User = null;
-    $scope.Filter = {infoType: "Email", viewLink: false};
+    $scope.Filter = {infoType: "Email", viewLink: false, viewThreadId: false};
 
     $scope.loadInfoType = function () {
         if ($scope.load) {
@@ -14,7 +14,9 @@ angular.module('workTimeService').controller('userInfoTypeController', function 
             $scope.load = true;
             console.log("запрос данных страницы");
             console.log(window.location);
-            $scope.Filter["viewLink"] = $scope.Filter.infoType === "Telegram";
+            $scope.Filter["viewLink"] = $scope.Filter.infoType === "Telegram" || $scope.Filter.infoType === "Max";
+            $scope.Filter["viewThreadId"] = $scope.Filter.infoType === "Telegram";
+
             $http({
                 url: constPatchUser + "/info/type/" + userIdInfo,
                 params: {senderType: $scope.Filter.infoType},
@@ -114,8 +116,8 @@ angular.module('workTimeService').controller('userInfoTypeController', function 
             params: {
                 nikName: nikName,
                 messageType: infoType.code,
-                projectId: infoType.projectId
-
+                projectId: infoType.projectId,
+                senderType: $scope.Filter.infoType
             }
         }).then(function (response) {
             console.log("Save response")

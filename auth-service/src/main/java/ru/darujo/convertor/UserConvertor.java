@@ -15,6 +15,7 @@ public class UserConvertor {
                 user.getPatronymic(),
                 user.getPasswordChange(),
                 user.getTelegramId() != null,
+                user.getMaxId() != null,
                 user.getCurrentProject().getId(),
                 user.getProjects().stream().map(ProjectConvertor::getProjectDto).toList(),
                 user.isBlock()

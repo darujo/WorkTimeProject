@@ -239,16 +239,19 @@ public class TelegramBotRequest implements SpringLongPollingBot, LongPollingUpda
                         try {
                             telegramBotSend.deleteMessage(chatInfo);
                             getStop(chatInfo);
+                            return;
                         } catch (TelegramApiException e) {
                             throw new RuntimeException(e);
                         }
                     } else if (CommandType.LINK.equals(CommandType.valueOf(callbackQuery.getData()))) {
                         try {
                             getLink(chatInfo);
+                            return;
                         } catch (TelegramApiException e) {
                             throw new RuntimeException(e);
                         }
                     }
+
                 } catch (IllegalArgumentException ex) {
                     log.info(String.valueOf(ex));
                 }

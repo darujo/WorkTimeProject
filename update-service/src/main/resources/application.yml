@@ -45,6 +45,8 @@ integration:
     enable: true
   telegram-service:
     enable: false
+  max-service:
+    enable: true
   work-service:
     enable: true
   task-service:

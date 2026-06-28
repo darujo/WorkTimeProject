@@ -52,7 +52,7 @@ public class UserController {
                 nikName = null;
             }
         }
-        return userService.getUserList(role, page, size, nikName, lastName, firstName, patronymic, null, null, projectId).map(UserConvertor::getUserDto);
+        return userService.getUserList(role, page, size, nikName, lastName, firstName, patronymic, null, null, null, null, projectId).map(UserConvertor::getUserDto);
 
 
     }
@@ -90,7 +90,7 @@ public class UserController {
     }
 
     @PostMapping("/user/info/type")
-    public UserInfoTypeDto getUserInfoTypes(@RequestParam String senderType,
+    public UserInfoTypeDto setUserInfoTypes(@RequestParam String senderType,
                                             @RequestBody UserInfoTypeDto userInfoTypeDto) {
         return userService.setUserInfoTypes(senderType, userInfoTypeDto);
 

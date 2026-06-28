@@ -15,4 +15,9 @@ public class ChatInfo {
     @Setter
     private String originMessageId;
 
+    public ChatInfo(String author, Long chatId, String originMessageId) {
+        this.author = author;
+        this.chatId = Long.toString(chatId);
+        this.originMessageId = originMessageId;
+    }
 }

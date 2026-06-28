@@ -28,7 +28,7 @@ max:
 
   bot:
 
-    mode: longpolling
+    mode: webhook
     webhook:
       token: "f9LHodD0cOLCGhzGSV92H6ALSwjLcgoIOoU_P0KNzzrQ7usxzw5tpFalOPTW_D2PEdTv-PSrwLIcTuOhyQMq"
       url: "https://sheduler.ru/max-bot/webhook"

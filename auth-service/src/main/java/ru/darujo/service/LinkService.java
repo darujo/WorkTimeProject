@@ -10,6 +10,7 @@ import ru.darujo.dto.information.ResultMes;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.User;
 import ru.darujo.model.UserInfoType;
+import ru.darujo.type.MessageSenderType;
 import ru.darujo.type.MessageType;
 
 import java.sql.Timestamp;
@@ -39,7 +40,7 @@ public class LinkService {
     }
 
     @Transactional
-    public CodeTelegramMes getGenSingleCode(String login, String messageType, Long projectId) {
+    public CodeTelegramMes getGenSingleCode(String login, String senderType, String messageType, Long projectId) {
 
         if (login == null) {
             throw new ResourceNotFoundRunTime("пройдите авторизацию");
@@ -57,6 +58,9 @@ public class LinkService {
         int code = (int) ((99999999 * Math.random()));
         SingleCode singleCode = new SingleCode(login, projectId, messageType, timestamp);
         mapCode.put(code, singleCode);
+        if (senderType.equalsIgnoreCase("max")) {
+            return new CodeTelegramMes(true, "max.ru/se13305836_bot", code, TIME_CODE);
+        }
         return new CodeTelegramMes(true, "t.me/DaruWorkBot", code, TIME_CODE);
 
     }
@@ -87,7 +91,7 @@ public class LinkService {
     }
 
     @Transactional
-    public ResultMes linkCodeTelegram(Integer code, String senderType, String telegramId, Integer threadId) {
+    public ResultMes linkCodeTelegram(Integer code, String senderType, String chatId, Integer threadId) {
 
         clearMapCode(null, null);
         SingleCode singleCode = mapCode.get(code);
@@ -100,13 +104,18 @@ public class LinkService {
         }
 
         if (singleCode.getMessageType() == null) {
-            user.setTelegramId(telegramId);
-            userService.saveUser(user);
+            if (senderType.equalsIgnoreCase(MessageSenderType.Max.toString())) {
+                user.setMaxId(chatId);
+                userService.saveUser(user);
+            } else if (senderType.equalsIgnoreCase(MessageSenderType.Telegram.toString())) {
+                user.setTelegramId(chatId);
+                userService.saveUser(user);
+            }
         } else {
             UserInfoType userInfoType = userInfoTypeService
                     .getInfoTypeForUser(user, senderType, singleCode.getProjectId(), null, null, singleCode.getMessageType())
                     .orElse(new UserInfoType(singleCode.getProjectId(), singleCode.getMessageType(), user));
-            userInfoType.setChatId(telegramId);
+            userInfoType.setChatId(chatId);
             userInfoType.setThreadId(threadId);
             userInfoTypeService.save(userInfoType);
 
@@ -120,22 +129,36 @@ public class LinkService {
     }
 
     @Transactional
-    public void linkDeleteTelegram(String senderType, String telegramId, Integer threadId) {
+    public void linkDeleteMessager(String senderType, String chatId, Integer threadId) {
         if (threadId == null) {
-            userService.getUserList(null, null, null, null, null, null, null, telegramId, null, null)
-                    .forEach(user -> {
-                        user.setTelegramId(null);
-                        userInfoTypeService.getInfoTypes(user, null, null, null, null)
-                                .forEach(userInfoType -> {
-                                    userInfoType.setChatId(null);
-                                    userInfoType.setThreadId(null);
-                                    userInfoTypeService.save(userInfoType);
-                                });
-                        userService.saveUser(user);
-                    });
+            if (senderType.equalsIgnoreCase(MessageSenderType.Telegram.toString())) {
+                userService.getUserList(null, null, null, null, null, null, null, chatId, null, null, null, null)
+                        .forEach(user -> {
+                            user.setTelegramId(null);
+                            userInfoTypeService.getInfoTypes(user, senderType, chatId, null, null)
+                                    .forEach(userInfoType -> {
+                                        userInfoType.setChatId(null);
+                                        userInfoType.setThreadId(null);
+                                        userInfoTypeService.save(userInfoType);
+                                    });
+                            userService.saveUser(user);
+                        });
+            } else if (senderType.equalsIgnoreCase(MessageSenderType.Max.toString())) {
+                userService.getUserList(null, null, null, null, null, null, null, null, chatId, null, null, null)
+                        .forEach(user -> {
+                            user.setMaxId(null);
+                            userInfoTypeService.getInfoTypes(user, senderType, chatId, null, null)
+                                    .forEach(userInfoType -> {
+                                        userInfoType.setChatId(null);
+                                        userInfoType.setThreadId(null);
+                                        userInfoTypeService.save(userInfoType);
+                                    });
+                            userService.saveUser(user);
+                        });
+            }
 
         }
-        userInfoTypeService.getInfoTypes(null, senderType, telegramId, threadId, null)
+        userInfoTypeService.getInfoTypes(null, senderType, chatId, threadId, null)
                 .forEach(userInfoType -> {
                     userInfoType.setChatId(null);
                     userInfoType.setThreadId(null);
@@ -145,11 +168,11 @@ public class LinkService {
 
     }
 
-    public ResultMes checkUserTelegram(String senderType, String chatId) {
+    public ResultMes checkUserMessager(String senderType, String chatId) {
         if (chatId == null) {
             return new ResultMes(false, "Нет ни одного пользователя с таким телеграмм");
         }
-        boolean flag = userService.exists(chatId);
+        boolean flag = userService.exists(senderType, chatId);
         if (!flag) {
             flag = userInfoTypeService.exists(senderType, chatId);
         }
@@ -157,11 +180,18 @@ public class LinkService {
     }
 
     @Transactional
-    public void linkDeleteTelegram(String nikName, String senderType, String messageType) {
+    public void linkDeleteMessager(String nikName, String senderType, String messageType) {
         User user = userService.findByNikName(nikName).orElseThrow(() -> new ResourceNotFoundRunTime("Не найден с логином " + nikName));
-        if (messageType == null) {
-            user.setTelegramId(null);
-            userService.saveUser(user);
+        if (senderType.equalsIgnoreCase(MessageSenderType.Max.toString())) {
+            if (messageType == null) {
+                user.setMaxId(null);
+                userService.saveUser(user);
+            }
+        } else {
+            if (messageType == null) {
+                user.setTelegramId(null);
+                userService.saveUser(user);
+            }
         }
         userInfoTypeService.getInfoTypes(user, senderType, null, null, messageType)
                 .forEach(userInfoType -> {

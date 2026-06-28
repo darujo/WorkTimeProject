@@ -14,6 +14,7 @@ public enum ServiceType implements TypeEnum {
     CALENDAR(10, "calendar-service", 8184),
     RATE(10, "rate-service", 8186),
     FRONT(10, "front-service", 8185),
+    MAX(95, "max-service", 8190),
     GATE_WAY(10, "gateway-service", 5555);
 
     private final int priorityStop;

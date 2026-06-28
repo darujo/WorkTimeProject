@@ -15,6 +15,7 @@ import ru.darujo.dto.project.ProjectDto;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.user.UserFio;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
+import ru.darujo.type.MessageSenderType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ public class UserServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
     public ServiceType getServiceType() {
         return ServiceType.USER;
     }
+
     public UserServiceIntegrationImp(WebClient webClientUser) {
         super.setWebClient(webClientUser);
     }
@@ -37,8 +39,9 @@ public class UserServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
     public static UserServiceIntegrationImp getInstance() {
         return INSTANCE;
     }
+
     @PostConstruct
-    public void init(){
+    public void init() {
         INSTANCE = this;
     }
 
@@ -113,11 +116,13 @@ public class UserServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
         addTeg(stringBuilder, "code", code);
         addTeg(stringBuilder, "telegramId", telegramId);
         addTeg(stringBuilder, "threadId", threadId);
+        addTeg(stringBuilder, "senderType", MessageSenderType.Telegram);
+        String uri = "/users/user/telegram/link" + stringBuilder;
         try {
-            return webClient.get().uri("/users/user/telegram/link" + stringBuilder)
+            return webClient.get().uri(uri)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
+                            clientResponse -> getMessage(clientResponse, uri + " Что-то пошло не так не удалось получить данные пользователю"))
                     .bodyToMono(ResultMes.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -130,16 +135,19 @@ public class UserServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
         }
 
     }
+
     public ResultMes linkCodeMax(Integer code, String telegramId, Integer threadId) {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "code", code);
         addTeg(stringBuilder, "telegramId", telegramId);
         addTeg(stringBuilder, "threadId", threadId);
+        addTeg(stringBuilder, "senderType", MessageSenderType.Max);
+        String uri = "/users/user/telegram/link" + stringBuilder;
         try {
-            return webClient.get().uri("/users/user/telegram/link" + stringBuilder)
+            return webClient.get().uri(uri)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
+                            clientResponse -> getMessage(clientResponse, uri + " Что-то пошло не так не удалось получить данные пользователю"))
                     .bodyToMono(ResultMes.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -157,11 +165,12 @@ public class UserServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "telegramId", telegramId);
         addTeg(stringBuilder, "threadId", threadId);
+        String uri = "/users/user/telegram/delete" + stringBuilder;
         try {
-            return webClient.get().uri("/users/user/telegram/delete" + stringBuilder)
+            return webClient.get().uri(uri)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
+                            clientResponse -> getMessage(clientResponse, uri + " Что-то пошло не так не удалось получить данные пользователю"))
                     .bodyToMono(Boolean.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
@@ -193,15 +202,19 @@ public class UserServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
         }
     }
 
-    public ResultMes checkUserTelegram(@NonNull Long chatId) {
+    public ResultMes checkUserTelegram(@NonNull MessageSenderType senderType, @NonNull Long chatId) {
+        StringBuilder stringBuilder = new StringBuilder();
+        addTeg(stringBuilder, "senderType", senderType);
+        String uri = "/users/user/telegram/get/" + chatId + stringBuilder;
+
         try {
-            return webClient.get().uri("/users/user/telegram/get/" + chatId)
+            return webClient.get().uri(uri)
                     .retrieve()
 //                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
 //                            clientResponse -> Mono.error(new ResourceNotFoundRunTime("Не удалось получить данные пользователю" + clientResponse.bodyToMono(String.class).flatMap(s -> {log.error(s);
 //                                return Mono.just(s);}))))
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю :")
+                            clientResponse -> getMessage(clientResponse, uri + " Что-то пошло не так не удалось получить данные пользователю :")
                     )
                     .bodyToMono(ResultMes.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
@@ -214,6 +227,7 @@ public class UserServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
             }
         }
     }
+
     private final Map<String, UserDto> userDtoMap = new HashMap<>();
 
     public String getFio(String nikName) {
@@ -228,6 +242,7 @@ public class UserServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
         }
         return "";
     }
+
     public void updFio(UserFio userFio) {
         try {
             if (userFio.getNikName() != null) {
@@ -255,11 +270,12 @@ public class UserServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "code", code);
         addTeg(stringBuilder, "name", name);
+        String uri = "/projects" + stringBuilder;
         try {
-            return Objects.requireNonNull(webClient.get().uri("/projects" + stringBuilder)
+            return Objects.requireNonNull(webClient.get().uri(uri)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> getMessage(clientResponse, "Что-то пошло не так не удалось получить данные пользователю"))
+                            clientResponse -> getMessage(clientResponse, uri + " Что-то пошло не так не удалось получить данные пользователю"))
                     .bodyToMono(new ParameterizedTypeReference<@NonNull CustomPageImpl<ProjectDto>>() {
                     })
                     .doOnError(throwable -> log.error(throwable.getMessage()))

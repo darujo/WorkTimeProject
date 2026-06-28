@@ -41,6 +41,8 @@ public class User {
 
     @Column(name = "telegram_id")
     private String telegramId;
+    @Column(name = "max_id")
+    private String maxId;
 
 
     @ManyToOne

@@ -73,6 +73,19 @@ public class ScheduleService implements AutoCloseable {
         MessageType messageType = null;
         ReportType reportType = ReportType.valueOf(reportTypeDto);
         for (MessageType value : MessageType.values()) {
+            if (value.getReportTypeList() != null) {
+                log.info(value.toString());
+                log.info(Boolean.toString(reportType.isProject()));
+                log.info(Boolean.toString(value.isProject()));
+                log.info(Boolean.toString(value.getReportTypeList().contains(reportType)));
+                log.info("---------");
+                log.info(Boolean.toString(reportType.isProject()
+                        && value.isProject()));
+                log.info(Boolean.toString(reportType.isProject()
+                        && value.isProject()
+                        && value.getReportTypeList().contains(reportType.getParentType())
+                ));
+            }
             if (value.getReportTypeList() != null
                     && value.getReportTypeList().size() == 1
                     &&

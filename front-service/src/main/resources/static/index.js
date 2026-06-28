@@ -156,12 +156,12 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             return !$scope.UserLogin.passwordChange && $scope.isUserLoggedIn();
         }
     };
-
+    // ----------------------------------------------------Telegram-------
     $scope.addTelegram = function () {
-        console.log("getUser")
+        console.log("addTelegram")
         // document.getElementById("UserName").value = nikName;
 
-        $http.get(constPatchAuth + '/users/user/telegram/get')
+        $http.get(constPatchAuth + '/users/user/telegram/get?senderType=telegram')
             .then(function successCallback(response) {
                 console.log(response)
                 $scope.CodeTelegram = response.data;
@@ -177,7 +177,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         console.log("deleteTelegram")
         // document.getElementById("UserName").value = nikName;
 
-        $http.get(constPatchAuth + '/users/user/telegram/delete/type')
+        $http.get(constPatchAuth + '/users/user/telegram/delete/type?senderType=telegram')
             .then(function successCallback(response) {
                 console.log(response)
                 $scope.getUser();
@@ -189,6 +189,56 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                 console.log(response);
             });
     };
+// ----------------------------------------------------Max-------
+    $scope.addMax = function () {
+        console.log("addMax")
+        // document.getElementById("UserName").value = nikName;
+
+        $http.get(constPatchAuth + '/users/user/telegram/get?senderType=max')
+            .then(function successCallback(response) {
+                console.log(response)
+                $scope.CodeMax = response.data;
+
+
+                // document.getElementById("UserName").value = response.data.lastName + " " + response.data.firstName + " " + response.data.patronymic;
+            }, function errorCallback(response) {
+                console.log(response);
+            });
+    };
+
+    $scope.deleteMax = function () {
+        console.log("deleteMax")
+        // document.getElementById("UserName").value = nikName;
+
+        $http.get(constPatchAuth + '/users/user/telegram/delete/type?senderType=max')
+            .then(function successCallback(response) {
+                console.log(response)
+                $scope.getUser();
+                $scope.CodeMax = null;
+
+
+                // document.getElementById("UserName").value = response.data.lastName + " " + response.data.firstName + " " + response.data.patronymic;
+            }, function errorCallback(response) {
+                console.log(response);
+            });
+    };
+//---------------------------------Max end----------------
+
+    $location.getCode = function (code, callBack) {
+        $http({
+            url: constPatchCode + code,
+            method: "get"
+
+        }).then(function (response) {
+            callBack(response);
+        }, function errorCallback(response) {
+            // console.log(response)
+            if ($location.checkAuthorized(response)) {
+                alert(response.data.message);
+            }
+        });
+
+    }
 
     $location.checkAuthorized = function (response) {
         console.log("response.status");
@@ -241,23 +291,6 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         }
 
     }
-
-    $location.getCode = function (code, callBack) {
-        $http({
-            url: constPatchCode + code,
-            method: "get"
-
-        }).then(function (response) {
-            callBack(response);
-        }, function errorCallback(response) {
-            // console.log(response)
-            if ($location.checkAuthorized(response)) {
-                alert(response.data.message);
-            }
-        });
-
-    }
-
 
     if (typeof $localStorage.filterWorkTime === "undefined") {
         $localStorage.filterWorkTime = {}

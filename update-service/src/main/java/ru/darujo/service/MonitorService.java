@@ -55,7 +55,7 @@ public class MonitorService {
                 flagError.set(true);
             }
         });
-        if (flagError.get()) {
+        if (flagError.get() || serviceIntegrationsError.isEmpty()) {
             serviceStatusService.newServiceStatus(serviceIntegrationsError.keySet());
         }
     }

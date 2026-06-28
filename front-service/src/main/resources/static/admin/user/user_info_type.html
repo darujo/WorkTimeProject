@@ -20,7 +20,7 @@
             <td class="table_head2">Название</td>
             <td class="table_head2"></td>
             <td class="table_head2" ng-if="Filter.viewLink">id чата</td>
-            <td class="table_head2" ng-if="Filter.viewLink">Номер канала в чате</td>
+            <td class="table_head2" ng-if="Filter.viewThreadId">Номер канала в чате</td>
             <td class="table_head2" ng-if="Filter.viewLink"></td>
             <td class="table_head2" ng-if="Filter.viewLink"></td>
             <td class="table_head2" ng-if="Filter.viewLink"></td>
@@ -38,7 +38,7 @@
                 <input id="RoleActive" class="vvod check_box_td" type="checkbox" ng-model="infoType.active"/>
             </td>
             <td ng-if="Filter.viewLink">{{infoType.telegramId}}</td>
-            <td ng-if="Filter.viewLink">{{infoType.threadId}}</td>
+            <td ng-if="Filter.viewThreadId">{{infoType.threadId}}</td>
             <td ng-if="Filter.viewLink"><p ng-if="infoType.message.ok">Для получения уведомлений перейдите <a
                     href="https://{{infoType.message.link}}" target="_blank">Бот</a>.
                 И отправьте команду /link. На запрос кода введите:<b>{{infoType.message.code}}</b>.

@@ -51,27 +51,6 @@ public class InfoServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
         }
     }
 
-    public void sendReport(@NonNull ReportType reportType, @NonNull String author, MessageSenderType senderType, String chatId, Integer threadId, Integer originMessageId) {
-        try {
-            StringBuilder sb = new StringBuilder();
-            addTeg(sb, "reportType", reportType);
-            addTeg(sb, "author", author);
-            addTeg(sb, "chatId", chatId);
-            addTeg(sb, "threadId", threadId);
-            addTeg(sb, "originMessageId", originMessageId);
-            addTeg(sb, "senderType", senderType);
-            webClient.get().uri("/report" + sb)
-                    .retrieve()
-                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
-                    .bodyToMono(Void.class)
-                    .doOnError(throwable -> log.error(throwable.getMessage()))
-                    .block();
-        } catch (RuntimeException ex) {
-            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
-        }
-    }
-
     public void sendReport(@NonNull ReportType reportType, @NonNull String author, MessageSenderType senderType, String chatId, Integer threadId, String originMessageId) {
         try {
             StringBuilder sb = new StringBuilder();

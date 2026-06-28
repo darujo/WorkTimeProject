@@ -78,7 +78,9 @@ public class MenuService {
     }
 
     public void openMainMenu(ChatInfo chatInfo) {
-        maxBotSend.sendPhoto(chatInfo, fileService.getFile("menu"), "Чего желаете?", List.of(getMainMenu()));
+        List<AttachmentRequest> menu = new ArrayList<>();
+        menu.add(getMainMenu());
+        maxBotSend.sendPhoto(chatInfo, fileService.getFile("menu"), "Чего желаете?", menu);
     }
 
     Map<String, MenuParam> paramMap = new HashMap<>();
@@ -95,7 +97,9 @@ public class MenuService {
             try {
 
                 menuParam.setReportType(ReportType.valueOf(command));
-                maxBotSend.EditPhoto(chatInfo, "Кому разослать результат по отчету " + command + "?", List.of(getMenuWorkStatus()), file);
+                List<AttachmentRequest> menu = new ArrayList<>();
+                menu.add(getMenuWorkStatus());
+                maxBotSend.EditPhoto(chatInfo, "Кому разослать результат по отчету " + command + "?", menu, file);
             } catch (IllegalArgumentException illegalArgumentException) {
                 reOpenMainMenu(chatInfo);
             }
@@ -118,9 +122,11 @@ public class MenuService {
         }
 
         if (command.equals(CommandType.REPORT)) {
-            ResultMes resultMes = userServiceIntegration.checkUserTelegram(Long.parseLong(chatInfo.getChatId()));
+            ResultMes resultMes = userServiceIntegration.checkUserTelegram(MessageSenderType.Max, Long.parseLong(chatInfo.getChatId()));
             if (resultMes.isOk()) {
-                maxBotSend.EditPhoto(chatInfo, "Какой отчет вы хотите построить?", List.of(getMenuReport()), file);
+                List<AttachmentRequest> menu = new ArrayList<>();
+                menu.add(getMenuReport());
+                maxBotSend.EditPhoto(chatInfo, "Какой отчет вы хотите построить?", menu, file);
             } else {
                 maxBotSend.deleteMessage(chatInfo);
                 maxBotSend.sendMessage(chatInfo, resultMes.getMessage());
@@ -160,7 +166,7 @@ public class MenuService {
     private void sendReport(ReportType reportType, ChatInfo chatInfo, boolean sendMe) {
         deleteMessage(chatInfo);
         try {
-            ResultMes resultMes = userServiceIntegration.checkUserTelegram(Long.parseLong(chatInfo.getChatId()));
+            ResultMes resultMes = userServiceIntegration.checkUserTelegram(MessageSenderType.Max, Long.parseLong(chatInfo.getChatId()));
             if (resultMes.isOk()) {
                 SendMessageResult message = maxBotSend.sendMessage(chatInfo, "Отчет \"" + reportType.getName() + "\" будет доставлен в ближайшее время");
                 // todo на что заменить?
@@ -168,7 +174,7 @@ public class MenuService {
                 if (sendMe) {
                     infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), MessageSenderType.Telegram, chatInfo.getChatId(), null, chatInfo.getOriginMessageId());
                 } else {
-                    infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), null, null, null, (Integer) null);
+                    infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), null, null, null, null);
                 }
             } else {
                 maxBotSend.sendMessage(chatInfo, resultMes.getMessage());
@@ -213,7 +219,9 @@ public class MenuService {
     }
 
     public void openCancel(ChatInfo chatInfo, String text) {
-        maxBotSend.sendMessage(chatInfo, text, List.of(getMenuCancel()));
+        List<AttachmentRequest> menu = new ArrayList<>();
+        menu.add(getMenuCancel());
+        maxBotSend.sendMessage(chatInfo, text, menu);
     }
 
     private List<Button> createRowCancel() {

@@ -136,6 +136,7 @@ public class UserService {
             }
 //            user.setProjects(saveUser.getProjects());
             user.setTelegramId(saveUser.getTelegramId());
+            user.setMaxId(saveUser.getMaxId());
             user.setEmail(saveUser.getEmail());
             if (user.getNewEmail() != null && !user.getNewEmail().equals(saveUser.getEmail())) {
                 setNewEmailCode(user);
@@ -210,9 +211,11 @@ public class UserService {
                                            String firstName,
                                            String patronymic,
                                            String telegramId,
+                                           String maxId,
+                                           String email,
                                            Boolean telegramIsNotNull,
                                            Long projectId) {
-        Specification<@NonNull User> specification = getUserSpecification(role, nikName, lastName, firstName, patronymic, telegramId, telegramIsNotNull, projectId);
+        Specification<@NonNull User> specification = getUserSpecification(role, nikName, lastName, firstName, patronymic, telegramId, maxId, email, telegramIsNotNull, projectId);
         Sort sort = Sort.by("lastName")
                 .and(Sort.by("firstName"));
         Page<@NonNull User> userPage;
@@ -228,7 +231,7 @@ public class UserService {
     }
 
     private Specification<@NonNull User> getUserSpecification(String role, String nikName, String lastName, String
-            firstName, String patronymic, String telegramId, Boolean telegramIsNotNull, Long projectId) {
+            firstName, String patronymic, String telegramId, String maxId, String email, Boolean telegramIsNotNull, Long projectId) {
         Specification<@NonNull User> specification = Specification.unrestricted();
         if (role != null && !role.isEmpty()) {
             specification = Specifications.in(specification, "r", roleService.findByName(projectId, role).orElseThrow(() -> new UsernameNotFoundException("Роль не найдена " + role))
@@ -240,6 +243,8 @@ public class UserService {
         specification = Specifications.like(specification, "firstName", firstName);
         specification = Specifications.like(specification, "patronymic", patronymic);
         specification = Specifications.eq(specification, "telegramId", telegramId);
+        specification = Specifications.eq(specification, "maxId", maxId);
+        specification = Specifications.eq(specification, "email", email);
         specification = Specifications.isNotNull(specification, "telegramId", telegramIsNotNull);
         return specification;
     }
@@ -349,6 +354,8 @@ public class UserService {
             return user.getTelegramId();
         } else if (senderType.equals(MessageSenderType.Email)) {
             return user.getEmail();
+        } else if (senderType.equals(MessageSenderType.Max)) {
+            return user.getMaxId();
         } else {
             return null;
         }
@@ -422,8 +429,14 @@ public class UserService {
         }
     }
 
-    public boolean exists(String chatId) {
-        return userRepository.exists(getUserSpecification(null, null, null, null, null, chatId, null, null));
+    public boolean exists(String senderType, String chatId) {
+
+        return (senderType.equalsIgnoreCase(MessageSenderType.Telegram.toString()) &&
+                userRepository.exists(getUserSpecification(null, null, null, null, null, chatId, null, null, null, null)))
+                || (senderType.equalsIgnoreCase(MessageSenderType.Max.toString()) &&
+                userRepository.exists(getUserSpecification(null, null, null, null, null, null, chatId, null, null, null)))
+                || (senderType.equalsIgnoreCase(MessageSenderType.Email.toString()) &&
+                userRepository.exists(getUserSpecification(null, null, null, null, null, null, null, chatId, null, null)));
     }
 
     private static void setNewEmailCode(User user) {

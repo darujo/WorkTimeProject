@@ -6,6 +6,11 @@ UPDATE user_repo."users"
 SET email = null
 WHERE email != 'radies@rambler.ru';
 
+UPDATE user_repo."users"
+SET max_id = null
+WHERE max_id != '350190659';
+
+
 UPDATE user_repo."user_info_type"
 SET telegram_id = null,
     thread_id   = null

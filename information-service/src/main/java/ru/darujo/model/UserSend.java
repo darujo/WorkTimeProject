@@ -23,14 +23,14 @@ public class UserSend {
     @Column(name = "send")
     private Boolean send;
     @Column(name = "origin_message_id")
-    private Integer originMessageId;
+    private String originMessageId;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "mes_info_id")
     private MessageInformation messageInformation;
     @Column(name = "sender_type")
     private String senderType;
 
-    public UserSend(String senderType, String chatId, Integer threadId, Integer originMessageId, MessageInformation messageInformation) {
+    public UserSend(String senderType, String chatId, Integer threadId, String originMessageId, MessageInformation messageInformation) {
         this.senderType = senderType;
         this.chatId = chatId;
         this.messageInformation = messageInformation;

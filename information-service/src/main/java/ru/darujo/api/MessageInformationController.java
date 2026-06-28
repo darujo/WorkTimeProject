@@ -53,7 +53,7 @@ public class MessageInformationController {
                            @RequestParam String author,
                            @RequestParam(required = false) String chatId,
                            @RequestParam(required = false) Integer threadId,
-                           @RequestParam(required = false) Integer originMessageId,
+                           @RequestParam(required = false) String originMessageId,
                            @RequestParam(required = false) String senderType) {
         scheduleService.sendReport(reportType, new ChatInfo(author, senderType == null ? null : MessageSenderType.valueOf(senderType), chatId, threadId, originMessageId));
     }

@@ -6,6 +6,11 @@
       "description": "Enable bean Telegram Service Integration."
     },
     {
+      "name": "integration.max-service.enable",
+      "type": "java.lang.Boolean",
+      "description": "Enable bean Max Service Integration."
+    },
+    {
       "name": "integration.calendar-service.enable",
       "type": "java.lang.Boolean",
       "description": "Enable bean Calendar Service Integration."

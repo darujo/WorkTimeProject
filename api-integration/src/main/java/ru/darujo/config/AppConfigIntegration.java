@@ -20,6 +20,7 @@ import javax.net.ssl.SSLException;
 @EnableConfigurationProperties(
         {
                 TelegramServiceProperty.class,
+                MaxServiceProperty.class,
                 CalendarServiceProperty.class,
                 InfoServiceProperty.class,
                 RateServiceProperty.class,
@@ -37,12 +38,17 @@ import javax.net.ssl.SSLException;
 public class AppConfigIntegration extends WebClientConfig {
     // Telegram
     @Bean(name = "telegramServiceIntegration")
-
     @ConditionalOnBooleanProperty(prefix = "integration.telegram-service", name = "enable")
     public TelegramServiceIntegrationImp telegramServiceIntegration(TelegramServiceProperty telegramServiceProperty) {
         return new TelegramServiceIntegrationImp(webClient(telegramServiceProperty));
     }
 
+    // Max
+    @Bean(name = "maxServiceIntegration")
+    @ConditionalOnBooleanProperty(prefix = "integration.max-service", name = "enable")
+    public MaxServiceIntegrationImp maxServiceIntegration(MaxServiceProperty maxServiceProperty) {
+        return new MaxServiceIntegrationImp(webClient(maxServiceProperty));
+    }
     // Calendar
     @Bean(name = "calendarServiceIntegration")
     @ConditionalOnBooleanProperty(prefix = "integration.calendar-service", name = "enable")

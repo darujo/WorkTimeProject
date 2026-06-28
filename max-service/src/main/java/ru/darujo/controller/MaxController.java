@@ -3,10 +3,9 @@ package ru.darujo.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import ru.darujo.dto.information.SendAdminMessage;
+import ru.darujo.max_bot.MaxBotSend;
 import ru.darujo.model.ChatInfo;
 import ru.darujo.service.FileService;
-import ru.darujo.max_bot.MaxBotSend;
 
 import java.io.File;
 
@@ -18,7 +17,7 @@ public class MaxController {
     private MaxBotSend maxBotSend;
 
     @Autowired
-    public void setTelegramBotSend(MaxBotSend maxBotSend) {
+    public void setMaxBotSend(MaxBotSend maxBotSend) {
         this.maxBotSend = maxBotSend;
     }
 
@@ -38,12 +37,12 @@ public class MaxController {
         maxBotSend.sendMessage(new ChatInfo(username, chatId, originMessageId), text);
     }
 
-    @PostMapping(value = "/send/admin", consumes = MediaType.TEXT_PLAIN_VALUE)
-    public void sendMessageToTelegram(@RequestBody SendAdminMessage message)  {
+    @PostMapping(value = "/send/admin")
+    public void sendMessageToTelegram(@RequestBody MessageAdmin message) {
         maxBotSend.sendMessageForAdmin(message);
     }
 
-    @PostMapping(value = "/file", consumes = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping(value = "/file")
     public String addFile(@RequestParam String fileName,
                           @RequestBody byte[] body) {
         return fileService.addFile(fileName, body);

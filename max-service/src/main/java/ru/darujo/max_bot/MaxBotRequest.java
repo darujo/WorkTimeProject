@@ -2,6 +2,7 @@ package ru.darujo.max_bot;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.information.ResultMes;
@@ -60,7 +61,7 @@ public class MaxBotRequest implements UpdateHandler, AutoCloseable {
     private MaxBotSend maxBotSend;
 
     @Autowired
-    public void setTelegramBotSend(MaxBotSend maxBotSend) {
+    public void setMaxBotSend(MaxBotSend maxBotSend) {
         this.maxBotSend = maxBotSend;
     }
 
@@ -82,75 +83,63 @@ public class MaxBotRequest implements UpdateHandler, AutoCloseable {
     public void onUpdate(Update update) {
 
         if (update instanceof MessageCreatedUpdate msg) {
-            log.info(msg.message().constructor().username());
-            log.info(String.valueOf(msg.message().recipient().chatId()));
-            String chatId = Long.toString(msg.message().recipient().chatId());
-
-            ChatInfo chatInfo = new ChatInfo(msg.message().constructor().username(), chatId, msg.message().body().mid());
-            if (maxBotSend.SendAction(chatInfo)) {
-                log.error("Не удалось уведомить пользователя, что я что-то делаю.");
-            }
-
-
-            messageReceiveService.saveMessageReceive(
-                    new MessageReceive(
-                            msg.message().recipient().chatId(),
-                            null,
-                            msg.message().body().text(),
-                            "@" + msg.message().constructor().username(),
-                            msg.message().constructor().firstName(),
-                            msg.message().constructor().lastName(),
-                            null,
-                            "message",
-                            null,
-                            msg.message().recipient().chatType().equals(ChatType.CHANNEL),
-                            msg.message().recipient().chatType().equals(ChatType.DIALOG),
-                            msg.message().recipient().chatType().equals(ChatType.CHAT),
-                            null));
+            log.info(msg.message().sender().username());
+            ChatInfo chatInfo = getChatInfo(msg.message());
+            saveMessage(msg.message());
             onUpdate(chatInfo, msg);
         } else if (update instanceof MessageCallbackUpdate msg) {
-            ChatInfo chatInfo = new ChatInfo(msg.message().constructor().username(), Long.toString(msg.message().recipient().chatId()), msg.message().body().mid());
-            if (maxBotSend.SendAction(chatInfo)) {
-                log.error("Не удалось уведомить пользователя, что я что-то делаю.");
-            }
-            messageReceiveService.saveMessageReceive(
-                    new MessageReceive(
-                            msg.message().recipient().chatId(),
-                            null,
-                            msg.message().body().text(),
-                            "@" + msg.message().constructor().username(),
-                            msg.message().constructor().firstName(),
-                            msg.message().constructor().lastName(),
-                            null,
-                            "message",
-                            null,
-                            msg.message().recipient().chatType().equals(ChatType.CHANNEL),
-                            msg.message().recipient().chatType().equals(ChatType.DIALOG),
-                            msg.message().recipient().chatType().equals(ChatType.CHAT),
-                            null));
+            ChatInfo chatInfo = getChatInfo(msg.message());
+            saveMessage(msg.message());
+            onUpdate(chatInfo, msg);
+        } else if (update instanceof BotStartedUpdate msg) {
+            ChatInfo chatInfo = new ChatInfo(msg.user().name(), msg.chatId(), null);
 
             onUpdate(chatInfo, msg);
         }
     }
 
+    private @NonNull ChatInfo getChatInfo(Message msg) {
+        ChatInfo chatInfo = new ChatInfo(msg.sender().username(), Long.toString(msg.recipient().chatId()), msg.body().mid());
+        if (maxBotSend.SendAction(chatInfo)) {
+            log.error("Не удалось уведомить пользователя, что я что-то делаю. (Max)");
+        }
+        return chatInfo;
+    }
+
+    private void saveMessage(Message msg) {
+        messageReceiveService.saveMessageReceive(
+                new MessageReceive(
+                        msg.recipient().chatId(),
+                        null,
+                        msg.body().text(),
+                        "@" + msg.sender().username(),
+                        msg.sender().firstName(),
+                        msg.sender().lastName(),
+                        null,
+                        "message",
+                        null,
+                        msg.recipient().chatType().equals(ChatType.CHANNEL),
+                        msg.recipient().chatType().equals(ChatType.DIALOG),
+                        msg.recipient().chatType().equals(ChatType.CHAT),
+                        null));
+    }
+
+    public void onUpdate(ChatInfo chatInfo, BotStartedUpdate ignoredRequest) {
+        commandStart(chatInfo);
+    }
+
+
     public void onUpdate(ChatInfo chatInfo, MessageCreatedUpdate request) {
 
         Message requestMessage = request.message();
-
-
+        boolean isCommand = requestMessage.body().text().startsWith("/");
 //        try {
         log.info("Working onUpdateReceived, request.message");
         log.info(requestMessage.body().text());
 
 
         switch (requestMessage.body().text()) {
-            case "/start" ->
-                    maxBotSend.sendPhoto(new ChatInfo("AutoHi", chatInfo.getChatId(), chatInfo.getOriginMessageId()),
-                            fileService.getFile("hi")
-                            , """
-                                    Напишите команду для показа списка мыслей:\s
-                                     /link - подписаться на уведомления от сервиса учета трудозатрат\s
-                                     /stop - отвязать аккаунт от уведомлений""");
+            case "/start" -> commandStart(chatInfo);
             case "/link" -> getLink(chatInfo);
             case "/menu" -> {
                 maxBotSend.deleteMessage(chatInfo);
@@ -167,7 +156,7 @@ public class MaxBotRequest implements UpdateHandler, AutoCloseable {
                 } else {
                     String lastCommand = userLastCommand.get(chatInfo.getChatId());
                     if (lastCommand != null
-                            && !requestMessage.body().text().startsWith("/")
+                            && !isCommand
                             && (lastCommand.startsWith("/link") || lastCommand.equals(CommandType.LINK.toString()))) {
                         try {
 
@@ -192,7 +181,7 @@ public class MaxBotRequest implements UpdateHandler, AutoCloseable {
             }
         }
 
-        if (requestMessage.body().text().startsWith("/")) {
+        if (isCommand) {
             log.info("Команда: ");
             userLastCommand.put(chatInfo.getChatId(), requestMessage.body().text());
             log.info(requestMessage.body().text());
@@ -202,18 +191,31 @@ public class MaxBotRequest implements UpdateHandler, AutoCloseable {
         }
     }
 
+    private void commandStart(ChatInfo chatInfo) {
+        maxBotSend.sendPhoto(new ChatInfo("AutoHi", chatInfo.getChatId(), chatInfo.getOriginMessageId()),
+                fileService.getFile("hi")
+                , """
+                        Напишите команду для показа списка мыслей:\s
+                         /link - подписаться на уведомления от сервиса учета трудозатрат\s
+                         /stop - отвязать аккаунт от уведомлений""");
+    }
+
     public void onUpdate(ChatInfo chatInfo, MessageCallbackUpdate request) {
         Callback callback = request.callback();
+        try {
+            if (CommandType.STOP.equals(CommandType.valueOf(callback.payload()))) {
+                maxBotSend.deleteMessage(chatInfo);
+                getStop(chatInfo);
+                return;
+            } else if (CommandType.LINK.equals(CommandType.valueOf(callback.payload()))) {
+                getLink(chatInfo);
+                return;
+            }
 
-        if (CommandType.STOP.equals(CommandType.valueOf(callback.payload()))) {
-            maxBotSend.deleteMessage(chatInfo);
-            getStop(chatInfo);
-
-        } else if (CommandType.LINK.equals(CommandType.valueOf(callback.payload()))) {
-            getLink(chatInfo);
-
+        } catch (IllegalArgumentException ex) {
+            log.info(String.valueOf(ex));
         }
-else  {
+        {
             menuService.getMenu(chatInfo, callback.payload(), fileService.getFile("menu"));
         }
     }

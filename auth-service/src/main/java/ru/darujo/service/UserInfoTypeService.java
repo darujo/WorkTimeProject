@@ -54,9 +54,9 @@ public class UserInfoTypeService {
             if (userInfoTypeActiveDto.getActive()) {
                 UserInfoType userInfoType;
                 if (userInfoTypeActiveDto.getProjectId() == null) {
-                    userInfoType = userInfoTypeRepository.findFirstByCodeAndUserAndProjectIdIsNull(userInfoTypeActiveDto.getCode(), user).orElse(null);
+                    userInfoType = userInfoTypeRepository.findFirstByCodeAndUserAndProjectIdIsNullAndSenderType(userInfoTypeActiveDto.getCode(), user, senderType).orElse(null);
                 } else {
-                    userInfoType = userInfoTypeRepository.findFirstByCodeAndUserAndProjectId(userInfoTypeActiveDto.getCode(), user, userInfoTypeActiveDto.getProjectId()).orElse(null);
+                    userInfoType = userInfoTypeRepository.findFirstByCodeAndUserAndProjectIdAndSenderType(userInfoTypeActiveDto.getCode(), user, userInfoTypeActiveDto.getProjectId(), senderType).orElse(null);
                 }
                 if (userInfoType == null) {
                     userInfoType = new UserInfoType(userInfoTypeActiveDto.getProjectId(),
@@ -81,8 +81,8 @@ public class UserInfoTypeService {
         return getInfoTypes(null, null, null, null, messageType.toString());
     }
 
-    public List<UserInfoType> getInfoTypes(User user, String senderType, String telegramId, Integer threadId, String messageType) {
-        Specification<@NonNull UserInfoType> specification = getUserInfoTypeSpecification(user, senderType, telegramId, threadId, messageType);
+    public List<UserInfoType> getInfoTypes(User user, String senderType, String chatId, Integer threadId, String messageType) {
+        Specification<@NonNull UserInfoType> specification = getUserInfoTypeSpecification(user, senderType, chatId, threadId, messageType);
         return userInfoTypeRepository.findAll(specification);
     }
 
@@ -96,11 +96,11 @@ public class UserInfoTypeService {
         return userInfoTypeRepository.findOne(specification);
     }
 
-    private static Specification<@NonNull UserInfoType> getUserInfoTypeSpecification(User user, String senderType, String telegramId, Integer threadId, String messageType) {
+    private static Specification<@NonNull UserInfoType> getUserInfoTypeSpecification(User user, String senderType, String chatId, Integer threadId, String messageType) {
         Specification<@NonNull UserInfoType> specification = Specification.unrestricted();
         specification = Specifications.eq(specification, "user", user);
         specification = Specifications.eq(specification, "senderType", senderType);
-        specification = Specifications.eq(specification, "telegramId", telegramId);
+        specification = Specifications.eq(specification, "chatId", chatId);
         specification = Specifications.eq(specification, "threadId", threadId);
         specification = Specifications.eq(specification, "code", messageType);
         return specification;
@@ -119,8 +119,8 @@ public class UserInfoTypeService {
 
     }
 
-    public boolean exists(String senderType, String telegramId) {
-        Specification<@NonNull UserInfoType> specification = getUserInfoTypeSpecification(null, senderType, telegramId, null, null);
+    public boolean exists(String senderType, String chatId) {
+        Specification<@NonNull UserInfoType> specification = getUserInfoTypeSpecification(null, senderType, chatId, null, null);
         return userInfoTypeRepository.exists(specification);
 
     }

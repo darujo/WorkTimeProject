@@ -105,12 +105,32 @@
 
                             </div>
                         </div>
-                        <div ng-if="UserLogin.telegramAdd">
-                            <button ng-click="deleteTelegram()" id="ButtonTelegramDel">Отвязать Telegram</button>
+                        <div ng-if="!UserLogin.maxAdd">
+                            <button ng-click="addMax()" id="ButtonMaxAdd">
+                                {{CodeMax.ok ? "Запросить код повторно" : "Привязать MAX"}}
+                            </button>
+                            <br>
+                            <div ng-if="CodeMax.ok">
+                                <p>Для получения уведомлений перейдите <a href="https://{{CodeMax.link}}"
+                                                                          target="_blank">Бот</a>.
+                                </p>
+                                <img src="./gif/max.jpg" alt="Ссылка на бот">
+                                <p>
+                                    И отправьте команду /link. На запрос кода введите:<b>{{CodeMax.code}}</b>.
+                                    Внимание Код действует <b>{{CodeMax.time}}</b> минут. После авторизации в боте
+                                    нажмите кнопку: </p>
+                                <br>
+                                <button ng-click="getUser()" id="ButtonMaxRef">Проверить</button>
+
+                            </div>
+                        </div>
+                        <div ng-if="UserLogin.maxAdd">
+                            <button ng-click="deleteMax()" id="ButtonMaxDel">Отвязать Max</button>
                         </div>
                         <div>
                             <div><a class="nav-link" href="#!/user_info_type?userId={{UserLogin.id}}">Типы
-                                уведомлений</a></div>
+                                уведомлений</a>
+                            </div>
                         </div>
 
                     </details>

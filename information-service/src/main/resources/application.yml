@@ -48,6 +48,8 @@ integration:
     enable: true
   telegram-service:
     enable: false
+  max-service:
+    enable: false
   calendar-service:
     enable: true
   work-time-service:

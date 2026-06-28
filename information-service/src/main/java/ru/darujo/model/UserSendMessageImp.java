@@ -20,7 +20,7 @@ public class UserSendMessageImp implements UserSendMessage {
     }
 
     @Override
-    public Integer getOriginMessageId() {
+    public String getOriginMessageId() {
         return userSend.getOriginMessageId();
     }
 

@@ -122,7 +122,7 @@ public class MenuService {
         }
 
         if (command.equals(CommandType.REPORT)) {
-            ResultMes resultMes = userServiceIntegration.checkUserTelegram(Long.parseLong(chatInfo.getChatId()));
+            ResultMes resultMes = userServiceIntegration.checkUserTelegram(MessageSenderType.Telegram, Long.parseLong(chatInfo.getChatId()));
             if (resultMes.isOk()) {
                 telegramBotSend.EditPhoto(chatInfo, "Какой отчет вы хотите построить?", getMenuReport(), file);
             } else {
@@ -164,14 +164,14 @@ public class MenuService {
     private void sendReport(ReportType reportType, ChatInfo chatInfo, boolean sendMe) throws TelegramApiException {
         deleteMessage(chatInfo);
         try {
-            ResultMes resultMes = userServiceIntegration.checkUserTelegram(Long.parseLong(chatInfo.getChatId()));
+            ResultMes resultMes = userServiceIntegration.checkUserTelegram(MessageSenderType.Telegram, Long.parseLong(chatInfo.getChatId()));
             if (resultMes.isOk()) {
                 Message message = telegramBotSend.sendMessage(chatInfo, "Отчет \"" + reportType.getName() + "\" будет доставлен в ближайшее время");
                 chatInfo.setOriginMessageId(message.getMessageId());
                 if (sendMe) {
-                    infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), MessageSenderType.Telegram, chatInfo.getChatId(), chatInfo.getThreadId(), chatInfo.getOriginMessageId());
+                    infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), MessageSenderType.Telegram, chatInfo.getChatId(), chatInfo.getThreadId(), Long.toString(chatInfo.getOriginMessageId()));
                 } else {
-                    infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), null, null, null, (Integer) null);
+                    infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), null, null, null, null);
                 }
             } else {
                 telegramBotSend.sendMessage(chatInfo, resultMes.getMessage());

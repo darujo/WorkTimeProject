@@ -30,7 +30,7 @@ public class MessageSend {
     public MessageSend(ChatInfo chatInfo, String text) {
         this.author = chatInfo.getAuthor();
         this.chatId = chatInfo.getChatId();
-        this.threadId = chatInfo.getThreadId();
+        this.threadId = null;
         this.text = text;
     }
 }
