@@ -62,6 +62,14 @@ spring:
             #                - JwtAdminFilter
             #                - StripPrefix=1
             #                            - PrefixPath=system/
+            - id: max-service
+              uri: "http://localhost:8190"
+              predicates:
+                - Path=/max-bot/**
+              filters:
+                - StripPrefix=0
+                - PrefixPath=/app/
+            #                - JwtAuthFilter
             - id: user-not-auch
               uri: "http://localhost:8183"
               predicates:
@@ -165,14 +173,7 @@ spring:
                 - StripPrefix=0
                 - PrefixPath=/app-front
             #            - JwtAuthFilter
-            - id: max-service
-              uri: "http://localhost:8190"
-              predicates:
-                - Path=/max-bot/**
-              filters:
-                - StripPrefix=0
-                - PrefixPath=/app/
-#                - JwtAuthFilter
+
 
 #      default-filters:
 #        - DedupeResponseHeader = Access-Control-Allow-Credentials Access-Control-Allow-Origin

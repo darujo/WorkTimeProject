@@ -80,7 +80,7 @@ public class LinkService {
     public CodeTelegramMes getCode(String login, String messageType) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         for (Map.Entry<Integer, SingleCode> entry : mapCode.entrySet()) {
-            if ((entry.getValue().getMessageType().equals(messageType) && entry.getValue().getLogin().equals(login))) {
+            if ((entry.getValue().getMessageType() != null && entry.getValue().getMessageType().equals(messageType) && entry.getValue().getLogin().equals(login))) {
                 return new CodeTelegramMes(true,
                         "t.me/DaruWorkBot",
                         entry.getKey(),

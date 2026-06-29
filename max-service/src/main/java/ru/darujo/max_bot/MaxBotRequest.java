@@ -197,7 +197,8 @@ public class MaxBotRequest implements UpdateHandler, AutoCloseable {
                 , """
                         Напишите команду для показа списка мыслей:\s
                          /link - подписаться на уведомления от сервиса учета трудозатрат\s
-                         /stop - отвязать аккаунт от уведомлений""");
+                         /stop - отвязать аккаунт от уведомлений\s
+                         /menu - Вызвать меню действий""");
     }
 
     public void onUpdate(ChatInfo chatInfo, MessageCallbackUpdate request) {

@@ -54,6 +54,9 @@ public class TaskRepService {
         List<Long> taskIdList = taskService.findTask(null, codeBTS, codeDEVBO, description, workIdList, null, projectId, null, null).getContent()
                 .stream()
                 .map(Task::getId).toList();
+        if (taskIdList.isEmpty()) {
+            return 0f;
+        }
         return workTimeServiceIntegration.getTimeTask(taskIdList, nikName, dateLe, dateGt, type);
 
     }

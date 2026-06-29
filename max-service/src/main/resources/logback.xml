@@ -7,11 +7,11 @@
     <import class="ch.qos.logback.core.ConsoleAppender"/>
 
     <appender name="FILE" class="RollingFileAppender">
-        <file>logs/app-telegram.log</file>
+        <file>logs/app-max.log</file>
         <rollingPolicy
                 class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
-            <fileNamePattern>logs/old/app-telegram.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/old/app-max.%d{yyyy-MM-dd}.log</fileNamePattern>
 
             <!-- Храним файлы логов 10 дней -->
             <maxHistory>10</maxHistory>
