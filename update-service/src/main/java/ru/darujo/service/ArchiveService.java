@@ -1,6 +1,5 @@
 package ru.darujo.service;
 
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.sevenz.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,16 +17,16 @@ import java.util.List;
 @Slf4j
 @Service
 public class ArchiveService {
-    @PostConstruct
-    private void unpackArh() {
-        SevenZOutputFile sevenZOutputFile = createArh(new File(pathFile + "/archive_new.7z"));
-        addFileArh(sevenZOutputFile, Path.of("new/input.txt"), "файлик".getBytes());
-        addFileArh(sevenZOutputFile, Path.of("new/disp/db.7z"), new File("c:/11/disp.7z"));
-
-        saveArh(sevenZOutputFile);
-        unpackArh(new File(pathFile + "/archive_new.7z"), null, Path.of(pathFile));
-
-    }
+//    @PostConstruct
+//    private void unpackArh() {
+//        SevenZOutputFile sevenZOutputFile = createArh(new File(pathFile + "/archive_new.7z"));
+//        addFileArh(sevenZOutputFile, Path.of("new/input.txt"), "файлик".getBytes());
+//        addFileArh(sevenZOutputFile, Path.of("new/disp/db.7z"), new File("c:/11/disp.7z"));
+//
+//        saveArh(sevenZOutputFile);
+//        unpackArh(new File(pathFile + "/archive_new.7z"), null, Path.of(pathFile));
+//
+//    }
 
     public SevenZOutputFile createArh(File fileArh) {
         try {

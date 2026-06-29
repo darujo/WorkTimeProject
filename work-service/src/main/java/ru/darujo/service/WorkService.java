@@ -168,7 +168,9 @@ public class WorkService {
                 }
             }
         }
-        if (workRepository.exists(getWorkSpecification(null, null, work.getCodeSap(), null, null, null, null, work.getId()))) {
+        if (work.getCodeSap() != null
+                && work.getCodeSap() != 0
+                && workRepository.exists(getWorkSpecification(null, null, work.getCodeSap(), null, null, null, null, work.getId()))) {
             throw new ResourceNotFoundRunTime("Уже есть ЗИ с таким номером SAP");
         }
         ProjectDto projectDto = getProjectDto(workProject.getProjectId());
