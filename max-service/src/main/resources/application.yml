@@ -25,21 +25,13 @@ app:
     bot: bot
 
 max:
-
   bot:
-
     mode: longpolling
-    webhook:
-      token: "f9LHodD0cOLCGhzGSV92H6ALSwjLcgoIOoU_P0KNzzrQ7usxzw5tpFalOPTW_D2PEdTv-PSrwLIcTuOhyQMq"
-      url: "https://sheduler.ru/max-bot/webhook"
-      secret: "HappinessIsAChoiceWeMakeEveryDay"
-      update-types: bot_started,message_callback,message_created
-      auto-register: true
-      auto-unregister: true
     longpolling:
-      token: "f9LHodD0cOLCGhzGSV92H6ALSwjLcgoIOoU_P0KNzzrQ7usxzw5tpFalOPTW_D2PEdTv-PSrwLIcTuOhyQMq"
+      token: "Df9LHodD0cOLCGhzGSV92H6ALSwjLcgoIOoU_P0KNzzrQ7usxzw5tpFalOPTW_D2PEdTv-PSrwLIcTuOhyQMq"
       poll-timeout: 30
       update-types:
+        - bot_started
         - MESSAGE_CREATED
         - MESSAGE_CALLBACK
     admin-id: "350190659" # Имя канала или id чата

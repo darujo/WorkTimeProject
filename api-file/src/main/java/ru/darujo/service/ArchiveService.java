@@ -2,7 +2,6 @@ package ru.darujo.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.sevenz.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.tukaani.xz.LZMA2Options;
 
@@ -18,20 +17,20 @@ import java.util.List;
 @Service
 public class ArchiveService {
 //    @PostConstruct
-//    private void unpackArh() {
-//        SevenZOutputFile sevenZOutputFile = createArh(new File(pathFile + "/archive_new.7z"));
-//        addFileArh(sevenZOutputFile, Path.of("new/input.txt"), "файлик".getBytes());
-//        addFileArh(sevenZOutputFile, Path.of("new/disp/db.7z"), new File("c:/11/disp.7z"));
+//    private void unpackArchive() {
+//        SevenZOutputFile sevenZOutputFile = createArchive(new File(pathFile + "/archive_new.7z"));
+//        addFileArchive(sevenZOutputFile, Path.of("new/input.txt"), "файлик".getBytes());
+//        addFileArchive(sevenZOutputFile, Path.of("new/disp/db.7z"), new File("c:/11/disp.7z"));
 //
-//        saveArh(sevenZOutputFile);
-//        unpackArh(new File(pathFile + "/archive_new.7z"), null, Path.of(pathFile));
+//        saveArchive(sevenZOutputFile);
+//        unpackArchive(new File(pathFile + "/archive_new.7z"), null, Path.of(pathFile));
 //
 //    }
 
-    public SevenZOutputFile createArh(File fileArh) {
+    public SevenZOutputFile createArchive(File fileArchive) {
         try {
 
-            SevenZOutputFile out = new SevenZOutputFile(fileArh);
+            SevenZOutputFile out = new SevenZOutputFile(fileArchive);
             /* установим степень сжатия */
             List<SevenZMethodConfiguration> methods = new ArrayList<>();
             LZMA2Options lzma2Options = new LZMA2Options();
@@ -49,9 +48,9 @@ public class ArchiveService {
 
     Path pathPoint = Path.of("." + File.separator);
 
-    public void addFileArh(SevenZOutputFile out, Path path, File file) {
+    public void addFileArchive(SevenZOutputFile out, Path path, File file) {
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
-            addFileArh(out, path, fileInputStream.readAllBytes());
+            addFileArchive(out, path, fileInputStream.readAllBytes());
         } catch (FileNotFoundException e) {
             log.error("Файл не найден", e);
         } catch (IOException e) {
@@ -60,9 +59,9 @@ public class ArchiveService {
 
     }
 
-    public void addFileArh(SevenZOutputFile out, Path path, InputStream fileInputStream) {
+    public void addFileArchive(SevenZOutputFile out, Path path, InputStream fileInputStream) {
         //            log.error(Integer.toString(path.));
-        Path pathDir = addADirArh(out, path);
+        Path pathDir = addDirArchive(out, path);
         SevenZArchiveEntry entry = out.createArchiveEntry(pathDir.toFile(), pathPoint.resolve(pathDir).toString());
 
         try {
@@ -79,14 +78,13 @@ public class ArchiveService {
 
     }
 
-    public void addFileArh(SevenZOutputFile out, Path pathFile, byte[] body) {
+    public void addFileArchive(SevenZOutputFile out, Path pathFile, byte[] body) {
         //            log.error(Integer.toString(path.));
-        addFileArh(out, pathFile, new ByteArrayInputStream(body));
+        addFileArchive(out, pathFile, new ByteArrayInputStream(body));
     }
 
-    private Path addADirArh(SevenZOutputFile sevenZOutputFile, Path pathFile) {
+    private Path addDirArchive(SevenZOutputFile sevenZOutputFile, Path pathFile) {
         SevenZArchiveEntry entry;
-
         Path pathDir = null;
         Iterator<Path> pathIterator = pathFile.iterator();
         for (int i = 0; i < pathFile.getNameCount() - 1; i++) {
@@ -104,7 +102,6 @@ public class ArchiveService {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-
         }
         Path pathDirNext = pathIterator.next();
         if (pathDir == null) {
@@ -115,23 +112,17 @@ public class ArchiveService {
         return pathDir;
     }
 
-    public void saveArh(SevenZOutputFile out) {
+    public void saveArchive(SevenZOutputFile out) {
 
         try {
             out.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
-
-    @Value("${update.save-into}")
-    private String pathFile;
-
-    private void unpackArh(File fileArh, String password, Path outputDir) {
-
-        try (final SevenZFile sevenZFile = SevenZFile.builder().setFile(fileArh).setPassword(password == null ? null : password.getBytes(StandardCharsets.UTF_16LE)).get()) {
+    private void unpackArchive(File fileArchive, String password, Path outputDir) {
+        try (final SevenZFile sevenZFile = SevenZFile.builder().setFile(fileArchive).setPassword(password == null ? null : password.getBytes(StandardCharsets.UTF_16LE)).get()) {
 // todo только 7 степень сжатия
             SevenZArchiveEntry sevenZArchiveEntry;
             sevenZArchiveEntry = sevenZFile.getNextEntry();
