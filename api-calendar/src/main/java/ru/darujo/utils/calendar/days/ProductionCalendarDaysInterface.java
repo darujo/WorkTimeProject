@@ -4,7 +4,6 @@ import ru.darujo.utils.calendar.structure.DateInfo;
 import ru.darujo.utils.calendar.structure.DayType;
 
 import java.time.LocalDate;
-import java.util.Map;
 
 /**
  * Интерфейс для производственного календаря
@@ -13,10 +12,15 @@ public interface ProductionCalendarDaysInterface {
 
     void init();
 
-    void add(String date, DayType type);
+    default DayType getType(LocalDate date) {
+        DateInfo dateInfo = getDateInfo(date);
+        if (dateInfo == null) {
+            return null;
+        }
+        return dateInfo.getType();
+    }
 
-    void add(String date, DayType type, String title);
+    boolean isWeekEnd(LocalDate date);
 
-    Map<LocalDate, DateInfo> getDays();
-
+    DateInfo getDateInfo(LocalDate date);
 }

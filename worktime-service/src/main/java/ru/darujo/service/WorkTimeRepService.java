@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.TaskDto;
 import ru.darujo.dto.WorkTimeDto;
@@ -14,10 +15,11 @@ import ru.darujo.dto.workperiod.UserWorkDto;
 import ru.darujo.dto.workperiod.WorkUserFactPlan;
 import ru.darujo.dto.workrep.UserWorkPeriodDto;
 import ru.darujo.dto.workrep.WorkPeriodDto;
-import ru.darujo.integration.CalendarServiceIntegration;
-import ru.darujo.integration.TaskServiceIntegration;
+import ru.darujo.integration.CalendarServiceIntegrationImp;
+import ru.darujo.integration.TaskServiceIntegrationImp;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -26,10 +28,10 @@ import java.util.stream.Collectors;
 @Service
 @Primary
 public class WorkTimeRepService {
-    private TaskServiceIntegration taskServiceIntegration;
+    private TaskServiceIntegrationImp taskServiceIntegration;
 
     @Autowired
-    public void setWorkServiceIntegration(TaskServiceIntegration taskServiceIntegration) {
+    public void setWorkServiceIntegration(TaskServiceIntegrationImp taskServiceIntegration) {
         this.taskServiceIntegration = taskServiceIntegration;
     }
 
@@ -40,14 +42,14 @@ public class WorkTimeRepService {
         this.workTimeService = workTimeService;
     }
 
-    CalendarServiceIntegration calendarServiceIntegration;
+    CalendarServiceIntegrationImp calendarServiceIntegration;
 
     @Autowired
-    public void setCalendarServiceIntegration(CalendarServiceIntegration calendarServiceIntegration) {
+    public void setCalendarServiceIntegration(CalendarServiceIntegrationImp calendarServiceIntegration) {
         this.calendarServiceIntegration = calendarServiceIntegration;
     }
 
-    public float getTimeWork(Long[] taskId, String nikName, Date dateGt, Date dateLe, String typeStr) {
+    public float getTimeWork(Long[] taskId, String nikName, LocalDate dateGt, LocalDate dateLe, String typeStr) {
         List<Integer> types = getTypeForWork(typeStr);
 
         AtomicReference<Float> time = new AtomicReference<>((float) 0);
@@ -70,30 +72,17 @@ public class WorkTimeRepService {
         } else {
             types = WorkTimeTypeService.getTypes(null);
         }
-//        List<Integer> types2 = new ArrayList<>();
-//        if (typeStr != null && typeStr.equals("analise")) {
-//            types2.add(2);
-//            types2.add(3);
-//            types2.add(5);
-//            types2.add(6);
-//
-//        } else if (typeStr != null && typeStr.equals("develop")) {
-//            types2.add(1);
-//            types2.add(4);
-//        } else {
-//            types2.add(null);
-//
-//        }
+
         return types;
     }
 
-    public ListString getFactUser(Long[] taskId, Date dateLe) {
+    public ListString getFactUser(Long[] taskId, LocalDate dateLe) {
         ListString users = new ListString();
         workTimeService.findWorkTime(taskId, null, null, dateLe, null, null, null, null, null, null, null).forEach(workTime -> users.getList().add(workTime.getNikName()));
         return users;
     }
 
-    public List<UserWorkDto> getWeekWork(Long[] taskId, String nikName, boolean addTotal, boolean weekSplit, Timestamp dateStart, Timestamp dateEnd) {
+    public List<UserWorkDto> getWeekWork(Long[] taskId, String nikName, boolean addTotal, boolean weekSplit, LocalDate dateStart, LocalDate dateEnd) {
         List<UserWorkDto> userWorkDTOs = new ArrayList<>();
         List<WeekWorkDto> weekWorkDTOs;
         if (taskId != null) {
@@ -103,7 +92,7 @@ public class WorkTimeRepService {
             weekWorkDTOs = calendarServiceIntegration.getWeekTime(dateStart, dateEnd);
         } else {
             weekWorkDTOs = new ArrayList<>();
-            weekWorkDTOs.add(new WeekWorkDto(dateStart, dateEnd, calendarServiceIntegration.getWorkTime(dateStart, dateEnd), null));
+            weekWorkDTOs.add(new WeekWorkDto(DateHelper.getZDT(dateStart), DateHelper.getZDT(dateEnd), calendarServiceIntegration.getWorkTime(dateStart, dateEnd), null));
         }
         Map<Long, Integer> tasks = new HashMap<>();
         weekWorkDTOs
@@ -122,7 +111,7 @@ public class WorkTimeRepService {
                         userWorkDtoMap.put(userWorkDtoTotal.getNikName(), userWorkDtoTotal);
                     }
                     UserWorkDto finalUserWorkDtoTotal = userWorkDtoTotal;
-                    workTimeService.findWorkTime(taskId, nikName, null, weekWorkDto.getDayEnd(), null, weekWorkDto.getDayStart(), null, null, null, null, null)
+                    workTimeService.findWorkTime(taskId, nikName, null, DateHelper.zDTToLD(weekWorkDto.getDayEnd()), null, DateHelper.zDTToLD(weekWorkDto.getDayStart()), null, null, null, null, null)
                             .forEach(workTime -> {
                                 Integer type = tasks.get(workTime.getTaskId());
                                 if (type == null) {
@@ -186,17 +175,17 @@ public class WorkTimeRepService {
         return workTimeService.getAvailTime(taskId);
     }
 
-    public WorkUserFactPlan getUserWorkOnly(String nikName, String periodSplit, Timestamp dateStart, Timestamp dateEnd) {
+    public WorkUserFactPlan getUserWorkOnly(String nikName, String periodSplit, LocalDate dateStart, LocalDate dateEnd) {
         WeekWorkDto weekWorkDTO;
         if (periodSplit != null) {
             List<WeekWorkDto> weekWorkDTOs = calendarServiceIntegration.getPeriodTime(dateStart, dateEnd, periodSplit);
             if (weekWorkDTOs.size() == 1) {
                 weekWorkDTO = weekWorkDTOs.get(0);
             } else {
-                weekWorkDTO = new WeekWorkDto(dateStart, dateEnd, 0f, null);
+                weekWorkDTO = new WeekWorkDto(DateHelper.getZDT(dateStart), DateHelper.getZDT(dateEnd), 0f, null);
             }
         } else {
-            weekWorkDTO = new WeekWorkDto(dateStart, dateEnd, calendarServiceIntegration.getWorkTime(dateStart, dateEnd), null);
+            weekWorkDTO = new WeekWorkDto(DateHelper.getZDT(dateStart), DateHelper.getZDT(dateEnd), calendarServiceIntegration.getWorkTime(dateStart, dateEnd), null);
         }
         List<WorkTimeDto> workTimeDtoList = getWorkTimeDTOs(nikName, weekWorkDTO.getDayStart(), weekWorkDTO.getDayEnd(), false);
         return new WorkUserFactPlan(
@@ -210,15 +199,15 @@ public class WorkTimeRepService {
     public List<UserWorkPeriodDto> getUserWork(
             String nikName,
             String periodSplit,
-            Timestamp dateStart,
-            Timestamp dateEnd) {
+            LocalDate dateStart,
+            LocalDate dateEnd) {
         List<WeekWorkDto> weekWorkDTOs;
         List<UserWorkPeriodDto> userWeekWorkPeriodDTOs = new ArrayList<>();
         if (periodSplit != null) {
             weekWorkDTOs = calendarServiceIntegration.getPeriodTime(dateStart, dateEnd, periodSplit);
         } else {
             weekWorkDTOs = new ArrayList<>();
-            weekWorkDTOs.add(new WeekWorkDto(dateStart, dateEnd, calendarServiceIntegration.getWorkTime(dateStart, dateEnd), null));
+            weekWorkDTOs.add(new WeekWorkDto(DateHelper.getZDT(dateStart), DateHelper.getZDT(dateEnd), calendarServiceIntegration.getWorkTime(dateStart, dateEnd), null));
         }
         List<UserDto> userDTOs;
 
@@ -267,8 +256,8 @@ public class WorkTimeRepService {
 
     private List<WorkTimeDto> getWorkTimeDTOs(
             String nikName,
-            Timestamp dateStart,
-            Timestamp dateEnd,
+            ZonedDateTime dateStart,
+            ZonedDateTime dateEnd,
             Boolean addTask
     ) {
         AtomicReference<Float> timeFactOne = new AtomicReference<>(0f);
@@ -281,9 +270,9 @@ public class WorkTimeRepService {
                         null,
                         nikName,
                         null,
-                        dateEnd,
+                        DateHelper.zDTToLD(dateEnd),
                         null,
-                        dateStart,
+                        DateHelper.zDTToLD(dateStart),
                         null,
                         null,
                         null,
@@ -309,7 +298,7 @@ public class WorkTimeRepService {
             if (vacationDTOs.isEmpty()) {
                 return;
             }
-            if (vacationDTOs.size() == 1 && vacationDTOs.get(0).getDateStart().compareTo(workPeriodDto.getDayStart()) <= 0 && vacationDTOs.get(0).getDateEnd().compareTo(workPeriodDto.getDayEnd()) >= 0) {
+            if (vacationDTOs.size() == 1 && !vacationDTOs.get(0).getDateStart().isAfter(workPeriodDto.getDayStart()) && !vacationDTOs.get(0).getDateEnd().isBefore(workPeriodDto.getDayEnd())) {
                 workPeriodDto.setAllVacation(true);
 
             } else {
@@ -320,7 +309,7 @@ public class WorkTimeRepService {
         }
     }
 
-    public Timestamp getLastTime(Long[] taskId, Timestamp dateGe, Timestamp dateLe) {
+    public LocalDate getLastTime(Long[] taskId, LocalDate dateGe, LocalDate dateLe) {
         return workTimeService.getLastTime(taskId, dateGe, dateLe);
     }
 }

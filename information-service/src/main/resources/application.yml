@@ -7,19 +7,57 @@ spring:
     banner-mode: off
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres?options=--search_path%3Dinformation
+    url: jdbc:postgresql://localhost:5432/postgres?options=--search_path=information
     username: postgres
     password: 5397
 
 
   jpa:
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: validate
     open-in-view: false
 
   jackson:
     default-property-inclusion: non_absent
+
+  mail:
+    host: smtp.mail.ru
+    #    port: 465
+    #    port: 587
+    port: 2525
+    username: rubanda@internet.ru
+    password: ptSBPlO9BcIlugK9hSbV
+    #    mR9TbsObjlcvckLINYrH
+    properties:
+      mail:
+        smtp:
+          connectiontimeout: 1000
+          auth: true
+          #          ssl:
+          #            enable: true
+
+          starttls:
+            enable: true
+
+
 file:
   save-into: "C:/daru/worktime/mes/"
+integration:
+  user-service:
+    enable: true
+  telegram-service:
+    enable: false
+  max-service:
+    enable: false
+  calendar-service:
+    enable: true
+  work-time-service:
+    enable: true
+  task-service:
+    enable: true
+  work-service:
+    enable: true
+  admin:
+    email: "worktimebackup@internet.ru"
 

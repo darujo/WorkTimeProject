@@ -11,7 +11,7 @@ import ru.darujo.dto.ratestage.WorkAgreementRequestEditDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.service.WorkAgreementRequestService;
 
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +37,7 @@ public class WorkAgreementRequestController {
             workAgreementRequestEditDto.setNikName(username);
         }
         if (workAgreementRequestEditDto.getTimestamp() == null) {
-            workAgreementRequestEditDto.setTimestamp(new Timestamp(System.currentTimeMillis()));
+            workAgreementRequestEditDto.setTimestamp(ZonedDateTime.now());
         }
         return WorkAgreementRequestConvertor.getWorkAgreementRequestEditDto(workAgreementRequestService.saveWorkCriteria(username, WorkAgreementRequestConvertor.getWorkAgreementRequest(workAgreementRequestEditDto)));
     }

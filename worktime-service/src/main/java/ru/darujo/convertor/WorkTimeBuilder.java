@@ -5,13 +5,13 @@ import ru.darujo.dto.WorkTimeDto;
 import ru.darujo.model.WorkTime;
 import ru.darujo.service.WorkTimeTypeService;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 
 public class WorkTimeBuilder {
     private Long id;
     private String nikName;
     private Float workTime;
-    private Timestamp workDate;
+    private LocalDate workDate;
     private Long taskId;
     private String comment;
     private Integer type;
@@ -32,12 +32,8 @@ public class WorkTimeBuilder {
         return this;
     }
 
-    public WorkTimeBuilder setWorkDate(Timestamp workDate) {
-        if (workDate == null) {
-            this.workDate = null;
-        } else {
-            this.workDate = DateHelper.dateNoTime(workDate);
-        }
+    public WorkTimeBuilder setWorkDate(LocalDate workDate) {
+        this.workDate = workDate;
         return this;
     }
 
@@ -67,7 +63,7 @@ public class WorkTimeBuilder {
 
 
     public WorkTimeDto getWorkTimeDto() {
-        return new WorkTimeDto(id, nikName, workDate, workTime, taskId, comment, type, WorkTimeTypeService.getName(type), WorkTimeTypeService.getAdminName(), projectId);
+        return new WorkTimeDto(id, nikName, DateHelper.getZDT(workDate), workTime, taskId, comment, type, WorkTimeTypeService.getName(type), WorkTimeTypeService.getAdminName(), projectId);
     }
 
     public WorkTime getWorkTime() {

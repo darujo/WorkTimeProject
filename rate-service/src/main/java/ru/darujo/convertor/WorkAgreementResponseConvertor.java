@@ -1,7 +1,8 @@
 package ru.darujo.convertor;
 
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.ratestage.WorkAgreementResponseDto;
-import ru.darujo.integration.UserServiceIntegration;
+import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.model.WorkAgreementResponse;
 
 public class WorkAgreementResponseConvertor {
@@ -10,13 +11,13 @@ public class WorkAgreementResponseConvertor {
                 .create()
                 .setId(workAgreementResponse.getId())
                 .setNikName(workAgreementResponse.getNikName())
-                .setTimestamp(workAgreementResponse.getTimestamp())
+                .setTimestamp(workAgreementResponse.getDateTime())
                 .setWorkId(workAgreementResponse.getWorkId())
                 .setComment(workAgreementResponse.getComment())
                 .setRequest(workAgreementResponse.getRequest())
                 .setStatus(workAgreementResponse.getStatus())
                 .getWorkAgreementResponseDTO();
-        UserServiceIntegration.getInstance().updFio(workAgreementResponseDto);
+        UserServiceIntegrationImp.getInstance().updFio(workAgreementResponseDto);
         return workAgreementResponseDto;
     }
     public static WorkAgreementResponse getWorkAgreementResponse(WorkAgreementResponseDto workAgreementResponse){
@@ -24,7 +25,7 @@ public class WorkAgreementResponseConvertor {
                 .create()
                 .setId(workAgreementResponse.getId())
                 .setNikName(workAgreementResponse.getNikName())
-                .setTimestamp(workAgreementResponse.getTimestamp())
+                .setTimestamp(DateHelper.zDTToLDT(workAgreementResponse.getTimestamp()))
                 .setWorkId(workAgreementResponse.getWorkId())
                 .setComment(workAgreementResponse.getComment())
                 .setRequest(workAgreementResponse.getRequestId())

@@ -1,0 +1,91 @@
+package ru.darujo.integration;
+
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.reactive.function.client.WebClient;
+import ru.darujo.dto.information.MapUserInfoDto;
+import ru.darujo.dto.information.MessageInfoDto;
+import ru.darujo.dto.information.SendAdminMessage;
+import ru.darujo.exceptions.ResourceNotFoundRunTime;
+import ru.darujo.type.MessageSenderType;
+import ru.darujo.type.ReportType;
+
+@Slf4j
+public class InfoServiceIntegrationImp extends ServiceIntegrationImp<ServiceType> implements AdminInfoService {
+    @Override
+    public ServiceType getServiceType() {
+        return ServiceType.INFORMATION;
+    }
+    public InfoServiceIntegrationImp(WebClient webClientInfo) {
+        super.setWebClient(webClientInfo);
+    }
+
+    public void setMessageTypeListMap(MapUserInfoDto mapUserInfoDto) {
+        try {
+            webClient.post().uri("/set/types")
+                    .bodyValue(mapUserInfoDto)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
+                    .bodyToMono(Void.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
+    }
+
+    public void addMessage(MessageInfoDto messageInfoDto) {
+        try {
+            webClient.post().uri("/add/message")
+                    .bodyValue(messageInfoDto)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
+                    .bodyToMono(Void.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Задачи (api-Information) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
+    }
+
+    public void sendReport(@NonNull ReportType reportType, @NonNull String author, MessageSenderType senderType, String chatId, Integer threadId, String originMessageId) {
+        try {
+            StringBuilder sb = new StringBuilder();
+            addTeg(sb, "reportType", reportType);
+            addTeg(sb, "author", author);
+            addTeg(sb, "chatId", chatId);
+            addTeg(sb, "threadId", threadId);
+            addTeg(sb, "originMessageId", originMessageId);
+            addTeg(sb, "senderType", senderType);
+            webClient.get().uri("/report" + sb)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
+                    .bodyToMono(Void.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
+    }
+
+
+    @Override
+    public void sendMessageForAdmin(SendAdminMessage message) {
+        try {
+            webClient.post().uri("/send/message/admin")
+                    .bodyValue(message)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса inform"))
+                    .bodyToMono(Void.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-Inform) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
+    }
+}

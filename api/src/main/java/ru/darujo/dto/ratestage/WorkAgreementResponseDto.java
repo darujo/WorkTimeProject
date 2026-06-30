@@ -3,7 +3,7 @@ package ru.darujo.dto.ratestage;
 import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.user.UserFio;
 
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 
 public class WorkAgreementResponseDto implements UserFio {
     private String firstName;
@@ -16,7 +16,7 @@ public class WorkAgreementResponseDto implements UserFio {
 
     private Long id;
     private String nikName;
-    private Timestamp timestamp;
+    private ZonedDateTime timestamp;
     @SuppressWarnings("unused")
     private String timestampStr;
     private String comment;
@@ -24,7 +24,7 @@ public class WorkAgreementResponseDto implements UserFio {
     private Long workId;
     private Long requestId;
 
-    public WorkAgreementResponseDto(Long id, String nikName, Timestamp timestamp, String comment, StatusResponse status, Long workId, Long requestId) {
+    public WorkAgreementResponseDto(Long id, String nikName, ZonedDateTime timestamp, String comment, StatusResponse status, Long workId, Long requestId) {
         this.id = id;
         this.nikName = nikName;
         this.timestamp = timestamp;
@@ -45,7 +45,7 @@ public class WorkAgreementResponseDto implements UserFio {
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getTimestamp() {
+    public ZonedDateTime getTimestamp() {
         return timestamp;
     }
 
@@ -78,7 +78,7 @@ public class WorkAgreementResponseDto implements UserFio {
         this.nikName = nikName;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
+    public void setTimestamp(ZonedDateTime timestamp) {
         this.timestamp = timestamp;
     }
 

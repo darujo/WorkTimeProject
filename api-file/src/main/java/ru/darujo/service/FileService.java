@@ -3,8 +3,10 @@ package ru.darujo.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -16,39 +18,42 @@ import java.util.Objects;
 public class FileService {
     private final Map<String, File> files = new HashMap<>();
 
-    public String addFile(String name, String body) {
+    public String addFile(String name, byte[] body) {
         return addFile(name, null, body);
     }
 
-    public void saveFile(String name, String body) {
+    public void saveFile(String name, byte[] body) {
         addFile(name, name, body);
     }
 
-    public String addFile(String name, String fileName, String body) {
+    public static File getFile(String name, String fileName, byte[] body) {
         try {
             File file;
             if (fileName == null) {
-                file = File.createTempFile(String.valueOf(Objects.requireNonNull(body).hashCode()), ".tmp");
+                file = File.createTempFile(String.valueOf(Objects.requireNonNull(name).hashCode()), ".jpg");
                 file.deleteOnExit();
             } else {
                 file = new File(fileName);
             }
 
-            log.info(name);
+
             log.info(fileName);
             log.info(file.getAbsolutePath());
 
-
-            try (PrintWriter out = new PrintWriter(file, StandardCharsets.UTF_8)) {
-                out.println(body);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            try (FileOutputStream fos = new FileOutputStream(file)) {
+                fos.write(body);
             }
-            addFile(name, file);
-            return name;
+            return file;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String addFile(String name, String fileName, byte[] body) {
+        log.info(name);
+        addFile(name, getFile(name, fileName, body));
+        return name;
+
 
     }
 
@@ -66,9 +71,9 @@ public class FileService {
         return file;
     }
 
-    public String getFileBody(String path) {
+    public byte[] getFileBody(String path) {
         try {
-            return Files.readString(Path.of(path));
+            return Files.readAllBytes(Path.of(path));
         } catch (IOException e) {
             log.info(e.getMessage(), e);
             return null;
@@ -90,7 +95,7 @@ public class FileService {
     public File resourceToFile(String fileName) {
 
         try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName)) {
-            File f = File.createTempFile(String.valueOf(Objects.requireNonNull(in).hashCode()), ".tmp");
+            File f = File.createTempFile(String.valueOf(Objects.requireNonNull(in).hashCode()), ".jpg");
             log.info(f.getAbsolutePath());
             f.deleteOnExit();
 

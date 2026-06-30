@@ -1,6 +1,7 @@
 package ru.darujo.api;
 
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -12,10 +13,11 @@ import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.WorkTime;
 import ru.darujo.service.WorkTimeService;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.List;
 
+@Slf4j
 @RestController()
 @RequestMapping("/v1/worktime")
 public class WorkTimeController {
@@ -67,36 +69,53 @@ public class WorkTimeController {
 
     @GetMapping("")
     public Page<@NonNull WorkTimeDto> findWorkTime(@RequestHeader String username,
-                                                   @RequestParam(required = false, name = "dateLt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLtStr,
-                                                   @RequestParam(required = false, name = "dateLe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateLeStr,
-                                                   @RequestParam(required = false, name = "dateGt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGtStr,
-                                                   @RequestParam(required = false, name = "dateGe") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateGeStr,
-                                                   @RequestParam(required = false) Long[] taskId,
-                                                   @RequestParam(required = false) String taskDEVBO,
-                                                   @RequestParam(required = false) String taskBTS,
-                                                   @RequestParam(required = false) String nikName,
-                                                   @RequestParam(required = false) List<Integer> type,
-                                                   @RequestParam(required = false) String comment,
-                                                   @RequestParam("system_project") Long projectId,
-                                                   @RequestParam(defaultValue = "false") boolean currentUser,
-                                                   @RequestParam(defaultValue = "1") Integer page,
-                                                   @RequestParam(defaultValue = "10") Integer size) {
-        Date dateLt = DateHelper.DTZToDate(dateLtStr, "dateLt = ");
-        Date dateLe = DateHelper.DTZToDate(dateLeStr, "dateLe = ", false);
-        Date dateGt = DateHelper.DTZToDate(dateGtStr, "dateGt = ", false);
-        Date dateGe = DateHelper.DTZToDate(dateGeStr, "dateGe = ");
+                                                   @RequestParam(required = false)
+                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                   ZonedDateTime dateLt,
+                                                   @RequestParam(required = false)
+                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                       ZonedDateTime dateLe,
+                                                   @RequestParam(required = false)
+                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                       ZonedDateTime dateGt,
+                                                   @RequestParam(required = false)
+                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                       ZonedDateTime dateGe,
+                                                   @RequestParam(required = false)
+                                                       Long[] taskId,
+                                                   @RequestParam(required = false)
+                                                       String taskDEVBO,
+                                                   @RequestParam(required = false)
+                                                       String taskBTS,
+                                                   @RequestParam(required = false)
+                                                       String nikName,
+                                                   @RequestParam(required = false)
+                                                       List<Integer> type,
+                                                   @RequestParam(required = false)
+                                                       String comment,
+                                                   @RequestParam("system_project")
+                                                       Long projectId,
+                                                   @RequestParam(defaultValue = "false")
+                                                       boolean currentUser,
+                                                   @RequestParam(defaultValue = "1")
+                                                       Integer page,
+                                                   @RequestParam(defaultValue = "10")
+                                                       Integer size) {
         if ((nikName == null || nikName.isEmpty()) && currentUser) {
             nikName = username;
         }
-
+        LocalDate lDateLt = DateHelper.zDTToLD(dateLt);
+        LocalDate lDateGt = DateHelper.zDTToLD(dateGt);
+        LocalDate lDateLe = DateHelper.zDTToLD(dateLe);
+        LocalDate lDateGe = DateHelper.zDTToLD(dateGe);
         workTimeService.clearCash();
         if ((taskBTS == null && taskDEVBO == null) || taskId != null) {
             return workTimeService.findWorkTime(taskId,
                     nikName,
-                    dateLt,
-                    dateLe,
-                    dateGt,
-                    dateGe,
+                    lDateLt,
+                    lDateLe,
+                    lDateGt,
+                    lDateGe,
                     type,
                     comment,
                     projectId,
@@ -107,10 +126,10 @@ public class WorkTimeController {
                     taskDEVBO,
                     taskBTS,
                     nikName,
-                    dateLt,
-                    dateLe,
-                    dateGt,
-                    dateGe,
+                    lDateLt,
+                    lDateLe,
+                    lDateGt,
+                    lDateGe,
                     type,
                     comment,
                     projectId,

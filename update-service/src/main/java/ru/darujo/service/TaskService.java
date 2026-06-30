@@ -6,30 +6,42 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.darujo.dto.information.MessageInfoDto;
-import ru.darujo.dto.information.MessageType;
-import ru.darujo.integration.InfoServiceIntegration;
+import ru.darujo.dto.information.SendAdminMessage;
+import ru.darujo.integration.AdminInfoService;
+import ru.darujo.integration.InfoServiceIntegrationImp;
 import ru.darujo.integration.ServiceIntegration;
+import ru.darujo.integration.ServiceType;
 import ru.darujo.model.RunnableNotException;
-import ru.darujo.model.ServiceType;
 import ru.darujo.object.ServiceIntegrationObject;
+import ru.darujo.type.MessageType;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.time.ZonedDateTime;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @Component
 public class TaskService {
     private MonitorService monitorService;
-    private InfoServiceIntegration infoServiceIntegration;
+    private InfoServiceIntegrationImp infoServiceIntegration;
+    private List<AdminInfoService> adminInfoServiceList;
 
     @Autowired
-    public void setInfoServiceIntegration(InfoServiceIntegration infoServiceIntegration) {
+    public void setAdminInfoServiceList(List<AdminInfoService> adminInfoServiceList) {
+        this.adminInfoServiceList = adminInfoServiceList;
+    }
+
+    @Autowired
+    public void setInfoServiceIntegration(InfoServiceIntegrationImp infoServiceIntegration) {
         this.infoServiceIntegration = infoServiceIntegration;
     }
 
@@ -40,6 +52,12 @@ public class TaskService {
 
     @Value("${update.run-service-command.command}")
     private String runFile;
+
+    //    @Value("#{'${update.backup.command}'.split(',')}")
+    @Value("${update.backup.command}")
+    private List<String> backUp;
+    @Value("${spring.datasource.password}")
+    private String backUpPass;
     @Value("${update.save-into}")
     private String pathFile;
     @Value("${update.unpack-command.command}")
@@ -51,7 +69,7 @@ public class TaskService {
 
     @PostConstruct
     public void init() {
-
+//        log.warn(getProcessOutput(backUpService(pathFile + "/backup", String.format("worktime_%s.backup", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm"))))));
     }
 
     public RunnableNotException getTaskAvailService() {
@@ -64,7 +82,7 @@ public class TaskService {
         return new RunnableNotException(() ->
         {
             try {
-                infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.SYSTEM_INFO, "Запущено обновление. Сервис может быть недоступен. Приносим извинения за предоставленые неудобства"));
+                infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.SYSTEM_INFO, "Запущено обновление. Сервис может быть недоступен. Приносим извинения за предоставленные неудобства"));
             } catch (RuntimeException ex) {
                 log.error(ex.getMessage(), ex);
             }
@@ -147,9 +165,7 @@ public class TaskService {
     private Process startService(ServiceType serviceType) {
         String param = String.format(runFile, serviceType.getName());
         try {
-            return new ProcessBuilder(param)
-                    .directory(new File(pathFile))
-                    .start();
+            return new ProcessBuilder(param).directory(new File(pathFile)).start();
         } catch (IOException e) {
             log.error("Не удалось выполнить команду {} c параметрами {} {}", runFile, param, e.getMessage(), e);
             return null;
@@ -157,7 +173,22 @@ public class TaskService {
 
     }
 
-    private void shutDownOneService(ServiceIntegration serviceIntegration, String token) {
+    private Process backUpService(String dir, String fileName) {
+        List<String> arr = new ArrayList<>(backUp);
+        arr.add(fileName);
+        ProcessBuilder processBuilder = new ProcessBuilder(arr).directory(new File(dir));
+        processBuilder.environment().put("PGPASSWORD", backUpPass);
+        log.info(dir, "/", fileName);
+        try {
+            return processBuilder.start();
+        } catch (IOException e) {
+            log.error("Не удалось выполнить команду {} c параметрами {} {}", runFile, backUp, e.getMessage(), e);
+            return null;
+        }
+
+    }
+
+    private void shutDownOneService(ServiceIntegration<ServiceType> serviceIntegration, String token) {
         serviceIntegration.shutDown(token);
     }
 
@@ -186,13 +217,54 @@ public class TaskService {
         }
     }
 
-    public RunnableNotException getTaskInfo(ZonedDateTime zonedDateTime, String text) {
+    public RunnableNotException getTaskInfo(LocalDateTime zonedDateTime, String text) {
         return new RunnableNotException(() -> {
             try {
-                long minutes = ChronoUnit.MINUTES.between(ZonedDateTime.now(), zonedDateTime);
+                long minutes = ChronoUnit.MINUTES.between(LocalDateTime.now(), zonedDateTime);
                 if (minutes > 0) {
                     infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.SYSTEM_INFO, String.format("Через %s будет %s", minutes, text)));
                 }
+            } catch (RuntimeException ignore) {
+            }
+        });
+    }
+
+    public RunnableNotException getBackUpTask() {
+        return new RunnableNotException(() -> {
+            try {
+                String fileName = String.format("worktime_%s.backup", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm")));
+                log.info(getProcessOutput(backUpService(pathFile + "/backup", fileName)));
+                adminInfoServiceList.forEach(adminInfoService -> adminInfoService.sendMessageForAdmin(new SendAdminMessage() {
+                    @Override
+                    public String getTitle() {
+                        return "BackUp WorkTime";
+                    }
+
+                    @Override
+                    public String getText() {
+                        return "BackUp выполнен;" + LocalDateTime.now();
+                    }
+
+                    @Override
+                    public String getFileName() {
+                        return fileName;
+                    }
+
+                    @Override
+                    public byte[] getFileBody() {
+                        Path file = Path.of(pathFile + "/backup" + "/" + fileName);
+                        try {
+                            return Files.readAllBytes(file);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+
+                    @Override
+                    public boolean isAttachFile() {
+                        return true;
+                    }
+                }));
             } catch (RuntimeException ignore) {
             }
         });

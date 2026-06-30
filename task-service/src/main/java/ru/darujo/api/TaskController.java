@@ -11,12 +11,11 @@ import ru.darujo.dto.TaskDto;
 import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
-import ru.darujo.integration.UserServiceIntegration;
-import ru.darujo.integration.WorkServiceIntegration;
+import ru.darujo.integration.UserServiceIntegrationImp;
+import ru.darujo.integration.WorkServiceIntegrationImp;
 import ru.darujo.model.Task;
 import ru.darujo.service.TaskService;
 
-import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -31,17 +30,17 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    private WorkServiceIntegration workServiceIntegration;
+    private WorkServiceIntegrationImp workServiceIntegration;
 
     @Autowired
-    public void setWorkServiceIntegration(WorkServiceIntegration workServiceIntegration) {
+    public void setWorkServiceIntegration(WorkServiceIntegrationImp workServiceIntegration) {
         this.workServiceIntegration = workServiceIntegration;
     }
 
-    UserServiceIntegration userServiceIntegration;
+    UserServiceIntegrationImp userServiceIntegration;
 
     @Autowired
-    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+    public void setUserServiceIntegration(UserServiceIntegrationImp userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
 
@@ -51,11 +50,13 @@ public class TaskController {
     }
 
     @GetMapping("/refresh/{id}")
-    public boolean TaskRefresh(@PathVariable long id,
-                               @RequestParam(required = false, name = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStr
+    public boolean TaskRefresh(@PathVariable
+                               long id,
+                               @RequestParam(required = false)
+                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                               ZonedDateTime date
     ) {
-        Timestamp date = DateHelper.DTZToDate(dateStr, "date");
-        return taskService.refreshTime(id, date);
+        return taskService.refreshTime(id, DateHelper.zDTToLD(date));
 
     }
 

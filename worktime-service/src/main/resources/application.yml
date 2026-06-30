@@ -20,4 +20,10 @@ spring:
 
   jackson:
     default-property-inclusion: non_absent
-
+integration:
+  task-service:
+    enable: true
+  user-service:
+    enable: true
+  calendar-service:
+    enable: true

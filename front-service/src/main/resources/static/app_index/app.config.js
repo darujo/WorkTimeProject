@@ -40,6 +40,9 @@ angular.module('workTimeService').config(["$ocLazyLoadProvider", function ($ocLa
             name: 'calendar', // module
             files: ['calendar/calendar.js?ver=' + ver]
         }, {
+            name: 'calendar_day', // module
+            files: ['calendar/day_edit.js?ver=' + ver]
+        }, {
             name: 'weekWork', // module
             files: ['rep/weekWork/weekWork.js?ver='.toLowerCase() + ver]
         }, {
@@ -90,6 +93,21 @@ angular.module('workTimeService').config(["$ocLazyLoadProvider", function ($ocLa
         }, {
             name: 'rate', // module
             files: ['workRate/rate.js?ver='.toLowerCase() + ver]
+        }, {
+            name: 'confirm_email', // module
+            files: ['user/confirm_email.js?ver='.toLowerCase() + ver]
+        }, {
+            name: 'change_email', // module
+            files: ['user/change_email.js?ver='.toLowerCase() + ver]
+        }, {
+            name: 'recovery_password', // module
+            files: ['user/recovery_password.js?ver='.toLowerCase() + ver]
+        }, {
+            name: 'recovery_pass', // module
+            files: ['user/recovery_pass.js?ver='.toLowerCase() + ver]
+        }, {
+            name: 'request_pass', // module
+            files: ['user/request_pass.js?ver='.toLowerCase() + ver]
         }
         ]
     });

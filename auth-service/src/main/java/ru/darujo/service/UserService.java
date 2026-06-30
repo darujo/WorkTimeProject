@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -14,23 +15,31 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.darujo.convertor.RoleConvertor;
+import ru.darujo.convertor.UserConvertor;
 import ru.darujo.dto.information.MapUserInfoDto;
-import ru.darujo.dto.information.MessageType;
+import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.dto.user.*;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
-import ru.darujo.integration.InfoServiceIntegration;
+import ru.darujo.hash.HashService;
+import ru.darujo.integration.InfoServiceIntegrationImp;
 import ru.darujo.model.Project;
 import ru.darujo.model.Right;
 import ru.darujo.model.User;
 import ru.darujo.repository.UserRepository;
 import ru.darujo.specifications.Specifications;
+import ru.darujo.type.MessageSenderType;
+import ru.darujo.type.MessageType;
+import ru.darujo.url.UrlWorkTime;
 
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class UserService {
+    @Value("${mail.secret}")
+    private String codePas;
     @Getter
     private static UserService INSTANCE;
     private ProjectService projectService;
@@ -67,10 +76,10 @@ public class UserService {
         this.rightService = rightService;
     }
 
-    private InfoServiceIntegration infoServiceIntegration;
+    private InfoServiceIntegrationImp infoServiceIntegration;
 
     @Autowired
-    public void setInfoServiceIntegration(InfoServiceIntegration infoServiceIntegration) {
+    public void setInfoServiceIntegration(InfoServiceIntegrationImp infoServiceIntegration) {
         this.infoServiceIntegration = infoServiceIntegration;
     }
 
@@ -102,6 +111,7 @@ public class UserService {
 
     @Transactional
     public User saveUser(User user, String textPassword, Boolean isAdmin) {
+        boolean newEmail = false;
         checkNull(user.getNikName(), "логин");
         checkNull(user.getFirstName(), "имя");
         checkNull(user.getLastName(), "фамилия");
@@ -117,7 +127,8 @@ public class UserService {
             if (userRepository.findByNikNameIgnoreCaseAndIdIsNot(user.getNikName(), user.getId()).isPresent()) {
                 throw new ResourceNotFoundRunTime("Уже есть пользователь с таким ником");
             }
-            User saveUser = userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + user.getId() + " не найден"));
+            User finalUser = user;
+            User saveUser = userRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + finalUser.getId() + " не найден"));
             user.setRights(saveUser.getRights());
 //            user.setRoles(saveUser.getRoles());
             if (user.getCurrentProject() == null) {
@@ -125,10 +136,22 @@ public class UserService {
             }
 //            user.setProjects(saveUser.getProjects());
             user.setTelegramId(saveUser.getTelegramId());
+            user.setMaxId(saveUser.getMaxId());
+            user.setEmail(saveUser.getEmail());
+            if (user.getNewEmail() != null && !user.getNewEmail().equals(saveUser.getEmail())) {
+                setNewEmailCode(user);
+                newEmail = true;
+            } else {
+                user.setCodeEmail(saveUser.getCodeEmail());
+                user.setSendCode(saveUser.getSendCode());
+                user.setRecovery(saveUser.getRecovery());
+            }
         } else {
             if (userRepository.findByNikNameIgnoreCase(user.getNikName()).isPresent()) {
                 throw new ResourceNotFoundRunTime("Уже есть пользователь с таким ником");
             }
+            setNewEmailCode(user);
+            newEmail = true;
         }
         if (textPassword != null && !textPassword.isEmpty()) {
             if (user.getPassword() == null || user.getPassword().isEmpty()) {
@@ -156,7 +179,11 @@ public class UserService {
                 }
             }
         }
-        return userRepository.save(user);
+        user = userRepository.save(user);
+        if (newEmail) {
+            infoServiceIntegration.addMessage(new MessageInfoDto(new UserInfoDto(MessageSenderType.Email.toString(), user.getId(), user.getNikName(), user.getNewEmail(), null, null), "Подтверждение почты", "Для подтверждения почты перейдите по ссылке " + UrlWorkTime.getUrlNewEmail(user.getNikName(), getHash(user))));
+        }
+        return user;
     }
 
     @Transactional
@@ -166,7 +193,7 @@ public class UserService {
             User user = new User(-1L, nikName, hashPassword(
                     "Приносить пользу миру — это единственный способ стать счастливым."),
 
-                    null, null, null, false, null, false);
+                    null, null, null, false, null, false, null, null, null, null, null);
             List<Right> right = new ArrayList<>();
             right.add(new Right(-1L, "STOP_SERVICE", "право на стоп"));
             user.setRights(right);
@@ -183,10 +210,12 @@ public class UserService {
                                            String lastName,
                                            String firstName,
                                            String patronymic,
-                                           Long telegramId,
+                                           String telegramId,
+                                           String maxId,
+                                           String email,
                                            Boolean telegramIsNotNull,
                                            Long projectId) {
-        Specification<@NonNull User> specification = getUserSpecification(role, nikName, lastName, firstName, patronymic, telegramId, telegramIsNotNull, projectId);
+        Specification<@NonNull User> specification = getUserSpecification(role, nikName, lastName, firstName, patronymic, telegramId, maxId, email, telegramIsNotNull, projectId);
         Sort sort = Sort.by("lastName")
                 .and(Sort.by("firstName"));
         Page<@NonNull User> userPage;
@@ -201,7 +230,8 @@ public class UserService {
         return userPage;
     }
 
-    private Specification<@NonNull User> getUserSpecification(String role, String nikName, String lastName, String firstName, String patronymic, Long telegramId, Boolean telegramIsNotNull, Long projectId) {
+    private Specification<@NonNull User> getUserSpecification(String role, String nikName, String lastName, String
+            firstName, String patronymic, String telegramId, String maxId, String email, Boolean telegramIsNotNull, Long projectId) {
         Specification<@NonNull User> specification = Specification.unrestricted();
         if (role != null && !role.isEmpty()) {
             specification = Specifications.in(specification, "r", roleService.findByName(projectId, role).orElseThrow(() -> new UsernameNotFoundException("Роль не найдена " + role))
@@ -213,6 +243,8 @@ public class UserService {
         specification = Specifications.like(specification, "firstName", firstName);
         specification = Specifications.like(specification, "patronymic", patronymic);
         specification = Specifications.eq(specification, "telegramId", telegramId);
+        specification = Specifications.eq(specification, "maxId", maxId);
+        specification = Specifications.eq(specification, "email", email);
         specification = Specifications.isNotNull(specification, "telegramId", telegramIsNotNull);
         return specification;
     }
@@ -252,12 +284,7 @@ public class UserService {
     }
 
     @Transactional
-    public boolean changePassword(String username, String passwordOld, String passwordNew) {
-        User user = userRepository.findByNikNameIgnoreCase(username).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь не найден"));
-        if (!checkPassword(passwordOld, user.getPassword())) {
-            throw new ResourceNotFoundRunTime("Старый пароль не действителен");
-        }
-
+    public boolean changePassword(User user, String passwordNew) {
         if (passwordNew == null || passwordNew.isEmpty()) {
             throw new ResourceNotFoundRunTime("Новый пароль не должен быть пустым");
         }
@@ -270,31 +297,72 @@ public class UserService {
         return user != null;
     }
 
+    @Transactional
+    public boolean changePassword(String username, String passwordOld, String passwordNew) {
+        User user = userRepository.findByNikNameIgnoreCase(username).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь не найден"));
+        if (!checkPassword(passwordOld, user.getPassword())) {
+            throw new ResourceNotFoundRunTime("Старый пароль не действителен");
+        }
+        return changePassword(user, passwordNew);
+    }
+
+    @Transactional
+    public boolean recoveryPassword(String username, String code, String passwordNew) {
+        User user = userRepository.findByNikNameIgnoreCase(username).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь не найден"));
+        if (!code.equals(getHash(user))) {
+            throw new ResourceNotFoundRunTime("Код не действителен.");
+        }
+        return changePassword(user, passwordNew);
+    }
+
     public MapUserInfoDto getUserMessageDTOs() {
-        Map<MessageType, List<UserInfoDto>> messageTypeListMap = new HashMap<>();
+        Map<MessageType, Map<MessageSenderType, List<UserInfoDto>>> messageTypeListMap = new HashMap<>();
         for (MessageType type : MessageType.values()) {
-//            List<UserInfoDto> userDTOs = getUserList(null, null, null, null, null, null, null, null, true).getContent().stream().map(UserConvertor::getUserInfoDto).toList();
-            List<UserInfoDto> userDTOs = userInfoTypeService
+            Map<MessageSenderType, List<UserInfoDto>> senderTypeListMap = new HashMap<>();
+            messageTypeListMap.put(type, senderTypeListMap);
+
+            userInfoTypeService
                     .getInfoTypes(type)
                     .stream()
                     .filter(userInfoType ->
-                            userInfoType.getUser().getTelegramId() != null
-                                    && userInfoType.getIsActive() != null
+                            userInfoType.getIsActive() != null
                                     && userInfoType.getIsActive())
-                    .map(
-                            userInfoType -> new UserInfoDto(
-                                    userInfoType.getUser().getId(),
-                                    userInfoType.getUser().getNikName(),
-                                    userInfoType.getProjectId(),
-                                    userInfoType.getTelegramId() == null ? Long.toString(userInfoType.getUser().getTelegramId()) : Long.toString(userInfoType.getTelegramId()),
-                                    userInfoType.getThreadId(),
-                                    null)).toList();
-            messageTypeListMap.put(type, userDTOs);
+                    .forEach(
+                            userInfoType -> {
+                                MessageSenderType senderType = MessageSenderType.valueOf(userInfoType.getSenderType());
+                                if (getMainChatId(senderType, userInfoType.getUser()) != null) {
+                                    List<UserInfoDto> userInfoDTOs = senderTypeListMap.computeIfAbsent(senderType, k -> new ArrayList<>());
+                                    userInfoDTOs.add(new UserInfoDto(
+                                            userInfoType.getSenderType(),
+                                            userInfoType.getUser().getId(),
+                                            userInfoType.getUser().getNikName(),
+                                            userInfoType.getProjectId(),
+                                            userInfoType.getChatId() == null ? getMainChatId(senderType, userInfoType.getUser()) : userInfoType.getChatId(),
+                                            userInfoType.getThreadId(),
+                                            null));
+                                }
+                            }
+                    );
+
+
         }
         return new MapUserInfoDto(messageTypeListMap);
     }
 
-    public UserInfoTypeDto getUserInfoTypes(Long userId) {
+    private static String getMainChatId(MessageSenderType senderType, User user) {
+        if (senderType.equals(MessageSenderType.Telegram)) {
+            return user.getTelegramId();
+        } else if (senderType.equals(MessageSenderType.Email)) {
+            return user.getEmail();
+        } else if (senderType.equals(MessageSenderType.Max)) {
+            return user.getMaxId();
+        } else {
+            return null;
+        }
+
+    }
+
+    public UserInfoTypeDto getUserInfoTypes(Long userId, String senderType) {
         User user;
         if (userId != null) {
             user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь с id " + userId + " не найден"));
@@ -314,7 +382,7 @@ public class UserService {
         if (userId != null) {
             Map<String, UserInfoTypeActiveDto> userInfoActiveCurrentProjectDtoMap = new HashMap<>();
             for (MessageType type : MessageType.values()) {
-                if (type.getProject()) {
+                if (type.isProject()) {
                     UserInfoTypeActiveDto userInfoTypeActiveDto = new UserInfoTypeActiveDto(user.getCurrentProject().getId(), type.toString(), type.getName(), false);
 
                     userInfoTypeActiveDto.setMessage(linkService.getCode(user.getNikName(), type.toString()));
@@ -323,7 +391,7 @@ public class UserService {
                 }
             }
             userInfoTypeService
-                    .getInfoTypes(user)
+                    .getInfoTypes(user, senderType)
                     .stream().filter(userInfoType -> userInfoType.getProjectId() == null || userInfoType.getProjectId().equals(user.getCurrentProject().getId()))
                     .forEach(userInfoType -> {
                         UserInfoTypeActiveDto userInfo;
@@ -333,7 +401,7 @@ public class UserService {
                             userInfo = userInfoActiveCurrentProjectDtoMap.get(userInfoType.getCode());
                         }
                         userInfo.setActive(userInfoType.getIsActive());
-                        userInfo.setTelegramId(userInfoType.getTelegramId());
+                        userInfo.setTelegramId(userInfoType.getChatId());
                         userInfo.setThreadId(userInfoType.getThreadId());
                     });
 
@@ -344,11 +412,11 @@ public class UserService {
 
     }
 
-    public UserInfoTypeDto setUserInfoTypes(UserInfoTypeDto userInfoTypeDto) {
+    public UserInfoTypeDto setUserInfoTypes(String senderType, UserInfoTypeDto userInfoTypeDto) {
         User user = userRepository.findById(userInfoTypeDto.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Пользователь не найден"));
-        userInfoTypeService.setUserInfoTypes(user, userInfoTypeDto.getInfoTypes(), userInfoTypeDto.getInfoProjectTypes());
+        userInfoTypeService.setUserInfoTypes(user, senderType, userInfoTypeDto.getInfoTypes(), userInfoTypeDto.getInfoProjectTypes());
         setMessageTypeListMap();
-        return getUserInfoTypes(user.getId());
+        return getUserInfoTypes(user.getId(), senderType);
     }
 
     public boolean setMessageTypeListMap() {
@@ -361,13 +429,90 @@ public class UserService {
         }
     }
 
-    public boolean exists(Long chatId) {
-        return userRepository.exists(getUserSpecification(null, null, null, null, null, chatId, null, null));
+    public boolean exists(String senderType, String chatId) {
+
+        return (senderType.equalsIgnoreCase(MessageSenderType.Telegram.toString()) &&
+                userRepository.exists(getUserSpecification(null, null, null, null, null, chatId, null, null, null, null)))
+                || (senderType.equalsIgnoreCase(MessageSenderType.Max.toString()) &&
+                userRepository.exists(getUserSpecification(null, null, null, null, null, null, chatId, null, null, null)))
+                || (senderType.equalsIgnoreCase(MessageSenderType.Email.toString()) &&
+                userRepository.exists(getUserSpecification(null, null, null, null, null, null, null, chatId, null, null)));
+    }
+
+    private static void setNewEmailCode(User user) {
+        int code = (int) ((99999999 * Math.random()));
+        user.setCodeEmail(Integer.toString(code));
+        user.setSendCode(new Timestamp(System.currentTimeMillis()));
+//        user.setEmail(user.getNewEmail());
+        user.setRecovery(false);
+    }
+
+    @Transactional
+    public boolean changeEmail(String nikName, String email) {
+        User user = UserConvertor.getUserCopyEmpty(loadUserByNikName(nikName));
+        if (!email.isEmpty()) {
+            user.setNewEmail(email);
+            saveUser(user);
+            return true;
+        }
+        return false;
+    }
+    @Transactional
+    public boolean confirmEmail(String nikName, String code) {
+        User user = loadUserByNikName(nikName);
+        if (code.equals(getHash(user))) {
+            user.setCodeEmail(null);
+            user.setEmail(user.getNewEmail());
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    @Transactional
+    public void getRestorePassword(String nikName, String email) {
+        User user = loadUserByNikName(nikName);
+        if (email != null && email.equals(user.getEmail())) {
+            setNewEmailCode(user);
+            userRepository.save(user);
+            infoServiceIntegration.addMessage(new MessageInfoDto(new UserInfoDto(MessageSenderType.Email.toString(), user.getId(), user.getNikName(), user.getEmail(), null, null), "Восстановление доступа", "Для восстановления пароля перейдите по ссылке " + UrlWorkTime.getUrlRecovery(user.getNikName(), getHash(user))));
+
+        } else {
+            throw new ResourceNotFoundRunTime("Почта не совпадает");
+        }
+
+    }
+
+    @Transactional
+    public boolean restorePassword(String nikName, String code) {
+        User user = loadUserByNikName(nikName);
+        if (code.equals(getHash(user))) {
+            user.setCodeEmail(null);
+            user.setPasswordChange(true);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    public String getHash(User user) {
+        return HashService.getSHA256(user.getCodeEmail() + ":" + codePas);
     }
 
 
     @Autowired
     public void setProjectService(ProjectService projectService) {
         this.projectService = projectService;
+    }
+
+    public List<MessageSenderType> getUserSenderTypes(Long userId) {
+        List<MessageSenderType> senderTypes = new ArrayList<>();
+        User user = findById(userId);
+        for (MessageSenderType value : MessageSenderType.values()) {
+            if (getMainChatId(value, user) != null) {
+                senderTypes.add(value);
+            }
+        }
+        return senderTypes;
     }
 }

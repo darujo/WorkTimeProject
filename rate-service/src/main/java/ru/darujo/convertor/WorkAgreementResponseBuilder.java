@@ -1,12 +1,13 @@
 package ru.darujo.convertor;
 
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.ratestage.StatusResponse;
 import ru.darujo.dto.ratestage.WorkAgreementResponseDto;
 import ru.darujo.model.WorkAgreementRequest;
 import ru.darujo.model.WorkAgreementResponse;
 import ru.darujo.service.WorkAgreementRequestService;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public class WorkAgreementResponseBuilder {
     public static WorkAgreementResponseBuilder create() {
@@ -15,7 +16,7 @@ public class WorkAgreementResponseBuilder {
 
     private Long id;
     private String nikName;
-    private Timestamp timestamp;
+    private LocalDateTime timestamp;
     private String comment;
     private String status;
     private Long workId;
@@ -37,7 +38,7 @@ public class WorkAgreementResponseBuilder {
         return this;
     }
 
-    public WorkAgreementResponseBuilder setTimestamp(Timestamp timestamp) {
+    public WorkAgreementResponseBuilder setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
         return this;
     }
@@ -67,7 +68,7 @@ public class WorkAgreementResponseBuilder {
     }
 
     public WorkAgreementResponseDto getWorkAgreementResponseDTO() {
-        return new WorkAgreementResponseDto(id, nikName, timestamp, comment, StatusResponse.valueOf(status), workId, requestId);
+        return new WorkAgreementResponseDto(id, nikName, DateHelper.getZDT(timestamp), comment, StatusResponse.valueOf(status), workId, requestId);
     }
 
     public WorkAgreementResponse getWorkAgreementResponse() {

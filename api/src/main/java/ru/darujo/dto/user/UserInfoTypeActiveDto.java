@@ -5,7 +5,7 @@ import ru.darujo.dto.information.CodeTelegramMes;
 public class UserInfoTypeActiveDto extends InfoTypeDto{
     private Long projectId;
     private Boolean active;
-    private Long telegramId;
+    private String telegramId;
     private Integer threadId;
     private CodeTelegramMes message;
 
@@ -24,7 +24,7 @@ public class UserInfoTypeActiveDto extends InfoTypeDto{
         return active;
     }
 
-    public void setTelegramId(Long telegramId) {
+    public void setTelegramId(String telegramId) {
         this.telegramId = telegramId;
     }
 
@@ -37,7 +37,7 @@ public class UserInfoTypeActiveDto extends InfoTypeDto{
     }
 
     @SuppressWarnings("unused")
-    public Long getTelegramId() {
+    public String getTelegramId() {
         return telegramId;
     }
 

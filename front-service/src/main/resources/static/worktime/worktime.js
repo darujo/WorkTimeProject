@@ -17,8 +17,10 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
         document.getElementById("FindTask").style.display = "none";
     };
     let showFindTask = function () {
+        console.log("showFindTask")
         document.getElementById("TaskNum").style.display = "none";
         document.getElementById("FindTask").style.display = "block";
+        loadFilterTask = true;
         $scope.filterTask();
     };
     let callBackCreate = function () {
@@ -41,16 +43,23 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
         nikName: null,
         currentUser: true
     }
-    $scope.FiltTask = {
-        size: null,
-        workId: null,
-        bts: null,
-        devbo: null,
-        desc: null,
-        ziName: null,
-        type: null,
-        nikName: null
+    let loadFilterTask = false;
+    let taskF = $location.getFilter("wortTimeEditFilter");
+    if (taskF && taskF !== {}) {
+        $scope.FiltTask = taskF
+    } else {
+        $scope.FiltTask = {
+            size: 10,
+            workId: null,
+            bts: null,
+            devbo: null,
+            desc: null,
+            ziName: null,
+            type: null,
+            nikName: null
+        }
     }
+
     $scope.workTime = {
         authorFirstName: null,
         authorLastName: null,
@@ -93,8 +102,6 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
     $scope.loadWorkTime = function () {
         showWorkTime();
         console.log("$location.WorkTime " + $localStorage.WorkTime);
-        console.log($localStorage.WorkTime);
-        console.log(typeof $localStorage.WorkTime !== "undefined");
         if (location.href.indexOf("?") !== -1) {
 
             $location.parserFilter($scope.Filter);
@@ -258,8 +265,6 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
         // $scope
 
         console.log($scope.WorkTime);
-        console.log("создаем 6");
-        console.log("создаем 3");
         if (!isNaN($scope.WorkTime.taskId)) {
             findNameTask($scope.WorkTime.taskId);
         }
@@ -274,10 +279,8 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
             .then(function (response) {
                 WorkTimeIdEdit = response.data.id;
                 $scope.WorkTime = response.data;
-                console.log($scope.WorkTime);
 
                 $scope.WorkTime.workDate = new Date(response.data.workDate);
-                console.log("eeee 3")
 
                 showFormEdit();
                 findNameTask($scope.WorkTime.taskId);
@@ -401,7 +404,7 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
         }
         document.getElementById("PageTask").value = page;
         if ($scope.loadTaskWait) {
-            alert("Подождите обрабатывается предыдущий запрос")
+            alert("Подождите обрабатывается предыдущий запрос2222333")
         } else {
             $scope.loadTaskWait = true;
             $scope.TaskList = null;
@@ -428,8 +431,6 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
                 $scope.loadTaskWait = false;
                 console.log("/task.response");
                 console.log(response);
-                console.log("response,data :");
-                console.log(response.data);
                 $scope.TaskList = response.data.content;
                 maxPage = response.data["totalPages"];
                 // showTask();
@@ -447,10 +448,12 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
     }
 
     $scope.filterTask = function () {
-        console.log("filterTask");
-        document.getElementById("PageTask").value = "1";
-        $location.saveFilter("wortTimeEditFilter", $scope.FiltTask);
-        $scope.loadTask(0);
+        if (loadFilterTask) {
+            console.log("filterTask");
+            document.getElementById("PageTask").value = "1";
+            $location.saveFilter("wortTimeEditFilter", $scope.FiltTask);
+            $scope.loadTask(0);
+        }
     };
     $scope.setTask = function (taskId) {
         document.getElementById("TaskIdEdit").value = taskId;
@@ -512,11 +515,12 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
         }
     }
     $scope.clearFilterTask = function (load) {
-        console.log("clearFilter");
+        console.log("clearFilterTassssk");
         if ($scope.FiltTask === null) {
             $scope.FiltTask = {size: 10}
         }
         console.log($scope.FiltTask)
+        console.log(load)
         if (load) {
             $scope.filterTask();
         }
@@ -524,7 +528,6 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
     console.log(" get filter 1 ", $scope.Filter)
     $scope.Filter = $location.getFilter("wortTimeFilter");
     console.log(" get filter 2 ", $scope.Filter)
-    $scope.FiltTask = $location.getFilter("wortTimeEditFilter");
 
     $scope.clearFilter(false);
 
@@ -554,8 +557,6 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
         return $scope.availProjectInList(list, $location.UserLogin.projectId)
     }
     $scope.availProjectInList = function (list, searchVal) {
-        console.log("availProjectInList search ", searchVal)
-
         for (let i = 0; i < list.length; i++) {
             if (list[i]["id"] === searchVal) {
                 return true;

@@ -13,14 +13,14 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.TaskDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
-import ru.darujo.integration.WorkServiceIntegration;
+import ru.darujo.integration.WorkServiceIntegrationImp;
 import ru.darujo.model.Task;
 import ru.darujo.repository.TaskRepository;
 import ru.darujo.specifications.Specifications;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,10 +37,10 @@ public class TaskService {
     }
 
 
-    private WorkServiceIntegration workServiceIntegration;
+    private WorkServiceIntegrationImp workServiceIntegration;
 
     @Autowired
-    public void setWorkServiceIntegration(WorkServiceIntegration workServiceIntegration) {
+    public void setWorkServiceIntegration(WorkServiceIntegrationImp workServiceIntegration) {
         this.workServiceIntegration = workServiceIntegration;
     }
 
@@ -67,7 +67,7 @@ public class TaskService {
         if (task.getType() == 1 && (task.getCodeBTS() != null && !task.getCodeBTS().isEmpty())) {
             task.setType(5);
         }
-        task.setRefresh(new Timestamp(System.currentTimeMillis()));
+        task.setRefresh(LocalDateTime.now());
         if (task.getId() != null) {
             Task taskSave = findById(task.getId()).orElseThrow(() -> new ResourceNotFoundRunTime("Отмеченная работа не найден"));
             if (task.getTimeCreate() == null && taskSave.getTimeCreate() != null) {
@@ -153,10 +153,10 @@ public class TaskService {
 
 
     @Transactional
-    public boolean refreshTime(long id, Date date) {
+    public boolean refreshTime(long id, LocalDate date) {
 
-        Task task = findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Отмеченная работа не найден"));
-        task.setRefresh(new Timestamp(System.currentTimeMillis()));
+        Task task = findById(id).orElseThrow(() -> new ResourceNotFoundRunTime("Задача не найден"));
+        task.setRefresh(LocalDateTime.now());
         taskRepository.save(task);
         boolean ok = workServiceIntegration.setWorkDate(task.getWorkId(), task.getProjectId(), date);
         if (!ok) {

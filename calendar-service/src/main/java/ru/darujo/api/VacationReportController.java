@@ -10,8 +10,9 @@ import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.calendar.UserVacationsDto;
 import ru.darujo.service.VacationReportService;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
+
 
 @RestController()
 @RequestMapping("/v1/vacation/report")
@@ -24,54 +25,70 @@ public class VacationReportController {
     }
 
     @GetMapping("/user")
-    public UserVacationsDto getWeekWork(@RequestParam(required = false) String nikName,
-                                        @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
-                                        @RequestParam(required = false, name = "dateEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEndStr,
-                                        @RequestParam(required = false) String periodSplit) {
-        Timestamp dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ", true);
-        Timestamp dateEnd = DateHelper.DTZToDate(dateEndStr, "dateEnd = ", true);
+    public UserVacationsDto getWeekWork(@RequestParam(required = false)
+                                        String nikName,
+                                        @RequestParam(required = false)
+                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                        ZonedDateTime dateStart,
+                                        @RequestParam(required = false)
+                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                            ZonedDateTime dateEnd,
+                                        @RequestParam(required = false)
+                                        String periodSplit) {
+        LocalDate lDateStart = DateHelper.zDTToLD(dateStart, "dateStart = ");
+        LocalDate lDateEnd = DateHelper.zDTToLD(dateEnd, "dateEnd = ");
 
-        return vacationReportService.getUserVacations(nikName, dateStart, dateEnd, periodSplit);
+        return vacationReportService.getUserVacations(nikName, lDateStart, lDateEnd, periodSplit);
     }
 
     @GetMapping("/user/work/day/last")
-    public Timestamp getLastWorkDay(@RequestParam(required = false) String username,
-                                    @RequestParam(required = false, name = "dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStartStr,
-                                    @RequestParam(required = false) Integer dayMinus,
-                                    @RequestParam(required = false) Boolean lastWeek) {
-        Timestamp dateStart;
-        if (dateStartStr == null) {
-            dateStart = new Timestamp(System.currentTimeMillis());
+    public LocalDate getLastWorkDay(@RequestParam(required = false)
+                                    String username,
+                                    @RequestParam(required = false)
+                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                    ZonedDateTime dateStart,
+                                    @RequestParam(required = false)
+                                    Integer dayMinus,
+                                    @RequestParam(required = false)
+                                    Boolean lastWeek) {
+        LocalDate lDateStart;
+        if (dateStart == null) {
+            lDateStart = LocalDate.now();
         } else {
-            dateStart = DateHelper.DTZToDate(dateStartStr, "dateStart = ", true);
+            lDateStart = DateHelper.zDTToLD(dateStart);
         }
-
-        return vacationReportService.getLastWorkDay(username, dateStart, dayMinus, lastWeek);
+        return vacationReportService.getLastWorkDay(username, lDateStart, dayMinus, lastWeek);
     }
 
     @GetMapping("/user/work/day")
-    public Boolean isWorkDayUser(@RequestParam(required = false) String username,
-                                 @RequestParam(required = false, name = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStr
+    public Boolean isWorkDayUser(@RequestParam(required = false)
+                                 String username,
+                                 @RequestParam(required = false)
+                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                 ZonedDateTime date
     ) {
-        Timestamp date;
-        if (dateStr == null) {
-            date = new Timestamp(System.currentTimeMillis());
+        LocalDate lDate;
+        if (date == null) {
+            lDate = LocalDate.now();
         } else {
-            date = DateHelper.DTZToDate(dateStr, "dateStart = ", true);
+            lDate = DateHelper.zDTToLD(date);
         }
-        return vacationReportService.isWorkDayUser(date, username);
+        return vacationReportService.isWorkDayUser(lDate, username);
     }
 
     @GetMapping("/work/day/after/week")
-    public Boolean isDayAfterWeek(@RequestParam(required = false, name = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStr,
-                                  @RequestParam(required = false) Integer dayMinus) {
-        Timestamp date;
-        if (dateStr == null) {
-            date = new Timestamp(System.currentTimeMillis());
+    public Boolean isDayAfterWeek(@RequestParam(required = false)
+                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                      ZonedDateTime date,
+                                  @RequestParam(required = false)
+                                  Integer dayMinus) {
+        LocalDate lDate;
+        if (date == null) {
+            lDate = LocalDate.now();
         } else {
-            date = DateHelper.DTZToDate(dateStr, "date = ", false);
+            lDate = DateHelper.zDTToLD(date);
         }
-        return vacationReportService.isDayAfterWeek(date, dayMinus);
+        return vacationReportService.isDayAfterWeek(lDate, dayMinus);
     }
 
 }

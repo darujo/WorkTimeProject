@@ -14,8 +14,9 @@ import org.telegram.telegrambots.meta.api.objects.message.MaybeInaccessibleMessa
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.darujo.dto.information.ResultMes;
+import ru.darujo.dto.information.SendAdminMessage;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
-import ru.darujo.integration.UserServiceIntegration;
+import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.model.ChatInfo;
 import ru.darujo.model.MessageReceive;
 import ru.darujo.service.CommandType;
@@ -40,10 +41,10 @@ public class TelegramBotRequest implements SpringLongPollingBot, LongPollingUpda
         return this;
     }
 
-    private UserServiceIntegration userServiceIntegration;
+    private UserServiceIntegrationImp userServiceIntegration;
 
     @Autowired
-    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+    public void setUserServiceIntegration(UserServiceIntegrationImp userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
 
@@ -238,16 +239,19 @@ public class TelegramBotRequest implements SpringLongPollingBot, LongPollingUpda
                         try {
                             telegramBotSend.deleteMessage(chatInfo);
                             getStop(chatInfo);
+                            return;
                         } catch (TelegramApiException e) {
                             throw new RuntimeException(e);
                         }
                     } else if (CommandType.LINK.equals(CommandType.valueOf(callbackQuery.getData()))) {
                         try {
                             getLink(chatInfo);
+                            return;
                         } catch (TelegramApiException e) {
                             throw new RuntimeException(e);
                         }
                     }
+
                 } catch (IllegalArgumentException ex) {
                     log.info(String.valueOf(ex));
                 }
@@ -285,7 +289,7 @@ public class TelegramBotRequest implements SpringLongPollingBot, LongPollingUpda
     /**
      * Шаблонный метод отправки сообщения пользователю
      *
-     * @param chatInfo - индификатор чата
+     * @param chatInfo - идентификатор чата
      * @param msg      - сообщение
      */
     private void defaultMsg(ChatInfo chatInfo, String msg) throws TelegramApiException {
@@ -300,7 +304,17 @@ public class TelegramBotRequest implements SpringLongPollingBot, LongPollingUpda
 
     private void messageForAdmin(String text) {
         try {
-            telegramBotSend.sendMessageForAdmin(text);
+            telegramBotSend.sendMessageForAdmin(new SendAdminMessage() {
+                @Override
+                public String getTitle() {
+                    return text;
+                }
+
+                @Override
+                public String getText() {
+                    return text;
+                }
+            });
         } catch (TelegramApiException e) {
             log.error("Failed to send message while stopping the bot", e);
         }

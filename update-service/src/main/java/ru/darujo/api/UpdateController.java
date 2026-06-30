@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.assistant.helper.EnumHelper;
 import ru.darujo.dto.ratestage.AttrDto;
-import ru.darujo.model.ServiceType;
+import ru.darujo.integration.ServiceType;
 import ru.darujo.service.UpdateService;
 
 import java.time.ZonedDateTime;
@@ -31,7 +31,7 @@ public class UpdateController {
                              @RequestParam(name = "type", required = false) List<String> types,
                              @RequestPart(required = false, name = "description") String description,
                              @RequestPart(required = false, name = "file") List<MultipartFile> multipartFiles) {
-        return updateService.loadUpdate(username, dateZoneUpdate, DateHelper.convertListNotNull(types), description, multipartFiles) ? "Success!" : "Failed!";
+        return updateService.loadUpdate(username, DateHelper.zDTToLDT(dateZoneUpdate), DateHelper.convertListNotNull(types), description, multipartFiles) ? "Success!" : "Failed!";
 
     }
 

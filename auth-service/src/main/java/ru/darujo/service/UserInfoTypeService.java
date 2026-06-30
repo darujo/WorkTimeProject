@@ -6,12 +6,12 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.user.UserInfoTypeActiveDto;
 import ru.darujo.model.User;
 import ru.darujo.model.UserInfoType;
 import ru.darujo.repository.UserInfoTypeRepository;
 import ru.darujo.specifications.Specifications;
+import ru.darujo.type.MessageType;
 
 import java.util.Collection;
 import java.util.List;
@@ -28,14 +28,14 @@ public class UserInfoTypeService {
     }
 
     @Transactional
-    public void setUserInfoTypes(User user, Collection<UserInfoTypeActiveDto> userInfoTypeDto, Collection<UserInfoTypeActiveDto> userInfoTypeProjectDto) {
-        setUserInfoTypes(user, userInfoTypeDto);
-        setUserInfoTypes(user, userInfoTypeProjectDto);
+    public void setUserInfoTypes(User user, String senderType, Collection<UserInfoTypeActiveDto> userInfoTypeDto, Collection<UserInfoTypeActiveDto> userInfoTypeProjectDto) {
+        setUserInfoTypes(user, senderType, userInfoTypeDto);
+        setUserInfoTypes(user, senderType, userInfoTypeProjectDto);
     }
 
 
-    private void setUserInfoTypes(User user, Collection<UserInfoTypeActiveDto> userInfoTypeDto) {
-        getInfoTypes(user).forEach(userInfoType ->
+    private void setUserInfoTypes(User user, String senderType, Collection<UserInfoTypeActiveDto> userInfoTypeDto) {
+        getInfoTypes(user, senderType).forEach(userInfoType ->
         {
             if (userInfoTypeDto
                     .stream()
@@ -54,14 +54,15 @@ public class UserInfoTypeService {
             if (userInfoTypeActiveDto.getActive()) {
                 UserInfoType userInfoType;
                 if (userInfoTypeActiveDto.getProjectId() == null) {
-                    userInfoType = userInfoTypeRepository.findFirstByCodeAndUserAndProjectIdIsNull(userInfoTypeActiveDto.getCode(), user).orElse(null);
+                    userInfoType = userInfoTypeRepository.findFirstByCodeAndUserAndProjectIdIsNullAndSenderType(userInfoTypeActiveDto.getCode(), user, senderType).orElse(null);
                 } else {
-                    userInfoType = userInfoTypeRepository.findFirstByCodeAndUserAndProjectId(userInfoTypeActiveDto.getCode(), user, userInfoTypeActiveDto.getProjectId()).orElse(null);
+                    userInfoType = userInfoTypeRepository.findFirstByCodeAndUserAndProjectIdAndSenderType(userInfoTypeActiveDto.getCode(), user, userInfoTypeActiveDto.getProjectId(), senderType).orElse(null);
                 }
                 if (userInfoType == null) {
                     userInfoType = new UserInfoType(userInfoTypeActiveDto.getProjectId(),
                             userInfoTypeActiveDto.getCode(),
                             user);
+                    userInfoType.setSenderType(senderType);
 
                 }
                 userInfoType.setIsActive(true);
@@ -71,22 +72,22 @@ public class UserInfoTypeService {
         });
     }
 
-    public List<UserInfoType> getInfoTypes(User user) {
+    public List<UserInfoType> getInfoTypes(User user, String senderType) {
 
-        return getInfoTypes(user, null, null, null);
+        return getInfoTypes(user, senderType, null, null, null);
     }
 
     public List<UserInfoType> getInfoTypes(MessageType messageType) {
-        return getInfoTypes(null, null, null, messageType.toString());
+        return getInfoTypes(null, null, null, null, messageType.toString());
     }
 
-    public List<UserInfoType> getInfoTypes(User user, Long telegramId, Integer threadId, String messageType) {
-        Specification<@NonNull UserInfoType> specification = getUserInfoTypeSpecification(user, telegramId, threadId, messageType);
+    public List<UserInfoType> getInfoTypes(User user, String senderType, String chatId, Integer threadId, String messageType) {
+        Specification<@NonNull UserInfoType> specification = getUserInfoTypeSpecification(user, senderType, chatId, threadId, messageType);
         return userInfoTypeRepository.findAll(specification);
     }
 
-    public Optional<UserInfoType> getInfoTypeForUser(User user, Long projectId, Long telegramId, Integer threadId, String messageType) {
-        Specification<@NonNull UserInfoType> specification = getUserInfoTypeSpecification(user, telegramId, threadId, messageType);
+    public Optional<UserInfoType> getInfoTypeForUser(User user, String senderType, Long projectId, String telegramId, Integer threadId, String messageType) {
+        Specification<@NonNull UserInfoType> specification = getUserInfoTypeSpecification(user, senderType, telegramId, threadId, messageType);
         if (projectId == null) {
             specification = Specifications.isNull(specification, "projectId");
         } else {
@@ -95,10 +96,11 @@ public class UserInfoTypeService {
         return userInfoTypeRepository.findOne(specification);
     }
 
-    private static Specification<@NonNull UserInfoType> getUserInfoTypeSpecification(User user, Long telegramId, Integer threadId, String messageType) {
+    private static Specification<@NonNull UserInfoType> getUserInfoTypeSpecification(User user, String senderType, String chatId, Integer threadId, String messageType) {
         Specification<@NonNull UserInfoType> specification = Specification.unrestricted();
         specification = Specifications.eq(specification, "user", user);
-        specification = Specifications.eq(specification, "telegramId", telegramId);
+        specification = Specifications.eq(specification, "senderType", senderType);
+        specification = Specifications.eq(specification, "chatId", chatId);
         specification = Specifications.eq(specification, "threadId", threadId);
         specification = Specifications.eq(specification, "code", messageType);
         return specification;
@@ -106,7 +108,7 @@ public class UserInfoTypeService {
 
     public void save(UserInfoType userInfoType) {
         if ((userInfoType.getIsActive() != null && userInfoType.getIsActive())
-                || userInfoType.getTelegramId() != null
+                || userInfoType.getChatId() != null
                 || userInfoType.getThreadId() != null) {
             userInfoTypeRepository.save(userInfoType);
         } else {
@@ -114,11 +116,11 @@ public class UserInfoTypeService {
                 userInfoTypeRepository.delete(userInfoType);
             }
         }
-        log.info(userInfoType.toString());
+
     }
 
-    public boolean exists(Long telegramId) {
-        Specification<@NonNull UserInfoType> specification = getUserInfoTypeSpecification(null, telegramId, null, null);
+    public boolean exists(String senderType, String chatId) {
+        Specification<@NonNull UserInfoType> specification = getUserInfoTypeSpecification(null, senderType, chatId, null, null);
         return userInfoTypeRepository.exists(specification);
 
     }

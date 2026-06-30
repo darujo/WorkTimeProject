@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.darujo.dto.information.SendAdminMessage;
 import ru.darujo.model.ChatInfo;
 import ru.darujo.service.FileService;
 import ru.darujo.telegram_bot.TelegramBotSend;
@@ -38,14 +39,14 @@ public class TelegramController {
         telegramBotSend.sendMessage(new ChatInfo(username, chatId, threadId, originMessageId), text);
     }
 
-    @PostMapping(value = "/send/admin", consumes = MediaType.TEXT_PLAIN_VALUE)
-    public void sendMessageToTelegram(@RequestBody String text) throws TelegramApiException {
-        telegramBotSend.sendMessageForAdmin(text);
+    @PostMapping(value = "/send/admin")
+    public void sendMessageToTelegram(@RequestBody SendAdminMessage message) throws TelegramApiException {
+        telegramBotSend.sendMessageForAdmin(message);
     }
 
-    @PostMapping(value = "/file", consumes = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping(value = "/file")
     public String addFile(@RequestParam String fileName,
-                          @RequestBody String body) {
+                          @RequestBody byte[] body) {
         return fileService.addFile(fileName, body);
     }
 
@@ -58,20 +59,6 @@ public class TelegramController {
                          @RequestBody String text) throws TelegramApiException {
         File file = fileService.getFile(fileName);
         telegramBotSend.sendDocument(new ChatInfo(username, chatId, threadId, originMessageId), fileName, file, text);
-    }
-
-    @PostMapping(value = "/{chatId}/file/fast")
-    public void sendFileFast(@RequestHeader String username,
-                             @PathVariable String chatId,
-                             @RequestParam(required = false) Integer threadId,
-                             @RequestParam(required = false) Integer originMessageId,
-                             @RequestParam String fileName,
-                             @RequestParam String text,
-                             @RequestBody String body) throws TelegramApiException {
-        fileService.addFile(fileName, body);
-        File file = fileService.getFile(fileName);
-        telegramBotSend.sendDocument(new ChatInfo(username, chatId, threadId, originMessageId), fileName, file, text);
-        fileService.delFile(fileName);
     }
 
     @DeleteMapping(value = "/file")

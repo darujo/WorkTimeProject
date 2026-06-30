@@ -2,7 +2,7 @@ package ru.darujo.dto.workperiod;
 
 import ru.darujo.assistant.helper.DateHelper;
 
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 
 public class WorkUserFactPlan extends DateHelper {
     @SuppressWarnings("unused")
@@ -10,12 +10,12 @@ public class WorkUserFactPlan extends DateHelper {
     }
 
     private String nikName;
-    private Timestamp dateStart;
-    private Timestamp dateEnd;
+    private ZonedDateTime dateStart;
+    private ZonedDateTime dateEnd;
     private Float timePlan;
     private Float timeFact;
 
-    public WorkUserFactPlan(String nikName, Timestamp dateStart, Timestamp dateEnd, Float timePlan, Float timeFact) {
+    public WorkUserFactPlan(String nikName, ZonedDateTime dateStart, ZonedDateTime dateEnd, Float timePlan, Float timeFact) {
         this.nikName = nikName;
         this.dateStart = dateStart;
         this.dateEnd = dateEnd;
@@ -29,7 +29,7 @@ public class WorkUserFactPlan extends DateHelper {
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getDateStart() {
+    public ZonedDateTime getDateStart() {
         return dateStart;
     }
 
@@ -41,7 +41,7 @@ public class WorkUserFactPlan extends DateHelper {
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getDateEnd() {
+    public ZonedDateTime getDateEnd() {
         return dateEnd;
     }
 

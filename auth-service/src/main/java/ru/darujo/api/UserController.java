@@ -9,10 +9,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.convertor.UserConvertor;
 import ru.darujo.dto.information.MapUserInfoDto;
+import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.user.UserInfoTypeDto;
 import ru.darujo.dto.user.UserPasswordChangeDto;
 import ru.darujo.service.UserService;
+import ru.darujo.type.MessageSenderType;
+
+import java.util.List;
 
 
 @RestController
@@ -20,11 +24,6 @@ import ru.darujo.service.UserService;
 @RequestMapping("/users")
 public class UserController {
     private UserService userService;
-
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping("/user")
     public ResponseEntity<?> getUserDto(@RequestParam(required = false) String nikName) {
@@ -53,7 +52,7 @@ public class UserController {
                 nikName = null;
             }
         }
-        return userService.getUserList(role, page, size, nikName, lastName, firstName, patronymic, null, null, projectId).map(UserConvertor::getUserDto);
+        return userService.getUserList(role, page, size, nikName, lastName, firstName, patronymic, null, null, null, null, projectId).map(UserConvertor::getUserDto);
 
 
     }
@@ -73,20 +72,48 @@ public class UserController {
 
     @GetMapping("/user/info/types")
     public UserInfoTypeDto getUserInfoTypes() {
-        return userService.getUserInfoTypes(null);
+        return userService.getUserInfoTypes(null, null);
+
+    }
+
+    @GetMapping("/user/sender/type/{userId}")
+    public List<AttrDto<MessageSenderType>> getUserSenderTypes(@PathVariable Long userId) {
+        return userService.getUserSenderTypes(userId).stream().map(senderType -> new AttrDto<>(senderType, senderType.getName())).toList();
 
     }
 
     @GetMapping("/user/info/type/{userId}")
-    public UserInfoTypeDto getUserInfoTypes(@PathVariable Long userId) {
-        return userService.getUserInfoTypes(userId);
+    public UserInfoTypeDto getUserInfoTypes(@PathVariable Long userId,
+                                            @RequestParam String senderType) {
+        return userService.getUserInfoTypes(userId, senderType);
 
     }
 
     @PostMapping("/user/info/type")
-    public UserInfoTypeDto getUserInfoTypes(@RequestBody UserInfoTypeDto userInfoTypeDto) {
-        return userService.setUserInfoTypes(userInfoTypeDto);
+    public UserInfoTypeDto setUserInfoTypes(@RequestParam String senderType,
+                                            @RequestBody UserInfoTypeDto userInfoTypeDto) {
+        return userService.setUserInfoTypes(senderType, userInfoTypeDto);
 
     }
 
+    @GetMapping("/user/email/change")
+    public boolean getUserInfoTypes(@RequestHeader String username,
+                                    @RequestParam String email) {
+        return userService.changeEmail(username, email);
+
+    }
+
+    @GetMapping("/user/password/recovery")
+    public boolean passwordRecovery(@RequestHeader String username,
+                                    @RequestParam String code,
+                                    @RequestParam String email) {
+        return userService.recoveryPassword(username, code, email);
+
+    }
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
 }
+

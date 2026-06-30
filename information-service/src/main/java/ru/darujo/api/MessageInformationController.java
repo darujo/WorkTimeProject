@@ -1,17 +1,21 @@
 package ru.darujo.api;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.dto.information.MapUserInfoDto;
 import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.model.ChatInfo;
+import ru.darujo.model.SendAdminMessageImp;
 import ru.darujo.service.MessageInformationService;
 import ru.darujo.service.ScheduleService;
+import ru.darujo.type.MessageSenderType;
 
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 
 @RestController()
 @RequestMapping("/v1/mes_info")
+@Slf4j
 public class MessageInformationController {
     private MessageInformationService messageInformationService;
 
@@ -34,7 +38,7 @@ public class MessageInformationController {
             messageInfoDto.setAuthor(username);
         }
         if (messageInfoDto.getDataTime() == null) {
-            messageInfoDto.setDataTime(new Timestamp(System.currentTimeMillis()));
+            messageInfoDto.setDataTime(ZonedDateTime.now());
         }
         return messageInformationService.addMessage(messageInfoDto);
     }
@@ -49,8 +53,15 @@ public class MessageInformationController {
                            @RequestParam String author,
                            @RequestParam(required = false) String chatId,
                            @RequestParam(required = false) Integer threadId,
-                           @RequestParam(required = false) Integer originMessageId) {
-        scheduleService.sendReport(reportType, new ChatInfo(author, chatId, threadId, originMessageId));
+                           @RequestParam(required = false) String originMessageId,
+                           @RequestParam(required = false) String senderType) {
+        scheduleService.sendReport(reportType, new ChatInfo(author, senderType == null ? null : MessageSenderType.valueOf(senderType), chatId, threadId, originMessageId));
+    }
+
+    @PostMapping("/send/message/admin")
+    public Boolean sendAdminMessageInformation(@RequestBody SendAdminMessageImp message) {
+        log.warn(message.toString());
+        return messageInformationService.sendAdminMessage(message);
     }
 
 }

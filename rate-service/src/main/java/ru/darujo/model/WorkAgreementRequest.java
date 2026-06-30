@@ -5,7 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,13 +21,13 @@ public class WorkAgreementRequest {
     @Column(name = "nik_name")
     private String nikName;
     @Column(name = "timestamp")
-    private Timestamp timestamp;
+    private LocalDateTime dateTime;
     @Column(name = "version")
     private String version;
     @Column(name = "comment")
     private String comment;
     @Column(name = "term")
-    private Timestamp term;
+    private LocalDate term;
     @Column(name = "status")
     private String status;
     @Column(name = "work_id")

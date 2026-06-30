@@ -1,0 +1,138 @@
+package ru.darujo.type;
+
+import ru.darujo.assistant.helper.DateHelper;
+
+import java.time.DayOfWeek;
+import java.util.List;
+
+public enum MessageType implements TypeEnum {
+    SYSTEM_INFO("Системные информационные сообщения"),
+    ESTIMATION_WORK("Проведена оценка"),
+    //todo Переименовать
+    CHANGE_STAGE_WORK("Изменение ЗИ (статус или релиз) "),
+    UPDATE_INFO("Список исправлений в новой версии"),
+    AVAIL_WORK_LAST_DAY("Работы отмеченные вами за предыдущий рабочий день. Рассылается по рабочим дням", 11),
+    AVAIL_WORK_LAST_WEEK("Работы отмеченные вами за последние 7 дней. Рассылается на второй рабочий день.", 12),
+    AVAIL_WORK_FULL_REPORT("Статус ЗИ", false, DayOfWeek.TUESDAY, 20, ReportType.ZI_STATUS),
+    AVAIL_WORK_FULL_REPORT_PROJECT("Статус ЗИ по проектам.", true, DayOfWeek.TUESDAY, 20, 10, ReportType.ZI_STATUS),
+
+    WEEK_WORK_REPORT("Факт загрузки за предыдущую неделю.", false, DayOfWeek.TUESDAY, 20, ReportType.USER_WORK),
+    ZI_WORK_REPORT("Факт загрузки по ЗИ.", false, DayOfWeek.TUESDAY, 20, ReportType.ZI_WORK),
+    ZI_WORK_REPORT_PROJECT("Факт загрузки по ЗИ по проектам.", true, DayOfWeek.TUESDAY, 20, 10, ReportType.ZI_WORK),
+
+    VACATION_MY_START("Начало вашего отпуска в день перед отпуском", 20),
+    VACATION_MY_END("Конец Вашего отпуска в последний день отпуска", 14),
+    VACATION_USER_START("Список отпусков ежедневно", 12),
+    EDIT_WORK_REQUEST("Добавлен/изменен запрос на согласование ТЗ"),
+    EDIT_WORK_RESPONSE("Добавлено/изменено согласование ТЗ"),
+    REPORT_STATUS(
+            "Еженедельные отчеты",
+            false,
+            DayOfWeek.TUESDAY,
+            20,
+            20,
+            ReportType.USER_WORK,
+            ReportType.ZI_STATUS,
+            ReportType.ZI_WORK);
+
+    private final String nameOrigin;
+    private final String periodStr;
+    private final DayOfWeek dayOfWeek;
+    private final Integer hour;
+    private final Integer minute;
+    private final Integer period;
+    private final boolean project;
+    private final List<ReportType> reportTypeList;
+
+    // Уведомления без периода
+    MessageType(String name) {
+        this(name, false, null, null, null, null, (ReportType[]) null);
+    }
+
+    // Ежедневные
+    MessageType(String name, Integer hour) {
+        this(name, false, null, hour, null, 1);
+    }
+
+    // Еженедельные
+    MessageType(String name, Boolean project, DayOfWeek dayOfWeek, Integer hour, ReportType reportType) {
+        this(name, project, dayOfWeek, hour, null, reportType);
+    }
+
+    MessageType(String name, Boolean project, DayOfWeek dayOfWeek, Integer hour, Integer minute, ReportType... reportType) {
+        this(name, project, dayOfWeek, hour, minute, 7, reportType);
+
+
+    }
+
+    MessageType(String name, Boolean project, DayOfWeek dayOfWeek, Integer hour, Integer minute, Integer periodDay, ReportType... reportType) {
+        this.nameOrigin = name;
+        this.periodStr = getDay(dayOfWeek) + getTime(hour, minute);
+        this.project = project;
+        this.dayOfWeek = dayOfWeek;
+        this.hour = hour;
+        this.minute = minute;
+        this.period = periodDay == null ? null : (86400 * periodDay);
+
+        this.reportTypeList = reportType == null || reportType.length == 0 ? null : List.of(reportType);
+//        this.reportTypeList = reportTypeList;
+    }
+
+    private String getTime(Integer hour, Integer minute) {
+        if (hour == null && minute == null) {
+            return "";
+        }
+        return " в " + (hour == null ? "0" : hour) + " часов " + (minute == null ? "" : (minute + " минут"));
+    }
+
+    private String getDay(DayOfWeek dayOfWeek) {
+        if (dayOfWeek == null) {
+            return "";
+        }
+        if (dayOfWeek.equals(DayOfWeek.MONDAY)) {
+            return " по понедельникам";
+        } else if (dayOfWeek.equals(DayOfWeek.TUESDAY)) {
+            return " по вторникам";
+        } else if (dayOfWeek.equals(DayOfWeek.WEDNESDAY)) {
+            return " по средам";
+        } else if (dayOfWeek.equals(DayOfWeek.THURSDAY)) {
+            return " по четвергам";
+        } else if (dayOfWeek.equals(DayOfWeek.FRIDAY)) {
+            return " по пятницам";
+        } else if (dayOfWeek.equals(DayOfWeek.SATURDAY)) {
+            return " по субботам";
+        } else if (dayOfWeek.equals(DayOfWeek.SUNDAY)) {
+            return " по воскресеньям";
+        } else return "";
+    }
+
+    @Override
+    public String getName() {
+        return getNameOrigin() + getPeriodStr();
+    }
+
+    public String getNameOrigin() {
+        return nameOrigin;
+    }
+
+    public String getPeriodStr() {
+        return periodStr;
+    }
+
+    public Integer getPeriod() {
+        return period;
+    }
+
+    public Long getStartTime() {
+        return DateHelper.getStartTime(dayOfWeek, hour, minute);
+    }
+
+    public boolean isProject() {
+        return project;
+    }
+
+    public List<ReportType> getReportTypeList() {
+        return reportTypeList;
+    }
+
+}

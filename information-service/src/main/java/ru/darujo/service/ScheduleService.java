@@ -5,10 +5,10 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.darujo.dto.information.MessageType;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.ChatInfo;
-import ru.darujo.type.ReportTypeDto;
+import ru.darujo.type.MessageType;
+import ru.darujo.type.ReportType;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -41,12 +41,16 @@ public class ScheduleService implements AutoCloseable {
                 scheduleAtFixedRate(messageType);
             }
         }
-//        ChatInfo chatInfo = new ChatInfo(null, "496071536", null, null);
+//        ChatInfo chatInfo = new ChatInfo(null, MessageSenderType.Telegram,"496071536", null, null);
+//        ChatInfo chatInfo = new ChatInfo(null, MessageSenderType.Email, "radies@rambler.ru", null, null);
+
 //        executor.schedule(getTask(MessageType.AVAIL_WORK_FULL_REPORT, chatInfo), 10, TimeUnit.SECONDS);
 //        executor.schedule(getTask(MessageType.AVAIL_WORK_FULL_REPORT_PROJECT, chatInfo), 1, TimeUnit.SECONDS);
 //        executor.schedule(getTask(MessageType.ZI_WORK_REPORT, chatInfo), 60, TimeUnit.MILLISECONDS);
 //        executor.schedule(getTask(MessageType.ZI_WORK_REPORT_PROJECT, chatInfo), 100, TimeUnit.SECONDS);
 //        executor.schedule(getTask(MessageType.WEEK_WORK_REPORT, null), 10, TimeUnit.SECONDS);
+//        ChatInfo chatInfo = null;
+//        executor.schedule(getTask(MessageType.REPORT_STATUS, chatInfo), 10, TimeUnit.SECONDS);
     }
 
     public static volatile boolean flagStartService = false;
@@ -66,18 +70,54 @@ public class ScheduleService implements AutoCloseable {
     }
 
     public void sendReport(String reportTypeDto, ChatInfo chatInfo) {
-        MessageType messageType;
-        if (reportTypeDto.equals(ReportTypeDto.USER_WORK.toString())) {
-            messageType = MessageType.WEEK_WORK_REPORT;
-        } else if (reportTypeDto.equals(ReportTypeDto.ZI_STATUS.toString())) {
-            messageType = MessageType.AVAIL_WORK_FULL_REPORT;
-        } else if (reportTypeDto.equals(ReportTypeDto.ZI_STATUS_PROJECT.toString())) {
-            messageType = MessageType.AVAIL_WORK_FULL_REPORT_PROJECT;
-        } else if (reportTypeDto.equals(ReportTypeDto.ZI_WORK.toString())) {
-            messageType = MessageType.ZI_WORK_REPORT;
-        } else if (reportTypeDto.equals(ReportTypeDto.ZI_WORK_PROJECT.toString())) {
-            messageType = MessageType.ZI_WORK_REPORT_PROJECT;
-        } else {
+        MessageType messageType = null;
+        ReportType reportType = ReportType.valueOf(reportTypeDto);
+        for (MessageType value : MessageType.values()) {
+            if (value.getReportTypeList() != null) {
+                log.info(value.toString());
+                log.info(Boolean.toString(reportType.isProject()));
+                log.info(Boolean.toString(value.isProject()));
+                log.info(Boolean.toString(value.getReportTypeList().contains(reportType)));
+                log.info("---------");
+                log.info(Boolean.toString(reportType.isProject()
+                        && value.isProject()));
+                log.info(Boolean.toString(reportType.isProject()
+                        && value.isProject()
+                        && value.getReportTypeList().contains(reportType.getParentType())
+                ));
+            }
+            if (value.getReportTypeList() != null
+                    && value.getReportTypeList().size() == 1
+                    &&
+                    (
+                            (
+                                    !reportType.isProject()
+                                            && value.getReportTypeList().contains(reportType)
+                            )
+                                    ||
+                                    (
+                                            reportType.isProject()
+                                                    && value.isProject()
+                                                    && value.getReportTypeList().contains(reportType.getParentType())
+                                    )
+                    )
+            ) {
+                messageType = value;
+                break;
+            }
+        }
+//        if (reportTypeDto.equals(ReportType.USER_WORK.toString())) {
+//            messageType = MessageType.WEEK_WORK_REPORT;
+//        } else if (reportTypeDto.equals(ReportType.ZI_STATUS.toString())) {
+//            messageType = MessageType.AVAIL_WORK_FULL_REPORT;
+//        } else if (reportTypeDto.equals(ReportType.ZI_STATUS_PROJECT.toString())) {
+//            messageType = MessageType.AVAIL_WORK_FULL_REPORT_PROJECT;
+//        } else if (reportTypeDto.equals(ReportType.ZI_WORK.toString())) {
+//            messageType = MessageType.ZI_WORK_REPORT;
+//        } else if (reportTypeDto.equals(ReportType.ZI_WORK_PROJECT.toString())) {
+//            messageType = MessageType.ZI_WORK_REPORT_PROJECT;
+//        } else {
+        if (messageType == null) {
             throw new ResourceNotFoundRunTime("Нет такого типа отчета");
 
         }
@@ -105,26 +145,18 @@ public class ScheduleService implements AutoCloseable {
     }
 
     private RunnableNotException getTask(MessageType messageType, ChatInfo chatInfo) {
-        if (messageType.equals(MessageType.AVAIL_WORK_LAST_DAY)) {
+        if (messageType.getReportTypeList() != null) {
+            return tasks.getSendReport(messageType, chatInfo);
+        } else if (messageType.equals(MessageType.AVAIL_WORK_LAST_DAY)) {
             return tasks.getAddWorkAvail(messageType);
         } else if (messageType.equals(MessageType.AVAIL_WORK_LAST_WEEK)) {
             return tasks.getAddWorkAvailLastWeek(messageType);
-        } else if (messageType.equals(MessageType.AVAIL_WORK_FULL_REPORT)) {
-            return tasks.sendReportWorkFull(messageType, chatInfo);
-        } else if (messageType.equals(MessageType.AVAIL_WORK_FULL_REPORT_PROJECT)) {
-            return tasks.sendReportWorkFullProject(messageType, chatInfo);
         } else if (messageType.equals(MessageType.VACATION_MY_START)) {
             return tasks.getMyVacationStart(messageType);
         } else if (messageType.equals(MessageType.VACATION_MY_END)) {
             return tasks.getMyVacationEnd(messageType);
         } else if (messageType.equals(MessageType.VACATION_USER_START)) {
             return tasks.getVacationStart(messageType);
-        } else if (messageType.equals(MessageType.ZI_WORK_REPORT)) {
-            return tasks.getZiWork(messageType, chatInfo);
-        } else if (messageType.equals(MessageType.ZI_WORK_REPORT_PROJECT)) {
-            return tasks.getZiWorkProject(messageType, chatInfo);
-        } else if (messageType.equals(MessageType.WEEK_WORK_REPORT)) {
-            return tasks.getWeekWork(messageType, chatInfo);
         } else {
             throw new ResourceNotFoundRunTime("Нет такого типа отчета");
         }

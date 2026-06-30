@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,7 +22,7 @@ public class Release {
     private String name;
     // Выдача релиза даты План
     @Column(name = "issuing_release_plan")
-    private Timestamp issuingReleasePlan;
+    private LocalDate issuingReleasePlan;
 
     @Column(name = "sort")
     private Float sort;

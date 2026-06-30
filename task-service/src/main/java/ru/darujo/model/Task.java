@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,10 +35,9 @@ public class Task {
     @Column(name = "work_id")
     private  Long workId;
     @Column(name = "refresh")
-    private Timestamp refresh;
+    private LocalDateTime refresh;
     @Column(name = "time_create")
-    private Timestamp timeCreate;
+    private LocalDateTime timeCreate;
     @Column(name = "project_id", nullable = false)
     private Long projectId;
-
 }

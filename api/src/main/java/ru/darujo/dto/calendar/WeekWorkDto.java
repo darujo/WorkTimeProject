@@ -6,8 +6,8 @@ import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.ColorDto;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.time.Duration;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 
 public class WeekWorkDto implements Serializable, Cloneable {
@@ -15,24 +15,23 @@ public class WeekWorkDto implements Serializable, Cloneable {
     }
 
 
-    private Timestamp dayStart;
-    private Timestamp dayEnd;
+    private ZonedDateTime dayStart;
+    private ZonedDateTime dayEnd;
     private Float time;
     private HashMap<DayTypeDto, Integer> dayTypes;
 
-
-    public WeekWorkDto(Timestamp dayStart, Timestamp dayEnd, Float time, HashMap<DayTypeDto, Integer> dayTypes) {
+    public WeekWorkDto(ZonedDateTime dayStart, ZonedDateTime dayEnd, Float time, HashMap<DayTypeDto, Integer> dayTypes) {
         this.dayStart = dayStart;
         this.dayEnd = dayEnd;
         this.time = time;
         this.dayTypes = dayTypes;
     }
 
-    public Timestamp getDayStart() {
+    public ZonedDateTime getDayStart() {
         return dayStart;
     }
 
-    public Timestamp getDayEnd() {
+    public ZonedDateTime getDayEnd() {
         return dayEnd;
     }
 
@@ -89,7 +88,7 @@ public class WeekWorkDto implements Serializable, Cloneable {
             }
         }
         if (colorRGB != null) {
-            long days = Duration.between(dayStart.toLocalDateTime(), dayEnd.toLocalDateTime()).toDays() + 1;
+            long days = Duration.between(dayStart, dayEnd).toDays() + 1;
             for (long i = 1; i < days - countColor; i++) {
                 colorRGB.addColor(ColorHelper.WHITE);
             }

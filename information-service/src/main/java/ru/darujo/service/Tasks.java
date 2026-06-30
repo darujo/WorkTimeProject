@@ -6,69 +6,51 @@ import org.springframework.stereotype.Component;
 import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.calendar.VacationDto;
 import ru.darujo.dto.information.MessageInfoDto;
-import ru.darujo.dto.information.MessageType;
-import ru.darujo.dto.ratestage.AttrDto;
+import ru.darujo.dto.project.ProjectDto;
 import ru.darujo.dto.user.UserInfoDto;
 import ru.darujo.dto.workperiod.WorkUserFactPlan;
-import ru.darujo.dto.workperiod.WorkUserTime;
 import ru.darujo.exceptions.ResourceNotFoundException;
-import ru.darujo.integration.*;
+import ru.darujo.integration.CalendarServiceIntegrationImp;
+import ru.darujo.integration.UserServiceIntegrationImp;
+import ru.darujo.integration.WorkTimeServiceIntegrationImp;
 import ru.darujo.model.ChatInfo;
+import ru.darujo.type.MessageType;
 import ru.darujo.url.UrlWorkTime;
 
-import java.sql.Timestamp;
-import java.util.LinkedList;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
 public class Tasks {
     MessageInformationService messageInformationService;
+    private ReportService reportService;
 
     @Autowired
     public void setMessageInformationService(MessageInformationService messageInformationService) {
         this.messageInformationService = messageInformationService;
     }
 
-    private CalendarServiceIntegration calendarServiceIntegration;
+    private CalendarServiceIntegrationImp calendarServiceIntegration;
 
     @Autowired
-    public void setCalendarServiceIntegration(CalendarServiceIntegration calendarServiceIntegration) {
+    public void setCalendarServiceIntegration(CalendarServiceIntegrationImp calendarServiceIntegration) {
         this.calendarServiceIntegration = calendarServiceIntegration;
     }
 
-    private WorkTimeServiceIntegration workTimeServiceIntegration;
+    private WorkTimeServiceIntegrationImp workTimeServiceIntegration;
 
     @Autowired
-    public void setWorkTimeServiceIntegration(WorkTimeServiceIntegration workTimeServiceIntegration) {
+    public void setWorkTimeServiceIntegration(WorkTimeServiceIntegrationImp workTimeServiceIntegration) {
         this.workTimeServiceIntegration = workTimeServiceIntegration;
     }
 
-    private TaskServiceIntegration taskServiceIntegration;
+    private UserServiceIntegrationImp userServiceIntegration;
 
     @Autowired
-    public void setTaskServiceIntegration(TaskServiceIntegration taskServiceIntegration) {
-        this.taskServiceIntegration = taskServiceIntegration;
-    }
-
-    private WorkServiceIntegration workServiceIntegration;
-
-    @Autowired
-    public void setWorkServiceIntegration(WorkServiceIntegration workServiceIntegration) {
-        this.workServiceIntegration = workServiceIntegration;
-    }
-
-    private HtmlService htmlService;
-
-    @Autowired
-    public void setHtmlService(HtmlService htmlService) {
-        this.htmlService = htmlService;
-    }
-
-    private UserServiceIntegration userServiceIntegration;
-
-    @Autowired
-    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+    public void setUserServiceIntegration(UserServiceIntegrationImp userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
 
@@ -79,29 +61,34 @@ public class Tasks {
                 () -> {
                     log.info("getAddWorkAvail");
 
-                    List<UserInfoDto> users = messageInformationService.getUsersForMesType(type);
+                    Map<String, List<UserInfoDto>> users = messageInformationService.getUsersForMesType(type);
                     if (users == null) {
                         return;
                     }
-                    users.forEach(userInfoDto -> {
+                    users.forEach((nikName, userInfoDTOs) ->
+                    {
                         try {
-                            if (calendarServiceIntegration.isWorkDayUser(userInfoDto.getNikName(), null)) {
+                            if (calendarServiceIntegration.isWorkDayUser(nikName, null)) {
 
 
-                                Timestamp date = calendarServiceIntegration.getLastWorkDay(userInfoDto.getNikName(),
+                                LocalDate date = calendarServiceIntegration.getLastWorkDay(nikName,
                                         null,
                                         2,
                                         false);
-                                WorkUserFactPlan workUserFactPlan = workTimeServiceIntegration.getUserWork(date, date, userInfoDto.getNikName(), "day");
+                                WorkUserFactPlan workUserFactPlan = workTimeServiceIntegration.getUserWork(date, date, nikName, "day");
                                 if (workUserFactPlan == null) {
                                     return;
                                 }
+
                                 if (workUserFactPlan.getTimeFact() < workUserFactPlan.getTimePlan() * PERCENT_WORK_TIME) {
                                     messageInformationService.addMessage(
                                             new MessageInfoDto(
-                                                    userInfoDto,
                                                     type,
-                                                    String.format("Вы не отметили работы за %S отмечено %S ч. по плану %S ч.", workUserFactPlan.getPeriodStr(), workUserFactPlan.getTimeFact(), workUserFactPlan.getTimePlan())));
+                                                    String.format("Вы не отметили работы за %S отмечено %S ч. по плану %S ч.",
+                                                            workUserFactPlan.getPeriodStr(),
+                                                            workUserFactPlan.getTimeFact(),
+                                                            workUserFactPlan.getTimePlan())),
+                                            userInfoDTOs);
                                 }
                             }
                         } catch (ResourceNotFoundException e) {
@@ -116,7 +103,7 @@ public class Tasks {
     public RunnableNotException getAddWorkAvailLastWeek(MessageType type) {
         return new RunnableNotException(() -> {
             log.info("getAddWorkAvailLastWeek");
-            List<UserInfoDto> users = messageInformationService.getUsersForMesType(type);
+            Map<String, List<UserInfoDto>> users = messageInformationService.getUsersForMesType(type);
             if (users == null) {
                 return;
             }
@@ -125,17 +112,16 @@ public class Tasks {
                     return;
                 }
 
-                users.forEach(userInfoDto -> {
-                    Timestamp date;
-                    date = calendarServiceIntegration.getLastWorkDay(userInfoDto.getNikName(), null, 1, true);
+                users.forEach((nikName, userInfoDTos) -> {
+                    LocalDate date = calendarServiceIntegration.getLastWorkDay(nikName, null, 1, true);
 
-                    WorkUserFactPlan workUserFactPlan = workTimeServiceIntegration.getUserWork(date, date, userInfoDto.getNikName(), "week");
+                    WorkUserFactPlan workUserFactPlan = workTimeServiceIntegration.getUserWork(date, date, nikName, "week");
                     if (workUserFactPlan.getTimeFact() < workUserFactPlan.getTimePlan() * PERCENT_WORK_TIME) {
                         messageInformationService.addMessage(
                                 new MessageInfoDto(
-                                        userInfoDto,
                                         type,
-                                        String.format("Вы не отметили работы за %S отмечено %S ч. по плану %S ч.", workUserFactPlan.getPeriodStr(), workUserFactPlan.getTimeFact(), workUserFactPlan.getTimePlan())));
+                                        String.format("Вы не отметили работы за %S отмечено %S ч. по плану %S ч.", workUserFactPlan.getPeriodStr(), workUserFactPlan.getTimeFact(), workUserFactPlan.getTimePlan())),
+                                userInfoDTos);
                     }
 
                 });
@@ -155,68 +141,31 @@ public class Tasks {
             } else {
                 ScheduleService.flagStartService = false;
             }
-        }) {
-        };
+        });
     }
 
     private UserInfoDto getUserInfoDto(ChatInfo chatInfo) {
         if (chatInfo == null || chatInfo.getChatId() == null) {
             return null;
         }
-        return new UserInfoDto(null, chatInfo.getAuthor(), chatInfo.getChatId(), chatInfo.getThreadId(), chatInfo.getOriginMessageId());
-    }
-
-    public RunnableNotException sendReportWorkFull(MessageType messageType, ChatInfo chatInfo) {
-        return new RunnableNotException(() -> {
-            log.info("sendReportWorkFull");
-            LinkedList<String> sort = new LinkedList<>();
-            sort.add("release.sort");
-            sort.add("name");
-            String report = htmlService.printRep(workServiceIntegration.getTimeWork(null, true, null, null, null, sort, true), "Статус_ЗИ");
-            messageInformationService.sendFile(new MessageInfoDto(
-                    chatInfo == null ? null : chatInfo.getAuthor(),
-                    getUserInfoDto(chatInfo),
-                    messageType, "Рассылка отчете статус ЗИ"
-            ), "Статус_ЗИ_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
-
-        });
-    }
-
-    public RunnableNotException sendReportWorkFullProject(MessageType messageType, ChatInfo chatInfo) {
-        return new RunnableNotException(() -> {
-            log.info("sendReportWorkFullProject");
-            LinkedList<String> sort = new LinkedList<>();
-            sort.add("release.sort");
-            userServiceIntegration.getProjects(null, null).forEach(projectDto -> {
-                String report = htmlService.printRep(workServiceIntegration.getTimeWork(null, true, null, null, projectDto.getId(), sort, true), "Статус ЗИ по проекту " + projectDto.getName());
-                messageInformationService.sendFile(
-                        new MessageInfoDto(
-                                chatInfo == null ? null : chatInfo.getAuthor(),
-                                getUserInfoDto(chatInfo),
-                                messageType, "Рассылка отчете статус ЗИ по проекту " + projectDto.getName()
-                        ),
-                        projectDto.getId(),
-                        "Статус_ЗИ_" + projectDto.getName() + "_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html",
-                        report);
-            });
-        });
+        return new UserInfoDto(chatInfo.getSenderType().toString(), null, chatInfo.getAuthor(), chatInfo.getChatId(), chatInfo.getThreadId(), chatInfo.getOriginMessageId());
     }
 
     public RunnableNotException getMyVacationStart(MessageType type) {
         return new RunnableNotException(() -> {
             log.info("getMyVacationStart");
-            List<UserInfoDto> users = messageInformationService.getUsersForMesType(type);
+            Map<String, List<UserInfoDto>> users = messageInformationService.getUsersForMesType(type);
             if (users == null) {
                 return;
             }
-            users.forEach(userInfoDto -> {
+            users.forEach((nikName, userInfoDTOs) -> {
                 try {
-                    if (calendarServiceIntegration.isVacationStart(userInfoDto.getNikName(), 1)) {
+                    if (calendarServiceIntegration.isVacationStart(nikName, 1)) {
                         messageInformationService.addMessage(
                                 new MessageInfoDto(
-                                        userInfoDto,
                                         type,
-                                        "Ура с завтрашнего дня вы находитесь в отпуске. Не забудьте отключить телефон и насладиться тишиной."));
+                                        "Ура с завтрашнего дня вы находитесь в отпуске. Не забудьте отключить телефон и насладиться тишиной."),
+                                userInfoDTOs);
                     }
                 } catch (ResourceNotFoundException e) {
                     log.error(e.getMessage());
@@ -230,18 +179,18 @@ public class Tasks {
     public RunnableNotException getMyVacationEnd(MessageType type) {
         return new RunnableNotException(() -> {
             log.info("getMyVacationEnd");
-            List<UserInfoDto> users = messageInformationService.getUsersForMesType(type);
+            Map<String, List<UserInfoDto>> users = messageInformationService.getUsersForMesType(type);
             if (users == null) {
                 return;
             }
-            users.forEach(userInfoDto -> {
+            users.forEach((nikName, userInfoDTOs) -> {
                 try {
-                    if (calendarServiceIntegration.isVacationEnd(userInfoDto.getNikName())) {
+                    if (calendarServiceIntegration.isVacationEnd(nikName)) {
                         messageInformationService.addMessage(
                                 new MessageInfoDto(
-                                        userInfoDto,
                                         type,
-                                        "К сожалению ваш отпуск подошел к концу и вам опять пора на работу. Не забудьте начать отмечать время прихода и ухода на работу"));
+                                        "К сожалению ваш отпуск подошел к концу и вам опять пора на работу. Не забудьте начать отмечать время прихода и ухода на работу"),
+                                userInfoDTOs);
                     }
                 } catch (ResourceNotFoundException e) {
                     log.error(e.getMessage());
@@ -262,7 +211,7 @@ public class Tasks {
                 return;
             }
             if (vacationDTOs == null) {
-                log.error("vacationDTOs == null");
+                log.error("Список отпусков пуст");
                 return;
             }
             vacationDTOs.stream()
@@ -281,62 +230,72 @@ public class Tasks {
             if (!vacationDTOs.isEmpty()) {
                 messageInformationService.addMessage(
                         new MessageInfoDto(
-
                                 messageType,
                                 vacationDTOs.get(0).getDateStartStr() + " начинается отпуск у сотрудников :\n" + users));
             }
         });
     }
 
-    public RunnableNotException getZiWork(MessageType messageType, ChatInfo chatInfo) {
+    public RunnableNotException getSendReport(MessageType messageType, ChatInfo chatInfo) {
+        return getSendReport(messageType, chatInfo, true);
+    }
+
+    public RunnableNotException getSendReport(MessageType messageType, ChatInfo chatInfo, boolean excel) {
         return new RunnableNotException(() -> {
-            log.info("getZiWork");
-            String report = getReportWork(true, null, "Факт загрузки по ЗИ");
-            messageInformationService.sendFile(new MessageInfoDto(
-                    chatInfo == null ? null : chatInfo.getAuthor(),
-                    getUserInfoDto(chatInfo),
-                    messageType, "Факт загрузки по ЗИ"
-            ), "Факт_загрузки_по_ЗИ_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
+            log.info("getSendReport {} {}", messageType, messageType.getNameOrigin());
+
+            sendFile(messageType, chatInfo, excel);
+
         });
     }
 
-    public RunnableNotException getZiWorkProject(MessageType messageType, ChatInfo chatInfo) {
-        return new RunnableNotException(() -> {
-            log.info("getZiWorkProject");
-            userServiceIntegration.getProjects(null, null).forEach(projectDto -> {
-                String report = getReportWork(true, projectDto.getId(), "Факт загрузки по ЗИ проект " + projectDto.getName());
-                messageInformationService.sendFile(
-                        new MessageInfoDto(
-                                chatInfo == null ? null : chatInfo.getAuthor(),
-                                getUserInfoDto(chatInfo),
-                                messageType,
-                                "Факт загрузки по ЗИ проект " + projectDto.getName()
-                        ),
-                        projectDto.getId(),
-                        "Факт_загрузки_по_ЗИ_" + projectDto.getName() + "_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html",
-                        report);
-            });
-        });
+    private void sendFile(MessageType messageType, ChatInfo chatInfo, boolean excel) {
+        String fileName = messageType.getNameOrigin().replace(" ", "_");
+        if (!messageType.isProject()) {
+            sendFile(messageType,
+                    chatInfo,
+                    null,
+                    reportService.print(
+                            messageType,
+                            null,
+                            excel),
+                    "Рассылка отчете \"" + messageType.getNameOrigin() + "\" ",
+                    fileName,
+                    (excel ? "xlsx" : "html"));
+
+        } else {
+            userServiceIntegration
+                    .getProjects(null, null)
+                    .forEach(projectDto ->
+                            sendFile(messageType,
+                                    chatInfo,
+                                    projectDto,
+                                    reportService.print(
+                                            messageType,
+                                            projectDto,
+                                            excel),
+                                    "Рассылка отчете \"" + messageType.getNameOrigin() + "\" " + projectDto.getName(),
+                                    fileName,
+                                    excel ? "xlsx" : "html")
+                    );
+        }
     }
 
-    private String getReportWork(boolean ziSplit, Long projectId, String headText) {
-        List<AttrDto<Integer>> taskListType = taskServiceIntegration.getTaskTypes();
-        Timestamp date = new Timestamp(System.currentTimeMillis() - 6 * 24 * 60 * 60 * 1000);
-//                calendarServiceIntegration.getLastWorkDay(null, null, 1, true);
-        List<WorkUserTime> weekWorkList = workServiceIntegration.getWorkUserTime(ziSplit, projectId, date, new Timestamp(System.currentTimeMillis()));
-        return htmlService.getWeekWork(headText, ziSplit, true, true, true, taskListType, weekWorkList);
+    private void sendFile(MessageType messageType, ChatInfo chatInfo, ProjectDto projectDto, byte[] report, String message, String fileName, String fileType) {
+        messageInformationService.sendFile(
+                new MessageInfoDto(
+                        chatInfo == null ? null : chatInfo.getAuthor(),
+                        getUserInfoDto(chatInfo),
+                        messageType,
+                        message
+                ),
+                projectDto == null ? null : projectDto.getId(),
+                fileName + "_" + (projectDto == null ? "" : (projectDto.getName() + "_")) + DateHelper.dateToISOStr(LocalDateTime.now()) + "." + fileType,
+                report);
     }
 
-    public RunnableNotException getWeekWork(MessageType messageType, ChatInfo chatInfo) {
-        return new RunnableNotException(() -> {
-            log.info("getWeekWork");
-            String report = getReportWork(false, null, "Факт загрузки за последние 7 дней");
-            messageInformationService.sendFile(new MessageInfoDto(
-                    chatInfo == null ? null : chatInfo.getAuthor(),
-                    getUserInfoDto(chatInfo),
-                    messageType, "Факт загрузки за последние 7 дней"
-            ), "Факт_загрузки_за_последние_7_дней_" + DateHelper.dateToISOStr(new Timestamp(System.currentTimeMillis())) + ".html", report);
-        });
+    @Autowired
+    public void setReportService(ReportService reportService) {
+        this.reportService = reportService;
     }
-
 }

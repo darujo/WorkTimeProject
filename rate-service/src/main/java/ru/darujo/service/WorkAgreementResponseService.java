@@ -12,17 +12,17 @@ import org.springframework.stereotype.Service;
 import ru.darujo.assistant.helper.CompareHelper;
 import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.information.MessageInfoDto;
-import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.ratestage.StatusResponse;
 import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
-import ru.darujo.integration.InfoServiceIntegration;
-import ru.darujo.integration.UserServiceIntegration;
-import ru.darujo.integration.WorkServiceIntegration;
+import ru.darujo.integration.InfoServiceIntegrationImp;
+import ru.darujo.integration.UserServiceIntegrationImp;
+import ru.darujo.integration.WorkServiceIntegrationImp;
 import ru.darujo.model.WorkAgreementRequest;
 import ru.darujo.model.WorkAgreementResponse;
 import ru.darujo.repository.WorkAgreementResponseRepository;
 import ru.darujo.specifications.Specifications;
+import ru.darujo.type.MessageType;
 import ru.darujo.url.UrlWorkTime;
 
 import java.util.Arrays;
@@ -36,17 +36,17 @@ public class WorkAgreementResponseService {
     private WorkAgreementRequestService workAgreementRequestService;
 
     private WorkAgreementResponseRepository workAgreementResponseRepository;
-    private InfoServiceIntegration infoServiceIntegration;
+    private InfoServiceIntegrationImp infoServiceIntegration;
 
     @Autowired
-    public void setWorkServiceIntegration(WorkServiceIntegration workServiceIntegration) {
+    public void setWorkServiceIntegration(WorkServiceIntegrationImp workServiceIntegration) {
         this.workServiceIntegration = workServiceIntegration;
     }
 
-    private WorkServiceIntegration workServiceIntegration;
+    private WorkServiceIntegrationImp workServiceIntegration;
 
     @Autowired
-    public void setInfoServiceIntegration(InfoServiceIntegration infoServiceIntegration) {
+    public void setInfoServiceIntegration(InfoServiceIntegrationImp infoServiceIntegration) {
         this.infoServiceIntegration = infoServiceIntegration;
     }
 
@@ -143,13 +143,13 @@ public class WorkAgreementResponseService {
         Specification<@NonNull WorkAgreementResponse> specification = Specification.unrestricted();
         specification = Specification.where(Specifications.eq(specification, "workId", workId));
         specification = Specifications.eq(specification, "request", request);
-        return workAgreementResponseRepository.findAll(specification, Sort.by("workId").and(Sort.by("requestId").and(Sort.by("timestamp"))));
+        return workAgreementResponseRepository.findAll(specification, Sort.by("workId").and(Sort.by("requestId").and(Sort.by("dateTime"))));
     }
 
     public String toString(@NonNull WorkAgreementResponse newObj) {
         return
-                "Пользователь: " + UserServiceIntegration.getInstance().getFio(newObj.getNikName()) + "\n" +
-                        "Время: " + DateHelper.dateTimeToStr(newObj.getTimestamp()) + "\n" +
+                "Пользователь: " + UserServiceIntegrationImp.getInstance().getFio(newObj.getNikName()) + "\n" +
+                        "Время: " + DateHelper.dateTimeToStr(newObj.getDateTime()) + "\n" +
                         (newObj.getComment() != null && !newObj.getComment().isBlank() ? ("Комментарий: " + newObj.getComment() + "\n") : "") +
                         "Статус: " + StatusResponse.valueOf(newObj.getStatus()).getName() + "\n";
 
@@ -160,8 +160,8 @@ public class WorkAgreementResponseService {
             return toString(newObj);
         }
         return
-                compareField("Пользователь", UserServiceIntegration.getInstance().getFio(old.getNikName()), UserServiceIntegration.getInstance().getFio(newObj.getNikName())) +
-                        compareField("Время", DateHelper.dateTimeToStr(old.getTimestamp()), DateHelper.dateTimeToStr(newObj.getTimestamp())) +
+                compareField("Пользователь", UserServiceIntegrationImp.getInstance().getFio(old.getNikName()), UserServiceIntegrationImp.getInstance().getFio(newObj.getNikName())) +
+                        compareField("Время", DateHelper.dateTimeToStr(old.getDateTime()), DateHelper.dateTimeToStr(newObj.getDateTime())) +
                         compareField("Комментарий", old.getComment(), newObj.getComment()) +
                         compareField("Статус", StatusResponse.valueOf(old.getStatus()).getName(), StatusResponse.valueOf(newObj.getStatus()).getName());
     }

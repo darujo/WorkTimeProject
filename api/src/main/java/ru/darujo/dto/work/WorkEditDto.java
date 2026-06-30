@@ -1,7 +1,7 @@
 package ru.darujo.dto.work;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public class WorkEditDto implements Serializable, WorkPlanTime {
@@ -14,39 +14,39 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
     // Разработка прототипа
     private String name;
     // Анализ факт
-    private Timestamp analiseEndFact;
+    private ZonedDateTime analiseEndFact;
     // Анализ План
-    private Timestamp analiseEndPlan;
+    private ZonedDateTime analiseEndPlan;
     //конец разработки факт
-    private Timestamp developEndFact;
+    private ZonedDateTime developEndFact;
     //конец разработки план
-    private Timestamp developEndPlan;
+    private ZonedDateTime developEndPlan;
 
     //выдача прототипа
-    private Timestamp issuePrototypeFact;
+    private ZonedDateTime issuePrototypeFact;
     //выдача прототипа план
-    private Timestamp issuePrototypePlan;
+    private ZonedDateTime issuePrototypePlan;
     // конец Стабилизация прототипа факт
-    private Timestamp debugEndFact;
+    private ZonedDateTime debugEndFact;
     // конец Стабилизация прототипа план
-    private Timestamp debugEndPlan;
+    private ZonedDateTime debugEndPlan;
     // конец Стабилизация релиза
-    private Timestamp releaseEndFact;
+    private ZonedDateTime releaseEndFact;
     // конец Стабилизация релиза
-    private Timestamp releaseEndPlan;
+    private ZonedDateTime releaseEndPlan;
     // конец ОПЭ релиза
-    private Timestamp opeEndFact;
+    private ZonedDateTime opeEndFact;
     // конец ОПЭ релиза
-    private Timestamp opeEndPlan;
+    private ZonedDateTime opeEndPlan;
     // № внутренней задачи (DEVBO)
     private String task;
     // Краткое описание внутренней задачи
     private String description;
 
     // Дата начала доработки План
-    private Timestamp startTaskPlan;
+    private ZonedDateTime startTaskPlan;
     // Дата начала доработки Факт
-    private Timestamp startTaskFact;
+    private ZonedDateTime startTaskFact;
     // Плановые трудозатраты, чел/час анализ
     private Float laborAnalise;
     // Плановые трудозатраты, чел/час Разработка прототипа
@@ -63,30 +63,30 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
     private Long releaseId;
     private String release;
     // Выдача релиза даты План
-    private Timestamp issuingReleasePlan;
+    private ZonedDateTime issuingReleasePlan;
     // Выдача релиза дата факт
-    private Timestamp issuingReleaseFact;
+    private ZonedDateTime issuingReleaseFact;
 
     // Анализ Факт
-    private Timestamp analiseStartFact;
-    private Timestamp developStartFact;
+    private ZonedDateTime analiseStartFact;
+    private ZonedDateTime developStartFact;
     // Стабилизация прототипа Факт
-    private Timestamp debugStartFact;
+    private ZonedDateTime debugStartFact;
     // Стабилизация релиза Факт
-    private Timestamp releaseStartFact;
+    private ZonedDateTime releaseStartFact;
     // ОПЭ релиза Факт
-    private Timestamp opeStartFact;
+    private ZonedDateTime opeStartFact;
 
     // Анализ план
-    private Timestamp analiseStartPlan;
+    private ZonedDateTime analiseStartPlan;
     //начало разработки план
-    private Timestamp developStartPlan;
+    private ZonedDateTime developStartPlan;
     // Стабилизация релиза план
-    private Timestamp debugStartPlan;
+    private ZonedDateTime debugStartPlan;
     // Стабилизация релиза план
-    private Timestamp releaseStartPlan;
+    private ZonedDateTime releaseStartPlan;
     // ОПЭ релиза план
-    private Timestamp opeStartPlan;
+    private ZonedDateTime opeStartPlan;
 
     private Boolean rated;
     private Long projectId;
@@ -101,37 +101,37 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
                        Long codeSap,
                        String codeZI,
                        String name,
-                       Timestamp analiseEndFact,
-                       Timestamp analiseEndPlan,
-                       Timestamp developEndFact,
-                       Timestamp developEndPlan,
-                       Timestamp issuePrototypeFact,
-                       Timestamp issuePrototypePlan,
-                       Timestamp debugEndFact,
-                       Timestamp debugEndPlan,
-                       Timestamp releaseEndFact,
-                       Timestamp releaseEndPlan,
-                       Timestamp opeEndFact,
-                       Timestamp opeEndPlan,
+                       ZonedDateTime analiseEndFact,
+                       ZonedDateTime analiseEndPlan,
+                       ZonedDateTime developEndFact,
+                       ZonedDateTime developEndPlan,
+                       ZonedDateTime issuePrototypeFact,
+                       ZonedDateTime issuePrototypePlan,
+                       ZonedDateTime debugEndFact,
+                       ZonedDateTime debugEndPlan,
+                       ZonedDateTime releaseEndFact,
+                       ZonedDateTime releaseEndPlan,
+                       ZonedDateTime opeEndFact,
+                       ZonedDateTime opeEndPlan,
                        String task,
                        String description,
-                       Timestamp startTaskPlan,
-                       Timestamp startTaskFact,
+                       ZonedDateTime startTaskPlan,
+                       ZonedDateTime startTaskFact,
                        Integer stageZI,
                        Long releaseId,
                        String release,
-                       Timestamp issuingReleasePlan,
-                       Timestamp issuingReleaseFact,
-                       Timestamp analiseStartFact,
-                       Timestamp developStartFact,
-                       Timestamp debugStartFact,
-                       Timestamp releaseStartFact,
-                       Timestamp opeStartFact,
-                       Timestamp analiseStartPlan,
-                       Timestamp developStartPlan,
-                       Timestamp debugStartPlan,
-                       Timestamp releaseStartPlan,
-                       Timestamp opeStartPlan,
+                       ZonedDateTime issuingReleasePlan,
+                       ZonedDateTime issuingReleaseFact,
+                       ZonedDateTime analiseStartFact,
+                       ZonedDateTime developStartFact,
+                       ZonedDateTime debugStartFact,
+                       ZonedDateTime releaseStartFact,
+                       ZonedDateTime opeStartFact,
+                       ZonedDateTime analiseStartPlan,
+                       ZonedDateTime developStartPlan,
+                       ZonedDateTime debugStartPlan,
+                       ZonedDateTime releaseStartPlan,
+                       ZonedDateTime opeStartPlan,
                        Boolean rated,
                        Long projectId,
                        List<Long> projectList,
@@ -185,23 +185,23 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
         return id;
     }
 
-    public Timestamp getIssuePrototypeFact() {
+    public ZonedDateTime getIssuePrototypeFact() {
         return issuePrototypeFact;
     }
 
-    public Timestamp getDebugEndFact() {
+    public ZonedDateTime getDebugEndFact() {
         return debugEndFact;
     }
 
-    public Timestamp getReleaseEndFact() {
+    public ZonedDateTime getReleaseEndFact() {
         return releaseEndFact;
     }
 
-    public Timestamp getOpeEndFact() {
+    public ZonedDateTime getOpeEndFact() {
         return opeEndFact;
     }
 
-    public Timestamp getAnaliseEndFact() {
+    public ZonedDateTime getAnaliseEndFact() {
         return analiseEndFact;
     }
 
@@ -217,11 +217,11 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
         return description;
     }
 
-    public Timestamp getStartTaskPlan() {
+    public ZonedDateTime getStartTaskPlan() {
         return startTaskPlan;
     }
 
-    public Timestamp getStartTaskFact() {
+    public ZonedDateTime getStartTaskFact() {
         return startTaskFact;
     }
 
@@ -258,11 +258,11 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
         return release;
     }
 
-    public Timestamp getIssuingReleasePlan() {
+    public ZonedDateTime getIssuingReleasePlan() {
         return issuingReleasePlan;
     }
 
-    public Timestamp getIssuingReleaseFact() {
+    public ZonedDateTime getIssuingReleaseFact() {
         return issuingReleaseFact;
     }
 
@@ -284,23 +284,23 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
         return codeZI;
     }
 
-    public Timestamp getIssuePrototypePlan() {
+    public ZonedDateTime getIssuePrototypePlan() {
         return issuePrototypePlan;
     }
 
-    public Timestamp getDebugEndPlan() {
+    public ZonedDateTime getDebugEndPlan() {
         return debugEndPlan;
     }
 
-    public Timestamp getReleaseEndPlan() {
+    public ZonedDateTime getReleaseEndPlan() {
         return releaseEndPlan;
     }
 
-    public Timestamp getOpeEndPlan() {
+    public ZonedDateTime getOpeEndPlan() {
         return opeEndPlan;
     }
 
-    public Timestamp getAnaliseEndPlan() {
+    public ZonedDateTime getAnaliseEndPlan() {
         return analiseEndPlan;
     }
 
@@ -333,51 +333,51 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
         this.laborOPE = laborOPE;
     }
 
-    public Timestamp getAnaliseStartFact() {
+    public ZonedDateTime getAnaliseStartFact() {
         return analiseStartFact;
     }
 
-    public Timestamp getDevelopStartFact() {
+    public ZonedDateTime getDevelopStartFact() {
         return developStartFact;
     }
 
-    public Timestamp getDebugStartFact() {
+    public ZonedDateTime getDebugStartFact() {
         return debugStartFact;
     }
 
-    public Timestamp getReleaseStartFact() {
+    public ZonedDateTime getReleaseStartFact() {
         return releaseStartFact;
     }
 
-    public Timestamp getOpeStartFact() {
+    public ZonedDateTime getOpeStartFact() {
         return opeStartFact;
     }
 
-    public Timestamp getAnaliseStartPlan() {
+    public ZonedDateTime getAnaliseStartPlan() {
         return analiseStartPlan;
     }
 
-    public Timestamp getDevelopStartPlan() {
+    public ZonedDateTime getDevelopStartPlan() {
         return developStartPlan;
     }
 
-    public Timestamp getDebugStartPlan() {
+    public ZonedDateTime getDebugStartPlan() {
         return debugStartPlan;
     }
 
-    public Timestamp getReleaseStartPlan() {
+    public ZonedDateTime getReleaseStartPlan() {
         return releaseStartPlan;
     }
 
-    public Timestamp getOpeStartPlan() {
+    public ZonedDateTime getOpeStartPlan() {
         return opeStartPlan;
     }
 
-    public Timestamp getDevelopEndFact() {
+    public ZonedDateTime getDevelopEndFact() {
         return developEndFact;
     }
 
-    public Timestamp getDevelopEndPlan() {
+    public ZonedDateTime getDevelopEndPlan() {
         return developEndPlan;
     }
 

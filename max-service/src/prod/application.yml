@@ -1,0 +1,50 @@
+server:
+  port: 8190
+  servlet:
+    context-path: /app
+spring:
+  main:
+    banner-mode: off
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres?options=--search_path=max_message
+    username: postgres
+    password: 5397
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+
+  jackson:
+    default-property-inclusion: non_absent
+
+
+app:
+  http:
+    bot: bot
+
+max:
+
+  bot:
+
+    mode: webhook
+    webhook:
+      token: "f9LHodD0cOLCGhzGSV92H6ALSwjLcgoIOoU_P0KNzzrQ7usxzw5tpFalOPTW_D2PEdTv-PSrwLIcTuOhyQMq"
+      url: "https://sheduler.ru/max-bot/webhook"
+      secret: "HappinessIsAChoiceWeMakeEveryDay"
+      update-types: bot_started,message_callback,message_created
+      auto-register: true
+      auto-unregister: true
+    longpolling:
+      token: "f9LHodD0cOLCGhzGSV92H6ALSwjLcgoIOoU_P0KNzzrQ7usxzw5tpFalOPTW_D2PEdTv-PSrwLIcTuOhyQMq"
+      poll-timeout: 30
+      update-types:
+        - MESSAGE_CREATED
+        - MESSAGE_CALLBACK
+    admin-id: "350190659" # Имя канала или id чата
+integration:
+  user-service:
+    enable: true
+  information-service:
+    enable: true

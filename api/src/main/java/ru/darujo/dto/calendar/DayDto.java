@@ -15,18 +15,22 @@ public class DayDto implements Serializable {
         this.comment = comment;
     }
 
+    @SuppressWarnings("unused")
     public Integer getDay() {
         return day;
     }
 
+    @SuppressWarnings("unused")
     public boolean isWeekend() {
         return weekend;
     }
 
+    @SuppressWarnings("unused")
     public boolean isShotDay() {
         return shotDay;
     }
 
+    @SuppressWarnings("unused")
     public String getComment() {
         return comment;
     }

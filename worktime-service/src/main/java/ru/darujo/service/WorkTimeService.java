@@ -18,14 +18,14 @@ import ru.darujo.dto.WorkTimeDto;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.user.UserFio;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
-import ru.darujo.integration.CalendarServiceIntegration;
-import ru.darujo.integration.TaskServiceIntegration;
-import ru.darujo.integration.UserServiceIntegration;
+import ru.darujo.integration.CalendarServiceIntegrationImp;
+import ru.darujo.integration.TaskServiceIntegrationImp;
+import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.model.WorkTime;
 import ru.darujo.repository.WorkTimeRepository;
 import ru.darujo.specifications.Specifications;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -33,24 +33,24 @@ import java.util.stream.Collectors;
 @Service
 @Primary
 public class WorkTimeService {
-    private TaskServiceIntegration taskServiceIntegration;
+    private TaskServiceIntegrationImp taskServiceIntegration;
 
     @Autowired
-    public void setWorkServiceIntegration(TaskServiceIntegration taskServiceIntegration) {
+    public void setWorkServiceIntegration(TaskServiceIntegrationImp taskServiceIntegration) {
         this.taskServiceIntegration = taskServiceIntegration;
     }
 
-    UserServiceIntegration userServiceIntegration;
+    UserServiceIntegrationImp userServiceIntegration;
 
     @Autowired
-    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+    public void setUserServiceIntegration(UserServiceIntegrationImp userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
 
-    CalendarServiceIntegration calendarServiceIntegration;
+    CalendarServiceIntegrationImp calendarServiceIntegration;
 
     @Autowired
-    public void setCalendarServiceIntegration(CalendarServiceIntegration calendarServiceIntegration) {
+    public void setCalendarServiceIntegration(CalendarServiceIntegrationImp calendarServiceIntegration) {
         this.calendarServiceIntegration = calendarServiceIntegration;
     }
 
@@ -93,7 +93,7 @@ public class WorkTimeService {
         workTimeRepository.deleteById(id);
     }
 
-    public Page<@NonNull WorkTime> findWorkTime(Long[] taskId, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, List<Integer> type, String comment, Long projectId, Integer page, Integer size) {
+    public Page<@NonNull WorkTime> findWorkTime(Long[] taskId, String nikName, LocalDate dateLt, LocalDate dateLe, LocalDate dateGT, LocalDate dateGE, List<Integer> type, String comment, Long projectId, Integer page, Integer size) {
         Specification<@NonNull WorkTime> specification = Specification.unrestricted();
         Sort sort = null;
         if (taskId != null) {
@@ -141,7 +141,7 @@ public class WorkTimeService {
         return workTimePage;
     }
 
-    public Page<@NonNull WorkTime> findWorkTimeTask(String taskDEVBO, String taskBts, String nikName, Date dateLt, Date dateLe, Date dateGT, Date dateGE, List<Integer> type, String comment, Long projectId, Integer page, Integer size) {
+    public Page<@NonNull WorkTime> findWorkTimeTask(String taskDEVBO, String taskBts, String nikName, LocalDate dateLt, LocalDate dateLe, LocalDate dateGT, LocalDate dateGE, List<Integer> type, String comment, Long projectId, Integer page, Integer size) {
         Page<@NonNull WorkTime> workTimes;
         List<Long> taskIdList = taskServiceIntegration.getTaskList(taskDEVBO, taskBts);
         if (taskIdList == null || taskIdList.isEmpty()) {
@@ -249,7 +249,7 @@ public class WorkTimeService {
         return true;
     }
 
-    public Timestamp getLastTime(Long[] taskId, Timestamp dateGe, Timestamp dateLe) {
+    public LocalDate getLastTime(Long[] taskId, LocalDate dateGe, LocalDate dateLe) {
         Page<@NonNull WorkTime> workTimes = findWorkTime(taskId, null, null, dateLe, null, dateGe, null, null, null, 1, 1);
 
         return workTimes.getContent().size() == 1 ? workTimes.getContent().get(0).getWorkDate() : null;

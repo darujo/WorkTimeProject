@@ -1,9 +1,10 @@
 package ru.darujo.convertor;
 
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.TaskDto;
 import ru.darujo.model.Task;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public class TaskBuilder {
 
@@ -19,7 +20,7 @@ public class TaskBuilder {
     private Integer type;
     // № ЗИ (ZI)
     private Long workId;
-    private Timestamp timeCreate;
+    private LocalDateTime timeCreate;
     private Long projectId;
 
     public TaskBuilder setId(Long id) {
@@ -57,7 +58,7 @@ public class TaskBuilder {
         return this;
     }
 
-    public TaskBuilder setTimeCreate(Timestamp timeCreate) {
+    public TaskBuilder setTimeCreate(LocalDateTime timeCreate) {
         this.timeCreate = timeCreate;
         return this;
     }
@@ -82,7 +83,7 @@ public class TaskBuilder {
                 description,
                 type,
                 workId,
-                timeCreate);
+                DateHelper.getZDT(timeCreate));
     }
 
     public Task getTask() {

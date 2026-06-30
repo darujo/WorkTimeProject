@@ -20,11 +20,22 @@ public class UserDto implements Serializable {
     private String patronymic;
     private Boolean passwordChange;
     private Boolean telegramAdd;
+    private Boolean maxAdd;
     private Long projectId;
     private List<ProjectDto> projects;
     private boolean block;
 
-    public UserDto(Long id, String nikName, String firstName, String lastName, String patronymic, Boolean passwordChange, Boolean telegramAdd, Long projectId, List<ProjectDto> projects, boolean block) {
+    public UserDto(Long id,
+                   String nikName,
+                   String firstName,
+                   String lastName,
+                   String patronymic,
+                   Boolean passwordChange,
+                   Boolean telegramAdd,
+                   Boolean maxAdd,
+                   Long projectId,
+                   List<ProjectDto> projects,
+                   boolean block) {
         this.id = id;
         this.nikName = nikName;
         this.firstName = firstName;
@@ -35,6 +46,7 @@ public class UserDto implements Serializable {
         this.projectId = projectId;
         this.projects = projects;
         this.block = block;
+        this.maxAdd = maxAdd;
     }
 
     public UserDto(Long id, String nikName, String firstName, String lastName, String patronymic, boolean block) {
@@ -93,5 +105,10 @@ public class UserDto implements Serializable {
 
     public boolean isBlock() {
         return block;
+    }
+
+    @SuppressWarnings("unused")
+    public Boolean getMaxAdd() {
+        return maxAdd;
     }
 }

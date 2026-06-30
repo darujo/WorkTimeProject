@@ -113,6 +113,15 @@ angular.module('workTimeService').config(function ($routeProvider) {
                 }]
             }
         })
+        .when('/calendar/day', {
+            templateUrl: 'calendar/day_edit.html?ver=' + ver,
+            controller: 'calendarDayController',
+            resolve: {
+                LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load('calendar_day'); // Resolve promise and load before view
+                }]
+            }
+        })
         .when('/weekWork'.toLowerCase(), {
             templateUrl: 'rep/weekWork/weekWork.html?ver='.toLowerCase() + ver,
             controller: 'weekWorkController',
@@ -275,6 +284,52 @@ angular.module('workTimeService').config(function ($routeProvider) {
                 }]
             }
         })
+        .when('/sys/email_confirm', {
+            templateUrl: 'welcome/welcome.html?ver='.toLowerCase() + ver,
+            controller: 'emailConfirmController',
+            resolve: {
+                LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load('confirm_email'); // Resolve promise and load before view
+                }]
+            }
+        })
+        .when('/email_change', {
+            templateUrl: 'user/change_email.html?ver='.toLowerCase() + ver,
+            controller: 'emailChangeController',
+            resolve: {
+                LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load('change_email'); // Resolve promise and load before view
+                }]
+            }
+        })
+        .when('/sys/recovery_password', {
+            templateUrl: 'welcome/welcome.html?ver='.toLowerCase() + ver,
+            controller: 'recoveryPasswordConfirmController',
+            resolve: {
+                LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load('recovery_password'); // Resolve promise and load before view
+                }]
+            }
+        })
+        .when('/recovery_pass', {
+            templateUrl: 'user/recovery_pass.html?ver='.toLowerCase() + ver,
+            controller: 'recoveryPassController',
+            resolve: {
+                LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load('recovery_pass'); // Resolve promise and load before view
+                }]
+            }
+        })
+        .when('/sys/request_pass', {
+            templateUrl: 'user/request_pass.html?ver='.toLowerCase() + ver,
+            controller: 'requestPassController',
+            resolve: {
+                LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load('request_pass'); // Resolve promise and load before view
+                }]
+            }
+        })
+
         .otherwise({
             redirectTo: '/'
         });

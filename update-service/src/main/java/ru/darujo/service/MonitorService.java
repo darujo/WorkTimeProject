@@ -6,19 +6,26 @@ import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.darujo.integration.*;
-import ru.darujo.model.ServiceType;
+import ru.darujo.integration.ServiceIntegration;
+import ru.darujo.integration.ServiceType;
+import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.object.ServiceIntegrationObject;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 @Slf4j
 @Service
 public class MonitorService {
     @Getter
     private final PriorityQueue<ServiceIntegrationObject> serviceIntegrations = new PriorityQueue<>(Comparator.comparing(ServiceIntegrationObject::getSort));
+
+
+    @Autowired
+    public void setIntegrationObject(List<ServiceIntegration<ServiceType>> integrationObjectList) {
+        integrationObjectList.forEach(this::addServiceIntegration);
+    }
 
     private ServiceStatusService serviceStatusService;
 
@@ -27,59 +34,10 @@ public class MonitorService {
         this.serviceStatusService = serviceStatusService;
     }
 
-    @Autowired
-    public void setCalendarServiceIntegration(CalendarServiceIntegration calendarServiceIntegration) {
-        addServiceIntegration(ServiceType.CALENDAR, calendarServiceIntegration);
-    }
 
-    @Autowired
-    public void setInfoServiceIntegration(InfoServiceIntegration infoServiceIntegration) {
-        addServiceIntegration(ServiceType.INFORMATION, infoServiceIntegration);
-    }
-
-    @Autowired
-    public void setRateServiceIntegration(RateServiceIntegration rateServiceIntegration) {
-        addServiceIntegration(ServiceType.RATE, rateServiceIntegration);
-    }
-
-    @Autowired
-    public void setTaskServiceIntegration(TaskServiceIntegration taskServiceIntegration) {
-        addServiceIntegration(ServiceType.TASK, taskServiceIntegration);
-    }
-
-    @Autowired
-    public void setTelegramServiceIntegration(TelegramServiceIntegration telegramServiceIntegration) {
-        addServiceIntegration(ServiceType.TELEGRAM, telegramServiceIntegration);
-    }
-
-    @Autowired
-    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
-        addServiceIntegration(ServiceType.USER, userServiceIntegration);
-    }
-
-    @Autowired
-    public void setWorkServiceIntegration(WorkServiceIntegration workServiceIntegration) {
-        addServiceIntegration(ServiceType.WORK, workServiceIntegration);
-    }
-
-    @Autowired
-    public void setWorkTimeServiceIntegration(WorkTimeServiceIntegration workTimeServiceIntegration) {
-        addServiceIntegration(ServiceType.WORK_TIME, workTimeServiceIntegration);
-    }
-
-    @Autowired
-    public void setFrontServiceIntegration(FrontServiceIntegration frontServiceIntegration) {
-        addServiceIntegration(ServiceType.FRONT, frontServiceIntegration);
-    }
-
-    @Autowired
-    public void setGateWayServiceIntegration(GateWayServiceIntegration gateWayServiceIntegration) {
-        addServiceIntegration(ServiceType.GATE_WAY, gateWayServiceIntegration);
-    }
-
-    private void addServiceIntegration(ServiceType serviceType, ServiceIntegration serviceIntegration) {
-        log.info(serviceType.toString());
-        serviceIntegrations.add(new ServiceIntegrationObject(serviceType, serviceIntegration, serviceType.getPriorityStop(), null));
+    private void addServiceIntegration(ServiceIntegration<ServiceType> serviceIntegration) {
+        log.info(serviceIntegration.getServiceType().toString());
+        serviceIntegrations.add(new ServiceIntegrationObject(serviceIntegration));
     }
 
     @PostConstruct
@@ -97,7 +55,7 @@ public class MonitorService {
                 flagError.set(true);
             }
         });
-        if (flagError.get()) {
+        if (flagError.get() || serviceIntegrationsError.isEmpty()) {
             serviceStatusService.newServiceStatus(serviceIntegrationsError.keySet());
         }
     }
@@ -111,15 +69,16 @@ public class MonitorService {
     Map<ServiceType, Integer> serviceIntegrationsError = Collections.synchronizedMap(new HashMap<>());
 
     private @NonNull Map<ServiceType, Integer> getServiceErrorTypes(List<ServiceType> serviceTypeList, boolean addCount) {
-        for (ServiceType serviceType : ServiceType.values()) {
-            if (serviceTypeList == null || serviceTypeList.contains(serviceType)) {
+        Map<ServiceType, Boolean> serviceOk = Collections.synchronizedMap(new HashMap<>());
+
+        availService(serviceIntegrations, serviceTypeList, serviceOk::put);
+        serviceOk.forEach((serviceType, ok) -> {
+            if (ok) {
+                serviceIntegrationsError.remove(serviceType);
+            } else {
                 serviceIntegrationsError.putIfAbsent(serviceType, 0);
             }
-        }
-        Set<ServiceType> serviceOk = Collections.synchronizedSet(new HashSet<>());
-
-        availService(serviceIntegrations, serviceTypeList, serviceOk::add);
-        serviceOk.forEach(serviceType -> serviceIntegrationsError.remove(serviceType));
+        });
         if (addCount) {
             serviceIntegrationsError.forEach((serviceType, count) -> serviceIntegrationsError.put(serviceType, count + 1));
         }
@@ -128,23 +87,23 @@ public class MonitorService {
 
     public void availService(PriorityQueue<ServiceIntegrationObject> serviceIntegrations,
                              List<ServiceType> serviceTypeList,
-                             Consumer<ServiceType> addService) {
+                             BiConsumer<ServiceType, Boolean> addService) {
 
         serviceIntegrations
                 .stream()
                 .filter(serviceIntegrationObject -> serviceTypeList == null || serviceTypeList.contains(serviceIntegrationObject.getServiceType()))
                 .forEach((serviceIntegrationObj) -> {
-            try {
+                    try {
 
-                serviceIntegrationObj.getServiceIntegration().test();
-                addService.accept(serviceIntegrationObj.getServiceType());
+                        serviceIntegrationObj.getServiceIntegration().test();
+                        addService.accept(serviceIntegrationObj.getServiceType(), true);
 //                log.info("Сервис {} в строю", serviceIntegrationObj.getServiceType());
-            } catch (RuntimeException ex) {
-
+                    } catch (RuntimeException ex) {
+                        addService.accept(serviceIntegrationObj.getServiceType(), false);
 //                log.error("Не прошла команда тест {} {}", serviceIntegrationObj.getServiceType(), ex.getMessage());
-            }
+                    }
 
-        });
+                });
 
 
     }
@@ -160,8 +119,8 @@ public class MonitorService {
         try {
 
 
-        return ((UserServiceIntegration) serviceIntegrations.stream().filter(serviceIntegrationObject -> serviceIntegrationObject.getServiceType().equals(ServiceType.USER)).findAny().orElseThrow(() -> new RuntimeException("")).getServiceIntegration()
-        ).getToken("system_user_update", "Приносить пользу миру — это единственный способ стать счастливым.").getToken();
+            return ((UserServiceIntegrationImp) serviceIntegrations.stream().filter(serviceIntegrationObject -> serviceIntegrationObject.getServiceType().equals(ServiceType.USER)).findAny().orElseThrow(() -> new RuntimeException("")).getServiceIntegration()
+            ).getToken("system_user_update", "Приносить пользу миру — это единственный способ стать счастливым.").getToken();
         } catch (RuntimeException ex) {
             return "";
         }

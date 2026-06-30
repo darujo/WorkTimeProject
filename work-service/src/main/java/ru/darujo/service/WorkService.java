@@ -5,27 +5,27 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.darujo.dto.information.MessageInfoDto;
-import ru.darujo.dto.information.MessageType;
 import ru.darujo.dto.project.ProjectDto;
 import ru.darujo.dto.ratestage.WorkStageDto;
 import ru.darujo.dto.work.WorkPlanTime;
 import ru.darujo.dto.workrep.ProjectUpdateInter;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
-import ru.darujo.integration.InfoServiceIntegration;
-import ru.darujo.integration.RateServiceIntegration;
-import ru.darujo.integration.UserServiceIntegration;
+import ru.darujo.integration.InfoServiceIntegrationImp;
+import ru.darujo.integration.RateServiceIntegrationImp;
+import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.model.*;
 import ru.darujo.repository.WorkLittleRepository;
 import ru.darujo.repository.WorkRepository;
 import ru.darujo.specifications.Specifications;
+import ru.darujo.type.MessageType;
 import ru.darujo.url.UrlWorkTime;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,10 +52,10 @@ public class WorkService {
         this.workLittleRepository = workLittleRepository;
     }
 
-    private RateServiceIntegration rateServiceIntegration;
+    private RateServiceIntegrationImp rateServiceIntegration;
 
     @Autowired
-    public void setRateServiceIntegration(RateServiceIntegration rateServiceIntegration) {
+    public void setRateServiceIntegration(RateServiceIntegrationImp rateServiceIntegration) {
         this.rateServiceIntegration = rateServiceIntegration;
     }
 
@@ -66,10 +66,10 @@ public class WorkService {
         this.releaseService = releaseService;
     }
 
-    InfoServiceIntegration infoServiceIntegration;
+    InfoServiceIntegrationImp infoServiceIntegration;
 
     @Autowired
-    public void setInfoServiceIntegration(InfoServiceIntegration infoServiceIntegration) {
+    public void setInfoServiceIntegration(InfoServiceIntegrationImp infoServiceIntegration) {
         this.infoServiceIntegration = infoServiceIntegration;
     }
 
@@ -80,10 +80,10 @@ public class WorkService {
         this.workProjectService = workProjectService;
     }
 
-    private static UserServiceIntegration userServiceIntegration;
+    private static UserServiceIntegrationImp userServiceIntegration;
 
     @Autowired
-    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+    public void setUserServiceIntegration(UserServiceIntegrationImp userServiceIntegration) {
         WorkService.userServiceIntegration = userServiceIntegration;
     }
 
@@ -168,6 +168,11 @@ public class WorkService {
                 }
             }
         }
+        if (work.getCodeSap() != null
+                && work.getCodeSap() != 0
+                && workRepository.exists(getWorkSpecification(null, null, work.getCodeSap(), null, null, null, null, work.getId()))) {
+            throw new ResourceNotFoundRunTime("Уже есть ЗИ с таким номером SAP");
+        }
         ProjectDto projectDto = getProjectDto(workProject.getProjectId());
         checkDate(workProject.getAnaliseStartFact(), workProject.getAnaliseEndFact(), "начала \"" + projectDto.getStage0Name() + "\" (факт)", "конца \"" + projectDto.getStage0Name() + "\" (факт)");
         checkDate(workProject.getDevelopStartFact(), workProject.getIssuePrototypeFact(), "начала \"" + projectDto.getStage1Name() + "\" (факт)", "конца \"" + projectDto.getStage1Name() + "\" (факт)");
@@ -194,8 +199,8 @@ public class WorkService {
 
     }
 
-    public void checkDate(Timestamp dateStart, Timestamp dateEnd, String dateStartMes, String dateEndMes) {
-        if (dateStart != null && dateEnd != null && dateStart.compareTo(dateEnd) > 0) {
+    public void checkDate(LocalDate dateStart, LocalDate dateEnd, String dateStartMes, String dateEndMes) {
+        if (dateStart != null && dateEnd != null && dateStart.isAfter(dateEnd)) {
             throw new ResourceNotFoundRunTime("Дата " + dateEndMes + " не может быть раньше " + dateStartMes);
         }
     }
@@ -259,7 +264,7 @@ public class WorkService {
     }
 
     private void sendInform(String login, MessageType type, String text) {
-        infoServiceIntegration.addMessage(new MessageInfoDto(new Timestamp(System.currentTimeMillis()), login, type, text));
+        infoServiceIntegration.addMessage(new MessageInfoDto(ZonedDateTime.now(), login, type, text));
     }
 
 
@@ -303,6 +308,10 @@ public class WorkService {
     }
 
     private <T> Specification<@NonNull T> getWorkSpecification(String name, List<String> sort, Long codeSap, String codeZi, Long releaseId, List<Long> releaseIdArray) {
+        return getWorkSpecification(name, sort, codeSap, codeZi, releaseId, releaseIdArray, null, null);
+    }
+
+    private <T> Specification<@NonNull T> getWorkSpecification(String name, List<String> sort, Long codeSap, String codeZi, Long releaseId, List<Long> releaseIdArray, List<Long> idList, Long notId) {
         Specification<@NonNull T> specification;
         if (sort != null && !sort.isEmpty()) {
             specification = Specification.unrestricted();
@@ -326,6 +335,8 @@ public class WorkService {
             }
             specification = Specifications.inO(specification, "release", releases);
         }
+        specification = Specifications.in(specification, "id", idList);
+        specification = Specifications.ne(specification, "id", notId);
 
         return specification;
     }
@@ -353,24 +364,10 @@ public class WorkService {
 
     public List<Work> getWorkList(String name, Integer stageZiGe, Integer stageZiLe, Long releaseId, List<String> sort) {
         Page<Work> works;
-        Specification<@NonNull Work> specification = Specification.unrestricted();
-        Sort sortWork = null;
-        if (sort != null) {
-            for (String sortField : sort) {
-                if (sortField.equals("codeZI") || sortField.equals("name") || sortField.startsWith("release")) {
-                    sortWork = sortWork == null ? Sort.by(sortField) : sortWork.and(Sort.by(sortField));
-                } else {
-                    log.error("Сортировка по полю {} не возможна", sortField);
-                }
-            }
-        }
-        specification = Specifications.like(specification, "name", name);
-        if (releaseId != null) {
-            Release release = releaseService.findOptionalById(releaseId).orElse(null);
-            specification = Specifications.eq(specification, "release", release);
-        }
-        specification = Specifications.in(specification, "id", workProjectService.getWorkIdList(stageZiGe, stageZiLe));
-        works = Specifications.findAll(workRepository, null, null, specification, sortWork);
+        Specification<@NonNull Work> specification =
+                getWorkSpecification(name, sort, null, null, releaseId, null, workProjectService.getWorkIdList(stageZiGe, stageZiLe), null);
+
+        works = Specifications.findAll(workRepository, null, null, specification, sort);
         return works.getContent();
     }
 
@@ -498,7 +495,7 @@ public class WorkService {
         return work;
     }
 
-    public boolean setWorkDate(long workId, Long projectId, Timestamp date) {
+    public boolean setWorkDate(long workId, Long projectId, LocalDate date) {
         Work work = addProject(workId, projectId);
         return workProjectService.setWorkDate(work, projectId, date);
     }

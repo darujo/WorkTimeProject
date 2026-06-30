@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Производственный календарь по-умолчанию
  */
-public class DefaultDays implements ProductionCalendarDaysInterface {
+public class DefaultDays extends DateInfoRepository {
 
     /**
      * Хранилище для производственного календаря с поиском по ключу
@@ -18,16 +18,11 @@ public class DefaultDays implements ProductionCalendarDaysInterface {
     final private Map<LocalDate, DateInfo> days = new HashMap<>();
 
     /**
-     * Консктруктор
+     * Конструктор
      */
     public DefaultDays() {
-        init();
-    }
 
-    /**
-     * Инициализируем пустой календаоь
-     */
-    public void init(){}
+    }
 
     /**
      * Добавить в календарь дату
@@ -36,28 +31,27 @@ public class DefaultDays implements ProductionCalendarDaysInterface {
      * @param type - тип {@link DayType}
      */
     public void add(String date, DayType type) {
-        add(date, type, null);
+        add(LocalDate.parse(date), type);
     }
 
     /**
      * Добавить в календарь дату
      *
-     * @param date  - дата
+     * @param localDate  - дата
      * @param type  - тип {@link DayType}
      * @param title - наименование праздника
      */
-    public void add(String date, DayType type, String title){
-        LocalDate localDate = LocalDate.parse(date);
+
+    public void add(LocalDate localDate, DayType type, String title) {
         days.put(localDate, new DateInfo(localDate, type, title));
     }
 
-    /**
-     * Возвращает производственный календарь в виде Map
-     * Ключ - дата, значение - {@link DateInfo}
-     *
-     * @return Map<LocalDate       ,               DateInfo>
-     */
-    public Map<LocalDate, DateInfo> getDays() {
-        return days;
+    @Override
+    public DateInfo getDateInfo(LocalDate date) {
+        if (!days.containsKey(date)) {
+            return null;
+        }
+        return days.get(date);
     }
+
 }

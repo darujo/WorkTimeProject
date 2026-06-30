@@ -6,21 +6,23 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     const constPatchCode = window.location.origin + '/task-service/v1/';
     const constPatchRelease = window.location.origin + '/work-service/v1/release';
     const constPatchWorkTime = window.location.origin + '/worktime-service/v1/code';
+    const techUrl = "/sys/"
+    let myHash;
+    let myPath = undefined;
     $scope.loadFilter = null;
     $scope.tryToAuth = function () {
         $http.post(constPatchAuth + '/auth', $scope.user)
             .then(function successCallback(response) {
                 if (response.data.token) {
-                    $http.defaults.headers.common.Authorization = 'Bearer ' + response.data.token;
-                    $localStorage.authUser = {username: $scope.user.username, token: response.data.token};
-                    init();
+                    $location.setToken($scope.user.username, response.data.token)
 
                     $scope.user = {
                         username: null,
                         password: null
                     };
-                    // $location.path('/').search({});
-                    $location.path(myHash).search(myFilter);
+
+                    console.log("-----1----", myHash)
+                    $location.openPath(myHash, myFilter);
                     document.getElementById("DetailPrim").open = true;
                 }
             }, function errorCallback(response) {
@@ -28,12 +30,20 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                 alert("Не удалось авторизоваться")
             });
     };
+    $location.setToken = function (username, token) {
+        $http.defaults.headers.common.Authorization = 'Bearer ' + token;
+        $localStorage.authUser = {username: username, token: token};
+        init();
+    }
+
     $location.backPage = function () {
         $scope.getUser();
         if (myHash === "userPassword".toLowerCase()) {
+            console.log("-----2----")
             $location.path("").search({});
         } else {
-            $location.path(myHash).search(myFilter);
+            console.log("-----3----", myHash)
+            $location.openPath(myHash, myFilter);
         }
     }
     let LoadCurrentUser = false;
@@ -51,8 +61,9 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                     $scope.UserLogin = response.data;
                     $location.UserLogin = $scope.UserLogin;
                     LoadCurrentUser = true;
-                    if ($scope.UserLogin.passwordChange) {
-                        $location.path('/userPassword'.toLowerCase()).search({});
+                    if ($scope.UserLogin.passwordChange && myPath !== undefined && !myPath.startsWith("/recovery_pass")) {
+                        console.log("-----4----")
+                        $location.openPath('/userPassword'.toLowerCase());
 
                     }
 
@@ -89,7 +100,8 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         if (window.location.hash === "#!/workTime".toLowerCase()) {
             $location.openEdit().search({});
         } else {
-            $location.path('/workTime'.toLowerCase()).search({});
+            $location.openPath('/workTime'.toLowerCase())
+
         }
     };
 
@@ -106,7 +118,10 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         // if ($scope.user.password) {
         //     $scope.user.password = null;
         // }
-        $location.path('/').search({});
+        console.log("-----------------ssss------------------")
+        if (myPath !== undefined && !myPath.startsWith(techUrl)) {
+            $location.openPath('/')
+        }
     };
 
     $scope.clearUser = function () {
@@ -114,13 +129,24 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         $http.defaults.headers.common.Authorization = '';
     };
 
-    $scope.isUserLoggedIn = function () {
-        if ($localStorage.authUser) {
+    $scope.isUserLoggedIn = function (reg) {
+        if ($localStorage.authUser || (reg && (location.hash.startsWith(techUrl, 2) || location.hash === techUrl))) {
             return true;
         } else {
-            $location.path('/').search({});
+            if (location.hash.startsWith(myPath, 2)) {
+                myPath = undefined;
+            } else if (myPath !== undefined && (!myPath.startsWith(techUrl) && myPath !== techUrl)) {
+                console.log("-----5---- 111")
+                $location.openPath('/');
+            }
+            if (myPath === undefined && (!location.hash.startsWith(techUrl, 2) && location.hash !== techUrl)) {
+                console.log("-----5----222")
+                $location.openPath('/');
+            }
             return false;
         }
+
+
     };
 
     $scope.isUserLoggedInAndPasOk = function () {
@@ -130,12 +156,12 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             return !$scope.UserLogin.passwordChange && $scope.isUserLoggedIn();
         }
     };
-
+    // ----------------------------------------------------Telegram-------
     $scope.addTelegram = function () {
-        console.log("getUser")
+        console.log("addTelegram")
         // document.getElementById("UserName").value = nikName;
 
-        $http.get(constPatchAuth + '/users/user/telegram/get')
+        $http.get(constPatchAuth + '/users/user/telegram/get?senderType=telegram')
             .then(function successCallback(response) {
                 console.log(response)
                 $scope.CodeTelegram = response.data;
@@ -148,10 +174,10 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     };
 
     $scope.deleteTelegram = function () {
-        console.log("getUser")
+        console.log("deleteTelegram")
         // document.getElementById("UserName").value = nikName;
 
-        $http.get(constPatchAuth + '/users/user/telegram/delete/type')
+        $http.get(constPatchAuth + '/users/user/telegram/delete/type?senderType=telegram')
             .then(function successCallback(response) {
                 console.log(response)
                 $scope.getUser();
@@ -163,6 +189,56 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                 console.log(response);
             });
     };
+// ----------------------------------------------------Max-------
+    $scope.addMax = function () {
+        console.log("addMax")
+        // document.getElementById("UserName").value = nikName;
+
+        $http.get(constPatchAuth + '/users/user/telegram/get?senderType=max')
+            .then(function successCallback(response) {
+                console.log(response)
+                $scope.CodeMax = response.data;
+
+
+                // document.getElementById("UserName").value = response.data.lastName + " " + response.data.firstName + " " + response.data.patronymic;
+            }, function errorCallback(response) {
+                console.log(response);
+            });
+    };
+
+    $scope.deleteMax = function () {
+        console.log("deleteMax")
+        // document.getElementById("UserName").value = nikName;
+
+        $http.get(constPatchAuth + '/users/user/telegram/delete/type?senderType=max')
+            .then(function successCallback(response) {
+                console.log(response)
+                $scope.getUser();
+                $scope.CodeMax = null;
+
+
+                // document.getElementById("UserName").value = response.data.lastName + " " + response.data.firstName + " " + response.data.patronymic;
+            }, function errorCallback(response) {
+                console.log(response);
+            });
+    };
+//---------------------------------Max end----------------
+
+    $location.getCode = function (code, callBack) {
+        $http({
+            url: constPatchCode + code,
+            method: "get"
+
+        }).then(function (response) {
+            callBack(response);
+        }, function errorCallback(response) {
+            // console.log(response)
+            if ($location.checkAuthorized(response)) {
+                alert(response.data.message);
+            }
+        });
+
+    }
 
     $location.checkAuthorized = function (response) {
         console.log("response.status");
@@ -189,7 +265,8 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             localPath = url.substring(url.indexOf("/"), url.indexOf("?"));
         }
         console.log(localPath);
-        $location.path(localPath).search(filter);
+        console.log("-----6----", localPath)
+        $location.openPath(localPath, filter);
         console.log(location.href)
         navigator.clipboard.writeText(location.href)
             .then(() => {
@@ -200,22 +277,20 @@ angular.module('workTimeService').controller('indexController', function ($rootS
             });
     }
 
-    $location.getCode = function (code, callBack) {
-        $http({
-            url: constPatchCode + code,
-            method: "get"
-
-        }).then(function (response) {
-            callBack(response);
-        }, function errorCallback(response) {
-            // console.log(response)
-            if ($location.checkAuthorized(response)) {
-                alert(response.data.message);
-            }
-        });
+    $scope.request_pass = function () {
+        $location.openPath('/sys/request_pass')
+    }
+    $location.openPath = function (path, param) {
+        console.log("установим страницу")
+        console.log(path)
+        myPath = path;
+        if (param) {
+            $location.path(path).search(param);
+        } else {
+            $location.path(path).search({});
+        }
 
     }
-
 
     if (typeof $localStorage.filterWorkTime === "undefined") {
         $localStorage.filterWorkTime = {}
@@ -249,7 +324,8 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         return {};
 
     }
-    let myHash;
+
+
     let myFilter = {};
     $location.parserFilter = function (filter) {
         console.log("parserFilter");
@@ -478,7 +554,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     }
 
     function wait() {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             setTimeout(() => {
                 resolve('Timeout resolved');
             }, 10);
@@ -571,4 +647,6 @@ angular.module('workTimeService').controller('indexController', function ($rootS
     }
 
     console.log("loan index.js end");
+
+
 })

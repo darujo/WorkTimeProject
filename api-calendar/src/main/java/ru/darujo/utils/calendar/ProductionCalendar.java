@@ -8,17 +8,17 @@ import ru.darujo.utils.calendar.structure.DayType;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.Map;
 
 public class ProductionCalendar {
 
-    Map<LocalDate, DateInfo> days;
+    ProductionCalendarDaysInterface productionCalendarDaysInterface;
 
     /**
      * @param productionCalendarDaysInterface ProductionCalendarDaysInterface. Наследованный от {@link DefaultDays} объект
      */
     public ProductionCalendar(ProductionCalendarDaysInterface productionCalendarDaysInterface) {
-        this.days = productionCalendarDaysInterface.getDays();
+        productionCalendarDaysInterface.init();
+        this.productionCalendarDaysInterface = productionCalendarDaysInterface;
     }
 
     /**
@@ -28,16 +28,7 @@ public class ProductionCalendar {
         this(new RU_Days());
     }
 
-    /**
-     * Возвращает true, если date выпадает на выходные (Суббота или Воскресенье)
-     *
-     * @param date LocalDate - Дата для проверки
-     * @return boolean
-     */
-    public boolean isWeekEndNotCalendar(LocalDate date) {
-        DayOfWeek dayOfWeek = date.getDayOfWeek();
-        return dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY;
-    }
+
 
     /**
      * Возвращает true, если date НЕ выпадает на выходные (Рабочая неделя)
@@ -58,7 +49,7 @@ public class ProductionCalendar {
      * @return boolean
      */
     public boolean isShortDay(LocalDate date) {
-        return days.containsKey(date) && days.get(date).getType() == DayType.SHORTDAY;
+        return productionCalendarDaysInterface.getType(date) == DayType.SHORTDAY;
     }
 
     /**
@@ -70,8 +61,9 @@ public class ProductionCalendar {
      * @return boolean
      */
     public boolean isWorkDay(LocalDate date) {
-        if (days.containsKey(date)) {
-            DayType dayType = days.get(date).getType();
+
+        DayType dayType = productionCalendarDaysInterface.getType(date);
+        if (dayType != null) {
             if (dayType.equals(DayType.WORKDAY) || dayType.equals(DayType.SHORTDAY))
                 return true;
             if (dayType.equals(DayType.HOLIDAY) || dayType.equals(DayType.WEEK_END))
@@ -89,14 +81,15 @@ public class ProductionCalendar {
      * @return boolean
      */
     public boolean isWeekEnd(LocalDate date) {
-        if (days.containsKey(date)) {
-            DayType dayType = days.get(date).getType();
+
+        DayType dayType = productionCalendarDaysInterface.getType(date);
+        if (dayType != null) {
             if (dayType.equals(DayType.HOLIDAY) || dayType.equals(DayType.WEEK_END))
                 return true;
             if (dayType.equals(DayType.WORKDAY) || dayType.equals(DayType.SHORTDAY))
                 return false;
         }
-        return isWeekEndNotCalendar(date);
+        return productionCalendarDaysInterface.isWeekEnd(date);
     }
 
     /**
@@ -190,8 +183,9 @@ public class ProductionCalendar {
      * @return DateInfo - информация об указанной дате {@link DateInfo}
      */
     public DateInfo getDateInfo(LocalDate date) {
-        if (days.containsKey(date))
-            return days.get(date);
+        DateInfo dateInfo = productionCalendarDaysInterface.getDateInfo(date);
+        if (dateInfo != null)
+            return dateInfo;
         else if (isWorkDay(date))
             return new DateInfo(date, DayType.WORKDAY);
         else if (isWeekEnd(date))
@@ -201,15 +195,12 @@ public class ProductionCalendar {
     }
 
     public boolean isHoliday(LocalDate date) {
-        if (days.containsKey(date)) {
-            return days.get(date).getType().equals(DayType.HOLIDAY);
-        }
-        return false;
+        return DayType.HOLIDAY.equals(productionCalendarDaysInterface.getType(date));
     }
 
     public Integer iDaysNotHoliday(LocalDate dateStart, LocalDate dateEnd) {
         int days = 0;
-        while (dateStart.compareTo(dateEnd) <= 0) {
+        while (!dateStart.isAfter(dateEnd)) {
             if (!isHoliday(dateStart)) {
                 days++;
             }
@@ -230,7 +221,7 @@ public class ProductionCalendar {
     }
 
     public boolean existWorkDay(LocalDate dateStart, LocalDate dateEnd) {
-        while (dateStart.compareTo(dateEnd) <= 0) {
+        while (!dateStart.isAfter(dateEnd)) {
             if (isWorkDay(dateStart)) {
                 return true;
             }

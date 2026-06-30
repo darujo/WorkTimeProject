@@ -1,6 +1,6 @@
 package ru.darujo.dto.ratestage;
 
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 
 public class WorkAgreementRequestEditDto {
     @SuppressWarnings("unused")
@@ -9,14 +9,14 @@ public class WorkAgreementRequestEditDto {
 
     private Long id;
     private String nikName;
-    private Timestamp timestamp;
+    private ZonedDateTime timestamp;
     private String version;
     private String comment;
-    private Timestamp term;
+    private ZonedDateTime term;
     private StatusRequest status;
     private Long workId;
 
-    public WorkAgreementRequestEditDto(Long id, String nikName, Timestamp timestamp, String version, String comment, Timestamp term, StatusRequest status, Long workId) {
+    public WorkAgreementRequestEditDto(Long id, String nikName, ZonedDateTime timestamp, String version, String comment, ZonedDateTime term, StatusRequest status, Long workId) {
         this.id = id;
         this.nikName = nikName;
         this.timestamp = timestamp;
@@ -38,7 +38,7 @@ public class WorkAgreementRequestEditDto {
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getTimestamp() {
+    public ZonedDateTime getTimestamp() {
         return timestamp;
     }
 
@@ -53,7 +53,7 @@ public class WorkAgreementRequestEditDto {
     }
 
     @SuppressWarnings("unused")
-    public Timestamp getTerm() {
+    public ZonedDateTime getTerm() {
         return term;
     }
 
@@ -74,7 +74,7 @@ public class WorkAgreementRequestEditDto {
         this.nikName = nikName;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
+    public void setTimestamp(ZonedDateTime timestamp) {
         this.timestamp = timestamp;
     }
 }

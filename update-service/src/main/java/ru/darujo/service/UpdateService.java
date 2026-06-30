@@ -8,14 +8,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.information.MessageInfoDto;
-import ru.darujo.dto.information.MessageType;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
-import ru.darujo.integration.InfoServiceIntegration;
-import ru.darujo.model.ServiceType;
+import ru.darujo.integration.InfoServiceIntegrationImp;
+import ru.darujo.integration.ServiceType;
+import ru.darujo.type.MessageType;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class UpdateService {
     private ScheduleService scheduleService;
     private MonitorService monitorService;
-    private InfoServiceIntegration infoServiceIntegration;
+    private InfoServiceIntegrationImp infoServiceIntegration;
     @Getter
     private static UpdateService INSTANCE;
 
@@ -36,7 +37,7 @@ public class UpdateService {
     }
 
     @Autowired
-    public void setInfoServiceIntegration(InfoServiceIntegration infoServiceIntegration) {
+    public void setInfoServiceIntegration(InfoServiceIntegrationImp infoServiceIntegration) {
         this.infoServiceIntegration = infoServiceIntegration;
     }
 
@@ -78,7 +79,7 @@ public class UpdateService {
     }
 
 
-    public boolean loadUpdate(String username, ZonedDateTime timestamp, List<String> types, String description, List<MultipartFile> multipartFiles) {
+    public boolean loadUpdate(String username, LocalDateTime timestamp, List<String> types, String description, List<MultipartFile> multipartFiles) {
         log.info("Пользователь {} загрузил обновление с описанием {}", username, description);
         if (multipartFiles != null && !multipartFiles.isEmpty() && (description == null || description.isBlank())) {
             throw new ResourceNotFoundRunTime("Должно быть заполнено описание");
@@ -96,7 +97,7 @@ public class UpdateService {
                 description);
         try {
             if (ChronoUnit.MINUTES.between(ZonedDateTime.now(), timestamp) > 0) {
-                infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.SYSTEM_INFO, String.format("%s будут проводиться сервисные работы. Сервис может быть недоступен. Приносим извинения за предоставленые неудобства.", DateHelper.dateTimeToStr(timestamp))));
+                infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.SYSTEM_INFO, String.format("%s будут проводиться сервисные работы. Сервис может быть недоступен. Приносим извинения за предоставленные неудобства.", DateHelper.dateTimeToStr(timestamp))));
             }
         } catch (RuntimeException ex) {
             log.error(ex.getMessage(), ex);

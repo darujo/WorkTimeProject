@@ -19,37 +19,42 @@ public class LinkController {
 
     @GetMapping("/get")
     public CodeTelegramMes getGenSingleCode(@RequestHeader String username,
+                                            @RequestParam(required = false) String senderType,
                                             @RequestParam(required = false) String nikName,
                                             @RequestParam(required = false) String messageType,
                                             @RequestParam(required = false) Long projectId) {
-        return linkService.getGenSingleCode(nikName == null ? username : nikName, messageType, projectId);
+        return linkService.getGenSingleCode(nikName == null ? username : nikName, senderType, messageType, projectId);
     }
 
     @GetMapping("/get/{chatId}")
-    public ResultMes checkUserTelegram(@PathVariable(required = false) Long chatId) {
-        return linkService.checkUserTelegram(chatId);
+    public ResultMes checkUserTelegram(@RequestParam String senderType,
+                                       @PathVariable(required = false) String chatId) {
+        return linkService.checkUserMessager(senderType, chatId);
     }
 
     @GetMapping("/link")
     public ResultMes linkSingleCode(@RequestParam Integer code,
-                                    @RequestParam Long telegramId,
+                                    @RequestParam String senderType,
+                                    @RequestParam String telegramId,
                                     @RequestParam(required = false) Integer threadId
     ) {
-        return linkService.linkCodeTelegram(code, telegramId, threadId);
+        return linkService.linkCodeTelegram(code, senderType, telegramId, threadId);
     }
 
     @GetMapping("/delete")
-    public void linkDeleteTelegram(@RequestParam Long telegramId,
+    public void linkDeleteTelegram(@RequestParam String senderType,
+                                   @RequestParam String telegramId,
                                    @RequestParam(required = false) Integer threadId
     ) {
-        linkService.linkDeleteTelegram(telegramId,threadId);
+        linkService.linkDeleteMessager(senderType, telegramId, threadId);
     }
 
     @GetMapping("/delete/type")
-    public void linkDeleteTelegramType(@RequestHeader String username,
+    public void linkDeleteTelegramType(@RequestParam String senderType,
+                                       @RequestHeader String username,
                                        @RequestParam(required = false) String messageType
     ) {
-        linkService.linkDeleteTelegram(username, messageType);
+        linkService.linkDeleteMessager(username, senderType, messageType);
     }
 
 }

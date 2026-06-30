@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.5</version>
+        <version>4.0.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -57,13 +57,13 @@
             <version>2.21.1</version>
             <scope>compile</scope>
         </dependency>
-        <!-- Source: https://mvnrepository.com/artifact/tools.jackson.core/jackson-core -->
-        <dependency>
-            <groupId>tools.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>3.1.0</version>
-            <scope>compile</scope>
-        </dependency>
+        <!--        &lt;!&ndash; Source: https://mvnrepository.com/artifact/tools.jackson.core/jackson-core &ndash;&gt;-->
+        <!--        <dependency>-->
+        <!--            <groupId>tools.jackson.core</groupId>-->
+        <!--            <artifactId>jackson-core</artifactId>-->
+        <!--            <version>3.1.2</version>-->
+        <!--            <scope>compile</scope>-->
+        <!--        </dependency>-->
         <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

@@ -3,17 +3,16 @@ package ru.darujo.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.calendar.DayTypeDto;
 import ru.darujo.dto.calendar.UserVacation;
 import ru.darujo.dto.calendar.UserVacationsDto;
 import ru.darujo.dto.calendar.WeekWorkDto;
 import ru.darujo.dto.user.UserDto;
-import ru.darujo.integration.UserServiceIntegration;
+import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.model.Vacation;
 
-import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,14 +34,14 @@ public class VacationReportService {
         this.calendarService = calendarService;
     }
 
-    UserServiceIntegration userServiceIntegration;
+    UserServiceIntegrationImp userServiceIntegration;
 
     @Autowired
-    public void setUserServiceIntegration(UserServiceIntegration userServiceIntegration) {
+    public void setUserServiceIntegration(UserServiceIntegrationImp userServiceIntegration) {
         this.userServiceIntegration = userServiceIntegration;
     }
 
-    public UserVacationsDto getUserVacations(String nikName, Timestamp dateStart, Timestamp dateEnd, String periodSplit) {
+    public UserVacationsDto getUserVacations(String nikName, LocalDate dateStart, LocalDate dateEnd, String periodSplit) {
         if (periodSplit == null) {
             periodSplit = "day";
         }
@@ -66,8 +65,8 @@ public class VacationReportService {
             Vacation vacation = null;
             LocalDate dayEndVacation = null;
             for (WeekWorkDto weekWorkDto : weekWorkUserList) {
-                LocalDate day = getLocalDate(weekWorkDto.getDayStart()).minusDays(1);
-                LocalDate dayEnd = getLocalDate(weekWorkDto.getDayEnd());
+                LocalDate day = DateHelper.zDTToLD(weekWorkDto.getDayStart()).minusDays(1);
+                LocalDate dayEnd = DateHelper.zDTToLD(weekWorkDto.getDayEnd());
                 float timeAll;
                 boolean flagDay = weekWorkDto.getDayStart().equals(weekWorkDto.getDayEnd());
                 timeAll = weekWorkDto.getTime();
@@ -77,7 +76,7 @@ public class VacationReportService {
                     if (vacation == null || dayEndVacation == null || day.isAfter(dayEndVacation)) {
                         vacation = vacationService.findOneDateInVacation(userDto.getNikName(), day);
                         if (vacation != null) {
-                            dayEndVacation = getLocalDate(vacation.getDateEnd());
+                            dayEndVacation = vacation.getDateEnd();
                         }
                     }
                     if (vacation != null) {
@@ -98,11 +97,11 @@ public class VacationReportService {
         return userVacations;
     }
 
-    public Timestamp getLastWorkDay(String username,
-                                    Timestamp dateStart,
+    public LocalDate getLastWorkDay(String username,
+                                    LocalDate dateStart,
                                     Integer dayMinus,
                                     Boolean lastWeek) {
-        LocalDate localDate = getLocalDate(dateStart);
+        LocalDate localDate = dateStart;
         if (lastWeek) {
             localDate = localDate.minusDays(localDate.getDayOfWeek().getValue());
         } else if (dayMinus != null) {
@@ -120,30 +119,19 @@ public class VacationReportService {
                 }
             }
         }
-        return Timestamp.valueOf(localDate.atStartOfDay());
+        return localDate;
 
     }
 
-    private LocalDate getLocalDate(Timestamp dateStart) {
-        return dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    }
-
-    public boolean isWorkDayUser(Timestamp date, String username) {
-        LocalDate localDate = getLocalDate(date);
+    public boolean isWorkDayUser(LocalDate localDate, String username) {
         return calendarService.isWorkDay(localDate) &&
                 vacationService.findOneDateInVacation(username, localDate) == null;
     }
 
-    private boolean isWorkDayUser(LocalDate localDate, String username) {
-        return calendarService.isWorkDay(localDate) &&
-                vacationService.findOneDateInVacation(username, localDate) == null;
-    }
-
-    public Boolean isDayAfterWeek(Timestamp date, Integer dayMinus) {
+    public Boolean isDayAfterWeek(LocalDate localDate, Integer dayMinus) {
         if (dayMinus < 1) {
             return false;
         }
-        LocalDate localDate = getLocalDate(date);
         while (0 < dayMinus) {
             if (!calendarService.isWorkDay(localDate)) {
                 return false;

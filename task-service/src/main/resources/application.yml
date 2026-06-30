@@ -20,4 +20,10 @@ spring:
 
   jackson:
     default-property-inclusion: non_absent
-
+integration:
+  work-service:
+    enable: true
+  user-service:
+    enable: true
+  work-time-service:
+    enable: true

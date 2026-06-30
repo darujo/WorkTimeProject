@@ -26,3 +26,9 @@ app:
 telegram-bot:
   token: "8503763341:DDHOsgfAMzDomSslCt9om_3iQG9LuxTRI8o"
   admin-id: "@daru_kanal" # Имя канала или id чата
+
+integration:
+  user-service:
+    enable: true
+  information-service:
+    enable: true

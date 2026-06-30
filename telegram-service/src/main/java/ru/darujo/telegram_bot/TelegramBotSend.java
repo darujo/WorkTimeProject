@@ -26,13 +26,14 @@ import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
+import ru.darujo.dto.information.SendAdminMessage;
 import ru.darujo.model.ChatInfo;
 import ru.darujo.model.MessageSend;
+import ru.darujo.service.FileService;
 import ru.darujo.service.MessageSendService;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -92,8 +93,7 @@ public class TelegramBotSend {
             User user = tgClient.execute(getMyName);
             return user.getUserName();
         } catch (TelegramApiException e) {
-            log.error(e.getMessage());
-            log.error(Arrays.toString(e.getStackTrace()));
+            log.error(e.getMessage(), e);
             return null;
         }
 
@@ -152,8 +152,17 @@ public class TelegramBotSend {
     @Value("${telegram-bot.admin-id}")
     private String adminId;
 
-    public void sendMessageForAdmin(String text) throws TelegramApiException {
-        sendMessage(new ChatInfo(null, adminId, null, null), text);
+    public void sendMessageForAdmin(SendAdminMessage message) throws TelegramApiException {
+        ChatInfo chatInfo = new ChatInfo(null, adminId, null, null);
+        if (message.isAttachFile()) {
+            sendDocument(
+                    chatInfo,
+                    message.getFileName(),
+                    FileService.getFile(message.toString(), message.getFileName(), message.getFileBody()),
+                    message.getText());
+        } else {
+            sendMessage(chatInfo, message.getText());
+        }
     }
 
     public void deleteMessage(ChatInfo chatInfo) throws TelegramApiException {
@@ -198,7 +207,7 @@ public class TelegramBotSend {
         try {
             return tgClient.execute(sendChatAction);
         } catch (TelegramApiException e) {
-            log.error("{} \n {}", e.getMessage(), Arrays.toString(e.getStackTrace()));
+            log.error(e.getMessage(), e);
         }
         return false;
     }

@@ -87,13 +87,15 @@
                         <br>
                         <a class="nav-link" href="#!/userpassword">Сменить пароль</a>
                         <br>
+                        <a class="nav-link" href="#!/email_change">Смена почты</a>
+                        <br>
                         <div ng-if="!UserLogin.telegramAdd">
                             <button ng-click="addTelegram()" id="ButtonTelegramAdd">
                                 {{CodeTelegram.ok ? "Запросить код повторно" : "Привязать telegram"}}
                             </button>
                             <br>
                             <div ng-if="CodeTelegram.ok">
-                                <p>Для получения уведомлений перейдите <a href="http://{{CodeTelegram.link}}"
+                                <p>Для получения уведомлений перейдите <a href="https://{{CodeTelegram.link}}"
                                                                           target="_blank">Бот</a>.
                                     И отправьте команду /link. На запрос кода введите:<b>{{CodeTelegram.code}}</b>.
                                     Внимание Код действует <b>{{CodeTelegram.time}}</b> минут. После авторизации в боте
@@ -103,15 +105,37 @@
 
                             </div>
                         </div>
-                        <div ng-if="UserLogin.telegramAdd">
-                            <button ng-click="deleteTelegram()" id="ButtonTelegramDel">Отвязать Telegram</button>
+                        <div ng-if="!UserLogin.maxAdd">
+                            <button ng-click="addMax()" id="ButtonMaxAdd">
+                                {{CodeMax.ok ? "Запросить код повторно" : "Привязать MAX"}}
+                            </button>
+                            <br>
+                            <div ng-if="CodeMax.ok">
+                                <p>Для получения уведомлений перейдите <a href="https://{{CodeMax.link}}"
+                                                                          target="_blank">Бот</a>.
+                                </p>
+                                <img src="./gif/max.jpg" alt="Ссылка на бот">
+                                <p>
+                                    И отправьте команду /link. На запрос кода введите:<b>{{CodeMax.code}}</b>.
+                                    Внимание Код действует <b>{{CodeMax.time}}</b> минут. После авторизации в боте
+                                    нажмите кнопку: </p>
+                                <br>
+                                <button ng-click="getUser()" id="ButtonMaxRef">Проверить</button>
+
+                            </div>
+                        </div>
+                        <div ng-if="UserLogin.maxAdd">
+                            <button ng-click="deleteMax()" id="ButtonMaxDel">Отвязать Max</button>
+                        </div>
+                        <div>
                             <div><a class="nav-link" href="#!/user_info_type?userId={{UserLogin.id}}">Типы
-                                уведомлений</a></div>
+                                уведомлений</a>
+                            </div>
                         </div>
 
                     </details>
                 </div>
-                <div class="nav-item" ng-show="!isUserLoggedIn()">
+                <div class="nav-item" ng-show="!isUserLoggedIn(true)">
                     <form class="" ng-submit="tryToAuth()">
                         <div class="input-group input-group-sm" style="padding: 4px;">
                             <label for="navLoginField">Логин:</label>
@@ -126,23 +150,23 @@
                             <button id="navLoginSubmit" class="head_button"
                                     style="margin-left: 10px;" type="submit">Войти
                             </button>
+                            <button type="button" ng-click="request_pass()" class="head_button"
+                                    id="ButtonSaveDown">Восстановить пароль
+                            </button>
+
                         </div>
                     </form>
                 </div>
-
-
             </div>
-
         </div>
-
     </nav>
-    <div class="nav-item" ng-show="isUserLoggedIn()" style="padding: 4px;">
-        <button type="button" class="head_button" ng-click="addTime()">Заполнить отработаное время</button>
+    <div class="nav-item" ng-show="isUserLoggedInAndPasOk()" style="padding: 4px;">
+        <button type="button" class="head_button" ng-click="addTime()">Заполнить отработанное время</button>
     </div>
-    <div class="nav-item" ng-show="isUserLoggedIn()" style="padding: 4px;">
+    <div class="nav-item" ng-show="isUserLoggedInAndPasOk()" style="padding: 4px;">
         <button class="head_button" ng-click="tryToLogout()">Выйти</button>
     </div>
-    <div class="nav-item" ng-show="isUserLoggedIn()" style="padding: 4px;">
+    <div class="nav-item" ng-show="isUserLoggedInAndPasOk()" style="padding: 4px;">
         <div class="user_view">
             <p class="p-form">
                 {{UserLogin.lastName}} {{UserLogin.firstName}} {{UserLogin.patronymic}}</p>
@@ -152,7 +176,7 @@
         <!--           type="readonly"-->
         <!--    >-->
     </div>
-    <div class="nav-item" ng-show="isUserLoggedIn()">
+    <div class="nav-item" ng-show="isUserLoggedInAndPasOk()">
         <label for="UserProject" class="p-head"></label>
         <select class="vvod" name="UserProject" id="UserProject"
                 ng-model="UserLogin.projectId" ng-change="changeProject(UserLogin.projectId)">

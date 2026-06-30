@@ -1,5 +1,6 @@
 package ru.darujo.convertor;
 
+import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.TaskDto;
 import ru.darujo.model.Task;
 
@@ -29,7 +30,7 @@ public class TaskConvertor {
                 .setDescription(taskDto.getDescription())
                 .setType(taskDto.getType())
                 .setWorkId(taskDto.getWorkId ())
-                .setTimeCreate(taskDto.getTimeCreate())
+                .setTimeCreate(DateHelper.zDTToLDT(taskDto.getTimeCreate()))
                 .setProjectId(projectId)
                 .getTask();
     }

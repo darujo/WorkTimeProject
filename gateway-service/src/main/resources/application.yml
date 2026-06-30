@@ -2,10 +2,24 @@ server:
   port: 5555
   ssl:
 #    keytool -genkey -alias tomcat -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12  -validity 3650
-    key-store: classpath:keystore.p12
+    #    key-store: classpath:keystore.p12
+    #    key-store-password: 53975397
+    #    keyStoreType: PKCS12
+    #    keyAlias: tomcat
+
+    #    "C:\Program Files\Git\mingw64\bin\openssl" pkcs12 -export -in certificate.crt -inkey certificate.key -passout pass:53975397 -out Server-keystore.p12
+
+    key-store: classpath:Server-keystore.p12
+    key-store-type: PKCS12
+    enabled: true
+    protocol: TLS
+    enabled-protocols: TLSv1.2
     key-store-password: 53975397
-    keyStoreType: PKCS12
-    keyAlias: tomcat
+
+
+#    certificate-private-key: classpath:certificate.crt
+#    key-store: classpath:certificate.p7b
+
 
 spring:
   main:
@@ -39,6 +53,7 @@ spring:
                 - Path=/gate/shutdownContext
               filters:
                 - JwtStopServiceFilter
+
             - id: gate-test
               uri: forward:///v1/system/test
               predicates:
@@ -47,6 +62,22 @@ spring:
             #                - JwtAdminFilter
             #                - StripPrefix=1
             #                            - PrefixPath=system/
+            - id: max-service
+              uri: "http://localhost:8190"
+              predicates:
+                - Path=/max-bot/**
+              filters:
+                - StripPrefix=0
+                - PrefixPath=/app/
+            #                - JwtAuthFilter
+            - id: user-not-auch
+              uri: "http://localhost:8183"
+              predicates:
+                - Path=/users/system/**
+              filters:
+                - StripPrefix=0
+                - PrefixPath=/app-auth/
+            #                - JwtAdminFilter
             - id: user-admin-service
               uri: "http://localhost:8183"
               predicates:

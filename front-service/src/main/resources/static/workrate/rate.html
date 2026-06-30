@@ -3,11 +3,11 @@
     <button type="button" class="head_button mar5" id="WorkPage" ng-click="workPage()">Назад</button>
     <h1>{{WorkRate.work.code}} {{WorkRate.work.name}} </h1>
     <label ng-if="WorkRate.work.childWork.length > 0" for="FilterChild" class="p-head">Отображать:</label>
-    <select ng-if="WorkRate.work.childWork.length > 0" id="FilterChild" class="p-head" ng-model="Child"
+    <select ng-if="WorkRate.work.childWork.length > 0" id="FilterChild" class="p-head" ng-model="FilterCh.Child"
             ng-change="loadRate()">
-        <option value="true" selected>Потомки</option>
-        <option value="false">Это ЗИ</option>
-        <option value="null">Это ЗИ и потомки</option>
+        <option ng-value="1" value="1" selected>Потомки</option>
+        <option ng-value="2" value="2">Это ЗИ</option>
+        <option ng-value="3" value="3">Это ЗИ и потомки</option>
     </select>
 
 </div>

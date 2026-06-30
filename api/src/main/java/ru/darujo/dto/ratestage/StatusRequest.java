@@ -3,7 +3,7 @@ package ru.darujo.dto.ratestage;
 import ru.darujo.type.TypeEnum;
 
 public enum StatusRequest implements TypeEnum {
-    REQUEST("Запрошено Внутренее согласование"),
+    REQUEST("Запрошено Внутреннее согласование"),
     SENT_CUSTOMER("Отправлено на согласование заказчику");
 
     StatusRequest(String name) {

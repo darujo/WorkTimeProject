@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,7 +19,7 @@ public class ReleaseProject {
     private Long id;
     // Выдача релиза дата факт
     @Column(name = "issuing_release_fact")
-    private Timestamp issuingReleaseFact;
+    private LocalDate issuingReleaseFact;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "release_id", nullable = false)

@@ -2,7 +2,7 @@ package ru.darujo.dto.work;
 
 import ru.darujo.assistant.helper.DateHelper;
 
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 
 public class ReleaseEditDto {
     private Long id;
@@ -10,12 +10,12 @@ public class ReleaseEditDto {
     private String name;
     private Long projectId;
     // Выдача релиза даты План
-    private Timestamp issuingReleasePlan;
+    private ZonedDateTime issuingReleasePlan;
     // Выдача релиза дата факт
-    private Timestamp issuingReleaseFact;
+    private ZonedDateTime issuingReleaseFact;
     private Float sort;
 
-    public ReleaseEditDto(Long id, String name, Long projectId, Timestamp issuingReleasePlan, Timestamp issuingReleaseFact, Float sort) {
+    public ReleaseEditDto(Long id, String name, Long projectId, ZonedDateTime issuingReleasePlan, ZonedDateTime issuingReleaseFact, Float sort) {
         this.id = id;
         this.name = name;
         this.issuingReleasePlan = issuingReleasePlan;
@@ -36,7 +36,7 @@ public class ReleaseEditDto {
         return name;
     }
 
-    public Timestamp getIssuingReleasePlan() {
+    public ZonedDateTime getIssuingReleasePlan() {
         return issuingReleasePlan;
     }
 
@@ -45,7 +45,7 @@ public class ReleaseEditDto {
         return DateHelper.dateToDDMMYYYY(issuingReleasePlan);
     }
 
-    public Timestamp getIssuingReleaseFact() {
+    public ZonedDateTime getIssuingReleaseFact() {
         return issuingReleaseFact;
     }
 
