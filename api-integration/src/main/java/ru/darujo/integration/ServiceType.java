@@ -19,11 +19,12 @@ public enum ServiceType implements TypeEnum {
 
     private final int priorityStop;
     private final String name;
+    private final int port;
 
     ServiceType(int priorityStop, String name, int port) {
         this.priorityStop = priorityStop;
         this.name = name;
-//        this.port = port;
+        this.port = port;
     }
 
 }

@@ -69,9 +69,9 @@ public class LinkService {
     public void clearMapCode(String login, String messageType) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         for (Map.Entry<Integer, SingleCode> entry : mapCode.entrySet()) {
-            if (entry.getValue().getTimestamp().before(timestamp)
-                    || (entry.getValue().getMessageType() != null && (entry.getValue().getMessageType().equals(messageType))
-                    && entry.getValue().getLogin().equals(login))) {
+            if (entry.getValue().timestamp().before(timestamp)
+                    || (entry.getValue().messageType() != null && (entry.getValue().messageType().equals(messageType))
+                    && entry.getValue().login().equals(login))) {
                 mapCode.remove(entry.getKey());
             }
         }
@@ -80,11 +80,11 @@ public class LinkService {
     public CodeTelegramMes getCode(String login, String messageType) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         for (Map.Entry<Integer, SingleCode> entry : mapCode.entrySet()) {
-            if ((entry.getValue().getMessageType() != null && entry.getValue().getMessageType().equals(messageType) && entry.getValue().getLogin().equals(login))) {
+            if ((entry.getValue().messageType() != null && entry.getValue().messageType().equals(messageType) && entry.getValue().login().equals(login))) {
                 return new CodeTelegramMes(true,
                         "t.me/DaruWorkBot",
                         entry.getKey(),
-                        Math.toIntExact(TimeUnit.MILLISECONDS.toMinutes(entry.getValue().getTimestamp().getTime() - timestamp.getTime())));
+                        Math.toIntExact(TimeUnit.MILLISECONDS.toMinutes(entry.getValue().timestamp().getTime() - timestamp.getTime())));
             }
         }
         return null;
@@ -98,12 +98,12 @@ public class LinkService {
         if (singleCode == null) {
             return new ResultMes(false, "Не такого кода авторизации или он просрочен ");
         }
-        User user = userService.findByNikName(singleCode.getLogin()).orElse(null);
+        User user = userService.findByNikName(singleCode.login()).orElse(null);
         if (user == null) {
             return new ResultMes(false, "Пользователь не найден.");
         }
 
-        if (singleCode.getMessageType() == null) {
+        if (singleCode.messageType() == null) {
             if (senderType.equalsIgnoreCase(MessageSenderType.Max.toString())) {
                 user.setMaxId(chatId);
                 userService.saveUser(user);
@@ -113,8 +113,8 @@ public class LinkService {
             }
         } else {
             UserInfoType userInfoType = userInfoTypeService
-                    .getInfoTypeForUser(user, senderType, singleCode.getProjectId(), null, null, singleCode.getMessageType())
-                    .orElse(new UserInfoType(singleCode.getProjectId(), singleCode.getMessageType(), user));
+                    .getInfoTypeForUser(user, senderType, singleCode.projectId(), null, null, singleCode.messageType())
+                    .orElse(new UserInfoType(singleCode.projectId(), singleCode.messageType(), user));
             userInfoType.setChatId(chatId);
             userInfoType.setThreadId(threadId);
             userInfoTypeService.save(userInfoType);

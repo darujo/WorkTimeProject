@@ -111,31 +111,6 @@ public class UserServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
 
     }
 
-    public ResultMes linkCodeTelegram(Integer code, Long telegramId, Integer threadId) {
-        StringBuilder stringBuilder = new StringBuilder();
-        addTeg(stringBuilder, "code", code);
-        addTeg(stringBuilder, "telegramId", telegramId);
-        addTeg(stringBuilder, "threadId", threadId);
-        addTeg(stringBuilder, "senderType", MessageSenderType.Telegram);
-        String uri = "/users/user/telegram/link" + stringBuilder;
-        try {
-            return webClient.get().uri(uri)
-                    .retrieve()
-                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            clientResponse -> getMessage(clientResponse, uri + " Что-то пошло не так не удалось получить данные пользователю"))
-                    .bodyToMono(ResultMes.class)
-                    .doOnError(throwable -> log.error(throwable.getMessage()))
-                    .block();
-        } catch (RuntimeException ex) {
-            if (ex instanceof ResourceNotFoundRunTime) {
-                throw ex;
-            } else {
-                throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить пользователя (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
-            }
-        }
-
-    }
-
     public ResultMes linkCodeMax(Integer code, String telegramId, Integer threadId) {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "code", code);

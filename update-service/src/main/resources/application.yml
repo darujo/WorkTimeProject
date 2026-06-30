@@ -7,7 +7,7 @@ spring:
     banner-mode: off
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/work_time_monitor?options=--search_path%3Dupdate
+    url: jdbc:postgresql://localhost:5432/work_time_monitor?options=--search_path=update
     username: postgres
     password: 5397
 
