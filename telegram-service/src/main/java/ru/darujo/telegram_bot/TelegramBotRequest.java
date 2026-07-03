@@ -178,7 +178,7 @@ public class TelegramBotRequest implements SpringLongPollingBot, LongPollingUpda
                                     try {
 
                                         Integer code = Integer.parseInt(requestMessage.getText());
-                                        ResultMes resultMes = userServiceIntegration.linkCodeMax(code, Long.toString(requestMessage.getChatId()), requestMessage.getMessageThreadId());
+                                        ResultMes resultMes = userServiceIntegration.linkCodeTelegram(code, requestMessage.getChatId(), requestMessage.getMessageThreadId());
                                         if (resultMes.isOk()) {
                                             telegramBotSend.deleteMessage(chatInfo);
                                             defaultMsg(chatInfo, "Вы успешно подключены к оповещениям");
