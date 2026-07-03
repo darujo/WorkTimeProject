@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.darujo.dto.information.SendAdminMessage;
 import ru.darujo.model.ChatInfo;
 import ru.darujo.model.MessageSend;
-import ru.darujo.service.FileService;
+import ru.darujo.service.FileSaverService;
 import ru.darujo.service.MessageSendService;
 import ru.max.botapi.client.MaxApiException;
 import ru.max.botapi.client.MaxBotAPI;
@@ -135,7 +135,7 @@ public class MaxBotSend {
                 sendDocument(
                         chatInfo,
                         message.getFileName(),
-                        FileService.getFile(message.toString(), message.getFileName(), message.getFileBody()),
+                        FileSaverService.getFile(message.toString(), message.getFileName(), message.getFileBody()),
                         message.getText());
             } else {
                 sendMessage(chatInfo, message.getText());

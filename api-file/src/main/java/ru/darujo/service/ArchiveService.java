@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 @Slf4j
 @Service
@@ -27,7 +28,7 @@ public class ArchiveService {
 //
 //    }
 
-    public SevenZOutputFile createArchive(File fileArchive) {
+    public static SevenZOutputFile createArchive(File fileArchive) {
         try {
 
             SevenZOutputFile out = new SevenZOutputFile(fileArchive);
@@ -46,9 +47,9 @@ public class ArchiveService {
         }
     }
 
-    Path pathPoint = Path.of("." + File.separator);
+    private static final Path pathPoint = Path.of("." + File.separator);
 
-    public void addFileArchive(SevenZOutputFile out, Path path, File file) {
+    public static void addFileArchive(SevenZOutputFile out, Path path, File file) {
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
             addFileArchive(out, path, fileInputStream.readAllBytes());
         } catch (FileNotFoundException e) {
@@ -59,17 +60,18 @@ public class ArchiveService {
 
     }
 
-    public void addFileArchive(SevenZOutputFile out, Path path, InputStream fileInputStream) {
+    public static void addFileArchive(SevenZOutputFile out, Path path, InputStream fileInputStream) {
         //            log.error(Integer.toString(path.));
         Path pathDir = addDirArchive(out, path);
-        SevenZArchiveEntry entry = out.createArchiveEntry(pathDir.toFile(), pathPoint.resolve(pathDir).toString());
 
+        SevenZArchiveEntry entry = out.createArchiveEntry(pathDir.toFile(), pathDir.toString());
+        out.putArchiveEntry(entry);
         try {
             out.write(fileInputStream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        out.putArchiveEntry(entry);
+
         try {
             out.closeArchiveEntry();
         } catch (IOException e) {
@@ -78,12 +80,12 @@ public class ArchiveService {
 
     }
 
-    public void addFileArchive(SevenZOutputFile out, Path pathFile, byte[] body) {
+    public static void addFileArchive(SevenZOutputFile out, Path pathFile, byte[] body) {
         //            log.error(Integer.toString(path.));
         addFileArchive(out, pathFile, new ByteArrayInputStream(body));
     }
 
-    private Path addDirArchive(SevenZOutputFile sevenZOutputFile, Path pathFile) {
+    private static Path addDirArchive(SevenZOutputFile sevenZOutputFile, Path pathFile) {
         SevenZArchiveEntry entry;
         Path pathDir = null;
         Iterator<Path> pathIterator = pathFile.iterator();
@@ -112,7 +114,7 @@ public class ArchiveService {
         return pathDir;
     }
 
-    public void saveArchive(SevenZOutputFile out) {
+    public static void saveArchive(SevenZOutputFile out) {
 
         try {
             out.close();
@@ -121,30 +123,52 @@ public class ArchiveService {
         }
     }
 
-    private void unpackArchive(File fileArchive, String password, Path outputDir) {
-        try (final SevenZFile sevenZFile = SevenZFile.builder().setFile(fileArchive).setPassword(password == null ? null : password.getBytes(StandardCharsets.UTF_16LE)).get()) {
-// todo только 7 степень сжатия
-            SevenZArchiveEntry sevenZArchiveEntry;
-            sevenZArchiveEntry = sevenZFile.getNextEntry();
-            while (sevenZArchiveEntry != null) {
-
-                Path entryPath = outputDir.resolve(sevenZArchiveEntry.getName());
-                if (sevenZArchiveEntry.isDirectory()) {
-                    Files.createDirectories(entryPath);
-                } else {
-
-                    FileOutputStream out = new FileOutputStream(sevenZArchiveEntry.resolveIn(outputDir).toFile());
-                    byte[] content = new byte[(int) sevenZArchiveEntry.getSize()];
-                    sevenZFile.read(content, 0, content.length);
-                    out.write(content);
-                    out.close();
-                }
-                sevenZArchiveEntry = sevenZFile.getNextEntry();
+    public static void unpackArchive(File fileArchive, String password, Path outputDir) {
+        unpackArchive(fileArchive, password, outputDir, (file, content) -> {
+            try (FileOutputStream out = new FileOutputStream(file)) {
+                out.write(content);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        });
     }
 
+    public static void unpackArchive(File fileArchive, BiConsumer<File, byte[]> fileBiConsumer) {
+        unpackArchive(fileArchive, null, fileBiConsumer);
+    }
 
+    public static void unpackArchive(File fileArchive, String password, BiConsumer<File, byte[]> fileBiConsumer) {
+        unpackArchive(fileArchive, password, null, fileBiConsumer);
+    }
+
+    public static void unpackArchive(File fileArchive, String password, Path outputDir, BiConsumer<File, byte[]> fileBiConsumer) {
+        {
+            try (final SevenZFile sevenZFile = SevenZFile.builder().setFile(fileArchive).setPassword(password == null ? null : password.getBytes(StandardCharsets.UTF_16LE)).get()) {
+// todo только 7 степень сжатия
+                SevenZArchiveEntry sevenZArchiveEntry;
+                sevenZArchiveEntry = sevenZFile.getNextEntry();
+                while (sevenZArchiveEntry != null) {
+
+
+                    if (sevenZArchiveEntry.isDirectory()) {
+                        if (outputDir != null) {
+                            Path entryPath = outputDir.resolve(sevenZArchiveEntry.getName());
+                            Files.createDirectories(entryPath);
+                        }
+                    } else {
+
+                        byte[] content = new byte[(int) sevenZArchiveEntry.getSize()];
+                        sevenZFile.read(content, 0, content.length);
+                        fileBiConsumer.accept(outputDir == null ? new File(sevenZArchiveEntry.getName().startsWith(".") ? sevenZArchiveEntry.getName().substring(2) : sevenZArchiveEntry.getName()) : sevenZArchiveEntry.resolveIn(outputDir).toFile(), content);
+
+                    }
+                    sevenZArchiveEntry = sevenZFile.getNextEntry();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+
+    }
 }

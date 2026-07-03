@@ -15,7 +15,7 @@ import java.util.Objects;
 
 @Slf4j
 @Service
-public class FileService {
+public class FileSaverService {
     private final Map<String, File> files = new HashMap<>();
 
     public String addFile(String name, byte[] body) {

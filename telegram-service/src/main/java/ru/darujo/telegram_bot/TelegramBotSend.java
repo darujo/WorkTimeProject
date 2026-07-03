@@ -29,7 +29,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ru.darujo.dto.information.SendAdminMessage;
 import ru.darujo.model.ChatInfo;
 import ru.darujo.model.MessageSend;
-import ru.darujo.service.FileService;
+import ru.darujo.service.FileSaverService;
 import ru.darujo.service.MessageSendService;
 
 import java.io.File;
@@ -158,7 +158,7 @@ public class TelegramBotSend {
             sendDocument(
                     chatInfo,
                     message.getFileName(),
-                    FileService.getFile(message.toString(), message.getFileName(), message.getFileBody()),
+                    FileSaverService.getFile(message.toString(), message.getFileName(), message.getFileBody()),
                     message.getText());
         } else {
             sendMessage(chatInfo, message.getText());

@@ -24,13 +24,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public class SendService {
     private UserSendRepository userSendRepository;
-    private FileService fileService;
+    private FileSaverService fileSaverService;
     private MessageInformationRepository messageInformationRepository;
     Map<MessageSenderType, SendServiceInt> senderList = new HashMap<>();
 
     @Autowired
-    public void setFileService(FileService fileService) {
-        this.fileService = fileService;
+    public void setFileService(FileSaverService fileSaverService) {
+        this.fileSaverService = fileSaverService;
     }
 
     @Autowired
@@ -60,7 +60,7 @@ public class SendService {
 
     public boolean sendMessage(MessageInformation messageInformation) {
         if (messageInformation.getFileForDisk() != null) {
-            byte[] body = fileService.getFileBody(pathSave + messageInformation.getFileForDisk());
+            byte[] body = fileSaverService.getFileBody(pathSave + messageInformation.getFileForDisk());
             if (body != null && body.length > 0) {
                 return fileSend(messageInformation, messageInformation.getFileForDisk(), body);
             } else {
@@ -97,7 +97,7 @@ public class SendService {
     }
 
     private void saveFile(MessageInformation messageInformation, String file, byte[] body) {
-        fileService.saveFile(pathSave + file, body);
+        fileSaverService.saveFile(pathSave + file, body);
         messageInformation.setText("Не удалось доставить до вас файл ранее. " + messageInformation.getText());
         messageInformation.setFileForDisk(file);
         messageInformationRepository.save(messageInformation);

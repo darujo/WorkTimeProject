@@ -26,8 +26,7 @@
         <module>update-service</module>
         <module>docx</module>
         <module>api-file</module>
-
-
+        <module>file-service</module>
     </modules>
 	<groupId>ru.darujo</groupId>
 	<artifactId>WorkTimeProject</artifactId>

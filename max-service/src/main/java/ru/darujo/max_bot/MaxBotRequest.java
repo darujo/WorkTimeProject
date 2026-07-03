@@ -12,7 +12,7 @@ import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.model.ChatInfo;
 import ru.darujo.model.MessageReceive;
 import ru.darujo.service.CommandType;
-import ru.darujo.service.FileService;
+import ru.darujo.service.FileSaverService;
 import ru.darujo.service.MenuService;
 import ru.darujo.service.MessageReceiveService;
 import ru.max.botapi.core.UpdateHandler;
@@ -32,14 +32,14 @@ public class MaxBotRequest implements UpdateHandler, AutoCloseable {
         this.userServiceIntegration = userServiceIntegration;
     }
 
-    private FileService fileService;
+    private FileSaverService fileSaverService;
 
     private String botName;
 
     @PostConstruct
     public void init() {
-        fileService.addFile("hi", fileService.resourceToFile("hi.jpg"));
-        fileService.addFile("menu", fileService.resourceToFile("menu.jpg"));
+        fileSaverService.addFile("hi", fileSaverService.resourceToFile("hi.jpg"));
+        fileSaverService.addFile("menu", fileSaverService.resourceToFile("menu.jpg"));
 
         botName = maxBotSend.getName();
         messageForAdmin("Бот @" + botName + " запущен");
@@ -47,8 +47,8 @@ public class MaxBotRequest implements UpdateHandler, AutoCloseable {
     }
 
     @Autowired
-    public void setFileService(FileService fileService) {
-        this.fileService = fileService;
+    public void setFileService(FileSaverService fileSaverService) {
+        this.fileSaverService = fileSaverService;
     }
 
     private MessageReceiveService messageReceiveService;
@@ -193,7 +193,7 @@ public class MaxBotRequest implements UpdateHandler, AutoCloseable {
 
     private void commandStart(ChatInfo chatInfo) {
         maxBotSend.sendPhoto(new ChatInfo("AutoHi", chatInfo.getChatId(), chatInfo.getOriginMessageId()),
-                fileService.getFile("hi")
+                fileSaverService.getFile("hi")
                 , """
                         Напишите команду для показа списка мыслей:\s
                          /link - подписаться на уведомления от сервиса учета трудозатрат\s
@@ -217,7 +217,7 @@ public class MaxBotRequest implements UpdateHandler, AutoCloseable {
             log.info(String.valueOf(ex));
         }
         {
-            menuService.getMenu(chatInfo, callback.payload(), fileService.getFile("menu"));
+            menuService.getMenu(chatInfo, callback.payload(), fileSaverService.getFile("menu"));
         }
     }
 
