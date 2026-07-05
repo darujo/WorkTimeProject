@@ -19,4 +19,8 @@ public class FileModel {
     private String fileForDisk;
     @Column(name = "user_name")
     private String userName;
+    @Column(name = "file_name")
+    private String fileName;
+    @Column(name = "size")
+    private Long size;
 }

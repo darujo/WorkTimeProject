@@ -29,6 +29,7 @@ public class ResultFile {
             String fileName;
             fileName = "archive.7z";
             File fileArch = new File(fileName);
+            fileArch.deleteOnExit();
             sevenZOutputFile = ArchiveService.createArchive(fileArch);
             ArchiveService.addFileArchive(sevenZOutputFile, this.file.toPath(), this.content);
             this.file = fileArch;

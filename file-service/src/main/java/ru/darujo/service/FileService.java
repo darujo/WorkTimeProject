@@ -3,10 +3,12 @@ package ru.darujo.service;
 import jakarta.activation.MimetypesFileTypeMap;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.sevenz.SevenZOutputFile;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.model.FileModel;
 import ru.darujo.repository.FileModelRepository;
+import ru.darujo.specifications.Specifications;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,7 +36,6 @@ public class FileService {
     private FileModelRepository fileModelRepository;
 
     public List<Long> saveFiles(String username, String objectType, String objectId, List<MultipartFile> multipartFiles) {
-
         String dir = pathSaveReport + File.separator + objectType + File.separator + objectId;
         File directory = new File(dir);
         boolean created = directory.mkdirs();
@@ -45,7 +47,8 @@ public class FileService {
         List<Long> fileIdList = new ArrayList<>();
         if (multipartFiles != null) {
             multipartFiles.forEach(multipartFile -> {
-                        FileModel fileModel = fileModelRepository.save(new FileModel(null, "", username));
+                log.warn(FileUtils.byteCountToDisplaySize(multipartFile.getSize()));
+                FileModel fileModel = fileModelRepository.save(new FileModel(null, "", username, multipartFile.getName(), multipartFile.getSize()));
                         fileIdList.add(fileModel.getId());
                         fileModel.setFileForDisk(dir + File.separator + fileModel.getId() + ".7z");
                         fileModelRepository.save(fileModel);
@@ -58,13 +61,10 @@ public class FileService {
                     }
             );
         }
-
         return fileIdList;
     }
 
-    public void getFile(List<Long> fileIdList, DeferredResult<ResponseEntity<Resource>> deferredResult) {
-
-
+    public void getFiles(List<Long> fileIdList, DeferredResult<ResponseEntity<Resource>> deferredResult) {
         fileIdList.forEach(fileId -> {
             File fileAdd = getFile(fileId);
             ArchiveService.unpackArchive(
@@ -108,5 +108,21 @@ public class FileService {
     @Autowired
     public void setFileModelRepository(FileModelRepository fileModelRepository) {
         this.fileModelRepository = fileModelRepository;
+    }
+
+    public void delete(String username, List<Long> fileId) {
+        if (getDocumentList(null, null, fileId).stream().allMatch(fileModel -> fileModel.getUserName().equals(username))) {
+            fileModelRepository.deleteAllById(fileId);
+        } else {
+            throw new ResourceNotFoundRunTime("Часть файлов принадлежит не вам. В удаление отказано.");
+        }
+    }
+
+    public List<FileModel> getDocumentList(String objectType, String objectId, List<Long> fileId) {
+        Specification<FileModel> sp = Specification.unrestricted();
+        sp = Specifications.eq(sp, "id", fileId);
+        sp = Specifications.eq(sp, "objectType", objectType);
+        sp = Specifications.eq(sp, "objectId", objectId);
+        return fileModelRepository.findAll(sp);
     }
 }
