@@ -329,6 +329,15 @@ angular.module('workTimeService').config(function ($routeProvider) {
                 }]
             }
         })
+        .when('/file', {
+            templateUrl: 'file/file.html?ver='.toLowerCase() + ver,
+            controller: 'fileController',
+            resolve: {
+                LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load('file_upload'); // Resolve promise and load before view
+                }]
+            }
+        })
 
         .otherwise({
             redirectTo: '/'

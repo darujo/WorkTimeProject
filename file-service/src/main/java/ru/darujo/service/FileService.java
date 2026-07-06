@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class FileService {
         List<Long> fileIdList = new ArrayList<>();
         if (multipartFiles != null) {
             multipartFiles.forEach(multipartFile -> {
-                FileModel fileModel = fileModelRepository.save(new FileModel(null, objectType, objectId, "", username, multipartFile.getOriginalFilename(), multipartFile.getSize(), false));
+                FileModel fileModel = fileModelRepository.save(new FileModel(null, objectType, objectId, "", username, multipartFile.getOriginalFilename(), multipartFile.getSize(), false, LocalDateTime.now()));
                         fileIdList.add(fileModel.getId());
                         fileModel.setFileForDisk(dir + File.separator + fileModel.getId() + ".7z");
                         fileModelRepository.save(fileModel);
@@ -135,9 +136,9 @@ public class FileService {
         sp = Specifications.eq(sp, "objectId", objectId);
         List<FileModel> fileModelList = fileModelRepository.findAll(sp);
         fileModelList.parallelStream().forEach(fileModel -> {
-            if (!fileModel.getDelete() && !Files.exists(Path.of(fileModel.getFileForDisk()))) {
+            if ((fileModel.getDelete() == null || !fileModel.getDelete()) && !Files.exists(Path.of(fileModel.getFileForDisk()))) {
                 deleteLogicalFile(fileModel);
-            } else if (fileModel.getDelete() && Files.exists(Path.of(fileModel.getFileForDisk()))) {
+            } else if (fileModel.getDelete() != null && fileModel.getDelete() && Files.exists(Path.of(fileModel.getFileForDisk()))) {
                 setDeleteFile(fileModel, false);
             }
         });

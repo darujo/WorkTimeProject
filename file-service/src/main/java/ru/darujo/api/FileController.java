@@ -26,7 +26,7 @@ public class FileController {
     @PostMapping("")
     public List<Long> saveFile(@RequestParam String objectType,
                                @RequestParam String objectId,
-                               @RequestPart("file") List<MultipartFile> files,
+                               @RequestPart(name = "file", required = false) List<MultipartFile> files,
                                @RequestHeader String username) {
 
         return fileService.saveFiles(username, objectType, objectId, files);

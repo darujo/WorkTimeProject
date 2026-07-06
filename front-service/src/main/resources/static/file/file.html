@@ -1,0 +1,51 @@
+<div id="UserList" class="head_text_elem">
+    <h1>Отправка уведомлений</h1>
+
+    <table>
+        <tr>
+            <td class="table_head2">Файл</td>
+            <td class="table_head2">Размер</td>
+            <td class="table_head2">Потерян</td>
+            <td class="table_head2"></td>
+            <!--            <td class="table_head2"></td>-->
+
+        </tr>
+        <tbody>
+        <tr ng-repeat="file in FileList">
+
+            <td>{{file.fileName}}</td>
+            <td>{{file.size}}</td>
+            <td>{{file.delete}}</td>
+            <td>
+                <label for="RoleActive"></label>
+                <input id="RoleActive" class="vvod check_box_td" type="checkbox" ng-model="file.active"/>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="wait_1_2">
+        <img ng-if="load" src="../gif/wait1_2.gif" alt="Лучше ждите" width="300" height="300"/>
+    </div>
+
+    <form ng-submit="sendFile()">
+        <div class="horiz">
+            <button type="submit" class="head_button">Отправить</button>
+            <button type="button" class="head_button" ng-click="backUser()">Назад</button>
+        </div>
+        <div ng-if="sendFileAll" class="div_process">
+            <div class="div_percent" ng-style="getProcess()">
+                <p class="div_process_text">{{uploadProgress}}</p>
+            </div>
+        </div>
+        <div class="horiz">
+            <label for="file1">Выберите файл:</label>
+
+            <div class="block-list">
+                <input type="file" id="file1" multiple="multiple" class="file-input" accept="*.*"
+                       file-model="FormFile.files"/>
+
+            </div>
+
+        </div>
+    </form>
+</div>

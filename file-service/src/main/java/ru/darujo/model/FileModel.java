@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -29,5 +31,7 @@ public class FileModel {
     private Long size;
     @Column(name = "delete")
     private Boolean delete;
+    @Column(name = "time_create")
+    private LocalDateTime create_time;
 
 }
