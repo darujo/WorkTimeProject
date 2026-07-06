@@ -15,6 +15,10 @@ public class FileModel {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "object_type")
+    private String objectType;
+    @Column(name = "object_id")
+    private String objectId;
     @Column(name = "file_for_disk")
     private String fileForDisk;
     @Column(name = "user_name")
@@ -23,4 +27,7 @@ public class FileModel {
     private String fileName;
     @Column(name = "size")
     private Long size;
+    @Column(name = "delete")
+    private Boolean delete;
+
 }

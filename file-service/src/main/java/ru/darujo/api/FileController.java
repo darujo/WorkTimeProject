@@ -27,7 +27,7 @@ public class FileController {
     public List<Long> saveFile(@RequestParam String objectType,
                                @RequestParam String objectId,
                                @RequestPart("file") List<MultipartFile> files,
-                               @RequestHeader(required = false) String username) {
+                               @RequestHeader String username) {
 
         return fileService.saveFiles(username, objectType, objectId, files);
 
@@ -41,9 +41,10 @@ public class FileController {
     }
 
     @GetMapping("/documents")
-    public List<FileDto> getDocList(@RequestParam String objectType,
-                                    @RequestParam String objectId) {
-        return fileService.getDocumentList(objectType, objectId, null)
+    public List<FileDto> getDocList(@RequestParam(required = false) String objectType,
+                                    @RequestParam(required = false) String objectId,
+                                    @RequestParam(required = false) List<Long> fileId) {
+        return fileService.getDocumentList(objectType, objectId, fileId)
                 .stream()
                 .map(FileConverter::getFileModel).toList();
     }

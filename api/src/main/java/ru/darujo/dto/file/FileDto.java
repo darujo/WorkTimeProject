@@ -5,7 +5,11 @@ public class FileDto {
     private String fileForDisk;
     private String userName;
     private String fileName;
-    private Long size;
+    private String size;
+    private Boolean delete;
+    private String objectType;
+    private String objectId;
+
 
     @SuppressWarnings("unused")
     public Long getId() {
@@ -28,19 +32,37 @@ public class FileDto {
     }
 
     @SuppressWarnings("unused")
-    public Long getSize() {
+    public String getSize() {
         return size;
+    }
+
+    @SuppressWarnings("unused")
+    public Boolean getDelete() {
+        return delete;
+    }
+
+    @SuppressWarnings("unused")
+    public String getObjectType() {
+        return objectType;
+    }
+
+    @SuppressWarnings("unused")
+    public String getObjectId() {
+        return objectId;
     }
 
     @SuppressWarnings("unused")
     public FileDto() {
     }
 
-    public FileDto(Long id, String fileForDisk, String userName, String fileName, Long size) {
+    public FileDto(Long id, String objectType, String objectId, String fileForDisk, String userName, String fileName, String size, Boolean delete) {
         this.id = id;
         this.fileForDisk = fileForDisk;
         this.userName = userName;
         this.fileName = fileName;
         this.size = size;
+        this.delete = delete;
+        this.objectType = objectType;
+        this.objectId = objectId;
     }
 }

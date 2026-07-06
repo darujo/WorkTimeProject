@@ -3,7 +3,6 @@ package ru.darujo.service;
 import jakarta.activation.MimetypesFileTypeMap;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.sevenz.SevenZOutputFile;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -23,12 +22,14 @@ import ru.darujo.specifications.Specifications;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
 @Slf4j
+@Service
 public class FileService {
 
     @Value("${file.save-into}")
@@ -47,8 +48,7 @@ public class FileService {
         List<Long> fileIdList = new ArrayList<>();
         if (multipartFiles != null) {
             multipartFiles.forEach(multipartFile -> {
-                log.warn(FileUtils.byteCountToDisplaySize(multipartFile.getSize()));
-                FileModel fileModel = fileModelRepository.save(new FileModel(null, "", username, multipartFile.getName(), multipartFile.getSize()));
+                FileModel fileModel = fileModelRepository.save(new FileModel(null, objectType, objectId, "", username, multipartFile.getOriginalFilename(), multipartFile.getSize(), false));
                         fileIdList.add(fileModel.getId());
                         fileModel.setFileForDisk(dir + File.separator + fileModel.getId() + ".7z");
                         fileModelRepository.save(fileModel);
@@ -67,10 +67,15 @@ public class FileService {
     public void getFiles(List<Long> fileIdList, DeferredResult<ResponseEntity<Resource>> deferredResult) {
         fileIdList.forEach(fileId -> {
             File fileAdd = getFile(fileId);
-            ArchiveService.unpackArchive(
-                    fileAdd,
-                    this::getResult);
+            try {
+                ArchiveService.unpackArchive(
+                        fileAdd,
+                        this::getResult);
+            } catch (NoSuchFileException ex) {
+                log.error(ex.getMessage(), ex);
+                deleteLogicalFile(fileId);
 
+            }
         });
 
         ResultFile res = resultFile.get();
@@ -89,25 +94,30 @@ public class FileService {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    private void deleteLogicalFile(Long fileId) {
+        fileModelRepository.findById(fileId).ifPresent(this::deleteLogicalFile);
+    }
+
+    private void deleteLogicalFile(FileModel fileModel) {
+        setDeleteFile(fileModel, true);
+    }
+
+    private void setDeleteFile(FileModel fileModel, boolean isDelete) {
+        fileModel.setDelete(isDelete);
+        fileModelRepository.save(fileModel);
     }
 
     ThreadLocal<ResultFile> resultFile = ThreadLocal.withInitial(ResultFile::new);
 
     private void getResult(File fileUnpack, byte[] content) {
-
         resultFile.get().setFile(fileUnpack, content);
-
     }
 
     private File getFile(Long fileId) {
         FileModel fileModel = fileModelRepository.findById(fileId).orElseThrow(() -> new ResourceNotFoundRunTime("Не найден файл."));
         return new File(fileModel.getFileForDisk());
-    }
-
-    @Autowired
-    public void setFileModelRepository(FileModelRepository fileModelRepository) {
-        this.fileModelRepository = fileModelRepository;
     }
 
     public void delete(String username, List<Long> fileId) {
@@ -120,9 +130,22 @@ public class FileService {
 
     public List<FileModel> getDocumentList(String objectType, String objectId, List<Long> fileId) {
         Specification<FileModel> sp = Specification.unrestricted();
-        sp = Specifications.eq(sp, "id", fileId);
+        sp = Specifications.in(sp, "id", fileId);
         sp = Specifications.eq(sp, "objectType", objectType);
         sp = Specifications.eq(sp, "objectId", objectId);
-        return fileModelRepository.findAll(sp);
+        List<FileModel> fileModelList = fileModelRepository.findAll(sp);
+        fileModelList.parallelStream().forEach(fileModel -> {
+            if (!fileModel.getDelete() && !Files.exists(Path.of(fileModel.getFileForDisk()))) {
+                deleteLogicalFile(fileModel);
+            } else if (fileModel.getDelete() && Files.exists(Path.of(fileModel.getFileForDisk()))) {
+                setDeleteFile(fileModel, false);
+            }
+        });
+        return fileModelList;
+    }
+
+    @Autowired
+    public void setFileModelRepository(FileModelRepository fileModelRepository) {
+        this.fileModelRepository = fileModelRepository;
     }
 }

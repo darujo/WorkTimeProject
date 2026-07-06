@@ -8,6 +8,7 @@ import org.tukaani.xz.LZMA2Options;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -123,7 +124,7 @@ public class ArchiveService {
         }
     }
 
-    public static void unpackArchive(File fileArchive, String password, Path outputDir) {
+    public static void unpackArchive(File fileArchive, String password, Path outputDir) throws NoSuchFileException {
         unpackArchive(fileArchive, password, outputDir, (file, content) -> {
             try (FileOutputStream out = new FileOutputStream(file)) {
                 out.write(content);
@@ -133,15 +134,15 @@ public class ArchiveService {
         });
     }
 
-    public static void unpackArchive(File fileArchive, BiConsumer<File, byte[]> fileBiConsumer) {
+    public static void unpackArchive(File fileArchive, BiConsumer<File, byte[]> fileBiConsumer) throws NoSuchFileException {
         unpackArchive(fileArchive, null, fileBiConsumer);
     }
 
-    public static void unpackArchive(File fileArchive, String password, BiConsumer<File, byte[]> fileBiConsumer) {
+    public static void unpackArchive(File fileArchive, String password, BiConsumer<File, byte[]> fileBiConsumer) throws NoSuchFileException {
         unpackArchive(fileArchive, password, null, fileBiConsumer);
     }
 
-    public static void unpackArchive(File fileArchive, String password, Path outputDir, BiConsumer<File, byte[]> fileBiConsumer) {
+    public static void unpackArchive(File fileArchive, String password, Path outputDir, BiConsumer<File, byte[]> fileBiConsumer) throws NoSuchFileException {
         {
             try (final SevenZFile sevenZFile = SevenZFile.builder().setFile(fileArchive).setPassword(password == null ? null : password.getBytes(StandardCharsets.UTF_16LE)).get()) {
 // todo только 7 степень сжатия
@@ -164,9 +165,12 @@ public class ArchiveService {
                     }
                     sevenZArchiveEntry = sevenZFile.getNextEntry();
                 }
+            } catch (NoSuchFileException exception) {
+                throw exception;
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+
         }
 
 
