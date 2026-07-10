@@ -116,7 +116,7 @@ public class MaxBotSend {
 
 
     public SendMessageResult sendMessage(ChatInfo chatInfo, String text, List<AttachmentRequest> menu) {
-        SendMessageResult messageSend = api.sendMessage(new NewMessageBody(text, menu, null, null, null))
+        SendMessageResult messageSend = api.sendMessage(new NewMessageBody(text, menu, null, null, TextFormat.HTML))
                 .chatId(Long.parseLong(chatInfo.getChatId()))
                 .execute();
 

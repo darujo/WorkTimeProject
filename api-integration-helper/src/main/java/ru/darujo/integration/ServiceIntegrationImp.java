@@ -80,7 +80,7 @@ public abstract class ServiceIntegrationImp<T extends Enum<?>> implements Servic
         return clientResponse
                 .bodyToMono(ErrorResponse.class)
                 .flatMap(error -> {
-//                            log.error("{} {}", message, error.getMessage());
+                    log.error(message, error.getMessage(), error);
                             return Mono.error(new ResourceNotFoundRunTime(message + " " + error.getMessage()));
                         }
 
