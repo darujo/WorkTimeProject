@@ -12,6 +12,7 @@ import ru.darujo.dto.information.SendMessage;
 import ru.darujo.dto.information.SendServiceInt;
 import ru.darujo.dto.information.UserSendMessage;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
+import ru.darujo.type.MessageSenderType;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -86,5 +87,10 @@ public class DefaultEmailService implements SendServiceInt {
             }
         }
         return flagOk;
+    }
+
+    @Override
+    public MessageSenderType getMessageSenderType() {
+        return MessageSenderType.Email;
     }
 }

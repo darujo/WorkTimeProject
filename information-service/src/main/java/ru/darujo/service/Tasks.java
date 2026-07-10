@@ -138,9 +138,10 @@ public class Tasks {
             if (!messageInformationService.sendMesNotSend()) {
                 ScheduleService.flagStartService = false;
                 ScheduleService.getINSTANCE().sendMes();
-            } else {
-                ScheduleService.flagStartService = false;
             }
+//            else {
+//                ScheduleService.flagStartService = false;
+//            }
         });
     }
 

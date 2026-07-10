@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -39,18 +38,12 @@ public class SendService {
     }
 
     @Autowired
-    public void setTelegramServiceIntegration(SendServiceInt telegramServiceIntegration) {
-        senderList.put(MessageSenderType.Telegram, telegramServiceIntegration);
+    public void setSendServiceInt(List<SendServiceInt> sendServiceIntList) {
+        sendServiceIntList.forEach(sendServiceInt ->
+                senderList.put(sendServiceInt.getMessageSenderType(), sendServiceInt));
     }
 
     @Autowired
-    @Qualifier("mailServiceIntegration")
-    public void setMailServiceIntegration(SendServiceInt mailServiceIntegration) {
-        senderList.put(MessageSenderType.Email, mailServiceIntegration);
-    }
-
-    @Autowired
-
     public void setMessageInformationRepository(MessageInformationRepository messageInformationRepository) {
         this.messageInformationRepository = messageInformationRepository;
     }

@@ -3,8 +3,9 @@ package ru.darujo.service;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class RunnableNotException implements Runnable{
+public class RunnableNotException implements Runnable {
     private final Runnable runnable;
+
     public RunnableNotException(Runnable runnable) {
         this.runnable = runnable;
     }
@@ -13,9 +14,11 @@ public class RunnableNotException implements Runnable{
     public void run() {
         try {
             runnable.run();
-        }catch (Exception ex){
+        } catch (RuntimeException ex) {
+            log.error(ex.getMessage(), ex);
+        } catch (Exception ex) {
             log.error(Boolean.toString(Thread.interrupted()));
-            if(Thread.interrupted()){
+            if (Thread.interrupted()) {
                 throw new RuntimeException("Команда на завершение");
             }
             log.error(ex.getMessage(), ex);
