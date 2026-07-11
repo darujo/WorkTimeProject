@@ -249,12 +249,14 @@ public class WorkService {
 
     private String getMesChangRated(String login, WorkLittleInterface work, WorkProjectInter workProject, String projectName) {
         return workProject.getRated() ?
-                String.format("%s проставил <u><b>оценка выполнена</b></u> по ЗИ %s %s в проекте %s оценка %s",
+                String.format("%s проставил <u><b>оценка выполнена</b></u> по ЗИ %s %s в проекте %s оценка %s.%s",
                         login,
                         work.getCodeSap(),
                         UrlWorkTime.getUrlRate(work.getId(), work.getName()),
                         projectName,
-                        UrlWorkTime.getUrlRateAll(work.getId(), "ЗИ целиком")) :
+                        UrlWorkTime.getUrlRateAll(work.getId(), "ЗИ целиком"),
+                        work.getWorkParent() == null ? "" : String.format(" Оценка по охватывающей ЗИ %s.",
+                                UrlWorkTime.getUrlRateAll(work.getWorkParent().getId(), work.getWorkParent().getName()))) :
                 String.format("%s <u><b>отменил оценку</b></u> по ЗИ %s %s в проекте %s оценка %s",
                         login,
                         work.getCodeSap(),
