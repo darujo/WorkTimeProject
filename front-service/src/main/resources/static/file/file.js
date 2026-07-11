@@ -21,18 +21,13 @@ fileApp.controller('fileController', function ($scope, $http, $location) {
         const constPatchFile = window.location.origin + '/file-service/v1/file';
         $scope.FormFile = {
             files: [],
-            objectType: "hobby",
-            objectId: "12354first3",
+            objectType: null,
+            objectId: null,
             objectName: "Имя объекта"
 
         }
-
-
-        // $scope.sendMessageForAll = false;
-        // $scope.onFileSelected = function(event) {
-        //     console.log(event)
-        //     this.fileToUpload = event.item(0);
-        // }
+        $location.parserFilter($scope.FormFile);
+        console.log("$scope.FormFile", $scope.FormFile)
 
         $scope.sendFile = function () {
             const formData = new FormData();
@@ -109,7 +104,13 @@ fileApp.controller('fileController', function ($scope, $http, $location) {
         let getFiles = function () {
             console.log("getFiles");
 
-            $http.get(constPatchFile + "/documents")
+            $http.get(constPatchFile + "/documents",
+                {
+                    params: {
+                        objectType: $scope.FormFile.objectType,
+                        objectId: $scope.FormFile.objectId
+                    }
+                })
                 .then(function (response) {
                     $scope.FileList = response.data;
                     console.log($scope.FileList);
@@ -171,12 +172,7 @@ fileApp.controller('fileController', function ($scope, $http, $location) {
                 let fName = "response.zip";
                 const contentDisposition = response.headers('Content-Disposition');
                 if (contentDisposition) {
-                    // const fileNameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-                    // const matches = fileNameRegex.exec(contentDisposition);
-                    // if (matches != null && matches[1]) {
-                    //     fName = matches[1].replace(/['"]/g, '');
-                    // }
-                    const utf8FilenameRegex = /filename\*=UTF-8''([\w%\-\.]+)(?:; ?|$)/i;
+                    const utf8FilenameRegex = /filename\*=UTF-8''([\w%\-.]+)(?:; ?|$)/i;
                     const asciiFilenameRegex = /^filename=(["']?)(.*?[^\\])\1(?:; ?|$)/i;
 
                     let fileName;

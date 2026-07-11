@@ -356,6 +356,9 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                     console.log(key);
                     console.log(value);
                     filter[key] = parseInt(value);
+                    if (isNaN(filter[key])) {
+                        filter[key] = value;
+                    }
                 } else if (key.toLowerCase().indexOf("date") !== -1) {
                     console.log(key);
 
