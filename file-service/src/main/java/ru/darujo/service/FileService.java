@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import ru.darujo.specifications.Specifications;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -65,7 +67,7 @@ public class FileService {
         return fileIdList;
     }
 
-    public void getFiles(List<Long> fileIdList, DeferredResult<ResponseEntity<Resource>> deferredResult) {
+    public ResponseEntity<Resource> getFiles(List<Long> fileIdList) {
         fileIdList.forEach(fileId -> {
             File fileAdd = getFile(fileId);
             try {
@@ -86,15 +88,27 @@ public class FileService {
 
         try {
             InputStreamResource resource = res.getISR();
-            deferredResult.setResult(ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(contentType))
-                    .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\"" + res.getFile().getName() + "\"")
-                    .contentLength(res.getLength())
-                    .body(resource));
+
+            ContentDisposition contentDisposition = ContentDisposition.attachment().filename(res.getFile().getName(), StandardCharsets.UTF_8).build();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentDisposition(contentDisposition);
+            headers.setContentLength(res.getLength());
+            headers.setContentType(MediaType.parseMediaType(contentType));
+            return ResponseEntity.ok()
+//                    .contentType(MediaType.parseMediaType(contentType))
+
+//                    .contentLength(res.getLength())
+//                    .header(HttpHeaders.CONTENT_DISPOSITION,
+//                            "attachment; filename=\"" + res.getFile().getName() + "\"")
+                    .headers(headers)
+                    .body(resource);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void getFiles(List<Long> fileIdList, DeferredResult<ResponseEntity<Resource>> deferredResult) {
+        deferredResult.setResult(getFiles(fileIdList));
     }
 
     private void deleteLogicalFile(Long fileId) {
