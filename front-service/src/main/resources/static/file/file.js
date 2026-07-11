@@ -31,8 +31,6 @@ fileApp.controller('fileController', function ($scope, $http, $location) {
 
         $scope.sendFile = function () {
             const formData = new FormData();
-            // formData.append('file', $scope.uploadedFile);
-            // console.log($scope.uploadedFile)
             console.log($scope.FormFile.files)
             console.log(formData);
             for (let i = 0; i < $scope.FormFile.files.length; i++) {
@@ -139,7 +137,7 @@ fileApp.controller('fileController', function ($scope, $http, $location) {
                 getDocument(fileId)
             } else {
                 if ($scope.FileList.length > 0) {
-                    let downloadAll = confirm("Скачать все?");
+                    let downloadAll = confirm("Не выбран не один файл. Скачать все?");
                     if (downloadAll) {
                         for (let i = 0; i < $scope.FileList.length; i++) {
                             fileId.push($scope.FileList[i].id)

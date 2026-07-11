@@ -32,8 +32,8 @@
     </div>
 
     <form ng-submit="sendFile()">
+
         <div class="horiz">
-            <button type="submit" class="head_button">Отправить</button>
             <button type="button" class="head_button" ng-click="getListDocCheckbox()">Скачать файлы</button>
         </div>
         <div ng-if="sendFileAll" class="div_process">
@@ -52,9 +52,12 @@
                        accept="*.*"
                        required
                        file-model="FormFile.files"/>
-
+                <p ng-repeat="file in FormFile.files">{{file.name}}</p>
             </div>
 
+        </div>
+        <div class="horiz">
+            <button type="submit" class="head_button">Отправить</button>
         </div>
     </form>
 </div>

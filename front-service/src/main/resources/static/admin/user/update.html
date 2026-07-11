@@ -38,7 +38,7 @@
             <div class="block-list">
                 <input type="file" id="file1" class="file-input" accept=".7z, .7z.*" file-model="FormFile.files"
                        multiple="multiple"/>
-
+                <p ng-repeat="file in FormFile.files">{{file.name}}</p>
             </div>
 
         </div>
