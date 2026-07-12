@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
@@ -136,8 +137,15 @@ public class FileService {
     }
 
     public void delete(String username, List<Long> fileId) {
-        if (getDocumentList(null, null, fileId).stream().allMatch(fileModel -> fileModel.getUserName().equals(username))) {
-            fileModelRepository.deleteAllById(fileId);
+        List<FileModel> fileModelList = getDocumentList(null, null, fileId);
+        if (fileModelList.stream().allMatch(fileModel -> fileModel.getUserName().equals(username))) {
+            fileModelList.forEach(fileModel -> {
+                File file = new File(fileModel.getFileForDisk());
+                if (file.delete()) {
+                    fileModelRepository.deleteById(fileModel.getId());
+                }
+            });
+
         } else {
             throw new ResourceNotFoundRunTime("Часть файлов принадлежит не вам. В удаление отказано.");
         }
@@ -148,7 +156,7 @@ public class FileService {
         sp = Specifications.in(sp, "id", fileId);
         sp = Specifications.eq(sp, "objectType", objectType);
         sp = Specifications.eq(sp, "objectId", objectId);
-        List<FileModel> fileModelList = fileModelRepository.findAll(sp);
+        List<FileModel> fileModelList = fileModelRepository.findAll(sp, Sort.by(Sort.Direction.DESC, "timeCreate"));
         fileModelList.parallelStream().forEach(fileModel -> {
             if ((fileModel.getDelete() == null || !fileModel.getDelete()) && !Files.exists(Path.of(fileModel.getFileForDisk()))) {
                 deleteLogicalFile(fileModel);

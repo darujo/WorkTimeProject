@@ -32,6 +32,6 @@ public class FileModel {
     @Column(name = "delete")
     private Boolean delete;
     @Column(name = "time_create")
-    private LocalDateTime create_time;
+    private LocalDateTime timeCreate;
 
 }

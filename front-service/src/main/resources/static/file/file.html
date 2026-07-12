@@ -5,7 +5,7 @@
         <tr>
             <td class="table_head2">Файл</td>
             <td class="table_head2">Размер</td>
-            <td class="table_head2">Потерян</td>
+            <td class="table_head2"></td>
             <td class="table_head2"></td>
             <!--            <td class="table_head2"></td>-->
 
@@ -14,16 +14,22 @@
         <tr ng-repeat="file in FileList">
 
             <td>
-                <button class="button_table" ng-click="getOneDoc(file.id);">
+                <button class="button_table_del text_left" ng-click="getOneDoc(file.id);">
                     {{file.fileName}}
                 </button>
             </td>
             <td>{{file.size}}</td>
-            <td>{{file.delete}}</td>
+            <td>
+                <button class="button_table_del" ng-click="deleteDocument(file.id)" ng-style="getStyle(task.id)">
+                    <img src="../gif/del.png" alt="удалить" width="20" height="20"/>
+                </button>
+            </td>
             <td>
                 <label for="RoleActive"></label>
                 <input id="RoleActive" class="vvod check_box_td" type="checkbox" ng-model="file.active"/>
             </td>
+
+            <td ng-if="file.delete">Файл потерян обратитесь к администратору</td>
         </tr>
         </tbody>
     </table>

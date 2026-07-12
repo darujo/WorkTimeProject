@@ -82,7 +82,7 @@
         </select>
     </div>
     <ul class="container">
-        <li class="nav-item"><a class="nav-link" href="#!/work_stage">Просмотр статусо по ЗИ</a></li>
+        <li class="nav-item"><a class="nav-link" href="#!/work_stage">Просмотр статуса по ЗИ</a></li>
         <li class="nav-item" ng-if="rightObj.Edit"><a class="nav-link" href="#!/work_stage_edit">Изменение статусов по
             ЗИ</a></li>
     </ul>
@@ -158,7 +158,11 @@
             <td class="sticky-col first-col-1">{{work.codeSap}}</td>
             <td class="sticky-col second-col-1">{{work.codeZI}}</td>
             <td class="text_left sticky-col three-col-1">
+                <button class="button_table_clip" ng-click="viewAttachment(work)">
+                    <img src="../gif/clip.png" alt="Вложения" width="30" height="30"/>
+                </button>
                 <button ng-click="addTime(work.id)">{{work.name}}</button>
+
             </td>
             <td>
                 <label for="RatedTd"></label>

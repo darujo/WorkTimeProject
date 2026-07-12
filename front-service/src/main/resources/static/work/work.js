@@ -195,6 +195,17 @@ angular.module('workTimeService').controller('workController', function ($scope,
 
     };
 
+    $scope.viewAttachment = function (work) {
+        console.log("viewAttachment")
+        $location
+            .path('/file')
+            .search({
+                objectType: "work",
+                objectId: work.id,
+                objectName: work.codeSap + " " + work.name
+            });
+
+    }
     $scope.editWork = function (workId) {
         $http.get(constPatchWork + "/works/" + workId)
             .then(function (response) {

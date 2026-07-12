@@ -17,8 +17,9 @@ fileApp.directive('fileModel', ['$parse', function ($parse) {
     };
 }]);
 
-fileApp.controller('fileController', function ($scope, $http, $location) {
-        const constPatchFile = window.location.origin + '/file-service/v1/file';
+fileApp.controller('fileController', function ($scope, $http, $location, $routeParams) {
+    console.log("$routeParams", $routeParams)
+    const constPatchFile = window.location.origin + '/file-service/v1/file';
         $scope.FormFile = {
             files: [],
             objectType: null,
@@ -26,7 +27,8 @@ fileApp.controller('fileController', function ($scope, $http, $location) {
             objectName: "Имя объекта"
 
         }
-        $location.parserFilter($scope.FormFile);
+    // $location.parserFilter($scope.FormFile);
+    $scope.FormFile = $routeParams;
         console.log("$scope.FormFile", $scope.FormFile)
 
         $scope.sendFile = function () {
@@ -207,6 +209,32 @@ fileApp.controller('fileController', function ($scope, $http, $location) {
                 }
             });
         };
+
+    $scope.deleteDocument = function (list) {
+        console.log("deleteDocument");
+        console.log(list)
+        let deleteOk = confirm("Хотите удалить файл без возвратно?");
+        if (deleteOk) {
+
+            // window.location = constPatchFile +'/document?' + list;
+            $http({
+                url: constPatchFile + "/document",
+                method: "delete",
+                params: {
+                    fileId: list
+                }
+            }).then(function (response) {
+                console.log(response)
+                getFiles();
+            }, function errorCallback(response) {
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                    //     alert(response.data.message);
+                }
+            });
+        }
+    };
+
         getFiles();
         console.log("$scope.FormFile.objectType", $scope.FormFile.objectType, $scope.FormFile.objectId);
         $scope.backUser = function () {
