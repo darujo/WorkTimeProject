@@ -29,7 +29,8 @@ import javax.net.ssl.SSLException;
                 WorkServiceProperty.class,
                 WorkTimeServiceProperty.class,
                 FrontServiceProperty.class,
-                GateWayServiceProperty.class
+                GateWayServiceProperty.class,
+                FileServiceProperty.class
         }
 
 )
@@ -118,6 +119,18 @@ public class AppConfigIntegration extends WebClientConfig {
             @Override
             public ServiceType getServiceType() {
                 return ServiceType.GATE_WAY;
+            }
+        };
+    }
+
+    //Front
+    @Bean(name = "fileServiceIntegration")
+    @ConditionalOnBooleanProperty(prefix = "integration.file-service", name = "enable")
+    public ServiceIntegrationImp<ServiceType> fileServiceIntegration(FileServiceProperty fileServiceProperty) {
+        return new ServiceIntegrationImp<>(webClient(fileServiceProperty)) {
+            @Override
+            public ServiceType getServiceType() {
+                return ServiceType.FILE;
             }
         };
     }
