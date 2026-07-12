@@ -1,6 +1,5 @@
 package ru.darujo.service;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -22,17 +21,6 @@ public class DefaultEmailService implements SendServiceInt {
 
     @Value("${spring.mail.username}")
     private String senderEmail;
-
-    @PostConstruct
-    public void init() {
-        String[] toAddress = new String[1];
-        toAddress[0] = "radies@rambler.ru";
-        try {
-            sendSimpleEmail(toAddress, "Запуск", "тест");
-        } catch (ResourceNotFoundRunTime ex) {
-            log.error(ex.getMessage(), ex);
-        }
-    }
 
     public JavaMailSender emailSender;
 
