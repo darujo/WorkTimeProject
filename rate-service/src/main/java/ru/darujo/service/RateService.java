@@ -3,6 +3,7 @@ package ru.darujo.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.darujo.convertor.WorkCriteriaConvertor;
 import ru.darujo.convertor.WorkStageConvertor;
 import ru.darujo.convertor.WorkTypeConvertor;
@@ -34,26 +35,6 @@ public class RateService {
     private WorkCriteriaService workCriteriaService;
     private WorkTypeService workTypeService;
     private WorkServiceIntegrationImp workServiceIntegration;
-
-    @Autowired
-    public void setUserServiceIntegration(UserServiceIntegrationImp userServiceIntegration) {
-        this.userServiceIntegration = userServiceIntegration;
-    }
-
-    @Autowired
-    public void setWorkStageService(WorkStageService workStageService) {
-        this.workStageService = workStageService;
-    }
-
-    @Autowired
-    public void setWorkCriteriaService(WorkCriteriaService workCriteriaService) {
-        this.workCriteriaService = workCriteriaService;
-    }
-
-    @Autowired
-    public void setWorkTypeService(WorkTypeService workTypeService) {
-        this.workTypeService = workTypeService;
-    }
 
     public Float getTimeStageNotAnalise(List<Long> workIdList, Long projectId) {
         AtomicReference<Float> timeStage = new AtomicReference<>();
@@ -275,7 +256,6 @@ public class RateService {
             workStageDtoTotal.setStage3Fact(workStageDtoTotal.getStage3Fact() + floatNotNull(workStageDto.getStage3Fact()));
             workStageDtoTotal.setStage4Fact(workStageDtoTotal.getStage4Fact() + floatNotNull(workStageDto.getStage4Fact()));
             workStageDtoTotal.setStage5Fact(workStageDtoTotal.getStage5Fact() + floatNotNull(workStageDto.getStage5Fact()));
-
         });
         workStageDtoTotal.setStageAll(workStageDtoTotal.getStage0()
                 + workStageDtoTotal.getStage1()
@@ -299,7 +279,6 @@ public class RateService {
             userServiceIntegration.getProjects(null, null).forEach(projectDto ->
                     projectDtoMap.put(projectDto.getId(), projectDto));
         } catch (RuntimeException ignore) {
-
         }
 
     }
@@ -314,6 +293,33 @@ public class RateService {
         ProjectDto projectDto = getProjectDtoMap().get(projectUpdateInter.getProjectId());
         projectUpdateInter.setProjectName(projectDto.getName());
         projectUpdateInter.setProjectCode(projectDto.getCode());
+    }
+
+    @Transactional
+    public void copy(Long workIdSource, Long workIdTarget, boolean deleteOld) {
+        workTypeService.copy(workIdSource, workIdTarget, deleteOld);
+        workStageService.copy(workIdSource, workIdTarget, deleteOld);
+        workCriteriaService.copy(workIdSource, workIdTarget, deleteOld);
+    }
+
+    @Autowired
+    public void setUserServiceIntegration(UserServiceIntegrationImp userServiceIntegration) {
+        this.userServiceIntegration = userServiceIntegration;
+    }
+
+    @Autowired
+    public void setWorkStageService(WorkStageService workStageService) {
+        this.workStageService = workStageService;
+    }
+
+    @Autowired
+    public void setWorkCriteriaService(WorkCriteriaService workCriteriaService) {
+        this.workCriteriaService = workCriteriaService;
+    }
+
+    @Autowired
+    public void setWorkTypeService(WorkTypeService workTypeService) {
+        this.workTypeService = workTypeService;
     }
 
     @Autowired

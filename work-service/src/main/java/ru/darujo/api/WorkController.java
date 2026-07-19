@@ -41,7 +41,7 @@ public class WorkController {
     ) {
         long curTime = System.nanoTime();
 
-        Iterable<WorkFull> works = workService.findWorks(1, 100000000, name, null, null, null, null, null, task, null, null);
+        Iterable<WorkFull> works = workService.findWorks(0, 100000000, name, null, null, null, null, null, task, null, null);
         float time_last = (System.nanoTime() - curTime) * 0.000000001f;
         log.info("Время выполнения workList {}", time_last);
         return works;
@@ -73,7 +73,7 @@ public class WorkController {
                             @RequestParam("system_right") List<String> rights,
                             @RequestParam("system_project") Long projectId) {
         workService.checkRight("edit", rights);
-        WorkFull work = workService.saveWork(userName, WorkConvertor.getWork(workDto, projectId));
+        WorkFull work = workService.saveWork(userName, WorkConvertor.getWork(workDto, projectId), workDto.isCopy());
 
         return WorkConvertor.getWorkDto(work);
     }
@@ -88,7 +88,7 @@ public class WorkController {
 
     @GetMapping("")
     @Transactional
-    public PagedModel<?> workPage(@RequestParam(defaultValue = "1") int page,
+    public PagedModel<?> workPage(@RequestParam(defaultValue = "0") int page,
                                   @RequestParam(defaultValue = "10") int size,
                                   @RequestParam(required = false) String name,
                                   @RequestParam(defaultValue = "15") Integer stageZi,
@@ -108,6 +108,7 @@ public class WorkController {
         workDTOs.forEach(workDto -> workService.updWorkPlanTime(workDto));
         float time_last = (System.nanoTime() - curTime) * 0.000000001f;
         log.info("Время выполнения WorkPage {}", time_last);
+//        return new PagedModel<>(workDTOs);
         return pagedAssembler.toModel(workDTOs);
     }
 

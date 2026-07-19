@@ -120,6 +120,6 @@ public class WorkRepController {
             lDateEnd = LocalDate.now().plusDays(100);
         }
 
-        return workRepService.getWorkGraphRep(page, size, nameZi, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, sort, lDateStart, lDateEnd, period);
+        return workRepService.getWorkGraphRep(page - 1, size, nameZi, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, sort, lDateStart, lDateEnd, period);
     }
 }

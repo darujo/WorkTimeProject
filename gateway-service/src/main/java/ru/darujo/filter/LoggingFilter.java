@@ -1,4 +1,4 @@
-package ru.darujo;
+package ru.darujo.filter;
 
 import org.jspecify.annotations.NullMarked;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;

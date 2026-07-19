@@ -133,27 +133,33 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         if ($localStorage.authUser || (reg && (location.hash.startsWith(techUrl, 2) || location.hash === techUrl))) {
             return true;
         } else {
-            if (location.hash.startsWith(myPath, 2)) {
-                myPath = undefined;
-            } else if (myPath !== undefined && (!myPath.startsWith(techUrl) && myPath !== techUrl)) {
-                console.log("-----5---- 111")
-                $location.openPath('/');
-            }
-            if (myPath === undefined && (!location.hash.startsWith(techUrl, 2) && location.hash !== techUrl)) {
-                console.log("-----5----222")
-                $location.openPath('/');
+            if (location.hash.substring(2) !== "/" && location.hash !== "/") {
+                if (location.hash.startsWith(myPath, 2)) {
+                    myPath = undefined;
+                } else if (myPath !== undefined && (!myPath.startsWith(techUrl) && myPath !== techUrl)) {
+                    console.log("-----5---- 111")
+                    $location.openPath('/');
+                }
+                if (myPath === undefined
+                    && (!location.hash.startsWith(techUrl, 2) && location.hash !== techUrl)
+                ) {
+                    console.log("-----5----222")
+                    $location.openPath('/');
+                }
             }
             return false;
         }
 
 
     };
-
+    $scope.isUserLoggedInOk = false;
     $scope.isUserLoggedInAndPasOk = function () {
         if (typeof $scope.UserLogin === "undefined") {
-            return $scope.isUserLoggedIn();
+            $scope.isUserLoggedInOk = $scope.isUserLoggedIn();
+            return $scope.isUserLoggedInOk;
         } else {
-            return !$scope.UserLogin.passwordChange && $scope.isUserLoggedIn();
+            $scope.isUserLoggedInOk = !$scope.UserLogin.passwordChange && $scope.isUserLoggedIn();
+            return $scope.isUserLoggedInOk;
         }
     };
     // ----------------------------------------------------Telegram-------
@@ -281,9 +287,24 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         $location.openPath('/sys/request_pass')
     }
     $location.openPath = function (path, param) {
-        console.log("установим страницу")
+        console.log("установим страницу", path, myPath, location.hash)
         console.log(path)
-        myPath = path;
+        //myPath = path;
+        if (path !== undefined && path !== "/") {
+            myPath = path;
+        } else {
+            if (location.hash !== "/" && location.hash !== "#!/") {
+                myPath = location.hash;
+                if (myPath.startsWith("#/")) {
+                    myPath = myPath.substring(2);
+                }
+                let filter = {}
+                $location.parserFilter(filter)
+                console.log("Получаем адрес")
+                console.log(myHash)
+                console.log(myFilter)
+            }
+        }
         if (param) {
             $location.path(path).search(param);
         } else {
@@ -333,7 +354,8 @@ angular.module('workTimeService').controller('indexController', function ($rootS
         console.log(location.href);
         let strPars;
         console.log(location.href.lastIndexOf("#!"))
-        if (location.href.lastIndexOf("#!") > location.href.indexOf("?")) {
+        console.log(location.href.indexOf("?"))
+        if (location.href.indexOf("?") > 0 && location.href.lastIndexOf("#!") > location.href.indexOf("?")) {
             strPars = location.href.substring(location.href.lastIndexOf("#!"));
             console.log(strPars)
             window.open(location.origin + "/" + strPars, "_self");

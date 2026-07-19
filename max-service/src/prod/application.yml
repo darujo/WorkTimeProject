@@ -32,10 +32,13 @@ max:
       token: "Af9LHodD0cOLCGhzGSV92H6ALSwjLcgoIOoU_P0KNzzrQ7usxzw5tpFalOPTW_D2PEdTv-PSrwLIcTuOhyQMq"
       url: "https://sheduler.ru/max-bot/webhook"
       secret: "HappinessIsAChoiceWeMakeEveryDay"
-      update-types: bot_started,message_callback,message_created
+      update-types:
+        - bot_started
+        - message_callback
+        - message_created
       auto-register: true
       auto-unregister: true
-    admin-id: "350190659" # Имя канала или id чата
+    admin-id: "350190659,-76870707234237" # Имя канала или id чата
 integration:
   user-service:
     enable: true

@@ -26,26 +26,9 @@ import java.util.Optional;
 @Service
 @Primary
 public class WorkStageService {
-    UserServiceIntegrationImp userServiceIntegration;
-
-    @Autowired
-    public void setUserServiceIntegration(UserServiceIntegrationImp userServiceIntegration) {
-        this.userServiceIntegration = userServiceIntegration;
-    }
-
-    WorkServiceIntegrationImp workServiceIntegration;
-
-    @Autowired
-    public void setWorkServiceIntegration(WorkServiceIntegrationImp workServiceIntegration) {
-        this.workServiceIntegration = workServiceIntegration;
-    }
-
+    private UserServiceIntegrationImp userServiceIntegration;
+    private WorkServiceIntegrationImp workServiceIntegration;
     private WorkStageRepository workStageRepository;
-
-    @Autowired
-    public void setWorkStageRepository(WorkStageRepository workStageRepository) {
-        this.workStageRepository = workStageRepository;
-    }
 
     public Optional<WorkStage> findById(long id) {
         return workStageRepository.findById(id);
@@ -61,9 +44,7 @@ public class WorkStageService {
         if (workStage.getRole() == null) {
             throw new ResourceNotFoundRunTime("Не заполнено роль");
         }
-
         checkAvailUser(workStage);
-
     }
 
     private void checkAvailUser(WorkStage workStage) {
@@ -97,7 +78,6 @@ public class WorkStageService {
         specification = Specifications.eq(specification, "projectId", projectId);
         return workStageRepository.findAll(specification);
     }
-
 
     public void updFio(UserFio userFio) {
         userServiceIntegration.updFio(userFio);
@@ -134,4 +114,31 @@ public class WorkStageService {
     public List<WorkStage> findWorkStage(List<Long> workIdList, Long projectId) {
         return findWorkStage(workIdList, null, projectId);
     }
+
+    @Transactional
+    public void copy(Long workIdSource, Long workIdTarget, boolean deleteOld) {
+        findWorkStage(List.of(workIdSource), null, null).forEach(workStage -> {
+            if (!deleteOld) {
+                workStage.setId(null);
+            }
+            workStage.setWorkId(workIdTarget);
+            workStageRepository.save(workStage);
+        });
+    }
+
+    @Autowired
+    public void setUserServiceIntegration(UserServiceIntegrationImp userServiceIntegration) {
+        this.userServiceIntegration = userServiceIntegration;
+    }
+
+    @Autowired
+    public void setWorkServiceIntegration(WorkServiceIntegrationImp workServiceIntegration) {
+        this.workServiceIntegration = workServiceIntegration;
+    }
+
+    @Autowired
+    public void setWorkStageRepository(WorkStageRepository workStageRepository) {
+        this.workStageRepository = workStageRepository;
+    }
+
 }

@@ -75,6 +75,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
         if (page < 1) {
             page = 1;
         }
+
         console.log("page");
         console.log(page);
         document.getElementById("Page").value = page;
@@ -94,7 +95,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
                 url: constPatchWork + "/works",
                 method: "get",
                 params: {
-                    page: page,
+                    page: page - 1,
                     size: Filter ? Filter.size : null,
                     name: Filter ? Filter.name : null,
                     codeSap: Filter ? Filter.codeSap : null,
@@ -181,7 +182,8 @@ angular.module('workTimeService').controller('workController', function ($scope,
             release: 0,
             issuingReleasePlan: null,
             issuingReleaseFact: null,
-            rated: null
+            rated: null,
+            copy: null
 
         };
         checkRight("create", true);
@@ -207,6 +209,11 @@ angular.module('workTimeService').controller('workController', function ($scope,
 
     }
     $scope.editWork = function (workId) {
+        $scope.getWork(workId, showFormEdit)
+
+    }
+    $scope.getWork = function (workId, responseOk) {
+
         $http.get(constPatchWork + "/works/" + workId)
             .then(function (response) {
                 console.log("получили");
@@ -251,7 +258,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
                     $scope.Work.issuingReleaseFact = new Date(response.data.issuingReleaseFact);
                 }
                 console.log($scope.Work)
-                showFormEdit();
+                responseOk();
             });
     };
     $scope.deleteWork = function (workId) {
@@ -293,6 +300,21 @@ angular.module('workTimeService').controller('workController', function ($scope,
         }
     };
 
+    $scope.copyWork = function (workId) {
+        $scope.getWork(workId, copyWorkParam)
+    }
+    let copyWorkParam = function () {
+        console.log()
+        console.log($scope.Work);
+        console.log(WorkIdEdit);
+        $scope.Work.id = null;
+        $scope.Work.name = $scope.Work.name + " копия"
+        $scope.Work.childWork = null;
+        $scope.Work.workProjectId = null
+        $scope.Work.copy = true;
+        $scope.Work.rated = false;
+        showFormEdit();
+    };
     $scope.addTime = function (workId) {
         $location.path('/task').search({workId: workId});
         // window.open('#!/task',"_parent");
