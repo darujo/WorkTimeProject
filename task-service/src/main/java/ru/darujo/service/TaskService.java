@@ -62,7 +62,7 @@ public class TaskService {
             if (task.getWorkId() == null) {
                 throw new ResourceNotFoundRunTime("Не выбрано ЗИ");
             }
-            workServiceIntegration.getWorEditDto(task.getWorkId());
+            workServiceIntegration.getWorLittleDto(task.getWorkId());
         }
         if (task.getType() == 1 && (task.getCodeBTS() != null && !task.getCodeBTS().isEmpty())) {
             task.setType(5);
@@ -143,11 +143,7 @@ public class TaskService {
         specification = Specifications.eq(specification, "type", type);
 
         specification = Specifications.eq(specification, "projectId", projectId);
-        if (page != null) {
-            return taskRepository.findAll(specification, PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "refresh")));
-        } else {
-            return new PageImpl<>(taskRepository.findAll(specification));
-        }
+        return Specifications.findAll(taskRepository, page == null ? null : page - 1, size, specification, Sort.by(Sort.Direction.DESC, "refresh"));
 
     }
 

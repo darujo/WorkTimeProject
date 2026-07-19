@@ -159,7 +159,7 @@ public class RateService {
     }
 
     public WorkRateDto getRate(Long workId, Boolean child) {
-        WorkLittleDto workLittleDto = workServiceIntegration.getWorEditDto(workId);
+        WorkLittleDto workLittleDto = workServiceIntegration.getWorLittleDto(workId);
         List<RateDto> rateDtoList = new ArrayList<>();
         List<WorkStageDto> workStageDtoListTotal = new ArrayList<>();
         List<Long> workIDList;
@@ -297,6 +297,10 @@ public class RateService {
 
     @Transactional
     public void copy(Long workIdSource, Long workIdTarget, boolean deleteOld) {
+        // Проверка наличия
+        workServiceIntegration.getWorLittleDto(workIdSource);
+        workServiceIntegration.getWorLittleDto(workIdTarget);
+        // копирование
         workTypeService.copy(workIdSource, workIdTarget, deleteOld);
         workStageService.copy(workIdSource, workIdTarget, deleteOld);
         workCriteriaService.copy(workIdSource, workIdTarget, deleteOld);

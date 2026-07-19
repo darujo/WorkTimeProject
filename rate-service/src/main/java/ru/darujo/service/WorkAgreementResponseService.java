@@ -96,7 +96,7 @@ public class WorkAgreementResponseService {
         }
         validWorkAgreementResponse(workAgreementResponse);
         workAgreementResponse = workAgreementResponseRepository.save(workAgreementResponse);
-        WorkLittleDto workLittleDto = workServiceIntegration.getWorEditDto(workAgreementResponse.getWorkId());
+        WorkLittleDto workLittleDto = workServiceIntegration.getWorLittleDto(workAgreementResponse.getWorkId());
         try {
 
 
@@ -122,7 +122,7 @@ public class WorkAgreementResponseService {
             return;
         }
         workAgreementResponseRepository.deleteById(id);
-        WorkLittleDto workLittleDto = workServiceIntegration.getWorEditDto(workAgreementResponseSave.getWorkId());
+        WorkLittleDto workLittleDto = workServiceIntegration.getWorLittleDto(workAgreementResponseSave.getWorkId());
 
         infoServiceIntegration.addMessage(
                 new MessageInfoDto(

@@ -163,7 +163,7 @@ public class TaskController {
 
             WorkLittleDto workLittleDto = workLittleDtoMap.get(taskDto.getWorkId());
             if (workLittleDto == null) {
-                workLittleDto = workServiceIntegration.getWorEditDto(taskDto.getWorkId());
+                workLittleDto = workServiceIntegration.getWorLittleDto(taskDto.getWorkId());
                 workLittleDtoMap.put(taskDto.getId(), workLittleDto);
             }
             taskDto.setCodeZi(workLittleDto.getCodeZI());

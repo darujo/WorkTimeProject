@@ -312,9 +312,10 @@ public class WorkService {
             List<Work> workList = null;
             if (name != null || codeSap != null || codeZi != null) {
                 workList = workRepository.findAll(specification);
-                if (workList.isEmpty()) {
-                    return new PageImpl<>(new ArrayList<>());
-                }
+
+            }
+            if (workList != null && workList.isEmpty()) {
+                return new PageImpl<>(new ArrayList<>());
             }
             return workProjectService.getWorkFull(page, size, sort, stageZiGe, stageZiLe, task, projectId, workList);
         }
