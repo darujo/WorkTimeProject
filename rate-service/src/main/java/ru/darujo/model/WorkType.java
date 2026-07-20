@@ -3,14 +3,16 @@ package ru.darujo.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Entity
 @Table(name = "work_type")
-public class WorkType {
+public class WorkType extends CopyWork implements Cloneable {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,4 +28,8 @@ public class WorkType {
     @Column(name = "project_id")
     private Long projectId;
 
+
+    public WorkType clone() throws CloneNotSupportedException {
+        return (WorkType) super.clone();
+    }
 }

@@ -87,7 +87,7 @@ public class UpdateService {
         boolean flag = multipartFiles == null || multipartFiles.size() == files.size();
         if (!flag) {
             files.forEach(File::deleteOnExit);
-            throw new ResourceNotFoundRunTime("Все файлы удалось сохранить.");
+            throw new ResourceNotFoundRunTime("Не все файлы удалось сохранить.");
         }
         scheduleService.addUpdate(
                 timestamp,

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.WorkServiceIntegrationImp;
+import ru.darujo.model.CopyWork;
 import ru.darujo.model.WorkCriteria;
 import ru.darujo.repository.WorkCriteriaRepository;
 import ru.darujo.specifications.Specifications;
@@ -62,13 +63,10 @@ public class WorkCriteriaService {
 
     @Transactional
     public void copy(Long workIdSource, Long workIdTarget, boolean deleteOld) {
-        findWorkCriteria(List.of(workIdSource), null).forEach(workCriteria -> {
-            if (!deleteOld) {
-                workCriteria.setId(null);
-            }
-            workCriteria.setWorkId(workIdTarget);
-            workCriteriaRepository.save(workCriteria);
-        });
+        findWorkCriteria(List.of(workIdSource), null)
+                .forEach(work ->
+                        CopyWork.copy(workIdTarget, deleteOld, work, workCriteriaRepository)
+                );
     }
 
     @Autowired

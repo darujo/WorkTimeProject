@@ -331,7 +331,10 @@ angular.module('workTimeService').controller('indexController', function ($rootS
 
         console.log("$scope.SettingUser.loadFilter")
         console.log($scope.SettingUser);
-        if (typeof $scope.SettingUser !== "undefined") {
+        console.log($scope.SettingUser !== undefined)
+        console.log(typeof $scope.SettingUser !== "undefined")
+
+        if ($scope.SettingUser !== undefined) {
             if ($scope.SettingUser.loadFilter) {
                 if (typeof $localStorage.filterWorkTime[name] === "undefined") {
                     return null;
@@ -342,6 +345,8 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                 return $localStorage.filterWorkTime[name];
             }
         }
+        console.log("return {}")
+        console.log({})
         return {};
 
     }

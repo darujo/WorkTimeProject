@@ -13,6 +13,7 @@ import ru.darujo.dto.user.UserFio;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.integration.WorkServiceIntegrationImp;
+import ru.darujo.model.CopyWork;
 import ru.darujo.model.WorkStage;
 import ru.darujo.repository.WorkStageRepository;
 import ru.darujo.specifications.Specifications;
@@ -117,13 +118,10 @@ public class WorkStageService {
 
     @Transactional
     public void copy(Long workIdSource, Long workIdTarget, boolean deleteOld) {
-        findWorkStage(List.of(workIdSource), null, null).forEach(workStage -> {
-            if (!deleteOld) {
-                workStage.setId(null);
-            }
-            workStage.setWorkId(workIdTarget);
-            workStageRepository.save(workStage);
-        });
+        findWorkStage(List.of(workIdSource), null, null)
+                .forEach(work ->
+                        CopyWork.copy(workIdTarget, deleteOld, work, workStageRepository)
+                );
     }
 
     @Autowired

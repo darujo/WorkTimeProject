@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.WorkServiceIntegrationImp;
+import ru.darujo.model.CopyWork;
 import ru.darujo.model.WorkType;
 import ru.darujo.repository.WorkTypeRepository;
 import ru.darujo.specifications.Specifications;
@@ -52,7 +53,7 @@ public class WorkTypeService {
     }
 
 
-    public List<WorkType> findWorkCriteria(List<Long> workId, Long projectId) {
+    public List<WorkType> findWorkType(List<Long> workId, Long projectId) {
         Specification<@NonNull WorkType> specification = Specification.where(Specifications.in(null, "workId", workId));
         specification = Specifications.eq(specification, "projectId", projectId);
         return workTypeRepository.findAll(specification, Sort.by("workId").and(Sort.by("number").and(Sort.by("type"))));
@@ -60,14 +61,10 @@ public class WorkTypeService {
 
     @Transactional
     public void copy(Long workIdSource, Long workIdTarget, Boolean deleteOld) {
-        findWorkCriteria(List.of(workIdSource), null).forEach(workStage -> {
-            if (!deleteOld) {
-                workStage.setId(null);
-            }
-            workStage.setWorkId(workIdTarget);
-            workTypeRepository.save(workStage);
-        });
+        findWorkType(List.of(workIdSource), null)
+                .forEach(work -> CopyWork.copy(workIdTarget, deleteOld, work, workTypeRepository));
     }
+
 
     @Autowired
     public void setWorkCriteriaRepository(WorkTypeRepository workTypeRepository) {

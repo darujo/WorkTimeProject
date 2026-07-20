@@ -70,7 +70,7 @@ public class RateService {
 
         timeType.set(0f);
 
-        List<WorkType> workTypeList = workTypeService.findWorkCriteria(workIdList, projectId);
+        List<WorkType> workTypeList = workTypeService.findWorkType(workIdList, projectId);
         workTypeList.forEach(
                 workType -> timeType.set(
                         timeType.get() + getTime(workType.getTime())));
@@ -204,7 +204,7 @@ public class RateService {
                     workServiceIntegration.getRate(workIDList, projectId),
                     workStageList,
                     workCriteriaService.findWorkCriteria(workIDList, projectId).stream().map(WorkCriteriaConvertor::getWorkCriteriaDto).toList(),
-                    workTypeService.findWorkCriteria(workIDList, projectId).stream().map(WorkTypeConvertor::getWorkTypeDto).toList(),
+                    workTypeService.findWorkType(workIDList, projectId).stream().map(WorkTypeConvertor::getWorkTypeDto).toList(),
                     comparisonStageCriteria(workIDList, projectId),
                     comparisonStageType(workIDList, projectId),
                     comparisonCriteriaType(workIDList, projectId)
