@@ -54,7 +54,7 @@ public class WorkTimeRepService {
 
         AtomicReference<Float> time = new AtomicReference<>((float) 0);
 
-        workTimeService.findWorkTime(taskId, nikName, null, dateLe, dateGt, null, types, null, null, null, null)
+        workTimeService.findWorkTime(taskId, nikName, null, dateLe, dateGt, null, types, null, null)
                 .forEach(workTime ->
                         time.set(time.get() + workTime.getWorkTime())
                 );
@@ -78,7 +78,7 @@ public class WorkTimeRepService {
 
     public ListString getFactUser(Long[] taskId, LocalDate dateLe) {
         ListString users = new ListString();
-        workTimeService.findWorkTime(taskId, null, null, dateLe, null, null, null, null, null, null, null).forEach(workTime -> users.getList().add(workTime.getNikName()));
+        workTimeService.findWorkTime(taskId, null, null, dateLe, null, null, null, null, null).forEach(workTime -> users.getList().add(workTime.getNikName()));
         return users;
     }
 
@@ -111,7 +111,7 @@ public class WorkTimeRepService {
                         userWorkDtoMap.put(userWorkDtoTotal.getNikName(), userWorkDtoTotal);
                     }
                     UserWorkDto finalUserWorkDtoTotal = userWorkDtoTotal;
-                    workTimeService.findWorkTime(taskId, nikName, null, DateHelper.zDTToLD(weekWorkDto.getDayEnd()), null, DateHelper.zDTToLD(weekWorkDto.getDayStart()), null, null, null, null, null)
+                    workTimeService.findWorkTime(taskId, nikName, null, DateHelper.zDTToLD(weekWorkDto.getDayEnd()), null, DateHelper.zDTToLD(weekWorkDto.getDayStart()), null, null, null)
                             .forEach(workTime -> {
                                 Integer type = tasks.get(workTime.getTaskId());
                                 if (type == null) {
@@ -273,8 +273,6 @@ public class WorkTimeRepService {
                         DateHelper.zDTToLD(dateEnd),
                         null,
                         DateHelper.zDTToLD(dateStart),
-                        null,
-                        null,
                         null,
                         null,
                         null)

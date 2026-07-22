@@ -30,7 +30,7 @@ public class WorkTimeController {
 
     @GetMapping("/conv")
     public WorkTimeDto workConv() {
-        workTimeService.findWorkTime(null, null, null, null, null, null, null, null, null, null, null).forEach(workTime -> workTimeService.saveWorkTime(WorkTimeConvertor.getWorkTime(WorkTimeConvertor.getWorkTimeDto(workTime)), false));
+        workTimeService.findWorkTime(null, null, null, null, null, null, null, null, null).forEach(workTime -> workTimeService.saveWorkTime(WorkTimeConvertor.getWorkTime(WorkTimeConvertor.getWorkTimeDto(workTime)), false));
         return new WorkTimeDto();
     }
 
@@ -97,7 +97,7 @@ public class WorkTimeController {
                                                        Long projectId,
                                                    @RequestParam(defaultValue = "false")
                                                        boolean currentUser,
-                                                   @RequestParam(defaultValue = "1")
+                                                   @RequestParam(defaultValue = "0")
                                                        Integer page,
                                                    @RequestParam(defaultValue = "10")
                                                        Integer size) {

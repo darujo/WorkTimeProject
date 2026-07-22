@@ -92,6 +92,9 @@ public class WorkTimeService {
         workTimeRepository.deleteById(id);
     }
 
+    public Page<@NonNull WorkTime> findWorkTime(Long[] taskId, String nikName, LocalDate dateLt, LocalDate dateLe, LocalDate dateGT, LocalDate dateGE, List<Integer> type, String comment, Long projectId) {
+        return findWorkTime(taskId, nikName, dateLt, dateLe, dateGT, dateGE, type, comment, projectId, null, null);
+    }
     public Page<@NonNull WorkTime> findWorkTime(Long[] taskId, String nikName, LocalDate dateLt, LocalDate dateLe, LocalDate dateGT, LocalDate dateGE, List<Integer> type, String comment, Long projectId, Integer page, Integer size) {
         Specification<@NonNull WorkTime> specification = Specification.unrestricted();
         Sort sort = null;

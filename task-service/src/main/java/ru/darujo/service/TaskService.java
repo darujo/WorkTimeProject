@@ -89,9 +89,7 @@ public class TaskService {
                                String description,
                                List<Long> workIdList,
                                Integer type,
-                               Long projectId,
-                               Integer page,
-                               Integer size) {
+                               Long projectId) {
         return findTask(nikName,
                 codeBTS,
                 code,
@@ -101,8 +99,8 @@ public class TaskService {
                 type,
                 null,
                 projectId,
-                page,
-                size);
+                null,
+                null);
     }
 
     public Page<Task> findTask(String nikName,

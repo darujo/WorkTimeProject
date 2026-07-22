@@ -52,7 +52,7 @@ public class WorkProjectLittleService {
 
     public Page<WorkProjectLittle> getListWork(Integer page, Integer size, List<String> sort, Integer stageZiGe, Integer stageZiLe, String task, Long projectId, List<WorkLittle> workLittleList) {
         Specification<WorkProjectLittle> specification = getWorkProjectLittleSpecification(stageZiGe, stageZiLe, task, projectId, workLittleList);
-        return Specifications.findAll(workProjectLittleRepository, page == null ? null : page - 1, size, specification, sort);
+        return Specifications.findAll(workProjectLittleRepository, page, size, specification, sort);
     }
 
     private static Specification<WorkProjectLittle> getWorkProjectLittleSpecification(Integer stageZiGe, Integer stageZiLe, String task, Long projectId, List<WorkLittle> workLittleList) {

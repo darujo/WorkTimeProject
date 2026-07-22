@@ -115,7 +115,7 @@ public class WorkController {
 
     @GetMapping("/obj/little")
     @Transactional
-    public Page<@NonNull WorkLittleDto> workLittlePage(@RequestParam(defaultValue = "1") int page,
+    public Page<@NonNull WorkLittleDto> workLittlePage(@RequestParam(defaultValue = "0") int page,
                                                        @RequestParam(defaultValue = "10") int size,
                                                        @RequestParam(required = false) String name,
                                                        @RequestParam(defaultValue = "15") Integer stageZi,

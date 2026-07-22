@@ -453,7 +453,7 @@ angular.module('workTimeService').controller('workController', function ($scope,
             url: constPatchWork + "/works/obj/little",
             method: "get",
             params: {
-                page: page,
+                page: page - 1,
                 size: FilterWorkParent ? FilterWorkParent.size : null,
                 name: FilterWorkParent ? FilterWorkParent.name : null
 
