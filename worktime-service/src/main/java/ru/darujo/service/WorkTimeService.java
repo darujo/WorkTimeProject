@@ -133,7 +133,7 @@ public class WorkTimeService {
         else {
             sort = sort.and(Sort.by(Sort.Direction.DESC, "workDate"));
         }
-        return Specifications.findAll(workTimeRepository, page == null ? null : page - 1, size, specification, sort);
+        return Specifications.findAll(workTimeRepository, page, size, specification, sort);
 
     }
 
