@@ -6,6 +6,7 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 import reactor.core.publisher.Mono;
 import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
@@ -43,7 +44,14 @@ public abstract class ServiceIntegrationImp<T extends Enum<?>> implements Servic
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Проверка не прошла "))
                     .bodyToMono(Void.class)
-                    .doOnError(throwable -> log.error(throwable.getMessage(), throwable))
+                    .doOnError(throwable -> {
+                        if (throwable instanceof WebClientRequestException) {
+                            log.warn(throwable.getMessage());
+                        } else {
+                            log.error(throwable.getMessage(), throwable);
+                        }
+                        throw new RuntimeException(throwable.getMessage());
+                    })
                     .block();
         } catch (RuntimeException ex) {
             throw new ResourceNotFoundRunTime("Проверка не прошла или обратитесь к администратору " + ex.getMessage());
@@ -80,7 +88,7 @@ public abstract class ServiceIntegrationImp<T extends Enum<?>> implements Servic
         return clientResponse
                 .bodyToMono(ErrorResponse.class)
                 .flatMap(error -> {
-//                            log.error("{} {}", message, error.getMessage());
+                    log.error(message, error.getMessage(), error);
                             return Mono.error(new ResourceNotFoundRunTime(message + " " + error.getMessage()));
                         }
 

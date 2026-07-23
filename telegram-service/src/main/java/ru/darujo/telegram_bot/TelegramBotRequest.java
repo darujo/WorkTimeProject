@@ -20,7 +20,7 @@ import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.model.ChatInfo;
 import ru.darujo.model.MessageReceive;
 import ru.darujo.service.CommandType;
-import ru.darujo.service.FileService;
+import ru.darujo.service.FileSaverService;
 import ru.darujo.service.MenuService;
 import ru.darujo.service.MessageReceiveService;
 
@@ -48,7 +48,7 @@ public class TelegramBotRequest implements SpringLongPollingBot, LongPollingUpda
         this.userServiceIntegration = userServiceIntegration;
     }
 
-    private FileService fileService;
+    private FileSaverService fileSaverService;
 
     private String botName;
     @Value("${telegram-bot.token}")
@@ -56,8 +56,8 @@ public class TelegramBotRequest implements SpringLongPollingBot, LongPollingUpda
 
     @PostConstruct
     public void init() {
-        fileService.addFile("hi", fileService.resourceToFile("hi.jpg"));
-        fileService.addFile("menu", fileService.resourceToFile("menu.jpg"));
+        fileSaverService.addFile("hi", fileSaverService.resourceToFile("hi.jpg"));
+        fileSaverService.addFile("menu", fileSaverService.resourceToFile("menu.jpg"));
 
         botName = telegramBotSend.getName();
         messageForAdmin("Бот @" + botName + " запущен");
@@ -65,8 +65,8 @@ public class TelegramBotRequest implements SpringLongPollingBot, LongPollingUpda
     }
 
     @Autowired
-    public void setFileService(FileService fileService) {
-        this.fileService = fileService;
+    public void setFileService(FileSaverService fileSaverService) {
+        this.fileSaverService = fileSaverService;
     }
 
     private MessageReceiveService messageReceiveService;
@@ -152,7 +152,7 @@ public class TelegramBotRequest implements SpringLongPollingBot, LongPollingUpda
                     switch (requestMessage.getText()) {
                         case "/start" ->
                                 telegramBotSend.sendPhoto(new ChatInfo("AutoHi", chatId, threadId, requestMessage.getMessageId()),
-                                        fileService.getFile("hi")
+                                        fileSaverService.getFile("hi")
                                         , """
                                                 Напишите команду для показа списка мыслей:\s
                                                  /link - подписаться на уведомления от сервиса учета трудозатрат\s
@@ -257,7 +257,7 @@ public class TelegramBotRequest implements SpringLongPollingBot, LongPollingUpda
                 }
 
                 try {
-                    menuService.getMenu(chatInfo, callbackQuery.getData(), fileService.getFile("menu"));
+                    menuService.getMenu(chatInfo, callbackQuery.getData(), fileSaverService.getFile("menu"));
                 } catch (TelegramApiException e) {
                     throw new RuntimeException(e);
                 }

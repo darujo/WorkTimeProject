@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +87,7 @@ public class UpdateService {
         boolean flag = multipartFiles == null || multipartFiles.size() == files.size();
         if (!flag) {
             files.forEach(File::deleteOnExit);
-            throw new ResourceNotFoundRunTime("Все файлы удалось сохранить.");
+            throw new ResourceNotFoundRunTime("Не все файлы удалось сохранить.");
         }
         scheduleService.addUpdate(
                 timestamp,
@@ -96,7 +95,8 @@ public class UpdateService {
                 files,
                 description);
         try {
-            if (ChronoUnit.MINUTES.between(ZonedDateTime.now(), timestamp) > 0) {
+            log.info(Long.toString(ChronoUnit.MINUTES.between(LocalDateTime.now(), timestamp)));
+            if (ChronoUnit.MINUTES.between(LocalDateTime.now(), timestamp) > 0) {
                 infoServiceIntegration.addMessage(new MessageInfoDto(MessageType.SYSTEM_INFO, String.format("%s будут проводиться сервисные работы. Сервис может быть недоступен. Приносим извинения за предоставленные неудобства.", DateHelper.dateTimeToStr(timestamp))));
             }
         } catch (RuntimeException ex) {

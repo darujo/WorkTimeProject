@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -93,6 +92,9 @@ public class WorkTimeService {
         workTimeRepository.deleteById(id);
     }
 
+    public Page<@NonNull WorkTime> findWorkTime(Long[] taskId, String nikName, LocalDate dateLt, LocalDate dateLe, LocalDate dateGT, LocalDate dateGE, List<Integer> type, String comment, Long projectId) {
+        return findWorkTime(taskId, nikName, dateLt, dateLe, dateGT, dateGE, type, comment, projectId, null, null);
+    }
     public Page<@NonNull WorkTime> findWorkTime(Long[] taskId, String nikName, LocalDate dateLt, LocalDate dateLe, LocalDate dateGT, LocalDate dateGE, List<Integer> type, String comment, Long projectId, Integer page, Integer size) {
         Specification<@NonNull WorkTime> specification = Specification.unrestricted();
         Sort sort = null;
@@ -131,14 +133,8 @@ public class WorkTimeService {
         else {
             sort = sort.and(Sort.by(Sort.Direction.DESC, "workDate"));
         }
-        Page<@NonNull WorkTime> workTimePage;
-        if (page == null) {
-            workTimePage = new PageImpl<>(workTimeRepository.findAll(specification, sort));
+        return Specifications.findAll(workTimeRepository, page == null ? null : page - 1, size, specification, sort);
 
-        } else {
-            workTimePage = workTimeRepository.findAll(specification, PageRequest.of(page - 1, size, sort));
-        }
-        return workTimePage;
     }
 
     public Page<@NonNull WorkTime> findWorkTimeTask(String taskDEVBO, String taskBts, String nikName, LocalDate dateLt, LocalDate dateLe, LocalDate dateGT, LocalDate dateGE, List<Integer> type, String comment, Long projectId, Integer page, Integer size) {
@@ -147,10 +143,7 @@ public class WorkTimeService {
         if (taskIdList == null || taskIdList.isEmpty()) {
             return new PageImpl<>(new ArrayList<>());
         }
-
-        workTimes = findWorkTime(taskIdList.toArray(new Long[0]), nikName, dateLt, dateLe, dateGT, dateGE, type, comment, projectId, page, size)
-
-        ;
+        workTimes = findWorkTime(taskIdList.toArray(new Long[0]), nikName, dateLt, dateLe, dateGT, dateGE, type, comment, projectId, page, size);
         return workTimes;
     }
 

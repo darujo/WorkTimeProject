@@ -51,7 +51,7 @@ public class TaskRepService {
             LocalDate dateLe,
             LocalDate dateGt,
             String type) {
-        List<Long> taskIdList = taskService.findTask(null, codeBTS, codeDEVBO, description, workIdList, null, projectId, null, null).getContent()
+        List<Long> taskIdList = taskService.findTask(null, codeBTS, codeDEVBO, description, workIdList, null, projectId).getContent()
                 .stream()
                 .map(Task::getId).toList();
         if (taskIdList.isEmpty()) {
@@ -63,7 +63,7 @@ public class TaskRepService {
 
     public ListString getFactUsers(List<Long> workIdList, Long projectId, LocalDate dateLe) {
         ListString users = new ListString();
-        taskService.findTask(null, null, null, null, workIdList, null, projectId, null, null)
+        taskService.findTask(null, null, null, null, workIdList, null, projectId)
                 .stream().map(task ->
                         workTimeServiceIntegration
                                 .getUsers(task.getId(), dateLe))
@@ -85,7 +85,7 @@ public class TaskRepService {
     }
 
     public List<UserWorkDto> getWeekWork(List<Long> workIdList, Long projectId, String nikName, Boolean addTotal) {
-        List<Task> tasks = taskService.findTask(null, null, null, null, workIdList, null, projectId, null, null).getContent();
+        List<Task> tasks = taskService.findTask(null, null, null, null, workIdList, null, projectId).getContent();
         if (tasks.isEmpty()) {
             return null;
         }
@@ -94,7 +94,7 @@ public class TaskRepService {
     }
 
     public LocalDate getLastTime(List<Long> workId, LocalDate dateLe, LocalDate dateGe) {
-        List<Task> tasks = taskService.findTask(null, null, null, null, workId, null, null, null, null).getContent();
+        List<Task> tasks = taskService.findTask(null, null, null, null, workId, null, null).getContent();
 
         return workTimeServiceIntegration.getLastTime(tasks.stream().map(Task::getId).collect(Collectors.toList()), dateLe, dateGe);
     }

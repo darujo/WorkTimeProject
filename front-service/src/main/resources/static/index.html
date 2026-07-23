@@ -160,13 +160,13 @@
             </div>
         </div>
     </nav>
-    <div class="nav-item" ng-show="isUserLoggedInAndPasOk()" style="padding: 4px;">
+    <div class="nav-item" ng-show="isUserLoggedInOk" style="padding: 4px;">
         <button type="button" class="head_button" ng-click="addTime()">Заполнить отработанное время</button>
     </div>
-    <div class="nav-item" ng-show="isUserLoggedInAndPasOk()" style="padding: 4px;">
+    <div class="nav-item" ng-show="isUserLoggedInOk" style="padding: 4px;">
         <button class="head_button" ng-click="tryToLogout()">Выйти</button>
     </div>
-    <div class="nav-item" ng-show="isUserLoggedInAndPasOk()" style="padding: 4px;">
+    <div class="nav-item" ng-show="isUserLoggedInOk" style="padding: 4px;">
         <div class="user_view">
             <p class="p-form">
                 {{UserLogin.lastName}} {{UserLogin.firstName}} {{UserLogin.patronymic}}</p>
@@ -176,7 +176,7 @@
         <!--           type="readonly"-->
         <!--    >-->
     </div>
-    <div class="nav-item" ng-show="isUserLoggedInAndPasOk()">
+    <div class="nav-item" ng-show="isUserLoggedInOk">
         <label for="UserProject" class="p-head"></label>
         <select class="vvod" name="UserProject" id="UserProject"
                 ng-model="UserLogin.projectId" ng-change="changeProject(UserLogin.projectId)">

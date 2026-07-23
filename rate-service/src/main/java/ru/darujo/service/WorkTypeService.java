@@ -6,8 +6,10 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.WorkServiceIntegrationImp;
+import ru.darujo.model.CopyWork;
 import ru.darujo.model.WorkType;
 import ru.darujo.repository.WorkTypeRepository;
 import ru.darujo.specifications.Specifications;
@@ -20,11 +22,6 @@ import java.util.Optional;
 public class WorkTypeService {
     private WorkTypeRepository workTypeRepository;
     private WorkServiceIntegrationImp workServiceIntegration;
-
-    @Autowired
-    public void setWorkCriteriaRepository(WorkTypeRepository workTypeRepository) {
-        this.workTypeRepository = workTypeRepository;
-    }
 
     public Optional<WorkType> findById(long id) {
         return workTypeRepository.findById(id);
@@ -43,7 +40,6 @@ public class WorkTypeService {
         if (workTypeFind != null) {
             throw new ResourceNotFoundRunTime("Уже есть запись с такой работой");
         }
-
     }
 
     public WorkType saveWorkType(WorkType workType) {
@@ -57,10 +53,22 @@ public class WorkTypeService {
     }
 
 
-    public List<WorkType> findWorkCriteria(List<Long> workId, Long projectId) {
+    public List<WorkType> findWorkType(List<Long> workId, Long projectId) {
         Specification<@NonNull WorkType> specification = Specification.where(Specifications.in(null, "workId", workId));
         specification = Specifications.eq(specification, "projectId", projectId);
         return workTypeRepository.findAll(specification, Sort.by("workId").and(Sort.by("number").and(Sort.by("type"))));
+    }
+
+    @Transactional
+    public void copy(Long workIdSource, Long workIdTarget, Boolean deleteOld) {
+        findWorkType(List.of(workIdSource), null)
+                .forEach(work -> CopyWork.copy(workIdTarget, deleteOld, work, workTypeRepository));
+    }
+
+
+    @Autowired
+    public void setWorkCriteriaRepository(WorkTypeRepository workTypeRepository) {
+        this.workTypeRepository = workTypeRepository;
     }
 
     @Autowired

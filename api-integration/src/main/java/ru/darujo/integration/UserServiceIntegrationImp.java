@@ -111,12 +111,20 @@ public class UserServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
 
     }
 
-    public ResultMes linkCodeMax(Integer code, String telegramId, Integer threadId) {
+    public ResultMes linkCodeTelegram(Integer code, Long chatId, Integer threadId) {
+        return linkCodeMessager(MessageSenderType.Telegram, code, Long.toString(chatId), threadId);
+    }
+
+    public ResultMes linkCodeMax(Integer code, String chatId, Integer threadId) {
+        return linkCodeMessager(MessageSenderType.Max, code, chatId, threadId);
+    }
+
+    public ResultMes linkCodeMessager(MessageSenderType messageSenderType, Integer code, String chatId, Integer threadId) {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "code", code);
-        addTeg(stringBuilder, "telegramId", telegramId);
+        addTeg(stringBuilder, "telegramId", chatId);
         addTeg(stringBuilder, "threadId", threadId);
-        addTeg(stringBuilder, "senderType", MessageSenderType.Max);
+        addTeg(stringBuilder, "senderType", messageSenderType);
         String uri = "/users/user/telegram/link" + stringBuilder;
         try {
             return webClient.get().uri(uri)

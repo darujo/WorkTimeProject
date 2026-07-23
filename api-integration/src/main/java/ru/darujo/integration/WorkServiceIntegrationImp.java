@@ -25,7 +25,7 @@ public class WorkServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
         super.setWebClient(webClientWork);
     }
 
-    public WorkLittleDto getWorEditDto(Long workId) {
+    public WorkLittleDto getWorLittleDto(Long workId) {
         if (workId == null) {
             return new WorkLittleDto();
         }

@@ -26,31 +26,37 @@ public abstract class MessagerServiceIntegrationImp extends ServiceIntegrationIm
             StringBuilder sb = new StringBuilder();
             addTeg(sb, "threadId", threadId);
             addTeg(sb, "originMessageId", originMessageId);
-            webClient.post().uri("/" + chatId + "/notifications" + sb)
+            String uri = "/" + chatId + "/notifications" + sb;
+            log.debug(uri);
+            webClient.post().uri(uri)
                     .header("username", author)
                     .bodyValue(text)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса telegram"))
+                            cR -> getMessage(cR, uri + " Что-то пошло не так не удалось получить ответ от сервиса telegram"))
                     .bodyToMono(Void.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
+            log.error(ex.getMessage(), ex);
             throw new ResourceNotFoundRunTime("(Api-Telegram) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 
     public void sendMessageForAdmin(SendAdminMessage message) {
         try {
-            webClient.post().uri("/send/admin")
+            String uri = "/send/admin";
+            log.debug(uri);
+            webClient.post().uri(uri)
                     .bodyValue(message)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса telegram"))
+                            cR -> getMessage(cR, uri + " Что-то пошло не так не удалось получить ответ от сервиса telegram"))
                     .bodyToMono(Void.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
+            log.error(ex.getMessage(), ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-Telegram) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -61,15 +67,18 @@ public abstract class MessagerServiceIntegrationImp extends ServiceIntegrationIm
         try {
             StringBuilder sb = new StringBuilder();
             addTeg(sb, "fileName", fileName);
-            webClient.post().uri("/file" + sb)
+            String uri = "/file" + sb;
+            log.debug(uri);
+            webClient.post().uri(uri)
                     .bodyValue(textFile)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса telegram"))
+                            cR -> getMessage(cR, uri + " Что-то пошло не так не удалось получить ответ от сервиса telegram"))
                     .bodyToMono(Void.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
+            log.error(ex.getMessage(), ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-Telegram) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -87,16 +96,20 @@ public abstract class MessagerServiceIntegrationImp extends ServiceIntegrationIm
             addTeg(sb, "fileName", fileName);
             addTeg(sb, "threadId", threadId);
             addTeg(sb, "originMessageId", originMessageId);
-            webClient.post().uri("/" + chatId + "/file" + sb)
+            String uri = "/" + chatId + "/file" + sb;
+            log.debug(uri);
+
+            webClient.post().uri(uri)
                     .header("username", author)
                     .bodyValue(text)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса telegram"))
+                            cR -> getMessage(cR, uri + " Что-то пошло не так не удалось получить ответ от сервиса telegram"))
                     .bodyToMono(Void.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
+            log.error(ex.getMessage(), ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-Telegram) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
@@ -106,14 +119,17 @@ public abstract class MessagerServiceIntegrationImp extends ServiceIntegrationIm
         try {
             StringBuilder sb = new StringBuilder();
             addTeg(sb, "fileName", fileName);
-            webClient.delete().uri("/file" + sb)
+            String uri = "/file" + sb;
+            log.debug(uri);
+            webClient.delete().uri(uri)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса telegram"))
+                            cR -> getMessage(cR, uri + " Что-то пошло не так не удалось получить ответ от сервиса telegram"))
                     .bodyToMono(Void.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
+            log.error(ex.getMessage(), ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-Telegram) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }

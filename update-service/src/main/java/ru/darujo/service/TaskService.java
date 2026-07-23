@@ -242,7 +242,7 @@ public class TaskService {
 
                     @Override
                     public String getText() {
-                        return "BackUp выполнен;" + LocalDateTime.now();
+                        return "BackUp выполнен: " + LocalDateTime.now();
                     }
 
                     @Override

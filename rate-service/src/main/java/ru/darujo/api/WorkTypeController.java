@@ -48,7 +48,7 @@ public class WorkTypeController {
     public List<WorkTypeDto> WorkStageList(@RequestParam List<Long> workId,
                                            @RequestParam("system_project") Long projectId
     ) {
-        return workTypeService.findWorkCriteria(workId, projectId).stream().map(WorkTypeConvertor::getWorkTypeDto).collect(Collectors.toList());
+        return workTypeService.findWorkType(workId, projectId).stream().map(WorkTypeConvertor::getWorkTypeDto).collect(Collectors.toList());
     }
 
 }

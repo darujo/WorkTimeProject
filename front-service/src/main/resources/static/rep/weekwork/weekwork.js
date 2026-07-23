@@ -64,13 +64,13 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
     $scope.findPage = function (diff) {
         console.log("findPage");
         console.log($scope.Filt.page);
-        let page = parseInt($scope.Filt.page) + diff;
-        if (page > maxPage) {
-            page = maxPage;
+        let page = parseInt($scope.Filt.page) + diff - 1;
+        if (page > maxPage - 1) {
+            page = maxPage - 1;
 
         }
-        if (page < 1) {
-            page = 1;
+        if (page < 0) {
+            page = 0;
         }
         $scope.Filt.page = page;
         if ($scope.load) {
@@ -91,7 +91,7 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
                     ziSplit: Filter ? Filter.ziSplit : null,
                     addTotal: Filter ? Filter.addTotal : null,
                     //ЗИ
-                    page: Filter ? Filter.page : 1,
+                    page: Filter ? Filter.page : 0,
                     size: Filter ? Filter.size : 10,
                     name: Filter ? Filter.name : null,
                     task: Filter ? Filter.task : null,

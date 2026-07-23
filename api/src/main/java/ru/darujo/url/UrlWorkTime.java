@@ -3,7 +3,7 @@ package ru.darujo.url;
 import ru.darujo.dto.work.WorkLittleDto;
 
 public class UrlWorkTime {
-    private static final String URL = "https://178.20.40.174:5555/#!";
+    private static final String URL = "https://sheduler.ru/#!";
 //    private static final String URL = "https://localhost:5555/#!";
 
     public static String getUrl(String url, String name) {

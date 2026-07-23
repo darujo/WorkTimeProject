@@ -6,8 +6,6 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.assistant.helper.DateHelper;
@@ -120,13 +118,7 @@ public class VacationService {
         specification = Specifications.in(specification, "nikName", users);
         specification = Specifications.ge(specification, "dateEnd", dateStart);
         specification = Specifications.le(specification, "dateStart", dateEnd);
-
-        if (page != null && size != null) {
-            return vacationRepository.findAll(specification
-                    , PageRequest.of(page - 1, size));
-        } else {
-            return new PageImpl<>(vacationRepository.findAll(specification));
-        }
+        return Specifications.findAll(vacationRepository, page == null ? null : page - 1, size, specification, List.of("nikName", "dateStart"));
     }
 
     public Vacation findOneDateBetween(String nikName, String field, LocalDate dateGe, LocalDate dateLe) {

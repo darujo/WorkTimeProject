@@ -8,4 +8,6 @@ public interface WorkLittleInterface {
     String getName();
 
     Long getId();
+
+    WorkLittleInterface getWorkParent();
 }

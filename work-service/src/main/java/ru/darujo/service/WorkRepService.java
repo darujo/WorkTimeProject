@@ -322,7 +322,7 @@ public class WorkRepService {
             ProjectDto projectDto = WorkService.getProjectDto(projectId);
             users.forEach(user -> {
                 Float time = getFactWork(workFull.getWorkProject(), projectDto.getStageEnd(), stage, user, false);
-                if (time > 0) {
+                if (time != null && time > 0) {
 
                     usersTime.compute(user, (k, savaTime) -> (savaTime == null ? 0 : savaTime) + time);
 
@@ -338,6 +338,9 @@ public class WorkRepService {
 
     public Float getFactWork(WorkProject workProject, Integer projectStageEnd, Integer stage, String nikName, boolean addChild) {
         List<Long> childList;
+        if (workProject == null) {
+            return null;
+        }
         if (addChild) {
             childList = workProject.getWork().getChildIdList();
         } else {

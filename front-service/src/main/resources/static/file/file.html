@@ -1,0 +1,69 @@
+<div id="UserList" class="head_text_elem">
+    <h1>Файлы по {{FormFile.objectName}}</h1>
+    <button type="button" class="head_button" ng-click="backUser()">Назад</button>
+    <table>
+        <tr>
+            <td class="table_head2">Файл</td>
+            <td class="table_head2">Размер</td>
+            <td class="table_head2"></td>
+            <td class="table_head2"></td>
+            <!--            <td class="table_head2"></td>-->
+
+        </tr>
+        <tbody>
+        <tr ng-repeat="file in FileList">
+
+            <td>
+                <button class="button_table_del text_left" ng-click="getOneDoc(file.id);">
+                    {{file.fileName}}
+                </button>
+            </td>
+            <td>{{file.size}}</td>
+            <td>
+                <button class="button_table_del" ng-click="deleteDocument(file.id)" ng-style="getStyle(task.id)">
+                    <img src="../gif/del.png" alt="удалить" width="20" height="20"/>
+                </button>
+            </td>
+            <td>
+                <label for="RoleActive"></label>
+                <input id="RoleActive" class="vvod check_box_td" type="checkbox" ng-model="file.active"/>
+            </td>
+
+            <td ng-if="file.delete">Файл потерян обратитесь к администратору</td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="wait_1_2">
+        <img ng-if="load" src="../gif/wait1_2.gif" alt="Лучше ждите" width="300" height="300"/>
+    </div>
+
+    <form ng-submit="sendFile()">
+
+        <div class="horiz">
+            <button type="button" class="head_button" ng-click="getListDocCheckbox()">Скачать файлы</button>
+        </div>
+        <div ng-if="sendFileAll" class="div_process">
+            <div class="div_percent" ng-style="getProcess()">
+                <p class="div_process_text">{{uploadProgress}}</p>
+            </div>
+        </div>
+        <div class="horiz">
+            <label for="file1">Выберите файл:</label>
+
+            <div class="block-list">
+                <input type="file"
+                       id="file1"
+                       multiple="multiple"
+                       class="file-input"
+                       accept="*.*"
+                       required
+                       file-model="FormFile.files"/>
+                <p ng-repeat="file in FormFile.files">{{file.name}}</p>
+            </div>
+
+        </div>
+        <div class="horiz">
+            <button type="submit" class="head_button">Отправить</button>
+        </div>
+    </form>
+</div>

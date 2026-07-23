@@ -70,6 +70,14 @@ spring:
                 - StripPrefix=0
                 - PrefixPath=/app/
             #                - JwtAuthFilter
+            - id: max-service
+              uri: "http://localhost:8191"
+              predicates:
+                - Path=/file-service/**
+              filters:
+                - StripPrefix=1
+                - PrefixPath=/app/
+                - JwtAuthFilter
             - id: user-not-auch
               uri: "http://localhost:8183"
               predicates:
@@ -110,6 +118,13 @@ spring:
                 - StripPrefix=1
                 - PrefixPath=/app
                 - JwtAuthFilter
+                - ReplaceResponse
+            #                - name: ModifyRequestBody
+            #                  args:
+            #                    - inClass: tools.jackson.databind.JsonNode
+            #                    - outClass: tools.jackson.databind.JsonNode
+            #                    - rewriteFunction: ru.darujo.filter.ReplacerHref
+            #                           - contentType: application/json
             - id: calendar-service
               uri: "http://localhost:8184"
               predicates:
@@ -173,6 +188,10 @@ spring:
                 - StripPrefix=0
                 - PrefixPath=/app-front
             #            - JwtAuthFilter
+  http:
+    codecs:
+      preferred-json-mapper: jackson
+
 
 
 #      default-filters:

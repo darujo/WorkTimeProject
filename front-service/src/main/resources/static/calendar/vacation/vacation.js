@@ -162,7 +162,9 @@ angular.module('workTimeService').controller('vacationController', function ($sc
 
     $scope.clearFilter = function (load) {
         console.log("clearFilter");
-        if ($scope.Filt === null || load) {
+        console.log($scope.Filt)
+        console.log(Object.keys($scope.Filt).length)
+        if ($scope.Filt === null || Object.keys($scope.Filt).length === 0 || load) {
             $scope.Filt = {
                 size: 10,
                 nikName: "current",
@@ -177,10 +179,12 @@ angular.module('workTimeService').controller('vacationController', function ($sc
             $scope.filterVacation();
         }
     }
-
+    console.log("-----222-", $scope.Filt)
     // $scope.UserList = $location.UserList;
+    console.log($location.getFilter("vacationFilter"))
     $scope.Filt = $location.getFilter("vacationFilter");
-
+    // $scope.Filt = {}
+    console.log("------", $scope.Filt)
     $scope.clearFilter(false);
 
 

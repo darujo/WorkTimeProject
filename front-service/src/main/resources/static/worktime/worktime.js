@@ -161,12 +161,13 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
 
     $scope.findPage = function (diffPage) {
         console.log("findPage");
-        let page = parseInt(document.getElementById("Page").value) + diffPage;
-        document.getElementById("Page").value = page;
         if ($scope.load) {
             alert("Подождите обрабатывается предыдущий запрос")
         } else {
             $scope.load = true;
+
+            let page = parseInt(document.getElementById("Page").value) + diffPage;
+            document.getElementById("Page").value = page;
             $scope.WorkTimeList = null;
             console.log("запрос данных");
 
@@ -185,7 +186,7 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
                 url: constPatchWorkTime + "/workTime".toLowerCase(),
                 method: "get",
                 params: {
-                    page: page,
+                    page: page - 1,
                     size: Filter ? Filter.size : null,
                     dateLe: Filter ? Filter.dateLe : null,
                     dateGe: Filter ? Filter.dateGe : null,
@@ -388,25 +389,27 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
     }
     let maxPage = 1;
     $scope.loadTask = function (diffPage) {
-        console.log("loadTask");
-        console.log("diffPage");
-        console.log(diffPage);
-        let page = parseInt(document.getElementById("PageTask").value) + diffPage;
-        console.log(page);
-
-
-        if (maxPage < page) {
-            page = maxPage;
-        }
-        // должно быть после если maxPage = 0
-        if (page < 1) {
-            page = 1;
-        }
-        document.getElementById("PageTask").value = page;
         if ($scope.loadTaskWait) {
             alert("Подождите обрабатывается предыдущий запрос2222333")
         } else {
+
             $scope.loadTaskWait = true;
+            console.log("loadTask");
+            console.log("diffPage");
+            console.log(diffPage);
+            let page = parseInt(document.getElementById("PageTask").value) + diffPage;
+            console.log(page);
+
+
+            if (maxPage < page) {
+                page = maxPage;
+            }
+            // должно быть после если maxPage = 0
+            if (page < 1) {
+                page = 1;
+            }
+            document.getElementById("PageTask").value = page;
+
             $scope.TaskList = null;
             let FilterTask;
             FilterTask = $scope.FiltTask;
@@ -417,7 +420,7 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
                 url: constPatchTask + "/task",
                 method: "get",
                 params: {
-                    page: page,
+                    page: page - 1,
                     size: FilterTask ? FilterTask.size : null,
                     workId: FilterTask ? FilterTask.workId : null,
                     codeBTS: FilterTask ? FilterTask.bts : null,
@@ -515,7 +518,7 @@ angular.module('workTimeService').controller('workTimeController', function ($sc
         }
     }
     $scope.clearFilterTask = function (load) {
-        console.log("clearFilterTassssk");
+        console.log("clearFilterTask");
         if ($scope.FiltTask === null) {
             $scope.FiltTask = {size: 10}
         }

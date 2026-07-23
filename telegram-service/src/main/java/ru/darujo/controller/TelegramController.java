@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.darujo.dto.information.SendAdminMessage;
 import ru.darujo.model.ChatInfo;
-import ru.darujo.service.FileService;
+import ru.darujo.service.FileSaverService;
 import ru.darujo.telegram_bot.TelegramBotSend;
 
 import java.io.File;
@@ -23,11 +23,11 @@ public class TelegramController {
         this.telegramBotSend = telegramBotSend;
     }
 
-    private FileService fileService;
+    private FileSaverService fileSaverService;
 
     @Autowired
-    public void setFileService(FileService fileService) {
-        this.fileService = fileService;
+    public void setFileService(FileSaverService fileSaverService) {
+        this.fileSaverService = fileSaverService;
     }
 
     @PostMapping(value = "/{chatId}/notifications", consumes = MediaType.TEXT_PLAIN_VALUE)
@@ -47,7 +47,7 @@ public class TelegramController {
     @PostMapping(value = "/file")
     public String addFile(@RequestParam String fileName,
                           @RequestBody byte[] body) {
-        return fileService.addFile(fileName, body);
+        return fileSaverService.addFile(fileName, body);
     }
 
     @PostMapping(value = "/{chatId}/file")
@@ -57,13 +57,13 @@ public class TelegramController {
                          @RequestParam(required = false) Integer originMessageId,
                          @RequestParam String fileName,
                          @RequestBody String text) throws TelegramApiException {
-        File file = fileService.getFile(fileName);
+        File file = fileSaverService.getFile(fileName);
         telegramBotSend.sendDocument(new ChatInfo(username, chatId, threadId, originMessageId), fileName, file, text);
     }
 
     @DeleteMapping(value = "/file")
     public void deleteFile(@RequestParam String fileName) {
-        fileService.delFile(fileName);
+        fileSaverService.delFile(fileName);
     }
 }
 

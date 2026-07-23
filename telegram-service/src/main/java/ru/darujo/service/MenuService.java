@@ -42,11 +42,11 @@ public class MenuService {
         this.userServiceIntegration = userServiceIntegration;
     }
 
-    private FileService fileService;
+    private FileSaverService fileSaverService;
 
     @Autowired
-    public void setFileService(FileService fileService) {
-        this.fileService = fileService;
+    public void setFileService(FileSaverService fileSaverService) {
+        this.fileSaverService = fileSaverService;
     }
 
     private InlineKeyboardMarkup createMenu(List<InlineKeyboardRow> rows) {
@@ -82,7 +82,7 @@ public class MenuService {
 
     public void openMainMenu(ChatInfo chatInfo) throws TelegramApiException {
 
-        telegramBotSend.sendPhoto(chatInfo, fileService.getFile("menu"), "Чего желаете?", getMainMenu());
+        telegramBotSend.sendPhoto(chatInfo, fileSaverService.getFile("menu"), "Чего желаете?", getMainMenu());
     }
 
     Map<Integer, MenuParam> paramMap = new HashMap<>();

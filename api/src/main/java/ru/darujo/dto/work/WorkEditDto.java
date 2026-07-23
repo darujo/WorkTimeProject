@@ -5,6 +5,9 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 public class WorkEditDto implements Serializable, WorkPlanTime {
+    @SuppressWarnings("unused")
+    public WorkEditDto() {
+    }
     private Long id;
     private Long workProjectId;
     // Код SAP
@@ -94,6 +97,8 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
 
     private WorkLittleDto parentWork;
     private List<WorkLittleDto> childWork;
+    @SuppressWarnings("unused")
+    private Boolean copy;
 
 
     public WorkEditDto(Long id,
@@ -266,11 +271,6 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
         return issuingReleaseFact;
     }
 
-
-    @SuppressWarnings("unused")
-    public WorkEditDto() {
-    }
-
     @SuppressWarnings("unused")
     public Boolean getRated() {
         return rated;
@@ -411,5 +411,9 @@ public class WorkEditDto implements Serializable, WorkPlanTime {
     @Override
     public List<Long> getChildId() {
         return childWork == null || childWork.isEmpty() ? null : childWork.stream().map(WorkLittleDto::getId).toList();
+    }
+
+    public boolean isCopy() {
+        return copy != null && copy;
     }
 }

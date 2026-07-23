@@ -55,4 +55,12 @@ public class RateController {
         return rateService.getRate(workId, child);
     }
 
+    @GetMapping("/copy")
+    public void getRate(@RequestParam(required = false) Long workIdSource,
+                        @RequestParam(required = false) Long workIdTarget,
+                        @RequestParam(defaultValue = "false") boolean deleteOld
+    ) {
+        rateService.copy(workIdSource, workIdTarget, deleteOld);
+    }
+
 }

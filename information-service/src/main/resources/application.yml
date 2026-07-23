@@ -49,7 +49,7 @@ integration:
   telegram-service:
     enable: false
   max-service:
-    enable: false
+    enable: true
   calendar-service:
     enable: true
   work-time-service:

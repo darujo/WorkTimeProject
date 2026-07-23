@@ -7,8 +7,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.mail.javamail.JavaMailSender;
+import ru.darujo.dto.information.SendMessage;
 import ru.darujo.dto.information.SendServiceInt;
 import ru.darujo.service.DefaultEmailService;
+import ru.darujo.type.MessageSenderType;
 
 @Configuration
 @Slf4j
@@ -18,7 +20,7 @@ public class AppConfig {
     @ConditionalOnMissingBean(name = "telegramServiceIntegration")
     @Bean("telegramServiceIntegration")
     public SendServiceInt telegramServiceIntegration() {
-        return getDefault("telegram");
+        return getDefault(MessageSenderType.Telegram);
     }
 
     @ConditionalOnProperty(prefix = "spring.mail", name = "host")
@@ -31,15 +33,25 @@ public class AppConfig {
     @ConditionalOnMissingBean(name = "mailServiceIntegration")
     @Bean("mailServiceIntegration")
     public SendServiceInt getDefaultMailServiceIntegration() {
-        return getDefault("email");
+        return getDefault(MessageSenderType.Email);
     }
 
     private static SendServiceInt defaultService;
 
-    private SendServiceInt getDefault(String name) {
-        log.warn("Не подключен сервис {} все сообщения игнорируются", name);
+    private SendServiceInt getDefault(MessageSenderType messageSenderType) {
+        log.warn("Не подключен сервис {} все сообщения игнорируются", messageSenderType.name());
         if (defaultService == null) {
-            defaultService = sendMessage -> true;
+            defaultService = new SendServiceInt() {
+                @Override
+                public MessageSenderType getMessageSenderType() {
+                    return messageSenderType;
+                }
+
+                @Override
+                public boolean sendMessage(SendMessage sendMessage) throws RuntimeException {
+                    return true;
+                }
+            };
         }
         return defaultService;
 

@@ -63,3 +63,5 @@ integration:
     enable: true
   gate-way-service:
     enable: true
+  file-service:
+    enable: true

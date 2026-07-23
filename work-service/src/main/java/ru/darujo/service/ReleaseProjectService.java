@@ -15,7 +15,6 @@ public class ReleaseProjectService {
 
     public ReleaseProjectService() {
         INSTANCE = this;
-
     }
 
     private ReleaseProjectRepository releaseProjectRepository;

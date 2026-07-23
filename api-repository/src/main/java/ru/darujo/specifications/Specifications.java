@@ -1,6 +1,7 @@
 package ru.darujo.specifications;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -24,25 +25,60 @@ public class Specifications {
     }
 
     public static <T> Page<T> findAll(JpaSpecificationExecutor<T> repository, Integer page, Integer size, Specification<T> specification, List<String> sortStr) {
+        Sort sort = parseSort(sortStr);
+
+        return findAll(repository, page, size, specification, sort);
+    }
+
+    public static @Nullable Sort parseSort(List<String> sortStr) {
         Sort sort = null;
         if (sortStr != null) {
-            for (String sortField : sortStr) {
-                sort = sort == null ? Sort.by(sortField) : sort.and(Sort.by(sortField));
+            String direction = sortStr.get(sortStr.size() - 1);
+            if (direction.equalsIgnoreCase("asc") || direction.equalsIgnoreCase("desc")) {
+                String[] type = {};
+                sort = getSort(sortStr.toArray(type), null);
+            } else {
+                for (String sortField : sortStr) {
+                    sort = getSort(sortField.split(","), sort);
+                }
             }
         }
-        return findAll(repository, page, size, specification, sort);
+        return sort;
+    }
+
+    private static Sort getSort(String[] sortStr, Sort sort) {
+        String direction = sortStr[sortStr.length - 1];
+        Sort.Direction directionSort;
+        boolean lastDir = direction.equalsIgnoreCase("asc");
+        if (direction.equalsIgnoreCase("desc")) {
+            directionSort = Sort.Direction.DESC;
+            lastDir = true;
+        } else {
+            directionSort = Sort.Direction.ASC;
+        }
+
+        for (int i = 0; i < sortStr.length - (lastDir ? 1 : 0); i++) {
+            String sortField = sortStr[i];
+            sort = sort == null ? Sort.by(
+                    directionSort,
+                    sortField) :
+                    sort.and(Sort.by(
+                            directionSort,
+                            sortField));
+        }
+        return sort;
     }
 
     public static <T> Page<T> findAll(JpaSpecificationExecutor<T> repository, Integer page, Integer size, Specification<T> specification, Sort sort) {
         if (sort == null) {
             if (page != null && size != null) {
-                return repository.findAll(specification, PageRequest.of(page - 1, size));
+                return repository.findAll(specification, PageRequest.of(page, size));
             } else {
                 return new PageImpl<>(repository.findAll(specification));
             }
         } else {
             if (page != null && size != null) {
-                return repository.findAll(specification, PageRequest.of(page - 1, size, sort));
+                return repository.findAll(specification, PageRequest.of(page, size, sort));
             } else {
                 return new PageImpl<>(repository.findAll(specification, sort));
             }
@@ -310,6 +346,15 @@ public class Specifications {
     private static <T> Specification<@NonNull T> notEqual(String field, Object value) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.notEqual(root.get(field), value)
         );
+    }
+
+    public static <T> Specification<@NonNull T> ne(Specification<@NonNull T> specification, String field, List<Long> valueList) {
+        if (valueList != null && !valueList.isEmpty()) {
+            for (Long value : valueList) {
+                specification = ne(specification, field, value);
+            }
+        }
+        return specification;
     }
 
     public static <T> Specification<@NonNull T> ne(Specification<@NonNull T> specification, String field, Long value) {

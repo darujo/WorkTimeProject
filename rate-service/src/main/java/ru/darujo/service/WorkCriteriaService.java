@@ -6,8 +6,10 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.WorkServiceIntegrationImp;
+import ru.darujo.model.CopyWork;
 import ru.darujo.model.WorkCriteria;
 import ru.darujo.repository.WorkCriteriaRepository;
 import ru.darujo.specifications.Specifications;
@@ -20,11 +22,6 @@ import java.util.Optional;
 public class WorkCriteriaService {
     private WorkCriteriaRepository workCriteriaRepository;
     private WorkServiceIntegrationImp workServiceIntegration;
-
-    @Autowired
-    public void setWorkCriteriaRepository(WorkCriteriaRepository workCriteriaRepository) {
-        this.workCriteriaRepository = workCriteriaRepository;
-    }
 
     public Optional<WorkCriteria> findById(long id) {
         return workCriteriaRepository.findById(id);
@@ -45,7 +42,6 @@ public class WorkCriteriaService {
         if (workCriteriaFind != null) {
             throw new ResourceNotFoundRunTime("Уже есть запись с таким критерием");
         }
-
     }
 
     public WorkCriteria saveWorkCriteria(WorkCriteria workCriteria) {
@@ -63,6 +59,19 @@ public class WorkCriteriaService {
         Specification<@NonNull WorkCriteria> specification = Specification.where(Specifications.in(null, "workId", workId));
         specification = Specifications.eq(specification, "projectId", projectId);
         return workCriteriaRepository.findAll(specification, Sort.by("workId").and(Sort.by("criteria")));
+    }
+
+    @Transactional
+    public void copy(Long workIdSource, Long workIdTarget, boolean deleteOld) {
+        findWorkCriteria(List.of(workIdSource), null)
+                .forEach(work ->
+                        CopyWork.copy(workIdTarget, deleteOld, work, workCriteriaRepository)
+                );
+    }
+
+    @Autowired
+    public void setWorkCriteriaRepository(WorkCriteriaRepository workCriteriaRepository) {
+        this.workCriteriaRepository = workCriteriaRepository;
     }
 
     @Autowired

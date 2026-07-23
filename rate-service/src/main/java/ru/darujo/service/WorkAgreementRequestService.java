@@ -96,7 +96,7 @@ public class WorkAgreementRequestService {
     public WorkAgreementRequest saveWorkCriteria(String username, WorkAgreementRequest workAgreementRequest) {
         validWorkAgreementRequest(workAgreementRequest);
         WorkAgreementRequest workAgreementRequestSave = findRequest(workAgreementRequest.getId());
-        WorkLittleDto workLittleDto = workServiceIntegration.getWorEditDto(workAgreementRequest.getWorkId());
+        WorkLittleDto workLittleDto = workServiceIntegration.getWorLittleDto(workAgreementRequest.getWorkId());
 
         String message = workAgreementRequestSave == null
                 ?
@@ -123,7 +123,7 @@ public class WorkAgreementRequestService {
         if (workAgreementRequestSave == null) {
             return;
         }
-        WorkLittleDto workLittleDto = workServiceIntegration.getWorEditDto(workAgreementRequestSave.getWorkId());
+        WorkLittleDto workLittleDto = workServiceIntegration.getWorLittleDto(workAgreementRequestSave.getWorkId());
         String message = ("Удален запрос на согласование по ЗИ " + UrlWorkTime.getUrlAgreement(workLittleDto) + "\n" + workAgreementRequestSave);
         workAgreementRequestRepository.deleteById(id);
         infoServiceIntegration.addMessage(

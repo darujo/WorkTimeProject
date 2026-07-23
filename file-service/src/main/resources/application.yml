@@ -1,0 +1,33 @@
+server:
+  port: 8191
+  servlet:
+    context-path: /app
+spring:
+  main:
+    banner-mode: off
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres?options=--search_path%3Dfile_repository
+    username: postgres
+    password: 5397
+
+
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  jackson:
+    default-property-inclusion: non_absent
+  servlet:
+    multipart:
+      enabled: true
+      # Threshold after which the files are written to a disk.
+      file-size-threshold: 1MB
+      # Max file size.
+      max-file-size: 5MB
+      # Max Request Size
+      max-request-size: 200MB
+file:
+  save-into: "C:\\daru\\worktime\\file"

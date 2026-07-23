@@ -1,6 +1,8 @@
 package ru.darujo.dto.information;
 
-public interface SendServiceInt {
+import ru.darujo.type.MessageSenderType;
 
+public interface SendServiceInt {
+    MessageSenderType getMessageSenderType();
     boolean sendMessage(SendMessage sendMessage) throws RuntimeException;
 }

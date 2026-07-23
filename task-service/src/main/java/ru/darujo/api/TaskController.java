@@ -145,9 +145,7 @@ public class TaskController {
                 description,
                 workId,
                 null,
-                projectId,
-                null,
-                null).forEach(task -> listId.add(task.getId()));
+                projectId).forEach(task -> listId.add(task.getId()));
         return listId;
     }
 
@@ -163,7 +161,7 @@ public class TaskController {
 
             WorkLittleDto workLittleDto = workLittleDtoMap.get(taskDto.getWorkId());
             if (workLittleDto == null) {
-                workLittleDto = workServiceIntegration.getWorEditDto(taskDto.getWorkId());
+                workLittleDto = workServiceIntegration.getWorLittleDto(taskDto.getWorkId());
                 workLittleDtoMap.put(taskDto.getId(), workLittleDto);
             }
             taskDto.setCodeZi(workLittleDto.getCodeZI());

@@ -2,6 +2,7 @@ package ru.darujo.integration;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.function.client.WebClient;
+import ru.darujo.type.MessageSenderType;
 
 @Slf4j
 public class MaxServiceIntegrationImp extends MessagerServiceIntegrationImp {
@@ -14,4 +15,8 @@ public class MaxServiceIntegrationImp extends MessagerServiceIntegrationImp {
         super.setWebClient(webClientMax);
     }
 
+    @Override
+    public MessageSenderType getMessageSenderType() {
+        return MessageSenderType.Max;
+    }
 }

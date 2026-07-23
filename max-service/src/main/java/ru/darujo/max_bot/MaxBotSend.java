@@ -1,6 +1,5 @@
 package ru.darujo.max_bot;
 
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.darujo.dto.information.SendAdminMessage;
 import ru.darujo.model.ChatInfo;
 import ru.darujo.model.MessageSend;
-import ru.darujo.service.FileService;
+import ru.darujo.service.FileSaverService;
 import ru.darujo.service.MessageSendService;
 import ru.max.botapi.client.MaxApiException;
 import ru.max.botapi.client.MaxBotAPI;
@@ -46,31 +45,6 @@ public class MaxBotSend {
         sendPhoto(chatInfo, file, text, null);
     }
 
-
-    @PostConstruct
-    public void setCommand() {
-
-//        List<BotCommand> botCommands = new ArrayList<>();
-//        botCommands.add(new BotCommand("/menu", "Открыть меню"));
-//        botCommands.add(new BotCommand("/stop", "Отвязать аккаунт от уведомлений"));
-//        botCommands.add(new BotCommand("/link", "Подписаться на уведомления от сервиса трудозатрат"));
-//        SetMyCommands setMyCommands = new SetMyCommands(botCommands);
-//        setMyCommands.setScope(new BotCommandScopeAllPrivateChats());
-//        try {
-//            tgClient.execute(setMyCommands);
-//
-//        } catch (TelegramApiException e) {
-//            log.error(e.getMessage(), e);
-//        }
-//        setMyCommands.setScope(new BotCommandScopeAllGroupChats());
-//        try {
-//            tgClient.execute(setMyCommands);
-//
-//        } catch (TelegramApiException e) {
-//            log.error(e.getMessage(), e);
-//        }
-    }
-
     public String getName() {
         return api.getMyInfo().execute().name();
     }
@@ -84,11 +58,11 @@ public class MaxBotSend {
     }
 
     private @NonNull List<AttachmentRequest> attachmentPhoto(MaxUploadAPI uploadApi, File file, List<AttachmentRequest> menu) {
-        return attachmentImage(uploadApi, UploadType.IMAGE, null, file, menu);
+        return attachmentFile(uploadApi, UploadType.IMAGE, null, file, menu);
     }
 
-    private List<AttachmentRequest> attachmentDocument(MaxUploadAPI uploadApi, String fileName, File file, List<AttachmentRequest> menu) {
-        return attachmentFile(uploadApi, UploadType.FILE, fileName, file, menu);
+    private List<AttachmentRequest> attachmentDocument(MaxUploadAPI uploadApi, String fileName, File file) {
+        return attachmentFile(uploadApi, UploadType.FILE, fileName, file, null);
     }
 
     private @NonNull List<AttachmentRequest> attachmentFile(MaxUploadAPI uploadApi, UploadType uploadType, String filename, File file, List<AttachmentRequest> menu) {
@@ -97,8 +71,7 @@ public class MaxBotSend {
         UploadEndpoint endpoint = api.getUploadUrl(uploadType).execute();
 
         // Шаг 2: передать файл потоком (без буферизации в куче)
-        FileUploadedInfo info = uploadApi.uploadFile(endpoint, file.toPath(), filename == null ? file.getName() : filename);
-        AttachmentRequest attachmentRequest = new FileAttachmentRequest(new MediaRequestPayload(info.token()));
+        AttachmentRequest attachmentRequest = getAttachmentRequest(uploadApi, uploadType, filename, file, endpoint);
         try {
             Thread.sleep(2000); // пауза 2 секунды
         } catch (InterruptedException e) {
@@ -113,32 +86,29 @@ public class MaxBotSend {
         return menu;
     }
 
-    private @NonNull List<AttachmentRequest> attachmentImage(MaxUploadAPI uploadApi, UploadType uploadType, String filename, File file, List<AttachmentRequest> menu) {
-
-        // Шаг 1: запросить endpoint для загрузки
-        UploadEndpoint endpoint = api.getUploadUrl(uploadType).execute();
-
-        // Шаг 2: передать файл потоком (без буферизации в куче)
-        ImageUploadedInfo info = uploadApi.uploadImage(endpoint, file.toPath(), filename == null ? file.getName() : filename);
-        ImageAttachmentRequest attachmentRequest = new ImageAttachmentRequest(
-                new PhotoAttachmentRequestPayload(null, null, info.photos()));
-        try {
-            Thread.sleep(2000); // пауза 2 секунды
-        } catch (InterruptedException e) {
-            log.error(e.getMessage(), e);
+    private static @NonNull AttachmentRequest getAttachmentRequest(MaxUploadAPI uploadApi, UploadType uploadType, String filename, File file, UploadEndpoint endpoint) {
+        if (filename == null) {
+            filename = file.getName();
         }
-        if (menu == null) {
-            menu = List.of(attachmentRequest);
+        if (uploadType.equals(UploadType.IMAGE)) {
+            ImageUploadedInfo info = uploadApi.uploadImage(endpoint, file.toPath(), filename);
+            return new ImageAttachmentRequest(
+                    new PhotoAttachmentRequestPayload(null, null, info.photos()));
+
+        }
+        if (uploadType.equals(UploadType.AUDIO)) {
+            MediaUploadedInfo info = uploadApi.uploadMedia(endpoint, file.toPath(), filename);
+            return new VideoAttachmentRequest(new MediaRequestPayload(info.token()));
         } else {
-            menu.add(attachmentRequest);
+            FileUploadedInfo info = uploadApi.uploadFile(endpoint, file.toPath(), filename);
+            return new FileAttachmentRequest(new MediaRequestPayload(info.token()));
         }
-        return menu;
     }
 
     public void sendDocument(ChatInfo chatInfo, String fileName, File file, String text) {
         try (MaxUploadAPI uploadApi = new MaxUploadAPI()) {
             SendAction(chatInfo, SenderAction.SENDING_FILE);
-            List<AttachmentRequest> attachmentRequest = attachmentDocument(uploadApi, fileName, file, null);
+            List<AttachmentRequest> attachmentRequest = attachmentDocument(uploadApi, fileName, file);
 
             sendMessage(chatInfo, text, attachmentRequest);
         }
@@ -146,7 +116,7 @@ public class MaxBotSend {
 
 
     public SendMessageResult sendMessage(ChatInfo chatInfo, String text, List<AttachmentRequest> menu) {
-        SendMessageResult messageSend = api.sendMessage(new NewMessageBody(text, menu, null, null, null))
+        SendMessageResult messageSend = api.sendMessage(new NewMessageBody(text, menu, null, null, TextFormat.HTML))
                 .chatId(Long.parseLong(chatInfo.getChatId()))
                 .execute();
 
@@ -156,23 +126,21 @@ public class MaxBotSend {
     }
 
     @Value("${max.bot.admin-id}")
-    private String adminId;
+    private List<String> adminIdList;
 
     public void sendMessageForAdmin(SendAdminMessage message) {
-        if (adminId.isEmpty()) {
-            return;
-        }
-
-        ChatInfo chatInfo = new ChatInfo(null, adminId, null);
-        if (message.isAttachFile()) {
-            sendDocument(
-                    chatInfo,
-                    message.getFileName(),
-                    FileService.getFile(message.toString(), message.getFileName(), message.getFileBody()),
-                    message.getText());
-        } else {
-            sendMessage(chatInfo, message.getText());
-        }
+        adminIdList.forEach(adminId -> {
+            ChatInfo chatInfo = new ChatInfo(null, adminId, null);
+            if (message.isAttachFile()) {
+                sendDocument(
+                        chatInfo,
+                        message.getFileName(),
+                        FileSaverService.getFile(message.toString(), message.getFileName(), message.getFileBody()),
+                        message.getText());
+            } else {
+                sendMessage(chatInfo, message.getText());
+            }
+        });
     }
 
     public void deleteMessage(ChatInfo chatInfo) {

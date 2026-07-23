@@ -10,7 +10,7 @@ updateApp.directive('fileModel', ['$parse', function ($parse) {
             console.log(element[0])
             element.bind('change', function () {
                 scope.$apply(function () {
-                    modelSetter(scope, element[0].files[0]);
+                    modelSetter(scope, element[0].files);
                 });
             });
         }
@@ -58,8 +58,9 @@ updateApp.controller('updateController', function ($scope, $http, $location) {
                         // reportProgress: true, // Без observe: 'events' не работает
                         // observe: 'events', // без reportProgress: true только HttpEventType.Sent и HttpEventType.Response
                         transformRequest: angular.identity,
-                        // блокирут преобразование ответа в объект а мы этого не хотим
-                        // transformResponse: angular.identity ,
+                        // блокирует преобразование ответа в объект, а мы этого не хотим,
+                        // но так все равно пытается распарсить его как json хотя в ответе text
+                        transformResponse: angular.identity,
                         headers: {
                             'Content-Type': undefined
                         },
@@ -76,29 +77,30 @@ updateApp.controller('updateController', function ($scope, $http, $location) {
 
                         // , formData, config
                     }
-                )
-                    .then(function (response) {
-                        console.log("Send Update")
-                        console.log(response);
-                        $scope.sendMessageForAll = false;
-                        alert("Обновление успешно отправлено");
-                    }, function errorCallback(response) {
-                        $scope.sendMessageForAll = false;
-                        console.log("----error---");
-                        console.log(response);
+                ).then(function (response) {
+                    console.log("Send Update")
+                    console.log(response);
+                    $scope.sendMessageForAll = false;
+                    alert("Обновление успешно отправлено");
+                }, function errorCallback(response) {
+                    $scope.sendMessageForAll = false;
+                    console.log("----error---");
+                    console.log(response);
 
-                        if ($location.checkAuthorized(response)) {
-                            console.log(1)
-                            if(response.data.message === undefined ){
-                                alert(response.data);
-                            } else {
-                                alert(response.data.message);
-                            }
+                    if ($location.checkAuthorized(response)) {
+                        console.log(1)
+                        let data = JSON.parse(response.data)
+                        console.log()
+                        if (data.message === undefined) {
+                            alert(data);
                         } else {
-                            console.log(2)
-                            alert(response.data);
+                            alert(data.message);
                         }
-                    });
+                    } else {
+                        console.log(2)
+                        alert(response.data);
+                    }
+                });
             } else {
                 alert("Подождите отправляется предыдущее обновление")
             }

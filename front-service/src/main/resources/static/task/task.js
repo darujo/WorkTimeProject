@@ -80,20 +80,22 @@ angular.module('workTimeService').controller('taskController', function ($scope,
     }
     let maxPage = 1;
     $scope.findPage = function (diffPage) {
-        console.log("findPage");
-        let page = parseInt(document.getElementById("Page").value) + diffPage;
-        console.log("запрос данных7");
-        if (page > maxPage) {
-            page = maxPage;
 
-        }
-        if (page < 1) {
-            page = 1;
-        }
-        document.getElementById("Page").value = page;
         if ($scope.load) {
             alert("Подождите обрабатывается предыдущий запрос")
         } else {
+            console.log("findPage");
+            let page = parseInt(document.getElementById("Page").value) + diffPage;
+            console.log("запрос данных7");
+            if (page > maxPage) {
+                page = maxPage;
+
+            }
+            if (page < 1) {
+                page = 1;
+            }
+            document.getElementById("Page").value = page;
+
             $scope.load = true;
             $scope.TaskList = null;
             let Filter;
@@ -103,7 +105,7 @@ angular.module('workTimeService').controller('taskController', function ($scope,
                 url: constPatchTask + "/task",
                 method: "get",
                 params: {
-                    page: page,
+                    page: page - 1,
                     size: Filter ? Filter.size : null,
                     workId: Filter ? Filter.workId : null,
                     codeBTS: Filter ? Filter.bts : null,
@@ -318,9 +320,9 @@ angular.module('workTimeService').controller('taskController', function ($scope,
     }
     $scope.loadWork = function (diffPage) {
         console.log("loadWork")
-        let page = parseInt(document.getElementById("PageWork").value) + diffPage;
-        if (page < 1) {
-            page = 1;
+        let page = parseInt(document.getElementById("PageWork").value) + diffPage - 1;
+        if (page < 0) {
+            page = 0;
         }
         $location.saveFilter("taskEditFilter", $scope.FiltWork);
         document.getElementById("PageWork").value = page;

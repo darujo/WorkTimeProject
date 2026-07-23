@@ -38,11 +38,11 @@ public class MenuService {
         this.userServiceIntegration = userServiceIntegration;
     }
 
-    private FileService fileService;
+    private FileSaverService fileSaverService;
 
     @Autowired
-    public void setFileService(FileService fileService) {
-        this.fileService = fileService;
+    public void setFileService(FileSaverService fileSaverService) {
+        this.fileSaverService = fileSaverService;
     }
 
     private InlineKeyboardAttachmentRequest createMenu(List<List<Button>> rows) {
@@ -80,7 +80,7 @@ public class MenuService {
     public void openMainMenu(ChatInfo chatInfo) {
         List<AttachmentRequest> menu = new ArrayList<>();
         menu.add(getMainMenu());
-        maxBotSend.sendPhoto(chatInfo, fileService.getFile("menu"), "Чего желаете?", menu);
+        maxBotSend.sendPhoto(chatInfo, fileSaverService.getFile("menu"), "Чего желаете?", menu);
     }
 
     Map<String, MenuParam> paramMap = new HashMap<>();

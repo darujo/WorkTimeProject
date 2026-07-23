@@ -1,0 +1,59 @@
+package ru.darujo.api;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
+import org.springframework.web.multipart.MultipartFile;
+import ru.darujo.converter.FileConverter;
+import ru.darujo.dto.file.FileDto;
+import ru.darujo.service.FileService;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/v1/file")
+public class FileController {
+    private FileService fileService;
+
+
+    @Autowired
+    public void setFileService(FileService fileService) {
+        this.fileService = fileService;
+    }
+
+    @PostMapping("")
+    public List<Long> saveFile(@RequestParam String objectType,
+                               @RequestParam String objectId,
+                               @RequestPart(name = "file", required = false) List<MultipartFile> files,
+                               @RequestHeader String username) {
+
+        return fileService.saveFiles(username, objectType, objectId, files);
+
+    }
+
+    @GetMapping("/document")
+    public DeferredResult<ResponseEntity<Resource>> asyncDownload(@RequestParam List<Long> fileId) {
+        DeferredResult<ResponseEntity<Resource>> deferredResult = new DeferredResult<>(30000L); // 30-секундный таймаут
+        fileService.getFiles(fileId, deferredResult);
+        return deferredResult;
+    }
+
+    @GetMapping("/documents")
+    public List<FileDto> getDocList(@RequestParam(required = false) String objectType,
+                                    @RequestParam(required = false) String objectId,
+                                    @RequestParam(required = false) List<Long> fileId) {
+        return fileService.getDocumentList(objectType, objectId, fileId)
+                .stream()
+                .map(FileConverter::getFileModel).toList();
+    }
+
+    @DeleteMapping("/document")
+    public boolean deleteFile(@RequestHeader String username,
+                              @RequestParam List<Long> fileId) {
+        fileService.delete(username, fileId);
+        return true;
+    }
+
+}

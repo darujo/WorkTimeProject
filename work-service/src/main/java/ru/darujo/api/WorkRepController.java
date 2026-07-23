@@ -92,7 +92,7 @@ public class WorkRepController {
         LocalDate lDateStart = DateHelper.zDTToLD(dateStart, "dateStart = ");
         LocalDate lDateEnd = DateHelper.zDTToLD(dateEnd, "dateEnd = ");
         StageZiFind stageZiFind = new StageZiFind(stageZi);
-
+/// sssssss
         return workRepService.getWeekWork(ziSplit, addTotal, nikName, weekSplit, lDateStart, lDateEnd,
                 page, size, name, projectId, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, sort);
     }
@@ -120,6 +120,6 @@ public class WorkRepController {
             lDateEnd = LocalDate.now().plusDays(100);
         }
 
-        return workRepService.getWorkGraphRep(page, size, nameZi, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, sort, lDateStart, lDateEnd, period);
+        return workRepService.getWorkGraphRep(page - 1, size, nameZi, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, sort, lDateStart, lDateEnd, period);
     }
 }

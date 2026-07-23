@@ -1,6 +1,5 @@
 package ru.darujo.service;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +11,7 @@ import ru.darujo.dto.information.SendMessage;
 import ru.darujo.dto.information.SendServiceInt;
 import ru.darujo.dto.information.UserSendMessage;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
+import ru.darujo.type.MessageSenderType;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -21,17 +21,6 @@ public class DefaultEmailService implements SendServiceInt {
 
     @Value("${spring.mail.username}")
     private String senderEmail;
-
-    @PostConstruct
-    public void init() {
-        String[] toAddress = new String[1];
-        toAddress[0] = "radies@rambler.ru";
-        try {
-            sendSimpleEmail(toAddress, "Запуск", "тест");
-        } catch (ResourceNotFoundRunTime ex) {
-            log.error(ex.getMessage(), ex);
-        }
-    }
 
     public JavaMailSender emailSender;
 
@@ -86,5 +75,10 @@ public class DefaultEmailService implements SendServiceInt {
             }
         }
         return flagOk;
+    }
+
+    @Override
+    public MessageSenderType getMessageSenderType() {
+        return MessageSenderType.Email;
     }
 }

@@ -27,7 +27,7 @@ angular.module('workTimeService').controller('rateController', function ($scope,
             return {};
         }
     };
-    $scope.FilterCh = {Child: 2};
+    $scope.FilterCh = {Child: 3};
     $scope.loadRate = function () {
         console.log("loadWorkStage");
         if ($scope.load1) {

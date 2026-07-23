@@ -108,6 +108,9 @@ angular.module('workTimeService').config(["$ocLazyLoadProvider", function ($ocLa
         }, {
             name: 'request_pass', // module
             files: ['user/request_pass.js?ver='.toLowerCase() + ver]
+        }, {
+            name: 'file_upload', // module
+            files: ['file/file.js?ver='.toLowerCase() + ver]
         }
         ]
     });
