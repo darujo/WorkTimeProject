@@ -1,6 +1,8 @@
 package ru.darujo.integration;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.darujo.dto.MapStringFloat;
@@ -184,8 +186,9 @@ public class WorkServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
         }
     }
 
-    public List<WorkUserTime> getWorkUserTime(boolean ziSplit, Long projectId, Timestamp dateStart, Timestamp dateEnd) {
-        return getWorkUserTime(ziSplit,
+    public PagedModel<WorkUserTime> getWorkUserTime(boolean ziSplit, Long projectId, Timestamp dateStart, Timestamp dateEnd) {
+
+        getWorkUserTime(ziSplit,
                 null,
                 true,
                 false,
@@ -199,9 +202,10 @@ public class WorkServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
                 null,
                 null,
                 null);
+        return null;
     }
 
-    public List<WorkUserTime> getWorkUserTime(boolean ziSplit,
+    public void getWorkUserTime(boolean ziSplit,
                                               String nikName,
                                               Boolean addTotal,
                                               Boolean weekSplit,
@@ -237,15 +241,23 @@ public class WorkServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
         addTeg(stringBuilder, "sort", sort);
         String uri = "/rep/fact/week" + stringBuilder;
         try {
-            return webClient.get().uri(uri)
+
+            var page = webClient.get().uri(uri)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ"))
-                    .bodyToFlux(WorkUserTime.class)
-                    .collectList()
+                    .bodyToMono(new ParameterizedTypeReference<PagedModel<List<WorkUserTime>>>() {
+                    })
+//                    .bodyToMono(new TypeReferences.PagedModelType< WorkUserTime>())
                     .doOnError(throwable -> log.error(uri, throwable))
                     .block();
+            //todo доделать на pagedModel
+            if (page != null) {
+//                return new PagedModel<>(new ArrayList<>());
+            } else {
+                throw new ResourceNotFoundRunTime("где-то пропала пагинация");
+            }
         } catch (RuntimeException ex) {
             log.error(uri, ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());

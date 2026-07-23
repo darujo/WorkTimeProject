@@ -1,14 +1,15 @@
 package ru.darujo.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.MapStringFloat;
-import ru.darujo.dto.PageDto;
 import ru.darujo.dto.PageObjDto;
 import ru.darujo.dto.workperiod.WorkUserTime;
 import ru.darujo.dto.workrep.WorkFactDto;
@@ -44,22 +45,23 @@ public class WorkRepController {
     }
 
     @GetMapping("/work/fact")
-    public PageDto<WorkFactDto> getFactWork(@RequestParam(defaultValue = "1") int page,
-                                            @RequestParam(defaultValue = "10") int size,
-                                            @RequestParam(required = false) String nikName,
-                                            @RequestParam(required = false) String name,
-                                            @RequestParam(defaultValue = "15") Integer stageZi,
-                                            @RequestParam(required = false) Long codeSap,
-                                            @RequestParam(required = false) String codeZi,
-                                            @RequestParam(required = false) String task,
-                                            @RequestParam(required = false) Long releaseId,
-                                            @RequestParam(defaultValue = "release.sort,name") List<String> sort,
-                                            @RequestParam(defaultValue = "true") boolean hideNotTime) {
+    public PagedModel<?> getFactWork(@RequestParam(defaultValue = "1") int page,
+                                     @RequestParam(defaultValue = "10") int size,
+                                     @RequestParam(required = false) String nikName,
+                                     @RequestParam(required = false) String name,
+                                     @RequestParam(defaultValue = "15") Integer stageZi,
+                                     @RequestParam(required = false) Long codeSap,
+                                     @RequestParam(required = false) String codeZi,
+                                     @RequestParam(required = false) String task,
+                                     @RequestParam(required = false) Long releaseId,
+                                     @RequestParam(defaultValue = "release.sort,name") List<String> sort,
+                                     @RequestParam(defaultValue = "true") boolean hideNotTime,
+                                     PagedResourcesAssembler<WorkFactDto> pagedAssembler) {
         if (nikName != null && nikName.isEmpty()) {
             nikName = null;
         }
         StageZiFind stageZiFind = new StageZiFind(stageZi);
-        return workRepService.getWorkFactRep(page, size, nikName, name, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, sort, hideNotTime);
+        return pagedAssembler.toModel(workRepService.getWorkFactRep(page, size, nikName, name, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, sort, hideNotTime));
     }
 
     @GetMapping("/time/fact/stage")
@@ -71,7 +73,7 @@ public class WorkRepController {
     }
 
     @GetMapping("/fact/week")
-    public List<WorkUserTime> getWeekWork(@RequestParam(defaultValue = "false") boolean ziSplit,
+    public PagedModel<?> getWeekWork(@RequestParam(defaultValue = "false") boolean ziSplit,
                                           @RequestParam(required = false) String nikName,
                                           @RequestParam(required = false) Boolean addTotal,
                                           @RequestParam(required = false) Boolean weekSplit,
@@ -88,13 +90,15 @@ public class WorkRepController {
                                           @RequestParam(required = false) String codeZi,
                                           @RequestParam(required = false) String task,
                                           @RequestParam(required = false) List<Long> releaseId,
-                                          @RequestParam(defaultValue = "release.sort,name") List<String> sort) {
+                                     @RequestParam(defaultValue = "release.sort,name") List<String> sort,
+                                     PagedResourcesAssembler<WorkUserTime> pagedResourcesAssembler) {
         LocalDate lDateStart = DateHelper.zDTToLD(dateStart, "dateStart = ");
         LocalDate lDateEnd = DateHelper.zDTToLD(dateEnd, "dateEnd = ");
         StageZiFind stageZiFind = new StageZiFind(stageZi);
-/// sssssss
-        return workRepService.getWeekWork(ziSplit, addTotal, nikName, weekSplit, lDateStart, lDateEnd,
-                page, size, name, projectId, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, sort);
+
+        return pagedResourcesAssembler.toModel(
+                workRepService.getWeekWork(ziSplit, addTotal, nikName, weekSplit, lDateStart, lDateEnd,
+                        page, size, name, projectId, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, sort));
     }
 
     @GetMapping("/graph")
