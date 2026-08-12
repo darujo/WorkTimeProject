@@ -31,13 +31,32 @@
         <dependency>
             <groupId>ru.etsft.max</groupId>
             <artifactId>max-bot-api-spring-boot</artifactId>
-            <version>0.3.1</version>
+            <version>0.3.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>ru.etsft.max</groupId>
+            <artifactId>max-bot-api-client</artifactId>
+            <version>0.3.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>ru.etsft.max</groupId>
             <artifactId>max-bot-api-jackson</artifactId>
-            <version>0.3.1</version>
+            <version>0.3.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>ru.etsft.max</groupId>
+            <artifactId>max-bot-api-longpolling</artifactId>
+            <version>0.3.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>ru.etsft.max</groupId>
+            <artifactId>max-bot-api-webhook</artifactId>
+            <version>0.3.2</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>ru.darujo</groupId>

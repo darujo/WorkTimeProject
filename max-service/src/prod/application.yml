@@ -27,7 +27,7 @@ app:
 max:
 
   bot:
-    mode: webhook
+    mode: longpolling
     webhook:
       token: "Af9LHodD0cOLCGhzGSV92H6ALSwjLcgoIOoU_P0KNzzrQ7usxzw5tpFalOPTW_D2PEdTv-PSrwLIcTuOhyQMq"
       url: "https://sheduler.ru/max-bot/webhook"
@@ -38,6 +38,13 @@ max:
         - message_created
       auto-register: true
       auto-unregister: true
+    longpolling:
+      token: "Af9LHodD0cOLCGhzGSV92H6ALSwjLcgoIOoU_P0KNzzrQ7usxzw5tpFalOPTW_D2PEdTv-PSrwLIcTuOhyQMq"
+      poll-timeout: 30
+      update-types:
+        - bot_started
+        - MESSAGE_CREATED
+        - MESSAGE_CALLBACK
     admin-id: "350190659,-76870707234237" # Имя канала или id чата
 integration:
   user-service:

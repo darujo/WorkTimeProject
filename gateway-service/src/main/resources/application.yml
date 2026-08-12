@@ -46,6 +46,15 @@ spring:
           httpclient:
             connect-timeout: 10000
             response-timeout: 800s
+            ssl:
+              trusted-x509-certificates:
+                -certs/rootca_ssl_rsa2022.crt
+                -certs/subca_ssl_rsa2024.crt
+                -certs/russian_trusted_root_ca.cer
+                -certs/russian_trusted_root_ca_gost_2025.cer
+                -certs/russian_trusted_sub_ca.cer
+                -certs/russian_trusted_sub_ca_2024.cer
+                -certs/russian_trusted_sub_ca_gost_2025.cer
           routes:
             - id: gate
               uri: forward:///v1/system/shutdownContext
