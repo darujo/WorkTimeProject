@@ -141,4 +141,29 @@ public class VacationReportService {
         }
         return !calendarService.isWorkDay(localDate);
     }
+
+    public float getTimePlan(String nikName, LocalDate start, LocalDate end) {
+        LocalDate day = start;
+        if (nikName == null) {
+            return calendarService.getWorkTime(start, end);
+        }
+        float time = 0f;
+        while (day.isBefore(end)) {
+            Vacation vacation = vacationService.findOneDateInVacation(nikName, day);
+            if (vacation == null) {
+                vacation = vacationService.nextVacation(nikName, day);
+                if (vacation == null || vacation.getDateStart().isAfter(end)) {
+                    time = time + calendarService.getWorkTime(day, end);
+                    day = end;
+                } else {
+                    time = time + calendarService.getWorkTime(day, vacation.getDateStart().minusDays(1));
+                    day = vacation.getDateStart();
+                }
+            } else {
+                day = vacation.getDateEnd().plusDays(1);
+            }
+        }
+        return time;
+    }
+
 }

@@ -91,5 +91,17 @@ public class VacationReportController {
         return vacationReportService.isDayAfterWeek(lDate, dayMinus);
     }
 
+    @GetMapping("/work/time")
+    public float getTimePlan(@RequestParam(required = false) String nikName,
+                             @RequestParam
+                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                             ZonedDateTime dateStart,
+                             @RequestParam
+                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                             ZonedDateTime dateEnd) {
+
+        return vacationReportService.getTimePlan(nikName, DateHelper.zDTToLD(dateStart), DateHelper.zDTToLD(dateEnd));
+    }
+
 }
 

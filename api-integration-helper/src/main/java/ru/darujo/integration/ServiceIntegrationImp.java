@@ -13,6 +13,7 @@ import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Slf4j
@@ -137,6 +138,18 @@ public abstract class ServiceIntegrationImp<T extends Enum<?>> implements Servic
             }
 
             stringBuilder.append(str).append("=").append(DateHelper.getZDT(value));
+        }
+    }
+
+    protected void addTeg(StringBuilder stringBuilder, String str, ZonedDateTime value) {
+        if (value != null) {
+            if (!stringBuilder.isEmpty()) {
+                stringBuilder.append("&");
+            } else {
+                stringBuilder.append("?");
+            }
+
+            stringBuilder.append(str).append("=").append(value);
         }
     }
 

@@ -6,6 +6,7 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.assistant.helper.DateHelper;
@@ -202,4 +203,15 @@ public class VacationService {
     }
 
 
+    public Vacation nextVacation(String nikName, LocalDate day) {
+        Specification<@NonNull Vacation> specification;
+        specification = Specifications.eq(null, "nikName", nikName);
+        specification = Specifications.ge(specification, "dateStart", day);
+
+        Page<Vacation> page = vacationRepository.findAll(specification, PageRequest.of(0, 1, Objects.requireNonNull(Specifications.parseSort(List.of("nikName", "dateStart")))));
+        if (page.getTotalElements() > 0) {
+            return page.getContent().get(0);
+        }
+        return null;
+    }
 }
