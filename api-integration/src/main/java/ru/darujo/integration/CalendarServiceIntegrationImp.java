@@ -214,10 +214,16 @@ public class CalendarServiceIntegrationImp extends ServiceIntegrationImp<Service
 
     public List<VacationDto> userVacationStart(String nikName,
                                                Integer day) throws ResourceNotFoundException {
+        return userVacationStart(nikName, day, null);
+    }
+    public List<VacationDto> userVacationStart(String nikName,
+                                               Integer day,
+                                               List<String> typeList) throws ResourceNotFoundException {
 
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "nikName", nikName);
         addTeg(stringBuilder, "day", day);
+        addTeg(stringBuilder, "type", typeList);
 
         try {
             return webClient.get().uri("/vacation/inform/user/day/begin" + stringBuilder)
@@ -255,6 +261,28 @@ public class CalendarServiceIntegrationImp extends ServiceIntegrationImp<Service
         } catch (RuntimeException ex) {
             log.error(uri, ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Календарь (api-calendar) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
+    }
+
+    public void setVacationEnd(@NonNull String nikName,
+                               @NonNull LocalDate date) throws ResourceNotFoundException {
+
+        StringBuilder stringBuilder = new StringBuilder();
+        addTeg(stringBuilder, "nikName", nikName);
+        addTeg(stringBuilder, "date", date);
+
+        String uri = "/vacation/set/end" + stringBuilder;
+        try {
+            webClient.get().uri(uri)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить отпуск за период httpStatus "))
+                    .bodyToMono(Void.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .block();
+        } catch (RuntimeException ex) {
+            log.error(uri, ex);
+            throw new ResourceNotFoundException("Api-Calendar подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 }

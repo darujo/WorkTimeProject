@@ -16,6 +16,7 @@ import ru.darujo.dto.TaskDto;
 import ru.darujo.dto.WorkTimeDto;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.user.UserFio;
+import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.CalendarServiceIntegrationImp;
 import ru.darujo.integration.TaskServiceIntegrationImp;
@@ -85,7 +86,13 @@ public class WorkTimeService {
         if (!ok) {
             log.error("Не обновили время у задачи {} {} {}", workTime.getTaskId(), workTime.getType(), workTime.getWorkDate());
         }
+        try {
+            calendarServiceIntegration.setVacationEnd(workTime.getNikName(), workTime.getWorkDate());
+        } catch (ResourceNotFoundException e) {
+            log.error("Не удалось установить окончание отпуска", e);
+        }
         return workTimeRepository.save(workTime);
+
     }
 
     public void deleteWorkTime(Long id) {
@@ -95,6 +102,7 @@ public class WorkTimeService {
     public Page<@NonNull WorkTime> findWorkTime(Long[] taskId, String nikName, LocalDate dateLt, LocalDate dateLe, LocalDate dateGT, LocalDate dateGE, List<Integer> type, String comment, Long projectId) {
         return findWorkTime(taskId, nikName, dateLt, dateLe, dateGT, dateGE, type, comment, projectId, null, null);
     }
+
     public Page<@NonNull WorkTime> findWorkTime(Long[] taskId, String nikName, LocalDate dateLt, LocalDate dateLe, LocalDate dateGT, LocalDate dateGE, List<Integer> type, String comment, Long projectId, Integer page, Integer size) {
         Specification<@NonNull WorkTime> specification = Specification.unrestricted();
         Sort sort = null;

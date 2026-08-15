@@ -6,10 +6,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.darujo.assistant.helper.DateHelper;
+import ru.darujo.assistant.helper.EnumHelper;
 import ru.darujo.dto.calendar.VacationDto;
+import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.service.VacationService;
+import ru.darujo.type.VacationType;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 
 @RestController()
@@ -47,6 +51,8 @@ public class VacationController {
                                                    @RequestParam(required = false)
                                                    String nikName,
                                                    @RequestParam(required = false)
+                                                       String type,
+                                                   @RequestParam(required = false)
                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                                        ZonedDateTime dateStart,
                                                    @RequestParam(required = false)
@@ -59,8 +65,18 @@ public class VacationController {
         if (nikName != null && nikName.equals("current")) {
             nikName = username;
         }
-        return vacationService.findAll(nikName, DateHelper.zDTToLD(dateStart), DateHelper.zDTToLD(dateEnd), page, size).map(vacationService::getVacationDtoAndAddFio);
+        return vacationService.findAll(nikName, type, DateHelper.zDTToLD(dateStart), DateHelper.zDTToLD(dateEnd), page, size).map(vacationService::getVacationDtoAndAddFio);
     }
 
+    @GetMapping("/types")
+    public List<AttrDto<Enum<?>>> StatusList() {
+        return EnumHelper.getList(VacationType.values());
+    }
+
+    @GetMapping("/set/end")
+    public void setVacationEnd(@RequestParam String nikName,
+                               @RequestParam ZonedDateTime date) {
+        vacationService.setEndVacation(nikName, DateHelper.zDTToLD(date));
+    }
 
 }

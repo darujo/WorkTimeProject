@@ -46,15 +46,15 @@ spring:
           httpclient:
             connect-timeout: 10000
             response-timeout: 800s
-            ssl:
-              trusted-x509-certificates:
-                -certs/rootca_ssl_rsa2022.crt
-                -certs/subca_ssl_rsa2024.crt
-                -certs/russian_trusted_root_ca.cer
-                -certs/russian_trusted_root_ca_gost_2025.cer
-                -certs/russian_trusted_sub_ca.cer
-                -certs/russian_trusted_sub_ca_2024.cer
-                -certs/russian_trusted_sub_ca_gost_2025.cer
+          #            ssl:
+          #              trusted-x509-certificates:
+          #                classpath:certs/rootca_ssl_rsa2022.crt,
+          #                classpath:certs/subca_ssl_rsa2024.crt,
+          #                classpath:certs/russian_trusted_root_ca.cer,
+          #                classpath:certs/russian_trusted_root_ca_gost_2025.cer,
+          #                classpath:certs/russian_trusted_sub_ca.cer,
+          #                classpath:certs/russian_trusted_sub_ca_2024.cer,
+          #                classpath:certs/russian_trusted_sub_ca_gost_2025.cer
           routes:
             - id: gate
               uri: forward:///v1/system/shutdownContext
@@ -79,7 +79,7 @@ spring:
                 - StripPrefix=0
                 - PrefixPath=/app/
             #                - JwtAuthFilter
-            - id: max-service
+            - id: file-service
               uri: "http://localhost:8191"
               predicates:
                 - Path=/file-service/**
@@ -98,7 +98,8 @@ spring:
             - id: user-admin-service
               uri: "http://localhost:8183"
               predicates:
-                - Path=/admin/users/**,/admin/roles/**,/admin/projects/**
+                - Path=/admin/users/**
+              #       1111         ,/admin/roles/**,/admin/projects/**
               filters:
                 - StripPrefix=0
                 - PrefixPath=/app-auth/
@@ -160,7 +161,8 @@ spring:
             - id: user-service
               uri: "http://localhost:8183"
               predicates:
-                - Path=/users/**,/roles/**,/projects/**,/token/**
+                - Path=/users/**
+              #   2222             /roles/**,/projects/**,/token/**
               filters:
                 - StripPrefix=0
                 - PrefixPath=/app-auth

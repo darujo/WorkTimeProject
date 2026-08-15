@@ -9,7 +9,8 @@
 
                         <div class="horiz">
                             <label for="User" class="p-head">ФИО</label>
-                            <select class="vvod40 mar5" name="UserFilterVacationSelect" id="User" ng-model="Filt.nikName">
+                            <select class="vvod40 mar5" name="UserFilterVacationSelect" id="User"
+                                    ng-model="Filt.nikName">
                                 <option ng-repeat="user in UserList" ng-value="user.nikName" value="user.nikName">
                                     {{user.lastName}}
                                     {{user.firstName}} {{user.patronymic}}
@@ -24,9 +25,20 @@
                             </select>
 
                         </div>
+                        <div class="filter_block min_block300 mar5">
+                            <label for="TypeFilter" class="p-form">Тип</label>
+                            <select required class="vvod" name="VacationTypeFilter" id="TypeFilter"
+                                    ng-model="Filt.type">
+                                <option value="">--Выберите тип отсутствия--</option>
+                                <option ng-repeat="type in TypeList" ng-value="type.code" value="type.code">
+                                    {{type.value}}
+                                </option>
+                            </select>
+                        </div>
                         <div class="horiz">
                             <label for="FilterDateStart"></label>
-                            <input class="vvod20" type="date" id="FilterDateStart" step="any" ng-model="Filt.dateStart"/>
+                            <input class="vvod20" type="date" id="FilterDateStart" step="any"
+                                   ng-model="Filt.dateStart"/>
                             <label for="FilterDateEnd" class="p-head"> <= Дата <= </label>
                             <input class="vvod20" type="date" id="FilterDateEnd" step="any" ng-model="Filt.dateEnd"/>
                             <br>
@@ -47,7 +59,8 @@
         <input class="vvod" type="number" id="Page" value="1"/>
         <button class="head_button" ng-click="findPage(1)">NextPage</button>
         <label for="VacationSize" class="p-head">Количество элементов</label>
-        <select class="vvod20" name="VacationSizeSelect" id="VacationSize" ng-model="Filt.size" ng-change="filterUser()">
+        <select class="vvod20" name="VacationSizeSelect" id="VacationSize" ng-model="Filt.size"
+                ng-change="filterUser()">
             <option ng-value="10" value="10" selected>10</option>
             <option ng-value="25" value="25">25</option>
             <option ng-value="50" value="50">50</option>
@@ -61,10 +74,11 @@
     <table>
         <tr>
             <td class="table_head2">ФИО</td>
-            <td class="table_head2">Дата начала отпуска</td>
-            <td class="table_head2">Дата конца отпуска</td>
-            <td class="table_head2">Кол-во дней отпуска</td>
+            <td class="table_head2">Тип</td>
+            <td class="table_head2">Дата начала отсутствия</td>
+            <td class="table_head2">Дата конца отсутствия</td>
 
+            <td class="table_head2">Кол-во дней отпуска</td>
             <td class="table_head2"></td>
             <td class="table_head2"></td>
             <!--            <td class="table_head2"></td>-->
@@ -77,9 +91,11 @@
             <td ng-if="vacation.firstName">{{vacation.lastName}} {{vacation.firstName}}
                 {{vacation.patronymic}}
             </td>
+            <td>{{vacation.typeName}}</td>
             <td>{{vacation.dateStartStr}}</td>
             <td>{{vacation.dateEndStr}}</td>
             <td>{{vacation.days}}</td>
+
             <td>
                 <button ng-click="editVacation(vacation.id)">Изменить</button>
             </td>
@@ -113,22 +129,36 @@
         <div class="horiz">
             <label for="DateStart" class="form_label">Дата начала:</label>
             <input class="vvod40mar10" type="date" id="DateStart" step="any"
-                                                  ng-model="Vacation.dateStart"/>
+                   ng-model="Vacation.dateStart"/>
             <br>
         </div>
         <div class="horiz">
             <label for="DateEnd" class="form_label">Дата конца:</label>
             <input class="vvod40mar10" type="date" id="DateEnd" step="any"
-                                                ng-change="Vacation.days = null"
-                                                ng-model="Vacation.dateEnd"/>
+                   ng-change="Vacation.days = null"
+                   ng-model="Vacation.dateEnd"/>
             <br>
         </div>
         <div class="horiz">
             <label for="Days" class="form_label">Дней:</label>
             <input class="vvod40mar10" type="number" id="Days" step="1"
-                                             ng-change="Vacation.dateEnd = null"
-                                             ng-model="Vacation.days"/>
+                   ng-change="Vacation.dateEnd = null"
+                   ng-model="Vacation.days"/>
             <br>
+        </div>
+        <div class="horiz">
+            <label for="Type" class="form_label">Тип</label>
+            <select required class="vvod40mar10" name="VacationType" id="Type" ng-model="Vacation.type">
+                <option value="">--Выберите тип отсутствия--</option>
+                <option ng-repeat="type in TypeList" ng-value="type.code" value="type.code">{{type.value}}
+                </option>
+            </select>
+        </div>
+        <div class="horiz">
+            <label for="Dynamic" class="form_label">С уменьшаемым окончанием</label>
+            <input class="" type="checkbox"
+                   id="Dynamic"
+                   ng-model="Vacation.dynamic"/>
         </div>
         <button type="submit" class="button" id="ButtonSaveDown">Сохранить</button>
         <button type="button" ng-click="loadVacation()" class="button">Вернуться к списку</button>

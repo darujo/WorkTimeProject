@@ -2,6 +2,7 @@ package ru.darujo.dto.calendar;
 
 import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.user.UserFio;
+import ru.darujo.type.VacationType;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -12,11 +13,13 @@ public class VacationDto implements UserFio, Serializable {
     public VacationDto() {
     }
 
-    public VacationDto(Long id, String nikName, ZonedDateTime dateStart, ZonedDateTime dateEnd) {
+    public VacationDto(Long id, String nikName, ZonedDateTime dateStart, ZonedDateTime dateEnd, VacationType type, Boolean dynamic) {
         this.id = id;
         this.nikName = nikName;
         this.dateStart = dateStart;
         this.dateEnd = dateEnd;
+        this.type = type;
+        this.dynamic = dynamic;
     }
 
     private Long id;
@@ -29,6 +32,13 @@ public class VacationDto implements UserFio, Serializable {
     private ZonedDateTime dateStart;
     private ZonedDateTime dateEnd;
     private Integer days;
+    private VacationType type;
+    private Boolean dynamic;
+
+    public Boolean getDynamic() {
+        return dynamic;
+    }
+
     public Long getId() {
         return id;
     }
@@ -73,6 +83,14 @@ public class VacationDto implements UserFio, Serializable {
 
     public void setNikName(String nikName) {
         this.nikName = nikName;
+    }
+
+    public VacationType getType() {
+        return type;
+    }
+
+    public String getTypeName() {
+        return type.getName();
     }
 
     @Override

@@ -62,17 +62,20 @@ public class VacationService {
         if (vacation.getNikName() == null) {
             throw new ResourceNotFoundRunTime("ФИО должно быть заполнено");
         }
-        if (vacation.getDateStart() == null || vacation.getDateEnd() == null) {
-            throw new ResourceNotFoundRunTime("Дата начала и конца периода должны быть заполнены");
+        if (vacation.getDateStart() == null) {
+            throw new ResourceNotFoundRunTime("Дата начала периода должны быть заполнены");
+        }
+        if (vacation.getDateEnd() == null) {
+            throw new ResourceNotFoundRunTime("Дата конца периода должны быть заполнены");
         }
         if (calendarService.isHoliday(vacation.getDateEnd())) {
             throw new ResourceNotFoundRunTime("Дата конца отпуска не может быть праздником");
         }
-        Vacation vacationSave = findOneDateBetween(vacation.getNikName(), "dateStart", vacation.getDateStart(), vacation.getDateEnd());
+        Vacation vacationSave = findOneDateBetween(vacation.getNikName(), null, "dateStart", vacation.getDateStart(), vacation.getDateEnd());
         if (vacationSave != null && !vacationSave.getId().equals(vacation.getId())) {
-            throw new ResourceNotFoundRunTime("Отпуск пересекаются с отпуском " + dateToText(vacationSave.getDateStart()) + " - " + dateToText(vacationSave.getDateEnd()));
+            throw new ResourceNotFoundRunTime("Отсутствие пересекаются с Отсутствие " + dateToText(vacationSave.getDateStart()) + " - " + dateToText(vacationSave.getDateEnd()));
         }
-        vacationSave = findOneDateBetween(vacation.getNikName(), "dateEnd", vacation.getDateStart(), vacation.getDateEnd());
+        vacationSave = findOneDateBetween(vacation.getNikName(), null, "dateEnd", vacation.getDateStart(), vacation.getDateEnd());
         if (vacationSave != null && !vacationSave.getId().equals(vacation.getId())) {
             throw new ResourceNotFoundRunTime("Отпуск пересекаются с отпуском " + dateToText(vacationSave.getDateStart()) + " - " + dateToText(vacationSave.getDateEnd()));
         }
@@ -83,6 +86,15 @@ public class VacationService {
         // вторую дату проверять не надо так как этот случай покрывается предыдущими случаями
     }
 
+    public void setEndVacation(String nikName, LocalDate date) {
+        Vacation vacation = findOneDateInVacation(nikName, date);
+        if (vacation != null && vacation.getDynamic() && date.isBefore(vacation.getDateEnd())) {
+            vacation.setDateEnd(date);
+            checkVacation(vacation);
+            vacationRepository.save(vacation);
+        }
+
+    }
     private LocalDate addDay(LocalDate date, int day) {
         return date.plusDays(day);
     }
@@ -91,13 +103,13 @@ public class VacationService {
     public Vacation saveVacation(Vacation vacation) {
         checkVacation(vacation);
         LocalDate date = addDay(vacation.getDateStart(), -1);
-        Vacation vacationSave = findOneDateBetween(vacation.getNikName(), "dateEnd", date, date);
+        Vacation vacationSave = findOneDateBetween(vacation.getNikName(), vacation.getType(), "dateEnd", date, date);
         if (vacationSave != null) {
             vacation.setDateStart(vacationSave.getDateStart());
             vacationRepository.delete(vacationSave);
         }
         date = addDay(vacation.getDateEnd(), 1);
-        vacationSave = findOneDateBetween(vacation.getNikName(), "dateStart", date, date);
+        vacationSave = findOneDateBetween(vacation.getNikName(), vacation.getType(), "dateStart", date, date);
         if (vacationSave != null) {
             vacation.setDateEnd(vacationSave.getDateEnd());
             vacationRepository.delete(vacationSave);
@@ -112,18 +124,31 @@ public class VacationService {
         vacationRepository.deleteById(id);
     }
 
-    public Page<@NonNull Vacation> findAll(String nikName, LocalDate dateStart, LocalDate dateEnd, Integer page, Integer size) {
+    public Page<@NonNull Vacation> findAll(String nikName, String type, LocalDate dateStart, LocalDate dateEnd, Integer page, Integer size) {
         List<String> users = Objects.requireNonNull(userServiceIntegration.getUserDTOs(nikName)).stream().map(UserDto::getNikName).collect(Collectors.toList());
-        Specification<@NonNull Vacation> specification;
-        specification = Specification.unrestricted();
-        specification = Specifications.in(specification, "nikName", users);
-        specification = Specifications.ge(specification, "dateEnd", dateStart);
-        specification = Specifications.le(specification, "dateStart", dateEnd);
+        Specification<@NonNull Vacation> specification = getVacationSpecification(null, type, dateStart, dateEnd, users);
         return Specifications.findAll(vacationRepository, page == null ? null : page - 1, size, specification, List.of("nikName", "dateStart"));
     }
 
-    public Vacation findOneDateBetween(String nikName, String field, LocalDate dateGe, LocalDate dateLe) {
-        Specification<@NonNull Vacation> specification = Specifications.eq(null, "nikName", nikName);
+    private static Specification<@NonNull Vacation> getVacationSpecification(String nikName, String type, LocalDate dateStart, LocalDate dateEnd, List<String> userList) {
+        Specification<@NonNull Vacation> specification;
+        specification = Specification.unrestricted();
+        specification = Specifications.eq(specification, "nikName", nikName);
+        specification = Specifications.in(specification, "nikName", userList);
+        specification = Specifications.eq(specification, "type", type);
+        specification = Specifications.ge(specification, "dateEnd", dateStart);
+        specification = Specifications.le(specification, "dateStart", dateEnd);
+        return specification;
+    }
+
+    public Vacation findOneDateBetween(String nikName, String type, String field, LocalDate dateGe, LocalDate dateLe) {
+        Specification<@NonNull Vacation> specification = getVacationSpecification(
+                nikName,
+                type,
+                null,
+                null,
+                null);
+
         if (dateGe.equals(dateLe)) {
             specification = Specifications.eq(specification, field, dateGe);
         } else {
@@ -135,9 +160,7 @@ public class VacationService {
 
     public Vacation findOneDateInVacation(String nikName, LocalDate date) {
         Specification<@NonNull Vacation> specification;
-        specification = Specifications.eq(null, "nikName", nikName);
-        specification = Specifications.le(specification, "dateStart", date);
-        specification = Specifications.ge(specification, "dateEnd", date);
+        specification = getVacationSpecification(nikName, null, date, date, null);
         return vacationRepository.findOne(specification).orElse(null);
     }
 
@@ -156,15 +179,16 @@ public class VacationService {
         return calendarService.getDateEndNotHoliday(dateStart, days);
     }
 
-    public List<VacationDto> userVacationStart(String nikName, int day) {
+    public List<VacationDto> userVacationStart(String nikName, int day, List<String> typeList) {
         LocalDate date = addDay(LocalDate.now(), day);
-        return userVacationStart(nikName, date);
+        return userVacationStart(nikName, date, typeList);
     }
 
-    public List<VacationDto> userVacationStart(String nikName, LocalDate dateStart) {
+    public List<VacationDto> userVacationStart(String nikName, LocalDate dateStart, List<String> typeList) {
         Specification<@NonNull Vacation> specification;
         specification = Specifications.eq(null, "nikName", nikName);
         specification = Specifications.eq(specification, "dateStart", dateStart);
+        specification = Specifications.in(specification, "type", typeList);
         return vacationRepository.findAll(specification).stream().map(this::getVacationDtoAndAddFio).toList();
     }
 
@@ -174,7 +198,7 @@ public class VacationService {
     }
 
     public Vacation findVacationStart(String nikName, LocalDate date) {
-        return findOneDateBetween(nikName, "dateStart", date, date);
+        return findOneDateBetween(nikName, null, "dateStart", date, date);
     }
 
     public Boolean isVacationEnd(String nikName) {
@@ -182,7 +206,7 @@ public class VacationService {
     }
 
     public Vacation findVacationEnd(String nikName, LocalDate date) {
-        return findOneDateBetween(nikName, "dateEnd", date, date);
+        return findOneDateBetween(nikName, null, "dateEnd", date, date);
     }
 
     public VacationDto getVacationDtoAndAddDay(Vacation vacation) {

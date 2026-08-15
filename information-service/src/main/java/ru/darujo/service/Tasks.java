@@ -15,6 +15,7 @@ import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.integration.WorkTimeServiceIntegrationImp;
 import ru.darujo.model.ChatInfo;
 import ru.darujo.type.MessageType;
+import ru.darujo.type.VacationType;
 import ru.darujo.url.UrlWorkTime;
 
 import java.time.LocalDate;
@@ -139,9 +140,6 @@ public class Tasks {
                 ScheduleService.flagStartService = false;
                 ScheduleService.getINSTANCE().sendMes();
             }
-//            else {
-//                ScheduleService.flagStartService = false;
-//            }
         });
     }
 
@@ -202,7 +200,7 @@ public class Tasks {
 
     public RunnableNotException getVacationStart(MessageType messageType) {
         return new RunnableNotException(() -> {
-            log.info("getVacationEnd");
+            log.info("getVacationStart");
             StringBuffer users = new StringBuffer();
             List<VacationDto> vacationDTOs;
             try {
@@ -212,14 +210,14 @@ public class Tasks {
                 return;
             }
             if (vacationDTOs == null) {
-                log.error("Список отпусков пуст");
+                log.error("Список начала отпусков пуст");
                 return;
             }
             vacationDTOs.stream()
                     .map(vacationDto ->
                             UrlWorkTime.getUrlVacation(vacationDto.getNikName(), vacationDto.getFirstName() + " " +
                                     vacationDto.getLastName()) + " ( " +
-                                    vacationDto.getDays() + " дней последний день отпуска " +
+                                    vacationDto.getDays() + " дней последний день " + vacationDto.getTypeName() + " " +
                                     vacationDto.getDateEndStr() + " )")
                     .forEach(s -> {
                         if (users.isEmpty()) {
@@ -232,9 +230,47 @@ public class Tasks {
                 messageInformationService.addMessage(
                         new MessageInfoDto(
                                 messageType,
-                                vacationDTOs.get(0).getDateStartStr() + " начинается отпуск у сотрудников :\n" + users));
+                                vacationDTOs.get(0).getDateStartStr() + " начинается отсутствие у сотрудников :\n" + users));
             }
+            getVacationStartToday(messageType);
         });
+    }
+
+    public void getVacationStartToday(MessageType messageType) {
+
+        log.info("getVacationStartToday");
+        StringBuffer users = new StringBuffer();
+        List<VacationDto> vacationDTOs;
+        try {
+            vacationDTOs = calendarServiceIntegration.userVacationStart(null, 0, List.of(VacationType.MEDICAL.toString(), VacationType.TIME_OFF.toString()));
+        } catch (ResourceNotFoundException e) {
+            log.error(e.getMessage());
+            return;
+        }
+        if (vacationDTOs == null) {
+            log.error("Список отпусков пуст");
+            return;
+        }
+        vacationDTOs.stream()
+                .map(vacationDto ->
+                        UrlWorkTime.getUrlVacation(vacationDto.getNikName(), vacationDto.getFirstName() + " " +
+                                vacationDto.getLastName()) + (vacationDto.getDynamic() ? " предположительно до " + vacationDto.getDateEndStr() : " ( " +
+                                vacationDto.getDays() + " дней последний день " + vacationDto.getTypeName() + " ") +
+                                vacationDto.getDateEndStr() + " )")
+                .forEach(s -> {
+                    if (users.isEmpty()) {
+                        users.append(s);
+                    } else {
+                        users.append("\n").append(s);
+                    }
+                });
+        if (!vacationDTOs.isEmpty()) {
+            messageInformationService.addMessage(
+                    new MessageInfoDto(
+                            messageType,
+                            "Сегодня начинается отсутствие у сотрудников :\n" + users));
+        }
+
     }
 
     public RunnableNotException getSendReport(MessageType messageType, ChatInfo chatInfo) {

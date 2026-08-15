@@ -17,11 +17,16 @@ public class  Vacation {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "nikName")
+    @Column(name = "nikName", nullable = false)
     private String nikName;
-    @Column(name = "dateStart")
+    @Column(name = "dateStart", nullable = false)
     private LocalDate dateStart;
     @Column(name = "dateEnd")
     private LocalDate dateEnd;
+    @Column(name = "type", nullable = false)
+    private String type;
+    @Column(name = "dynamic", nullable = false)
+    private Boolean dynamic;
+
 
 }

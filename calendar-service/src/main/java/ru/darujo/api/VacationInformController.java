@@ -22,16 +22,20 @@ public class VacationInformController {
 
     @GetMapping("/day/begin")
     public Boolean isVacationStart(@RequestParam String nikName,
-                                   @RequestParam Integer day) {
-        return vacationService.isVacationStart(nikName,day);
+                                   @RequestParam Integer day
+    ) {
+        return vacationService.isVacationStart(nikName, day);
     }
+
     @GetMapping("/day/end")
     public Boolean isVacationEnd(@RequestParam String nikName) {
         return vacationService.isVacationEnd(nikName);
     }
+
     @GetMapping("/user/day/begin")
     public List<VacationDto> userVacationStart(@RequestParam(required = false) String nikName,
-                                               @RequestParam Integer day) {
-        return vacationService.userVacationStart(nikName,day);
+                                               @RequestParam Integer day,
+                                               @RequestParam(required = false) List<String> type) {
+        return vacationService.userVacationStart(nikName, day, type);
     }
 }
