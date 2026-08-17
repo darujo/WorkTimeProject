@@ -7,6 +7,11 @@ server:
     #    keyStoreType: PKCS12
     #    keyAlias: tomcat
 
+    #  Импорт сертификатов в хранилище
+    #  "C:\Program Files\Java\jre1.8.0_501\bin\keytool" -importcert -trustcacerts -keystore "C:\java\WorkTimeProject\gateway-service\src\main\resources\keystore.p12" -file russian_trusted_root_ca.cer -alias russian_trusted_root
+    #  "C:\Program Files\Java\jre1.8.0_501\bin\keytool" -importcert -trustcacerts -keystore "C:\java\WorkTimeProject\gateway-service\src\main\resources\keystore.p12" -file russian_trusted_sub_ca.cer -alias russian_trusted_sub
+
+
     #    "C:\Program Files\Git\mingw64\bin\openssl" pkcs12 -export -in certificate.crt -inkey certificate.key -passout pass:53975397 -out Server-keystore.p12
 
     key-store: classpath:Server-keystore.p12
@@ -46,7 +51,12 @@ spring:
           httpclient:
             connect-timeout: 10000
             response-timeout: 800s
+
           #            ssl:
+          #              key-store: classpath:keystore.p12
+          #              key-store-type: PKCS12
+          #              key-store-password: 53975397
+
           #              trusted-x509-certificates:
           #                classpath:certs/rootca_ssl_rsa2022.crt,
           #                classpath:certs/subca_ssl_rsa2024.crt,
@@ -98,8 +108,7 @@ spring:
             - id: user-admin-service
               uri: "http://localhost:8183"
               predicates:
-                - Path=/admin/users/**
-              #       1111         ,/admin/roles/**,/admin/projects/**
+                - Path=/admin/users/**,/admin/roles/**,/admin/projects/**
               filters:
                 - StripPrefix=0
                 - PrefixPath=/app-auth/
@@ -161,8 +170,7 @@ spring:
             - id: user-service
               uri: "http://localhost:8183"
               predicates:
-                - Path=/users/**
-              #   2222             /roles/**,/projects/**,/token/**
+                - Path=/users/**,/roles/**,/projects/**,/token/**
               filters:
                 - StripPrefix=0
                 - PrefixPath=/app-auth
