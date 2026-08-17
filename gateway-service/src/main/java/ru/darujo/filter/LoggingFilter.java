@@ -1,6 +1,8 @@
 package ru.darujo.filter;
 
 import org.jspecify.annotations.NullMarked;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.stereotype.Component;
@@ -10,12 +12,12 @@ import reactor.core.publisher.Mono;
 @Component
 public class LoggingFilter implements GlobalFilter {
 
-//    private static final Logger logger = LoggerFactory.getLogger(LoggingFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(LoggingFilter.class);
 
     @Override
     public @NullMarked Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-//        logger.info("Request path: {}", exchange.getRequest().getPath());
-        System.out.printf("Request path: %s %s \n", exchange.getRequest().getPath(), exchange.getRequest().getQueryParams());
+        logger.info("Request path: {} {}", exchange.getRequest().getPath(), exchange.getRequest().getQueryParams());
+//        System.out.printf("Request path: %s %s %s \n", exchange.getRequest().getRemoteAddress(),exchange.getRequest().getPath(), exchange.getRequest().getQueryParams());
         return chain.filter(exchange);
     }
 }
