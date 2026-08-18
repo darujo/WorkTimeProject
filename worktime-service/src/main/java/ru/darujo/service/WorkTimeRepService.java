@@ -128,6 +128,8 @@ public class WorkTimeRepService {
                                             null,
                                             weekWorkDto.getDayStart(),
                                             weekWorkDto.getDayEnd(),
+                                            weekWorkDto.getDayStart() == null || weekWorkDto.getDayEnd() == null ?
+                                                    0f :
                                             calendarServiceIntegration.getTimePlan(workTime.getNikName(),
                                                     weekWorkDto.getDayStart(),
                                                     weekWorkDto.getDayEnd()));
