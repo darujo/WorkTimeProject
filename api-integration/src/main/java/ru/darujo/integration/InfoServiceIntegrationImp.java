@@ -27,12 +27,12 @@ public class InfoServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
                     .bodyValue(mapUserInfoDto)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
+                            cR -> getMessage(cR, "Ошибка при обращение в info-service"))
                     .bodyToMono(Void.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime("(api-info) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 
@@ -42,12 +42,12 @@ public class InfoServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
                     .bodyValue(messageInfoDto)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
+                            cR -> getMessage(cR, "Ошибка при обращение в info-service"))
                     .bodyToMono(Void.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Задачи (api-Information) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime("(api-Information) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 
@@ -63,12 +63,12 @@ public class InfoServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
             webClient.get().uri("/report" + sb)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
+                            cR -> getMessage(cR, "Ошибка при обращение в info-service"))
                     .bodyToMono(Void.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить Задачи (api-task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime("(api-info) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 
@@ -80,12 +80,12 @@ public class InfoServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
                     .bodyValue(message)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить ответ от сервиса inform"))
+                            cR -> getMessage(cR, "Ошибка при обращение в info-service"))
                     .bodyToMono(Void.class)
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();
         } catch (RuntimeException ex) {
-            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-Inform) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime("(Api-Inform) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }
     }
 }
