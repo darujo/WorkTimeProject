@@ -2,6 +2,7 @@ package ru.darujo.integration;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.reactive.function.client.WebClient;
 import ru.darujo.dto.information.SendAdminMessage;
 import ru.darujo.dto.information.SendMessage;
 import ru.darujo.dto.information.SendServiceInt;
@@ -12,7 +13,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 public abstract class MessagerServiceIntegrationImp extends ServiceIntegrationImp<ServiceType> implements SendServiceInt, AdminInfoService {
-
+    String textDoOnError = " Что-то пошло не так не удалось получить ответ от сервиса " + getServiceType();
+    String textReturnError = "(Api-" + getServiceType() + ") не доступен подождите или обратитесь к администратору ";
     public void sendMessage(
             String author,
             String chatId,
@@ -27,37 +29,25 @@ public abstract class MessagerServiceIntegrationImp extends ServiceIntegrationIm
             addTeg(sb, "threadId", threadId);
             addTeg(sb, "originMessageId", originMessageId);
             String uri = "/" + chatId + "/notifications" + sb;
-            log.debug(uri);
-            webClient.post().uri(uri)
+            sendRequest(uri, webClient.post().uri(uri)
                     .header("username", author)
                     .bodyValue(text)
-                    .retrieve()
-                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, uri + " Что-то пошло не так не удалось получить ответ от сервиса telegram"))
-                    .bodyToMono(Void.class)
-                    .doOnError(throwable -> log.error(throwable.getMessage()))
-                    .block();
+                    .retrieve());
         } catch (RuntimeException ex) {
             log.error(ex.getMessage(), ex);
-            throw new ResourceNotFoundRunTime("(Api-Telegram) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime(textReturnError + ex.getMessage());
         }
     }
 
     public void sendMessageForAdmin(SendAdminMessage message) {
         try {
             String uri = "/send/admin";
-            log.debug(uri);
-            webClient.post().uri(uri)
+            sendRequest(uri, webClient.post().uri(uri)
                     .bodyValue(message)
-                    .retrieve()
-                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, uri + " Что-то пошло не так не удалось получить ответ от сервиса telegram"))
-                    .bodyToMono(Void.class)
-                    .doOnError(throwable -> log.error(throwable.getMessage()))
-                    .block();
+                    .retrieve());
         } catch (RuntimeException ex) {
             log.error(ex.getMessage(), ex);
-            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-Telegram) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime(textReturnError + ex.getMessage());
         }
     }
 
@@ -68,22 +58,26 @@ public abstract class MessagerServiceIntegrationImp extends ServiceIntegrationIm
             StringBuilder sb = new StringBuilder();
             addTeg(sb, "fileName", fileName);
             String uri = "/file" + sb;
-            log.debug(uri);
-            webClient.post().uri(uri)
+            sendRequest(uri, webClient.post().uri(uri)
                     .bodyValue(textFile)
-                    .retrieve()
-                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, uri + " Что-то пошло не так не удалось получить ответ от сервиса telegram"))
-                    .bodyToMono(Void.class)
-                    .doOnError(throwable -> log.error(throwable.getMessage()))
-                    .block();
+                    .retrieve());
         } catch (RuntimeException ex) {
             log.error(ex.getMessage(), ex);
-            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-Telegram) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime(textReturnError + ex.getMessage());
         }
     }
 
-    private void sendFile(
+    private void sendRequest(String uri, WebClient.ResponseSpec webClient) {
+        log.debug(uri);
+        webClient
+                .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                        cR -> getMessage(cR, uri + textDoOnError))
+                .bodyToMono(Void.class)
+                .doOnError(throwable -> log.error(throwable.getMessage()))
+                .block();
+    }
+
+    private void sendRequest(
             String author,
             String chatId,
             Integer threadId,
@@ -97,20 +91,13 @@ public abstract class MessagerServiceIntegrationImp extends ServiceIntegrationIm
             addTeg(sb, "threadId", threadId);
             addTeg(sb, "originMessageId", originMessageId);
             String uri = "/" + chatId + "/file" + sb;
-            log.debug(uri);
-
-            webClient.post().uri(uri)
+            sendRequest(uri, webClient.post().uri(uri)
                     .header("username", author)
                     .bodyValue(text)
-                    .retrieve()
-                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, uri + " Что-то пошло не так не удалось получить ответ от сервиса telegram"))
-                    .bodyToMono(Void.class)
-                    .doOnError(throwable -> log.error(throwable.getMessage()))
-                    .block();
+                    .retrieve());
         } catch (RuntimeException ex) {
             log.error(ex.getMessage(), ex);
-            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-Telegram) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime(textReturnError + ex.getMessage());
         }
     }
 
@@ -120,23 +107,17 @@ public abstract class MessagerServiceIntegrationImp extends ServiceIntegrationIm
             StringBuilder sb = new StringBuilder();
             addTeg(sb, "fileName", fileName);
             String uri = "/file" + sb;
-            log.debug(uri);
-            webClient.delete().uri(uri)
-                    .retrieve()
-                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
-                            cR -> getMessage(cR, uri + " Что-то пошло не так не удалось получить ответ от сервиса telegram"))
-                    .bodyToMono(Void.class)
-                    .doOnError(throwable -> log.error(throwable.getMessage()))
-                    .block();
+            sendRequest(uri, webClient.delete().uri(uri)
+                    .retrieve());
         } catch (RuntimeException ex) {
             log.error(ex.getMessage(), ex);
-            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-Telegram) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            throw new ResourceNotFoundRunTime(textReturnError + ex.getMessage());
         }
     }
 
     public boolean sendMessage(SendMessage sendMessage) {
         if (sendMessage.isAttachFile()) {
-            return sendFile(sendMessage);
+            return sendRequest(sendMessage);
         } else {
             AtomicBoolean flagOk = new AtomicBoolean(true);
             sendMessage.getUserSendMessages().forEach(userSendMessage -> {
@@ -152,7 +133,7 @@ public abstract class MessagerServiceIntegrationImp extends ServiceIntegrationIm
 
     }
 
-    private boolean sendFile(SendMessage sendMessage) {
+    private boolean sendRequest(SendMessage sendMessage) {
         boolean flagSendFile = false;
         try {
             addFile(sendMessage.getFileName(), sendMessage.getFileBody());
@@ -161,7 +142,7 @@ public abstract class MessagerServiceIntegrationImp extends ServiceIntegrationIm
             sendMessage.getUserSendMessages()
                     .forEach(userSend -> {
                         try {
-                            sendFile(sendMessage.getAuthor(), userSend.getChatId(), userSend.getThreadId(), userSend.getOriginMessageId(), sendMessage.getFileName(), sendMessage.getText());
+                            sendRequest(sendMessage.getAuthor(), userSend.getChatId(), userSend.getThreadId(), userSend.getOriginMessageId(), sendMessage.getFileName(), sendMessage.getText());
                             userSend.setSend();
                         } catch (ResourceNotFoundRunTime ex) {
                             log.error("Сбой отправки файла пользователю с chatId {}", userSend.getChatId(), ex);

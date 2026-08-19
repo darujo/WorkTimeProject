@@ -27,10 +27,12 @@ public enum MessageType implements TypeEnum {
     EDIT_WORK_RESPONSE("Добавлено/изменено согласование ТЗ"),
     REPORT_STATUS(
             "Еженедельные отчеты",
+            ReportType.ALL_REPORT,
             false,
             DayOfWeek.TUESDAY,
             20,
             20,
+
             ReportType.USER_WORK,
             ReportType.ZI_STATUS,
             ReportType.ZI_WORK);
@@ -57,6 +59,12 @@ public enum MessageType implements TypeEnum {
     // Еженедельные
     MessageType(String name, Boolean project, DayOfWeek dayOfWeek, Integer hour, ReportType reportType) {
         this(name, project, dayOfWeek, hour, null, reportType);
+    }
+
+    MessageType(String name, ReportType setReportType, Boolean project, DayOfWeek dayOfWeek, Integer hour, Integer minute, ReportType... reportType) {
+        this(name, project, dayOfWeek, hour, minute, 7, reportType);
+        setReportType.setMessageType(this);
+
     }
 
     MessageType(String name, Boolean project, DayOfWeek dayOfWeek, Integer hour, Integer minute, ReportType... reportType) {

@@ -54,7 +54,8 @@ angular.module('workTimeService').controller('vacationController', function ($sc
                     size: Filter ? Filter.size : null,
                     nikName: Filter ? Filter.nikName : null,
                     dateStart: Filter ? Filter.dateStart : null,
-                    dateEnd: Filter ? Filter.dateEnd : null
+                    dateEnd: Filter ? Filter.dateEnd : null,
+                    type: Filter ? Filter.type : null
                 }
 
 
@@ -97,7 +98,8 @@ angular.module('workTimeService').controller('vacationController', function ($sc
             nikName: null,
             dateStart: null,
             dateEnd: null,
-            days: null
+            days: null,
+            type: "VACATION"
         };
 
         console.log($scope.Vacation);
@@ -169,6 +171,8 @@ angular.module('workTimeService').controller('vacationController', function ($sc
                 size: 10,
                 nikName: "current",
                 dateStart: new Date()
+                // ,
+                // type: "VACATION"
             };
         } else {
             $scope.Filt ["size"] = $scope.Filt.size ? $scope.Filt.size : 10;
@@ -208,7 +212,21 @@ angular.module('workTimeService').controller('vacationController', function ($sc
     $scope.sendFilter = function () {
         $location.sendFilter(location.hash, $scope.Filt);
     }
+    let loadType = function () {
+        $http.get(constPatchVacation + "/types")
+            .then(function (response) {
+                // WorkTimeIdEdit = response.data.id;
+                $scope.TypeList = response.data;
+                console.log($scope.TypeList);
 
+
+            }, function errorCallback(response) {
+                console.log(response)
+                if ($location.checkAuthorized(response)) {
+                }
+            });
+    };
+    loadType();
     console.log("Start");
     showList();
     console.log("Show ok");

@@ -103,7 +103,7 @@ angular.module('workTimeService').controller('weekWorkController', function ($sc
             }).then(function (response) {
                 $scope.load = false;
                 console.log(response.data);
-                $scope.WeekWorkList = response.data;
+                $scope.WeekWorkList = response.data._embedded.workUserTimeList;
                 $scope.ziSplit = Filter.ziSplit;
             }, function errorCallback(response) {
                 $scope.load = false;

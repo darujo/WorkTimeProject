@@ -172,7 +172,7 @@ public class MenuService {
                 // todo на что заменить?
                 chatInfo.setOriginMessageId(message.message().body().mid());
                 if (sendMe) {
-                    infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), MessageSenderType.Telegram, chatInfo.getChatId(), null, chatInfo.getOriginMessageId());
+                    infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), MessageSenderType.Max, chatInfo.getChatId(), null, chatInfo.getOriginMessageId());
                 } else {
                     infoServiceIntegration.sendReport(reportType, chatInfo.getAuthor(), null, null, null, null);
                 }

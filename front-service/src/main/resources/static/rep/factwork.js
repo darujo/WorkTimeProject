@@ -70,8 +70,11 @@ angular.module('workTimeService').controller('workFactRepController', function (
             }).then(function (response) {
                 $scope.load = false;
                 console.log(response.data);
-                $scope.WorkTimeList = response.data.content;
-                maxPage = response.data["totalPages"];
+                $scope.WorkTimeList = response.data._embedded.workFactDtoList;
+                maxPage = response.data.page["totalPages"];
+                console.log($scope.WorkTimeList);
+                console.log(maxPage)
+
             }, function errorCallback(response) {
                 $scope.load = false;
                 console.log(response)

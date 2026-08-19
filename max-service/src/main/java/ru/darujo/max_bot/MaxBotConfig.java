@@ -37,6 +37,7 @@ public class MaxBotConfig {
                 .connectTimeout(Duration.ofSeconds(10))
                 .requestTimeout(Duration.ofSeconds(60))
                 .longPollTimeout(Duration.ofSeconds(30))
+//                .sslContext(TrustStoreManager.getSslContext())
                 .maxRetries(5)
                 .enableRateLimiting(true)
                 .maxRequestsPerSecond(30)

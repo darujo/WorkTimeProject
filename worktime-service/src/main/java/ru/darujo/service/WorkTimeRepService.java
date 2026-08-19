@@ -128,7 +128,11 @@ public class WorkTimeRepService {
                                             null,
                                             weekWorkDto.getDayStart(),
                                             weekWorkDto.getDayEnd(),
-                                            weekWorkDto.getTime());
+                                            weekWorkDto.getDayStart() == null || weekWorkDto.getDayEnd() == null ?
+                                                    0f :
+                                            calendarServiceIntegration.getTimePlan(workTime.getNikName(),
+                                                    weekWorkDto.getDayStart(),
+                                                    weekWorkDto.getDayEnd()));
                                     userWorkDtoMap.put(workTime.getNikName(), userWorkDto);
 
 
@@ -141,8 +145,7 @@ public class WorkTimeRepService {
                                 }
 
                             });
-
-
+//                    userWorkDtoMap.forEach((chatId, userWorkDto) -> userWorkDto.addTime(9999,calendarServiceIntegration.getWorkTime()));
                     UserWorkDto userWorkDto = userWorkDtoMap.values().stream().findFirst().orElse(
                             new UserWorkDto(
                                     null,

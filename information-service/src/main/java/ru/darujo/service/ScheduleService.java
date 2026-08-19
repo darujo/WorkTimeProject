@@ -34,7 +34,7 @@ public class ScheduleService implements AutoCloseable {
 
     @PostConstruct
     private void init() {
-
+//        log.error(ReportType.ALL_REPORT.getMessageType().toString());
         sendMes();
         for (MessageType messageType : MessageType.values()) {
             if (messageType.getPeriod() != null) {
@@ -70,42 +70,48 @@ public class ScheduleService implements AutoCloseable {
     }
 
     public void sendReport(String reportTypeDto, ChatInfo chatInfo) {
-        MessageType messageType = null;
+        log.warn(reportTypeDto);
         ReportType reportType = ReportType.valueOf(reportTypeDto);
-        for (MessageType value : MessageType.values()) {
-            if (value.getReportTypeList() != null) {
-                log.info(value.toString());
-                log.info(Boolean.toString(reportType.isProject()));
-                log.info(Boolean.toString(value.isProject()));
-                log.info(Boolean.toString(value.getReportTypeList().contains(reportType)));
-                log.info("---------");
-                log.info(Boolean.toString(reportType.isProject()
-                        && value.isProject()));
-                log.info(Boolean.toString(reportType.isProject()
-                        && value.isProject()
-                        && value.getReportTypeList().contains(reportType.getParentType())
-                ));
+        log.warn(reportType.toString());
+        MessageType messageType = reportType.getMessageType();
+        log.info(reportType.toString(), reportType);
+        if (messageType == null) {
+            log.warn("reportType.getMessageType() == null.... ");
+            for (MessageType value : MessageType.values()) {
+                if (value.getReportTypeList() != null) {
+                    log.info(value.toString());
+                    log.info(Boolean.toString(reportType.isProject()));
+                    log.info(Boolean.toString(value.isProject()));
+                    log.info(Boolean.toString(value.getReportTypeList().contains(reportType)));
+                    log.info("---------");
+                    log.info(Boolean.toString(reportType.isProject()
+                            && value.isProject()));
+                    log.info(Boolean.toString(reportType.isProject()
+                            && value.isProject()
+                            && value.getReportTypeList().contains(reportType.getParentType())
+                    ));
+                }
+                if (value.getReportTypeList() != null
+                        && value.getReportTypeList().size() == 1
+                        &&
+                        (
+                                (
+                                        !reportType.isProject()
+                                                && value.getReportTypeList().contains(reportType)
+                                )
+                                        ||
+                                        (
+                                                reportType.isProject()
+                                                        && value.isProject()
+                                                        && value.getReportTypeList().contains(reportType.getParentType())
+                                        )
+                        )
+                ) {
+                    messageType = value;
+                    break;
+                }
             }
-            if (value.getReportTypeList() != null
-                    && value.getReportTypeList().size() == 1
-                    &&
-                    (
-                            (
-                                    !reportType.isProject()
-                                            && value.getReportTypeList().contains(reportType)
-                            )
-                                    ||
-                                    (
-                                            reportType.isProject()
-                                                    && value.isProject()
-                                                    && value.getReportTypeList().contains(reportType.getParentType())
-                                    )
-                    )
-            ) {
-                messageType = value;
-                break;
-            }
-        }
+
 //        if (reportTypeDto.equals(ReportType.USER_WORK.toString())) {
 //            messageType = MessageType.WEEK_WORK_REPORT;
 //        } else if (reportTypeDto.equals(ReportType.ZI_STATUS.toString())) {
@@ -117,9 +123,10 @@ public class ScheduleService implements AutoCloseable {
 //        } else if (reportTypeDto.equals(ReportType.ZI_WORK_PROJECT.toString())) {
 //            messageType = MessageType.ZI_WORK_REPORT_PROJECT;
 //        } else {
-        if (messageType == null) {
-            throw new ResourceNotFoundRunTime("Нет такого типа отчета");
+            if (messageType == null) {
+                throw new ResourceNotFoundRunTime("Нет такого типа отчета 1 Не удалось найти задание.");
 
+            }
         }
         executor.schedule(getTask(messageType, chatInfo), 2, TimeUnit.SECONDS);
     }
@@ -145,6 +152,7 @@ public class ScheduleService implements AutoCloseable {
     }
 
     private RunnableNotException getTask(MessageType messageType, ChatInfo chatInfo) {
+        log.info(messageType.toString(), messageType.getReportTypeList());
         if (messageType.getReportTypeList() != null) {
             return tasks.getSendReport(messageType, chatInfo);
         } else if (messageType.equals(MessageType.AVAIL_WORK_LAST_DAY)) {
@@ -158,7 +166,7 @@ public class ScheduleService implements AutoCloseable {
         } else if (messageType.equals(MessageType.VACATION_USER_START)) {
             return tasks.getVacationStart(messageType);
         } else {
-            throw new ResourceNotFoundRunTime("Нет такого типа отчета");
+            throw new ResourceNotFoundRunTime("Нет такого типа отчета 2");
         }
     }
 

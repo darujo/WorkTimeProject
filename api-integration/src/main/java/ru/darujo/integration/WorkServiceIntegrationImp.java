@@ -1,11 +1,15 @@
 package ru.darujo.integration;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.WebClient;
+import ru.darujo.dto.EmberPageImpl;
 import ru.darujo.dto.MapStringFloat;
 import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.dto.workperiod.WorkUserTime;
+import ru.darujo.dto.workperiod.WorkUserTimeList;
 import ru.darujo.dto.workrep.WorkRepDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
@@ -21,6 +25,7 @@ public class WorkServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
     public ServiceType getServiceType() {
         return ServiceType.WORK;
     }
+
     public WorkServiceIntegrationImp(WebClient webClientWork) {
         super.setWebClient(webClientWork);
     }
@@ -237,15 +242,20 @@ public class WorkServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
         addTeg(stringBuilder, "sort", sort);
         String uri = "/rep/fact/week" + stringBuilder;
         try {
-            return webClient.get().uri(uri)
+            var result = webClient.get().uri(uri)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value()
                             ,
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по ЗИ"))
-                    .bodyToFlux(WorkUserTime.class)
-                    .collectList()
+                    .bodyToMono(new ParameterizedTypeReference<@NonNull EmberPageImpl<WorkUserTime, WorkUserTimeList>>() {
+                    })
+
                     .doOnError(throwable -> log.error(uri, throwable))
                     .block();
+            if (result == null) {
+                return null;
+            }
+            return result.getContent();
         } catch (RuntimeException ex) {
             log.error(uri, ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить ЗИ (api-work) не доступен подождите или обратитесь к администратору " + ex.getMessage());

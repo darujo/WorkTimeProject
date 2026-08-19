@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.darujo.assistant.color.ColorRGB;
 import ru.darujo.assistant.helper.ColorHelper;
@@ -11,7 +13,6 @@ import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.convertor.WorkConvertor;
 import ru.darujo.dto.ColorDto;
 import ru.darujo.dto.MapStringFloat;
-import ru.darujo.dto.PageDto;
 import ru.darujo.dto.PageObjDto;
 import ru.darujo.dto.calendar.WeekWorkDto;
 import ru.darujo.dto.project.ProjectDto;
@@ -201,7 +202,7 @@ public class WorkRepService {
     }
 
     @Transactional
-    public PageDto<WorkFactDto> getWorkFactRep(Integer page,
+    public Page<WorkFactDto> getWorkFactRep(Integer page,
                                                Integer size,
                                                String userName,
                                                String nameZi,
@@ -302,7 +303,8 @@ public class WorkRepService {
                     }
                 })
         );
-        return new PageDto<>(workPage.getTotalPages(), workPage.getNumber(), workPage.getSize(), workFactDTOs);
+
+        return new PageImpl<>(workFactDTOs, PageRequest.of(page, size), workPage.getTotalElements());
     }
 
     @Transactional
@@ -431,33 +433,34 @@ public class WorkRepService {
     }
 
 
-    public List<WorkUserTime> getWeekWork(boolean ziSplit, Boolean addTotal, String nikName, Boolean weekSplit, LocalDate dateStart, LocalDate dateEnd,
+    public Page<WorkUserTime> getWeekWork(boolean ziSplit, Boolean addTotal, String nikName, Boolean weekSplit, LocalDate dateStart, LocalDate dateEnd,
                                           Integer page, Integer size, String name, Long projectId, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, List<Long> releaseIdList, List<String> sort) {
-        List<WorkUserTime> workUserTimes = new ArrayList<>();
         if (ziSplit) {
             Page<@NonNull WorkLittleFull> works = workService.findWorkLittle(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseIdList, projectId);
-            works.forEach(workLittleFull -> {
+            return works.map(workLittleFull -> {
                         WorkLittle work = workLittleFull.getWork();
-                        workUserTimes.add(new WorkUserTime(
+                return new WorkUserTime(
                                 work.getId(),
                                 work.getCodeSap(),
                                 work.getCodeZi(),
                                 work.getName(),
                                 taskServiceIntegration.getWorkUserOrZi(work.getId(), projectId, nikName, addTotal))
-                        );
+                        ;
                     }
             );
 
         } else {
-            workUserTimes.add(new WorkUserTime(
+            return new PageImpl<>(
+                    List.of(
+                            new WorkUserTime(
                     null,
                     null,
                     null,
                     "Без ЗИ",
                     workTimeServiceIntegration.getWorkUserOrZiBig(null, nikName, addTotal, weekSplit, dateStart, dateEnd))
-            );
+                    ));
         }
-        return workUserTimes;
+//        return workUserTimes;
     }
 
     @Transactional

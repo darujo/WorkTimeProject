@@ -170,13 +170,13 @@ public class LinkService {
 
     public ResultMes checkUserMessager(String senderType, String chatId) {
         if (chatId == null) {
-            return new ResultMes(false, "Нет ни одного пользователя с таким телеграмм");
+            return new ResultMes(false, "Нет ни одного пользователя с таким " + senderType);
         }
         boolean flag = userService.exists(senderType, chatId);
         if (!flag) {
             flag = userInfoTypeService.exists(senderType, chatId);
         }
-        return new ResultMes(flag, flag ? "" : "Нет ни одного пользователя с таким телеграмм");
+        return new ResultMes(flag, flag ? "" : "Нет ни одного пользователя с таким " + senderType);
     }
 
     @Transactional

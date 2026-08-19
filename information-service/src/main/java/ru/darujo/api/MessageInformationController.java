@@ -60,7 +60,7 @@ public class MessageInformationController {
 
     @PostMapping("/send/message/admin")
     public Boolean sendAdminMessageInformation(@RequestBody SendAdminMessageImp message) {
-        log.warn(message.toString());
+        log.info("Сообщение администратору {}", message.getText());
         return messageInformationService.sendAdminMessage(message);
     }
 

@@ -311,6 +311,7 @@ public class CalendarService {
                 time = time + getDayTime(date);
             }
         }
+
         return time;
     }
 
