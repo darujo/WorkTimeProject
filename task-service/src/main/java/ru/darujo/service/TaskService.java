@@ -141,7 +141,7 @@ public class TaskService {
         specification = Specifications.eq(specification, "type", type);
 
         specification = Specifications.eq(specification, "projectId", projectId);
-        return Specifications.findAll(taskRepository, page == null ? null : page - 1, size, specification, Sort.by(Sort.Direction.DESC, "refresh"));
+        return Specifications.findAll(taskRepository, page, size, specification, Sort.by(Sort.Direction.DESC, "refresh"));
 
     }
 

@@ -68,7 +68,7 @@ public class WorkProjectService {
         ) {
             SaveDateDevelopEndFact saveDateDevelopEndFact = checkSetDevelopEndDate(workProject, null);
             if (saveDateDevelopEndFact.isSave()) {
-                if (workProject.getDevelopEndFact().isBefore(saveDateDevelopEndFact.getDate())) {
+                if (workProject.getDevelopEndFact() == null || workProject.getDevelopEndFact().isBefore(saveDateDevelopEndFact.getDate())) {
                     saveDateDevelopEndFact.setDate(workProject.getDevelopEndFact());
                 }
 
