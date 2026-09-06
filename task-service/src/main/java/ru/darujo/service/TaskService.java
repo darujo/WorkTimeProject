@@ -12,7 +12,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.darujo.dto.TaskDto;
+import ru.darujo.dto.user.UserDto;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
+import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.integration.WorkServiceIntegrationImp;
 import ru.darujo.model.Task;
 import ru.darujo.repository.TaskRepository;
@@ -20,9 +22,7 @@ import ru.darujo.specifications.Specifications;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -30,19 +30,8 @@ import java.util.Optional;
 public class TaskService {
 
     private TaskRepository taskRepository;
-
-    @Autowired
-    public void setTaskRepository(TaskRepository taskRepository) {
-        this.taskRepository = taskRepository;
-    }
-
-
+    private UserServiceIntegrationImp userServiceIntegration;
     private WorkServiceIntegrationImp workServiceIntegration;
-
-    @Autowired
-    public void setWorkServiceIntegration(WorkServiceIntegrationImp workServiceIntegration) {
-        this.workServiceIntegration = workServiceIntegration;
-    }
 
     public Optional<Task> findById(long id) {
         return taskRepository.findById(id);
@@ -58,7 +47,7 @@ public class TaskService {
                 throw new ResourceNotFoundRunTime("Не задан номер " + projectName + " и BTS");
             }
         }
-        if (CodeService.getTaskTypeIsZi(task.getType())) {
+        if (TaskType.getTaskTypeIsZi(task.getType())) {
             if (task.getWorkId() == null) {
                 throw new ResourceNotFoundRunTime("Не выбрано ЗИ");
             }
@@ -75,6 +64,10 @@ public class TaskService {
             }
         } else {
             task.setTimeCreate(task.getRefresh());
+        }
+        // todo убрать проверку на null статус должен быть всегда
+        if (task.getStatus() != null) {
+            TaskStatus.getName(task.getStatus());
         }
         return taskRepository.save(task);
     }
@@ -162,16 +155,26 @@ public class TaskService {
     public String taskCheck(TaskDto taskDto) {
         String text = null;
         if (taskDto.getWorkId() != null && taskDto.getType() == 1 && (taskDto.getCodeBTS() != null && !taskDto.getCodeBTS().isEmpty())) {
-            text = "Тип задачи будет изменен на \"Запросы по ЗИ\" так как тип задачи \"ЗИ\" и по ней введен номер запроса";
+            text = addText(null, "Тип задачи будет изменен на \"Запросы по ЗИ\" так как тип задачи \"ЗИ\" и по ней введен номер запроса");
         }
-        String testAvail = taskCheckAvail(taskDto.getId(), taskDto.getWorkId(), taskDto.getCodeDEVBO(), taskDto.getCodeBTS());
-        if (text == null) {
-            return testAvail;
-        }
-        if (testAvail == null) {
+        text = addText(text, taskCheckAvail(taskDto.getId(), taskDto.getWorkId(), taskDto.getCodeDEVBO(), taskDto.getCodeBTS()));
+// todo исправить false на true чтобы включить проверку на заполнение
+        text = addText(text, checkUser(taskDto.getNikName(), "исполнитель", false));
+        text = addText(text, checkUser(taskDto.getAnalyst(), "аналитик"));
+        text = addText(text, checkUser(taskDto.getDeveloper(), "разработчик"));
+        text = addText(text, checkUser(taskDto.getTester(), "тестировщик"));
+        clearUsers();
+        return text;
+    }
+
+    private String addText(String text, String textAdd) {
+        if (textAdd == null) {
             return text;
+        } else if (text == null) {
+            return textAdd;
+        } else {
+            return text + " " + textAdd;
         }
-        return text + " " + testAvail;
     }
 
     public String taskCheckAvail(Long id, Long workId, String code, String codeBTS) {
@@ -219,5 +222,54 @@ public class TaskService {
             }
         }
         return true;
+    }
+
+    private final Set<String> users = new HashSet<>();
+
+    private void clearUsers() {
+        users.clear();
+    }
+
+    private String checkUser(String nikName, String userRole) {
+        return checkUser(nikName, userRole, false);
+    }
+
+    private String checkUser(String nikName, String userRole, boolean isCheckNull) {
+        if (isCheckNull) {
+            if (nikName == null) {
+                return String.format("Не задан %s", userRole);
+            }
+        } else {
+            if (nikName == null) {
+                return null;
+            }
+        }
+        if (!users.contains(nikName)) {
+            try {
+                UserDto userDto = userServiceIntegration.getUserDto(nikName);
+                if (userDto.isBlock()) {
+                    return String.format("Пользователь %s(%s %s %s) с ролью %s заблокирован.", nikName, userDto.getLastName(), userDto.getFirstName(), userDto.getPatronymic(), userRole);
+                }
+                users.add(nikName);
+            } catch (ResourceNotFoundRunTime ex) {
+                return String.format("Не известный пользователь с ролью %s с ником %s", userRole, nikName);
+            }
+        }
+        return null;
+    }
+
+    @Autowired
+    public void setUserServiceIntegration(UserServiceIntegrationImp userServiceIntegration) {
+        this.userServiceIntegration = userServiceIntegration;
+    }
+
+    @Autowired
+    public void setTaskRepository(TaskRepository taskRepository) {
+        this.taskRepository = taskRepository;
+    }
+
+    @Autowired
+    public void setWorkServiceIntegration(WorkServiceIntegrationImp workServiceIntegration) {
+        this.workServiceIntegration = workServiceIntegration;
     }
 }

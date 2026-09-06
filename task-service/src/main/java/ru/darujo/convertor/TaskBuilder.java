@@ -3,6 +3,7 @@ package ru.darujo.convertor;
 import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.TaskDto;
 import ru.darujo.model.Task;
+import ru.darujo.service.TaskType;
 
 import java.time.LocalDateTime;
 
@@ -22,6 +23,11 @@ public class TaskBuilder {
     private Long workId;
     private LocalDateTime timeCreate;
     private Long projectId;
+    private String executor;
+    private String analyst;
+    private String developer;
+    private String tester;
+    private String status;
 
     public TaskBuilder setId(Long id) {
         this.id = id;
@@ -72,6 +78,31 @@ public class TaskBuilder {
         return this;
     }
 
+    public TaskBuilder setExecutor(String executor) {
+        this.executor = executor;
+        return this;
+    }
+
+    public TaskBuilder setAnalyst(String analyst) {
+        this.analyst = analyst;
+        return this;
+    }
+
+    public TaskBuilder setDeveloper(String developer) {
+        this.developer = developer;
+        return this;
+    }
+
+    public TaskBuilder setTester(String tester) {
+        this.tester = tester;
+        return this;
+    }
+
+    public TaskBuilder setStatus(String status) {
+        this.status = status;
+        return this;
+    }
+
     public TaskDto getTaskDto() {
         return new TaskDto(id,
                 nikName,
@@ -82,8 +113,14 @@ public class TaskBuilder {
                 codeDEVBO,
                 description,
                 type,
+                TaskType.getTaskTypeName(type),
                 workId,
-                DateHelper.getZDT(timeCreate));
+                DateHelper.getZDT(timeCreate),
+                executor,
+                analyst,
+                developer,
+                tester,
+                status);
     }
 
     public Task getTask() {
@@ -97,6 +134,11 @@ public class TaskBuilder {
                 workId,
                 null,
                 timeCreate,
-                projectId);
+                projectId,
+                executor,
+                analyst,
+                developer,
+                tester,
+                status);
     }
 }

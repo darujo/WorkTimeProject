@@ -17,6 +17,11 @@ public class TaskConvertor {
                 .setType(task.getType())
                 .setWorkId(task.getWorkId ())
                 .setTimeCreate(task.getTimeCreate())
+                .setExecutor(task.getExecutor())
+                .setAnalyst(task.getAnalyst())
+                .setDeveloper(task.getDeveloper())
+                .setTester(task.getTester())
+                .setStatus(task.getStatus())
                 .getTaskDto();
     }
 
@@ -32,6 +37,11 @@ public class TaskConvertor {
                 .setWorkId(taskDto.getWorkId ())
                 .setTimeCreate(DateHelper.zDTToLDT(taskDto.getTimeCreate()))
                 .setProjectId(projectId)
+                .setExecutor(taskDto.getExecutor())
+                .setAnalyst(taskDto.getAnalyst())
+                .setDeveloper(taskDto.getDeveloper())
+                .setTester(taskDto.getTester())
+                .setStatus(taskDto.getStatus())
                 .getTask();
     }
 }

@@ -35,8 +35,8 @@
                         <div class="horiz">
                             <label for="FavoritTask" class="p-head">Избранное</label>
                             <input class="vvod20" type="checkbox"
-                                                                    id="FavoritTask"
-                                                                    ng-model="Filt.favouriteTask"/>
+                                   id="FavoritTask"
+                                   ng-model="Filt.favouriteTask"/>
                             <button type="submit" class="head_button">Применить</button>
                             <button type="button" class="head_button" ng-click="clearFilter(true)">Сбросить</button>
                             <button type="button" class="head_button" ng-click="sendFilter()">Поделиться</button>
@@ -124,17 +124,17 @@
         <!--        <br>-->
         <label for="CodeBTS">№ запроса (BTS) :</label>
         <input class="vvod" type="text" id="CodeBTS" placeholder="Ведите код запроса"
-                                                              ng-model="Task.codeBTS"/>
+               ng-model="Task.codeBTS"/>
 
         <br>
         <label for="CodeDEVBO">№ внутренней задачи : </label>
         <input class="vvod" type="text" id="CodeDEVBO" placeholder="Ведите внутрений код задачи"
-                                                                            ng-model="Task.codeDEVBO"/>
+               ng-model="Task.codeDEVBO"/>
 
         <br>
         <label for="Description">Краткое описание ошибки :</label>
         <input class="vvod" type="text" id="Description" placeholder="Ведите наименование"
-                                                                          ng-model="Task.description"/>
+               ng-model="Task.description"/>
 
         <br>
 
@@ -168,7 +168,7 @@
                 <form novalidate class="filter">
                     <label for="Name" class="p-head"> Наименование </label>
                     <input class="vvod80" inputmode="text" id="Name"
-                                                     ng-model="FiltWork.name"/>
+                           ng-model="FiltWork.name"/>
                     <br>
                     <button type="button" ng-click="filterWork()" class="head_button">Применить</button>
 
@@ -182,7 +182,8 @@
             <button type="button" class="head_button" ng-click="loadWork(1)">NextPage</button>
             <p class="p-head">Количество элементов</p>
             <label for="WorkSize" class="p-head">Количество элементов</label>
-            <select class="vvod20" name="WorkSizeFilterTaskSelect" id="WorkSize" ng-model="FiltWork.size" ng-change="filterWork()">
+            <select class="vvod20" name="WorkSizeFilterTaskSelect" id="WorkSize" ng-model="FiltWork.size"
+                    ng-change="filterWork()">
                 <option ng-value="10" value="10" selected>10</option>
                 <option ng-value="25" value="25">25</option>
                 <option ng-value="50" value="50">50</option>
@@ -214,6 +215,56 @@
 
 
     </div>
+    <details class="details_block">
+        <summary class="p-head">Ответственные</summary>
+        <div class="horiz">
+            <div>
+                <label class="p-head" for="ExecutorTask">Исполнитель</label>
+                <select class="vvod40mar10" name="ExecutorTaskSelect" id="ExecutorTask" ng-model="Task.executor">
+                    <option ng-repeat="user in UserList"
+                            ng-value="user.nikName" value="user.nikName">
+                        {{user.lastName}}
+                        {{user.firstName}} {{user.patronymic}}
+                    </option>
+                </select>
+                <label class="p-head" for="AnalystTask">Аналитик</label>
+                <select class="vvod40mar10" name="Analyst" id="AnalystTask" ng-model="Task.analyst">
+                    <option ng-repeat="user in UserList"
+                            ng-value="user.nikName" value="user.nikName">
+                        {{user.lastName}}
+                        {{user.firstName}} {{user.patronymic}}
+                    </option>
+                </select>
+            </div>
+            <div>
+                <label class="p-head" for="DeveloperTask">Разработчик</label>
+                <select class="vvod40mar10" name="DeveloperTaskSelect" id="DeveloperTask" ng-model="Task.developer">
+                    <option ng-repeat="user in UserList"
+                            ng-value="user.nikName" value="user.nikName">
+                        {{user.lastName}}
+                        {{user.firstName}} {{user.patronymic}}
+                    </option>
+                </select>
+                <label class="p-head" for="TesterTask">Тестировщик</label>
+                <select class="vvod40mar10" name="TesterTaskSelect" id="TesterTask" ng-model="Task.tester">
+                    <option ng-repeat="user in UserList"
+                            ng-value="user.nikName" value="user.nikName">
+                        {{user.lastName}}
+                        {{user.firstName}} {{user.patronymic}}
+                    </option>
+                </select>
+            </div>
+        </div>
+        <!--        todo надо вынести из сотрудников-->
+        <label class="p-head" for="StatusTask">Статус</label>
+        <select class="vvod40mar10" name="StatusTaskSelect" id="StatusTask" ng-model="Task.status">
+            <option ng-repeat="status in TaskListStatus"
+                    ng-value="status.code" value="status.code">
+                {{status.value}}
+
+            </option>
+        </select>
+    </details>
     <button class="button" ng-click="saveTask()" id="ButtonSaveDown">Сохранить</button>
     <button type="button" ng-click="loadTask()" class="button">Вернуться к списку</button>
 

@@ -1,7 +1,6 @@
 package ru.darujo.dto;
 
 import ru.darujo.dto.user.UserFio;
-import ru.darujo.service.CodeService;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -22,10 +21,16 @@ public class TaskDto implements Serializable, UserFio {
     private String description;
     // Тип задачи
     private Integer type;
+    private String typeStr;
+    private String executor;
+    private String analyst;
+    private String developer;
+    private String tester;
+    private String status;
 
     @SuppressWarnings("unused")
     public String getTypeStr() {
-        return CodeService.getTaskType(type);
+        return typeStr;
     }
 
     // № ЗИ (ZI)
@@ -113,8 +118,14 @@ public class TaskDto implements Serializable, UserFio {
                    String codeDEVBO,
                    String description,
                    Integer type,
+                   String typeStr,
                    Long workId,
-                   ZonedDateTime timeCreate) {
+                   ZonedDateTime timeCreate,
+                   String executor,
+                   String analyst,
+                   String developer,
+                   String tester,
+                   String status) {
         this.id = id;
         this.nikName = nikName;
         this.authorFirstName = authorFirstName;
@@ -124,8 +135,14 @@ public class TaskDto implements Serializable, UserFio {
         this.codeDEVBO = codeDEVBO;
         this.description = description;
         this.type = type;
+        this.typeStr = typeStr;
         this.workId = workId;
         this.timeCreate = timeCreate;
+        this.executor = executor;
+        this.analyst = analyst;
+        this.developer = developer;
+        this.tester = tester;
+        this.status = status;
     }
 
     public void setFirstName(String authorFirstName) {
@@ -142,5 +159,25 @@ public class TaskDto implements Serializable, UserFio {
 
     public ZonedDateTime getTimeCreate() {
         return timeCreate;
+    }
+
+    public String getExecutor() {
+        return executor;
+    }
+
+    public String getAnalyst() {
+        return analyst;
+    }
+
+    public String getDeveloper() {
+        return developer;
+    }
+
+    public String getTester() {
+        return tester;
+    }
+
+    public String getStatus() {
+        return status;
     }
 }

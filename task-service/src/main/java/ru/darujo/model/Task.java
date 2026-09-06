@@ -40,4 +40,15 @@ public class Task {
     private LocalDateTime timeCreate;
     @Column(name = "project_id", nullable = false)
     private Long projectId;
+
+    @Column(name = "executor")
+    private String executor;
+    @Column(name = "analyst")
+    private String analyst;
+    @Column(name = "developer")
+    private String developer;
+    @Column(name = "tester")
+    private String tester;
+    @Column(name = "status")
+    private String status;
 }

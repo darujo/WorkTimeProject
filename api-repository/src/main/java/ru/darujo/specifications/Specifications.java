@@ -238,6 +238,17 @@ public class Specifications {
         return specification;
     }
 
+    public static <T> Specification<@NonNull T> isNull(Specification<@NonNull T> specification, String field, Boolean isNull) {
+        if (isNull != null && isNull) {
+            if (specification == null) {
+                specification = isNull(field);
+            } else {
+                specification = specification.and(isNull(field));
+            }
+        }
+        return specification;
+    }
+
     private static <T> Specification<@NonNull T> isNotNull(String field) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.isNotNull(root.get(field)));
 

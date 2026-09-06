@@ -240,7 +240,7 @@ public class UserServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
         }
     }
 
-    private UserDto getUserDto(String nikName) {
+    public UserDto getUserDto(String nikName) {
         UserDto userDto = userDtoMap.get(nikName);
         if (userDto == null) {
             userDto = getUserDto(null, nikName);

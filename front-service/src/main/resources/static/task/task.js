@@ -400,6 +400,12 @@ angular.module('workTimeService').controller('taskController', function ($scope,
         $scope.TaskListType = response.data;
     }
 
+    let callBackStatus = function (response) {
+        console.log("callBackStatus");
+        console.log(response);
+        $scope.TaskListStatus = response.data;
+    }
+
     if (typeof $localStorage.favourites !== "undefined"
         && typeof $localStorage.favourites.listTaskID !== "undefined") {
         arrTaskId = $localStorage.favourites.listTaskID;
@@ -441,8 +447,13 @@ angular.module('workTimeService').controller('taskController', function ($scope,
             return {};
         }
     };
-
+    $location.getUsers().then(function (result) {
+        $scope.UserList = result;
+        console.log("result UserList");
+        console.log(result);
+    });
     $location.getCode("task/code/type", callBackType);
+    $location.getCode("task/code/status", callBackStatus);
     $scope.FiltWork = $location.getFilter("taskEditFilter");
     if ($scope.FiltWork == null) {
         $scope.FiltWork = {size: 10};

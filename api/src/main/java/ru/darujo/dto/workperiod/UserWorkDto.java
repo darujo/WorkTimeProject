@@ -1,7 +1,6 @@
 package ru.darujo.dto.workperiod;
 
 import ru.darujo.dto.user.UserFio;
-import ru.darujo.service.CodeService;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -33,7 +32,7 @@ public class UserWorkDto implements UserFio, Serializable {
         this.dateEnd = dateEnd;
         this.workPlan = workPlan;
         this.workAllFact = 0f;
-        CodeService.getTaskTypes().forEach((type, s) -> workTime.put(type,0f));
+//        CodeService.getTaskTypes().forEach((type, s) -> workTime.put(type,0f));
     }
     public void addTime(Integer type,Float time ){
         if(type != null && time != null){
