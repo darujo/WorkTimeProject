@@ -3,6 +3,7 @@ package ru.darujo.service;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.jspecify.annotations.NonNull;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,6 +93,13 @@ public class UserService {
 
     public User findById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("Не найден пользователь c id " + id));
+    }
+
+    @Transactional
+    public User findByIdWithCategory(Long id) {
+        User user = findById(id);
+        Hibernate.initialize(user.getCategory());
+        return user;
     }
 
     public Optional<User> findByNikName(String name) {
@@ -193,13 +201,15 @@ public class UserService {
             User user = new User(-1L, nikName, hashPassword(
                     "Приносить пользу миру — это единственный способ стать счастливым."),
 
-                    null, null, null, false, null, false, null, null, null, null, null);
+                    null, null, null, false, null, false, null, null, null, null, null, null);
             List<Right> right = new ArrayList<>();
             right.add(new Right(-1L, "STOP_SERVICE", "право на стоп"));
             user.setRights(right);
             return user;
         }
-        return findByNikName(nikName).orElseThrow(() -> new UsernameNotFoundException("Не найден пользователь по логину " + nikName));
+        User user = findByNikName(nikName).orElseThrow(() -> new UsernameNotFoundException("Не найден пользователь по логину " + nikName));
+        Hibernate.initialize(user.getCategory());
+        return user;
     }
 
     @Transactional

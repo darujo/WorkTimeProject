@@ -27,7 +27,7 @@ public class AdminUserController {
     @GetMapping("/edit/user/{id}")
     public ResponseEntity<?> getUserEditDto(@PathVariable long id) {
         try {
-            return ResponseEntity.ok(UserConvertor.getUserEditDto(userService.findById(id)));
+            return ResponseEntity.ok(UserConvertor.getUserEditDto(userService.findByIdWithCategory(id)));
 
         } catch (UsernameNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex);

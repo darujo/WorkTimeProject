@@ -77,8 +77,8 @@
                 <td ng-if="Filter.viewFact" class="table_head1">IV факт</td>
                 <td class="table_head2">IV этап</td>
                 <td ng-if="Filter.viewFact" class="table_head1">V факт</td>
-                <td ng-if="Filter.viewFact" class="table_head1">Итого, ч/часов факт</td>
-                <td class="table_head2">Итого, ч/часов</td>
+                <td ng-if="Filter.viewFact" class="table_head1">Итого, {{getUnit()}} факт</td>
+                <td class="table_head2">Итого, {{getUnit()}}</td>
             </tr>
             <tbody>
             <tr ng-repeat="work in projectRate.workStageList">
@@ -125,7 +125,7 @@
 
     </div>
 
-    <div id="WorkCriteriaList" class="head_text_elem">
+    <div id="WorkCriteriaList" class="head_text_elem" ng-if="projectRate.workCriteriaList">
         <div class="horiz">
             <h1>Критерии</h1>
         </div>
@@ -147,7 +147,7 @@
         </table>
     </div>
 
-    <div id="WorkTypeList" class="head_text_elem">
+    <div id="WorkTypeList" class="head_text_elem" ng-if="projectRate.workTypeList">
         <div class="horiz">
             <h1>Работы</h1>
         </div>
@@ -194,8 +194,8 @@
         <td ng-if="Filter.viewFact" class="table_head1">IV факт</td>
         <td class="table_head2">IV этап</td>
         <td ng-if="Filter.viewFact" class="table_head1">V факт</td>
-        <td ng-if="Filter.viewFact" class="table_head1">Итого, ч/часов факт</td>
-        <td class="table_head2">Итого, ч/часов</td>
+        <td ng-if="Filter.viewFact" class="table_head1">Итого, {{this.getUnit()}} факт</td>
+        <td class="table_head2">Итого, {{this.getUnit()}}</td>
     </tr>
     <tbody>
     <tr>

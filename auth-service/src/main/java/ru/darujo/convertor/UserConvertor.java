@@ -1,13 +1,27 @@
 package ru.darujo.convertor;
 
+import org.hibernate.LazyInitializationException;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.user.UserEditDto;
+import ru.darujo.model.Category;
 import ru.darujo.model.Project;
 import ru.darujo.model.User;
+import ru.darujo.service.CategoryService;
 import ru.darujo.service.ProjectService;
 
 public class UserConvertor {
     public static UserDto getUserDto(User user) {
+        String name = null;
+        Long id = null;
+        try {
+            Category category = user.getCategory();
+            if (category != null) {
+                id = category.getId();
+                name = category.getName();
+            }
+        } catch (LazyInitializationException ignore) {
+
+        }
         return new UserDto(user.getId(),
                 user.getNikName(),
                 user.getFirstName(),
@@ -18,7 +32,9 @@ public class UserConvertor {
                 user.getMaxId() != null,
                 user.getCurrentProject().getId(),
                 user.getProjects().stream().map(ProjectConvertor::getProjectDto).toList(),
-                user.isBlock()
+                user.isBlock(),
+                id,
+                name
         );
     }
 
@@ -33,7 +49,8 @@ public class UserConvertor {
                 user.getProjects().stream().map(Project::getId).toList(),
                 user.isBlock(),
                 user.getRights() == null ? null : user.getRights().stream().anyMatch(right -> right.getName().equals("ADMIN_USER")),
-                user.getEmail());
+                user.getEmail(),
+                user.getCategory() == null ? null : user.getCategory().getId());
     }
 
     public static User getUser(UserEditDto user) {
@@ -50,7 +67,8 @@ public class UserConvertor {
                 null,
                 user.getEmail(),
                 null,
-                null
+                null,
+                CategoryService.getInstance().findById(user.getCategoryId())
         );
     }
 
@@ -68,7 +86,8 @@ public class UserConvertor {
                 null,
                 user.getEmail(),
                 null,
-                null
+                null,
+                user.getCategory()
         );
     }
 

@@ -44,7 +44,6 @@ public class User {
     @Column(name = "max_id")
     private String maxId;
 
-
     @ManyToOne
     @JoinColumn(name = "project_id", nullable = false)
     private Project currentProject;
@@ -86,6 +85,10 @@ public class User {
     @Column(name = "recovery")
     private Boolean recovery;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
     public User(Long id,
                 String nikName,
                 String password,
@@ -99,7 +102,8 @@ public class User {
                 String email,
                 String newEmail,
                 Timestamp sendCode,
-                Boolean recovery) {
+                Boolean recovery,
+                Category category) {
         this.id = id;
         this.nikName = nikName;
         this.password = password;
@@ -114,6 +118,7 @@ public class User {
         this.newEmail = newEmail;
         this.sendCode = sendCode;
         this.recovery = recovery;
+        this.category = category;
     }
 
     public Project getCurrentProject() {
@@ -126,5 +131,6 @@ public class User {
         }
         return currentProject;
     }
+
 }
 

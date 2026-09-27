@@ -51,8 +51,13 @@ public class RateController {
 
     @GetMapping("")
     public WorkRateDto getRate(@RequestParam Long workId,
-                               @RequestParam(required = false) Boolean child) {
-        return rateService.getRate(workId, child);
+                               @RequestParam(required = false) Boolean child,
+                               @RequestParam(defaultValue = "false") boolean amountRate,
+                               @RequestParam("system_right") List<String> rights) {
+        if (amountRate) {
+            rateService.checkRight("category_view", rights);
+        }
+        return rateService.getRate(workId, child, amountRate);
     }
 
     @GetMapping("/copy")

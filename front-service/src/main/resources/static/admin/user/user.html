@@ -161,6 +161,16 @@
                 </option>
             </select>
         </div>
+        <div class="horiz">
+            <label for="UserCategory" class="p-head">Категория</label>
+            <select class="vvod80mar10" name="UserCategory" id="UserCategory"
+                    ng-model="User.categoryId" required>
+                <option ng-repeat="category in CategoryList" ng-value="category.id" value="category.id">
+                    {{category.name}}
+                </option>
+            </select>
+        </div>
+
         <button type="submit" class="button" id="ButtonSaveDown">Сохранить</button>
         <button type="button" ng-click="loadUser()" class="button">Вернуться к списку</button>
 

@@ -108,7 +108,7 @@ spring:
             - id: user-admin-service
               uri: "http://localhost:8183"
               predicates:
-                - Path=/admin/users/**,/admin/roles/**,/admin/projects/**
+                - Path=/admin/users/**,/admin/roles/**,/admin/projects/**,/admin/categories/**
               filters:
                 - StripPrefix=0
                 - PrefixPath=/app-auth/
@@ -170,7 +170,7 @@ spring:
             - id: user-service
               uri: "http://localhost:8183"
               predicates:
-                - Path=/users/**,/roles/**,/projects/**,/token/**
+                - Path=/users/**,/roles/**,/projects/**,/token/**,/categories/**
               filters:
                 - StripPrefix=0
                 - PrefixPath=/app-auth

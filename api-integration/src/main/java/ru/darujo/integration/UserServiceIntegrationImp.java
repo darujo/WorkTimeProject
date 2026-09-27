@@ -12,8 +12,7 @@ import ru.darujo.dto.information.ResultMes;
 import ru.darujo.dto.jwt.JwtRequest;
 import ru.darujo.dto.jwt.JwtResponse;
 import ru.darujo.dto.project.ProjectDto;
-import ru.darujo.dto.user.UserDto;
-import ru.darujo.dto.user.UserFio;
+import ru.darujo.dto.user.*;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.type.MessageSenderType;
 
@@ -85,6 +84,27 @@ public class UserServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
                 throw ex;
             } else {
                 throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить пользователя (api-auth) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+            }
+        }
+    }
+
+    private CategoryEditDto getCategoryDto(Long id) {
+        StringBuilder stringBuilder = new StringBuilder();
+        addTeg(stringBuilder, "system_right", "CATEGORY_AMOUNT");
+        String uri = "/admin/categories/" + id + stringBuilder;
+        try {
+            return webClient.get().uri(uri)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные пользователю"))
+                    .bodyToMono(CategoryEditDto.class)
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .block();
+        } catch (RuntimeException ex) {
+            if (ex instanceof ResourceNotFoundRunTime) {
+                throw ex;
+            } else {
+                throw new ResourceNotFoundRunTime(uri + " " + ex.getMessage());
             }
         }
     }
@@ -238,6 +258,57 @@ public class UserServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
             log.error(e.getMessage());
             userFio.setFirstName("Не найден пользователь с ником " + userFio.getNikName());
         }
+    }
+
+    public void updFio(UserFioCategory userFio) {
+        try {
+            if (userFio.getNikName() != null) {
+                UserDto userDto = getUserDto(userFio.getNikName());
+                userFio.setFirstName(userDto.getFirstName());
+                userFio.setLastName(userDto.getLastName());
+                userFio.setPatronymic(userDto.getPatronymic());
+                userFio.setCategoryId(userDto.getCategoryId());
+                userFio.setCategoryName(userDto.getCategoryName());
+            }
+        } catch (ResourceNotFoundRunTime e) {
+            log.error(e.getMessage());
+            userFio.setFirstName("Не найден пользователь с ником " + userFio.getNikName());
+        }
+    }
+
+    private final Map<Long, CategoryEditDto> categoryDtoMap = new HashMap<>();
+
+    public void updCategoryAmount(CategoryAmountUpd amountUpd) {
+        try {
+            if (amountUpd.getNikName() != null) {
+                UserDto userDto = getUserDto(amountUpd.getNikName());
+                CategoryEditDto categoryDto = null;
+                if (userDto.getCategoryId() != null) {
+                    categoryDto = getCategory(userDto.getCategoryId());
+                }
+                if (categoryDto == null) {
+                    categoryDto = new CategoryEditDto(null, "Отсутствует", 0f, 0f);
+                }
+                amountUpd.updAmount(categoryDto);
+            }
+        } catch (ResourceNotFoundRunTime e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    public void emptyCategoryCache() {
+        categoryDtoMap.clear();
+    }
+
+    private CategoryEditDto getCategory(Long id) {
+        CategoryEditDto categoryDto = categoryDtoMap.get(id);
+        if (categoryDto == null) {
+            categoryDto = getCategoryDto(id);
+            if (categoryDto != null) {
+                categoryDtoMap.put(id, categoryDto);
+            }
+        }
+        return categoryDto;
     }
 
     public UserDto getUserDto(String nikName) {

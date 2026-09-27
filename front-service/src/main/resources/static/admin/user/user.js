@@ -145,6 +145,23 @@
              });
      };
 
+     $scope.loadCategory = function () {
+         console.log("");
+         $http.get(constPatchUser + "/categories")
+             .then(function (response) {
+                 $scope.CategoryList = response.data._embedded.categoryDtoList;
+                 console.log("CategoryList")
+                 console.log($scope.CategoryList);
+
+
+             }, function errorCallback(response) {
+                 console.log(response)
+                 if ($location.checkAuthorized(response)) {
+                     //     alert(response.data.message);
+                 }
+             });
+     };
+
     $scope.deleteUser = function (userId) {
         $http.delete(constPatchAdmin + "/users/edit/user/" + userId)
             .then(function (response) {
@@ -229,6 +246,7 @@
 
 
      $scope.loadProject();
+     $scope.loadCategory();
     // $scope.UserList = $location.UserList;
     $scope.Filt = $location.getFilter("userFilter");
 

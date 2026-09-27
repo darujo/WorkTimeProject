@@ -158,7 +158,7 @@ public class RateService {
                 projectId);
     }
 
-    public WorkRateDto getRate(Long workId, Boolean child) {
+    public WorkRateDto getRate(Long workId, Boolean child, Boolean amount) {
         WorkLittleDto workLittleDto = workServiceIntegration.getWorLittleDto(workId);
         List<RateDto> rateDtoList = new ArrayList<>();
         List<WorkStageDto> workStageDtoListTotal = new ArrayList<>();
@@ -195,19 +195,25 @@ public class RateService {
             mapWorkStage.values().forEach(workStage -> workStageList.add(WorkStageConvertor.getWorkStageDto(workStage)));
 
             workStageService.updWorkStage(workIDList, workStageList, projectId);
-            workStageList.forEach(workStageDto -> workStageService.updFio(workStageDto));
-            WorkStageDto workStageDto = getTotal(workStageList);
 
+            workStageList.forEach(workStageDto -> {
+                workStageService.updFio(workStageDto);
+                if (amount) {
+                    userServiceIntegration.updCategoryAmount(workStageDto);
+                }
+            });
+            WorkStageDto workStageDto = getTotal(workStageList);
+            userServiceIntegration.emptyCategoryCache();
             workStageList.add(workStageDto);
             workStageDtoListTotal.add(workStageDto);
             RateDto rateDto = new RateDto(projectId,
                     workServiceIntegration.getRate(workIDList, projectId),
                     workStageList,
-                    workCriteriaService.findWorkCriteria(workIDList, projectId).stream().map(WorkCriteriaConvertor::getWorkCriteriaDto).toList(),
-                    workTypeService.findWorkType(workIDList, projectId).stream().map(WorkTypeConvertor::getWorkTypeDto).toList(),
-                    comparisonStageCriteria(workIDList, projectId),
-                    comparisonStageType(workIDList, projectId),
-                    comparisonCriteriaType(workIDList, projectId)
+                    amount ? null : workCriteriaService.findWorkCriteria(workIDList, projectId).stream().map(WorkCriteriaConvertor::getWorkCriteriaDto).toList(),
+                    amount ? null : workTypeService.findWorkType(workIDList, projectId).stream().map(WorkTypeConvertor::getWorkTypeDto).toList(),
+                    amount ? null : comparisonStageCriteria(workIDList, projectId),
+                    amount ? null : comparisonStageType(workIDList, projectId),
+                    amount ? null : comparisonCriteriaType(workIDList, projectId)
             );
             updateProject(rateDto);
             rateDtoList.add(rateDto);
@@ -304,6 +310,12 @@ public class RateService {
         workTypeService.copy(workIdSource, workIdTarget, deleteOld);
         workStageService.copy(workIdSource, workIdTarget, deleteOld);
         workCriteriaService.copy(workIdSource, workIdTarget, deleteOld);
+    }
+
+    public void checkRight(String right, List<String> rights) {
+        if (right.equals("category_view") && !rights.contains("CATEGORY_AMOUNT")) {
+            throw new ResourceNotFoundRunTime("У вас не права просмотра категорий");
+        }
     }
 
     @Autowired

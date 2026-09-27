@@ -1,10 +1,37 @@
 package ru.darujo.dto.ratestage;
 
-import ru.darujo.dto.user.UserFio;
+import ru.darujo.dto.user.CategoryAmountUpd;
+import ru.darujo.dto.user.CategoryEditDto;
+import ru.darujo.dto.user.UserFioCategory;
 
 
-public class WorkStageDto implements UserFio {
+public class WorkStageDto implements UserFioCategory, CategoryAmountUpd {
     private String firstName;
+
+    @Override
+    public void updAmount(CategoryEditDto categoryDto) {
+        stage0 = multiplication(stage0, categoryDto.getAmount());
+        stage1 = multiplication(stage1, categoryDto.getAmount());
+        stage2 = multiplication(stage2, categoryDto.getAmount());
+        stage3 = multiplication(stage3, categoryDto.getAmount());
+        stage4 = multiplication(stage4, categoryDto.getAmount());
+        stageAll = multiplication(stageAll, categoryDto.getAmount());
+
+        stage0Fact = multiplication(stage0Fact, categoryDto.getAmountFact());
+        stage1Fact = multiplication(stage1Fact, categoryDto.getAmountFact());
+        stage2Fact = multiplication(stage2Fact, categoryDto.getAmountFact());
+        stage3Fact = multiplication(stage3Fact, categoryDto.getAmountFact());
+        stage4Fact = multiplication(stage4Fact, categoryDto.getAmountFact());
+        stage5Fact = multiplication(stage5Fact, categoryDto.getAmountFact());
+
+    }
+
+    private Float multiplication(Float amount, Float amount2) {
+        if (amount == null || amount2 == null) {
+            return null;
+        }
+        return amount * amount2;
+    }
     private String lastName;
     private String patronymic;
 
@@ -66,6 +93,8 @@ public class WorkStageDto implements UserFio {
     //    private Float stageAllFact;
     private Long workId;
     private Long projectId;
+    private Long categoryId;
+    private String categoryName;
 
     public Long getId() {
         return id;
@@ -262,5 +291,23 @@ public class WorkStageDto implements UserFio {
             return 0f;
         }
         return time;
+    }
+
+    @SuppressWarnings("unused")
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    @SuppressWarnings("unused")
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 }

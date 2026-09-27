@@ -391,10 +391,12 @@ angular.module('workTimeService').controller('workRateController', function ($sc
     }
     console.log(" view = ", $scope.Filt.view)
     if ($scope.Filt.view !== "current"){
-        $location.path('/rate').search({workId: WorkId});
+        $scope.patchRate(false)
         return;
     }
-
+    $scope.patchRate = function (amountRate) {
+        $location.path('/rate').search({workId: WorkId, amountRate: amountRate});
+    }
     $scope.stageCreate = false;
     $scope.stageEdit = false;
     $scope.criteriaCreate = false;

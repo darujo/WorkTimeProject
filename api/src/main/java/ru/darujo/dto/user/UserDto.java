@@ -24,6 +24,8 @@ public class UserDto implements Serializable {
     private Long projectId;
     private List<ProjectDto> projects;
     private boolean block;
+    private Long categoryId;
+    private String categoryName;
 
     public UserDto(Long id,
                    String nikName,
@@ -35,7 +37,9 @@ public class UserDto implements Serializable {
                    Boolean maxAdd,
                    Long projectId,
                    List<ProjectDto> projects,
-                   boolean block) {
+                   boolean block,
+                   Long categoryId,
+                   String categoryName) {
         this.id = id;
         this.nikName = nikName;
         this.firstName = firstName;
@@ -47,6 +51,8 @@ public class UserDto implements Serializable {
         this.projects = projects;
         this.block = block;
         this.maxAdd = maxAdd;
+        this.categoryId = categoryId;
+        this.categoryName = categoryName;
     }
 
     public UserDto(Long id, String nikName, String firstName, String lastName, String patronymic, boolean block) {
@@ -110,5 +116,15 @@ public class UserDto implements Serializable {
     @SuppressWarnings("unused")
     public Boolean getMaxAdd() {
         return maxAdd;
+    }
+
+    @SuppressWarnings("unused")
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    @SuppressWarnings("unused")
+    public String getCategoryName() {
+        return categoryName;
     }
 }

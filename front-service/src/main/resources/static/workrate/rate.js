@@ -43,6 +43,7 @@ angular.module('workTimeService').controller('rateController', function ($scope,
                 params: {
                     workId: WorkId,
                     loadFact: true,
+                    amountRate: AmountRate,
                     child: $scope.FilterCh.Child === 1 ? true : ($scope.FilterCh.Child === 2 ? false : null)
 
                 }
@@ -53,20 +54,27 @@ angular.module('workTimeService').controller('rateController', function ($scope,
             }, function errorCallback(response) {
                 $scope.loadRateWait = false;
                 console.log(response)
-                if ($location.checkAuthorized(response)) {
+                if ($location.checkAuthorized(response, true)) {
                 }
             });
         }
     };
 
     $scope.workPage = function () {
-        $location.path('/work').search({});
+        $location.path('/work_rate').search({workId: WorkId, view: "current"});
     }
 
     $scope.Filt = {}
     $location.parserFilter($scope.Filt);
     WorkId = $scope.Filt.workId;
-
+    let AmountRate = $scope.Filt.amountRate;
+    $scope.getUnit = function () {
+        if (AmountRate === "true" || AmountRate === true) {
+            return "руб.";
+        } else {
+            return "чел. / часов";
+        }
+    }
     if (WorkId === undefined) {
         $scope.workPage();
         return;

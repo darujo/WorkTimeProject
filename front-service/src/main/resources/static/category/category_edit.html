@@ -1,0 +1,21 @@
+<div id="FormEdit" class="div_form container_filter">
+
+    <form novalidate ng-submit="saveCategory()">
+        <div class="horiz">
+            <label for="NaneEdit" class="form_label">Наименование:</label>
+            <input class="vvod80mar10" type="text" id="NaneEdit" step="any"
+                   ng-model="Category.name"/>
+            <br>
+        </div>
+
+        <div class="horiz">
+            <label for="CategoryAmount" class="form_label">Сумма:</label>
+            <input class="vvod20mar10" type="number" step="any" id="CategoryAmount" required
+                   min="0" max="100000"
+                   ng-model="Category.amount"/>
+        </div>
+        <button type="submit" class="button" id="ButtonSaveDown">Сохранить</button>
+        <button type="button" ng-click="backCategory()" class="button">Вернуться к списку</button>
+
+    </form>
+</div>

@@ -7,6 +7,14 @@
     <h1 ng-style="getStyle(RateStatusSC.code)">{{RateStatusSC.value}}</h1>
     <h1 ng-style="getStyle(RateStatusST.code)">{{RateStatusST.value}}</h1>
     <h1 ng-style="getStyle(RateStatusCT.code)">{{RateStatusCT.value}}</h1>
+    <div class="horiz" style="max-width: 600px">
+        <button type="button" class="button_table mar5" id="PatchRateAmount" ng-click="patchRate(true)">Оценка по
+            проектам (руб)
+        </button>
+        <button type="button" class="button_table mar5" id="PatchRate" ng-click="patchRate(false)">Оценка по проектам
+            (ч./часов)
+        </button>
+    </div>
     <div class="horiz">
         <h1>Плановая оценка</h1>
         <button type="button" class="head_button mar5" id="WorkPage" ng-click="workPage()">Назад</button>

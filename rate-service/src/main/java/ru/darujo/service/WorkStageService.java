@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.darujo.dto.MapStringFloat;
 import ru.darujo.dto.ratestage.WorkStageDto;
-import ru.darujo.dto.user.UserFio;
+import ru.darujo.dto.user.UserFioCategory;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.integration.WorkServiceIntegrationImp;
@@ -80,7 +80,7 @@ public class WorkStageService {
         return workStageRepository.findAll(specification);
     }
 
-    public void updFio(UserFio userFio) {
+    public void updFio(UserFioCategory userFio) {
         userServiceIntegration.updFio(userFio);
     }
 

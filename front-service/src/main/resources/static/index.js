@@ -246,11 +246,16 @@ angular.module('workTimeService').controller('indexController', function ($rootS
 
     }
 
-    $location.checkAuthorized = function (response) {
+    $location.checkAuthorized = function (response, check404) {
         console.log("response.status");
         console.log(response.status);
         if (parseInt(response.status) === 500) {
             alert("Произошла ошибка. Обратитесь к администратору. " + response.data.message);
+            return false;
+        } else if (parseInt(response.status) === 404) {
+            if (check404 && response.data.message) {
+                alert(response.data.message);
+            }
             return false;
         } else if (parseInt(response.status) === 403) {
             alert("Нет прав: " + response.data);
@@ -401,6 +406,7 @@ angular.module('workTimeService').controller('indexController', function ($rootS
                     || key.indexOf("ziSplit") !== -1
                     || key.indexOf("hideNotTime") !== -1
                     || key.indexOf("avail") !== -1
+                    || key.indexOf("amountRate") !== -1
 
                 ) {
                     console.log(key);

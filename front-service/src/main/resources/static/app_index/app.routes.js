@@ -275,6 +275,24 @@ angular.module('workTimeService').config(function ($routeProvider) {
                 }]
             }
         })
+        .when('/category'.toLowerCase(), {
+            templateUrl: 'category/category.html?ver=' + ver,
+            controller: 'categoryController',
+            resolve: {
+                LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load('category'); // Resolve promise and load before view
+                }]
+            }
+        })
+        .when('/categoryEdit', {
+            templateUrl: 'category/category_edit.html?ver=' + ver,
+            controller: 'categoryEditController',
+            resolve: {
+                LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load('category_edit'); // Resolve promise and load before view
+                }]
+            }
+        })
         .when('/rate', {
             templateUrl: 'workRate/rate.html?ver='.toLowerCase() + ver,
             controller: 'rateController',
