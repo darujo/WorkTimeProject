@@ -36,7 +36,7 @@ public class UserWorkDto implements UserFio, Serializable {
     }
     public void addTime(Integer type,Float time ){
         if(type != null && time != null){
-            workTime.put(type,workTime.get(type) + time);
+            workTime.merge(type, time, Float::sum);
         }
     }
     public UserWorkDto addTimeAll(){
