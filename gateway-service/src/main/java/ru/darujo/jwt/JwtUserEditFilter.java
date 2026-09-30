@@ -6,10 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class JwtAdminFilter extends JwtRightFilter {
+public class JwtUserEditFilter extends JwtRightFilter {
     @Override
     protected List<String> getRight() {
         List<String> rights = new ArrayList<>();
+        rights.add("EDIT_USER");
         rights.add("ADMIN_USER");
         return rights;
     }

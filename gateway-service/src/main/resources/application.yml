@@ -112,7 +112,7 @@ spring:
               filters:
                 - StripPrefix=0
                 - PrefixPath=/app-auth/
-                - JwtAdminFilter
+                - JwtUserEditFilter
             - id: worktime-service
               uri: "http://localhost:8180"
               predicates:
@@ -198,7 +198,7 @@ spring:
               filters:
                 - StripPrefix=1
                 - PrefixPath=/app/
-                - JwtAuthFilter
+                - JwtAdminFilter
             - id: front-add
               uri: "http://localhost:8185"
               predicates:

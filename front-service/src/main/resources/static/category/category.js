@@ -6,7 +6,7 @@ angular.module('workTimeService').controller('categoryController', function ($sc
         $scope.findPage(0);
     };
 
-
+    $scope.categoryDtoList = null;
     $scope.findPage = function () {
         console.log("findPage");
         console.log("запрос данных проектов");
@@ -32,7 +32,9 @@ angular.module('workTimeService').controller('categoryController', function ($sc
                 console.log(response);
                 console.log("response,data :");
                 console.log(response.data);
-                $scope.CategoryList = response.data._embedded.categoryDtoList;
+                if (response.data._embedded && response.data._embedded.categoryDtoList) {
+                    $scope.CategoryList = response.data._embedded.categoryDtoList;
+                }
                 $scope.load = false;
             }, function errorCallback(response) {
                 $scope.load = false;
