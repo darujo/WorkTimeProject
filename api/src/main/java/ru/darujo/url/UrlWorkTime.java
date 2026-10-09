@@ -15,13 +15,16 @@ public class UrlWorkTime {
     }
 
     public static String getUrlRateAll(Long workId, String name) {
-        return getUrl(URL + "/rate?workId=" + workId, name);
+        return getUrl(URL + "/rate?amountRate=false&workId=" + workId, name + "(часы)") + " "
+                + getUrl(URL + "/rate?amountRate=true&workId=" + workId, name + "(руб.)");
     }
+
     public static String getUrlWorkSap(Long codeSap, String name) {
         return getUrl(URL + "/work?stageZi=50&codeSap=" + codeSap, name);
     }
-    public static String getUrlVacation(String nikName,String text) {
-        return getUrl(URL + "/vacation?nikName=" +  nikName,text);
+
+    public static String getUrlVacation(String nikName, String text) {
+        return getUrl(URL + "/vacation?nikName=" + nikName, text);
     }
 
     public static String getUrlAgreement(Long workId, String name) {
@@ -29,7 +32,7 @@ public class UrlWorkTime {
     }
 
     public static String getUrlAgreement(WorkLittleDto workLittleDto) {
-        return getUrlAgreement(workLittleDto.getId(),workLittleDto.getName());
+        return getUrlAgreement(workLittleDto.getId(), workLittleDto.getName());
     }
 
     public static String getUrlNewEmail(String nikName, String code) {

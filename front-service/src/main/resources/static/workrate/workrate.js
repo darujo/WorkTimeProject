@@ -14,6 +14,10 @@ angular.module('workTimeService').controller('workRateController', function ($sc
         stageAll: null,
         criteriaStr: null
     }
+
+    $scope.patchRate = function (amountRate) {
+        $location.path('/rate').search({workId: WorkId, amountRate: amountRate});
+    }
     $scope.Filter= {viewFact : false};
     $scope.showWorkStageAdd = function () {
         document.getElementById("WorkStageAdd").style.display = "block";
@@ -394,9 +398,7 @@ angular.module('workTimeService').controller('workRateController', function ($sc
         $scope.patchRate(false)
         return;
     }
-    $scope.patchRate = function (amountRate) {
-        $location.path('/rate').search({workId: WorkId, amountRate: amountRate});
-    }
+
     $scope.stageCreate = false;
     $scope.stageEdit = false;
     $scope.criteriaCreate = false;

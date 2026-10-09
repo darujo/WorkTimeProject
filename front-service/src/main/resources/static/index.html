@@ -28,24 +28,36 @@
                 <div class="horiz" ng-show="isUserLoggedInAndPasOk()">
                     <details class="details_block_menu" open id="DetailPrim">
                         <summary class="p-head">Меню</summary>
+                        <ul class="ul_menu">
+                            <li>
+                                <div class="nav-item">
+                                    <a class="nav-link" href="#!/work">Список ЗИ</a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="nav-item">
+                                    <a class="nav-link" href="#!/task">Все задачи</a>
+                                </div>
+                            </li>
 
-                        <div class="nav-item">
-                            <a class="nav-link" href="#!/work">Список ЗИ</a>
-                        </div>
-                        <div class="nav-item">
-                            <a class="nav-link" href="#!/task">Все задачи</a>
-                        </div>
-                        <div class="nav-item">
-                            <a class="nav-link" href="#!/worktime">Все работы</a>
-                        </div>
-                        <div class="nav-item">
-                            <a class="nav-link" href="#!/calendar">Производственный календарь</a>
-                        </div>
-                        <div class="nav-item">
-                            <a class="nav-link" href="#!/user">Пользователи</a>
-                        </div>
-                        <details class="details_block_menu" id="DetailReport">
-                            <summary class="p-form">Отчеты</summary>
+                            <li>
+                                <div class="nav-item">
+                                    <a class="nav-link" href="#!/worktime">Все работы</a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="nav-item">
+                                    <a class="nav-link" href="#!/calendar">Производственный календарь</a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="nav-item">
+                                    <a class="nav-link" href="#!/user">Пользователи</a>
+                                </div>
+                            </li>
+                        </ul>
+                        <details class="details_block_in_menu" id="DetailReport">
+                            <summary class="summary_in_menu">Отчеты</summary>
                             <div class="nav-item">
                                 <a class="nav-link" href="#!/worktimerep">Статус ЗИ</a>
                             </div>
@@ -61,8 +73,8 @@
 
 
                         </details>
-                        <details class="details_block_menu" id="DetailAdmin">
-                            <summary class="p-filter">Администрирование</summary>
+                        <details class="details_block_in_menu" id="DetailAdmin">
+                            <summary class="summary_in_menu">Администрирование</summary>
                             <div class="nav-item">
                                 <a class="nav-link" href="#!/project">Проекты</a>
                             </div>

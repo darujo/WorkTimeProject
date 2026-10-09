@@ -59,6 +59,14 @@ angular.module('workTimeService').controller('rateController', function ($scope,
             });
         }
     };
+    const ruFormatter = new Intl.NumberFormat('ru-RU');
+
+    $scope.decFormat = function (amount) {
+        if (amount === undefined || isNaN(amount)) {
+            return "";
+        }
+        return ruFormatter.format(amount);
+    }
 
     $scope.workPage = function () {
         $location.path('/work_rate').search({workId: WorkId, view: "current"});
