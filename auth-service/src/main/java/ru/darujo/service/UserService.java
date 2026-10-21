@@ -328,35 +328,38 @@ public class UserService {
     public MapUserInfoDto getUserMessageDTOs() {
         Map<MessageType, Map<MessageSenderType, List<UserInfoDto>>> messageTypeListMap = new HashMap<>();
         for (MessageType type : MessageType.values()) {
-            Map<MessageSenderType, List<UserInfoDto>> senderTypeListMap = new HashMap<>();
+            Map<MessageSenderType, List<UserInfoDto>> senderTypeListMap = getMessageSenderTypeListMap(type);
             messageTypeListMap.put(type, senderTypeListMap);
-
-            userInfoTypeService
-                    .getInfoTypes(type)
-                    .stream()
-                    .filter(userInfoType ->
-                            userInfoType.getIsActive() != null
-                                    && userInfoType.getIsActive())
-                    .forEach(
-                            userInfoType -> {
-                                MessageSenderType senderType = MessageSenderType.valueOf(userInfoType.getSenderType());
-                                if (getMainChatId(senderType, userInfoType.getUser()) != null) {
-                                    List<UserInfoDto> userInfoDTOs = senderTypeListMap.computeIfAbsent(senderType, k -> new ArrayList<>());
-                                    userInfoDTOs.add(new UserInfoDto(
-                                            userInfoType.getSenderType(),
-                                            userInfoType.getUser().getId(),
-                                            userInfoType.getUser().getNikName(),
-                                            userInfoType.getProjectId(),
-                                            userInfoType.getChatId() == null ? getMainChatId(senderType, userInfoType.getUser()) : userInfoType.getChatId(),
-                                            userInfoType.getThreadId(),
-                                            null));
-                                }
-                            }
-                    );
-
 
         }
         return new MapUserInfoDto(messageTypeListMap);
+    }
+
+    private @NonNull Map<MessageSenderType, List<UserInfoDto>> getMessageSenderTypeListMap(MessageType type) {
+        Map<MessageSenderType, List<UserInfoDto>> senderTypeListMap = new HashMap<>();
+        userInfoTypeService
+                .getInfoTypes(type)
+                .stream()
+                .filter(userInfoType ->
+                        userInfoType.getIsActive() != null
+                                && userInfoType.getIsActive())
+                .forEach(
+                        userInfoType -> {
+                            MessageSenderType senderType = MessageSenderType.valueOf(userInfoType.getSenderType());
+                            if (getMainChatId(senderType, userInfoType.getUser()) != null) {
+                                List<UserInfoDto> userInfoDTOs = senderTypeListMap.computeIfAbsent(senderType, k -> new ArrayList<>());
+                                userInfoDTOs.add(new UserInfoDto(
+                                        userInfoType.getSenderType(),
+                                        userInfoType.getUser().getId(),
+                                        userInfoType.getUser().getNikName(),
+                                        userInfoType.getProjectId(),
+                                        userInfoType.getChatId() == null ? getMainChatId(senderType, userInfoType.getUser()) : userInfoType.getChatId(),
+                                        userInfoType.getThreadId(),
+                                        null));
+                            }
+                        }
+                );
+        return senderTypeListMap;
     }
 
     private static String getMainChatId(MessageSenderType senderType, User user) {

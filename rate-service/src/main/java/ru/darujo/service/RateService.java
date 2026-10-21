@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.darujo.convertor.WorkCriteriaConvertor;
 import ru.darujo.convertor.WorkStageConvertor;
 import ru.darujo.convertor.WorkTypeConvertor;
+import ru.darujo.dto.information.MessageInfoDto;
 import ru.darujo.dto.project.ProjectDto;
 import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.dto.ratestage.RateDto;
@@ -15,11 +16,14 @@ import ru.darujo.dto.ratestage.WorkStageDto;
 import ru.darujo.dto.work.WorkLittleDto;
 import ru.darujo.dto.workrep.ProjectUpdateInter;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
+import ru.darujo.integration.InfoServiceIntegrationImp;
 import ru.darujo.integration.UserServiceIntegrationImp;
 import ru.darujo.integration.WorkServiceIntegrationImp;
 import ru.darujo.model.WorkCriteria;
 import ru.darujo.model.WorkStage;
 import ru.darujo.model.WorkType;
+import ru.darujo.type.MessageType;
+import ru.darujo.url.UrlWorkTime;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +39,7 @@ public class RateService {
     private WorkCriteriaService workCriteriaService;
     private WorkTypeService workTypeService;
     private WorkServiceIntegrationImp workServiceIntegration;
+    private InfoServiceIntegrationImp infoServiceIntegrationImp;
 
     public Float getTimeStageNotAnalise(List<Long> workIdList, Long projectId) {
         AtomicReference<Float> timeStage = new AtomicReference<>();
@@ -341,5 +346,37 @@ public class RateService {
     @Autowired
     public void setWorkServiceIntegration(WorkServiceIntegrationImp workServiceIntegration) {
         this.workServiceIntegration = workServiceIntegration;
+    }
+
+    @Autowired
+    public void setInfoServiceIntegrationImp(InfoServiceIntegrationImp infoServiceIntegrationImp) {
+        this.infoServiceIntegrationImp = infoServiceIntegrationImp;
+    }
+
+    public void sendMessage(String nikName, Long projectId, String projectCode, Long workId, String type) {
+        try {
+            List<String> userList = workStageService.findWorkStage(List.of(workId), null, projectId).stream().map(WorkStage::getNikName).toList();
+            WorkLittleDto work = workServiceIntegration.getWorLittleDto(workId);
+            MessageType messageType = MessageType.valueOf(type);
+            if (messageType.equals(MessageType.BEFORE_ESTIMATION_WORK)) {
+                infoServiceIntegrationImp.addMessage(
+                        new MessageInfoDto(
+                                messageType,
+                                "Предварительная оценка",
+                                String.format("%s просит вас посмотреть <u><b>предварительную оценку</b></u> по ЗИ %s %s в проекте %s оценка %s.%s",
+                                        nikName,
+                                        work.getCodeSap(),
+                                        UrlWorkTime.getUrlRate(work.getId(), work.getName()),
+                                        projectCode,
+                                        UrlWorkTime.getUrlRateAll(work.getId(), "ЗИ целиком"),
+                                        work.getParentWork() == null ? "" : String.format(" Оценка по охватывающей ЗИ %s.",
+                                                UrlWorkTime.getUrlRateAll(work.getParentWork().getId(), work.getParentWork().getName())))
+                                , userList));
+            } else {
+                throw new ResourceNotFoundRunTime("Уведомления типа " + type + " не поддерживаются.");
+            }
+        } catch (IllegalArgumentException ex) {
+            throw new ResourceNotFoundRunTime("Не известный тип " + type + " уведомлений.");
+        }
     }
 }

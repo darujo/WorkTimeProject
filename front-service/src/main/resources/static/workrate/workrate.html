@@ -14,6 +14,9 @@
         <button type="button" class="button_table mar5" id="PatchRate" ng-click="patchRate(false)">Оценка по проектам
             (ч./часов)
         </button>
+        <button ng-if="ziEdit" type="button" class="button_table mar5" id="PreRateView" ng-click="preRateView(ZI.id)">
+            Разослать предложение о просмотре оценки
+        </button>
     </div>
     <div class="horiz">
         <h1>Плановая оценка</h1>

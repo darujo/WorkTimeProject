@@ -7,6 +7,7 @@ import java.util.List;
 
 public enum MessageType implements TypeEnum {
     SYSTEM_INFO("Системные информационные сообщения"),
+    BEFORE_ESTIMATION_WORK("Предварительная оценка"),
     ESTIMATION_WORK("Проведена оценка"),
     //todo Переименовать
     CHANGE_STAGE_WORK("Изменение ЗИ (статус или релиз) "),

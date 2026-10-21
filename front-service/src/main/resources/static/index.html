@@ -95,74 +95,77 @@
                                 <a class="nav-link" href="#!/update">Обновление</a>
                             </div>
                         </details>
-                    </details>
-                    <details class="details_block_menu">
-                        <summary class="p-head">Настройки</summary>
-                        <div class="horiz">
-                            <label for="SaveFilter" class="p-form">Сохранять</label>
-                            <input class="vvod20" type="checkbox"
-                                   id="SaveFilter"
-                                   ng-model="SettingUser.saveFilter"
-                                   ng-change="saveSetting()"/>
-                        </div>
-                        <div class="horiz">
-                            <label for="LoadFilter" class="p-form">Загружать</label>
-                            <input class="vvod20" type="checkbox"
-                                   id="LoadFilter"
-                                   ng-model="SettingUser.loadFilter"
-                                   ng-change="saveSetting()"/>
-                        </div>
-                        <button ng-click="delFilter()">Удалить сохраненные фильтры</button>
-                        <br>
-                        <a class="nav-link" href="#!/userpassword">Сменить пароль</a>
-                        <br>
-                        <a class="nav-link" href="#!/email_change">Смена почты</a>
-                        <br>
-                        <div ng-if="!UserLogin.telegramAdd">
-                            <button ng-click="addTelegram()" id="ButtonTelegramAdd">
-                                {{CodeTelegram.ok ? "Запросить код повторно" : "Привязать telegram"}}
-                            </button>
+                        <details class="details_block_in_menu">
+                            <summary class="summary_in_menu">Настройки</summary>
+                            <div class="horiz">
+                                <label for="SaveFilter" class="p-form">Сохранять</label>
+                                <input class="vvod20" type="checkbox"
+                                       id="SaveFilter"
+                                       ng-model="SettingUser.saveFilter"
+                                       ng-change="saveSetting()"/>
+                            </div>
+                            <div class="horiz">
+                                <label for="LoadFilter" class="p-form">Загружать</label>
+                                <input class="vvod20" type="checkbox"
+                                       id="LoadFilter"
+                                       ng-model="SettingUser.loadFilter"
+                                       ng-change="saveSetting()"/>
+                            </div>
+                            <button ng-click="delFilter()">Удалить сохраненные фильтры</button>
                             <br>
-                            <div ng-if="CodeTelegram.ok">
-                                <p>Для получения уведомлений перейдите <a href="https://{{CodeTelegram.link}}"
-                                                                          target="_blank">Бот</a>.
-                                    И отправьте команду /link. На запрос кода введите:<b>{{CodeTelegram.code}}</b>.
-                                    Внимание Код действует <b>{{CodeTelegram.time}}</b> минут. После авторизации в боте
-                                    нажмите кнопку: </p>
-                                <br>
-                                <button ng-click="getUser()" id="ButtonTelegramRef">Проверить</button>
-
-                            </div>
-                        </div>
-                        <div ng-if="!UserLogin.maxAdd">
-                            <button ng-click="addMax()" id="ButtonMaxAdd">
-                                {{CodeMax.ok ? "Запросить код повторно" : "Привязать MAX"}}
-                            </button>
+                            <a class="nav-link" href="#!/userpassword">Сменить пароль</a>
                             <br>
-                            <div ng-if="CodeMax.ok">
-                                <p>Для получения уведомлений перейдите <a href="https://{{CodeMax.link}}"
-                                                                          target="_blank">Бот</a>.
-                                </p>
-                                <img src="./gif/max.jpg" alt="Ссылка на бот">
-                                <p>
-                                    И отправьте команду /link. На запрос кода введите:<b>{{CodeMax.code}}</b>.
-                                    Внимание Код действует <b>{{CodeMax.time}}</b> минут. После авторизации в боте
-                                    нажмите кнопку: </p>
+                            <a class="nav-link" href="#!/email_change">Смена почты</a>
+                            <br>
+                            <div ng-if="!UserLogin.telegramAdd">
+                                <button ng-click="addTelegram()" id="ButtonTelegramAdd">
+                                    {{CodeTelegram.ok ? "Запросить код повторно" : "Привязать telegram"}}
+                                </button>
                                 <br>
-                                <button ng-click="getUser()" id="ButtonMaxRef">Проверить</button>
+                                <div ng-if="CodeTelegram.ok">
+                                    <p>Для получения уведомлений перейдите <a href="https://{{CodeTelegram.link}}"
+                                                                              target="_blank">Бот</a>.
+                                        И отправьте команду /link. На запрос кода введите:<b>{{CodeTelegram.code}}</b>.
+                                        Внимание Код действует <b>{{CodeTelegram.time}}</b> минут. После авторизации в
+                                        боте
+                                        нажмите кнопку: </p>
+                                    <br>
+                                    <button ng-click="getUser()" id="ButtonTelegramRef">Проверить</button>
 
+                                </div>
                             </div>
-                        </div>
-                        <div ng-if="UserLogin.maxAdd">
-                            <button ng-click="deleteMax()" id="ButtonMaxDel">Отвязать Max</button>
-                        </div>
-                        <div>
-                            <div><a class="nav-link" href="#!/user_info_type?userId={{UserLogin.id}}">Типы
-                                уведомлений</a>
+                            <div ng-if="!UserLogin.maxAdd">
+                                <button ng-click="addMax()" id="ButtonMaxAdd">
+                                    {{CodeMax.ok ? "Запросить код повторно" : "Привязать MAX"}}
+                                </button>
+                                <br>
+                                <div ng-if="CodeMax.ok">
+                                    <p>Для получения уведомлений перейдите <a href="https://{{CodeMax.link}}"
+                                                                              target="_blank">Бот</a>.
+                                    </p>
+                                    <img src="./gif/max.jpg" alt="Ссылка на бот">
+                                    <p>
+                                        И отправьте команду /link. На запрос кода введите:<b>{{CodeMax.code}}</b>.
+                                        Внимание Код действует <b>{{CodeMax.time}}</b> минут. После авторизации в боте
+                                        нажмите кнопку: </p>
+                                    <br>
+                                    <button ng-click="getUser()" id="ButtonMaxRef">Проверить</button>
+
+                                </div>
                             </div>
-                        </div>
+                            <div ng-if="UserLogin.maxAdd">
+                                <button ng-click="deleteMax()" id="ButtonMaxDel">Отвязать Max</button>
+                            </div>
+                            <div>
+                                <div><a class="nav-link" href="#!/user_info_type?userId={{UserLogin.id}}">Типы
+                                    уведомлений</a>
+                                </div>
+                            </div>
+
+                        </details>
 
                     </details>
+
                 </div>
                 <div class="nav-item" ng-show="!isUserLoggedIn(true)">
                     <form class="" ng-submit="tryToAuth()">

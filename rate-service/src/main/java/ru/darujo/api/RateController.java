@@ -1,10 +1,7 @@
 package ru.darujo.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.dto.ratestage.WorkRateDto;
 import ru.darujo.dto.ratestage.WorkStageDto;
@@ -66,6 +63,16 @@ public class RateController {
                         @RequestParam(defaultValue = "false") boolean deleteOld
     ) {
         rateService.copy(workIdSource, workIdTarget, deleteOld);
+    }
+
+    @GetMapping("/message")
+    public void sendMessage(@RequestHeader String username,
+                            @RequestParam(name = "system_project") Long projectId,
+                            @RequestParam(name = "system_project_code") String projectCode,
+                            @RequestParam Long workId,
+                            @RequestParam String type
+    ) {
+        rateService.sendMessage(username, projectId, projectCode, workId, type);
     }
 
 }

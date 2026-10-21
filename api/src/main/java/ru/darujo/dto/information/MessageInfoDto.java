@@ -5,6 +5,7 @@ import ru.darujo.type.MessageType;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 public class MessageInfoDto implements Serializable {
     @SuppressWarnings("unused")
@@ -17,6 +18,14 @@ public class MessageInfoDto implements Serializable {
     private String title;
     private String text;
     private UserInfoDto userInfoDto;
+    private List<String> userList;
+
+    public MessageInfoDto(MessageType type, String title, String text, List<String> userList) {
+        this.type = type;
+        this.title = title;
+        this.text = text;
+        this.userList = userList;
+    }
 
     public MessageInfoDto(String author, MessageType type, String text) {
         this(author, null, type, text);
@@ -88,5 +97,10 @@ public class MessageInfoDto implements Serializable {
     @SuppressWarnings("unused")
     public String getTitle() {
         return title;
+    }
+
+    @SuppressWarnings("unused")
+    public List<String> getUserList() {
+        return userList;
     }
 }

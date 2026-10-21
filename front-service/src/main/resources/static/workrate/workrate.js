@@ -66,6 +66,25 @@ angular.module('workTimeService').controller('workRateController', function ($sc
             }
         });
     }
+    $scope.preRateView = function (workId) {
+        console.log("preRateView");
+        console.log(workId)
+        $http({
+            url: constPatchWorkRate + "/rate/message",
+            method: "get",
+            params: {
+                workId: workId,
+                type: "BEFORE_ESTIMATION_WORK"
+            }
+        }).then(function (response) {
+            console.log(response.data);
+            alert("Запрос на просмотр отправлен")
+        }, function errorCallback(response) {
+            console.log(response)
+            if ($location.checkAuthorized(response)) {
+            }
+        });
+    }
 
     $scope.loadWorkStage = function () {
         console.log("loadWorkStage");
@@ -381,10 +400,10 @@ angular.module('workTimeService').controller('workRateController', function ($sc
         }
     };
 // ---------------------------------------------------------------------------------
-    console.log(" fileee = ")
+    console.log(" filter = ")
     $scope.Filt = {}
     $location.parserFilter($scope.Filt);
-    console.log(" fileee = ")
+    console.log(" filter = ")
     console.log($scope.Filt)
     WorkId = $scope.Filt.workId;
 

@@ -106,7 +106,23 @@ public class MessageInformationService {
 
     @Transactional
     public Boolean addMessage(MessageInfoDto messageInfoDto) {
-        return addMessage(messageInfoDto, null);
+        if (messageInfoDto.getType() != null && messageInfoDto.getUserList() != null && !messageInfoDto.getUserList().isEmpty()) {
+            List<UserInfoDto> userInfoDtoList = new ArrayList<>();
+            Map<String, List<UserInfoDto>> userSend = getUsersForMesType(messageInfoDto.getType());
+            if (userSend == null) {
+                return false;
+            }
+            messageInfoDto.getUserList().forEach(nikName -> {
+                List<UserInfoDto> userInfoList = userSend.get(nikName);
+                if (userInfoList != null) {
+                    userInfoDtoList.addAll(userInfoList);
+                }
+            });
+            return addMessage(messageInfoDto, userInfoDtoList);
+
+        } else {
+            return addMessage(messageInfoDto, null);
+        }
     }
 
     @Transactional
@@ -219,7 +235,9 @@ public class MessageInformationService {
     }
 
 
+    @Transactional
     public Map<String, List<UserInfoDto>> getUsersForMesType(MessageType type) {
+        initMesType();
         if (messageTypeListMap != null) {
             Map<String, List<UserInfoDto>> userMap = new HashMap<>();
 
@@ -230,6 +248,7 @@ public class MessageInformationService {
                                 List<UserInfoDto> userList = userMap.computeIfAbsent(userInfoDto.getNikName(), s -> new ArrayList<>());
                                 userList.add(userInfoDto);
                             }));
+            return userMap;
         }
         return null;
 
