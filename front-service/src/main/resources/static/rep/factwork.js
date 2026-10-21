@@ -56,7 +56,7 @@ angular.module('workTimeService').controller('workFactRepController', function (
                 method: "get",
                 params: {
                     nikName: Filter ? Filter.nikName : null,
-                    page: page,
+                    page: page - 1,
                     size: Filter ? Filter.size : null,
                     name: Filter ? Filter.name : null,
                     codeSap: Filter ? Filter.codeSap : null,
