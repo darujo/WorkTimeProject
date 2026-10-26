@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.MapStringFloat;
 import ru.darujo.dto.PageObjDto;
+import ru.darujo.dto.content.WorkContent;
 import ru.darujo.dto.workperiod.WorkUserTime;
 import ru.darujo.dto.workrep.WorkFactDto;
 import ru.darujo.dto.workrep.WorkGraphsDto;
@@ -74,30 +75,56 @@ public class WorkRepController {
 
     @GetMapping("/fact/week")
     public PagedModel<?> getWeekWork(@RequestParam(defaultValue = "false") boolean ziSplit,
-                                          @RequestParam(required = false) String nikName,
-                                          @RequestParam(required = false) Boolean addTotal,
-                                          @RequestParam(required = false) Boolean weekSplit,
+                                     @RequestParam(required = false) String nikName,
+                                     @RequestParam(required = false) Boolean addTotal,
+                                     @RequestParam(required = false) Boolean weekSplit,
 
-                                          @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStart,
-                                          @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEnd,
+                                     @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStart,
+                                     @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEnd,
 
-                                          @RequestParam(required = false) Integer page,
-                                          @RequestParam(required = false) Integer size,
-                                          @RequestParam(required = false) String name,
-                                          @RequestParam(required = false) Long projectId,
-                                          @RequestParam(defaultValue = "15") Integer stageZi,
-                                          @RequestParam(required = false) Long codeSap,
-                                          @RequestParam(required = false) String codeZi,
-                                          @RequestParam(required = false) String task,
-                                          @RequestParam(required = false) List<Long> releaseId,
+                                     @RequestParam(required = false) Integer page,
+                                     @RequestParam(required = false) Integer size,
+                                     @RequestParam(required = false) String name,
+                                     @RequestParam(required = false) Long projectId,
+                                     @RequestParam(defaultValue = "15") Integer stageZi,
+                                     @RequestParam(required = false) Long codeSap,
+                                     @RequestParam(required = false) String codeZi,
+                                     @RequestParam(required = false) String task,
+                                     @RequestParam(required = false) List<Long> releaseId,
                                      @RequestParam(defaultValue = "release.sort,name") List<String> sort,
                                      PagedResourcesAssembler<WorkUserTime> pagedResourcesAssembler) {
-        LocalDate lDateStart = DateHelper.zDTToLD(dateStart, "dateStart = ");
-        LocalDate lDateEnd = DateHelper.zDTToLD(dateEnd, "dateEnd = ");
+        LocalDate lDateStart = null;
+        LocalDate lDateEnd = null;
+        if (!ziSplit) {
+            lDateStart = DateHelper.zDTToLD(dateStart, "dateStart = ");
+            lDateEnd = DateHelper.zDTToLD(dateEnd, "dateEnd = ");
+        }
         StageZiFind stageZiFind = new StageZiFind(stageZi);
 
         return pagedResourcesAssembler.toModel(
                 workRepService.getWeekWork(ziSplit, addTotal, nikName, weekSplit, lDateStart, lDateEnd,
+                        page, size, name, projectId, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, sort));
+    }
+
+    @GetMapping("/fact/task/type")
+    public PagedModel<?> getTaskType(@RequestParam(required = false) Boolean addTotal,
+                                     @RequestParam(required = false) String nikName,
+
+                                     @RequestParam(required = false) Integer page,
+                                     @RequestParam(required = false) Integer size,
+                                     @RequestParam(required = false) String name,
+                                     @RequestParam(required = false) Long projectId,
+                                     @RequestParam(defaultValue = "15") Integer stageZi,
+                                     @RequestParam(required = false) Long codeSap,
+                                     @RequestParam(required = false) String codeZi,
+                                     @RequestParam(required = false) String task,
+                                     @RequestParam(required = false) List<Long> releaseId,
+                                     @RequestParam(defaultValue = "release.sort,name") List<String> sort,
+                                     PagedResourcesAssembler<WorkContent> pagedResourcesAssembler) {
+        StageZiFind stageZiFind = new StageZiFind(stageZi);
+
+        return pagedResourcesAssembler.toModel(
+                workRepService.getTaskType(addTotal, nikName,
                         page, size, name, projectId, stageZiFind.getStageZiGe(), stageZiFind.getStageZiLe(), codeSap, codeZi, task, releaseId, sort));
     }
 

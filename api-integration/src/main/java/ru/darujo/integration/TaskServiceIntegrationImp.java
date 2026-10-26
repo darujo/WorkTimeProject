@@ -9,6 +9,7 @@ import ru.darujo.dto.ListString;
 import ru.darujo.dto.TaskDto;
 import ru.darujo.dto.ratestage.AttrDto;
 import ru.darujo.dto.workperiod.UserWorkFormDto;
+import ru.darujo.dto.workrep.TaskContent;
 import ru.darujo.exceptions.ResourceNotFoundException;
 import ru.darujo.exceptions.ResourceNotFoundRunTime;
 
@@ -22,6 +23,7 @@ public class TaskServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
     public ServiceType getServiceType() {
         return ServiceType.TASK;
     }
+
     public TaskServiceIntegrationImp(WebClient webClientTask) {
         super.setWebClient(webClientTask);
     }
@@ -151,6 +153,31 @@ public class TaskServiceIntegrationImp extends ServiceIntegrationImp<ServiceType
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
                     .bodyToFlux(UserWorkFormDto.class)
+                    .collectList()
+                    .doOnError(throwable -> log.error(throwable.getMessage()))
+                    .block();
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-Task) не доступен подождите или обратитесь к администратору " + ex.getMessage());
+        }
+    }
+
+    public List<TaskContent> getTaskType(
+            Long workId,
+            Long projectId,
+            String nikName,
+            Boolean addTotal) throws ResourceNotFoundRunTime {
+        StringBuilder stringBuilder = new StringBuilder();
+        addTeg(stringBuilder, "workId", workId);
+        addTeg(stringBuilder, "projectId", projectId);
+        addTeg(stringBuilder, "nikName", nikName);
+        addTeg(stringBuilder, "addTotal", addTotal);
+
+        try {
+            return webClient.get().uri("/rep/fact/type/user" + stringBuilder)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
+                            cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
+                    .bodyToFlux(TaskContent.class)
                     .collectList()
                     .doOnError(throwable -> log.error(throwable.getMessage()))
                     .block();

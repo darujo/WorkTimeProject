@@ -117,6 +117,9 @@ angular.module('workTimeService').config(["$ocLazyLoadProvider", function ($ocLa
         }, {
             name: 'file_upload', // module
             files: ['file/file.js?ver='.toLowerCase() + ver]
+        }, {
+            name: 'work_task_type', // module
+            files: ['rep/WorkTaskType/work_task_type.js?ver='.toLowerCase() + ver]
         }
         ]
     });

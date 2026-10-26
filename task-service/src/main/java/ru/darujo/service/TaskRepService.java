@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.darujo.convertor.TaskConvertor;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.workperiod.UserWorkDto;
+import ru.darujo.dto.workrep.TaskContent;
 import ru.darujo.integration.WorkTimeServiceIntegrationImp;
 import ru.darujo.model.Task;
 import ru.darujo.repository.TaskRepository;
@@ -90,7 +92,15 @@ public class TaskRepService {
             return null;
         }
         return workTimeServiceIntegration.getWorkUserOrZi(tasks.stream().map(Task::getId).collect(Collectors.toList()), nikName, addTotal, false, null, null);
+    }
 
+    public List<TaskContent> getWeekTask(List<Long> workIdList, Long projectId, String nikName, Boolean addTotal) {
+        List<Task> tasks = taskService.findTask(null, null, null, null, workIdList, null, projectId).getContent();
+        if (tasks.isEmpty()) {
+            return null;
+        }
+        return tasks.stream().map(task -> new TaskContent(TaskConvertor.getTaskDto(task),
+                workTimeServiceIntegration.getWorkType(List.of(task.getId()), nikName, addTotal, false, null, null))).toList();
     }
 
     public LocalDate getLastTime(List<Long> workId, LocalDate dateLe, LocalDate dateGe) {

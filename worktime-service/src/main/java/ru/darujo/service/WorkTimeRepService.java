@@ -83,17 +83,14 @@ public class WorkTimeRepService {
     }
 
     public List<UserWorkDto> getWeekWork(Long[] taskId, String nikName, boolean addTotal, boolean weekSplit, LocalDate dateStart, LocalDate dateEnd) {
+        return getWeekWork(taskId, nikName, addTotal, weekSplit, dateStart, dateEnd, false);
+
+    }
+
+    public List<UserWorkDto> getWeekWork(Long[] taskId, String nikName, boolean addTotal, boolean weekSplit, LocalDate dateStart, LocalDate dateEnd, boolean workTimeType) {
         List<UserWorkDto> userWorkDTOs = new ArrayList<>();
-        List<WeekWorkDto> weekWorkDTOs;
-        if (taskId != null) {
-            weekWorkDTOs = new ArrayList<>();
-            weekWorkDTOs.add(new WeekWorkDto(null, null, null, null));
-        } else if (weekSplit) {
-            weekWorkDTOs = calendarServiceIntegration.getWeekTime(dateStart, dateEnd);
-        } else {
-            weekWorkDTOs = new ArrayList<>();
-            weekWorkDTOs.add(new WeekWorkDto(DateHelper.getZDT(dateStart), DateHelper.getZDT(dateEnd), calendarServiceIntegration.getWorkTime(dateStart, dateEnd), null));
-        }
+        List<WeekWorkDto> weekWorkDTOs = getWeekPeriod(taskId, weekSplit, dateStart, dateEnd);
+
         Map<Long, Integer> tasks = new HashMap<>();
         weekWorkDTOs
                 .forEach(weekWorkDto -> {
@@ -113,11 +110,16 @@ public class WorkTimeRepService {
                     UserWorkDto finalUserWorkDtoTotal = userWorkDtoTotal;
                     workTimeService.findWorkTime(taskId, nikName, null, DateHelper.zDTToLD(weekWorkDto.getDayEnd()), null, DateHelper.zDTToLD(weekWorkDto.getDayStart()), null, null, null)
                             .forEach(workTime -> {
-                                Integer type = tasks.get(workTime.getTaskId());
-                                if (type == null) {
-                                    TaskDto taskDto = taskServiceIntegration.getTask(workTime.getTaskId());
-                                    tasks.put(taskDto.getId(), taskDto.getType());
-                                    type = taskDto.getType();
+                                Integer type;
+                                if (workTimeType) {
+                                    type = workTime.getType();
+                                } else {
+                                    type = tasks.get(workTime.getTaskId());
+                                    if (type == null) {
+                                        TaskDto taskDto = taskServiceIntegration.getTask(workTime.getTaskId());
+                                        tasks.put(taskDto.getId(), taskDto.getType());
+                                        type = taskDto.getType();
+                                    }
                                 }
                                 UserWorkDto userWorkDto = userWorkDtoMap.get(workTime.getNikName());
                                 if (userWorkDto == null) {
@@ -130,18 +132,22 @@ public class WorkTimeRepService {
                                             weekWorkDto.getDayEnd(),
                                             weekWorkDto.getDayStart() == null || weekWorkDto.getDayEnd() == null ?
                                                     0f :
-                                            calendarServiceIntegration.getTimePlan(workTime.getNikName(),
-                                                    weekWorkDto.getDayStart(),
-                                                    weekWorkDto.getDayEnd()));
+                                                    calendarServiceIntegration.getTimePlan(workTime.getNikName(),
+                                                            weekWorkDto.getDayStart(),
+                                                            weekWorkDto.getDayEnd()));
                                     userWorkDtoMap.put(workTime.getNikName(), userWorkDto);
 
 
                                 }
                                 userWorkDto.addTime(type, workTime.getWorkTime());
-                                userWorkDto.addTask(type, workTime.getTaskId());
+                                if (!workTimeType) {
+                                    userWorkDto.addTask(type, workTime.getTaskId());
+                                }
                                 if (addTotal) {
                                     finalUserWorkDtoTotal.addTime(type, workTime.getWorkTime());
-                                    finalUserWorkDtoTotal.addTask(type, workTime.getTaskId());
+                                    if (!workTimeType) {
+                                        finalUserWorkDtoTotal.addTask(type, workTime.getTaskId());
+                                    }
                                 }
 
                             });
@@ -172,6 +178,25 @@ public class WorkTimeRepService {
                 });
         return userWorkDTOs;
 
+    }
+
+    private List<WeekWorkDto> getWeekPeriod(Long[] taskId, boolean weekSplit, LocalDate dateStart, LocalDate dateEnd) {
+        List<WeekWorkDto> weekWorkDTOs;
+
+        if (taskId != null) {
+            weekWorkDTOs = new ArrayList<>();
+            weekWorkDTOs.add(new WeekWorkDto(null, null, null, null));
+        } else if (weekSplit) {
+            weekWorkDTOs = calendarServiceIntegration.getWeekTime(dateStart, dateEnd);
+        } else {
+            weekWorkDTOs = new ArrayList<>();
+            weekWorkDTOs.add(new WeekWorkDto(DateHelper.getZDT(dateStart), DateHelper.getZDT(dateEnd), calendarServiceIntegration.getWorkTime(dateStart, dateEnd), null));
+        }
+        return weekWorkDTOs;
+    }
+
+    public List<UserWorkDto> getWorkTimeType(Long[] taskId, String nikName, boolean addTotal, boolean weekSplit, LocalDate dateStart, LocalDate dateEnd) {
+        return getWeekWork(taskId, nikName, addTotal, weekSplit, dateStart, dateEnd, true);
     }
 
     public Boolean getAvailTime(long taskId) {

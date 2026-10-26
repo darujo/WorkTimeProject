@@ -84,6 +84,28 @@ public class WorkTimeServiceIntegrationImp extends ServiceIntegrationImp<Service
             Boolean weekSplit,
             LocalDate dateStart,
             LocalDate dateEnd) {
+        return getUserWork("/rep/fact/week", taskIds, nikName, addTotal, weekSplit, dateStart, dateEnd);
+    }
+
+    public List<UserWorkDto> getWorkType(
+            Iterable<Long> taskIds,
+            String nikName,
+            Boolean addTotal,
+            Boolean weekSplit,
+            LocalDate dateStart,
+            LocalDate dateEnd) {
+        return getUserWork("/rep/fact/type", taskIds, nikName, addTotal, weekSplit, dateStart, dateEnd);
+
+    }
+
+    public List<UserWorkDto> getUserWork(
+            String url,
+            Iterable<Long> taskIds,
+            String nikName,
+            Boolean addTotal,
+            Boolean weekSplit,
+            LocalDate dateStart,
+            LocalDate dateEnd) {
         StringBuilder stringBuilder = new StringBuilder();
         addTeg(stringBuilder, "taskId", taskIds);
 
@@ -96,9 +118,9 @@ public class WorkTimeServiceIntegrationImp extends ServiceIntegrationImp<Service
         addTeg(stringBuilder, "weekSplit", weekSplit);
         addTeg(stringBuilder, "dateStart", dateStart);
         addTeg(stringBuilder, "dateEnd", dateEnd);
-
+        url = url + stringBuilder;
         try {
-            return webClient.get().uri("/rep/fact/week" + stringBuilder)
+            return webClient.get().uri(url)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() == HttpStatus.NOT_FOUND.value(),
                             cR -> getMessage(cR, "Что-то пошло не так не удалось получить данные по затраченному времени"))
@@ -106,7 +128,7 @@ public class WorkTimeServiceIntegrationImp extends ServiceIntegrationImp<Service
                     .collectList()
                     .block();
         } catch (RuntimeException ex) {
-            String text = "get Work User Or Zi /rep/fact/week" + stringBuilder;
+            String text = "get Work User Or Zi " + url;
             log.error(text, ex);
             throw new ResourceNotFoundRunTime("Что-то пошло не так не удалось получить работы (Api-WorkTime) не доступен подождите или обратитесь к администратору " + ex.getMessage());
         }

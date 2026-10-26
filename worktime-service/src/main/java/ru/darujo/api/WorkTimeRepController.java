@@ -102,6 +102,18 @@ public class WorkTimeRepController {
         return workTimeRepService.getWeekWork(taskId, nikName, addTotal, weekSplit, lDateStart, lDateEnd);
     }
 
+    @GetMapping("/type")
+    public List<UserWorkDto> getWorkTime(@RequestParam(required = false) Long[] taskId,
+                                         @RequestParam(required = false) String nikName,
+                                         @RequestParam(defaultValue = "false") Boolean addTotal,
+                                         @RequestParam(defaultValue = "true") Boolean weekSplit,
+                                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateStart,
+                                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateEnd) {
+        LocalDate lDateStart = DateHelper.zDTToLD(dateStart);
+        LocalDate lDateEnd = DateHelper.zDTToLD(dateEnd);
+        return workTimeRepService.getWorkTimeType(taskId, nikName, addTotal, weekSplit, lDateStart, lDateEnd);
+    }
+
 
     @GetMapping("/availTime/{taskId}")
     public Boolean getFactUsers(@PathVariable long taskId

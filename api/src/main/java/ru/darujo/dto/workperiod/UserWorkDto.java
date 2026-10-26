@@ -1,5 +1,6 @@
 package ru.darujo.dto.workperiod;
 
+import ru.darujo.dto.content.ContentElement;
 import ru.darujo.dto.user.UserFio;
 
 import java.io.Serializable;
@@ -9,8 +10,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class UserWorkDto implements UserFio, Serializable {
-    public UserWorkDto() { }
+public class UserWorkDto implements UserFio, Serializable, ContentElement {
+    public UserWorkDto() {
+    }
+
     private Integer userCol;
     private String nikName;
     private String authorFirstName;
@@ -21,7 +24,7 @@ public class UserWorkDto implements UserFio, Serializable {
     private Float workPlan;
     private Float workAllFact;
     protected Map<Integer, Float> workTime = new LinkedHashMap<>();
-    protected Map<Integer, Set<Long>> workTask = new LinkedHashMap<>();
+    protected Map<Integer, Set<Long>> workTask;
 
     public UserWorkDto(String nikName, String authorFirstName, String authorLastName, String authorPatronymic, ZonedDateTime dateStart, ZonedDateTime dateEnd, Float workPlan) {
         this.nikName = nikName;
@@ -34,18 +37,21 @@ public class UserWorkDto implements UserFio, Serializable {
         this.workAllFact = 0f;
 //        CodeService.getTaskTypes().forEach((type, s) -> workTime.put(type,0f));
     }
-    public void addTime(Integer type,Float time ){
-        if(type != null && time != null){
+
+    public void addTime(Integer type, Float time) {
+        if (type != null && time != null) {
             workTime.merge(type, time, Float::sum);
         }
     }
-    public UserWorkDto addTimeAll(){
+
+    public UserWorkDto addTimeAll() {
         workAllFact = 0f;
-        workTime.forEach((type, time) ->addTimeAll(time) );
+        workTime.forEach((type, time) -> addTimeAll(time));
         return this;
     }
-    private void addTimeAll(Float time){
-        if(time != null){
+
+    private void addTimeAll(Float time) {
+        if (time != null) {
             workAllFact = workAllFact + time;
         }
     }
@@ -104,6 +110,9 @@ public class UserWorkDto implements UserFio, Serializable {
     }
 
     public void addTask(Integer type, Long taskId) {
+        if (workTask == null) {
+            workTask = new LinkedHashMap<>();
+        }
         Set<Long> tasks = workTask.computeIfAbsent(type, k -> new HashSet<>());
         tasks.add(taskId);
 
@@ -125,5 +134,10 @@ public class UserWorkDto implements UserFio, Serializable {
     @SuppressWarnings("unused")
     public Map<Integer, Set<Long>> getWorkTask() {
         return workTask;
+    }
+
+    @Override
+    public int getCount() {
+        return 1;
     }
 }

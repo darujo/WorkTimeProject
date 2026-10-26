@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.darujo.assistant.helper.DateHelper;
 import ru.darujo.dto.ListString;
 import ru.darujo.dto.workperiod.UserWorkDto;
+import ru.darujo.dto.workrep.TaskContent;
 import ru.darujo.service.TaskRepService;
 
 import java.time.LocalDate;
@@ -75,6 +76,15 @@ public class TaskRepController {
                                          @RequestParam(required = false) Boolean addTotal
     ) {
         return taskRepService.getWeekWork(workId, projectId, nikName, addTotal);
+    }
+
+    @GetMapping("/type/user")
+    public List<TaskContent> getWeekTask(@RequestParam(required = false) List<Long> workId,
+                                         @RequestParam(required = false) Long projectId,
+                                         @RequestParam(required = false) String nikName,
+                                         @RequestParam(required = false) Boolean addTotal
+    ) {
+        return taskRepService.getWeekTask(workId, projectId, nikName, addTotal);
     }
 
     @GetMapping("/lastTime")

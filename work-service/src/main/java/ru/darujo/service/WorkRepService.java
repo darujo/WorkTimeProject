@@ -15,6 +15,7 @@ import ru.darujo.dto.ColorDto;
 import ru.darujo.dto.MapStringFloat;
 import ru.darujo.dto.PageObjDto;
 import ru.darujo.dto.calendar.WeekWorkDto;
+import ru.darujo.dto.content.WorkContent;
 import ru.darujo.dto.project.ProjectDto;
 import ru.darujo.dto.user.UserDto;
 import ru.darujo.dto.workperiod.WorkUserTime;
@@ -203,17 +204,17 @@ public class WorkRepService {
 
     @Transactional
     public Page<WorkFactDto> getWorkFactRep(Integer page,
-                                               Integer size,
-                                               String userName,
-                                               String nameZi,
-                                               Integer stageZiGe,
-                                               Integer stageZiLe,
-                                               Long codeSap,
-                                               String codeZiSearch,
-                                               String task,
-                                               Long releaseId,
-                                               List<String> sort,
-                                               boolean hideNotTime) {
+                                            Integer size,
+                                            String userName,
+                                            String nameZi,
+                                            Integer stageZiGe,
+                                            Integer stageZiLe,
+                                            Long codeSap,
+                                            String codeZiSearch,
+                                            String task,
+                                            Long releaseId,
+                                            List<String> sort,
+                                            boolean hideNotTime) {
         AtomicInteger num = new AtomicInteger();
         List<WorkFactDto> workFactDTOs = new ArrayList<>();
         Page<@NonNull Work> workPage = workService.findWorks(page, size, nameZi, sort, stageZiGe, stageZiLe, codeSap, codeZiSearch, task, releaseId);
@@ -453,13 +454,33 @@ public class WorkRepService {
             return new PageImpl<>(
                     List.of(
                             new WorkUserTime(
-                    null,
-                    null,
-                    null,
-                    "Без ЗИ",
-                    workTimeServiceIntegration.getWorkUserOrZiBig(null, nikName, addTotal, weekSplit, dateStart, dateEnd))
+                                    null,
+                                    null,
+                                    null,
+                                    "Без ЗИ",
+                                    workTimeServiceIntegration.getWorkUserOrZiBig(null, nikName, addTotal, weekSplit, dateStart, dateEnd))
                     ));
         }
+//        return workUserTimes;
+    }
+
+    public Page<WorkContent> getTaskType(Boolean addTotal, String nikName,
+                                         Integer page, Integer size, String name, Long projectId, Integer stageZiGe, Integer stageZiLe, Long codeSap, String codeZi, String task, List<Long> releaseIdList, List<String> sort) {
+
+        Page<@NonNull WorkLittleFull> works = workService.findWorkLittle(page, size, name, sort, stageZiGe, stageZiLe, codeSap, codeZi, task, releaseIdList, projectId);
+        return works.map(workLittleFull -> {
+                    WorkLittle work = workLittleFull.getWork();
+                    return new WorkContent(
+                            work.getId(),
+                            work.getCodeSap(),
+                            work.getCodeZi(),
+                            work.getName(),
+                            taskServiceIntegration.getTaskType(work.getId(), projectId, nikName, addTotal))
+                            ;
+                }
+        );
+
+
 //        return workUserTimes;
     }
 

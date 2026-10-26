@@ -356,6 +356,15 @@ angular.module('workTimeService').config(function ($routeProvider) {
                 }]
             }
         })
+        .when('/work_task_type', {
+            templateUrl: 'rep/WorkTaskType/work_task_type.html?ver='.toLowerCase() + ver,
+            controller: 'workTaskTypeController',
+            resolve: {
+                LazyLoadCtrl: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load('work_task_type'); // Resolve promise and load before view
+                }]
+            }
+        })
 
         .otherwise({
             redirectTo: '/'
