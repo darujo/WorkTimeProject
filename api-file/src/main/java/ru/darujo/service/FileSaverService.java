@@ -91,11 +91,14 @@ public class FileSaverService {
 
     }
 
-
     public File resourceToFile(String fileName) {
-
+        String[] par = fileName.split("\\.");
+        String suffix = ".tmp";
+        if (par.length > 1) {
+            suffix = "." + par[par.length - 1];
+        }
         try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName)) {
-            File f = File.createTempFile(String.valueOf(Objects.requireNonNull(in).hashCode()), ".jpg");
+            File f = File.createTempFile(String.valueOf(Objects.requireNonNull(in).hashCode()), suffix);
             log.info(f.getAbsolutePath());
             f.deleteOnExit();
 
