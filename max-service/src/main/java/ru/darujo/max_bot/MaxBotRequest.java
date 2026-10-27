@@ -43,7 +43,7 @@ public class MaxBotRequest implements UpdateHandler, AutoCloseable {
 
         botName = maxBotSend.getName();
         messageForAdmin("Бот @" + botName + " запущен");
-
+        maxBotSend.setCommandInit();
     }
 
     @Autowired

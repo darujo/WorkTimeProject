@@ -181,4 +181,17 @@ public class MaxBotSend {
         api.sendAction(new ActionRequestBody(actionType), Long.parseLong(chatInfo.getChatId())).execute();
         return false;
     }
+
+    public void setCommandInit() {
+        api.editMyCommands(new BotCommandsPatch(List.of(
+                new BotCommand("start", "Получить справку"),
+                new BotCommand("link", "Подписаться на уведомления от сервиса учета трудозатрат"),
+                new BotCommand("menu", "Вызвать меню действий"),
+                new BotCommand("stop", "Отвязать аккаунт от уведомлений")
+
+        ))).execute();
+
+// An empty list removes every command.
+//        api.editMyCommands(new BotCommandsPatch(List.of())).execute();
+    }
 }
